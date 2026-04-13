@@ -10,12 +10,12 @@ fun test3() = H.bar { x: String  -> x }
 
 fun test4(a: Any) {
     a <!UNCHECKED_CAST!>as J<String><!>
-    H.bar(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    H.bar(a)
 }
 
 fun test5(a: Any) {
     a <!UNCHECKED_CAST!>as (String) -> String<!>
-    H.bar(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    H.bar(a)
 }
 
 fun <T> test6(a: (T) -> T) {
@@ -24,7 +24,7 @@ fun <T> test6(a: (T) -> T) {
 
 fun <T> test7(a: Any) {
     a <!UNCHECKED_CAST!>as (T) -> T<!>
-    H.bar(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    H.bar(a)
 }
 
 fun test8(efn: String.() -> String) = J(efn)

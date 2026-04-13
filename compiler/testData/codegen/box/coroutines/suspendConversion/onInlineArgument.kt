@@ -4,7 +4,6 @@
 
 // `lambda` should not be wrapped in yet another object (so no OnInlineArgumentKt$box$1$1).
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 import helpers.*
 import kotlin.coroutines.*

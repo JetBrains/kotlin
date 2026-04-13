@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import Host.importedObjectMemberWithVarargs
 
 fun use(fn: (Int) -> String) = fn(1)

@@ -4,7 +4,7 @@
 fun reproduce() {
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("String?; ScopeOwner")!>otvOwner.instance<!> += ScopeOwner()
+        otvOwner.instance <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ScopeOwner()
     }
 }
 

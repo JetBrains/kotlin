@@ -17,7 +17,7 @@ public class A {
 // FILE: B.kt
 
 class B(private val foo: String) : <!DEPRECATION!>A<!>() {
-    override fun getFoo(text: String): String = super.<!DEPRECATION!>getFoo<!>(text + foo)
+    override fun <!OVERRIDE_DEPRECATION!>getFoo<!>(text: String): String = super.<!DEPRECATION!>getFoo<!>(text + foo)
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType,

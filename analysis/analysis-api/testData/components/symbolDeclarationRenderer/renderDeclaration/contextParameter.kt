@@ -1,5 +1,4 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_FE10
 
 interface Context2<A> {
     fun getContextElement(): A

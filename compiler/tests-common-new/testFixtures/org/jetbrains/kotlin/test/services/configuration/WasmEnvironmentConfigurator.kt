@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
@@ -174,6 +175,9 @@ open class WasmSecondStageEnvironmentConfigurator(
             WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,
             FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives
         )
+
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.ERROR))
     }
 }
 

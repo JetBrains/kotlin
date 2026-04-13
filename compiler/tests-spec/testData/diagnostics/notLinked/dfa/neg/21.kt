@@ -21,10 +21,10 @@ class Case1 {
         val y = this
         if (y.x != null) {
             x = null
-            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>this.x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>y.x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int"), DEBUG_INFO_SMARTCAST!>y.x<!>.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
+            this.x
+            y.x
+            y.x<!UNSAFE_CALL!>.<!>inv()
         } else {
             x = 10
         }
@@ -43,9 +43,9 @@ class Case2 {
         if (<!SENSELESS_COMPARISON!>y.x == null<!>) {
             x = 11
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>this.x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Nothing")!>y.x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Nothing")!>y.x<!>.inv()
+            this.x
+            y.x
+            y.x.inv()
             println(1)
         } else {
             x = 11

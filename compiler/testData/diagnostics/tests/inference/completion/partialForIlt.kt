@@ -9,10 +9,10 @@ fun takeLong(ilt: Long) {}
 fun <T> id(arg: T): T = arg
 
 fun test() {
-    takeByte(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte")!>id(42)<!>)
-    takeShort(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Short")!>id(42)<!>)
-    takeInt(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>id(42)<!>)
-    takeLong(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>id(42)<!>)
+    takeByte(id(42))
+    takeShort(id(42))
+    takeInt(id(42))
+    takeLong(id(42))
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

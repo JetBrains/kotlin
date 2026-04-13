@@ -7,7 +7,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block(this)
 }
@@ -18,9 +18,9 @@ fun b() = true
 @IgnorableReturnValue fun ign() = false
 
 fun testConditionals(s: String?) {
-    s?.myLet { if (it.length > 0) a() else b() }
-    s?.myLet { 42 }
-    s?.myLet {
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> { if (it.length > 0) a() else b() }
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> { 42 }
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         when (it.length) {
             0 -> a()
             1 -> b()
@@ -33,7 +33,7 @@ fun testConditionals(s: String?) {
             else -> ign()
         }
     }
-    s?.myLet {
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         if (it.length > 0) return@myLet a()
         if (it.length == 0) ign() else ign()
     }
@@ -43,11 +43,11 @@ fun testSpecialCases(s: String?, list: MutableList<String>) {
     s?.myLet { list.add(it) }
     s?.myLet { list[0] = it }
     s?.myLet { it.isEmpty() || error("") }
-    s?.myLet { it.isEmpty() || it.length > 0 }
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> { it.isEmpty() || it.length > 0 }
 }
 
 fun testRecursive(a: String?, b: String?) {
-    a?.myLet {
+    a?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         b?.myLet {
             a()
         }
@@ -59,7 +59,7 @@ fun testRecursive(a: String?, b: String?) {
         }
     }
 
-    a?.myLet {
+    a?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         if (it.length > 0) b?.myLet {
             a()
         } else ign()
@@ -73,7 +73,7 @@ fun testRecursive(a: String?, b: String?) {
 }
 
 fun testMultiple(a: String?, b: String?) {
-    a?.myLet {
+    a?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         if (it.length > 0) b?.myLet { a() } else b?.myLet { b() }
     }
 }

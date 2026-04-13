@@ -1,2 +1,2 @@
-KtNameReferenceExpression(51,60): 'JavaClass'
+KtNameReferenceExpression(50,59): 'JavaClass'
   NO_CANDIDATES

@@ -10,11 +10,11 @@ val B.a: () -> Int  get() = { 5 }
 fun test(a: A, b: B) {
     val x: Int = b.a()
 
-    b.<!FUNCTION_EXPECTED!>(a)<!>()
+    b.(<!UNRESOLVED_REFERENCE!>a<!>)()
 
-    with(b) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(b) {
         val y: Int = a()
-        <!FUNCTION_EXPECTED!>(a)<!>()
+        (<!UNRESOLVED_REFERENCE!>a<!>)()
     }
 }
 

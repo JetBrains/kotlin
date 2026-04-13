@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -131,6 +132,11 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
     @NotNull
     private ASTNode getParentNode() {
         ASTNode parent = getNode().getTreeParent();
+        if (parent.getElementType() == TokenType.ERROR_ELEMENT) {
+            // For top-level destructuring declarations we report an error in the parser.
+            // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
+            parent = parent.getTreeParent();
+        }
         assert parent.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION :
                 "parent is " + parent.getElementType();
         return parent;

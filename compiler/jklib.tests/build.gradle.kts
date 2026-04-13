@@ -20,7 +20,7 @@ sourceSets {
 
 projectTests {
     testData(project(":compiler").isolated, "testData/ir/irText")
-    testData(project(":compiler").isolated, "testData/mockJDK")
+    testData(rootProject.isolated, "third-party/mockJDKs/mockJDK")
 
     withJvmStdlibAndReflect()
     withMockJdkRuntime()

@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-81262
 // LANGUAGE: +ForbidExposingLessVisibleTypesInInline
-// FIR_IDENTICAL
 // FILE: Super.java
 class Super {
     public void foo() {}

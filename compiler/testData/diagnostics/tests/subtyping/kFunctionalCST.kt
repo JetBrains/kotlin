@@ -8,14 +8,14 @@ class B(block: String.() -> Int) : Base(block)
 
 fun test_1() {
     val c = select(::A, ::B)
-    c <!TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>length<!> }<!>
-    c { it.length }
+    c { length }
+    c { <!UNRESOLVED_REFERENCE!>it<!>.length }
 }
 
 fun test_2(cond: Boolean) {
     val c = if (cond) ::A else ::B
-    c <!TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>length<!> }<!>
-    c { it.length }
+    c { length }
+    c { <!UNRESOLVED_REFERENCE!>it<!>.length }
 }
 
 fun test_3(cond: Boolean) {
@@ -23,8 +23,8 @@ fun test_3(cond: Boolean) {
         true -> ::A
         false -> ::B
     }
-    c <!TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>length<!> }<!>
-    c { it.length }
+    c { length }
+    c { <!UNRESOLVED_REFERENCE!>it<!>.length }
 }
 
 /* GENERATED_FIR_TAGS: callableReference, capturedType, checkNotNullCall, classDeclaration, equalityExpression,

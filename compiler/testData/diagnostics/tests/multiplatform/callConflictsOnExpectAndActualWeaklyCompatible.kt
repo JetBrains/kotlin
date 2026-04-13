@@ -13,12 +13,12 @@ expect fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = fal
 // FILE: jvm.kt
 
 
-@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@Suppress(<!ERROR_SUPPRESSION!>"ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS"<!>)
 actual fun String.foo(prefix: String, ignoreCase: Boolean = false): Boolean {
     return true
 }
 
-@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@Suppress(<!ERROR_SUPPRESSION!>"ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS"<!>)
 actual fun String.foo(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     return true
 }

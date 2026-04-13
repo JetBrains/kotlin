@@ -1,6 +1,0 @@
-package
-
-package jet121 {
-    public fun apply(/*0*/ arg: kotlin.String, /*1*/ f: kotlin.String.() -> kotlin.Int): kotlin.Int
-    public fun box(): kotlin.String
-}

@@ -157,7 +157,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
+            public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
@@ -199,7 +199,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
+            public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
+            public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|) [evaluated = String(property str)]) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|) [evaluated = String(field str)]) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|) [evaluated = String(get str)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|
@@ -283,7 +283,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
+            public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|) [evaluated = String(property str)]) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|) [evaluated = String(field str)]) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|) [evaluated = String(get str)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Interface] get(): R|kotlin/String?|

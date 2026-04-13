@@ -12,7 +12,7 @@ fun regressionTestOverrides() {
     val anonymous: StableInterface = object : StableInterface {
         override fun <!OPT_IN_OVERRIDE_ERROR!>experimentalMethod<!>() {} // correctly fails check
     }
-    val lambda = <!OPT_IN_USAGE!>StableInterface<!> {} // this does not get flagged
+    val lambda = <!OPT_IN_USAGE_ERROR!>StableInterface<!> {} // this does not get flagged
 }
 
 @ExperimentalKotlinAnnotation

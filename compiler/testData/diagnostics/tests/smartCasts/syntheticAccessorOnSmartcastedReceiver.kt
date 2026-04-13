@@ -12,7 +12,7 @@ interface C : A
 fun test(x: A) {
     if (x !is C) return
     if (x is B) {
-        x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+        x.foo.foo
         x.getFoo().foo
     }
 }

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-59012
 // FILE: I.java
 public interface I<G extends I<G>> {

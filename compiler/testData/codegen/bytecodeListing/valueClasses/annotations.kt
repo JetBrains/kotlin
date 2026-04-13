@@ -1,6 +1,5 @@
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 
 import kotlin.reflect.KProperty

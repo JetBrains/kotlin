@@ -29,7 +29,7 @@ fun testWhen1(sealed: Sealed, sealedAbstract: SealedAbstract) {
         is Sealed.Sub -> {}
     }
 
-    when (sealed) {
+    <!MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS!>when<!> (sealed) {
         is Sealed.Sub -> {}
         is Sealed.Sub2 -> {}
     }
@@ -46,13 +46,13 @@ fun testWhen2(sealed: Sealed, sealedAbstract: SealedAbstract) {
 
     when (sealed) {
         is Sealed.Sub -> {}
-        <!USELESS_IS_CHECK!>is Sealed<!> -> {}
+        is Sealed -> {}
     }
 
     when (sealed) {
         is Sealed.Sub -> {}
         is Sealed.Sub2 -> {}
-        <!USELESS_IS_CHECK!>is Sealed<!> -> {}
+        is Sealed -> {}
     }
 
     when (sealedAbstract) {
@@ -61,7 +61,7 @@ fun testWhen2(sealed: Sealed, sealedAbstract: SealedAbstract) {
 
     when (sealedAbstract) {
         is SealedAbstract.Sub -> {}
-        <!USELESS_IS_CHECK!>is SealedAbstract<!> -> {}
+        is SealedAbstract -> {}
     }
 }
 
@@ -85,7 +85,7 @@ public sealed class B extends Base permits B.C, B.D {
 
 // FILE: main.kt
 fun test_2(base: Base): String {
-    return when (base) {
+    return <!MISSING_BRANCH_FOR_NON_ABSTRACT_SEALED_CLASS!>when<!> (base) {
         is A -> "Fail A"
         is B.C -> "K"
         is B.D -> "Fail B.D"

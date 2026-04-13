@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun infixFunSpecialized (a: kotlin.Any): kotlin.String declared in <root>.A'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:inlineFun visibility:public modality:FINAL returnType:T of <root>.A [inline]
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<T of <root>.A>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun inlineFunSpecialized (): kotlin.String declared in <root>.A'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:minus visibility:public modality:FINAL returnType:kotlin.String [operator]
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/main.kt
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun minus (a: kotlin.Any): kotlin.String declared in <root>.A'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:plus visibility:public modality:FINAL returnType:T of <root>.A [operator]
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.JavaIntermediate
         public open fun hashCode (): kotlin.Int declared in <root>.I
-    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.I
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:

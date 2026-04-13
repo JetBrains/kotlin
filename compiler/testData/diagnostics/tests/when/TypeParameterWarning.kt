@@ -17,19 +17,19 @@ interface JsonObject
 class SomeJsonObject() : JsonObject
 
 fun String.put(value: JsonObject?, node: ObjectNode) {
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>select<!>(
-        node.set(this, null),
+    select(
+        node.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>set<!>(this, null),
         Unit,
     )
 
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>if (value == null) node.set(this, null)
-    else if (value is SomeJsonObject) Unit<!>
+    if (value == null) node.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>set<!>(this, null)
+    else if (value is SomeJsonObject) Unit
 
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>when (value) {
-        null -> node.set(this, null)
+    when (value) {
+        null -> node.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>set<!>(this, null)
         is SomeJsonObject -> Unit
         else -> TODO()
-    }<!>
+    }
 }
 
 fun TODO(): Nothing = null!!

@@ -7,7 +7,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myRun(block: T.() -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block()
 }
@@ -15,15 +15,15 @@ inline fun <T, R> T.myRun(block: T.() -> R): R {
 val getBool: Boolean = true
 
 fun testStuff(a: Int, s: String?, list: MutableList<String>): Boolean {
-    s?.myRun {
+    s?.<!RETURN_VALUE_NOT_USED!>myRun<!> {
         if (a > 5) return list.add(this) // non-local, should not be counted
         if (a > 4) return@myRun getBool // non-ignorable
         if (a > 3) return@myRun list.add(this) // ignorable
-        /*2*/getBool // not last statement, should not be counted
+        /*2*/<!RETURN_VALUE_NOT_USED!>getBool<!> // not last statement, should not be counted
         /*1*/list.add(this) // ignorable
     } // 4 * 3 * 1 = non-ignorable
 
-    s?.myRun {
+    s?.<!RETURN_VALUE_NOT_USED!>myRun<!> {
         if (a > 5) return list.add(this) // non-local, should not be counted
         if (a > 4) return@myRun list.add(this) // ignorable
         if (a > 3) return@myRun list.add(this) // ignorable
@@ -31,11 +31,11 @@ fun testStuff(a: Int, s: String?, list: MutableList<String>): Boolean {
         /*1*/getBool
     } // 4 * 3 * 1 = non-ignorable
 
-    s?.myRun {
+    s?.<!RETURN_VALUE_NOT_USED!>myRun<!> {
         if (a > 5) return getBool // non-local, should not be counted
         if (a > 4) return@myRun list.add(this) // ignorable
         if (a > 3) return@myRun getBool // non-ignorable
-        /*2*/getBool // not last statement, should not be counted
+        /*2*/<!RETURN_VALUE_NOT_USED!>getBool<!> // not last statement, should not be counted
         /*1*/list.add(this)
     } // 4 * 3 * 1 = non-ignorable
 
@@ -43,7 +43,7 @@ fun testStuff(a: Int, s: String?, list: MutableList<String>): Boolean {
         if (a > 5) return getBool // non-local, should not be counted
         if (a > 4) return@myRun list.add(this) // ignorable
         if (a > 3) return@myRun list.add(this) // ignorable
-        /*2*/getBool // not last statement, should not be counted
+        /*2*/<!RETURN_VALUE_NOT_USED!>getBool<!> // not last statement, should not be counted
         /*1*/list.add(this)
     } // 4 * 3 * 1 = ignorable
 

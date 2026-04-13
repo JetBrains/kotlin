@@ -131,7 +131,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
     ) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             jvm()
-            js(IR) {
+            js {
                 browser()
             }
             linuxX64()

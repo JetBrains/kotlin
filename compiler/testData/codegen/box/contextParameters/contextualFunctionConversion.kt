@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 fun withContext(f: context(String) () -> String) = f("OK")
 

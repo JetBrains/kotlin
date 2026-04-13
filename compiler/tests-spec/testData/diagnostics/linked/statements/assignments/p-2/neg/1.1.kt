@@ -20,11 +20,11 @@ fun case1() {
     val x : Any
     x = "0"
     <!VAL_REASSIGNMENT!>x<!> = 1
-    x = 2.0
+    <!VAL_REASSIGNMENT!>x<!> = 2.0
 
     val y : Any = 0
     <!VAL_REASSIGNMENT!>y<!> = "0"
-    y = 1.0
+    <!VAL_REASSIGNMENT!>y<!> = 1.0
 }
 
 /*
@@ -33,7 +33,7 @@ fun case1() {
  */
 fun case2() {
     val x : Any
-    mutableListOf(0).forEach({ <!CAPTURED_VAL_INITIALIZATION!>x<!> = it })
+    mutableListOf(0).forEach({ <!VAL_REASSIGNMENT!>x<!> = it })
 
     val y : Any = 1
     mutableListOf(1).forEach({ <!VAL_REASSIGNMENT!>y<!> = it })

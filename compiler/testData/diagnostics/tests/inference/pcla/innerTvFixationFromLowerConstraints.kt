@@ -26,8 +26,8 @@ fun main(x: Controller<String>) {
         // And current answer in K2 is that it's String just the same way as when while fixating some TV, it has improper lower constraits
         // See org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver.prepareLowerConstraints
         selectL(x, this) { x ->
-            x.yield(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
-            x.yield(<!TYPE_MISMATCH!>""<!>)
+            x.yield(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+            x.yield("")
         }
     }.length
 }

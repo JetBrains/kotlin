@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.*
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.StringDirective
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -469,8 +472,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             return
         }
 
-        if (configurator.frontendKind == FrontendKind.Fe10 && isFe10DisabledForTheTest() ||
-            configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest() ||
+        if (configurator.frontendKind == FrontendKind.Fir && isFirDisabledForTheTest() ||
             configurator.analysisApiMode == AnalysisApiMode.Standalone && isStandaloneDisabledForTheTest()
         ) {
             return
@@ -511,7 +513,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
 
     private fun prepareToTheAnalysis(testConfiguration: NonGroupingPhaseTestConfiguration) {
         val moduleStructure = testServices.moduleStructure
-        val artifactsProvider = ArtifactsProvider(testServices, moduleStructure.modules)
+        val artifactsProvider = ArtifactsProvider()
         testServices.registerArtifactsProvider(artifactsProvider)
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor -> preprocessor.preprocessModuleStructure(moduleStructure) }
@@ -525,22 +527,11 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     private fun isDependentModeDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE in testServices.moduleStructure.allDirectives
 
-    private fun isFe10DisabledForTheTest(): Boolean =
-        AnalysisApiTestDirectives.IGNORE_FE10 in testServices.moduleStructure.allDirectives
-
     private fun isFirDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_FIR in testServices.moduleStructure.allDirectives
 
     private fun isStandaloneDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_STANDALONE in testServices.moduleStructure.allDirectives
-
-    protected fun <T : Directive> RegisteredDirectives.findSpecificDirective(
-        commonDirective: T,
-        k1Directive: T,
-        k2Directive: T,
-    ): T? = commonDirective.takeIf { it in this }
-        ?: k1Directive.takeIf { configurator.frontendKind == FrontendKind.Fe10 && it in this }
-        ?: k2Directive.takeIf { configurator.frontendKind == FrontendKind.Fir && it in this }
 
     /**
      * Analyzes [contextElement] either directly, or a copy of it when the test is in dependent analysis mode.

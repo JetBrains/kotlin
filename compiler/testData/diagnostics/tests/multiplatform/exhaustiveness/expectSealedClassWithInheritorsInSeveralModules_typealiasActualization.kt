@@ -10,7 +10,7 @@ expect sealed class Base()
 class CommonDerived : Base()
 
 // should be an error
-fun commonTest(x: Base) = <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, NO_ELSE_IN_WHEN, NO_ELSE_IN_WHEN{JVM}!>when<!> (x) {
+fun commonTest(x: Base) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
     is CommonDerived -> 1
 }
 

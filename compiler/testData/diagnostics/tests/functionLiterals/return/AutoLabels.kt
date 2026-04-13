@@ -13,7 +13,7 @@ fun f() {
 
     foo {
         foo {
-            return<!LABEL_NAME_CLASH!>@foo<!> 1
+            return@foo 1
         }
         return@foo 1
     }

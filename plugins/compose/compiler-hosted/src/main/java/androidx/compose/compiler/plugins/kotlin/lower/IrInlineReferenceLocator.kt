@@ -114,7 +114,7 @@ fun IrExpression.unwrapLambda(): IrFunctionSymbol? = when {
 
 private val IrStatementOrigin?.isLambdaBlockOrigin: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE ||
-            this == IrStatementOrigin.SUSPEND_CONVERSION
+            this == IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION
 
 // This is copied from JvmIrInlineUtils.kt in the Kotlin compiler, since we
 // need to check for synthetic composable functions.

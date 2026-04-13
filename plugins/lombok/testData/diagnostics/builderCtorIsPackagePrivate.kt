@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-83336
 
 // FILE: test/TestJava.java

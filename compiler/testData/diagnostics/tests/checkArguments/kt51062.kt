@@ -36,10 +36,10 @@ public class JavaSmartList <E> {
 
 // FILE: main.kt
 fun main() {
-    JavaSmartList(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..2<!>) // warning
+    JavaSmartList(1..2) // warning
     JavaSmartList<IntRange>(1..10) // no warning
 
-    JavaSmartList.append(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
+    JavaSmartList.append(1..10)    // warning
     JavaSmartList.append((1..10) as Any) // no warning
     JavaSmartList.append((1..10) as Iterable<Int>) // no warning
     JavaSmartList.append("a".."z") // no warning, the range is not iterable
@@ -49,11 +49,11 @@ fun main() {
 
     JavaSmartList.append3(JavaSmartList.In(1..10))    // no warning
 
-    JavaSmartList.append4(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
+    JavaSmartList.append4(1..10)    // warning
 
     JavaSmartList.append4<IntRange>(1..10)    // warning
 
-    JavaSmartList.takes(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
+    JavaSmartList.takes(1..10)    // warning
 }
 
 /* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,

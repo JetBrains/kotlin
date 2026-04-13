@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // FILE: Dependency.java
 public class Dependency {
     public static class Nested {

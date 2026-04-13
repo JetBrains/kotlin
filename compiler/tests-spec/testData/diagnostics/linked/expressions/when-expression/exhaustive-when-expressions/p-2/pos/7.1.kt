@@ -13,9 +13,9 @@
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: SealedClass): Int = when (value_1) {
-    is SealedChild1 -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.number
-    is SealedChild2 -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.e1 + <!DEBUG_INFO_SMARTCAST!>value_1<!>.e2
-    is SealedChild3 -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.m1 + <!DEBUG_INFO_SMARTCAST!>value_1<!>.m2
+    is SealedChild1 -> value_1.number
+    is SealedChild2 -> value_1.e1 + value_1.e2
+    is SealedChild3 -> value_1.m1 + value_1.m2
 }
 
 // TESTCASE NUMBER: 2
@@ -25,9 +25,9 @@ fun case_2(value_1: SealedClass): String = when (value_1) {
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: SealedClassWithMethods): String = when (value_1) {
-    is SealedWithMethodsChild1 -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.m1()
-    is SealedWithMethodsChild2 -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.m2()
-    is SealedWithMethodsChild3 -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.m3()
+    is SealedWithMethodsChild1 -> value_1.m1()
+    is SealedWithMethodsChild2 -> value_1.m2()
+    is SealedWithMethodsChild3 -> value_1.m3()
 }
 
 // TESTCASE NUMBER: 4
@@ -62,7 +62,7 @@ fun case_6(value_1: SealedClassMixed): String = when (value_1) {
 
 // TESTCASE NUMBER: 7
 fun case_7(value_1: SealedClassEmpty): String = when (value_1) {
-    else -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*
@@ -70,7 +70,7 @@ fun case_7(value_1: SealedClassEmpty): String = when (value_1) {
  * UNEXPECTED BEHAVIOUR: must be exhaustive
  * ISSUES: KT-22996
  */
-fun case_8(value: SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
+fun case_8(value: SealedClass?): String = when (value) {
     is SealedChild1, !is SealedChild3?, <!USELESS_IS_CHECK!>is SealedChild3?<!> -> ""
 }
 
@@ -79,7 +79,7 @@ fun case_8(value: SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
  * UNEXPECTED BEHAVIOUR: must be exhaustive
  * ISSUES: KT-22996
  */
-fun case_9(value: SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
+fun case_9(value: SealedClass?): String = when (value) {
     is SealedChild1, !is SealedChild3 -> ""
-    <!USELESS_IS_CHECK!>is SealedChild3?<!> -> ""
+    is SealedChild3? -> ""
 }

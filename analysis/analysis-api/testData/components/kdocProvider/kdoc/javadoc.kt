@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_FE10
 
 // FILE: JavaClass.java
 import java.util.List;

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 annotation class AnnE(val i: String)
 
 enum class MyEnum {

@@ -22,7 +22,7 @@ import libCase1.*
 import kotlin.text.*
 
 fun case1() {
-    <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
+    <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.Regex; typeCall: function")!>Regex("")<!>
 }
 
 // FILE: Lib1.kt
@@ -42,7 +42,7 @@ import lib1Case2.*
 import kotlin.text.*
 
 fun case2() {
-    <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")<!>
 }
 
 // FILE: Lib2.kt
@@ -75,7 +75,7 @@ import libCase3.*
 import kotlin.text.*
 
 fun case3() {
-    <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
+    <!DEBUG_INFO_CALL("fqName: libCase3.Regex.Companion.invoke; typeCall: variable&invoke")!>Regex("")<!>
 }
 
 // FILE: Lib3.kt
@@ -102,7 +102,7 @@ import lib1Case4.*
 import kotlin.text.*
 
 fun case4() {
-    <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
+    <!DEBUG_INFO_CALL("fqName: lib1Case4.Regex.Companion.invoke; typeCall: variable&invoke")!>Regex("")<!>
 }
 
 // FILE: Lib4.kt

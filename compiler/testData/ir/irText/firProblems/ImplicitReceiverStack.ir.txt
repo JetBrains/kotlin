@@ -239,7 +239,8 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun <get-type> (): kotlin.String declared in <root>.ImplicitReceiverValue' type=kotlin.String origin=GET_PROPERTY
-                  ARG <this>: GET_VAR 'val tmp_0: <root>.ImplicitReceiverValue<*>? declared in <root>.box' type=<root>.ImplicitReceiverValue<*>? origin=null
+                  ARG <this>: TYPE_OP type=<root>.ImplicitReceiverValue<*> origin=IMPLICIT_CAST typeOperand=<root>.ImplicitReceiverValue<*>
+                    GET_VAR 'val tmp_0: <root>.ImplicitReceiverValue<*>? declared in <root>.box' type=<root>.ImplicitReceiverValue<*>? origin=null
   FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:stack index:0 type:<root>.PersistentImplicitReceiverStack
     BLOCK_BODY

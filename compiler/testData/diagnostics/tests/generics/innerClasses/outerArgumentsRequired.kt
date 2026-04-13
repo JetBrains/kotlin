@@ -13,25 +13,25 @@ class A<T> {
     }
 
     class Nested {
-        val x: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'A'")!>B<!><String>? = null
-        val y: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'A'")!>B<!><String>.C<String>? = null
-        val z: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'A'")!>B<!><String>.D? = null
+        val x: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'A'")!>B<String>?<!> = null
+        val y: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'A'")!>B<String>.C<String>?<!> = null
+        val z: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'A'")!>B<String>.D?<!> = null
 
-        val c: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>C<!><Int>? = null
-        val d: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>D<!>? = null
+        val c: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>C<Int>?<!> = null
+        val d: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>D?<!> = null
 
-        val innerMost: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>Innermost<!><String>? = null
+        val innerMost: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>Innermost<String>?<!> = null
 
         fun foo() {
             object {
-                val something = listOf<<!OUTER_CLASS_ARGUMENTS_REQUIRED!>B<!><String>>()
+                val something = listOf<<!OUTER_CLASS_ARGUMENTS_REQUIRED!>B<String><!>>()
             }
         }
     }
 
     fun foo() {
         object {
-            val something = listOf<<!OUTER_CLASS_ARGUMENTS_REQUIRED!>B<!><String>>() // False positive in K1 KT-63732
+            val something = listOf<B<String>>() // False positive in K1 KT-63732
         }
     }
 }

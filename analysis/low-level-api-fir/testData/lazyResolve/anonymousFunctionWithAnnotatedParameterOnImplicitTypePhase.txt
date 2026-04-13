@@ -153,8 +153,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /nullablePropertyWithAnnotatedType]] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -174,8 +174,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
     public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /nullablePropertyWithAnnotatedType]] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=(TypeVariable(T)) -> TypeVariable(R)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {

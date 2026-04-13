@@ -26,12 +26,12 @@ open class Foo {
 class Bar : Foo() {
     fun test_1(x: Any) {
         myRequire(x is String)
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 
     fun test_2(x: Any) {
         assertIs<String>(x)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 
     fun test_3(): Int {
@@ -45,12 +45,12 @@ class Bar : Foo() {
 
 fun test_1(foo: Foo, x: Any) {
     foo.myRequire(x is String)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun test_2(foo: Foo, x: Any) {
     foo.assertIs<String>(x)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun test_3(foo: Foo): Int {

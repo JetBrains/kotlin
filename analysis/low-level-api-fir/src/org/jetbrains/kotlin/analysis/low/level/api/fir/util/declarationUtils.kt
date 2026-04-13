@@ -113,13 +113,11 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     containerFirFile: FirFile?,
 ): FirDeclaration? {
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
-    val originalDeclaration = (this as? KtDeclaration)?.originalDeclaration
-    val isDeclaration = this is KtDeclaration
     return FirElementFinder.findElementIn(
         firFile,
         canGoInside = { it is FirRegularClass || it is FirScript || it is FirFunction || it is FirProperty },
         predicate = { firDeclaration ->
-            firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
+            firDeclaration.psi == this
         }
     )
 }
@@ -196,13 +194,6 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
 
 fun FirAnonymousInitializer.containingClassIdOrNull(): ClassId? =
     (containingDeclarationSymbol as? FirClassSymbol<*>)?.classId
-
-val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
-var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)
-
-private val ORIGINAL_KT_FILE_KEY = com.intellij.openapi.util.Key<KtFile>("ORIGINAL_KT_FILE_KEY")
-var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
-
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
     return if (provider is LLFirProvider) {

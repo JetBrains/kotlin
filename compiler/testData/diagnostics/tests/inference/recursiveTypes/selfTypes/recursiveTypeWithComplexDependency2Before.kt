@@ -8,7 +8,7 @@ class MyRecordId : RecordId<String, MyRecordId>
 
 class Foo2<T, Id : RecordId<T, Id>>(underlyingColumn: T)
 
-val x = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo2<!>("")
+val x = <!CANNOT_INFER_PARAMETER_TYPE!>Foo2<!>("")
 
 /* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, outProjection, primaryConstructor,
 propertyDeclaration, starProjection, typeConstraint, typeParameter */

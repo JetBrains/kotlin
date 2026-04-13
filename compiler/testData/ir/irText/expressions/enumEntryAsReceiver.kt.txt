@@ -8,13 +8,13 @@ abstract enum class X : Enum<X> {
 
     override val value: Function0<String>
       field = local fun <anonymous>(): String {
-        return X.B.<get-value2>()
+        return <this>.<get-value2>()
       }
 
       override get
 
     private constructor() /* primary */ {
-      super/*X*/() /*~> Unit */
+      super/*X*/()
       /* <init>() */
 
     }

@@ -105,7 +105,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
 
         KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
 
-        StubUtils.writeNullableBoolean(dataStream, stub.getHasBackingField());
+        StubUtils.writeNullableBoolean$org_jetbrains_kotlin_psi_impl(dataStream, stub.getHasBackingField());
         StubUtils.serializeKdocText(dataStream, stub.getKdocText());
     }
 
@@ -126,7 +126,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
 
         ConstantValue<?> constantInitializer = KotlinConstantValueKt.deserializeConstantValue(dataStream);
         KotlinStubOrigin stubOrigin = KotlinStubOrigin.deserialize(dataStream);
-        Boolean hasBackingFiled = StubUtils.readNullableBoolean(dataStream);
+        Boolean hasBackingFiled = StubUtils.readNullableBoolean$org_jetbrains_kotlin_psi_impl(dataStream);
         String kdocText = StubUtils.deserializeKdocText(dataStream);
         return new KotlinPropertyStubImpl(
                 (StubElement<?>) parentStub,

@@ -93,16 +93,16 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in <root>.Java1
@@ -214,16 +214,16 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -242,7 +242,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.MutableIterator<kotlin.Any> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableIterator<kotlin.Any> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit

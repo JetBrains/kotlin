@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
-data class A(val x: Set<<!UNRESOLVED_REFERENCE!>CLassNotFound<!>> = setOf()) {
+data class A(val x: Set<<!UNRESOLVED_REFERENCE!>CLassNotFound<!>> = <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>()) {
     fun with(x: Set<<!UNRESOLVED_REFERENCE!>CLassNotFound<!>>? = null) {
-        A(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> ?: this.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+        A(x ?: this.x)
     }
 }
 

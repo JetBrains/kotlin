@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -336,10 +335,7 @@ internal open class GradleCompilerRunner(
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
 
                     if (task is Kotlin2JsCompile) {
-                        (jarForJavaSourceSet(project, task.sourceSetName.get()) ?: jarForSingleTargetJs(
-                            project,
-                            task.sourceSetName.get()
-                        ))?.let {
+                        (jarForJavaSourceSet(project, task.sourceSetName.get()))?.let {
                             jarToModule[it] = module
                         }
                     }
@@ -396,7 +392,10 @@ internal open class GradleCompilerRunner(
             get() = when (this) {
                 is KotlinCompile -> compilerOptions.moduleName.get()
                 is Kotlin2JsCompile -> compilerOptions.moduleName.get()
-                is KotlinCompileCommon -> moduleName.get()
+                is KotlinCompileCommon -> {
+                    @Suppress("DEPRECATION")
+                    moduleName.get()
+                }
                 else -> throw IllegalStateException("Unknown AbstractKotlinCompile task instance: ${this::class.qualifiedName}")
             }
 
@@ -408,17 +407,6 @@ internal open class GradleCompilerRunner(
             val sourceSet = sourceSets.findByName(sourceSetName) ?: return null
 
             val jarTask = project.tasks.findByName(sourceSet.jarTaskName) as? Jar
-            return jarTask?.archiveFile?.get()?.asFile
-        }
-
-        private fun jarForSingleTargetJs(
-            project: Project,
-            sourceSetName: String,
-        ): File? {
-            if (sourceSetName != KotlinCompilation.MAIN_COMPILATION_NAME) return null
-            val jarTaskName = project.extensions.findByType<KotlinJsProjectExtension>()?.js()?.artifactsTaskName
-
-            val jarTask = jarTaskName?.let { project.tasks.findByName(jarTaskName) } as? Zip
             return jarTask?.archiveFile?.get()?.asFile
         }
 

@@ -8,7 +8,7 @@ this@R|/C|.super<R|I|>
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superTypeQualifier3.kt
     public abstract [ResolvedTo(STATUS)] interface I : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(STATUS)] class C : R|I| {

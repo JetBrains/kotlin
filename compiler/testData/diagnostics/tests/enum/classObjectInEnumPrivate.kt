@@ -8,7 +8,7 @@ enum class E {
 fun foo() = E.values()
 fun bar() = E.valueOf("ENTRY")
 fun baz() = E.ENTRY
-fun <!EXPOSED_FUNCTION_RETURN_TYPE!>quux<!>() = <!INVISIBLE_MEMBER!>E<!>
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>quux<!>() = <!INVISIBLE_REFERENCE!>E<!>
 
 /* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
 stringLiteral */

@@ -3,8 +3,8 @@
 enum class Some {
     A {
         init {
-            <!VAL_REASSIGNMENT, VAL_REASSIGNMENT!>A<!> = null!!
-            <!VAL_REASSIGNMENT, VAL_REASSIGNMENT!>B<!> = null!!
+            <!VAL_REASSIGNMENT!>A<!> = null!!
+            <!VAL_REASSIGNMENT!>B<!> = null!!
         }
     },
     B {
@@ -15,14 +15,14 @@ enum class Some {
     };
 
     init {
-        <!INITIALIZATION_BEFORE_DECLARATION!>A<!> = null!!
-        <!INITIALIZATION_BEFORE_DECLARATION!>B<!> = null!!
+        <!VAL_REASSIGNMENT!>A<!> = null!!
+        <!VAL_REASSIGNMENT!>B<!> = null!!
     }
 }
 
 fun test() {
-    <!VAL_REASSIGNMENT!>Some.A<!> = null!!
-    <!VAL_REASSIGNMENT!>Some.B<!> = null!!
+    Some.<!VAL_REASSIGNMENT!>A<!> = null!!
+    Some.<!VAL_REASSIGNMENT!>B<!> = null!!
 }
 
 /* GENERATED_FIR_TAGS: assignment, checkNotNullCall, enumDeclaration, enumEntry, functionDeclaration, init */

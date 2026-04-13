@@ -20,7 +20,7 @@ fun main(x: Foo<*>?) {
     if (y !is Foo<*>?) return
     if (y == null) return
     if (x != y) return
-    takeFoo(<!DEBUG_INFO_SMARTCAST!>x<!>) // Here we capture `{Bar<Any!, Any!> & Foo<*>}..Foo<*>?`
+    takeFoo(x) // Here we capture `{Bar<Any!, Any!> & Foo<*>}..Foo<*>?`
 }
 
 /* GENERATED_FIR_TAGS: capturedType, equalityExpression, flexibleType, functionDeclaration, ifExpression, isExpression,

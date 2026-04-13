@@ -24,8 +24,8 @@ fun test() {
     val pubMutRef: KMutableProperty0<Any?> = ::publicMutable
     val protFinRef: KProperty<Double> = ::protectedFinal
     val protMutRef: KMutableProperty<Char> = ::protectedMutable
-    val privFinRef: KProperty<JavaClass?> = ::<!INVISIBLE_MEMBER!>privateFinal<!>
-    val privMutRef: KMutableProperty<Throwable?> = ::<!INVISIBLE_MEMBER!>privateMutable<!>
+    val privFinRef: KProperty<JavaClass?> = ::<!INVISIBLE_REFERENCE!>privateFinal<!>
+    val privMutRef: KMutableProperty<Throwable?> = ::<!INVISIBLE_REFERENCE!>privateMutable<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaType, localProperty, nullableType,

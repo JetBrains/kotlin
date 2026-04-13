@@ -25,9 +25,9 @@ private class Foo3 {
 // FILE: test.kt
 package pack
 
-import <!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>baz<!>
-import <!UNRESOLVED_REFERENCE!>Outer<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>`<no name provided>`<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>getInner<!>
-import pack.<!UNRESOLVED_REFERENCE!>UnresolvedName<!>
+import <!UNRESOLVED_IMPORT!>foo<!>.bar.baz
+import <!UNRESOLVED_IMPORT!>Outer<!>.`<no name provided>`.getInner
+import pack.<!UNRESOLVED_IMPORT!>UnresolvedName<!>
 import pkg.<!INVISIBLE_REFERENCE!>Klass<!>
 import pkg.<!INVISIBLE_REFERENCE!>Foo<!>.Bar.baz
 import pkg.Foo2.<!INVISIBLE_REFERENCE!>Bar<!>.baz

@@ -1,353 +1,305 @@
-KtNameReferenceExpression(176,177): 'T'
+KtNameReferenceExpression(162,163): 'T'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: Controller) T
 
-KtNameReferenceExpression(180,187): 'Boolean'
+KtNameReferenceExpression(166,173): 'Boolean'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
-      (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+      Nothing (Unresolved reference)
+    resolveToSymbols:
+      (in kotlin) class Boolean private constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
 
-KtNameReferenceExpression(226,236): 'Controller'
+KtNameReferenceExpression(212,222): 'Controller'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) class Controller<T>
 
-KtNameReferenceExpression(237,238): 'S'
+KtNameReferenceExpression(223,224): 'S'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: generate) S
 
-KtNameReferenceExpression(246,250): 'Unit'
+KtNameReferenceExpression(232,236): 'Unit'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in kotlin) object Unit
 
-KtNameReferenceExpression(253,254): 'S'
+KtNameReferenceExpression(239,240): 'S'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in <local>: generate) S
 
-KtCallExpression(257,263): 'TODO()'
+KtCallExpression(243,249): 'TODO()'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(257,261): 'TODO'
+KtNameReferenceExpression(243,247): 'TODO'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in kotlin) inline fun TODO(): kotlin.Nothing
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(276,282): 'MyEnum'
+KtNameReferenceExpression(262,268): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
-KtCallExpression(290,340): 'generate {'
+KtCallExpression(276,326): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(290,298): 'generate'
+KtNameReferenceExpression(276,284): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(309,317): 'yield(m)'
+KtCallExpression(295,303): 'yield(m)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(309,314): 'yield'
+KtNameReferenceExpression(295,300): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(315,316): 'm'
+KtNameReferenceExpression(301,302): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       m: MyEnum
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(326,334): 'yield(X)'
+KtCallExpression(312,320): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(326,331): 'yield'
+KtNameReferenceExpression(312,317): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(332,333): 'X'
+KtNameReferenceExpression(318,319): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in <Error class: unknown class>) open var `<Error property>`: ERROR(Error property type)
+      (in MyEnum) X
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(346,396): 'generate {'
+KtCallExpression(332,382): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(346,354): 'generate'
+KtNameReferenceExpression(332,340): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(365,373): 'yield(X)'
+KtCallExpression(351,359): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(365,370): 'yield'
+KtNameReferenceExpression(351,356): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(371,372): 'X'
+KtNameReferenceExpression(357,358): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      (in <Error class: unknown class>) open var `<Error property>`: ERROR(Error property type)
+      (in MyEnum) X
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(382,390): 'yield(m)'
+KtCallExpression(368,376): 'yield(m)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(382,387): 'yield'
+KtNameReferenceExpression(368,373): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(388,389): 'm'
+KtNameReferenceExpression(374,375): 'm'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       m: MyEnum
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(409,415): 'MyEnum'
+KtNameReferenceExpression(395,401): 'MyEnum'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
+      Nothing (Unresolved reference)
+    resolveToSymbols:
       (in ROOT) enum class MyEnum
 
-KtCallExpression(418,451): 'generate {'
+KtCallExpression(404,437): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(418,426): 'generate'
+KtNameReferenceExpression(404,412): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(437,445): 'yield(X)'
+KtCallExpression(423,431): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(437,442): 'yield'
+KtNameReferenceExpression(423,428): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(443,444): 'X'
+KtNameReferenceExpression(429,430): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    usesContextSensitiveResolution: true
+    attempt: KaSymbolResolutionSuccess
     symbols:
-      Nothing (Unresolved reference)
+      (in MyEnum) X
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(457,490): 'generate {'
+KtCallExpression(443,476): 'generate {'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(457,465): 'generate'
+KtNameReferenceExpression(443,451): 'generate'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /generate>
     symbols:
       (in ROOT) fun <S> generate(g: suspend Controller<S>.() -> kotlin.Unit): S
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtCallExpression(476,484): 'yield(X)'
+KtCallExpression(462,470): 'yield(X)'
   KtInvokeFunctionReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: null
     symbols:
       Nothing (Unresolved reference)
 
-KtNameReferenceExpression(476,481): 'yield'
+KtNameReferenceExpression(462,467): 'yield'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionSuccess
     symbols:
       (in Controller) fun yield(t: T): kotlin.Boolean
 
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    symbols:
-      Nothing (Unresolved reference)
-
-KtNameReferenceExpression(482,483): 'X'
+KtNameReferenceExpression(468,469): 'X'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
-    symbols:
-      (in <Error class: unknown class>) open var `<Error property>`: ERROR(Error property type)
-
-  SyntheticPropertyAccessorReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
+    attempt: KaSymbolResolutionError
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'X'.>
     symbols:
       Nothing (Unresolved reference)

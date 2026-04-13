@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any?>? declared in <root>.Java3
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java3
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java3]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D
     CONSTRUCTOR visibility:public returnType:<root>.D [primary]
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any?>? declared in <root>.Java3
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java3
     PROPERTY name:a visibility:public modality:FINAL [val]
       FUN name:<get-a> visibility:public modality:FINAL returnType:kotlin.collections.MutableList<kotlin.Any?>
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D
@@ -177,7 +177,7 @@ FILE fqName:<root> fileName:/1.kt
           ARG elements: VARARG type=kotlin.Array<out kotlin.Nothing?> varargElementType=kotlin.Nothing?
             CONST Null type=kotlin.Nothing? value=null
       VAR name:k type:kotlin.collections.List<kotlin.Any?> [val]
-        TYPE_OP type=kotlin.collections.List<*> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.List<*>
+        TYPE_OP type=@[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
           CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.A' type=@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? origin=null
             ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun foo (a: kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
@@ -201,7 +201,7 @@ FILE fqName:<root> fileName:/1.kt
         ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         ARG a: CONST Null type=kotlin.Nothing? value=null
       VAR name:k3 type:kotlin.collections.List<kotlin.Any?> [val]
-        TYPE_OP type=kotlin.collections.List<@[EnhancedNullability] kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.List<@[EnhancedNullability] kotlin.Any?>
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any?>
           CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any?>? declared in <root>.C' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Any?>? origin=null
             ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'public open fun foo (a: kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null

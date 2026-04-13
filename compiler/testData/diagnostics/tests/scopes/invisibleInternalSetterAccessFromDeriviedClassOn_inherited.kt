@@ -19,21 +19,21 @@ open class Derived2 : Derived1("")
 // FILE: derived2.kt
 
 fun testDerivied1(d: Derived1) {
-    <!INVISIBLE_SETTER!>d.foo<!> = "other"
+    d.<!INVISIBLE_SETTER!>foo<!> = "other"
 }
 
 fun testDerivied2(d: Derived2) {
-    <!INVISIBLE_SETTER!>d.foo<!> = "other"
+    d.<!INVISIBLE_SETTER!>foo<!> = "other"
 }
 
 class Derivied3(foo: String) : Derived2() {
     init {
-        <!INVISIBLE_SETTER!>this.foo<!> = foo
+        this.<!INVISIBLE_SETTER!>foo<!> = foo
     }
 
     fun bar1(param: String) {
         <!INVISIBLE_SETTER!>foo<!> = param
-        <!INVISIBLE_SETTER!>this.foo<!> = param
+        this.<!INVISIBLE_SETTER!>foo<!> = param
     }
 }
 

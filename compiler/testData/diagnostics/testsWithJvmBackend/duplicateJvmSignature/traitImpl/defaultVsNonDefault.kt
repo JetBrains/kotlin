@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 interface Base1 {
     fun getX(): Int

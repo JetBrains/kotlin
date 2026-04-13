@@ -6,7 +6,7 @@ fun tryFinally(x: Int?) {
     } finally {
         x!!
     }
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    checkSubtype<Int>(x)
 }
 
 fun tryCatchFinally(x: Int?) {
@@ -15,10 +15,10 @@ fun tryCatchFinally(x: Int?) {
     } catch (e: Exception) {
         x!!
     } finally {
-        checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
+        checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         x!!
     }
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    checkSubtype<Int>(x)
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

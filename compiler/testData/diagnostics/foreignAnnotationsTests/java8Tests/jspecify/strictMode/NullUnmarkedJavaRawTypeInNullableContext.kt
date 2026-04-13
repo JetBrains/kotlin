@@ -24,5 +24,5 @@ public class NullMarkedType {
 fun <T> accept(arg: T) {}
 
 fun test() {
-    accept<Any>(<!TYPE_MISMATCH!>NullMarkedType.TargetType.INSTANCE().produce()<!>)
+    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>NullMarkedType.TargetType.INSTANCE().produce()<!>)
 }

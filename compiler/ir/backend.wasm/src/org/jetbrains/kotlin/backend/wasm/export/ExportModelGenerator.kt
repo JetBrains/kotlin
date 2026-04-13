@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -259,7 +260,12 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
                 require(klass.isExternal) { "Unexpected non-external class: ${klass.fqNameWhenAvailable}" }
 
-                val name = "$NOT_EXPORTED_NAMESPACE.${klass.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = true).asString()}"
+                val name = FqName.fromSegments(
+                    listOf(
+                        NOT_EXPORTED_NAMESPACE,
+                        klass.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = true).asString()
+                    )
+                )
 
                 val classType = ExportedType.ClassType(
                     name = name,

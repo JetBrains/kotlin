@@ -3,18 +3,18 @@ data class Foo(val name: String)
 
 fun main() {
     val foo = Foo("John")
-    when (<!DECLARATION_IN_ILLEGAL_CONTEXT!>val (name) = <!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!>) {
-        is String -> bar("1")
-        is Foo -> bar("2")
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val (name) = foo<!>) {
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> bar("1")
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Foo<!> -> bar("2")
         else -> bar(<!UNRESOLVED_REFERENCE!>name<!>)
     }
 }
 
 fun main2() {
     val foo = Foo("John")
-    when (<!DECLARATION_IN_ILLEGAL_CONTEXT!>val (name) = <!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!>) {
-        is String -> bar("1")
-        is Foo -> bar("2")
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val (name) = foo<!>) {
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> bar("1")
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Foo<!> -> bar("2")
     }
 }
 

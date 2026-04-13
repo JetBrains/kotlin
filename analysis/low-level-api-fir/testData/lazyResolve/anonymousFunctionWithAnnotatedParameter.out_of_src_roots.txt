@@ -201,8 +201,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>?| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {

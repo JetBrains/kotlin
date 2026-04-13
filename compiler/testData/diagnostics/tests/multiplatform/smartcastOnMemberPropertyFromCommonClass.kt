@@ -11,7 +11,7 @@ enum class SomeEnum {
 // MODULE: main()()(common)
 fun Some.test() {
     if (e == null) return
-    val x = when (<!DEBUG_INFO_SMARTCAST!>e<!>) {
+    val x = when (e) {
         SomeEnum.A -> "a"
         SomeEnum.B -> "B"
     }

@@ -17,10 +17,10 @@ val value_2 = <!ILLEGAL_UNDERSCORE!>0B1_______1_______0_______1_<!>
 val value_3 = <!ILLEGAL_UNDERSCORE!>0B000000000_<!>
 
 // TESTCASE NUMBER: 4
-val value_4 = <!ILLEGAL_UNDERSCORE, INT_LITERAL_OUT_OF_RANGE!>0b_<!>
+val value_4 = <!ILLEGAL_UNDERSCORE!>0b_<!>
 
 // TESTCASE NUMBER: 5
-val value_5 = <!ILLEGAL_UNDERSCORE, INT_LITERAL_OUT_OF_RANGE!>0B______________<!>
+val value_5 = <!ILLEGAL_UNDERSCORE!>0B______________<!>
 
 // TESTCASE NUMBER: 6
 val value_6 = <!ILLEGAL_UNDERSCORE!>0B0_<!>

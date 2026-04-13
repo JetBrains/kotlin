@@ -20,7 +20,7 @@ public class J implements I {}
 import test.J
 
 fun test() {
-    J.<!DEBUG_INFO_CALLABLE_OWNER("test.J.OK in test.J")!>OK<!>
+    <!DEBUG_INFO_CALLABLE_OWNER("test.I.OK in test.I")!>J.OK<!>
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty */

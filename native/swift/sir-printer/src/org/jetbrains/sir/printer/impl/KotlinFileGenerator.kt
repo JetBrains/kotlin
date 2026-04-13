@@ -16,6 +16,7 @@ internal class KotlinBridgePrinter {
     private val fileLevelAnnotations = mutableSetOf<String>(
         """kotlin.Suppress("DEPRECATION_ERROR")""",
     )
+    private val fileLevelOptIns = mutableSetOf<String>()
 
     fun add(bridge: SirBridge) {
         when (bridge) {
@@ -31,9 +32,14 @@ internal class KotlinBridgePrinter {
 
     private fun add(bridge: SirTypeBindingBridge) {
         fileLevelAnnotations += bridge.kotlinFileAnnotation
+        fileLevelOptIns += bridge.kotlinOptIns
     }
 
     fun print(): Sequence<String> = sequence {
+        fileLevelOptIns.takeIf { it.isNotEmpty() }?.sorted()
+            ?.joinToString { "$it::class" }
+            ?.let { optIns -> yield("@file:OptIn($optIns)") }
+
         if (fileLevelAnnotations.isNotEmpty()) {
             fileLevelAnnotations.forEach {
                 yield("@file:$it")

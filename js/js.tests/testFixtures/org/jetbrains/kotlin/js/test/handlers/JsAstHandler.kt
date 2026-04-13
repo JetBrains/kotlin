@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.testOld.utils.DirectiveTestUtils
 import org.jetbrains.kotlin.js.translate.utils.name
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.CHECK_OPTIMIZED_JS
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -23,10 +24,18 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
-        val ktFiles = module.files.filter { it.isKtFile }.associate { it.originalFile to it.originalContent }
+        val ktFiles = module.files
+            .filter { it.isKtFile }
+            .associate { it.originalFile.parentFile.resolve(it.relativePath) to it.originalContent }
+
+        val mode = if (CHECK_OPTIMIZED_JS in module.directives)
+            TranslationMode.FULL_PROD_MINIMIZED_NAMES
+        else
+            TranslationMode.FULL_DEV
+
         val jsProgram = (info.unwrap() as? BinaryArtifacts.Js.JsIrArtifact)
             ?.compilerResult
-            ?.outputs[TranslationMode.FULL_DEV]
+            ?.outputs[mode]
             ?.jsProgram
             ?: return
         processJsProgram(jsProgram, ktFiles, testServices.defaultsProvider.targetBackend!!)

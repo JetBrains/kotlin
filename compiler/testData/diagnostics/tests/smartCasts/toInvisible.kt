@@ -39,7 +39,7 @@ import a.AImpl
 fun test1(a: A) {
     if (a is AImpl) {
         (a as A).b().bar() // OK
-        <!INACCESSIBLE_TYPE!><!DEBUG_INFO_SMARTCAST!>a<!>.b()<!>.<!INVISIBLE_MEMBER!>bar<!>()
+        <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>a.b()<!>.<!INVISIBLE_REFERENCE!>bar<!>()
     }
 }
 

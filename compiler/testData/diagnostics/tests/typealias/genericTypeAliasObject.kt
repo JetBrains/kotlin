@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 object AnObject {
     val ok = "OK"
     fun foo() = "OK"

@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.gradle.api.Project
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_DEPRECATED_TEST_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
@@ -45,8 +43,10 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("kotlin.build.report.dir"),
         DeprecatedProperty("kotlin.native.ignoreIncorrectDependencies"),
         DeprecatedProperty("kotlin.wasm.stability.nowarn"),
-        DeprecatedProperty(KotlinJsCompilerType.jsCompilerProperty),
-        DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
+        @Suppress("DEPRECATION")
+        DeprecatedProperty(org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.jsCompilerProperty),
+        @Suppress("DEPRECATION")
+        DeprecatedProperty("${org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty(
             "kotlin.experimental.swift-export.enabled",
@@ -89,8 +89,8 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             }
         ), // since 2.3.0
         DeprecatedProperty(
-            propertyName = KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT,
-            details = "Since Kotlin 2.2, the KMP Isolated Projects support is enabled by default. This property will be removed in 2.4 release." +
+            propertyName = "kotlin.kmp.isolated-projects.support",
+            details = "Since Kotlin 2.2, KMP Isolated Projects support is enabled by default. This property no longer has any effect." +
                     " Leave your questions here https://youtrack.jetbrains.com/issue/KT-79257",
         ), // Since 2.3.20
         DeprecatedProperty(
@@ -109,6 +109,12 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
             propertyName = "kotlin.native.suppressExperimentalArtifactsDslWarning",
             details = "The kotlinArtifacts DSL has been removed. See https://kotl.in/kotlin-native-artifacts-gradle-dsl for migration details."
         ),
+        DeprecatedProperty(
+            propertyName = "kotlin.compiler.runViaBuildToolsApi",
+            details = """
+                Kotlin Gradle plugin has run JVM compilations using the Build Tools API by default since Kotlin 2.3.20. The legacy mode is deprecated and will be removed in Kotlin 2.5.0. Please create an issue if something is not working correctly when the Build Tools API is active: https://kotl.in/issue
+            """.trimIndent()
+        ), // since 2.4.0
     )
 
     private val errorDeprecatedProperties: List<DeprecatedProperty> = listOf(

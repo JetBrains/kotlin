@@ -3,7 +3,7 @@
 
 fun test() {
    if (<!USELESS_IS_CHECK!>1 is Int<!>) {
-     if (1 is <!INCOMPATIBLE_TYPES!>Boolean<!>) {
+     if (<!IMPOSSIBLE_IS_CHECK_ERROR!>1 is Boolean<!>) {
 
      }
    }

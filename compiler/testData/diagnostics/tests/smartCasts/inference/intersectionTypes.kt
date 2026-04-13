@@ -21,17 +21,17 @@ fun test(a: A, b: B, c: C) {
         val e: Any = id(a)
         val f = id(a)
         checkSubtype<A>(f)
-        val g = two(<!DEBUG_INFO_SMARTCAST!>a<!>, b)
+        val g = two(a, b)
         checkSubtype<B>(g)
         checkSubtype<A>(g)
 
         // smart cast isn't needed, but is reported due to KT-4294
-        val h: Any = two(<!DEBUG_INFO_SMARTCAST!>a<!>, b)
+        val h: Any = two(a, b)
 
         val k = three(a, b, c)
         checkSubtype<A>(k)
-        checkSubtype<B>(<!TYPE_MISMATCH!>k<!>)
-        val l: Int = <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>three(a, b, c)<!>
+        checkSubtype<B>(<!ARGUMENT_TYPE_MISMATCH!>k<!>)
+        val l: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> three(a, b, c)
 
         use(d, e, f, g, h, k, l)
     }
@@ -41,19 +41,19 @@ fun <T> foo(t: T, l: MutableList<T>): T = t
 
 fun testErrorMessages(a: A, ml: MutableList<String>) {
     if (a is B && a is C) {
-        foo(a, <!TYPE_MISMATCH!>ml<!>)
+        foo(a, <!ARGUMENT_TYPE_MISMATCH!>ml<!>)
     }
 
     if(a is C) {
-        foo(a, <!TYPE_MISMATCH!>ml<!>)
+        foo(a, <!ARGUMENT_TYPE_MISMATCH!>ml<!>)
     }
 }
 
 fun rr(s: String?) {
     if (s != null) {
-        val l = arrayListOf("", <!DEBUG_INFO_SMARTCAST!>s<!>)
+        val l = arrayListOf("", s)
         checkSubtype<MutableList<String>>(l)
-        checkSubtype<MutableList<String?>>(<!TYPE_MISMATCH!>l<!>)
+        checkSubtype<MutableList<String?>>(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
     }
 }
 

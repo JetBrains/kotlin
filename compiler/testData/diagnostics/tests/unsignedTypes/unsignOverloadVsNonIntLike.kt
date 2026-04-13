@@ -10,7 +10,7 @@ fun bar(n: String) {}
 fun main() {
     val a = ""
     a <!CAST_NEVER_SUCCEEDS!>as<!> UByte
-    foo(a)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(a)
 
     val b = ""
     b <!CAST_NEVER_SUCCEEDS!>as<!> Long

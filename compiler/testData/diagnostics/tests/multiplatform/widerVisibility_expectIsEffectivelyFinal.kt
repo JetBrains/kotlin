@@ -13,7 +13,7 @@ expect class Foo : Base {
 // FILE: jvm.kt
 
 actual class Foo : Base() {
-    <!ACTUAL_WITHOUT_EXPECT!>public<!> actual override fun foo() {
+    public actual override fun foo() {
     }
 }
 

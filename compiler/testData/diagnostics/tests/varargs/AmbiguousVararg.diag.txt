@@ -1,6 +1,3 @@
-/AmbiguousVararg.kt:8:5: error: overload resolution ambiguity: 
-public fun foo(vararg t: String): String defined in root package in file AmbiguousVararg.kt
-public fun foo(vararg t: Int): String defined in root package in file AmbiguousVararg.kt
-    foo()
-    ^^^
-
+/AmbiguousVararg.kt:(142,145): error: Overload resolution ambiguity between candidates:
+fun foo(vararg t: String): String
+fun foo(vararg t: Int): String

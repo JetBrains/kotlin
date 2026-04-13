@@ -7,7 +7,7 @@ class A {
 }
 
 fun test(a: A) {
-    a.<!INVISIBLE_MEMBER!>foo<!>(3)
+    a.<!INVISIBLE_REFERENCE!>foo<!>(3)
     a.<!NONE_APPLICABLE!>foo<!>()
 }
 

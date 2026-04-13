@@ -6,17 +6,17 @@ class TestSome<P> {
 }
 
 class Test {
-    companion object : <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>InnerClass<!>() {
-        val a = object: <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>InnerClass<!>() {
+    companion object : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerClass<!>() {
+        val a = object: <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerClass<!>() {
         }
 
         fun more(): InnerClass {
-            val b = <!RESOLUTION_TO_CLASSIFIER!>InnerClass<!>()
+            val b = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerClass<!>()
 
             val testVal = <!UNRESOLVED_REFERENCE!>inClass<!>
             <!UNRESOLVED_REFERENCE!>foo<!>()
 
-            return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>b<!>
+            return b
         }
     }
 

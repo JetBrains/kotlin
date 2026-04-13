@@ -181,7 +181,6 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             configuration,
             orderedLibraries,
             dirtyFiles,
-            IrFactoryImplForJsIC(WholeWorldStageController()),
             setOf(FqName.fromSegments(listOfNotNull(testPackage, JsBoxRunner.TEST_FUNCTION))),
             mainArguments,
         )

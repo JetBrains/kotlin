@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun box() : String {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
+    test {
         <!RETURN_NOT_ALLOWED!>return@box<!> "123"
     }
 

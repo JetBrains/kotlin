@@ -3,7 +3,7 @@ fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ConcreteScopeOwner())
         // fixation of OTv is not required
-        <!USELESS_IS_CHECK, USELESS_IS_CHECK!>otvOwner.provide() is ConcreteScopeOwnerSubtype<!>
+        otvOwner.provide() is ConcreteScopeOwnerSubtype
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
     }
@@ -13,7 +13,7 @@ fun test() {
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ConcreteScopeOwner())
         // fixation of OTv is not required
-        <!USELESS_IS_CHECK, USELESS_IS_CHECK!>otvOwner.provide() !is ConcreteScopeOwnerSubtype<!>
+        otvOwner.provide() !is ConcreteScopeOwnerSubtype
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
     }
@@ -23,7 +23,7 @@ fun test() {
     val resultC = pcla { otvOwner ->
         otvOwner.constrain(GenericScopeOwner<TypeArgument>())
         // fixation of OTv is not required
-        <!USELESS_IS_CHECK, USELESS_IS_CHECK!>otvOwner.provide() is GenericScopeOwnerSubtype<*><!>
+        otvOwner.provide() is GenericScopeOwnerSubtype<*>
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
     }
@@ -33,18 +33,18 @@ fun test() {
     val resultD = pcla { otvOwner ->
         otvOwner.constrain(GenericScopeOwner<TypeArgument>())
         // should fix OTv := ScopeOwner to acquire type arguments for GSOS type constructor via bare type inference
-        <!USELESS_IS_CHECK, USELESS_IS_CHECK!>otvOwner.provide() is <!NO_TYPE_ARGUMENTS_ON_RHS!>GenericScopeOwnerSubtype<!><!>
+        otvOwner.provide() is GenericScopeOwnerSubtype
         // expected: Interloper </: GenericScopeOwner<TypeArgument>
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; GenericScopeOwner<TypeArgument>")!>Interloper<!>)
     }
     // expected: GenericScopeOwner<TypeArgument>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultD<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("GenericScopeOwner<TypeArgument>")!>resultD<!>
 
     // ISSUE: KT-71744
     pcla { otvOwner ->
         otvOwner.constrain(GenericScopeOwner<TypeArgument>())
         // fixation of OTv can ensure bare type inference results for the PTA (from GSOS) <: PTA (from GSO) check
-        <!USELESS_IS_CHECK, USELESS_IS_CHECK!>otvOwner.provide() is GenericScopeOwnerSubtype<TypeArgument><!>
+        otvOwner.provide() is <!CANNOT_CHECK_FOR_ERASED!>GenericScopeOwnerSubtype<TypeArgument><!>
         // but if this type constraint source is absent, the check above will succeed anyway
         otvOwner.constrain(Interloper)
         // is there a way to construct a PCLA lambda

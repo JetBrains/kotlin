@@ -21,10 +21,10 @@ interface Test {
     val goodName: String
 }
 
-<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:BadA<!>
+@field:BadA
 val fieldedBadName: String = "badField"
 
-<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:GoodA<!>
+@field:GoodA
 val fieldedGoodName: String = "goodField"
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetField, interfaceDeclaration, javaType, propertyDeclaration, stringLiteral */

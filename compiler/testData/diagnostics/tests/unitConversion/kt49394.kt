@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 fun interface Run {
     fun run()
@@ -12,7 +13,7 @@ val x = {
 }
 
 fun test() {
-    handle(<!UNSUPPORTED_FEATURE("The feature \"unit conversions on arbitrary expressions\" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-XXLanguage:+UnitConversionsOnArbitraryExpressions', but note that no stability guarantees are provided.. You can also change the original type of this expression to (...) -> Unit")!>x<!>)
+    handle(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 /* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, propertyDeclaration,

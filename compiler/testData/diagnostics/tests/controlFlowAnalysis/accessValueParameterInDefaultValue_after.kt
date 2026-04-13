@@ -30,7 +30,7 @@ interface Foo {
 
 fun test_5(
     x: Foo = object : Foo {
-        val z1 = <!UNINITIALIZED_PARAMETER, UNINITIALIZED_PARAMETER!>y<!> // Error
+        val z1 = <!UNINITIALIZED_PARAMETER!>y<!> // Error
         val z2 = run { <!UNINITIALIZED_PARAMETER!>y<!> } // Error
 
         init {
@@ -63,7 +63,7 @@ fun test_6(
 fun getFoo(x: String): Foo = null!!
 
 fun test_7(
-    x: Foo = object : Foo by getFoo(<!UNINITIALIZED_PARAMETER, UNINITIALIZED_PARAMETER!>y<!>) {}, // Error
+    x: Foo = object : Foo by getFoo(<!UNINITIALIZED_PARAMETER!>y<!>) {}, // Error
     y: String = "OK"
 ) {}
 

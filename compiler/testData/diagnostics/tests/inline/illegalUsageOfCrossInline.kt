@@ -3,7 +3,7 @@
 abstract class A(val x: () -> Unit)
 
 inline fun f(crossinline x: () -> Unit) {
-    object : A(<!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>x<!>) {}
+    object : A(<!USAGE_IS_NOT_INLINABLE!>x<!>) {}
 }
 
 fun main() {

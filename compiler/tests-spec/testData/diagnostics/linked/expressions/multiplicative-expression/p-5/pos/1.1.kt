@@ -55,10 +55,10 @@ fun case2() {
     val e = Case2(1) % 1
     val f = Case2(1) % Case2( 1)
 
-    <!DEBUG_INFO_CONSTANT!>a<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>b<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>c<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>d<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>e<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>f<!> checkType { check<Nothing?>() }
+    a checkType { check<Nothing?>() }
+    b checkType { check<Nothing?>() }
+    c checkType { check<Nothing?>() }
+    d checkType { check<Nothing?>() }
+    e checkType { check<Nothing?>() }
+    f checkType { check<Nothing?>() }
 }

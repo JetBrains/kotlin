@@ -11,7 +11,7 @@ class MutableA : A() {
 
 fun test(myA: A) {
     if (myA is MutableA) {
-        <!DEBUG_INFO_SMARTCAST!>myA<!>.value = 5
+        myA.value = 5
     }
 }
 

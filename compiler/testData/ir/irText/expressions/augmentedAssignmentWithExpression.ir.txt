@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
   FUN name:test3 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
-        ARG <this>: CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=null
+        ARG <this>: CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=PLUSEQ
         ARG x: CONST Int type=kotlin.Int value=1
   FUN name:test4 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Function0<<root>.Host>

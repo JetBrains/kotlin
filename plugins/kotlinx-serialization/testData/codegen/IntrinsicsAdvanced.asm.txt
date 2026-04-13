@@ -159,21 +159,21 @@ public final class NoSerGeneric : java/lang/Object {
 public final class Simple$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
     public final static Simple$$serializer INSTANCE
 
-    private final static kotlinx.serialization.internal.PluginGeneratedSerialDescriptor descriptor
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
 
     static void <clinit>()
 
     private void <init>()
 
-    public kotlinx.serialization.KSerializer[] childSerializers()
+    public final kotlinx.serialization.KSerializer[] childSerializers()
 
-    public Simple deserialize(kotlinx.serialization.encoding.Decoder decoder)
+    public final Simple deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
-    public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
-    public void serialize(kotlinx.serialization.encoding.Encoder encoder, Simple value)
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Simple value)
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
 
@@ -199,7 +199,7 @@ public final class Simple : java/lang/Object {
 
     public void <init>(java.lang.String firstName, java.lang.String lastName)
 
-    public void <init>(int seen1, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+    public void <init>(int seen0, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
 
     public final java.lang.String getFirstName()
 

@@ -9,7 +9,7 @@ interface B {
     fun foo(a: String = "OK"): String
 }
 class Impl : A2, B {
-    override fun foo(a: String) = a
+    override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION_WARNING!>a: String<!>) = a
 }
 
 fun box(): String = Impl().foo()

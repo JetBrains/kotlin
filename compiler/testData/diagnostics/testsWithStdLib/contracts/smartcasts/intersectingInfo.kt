@@ -29,14 +29,14 @@ fun notIsInt(x: Any?): Boolean {
 
 fun intersectingInfo(x: Any?, y: Any?) {
     if ((isString(x) && y is String) || (!notIsString(x) && !notIsInt(y))) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
@@ -46,17 +46,17 @@ fun intersectingInfo2(x: Any?, y: Any?) {
     // of them is absent in each arg of "||"-operator, so they *shouldn't* lead to smartcast
 
     if ((isString(x) && !notIsInt(x) && y is String) ||
-        (!notIsString(x) && isString(y) && <!USELESS_IS_CHECK!>y is Int<!>) ||
-        (x is String && !notIsInt(y) && <!USELESS_IS_CHECK!>x is Int<!>)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        (!notIsString(x) && isString(y) && <!IMPOSSIBLE_IS_CHECK_WARNING!>y is Int<!>) ||
+        (x is String && !notIsInt(y) && <!IMPOSSIBLE_IS_CHECK_WARNING!>x is Int<!>)) {
+        x.length
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
-    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    x.<!UNRESOLVED_REFERENCE!>inc<!>()
     y.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    y.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
 
 /* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, disjunctionExpression, functionDeclaration,

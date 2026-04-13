@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
 @_implementationOnly import KotlinBridges_flow_overrides
-import KotlinCoroutineSupport
+@_exported import KotlinCoroutineSupport
 import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinxCoroutinesCore

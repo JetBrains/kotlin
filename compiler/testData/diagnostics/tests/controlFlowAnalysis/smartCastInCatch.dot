@@ -1,12 +1,12 @@
-digraph smartCastInCatch_fir_kt {
+digraph smartCastInCatch_kt {
     graph [nodesep=3]
     node [shape=box penwidth=2]
     edge [penwidth=2]
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter file smartCastInCatch.fir.kt" style="filled" fillcolor=red];
-        1 [label="Exit file smartCastInCatch.fir.kt" style="filled" fillcolor=red];
+        0 [label="Enter file smartCastInCatch.kt" style="filled" fillcolor=red];
+        1 [label="Exit file smartCastInCatch.kt" style="filled" fillcolor=red];
     }
     0 -> {1} [color=green];
 

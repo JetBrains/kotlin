@@ -19,7 +19,7 @@ class FooImpl {
     class Inner
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = FooImpl
+actual typealias Foo = FooImpl
 
 class SeveralInnerImpl {
     class Inner1 {
@@ -29,6 +29,6 @@ class SeveralInnerImpl {
     }
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>SeveralInner<!> = SeveralInnerImpl
+actual typealias SeveralInner = SeveralInnerImpl
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nestedClass, primaryConstructor, typeAliasDeclaration */

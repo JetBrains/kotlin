@@ -18,15 +18,15 @@ class KotlinMap2 : java.util.AbstractMap<String, Int>() {
 
 fun foo(x: MutableMap<String, Int>, y: java.util.HashMap<String, Int>, z: java.util.AbstractMap<String, Int>) {
     x.remove("", 1)
-    x.remove("", <!TYPE_MISMATCH!>""<!>)
+    x.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     x.remove("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     y.remove("", 1)
-    y.remove("", <!TYPE_MISMATCH!>""<!>)
+    y.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     y.remove("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     z.remove("", 1)
-    z.remove("", <!TYPE_MISMATCH!>""<!>)
+    z.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     z.remove("", null)
 }
 

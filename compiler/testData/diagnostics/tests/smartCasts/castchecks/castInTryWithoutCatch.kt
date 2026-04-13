@@ -7,7 +7,7 @@ fun castInTry(s: Any) {
     } finally {
         s.<!UNRESOLVED_REFERENCE!>length<!> // Shouldn't be resolved
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!> // Should be smartcast
+    s.length // Should be smartcast
 }
 
 fun castInTryAndFinally(s: Any) {
@@ -16,7 +16,7 @@ fun castInTryAndFinally(s: Any) {
     } finally {
         s as String // Potential cast exception
     }
-    <!DEBUG_INFO_SMARTCAST!>s<!>.length // Should be smartcast
+    s.length // Should be smartcast
 }
 
 /* GENERATED_FIR_TAGS: asExpression, functionDeclaration, smartcast, tryExpression */

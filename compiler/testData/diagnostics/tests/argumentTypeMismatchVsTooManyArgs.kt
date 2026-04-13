@@ -4,7 +4,7 @@
 fun foo(i1: Int) {}
 
 fun test() {
-    foo(<!TYPE_MISMATCH!>""<!>,
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>,
         <!TOO_MANY_ARGUMENTS!>2<!>
     )
 }

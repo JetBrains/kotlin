@@ -8,7 +8,7 @@ import checkSubtype
 
 fun f1(a: String?) {
     a!!
-    checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    checkSubtype<String>(a)
 }
 
 fun f2(a: String) {
@@ -18,16 +18,16 @@ fun f2(a: String) {
 
 fun f3(a: Any?) {
     a as String
-    checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    checkSubtype<String>(a)
 }
 
 fun f4(a: Any) {
     a as String
-    checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    checkSubtype<String>(a)
 }
 
 fun f5(a: String) {
-    a <!USELESS_CAST!>as Any?<!>
+    a as Any?
     checkSubtype<String>(a)
 }
 

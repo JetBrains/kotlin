@@ -13,14 +13,18 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.FE10LikeConeSubstitutor
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolatedInLhsOfGetClass
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -124,11 +128,11 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         }
 
     /**
-     * Type arguments are only allowed in `Array` / typealiases to `Array` on JVM.
+     * Type arguments are only allowed in `Array` (not typealiases to `Array`!) on JVM.
      *
      * Without [LanguageFeature.ForbidUselessTypeArgumentsIn25], the following cases must produce deprecation warnings:
      *  1. typealiases to non-generic classes with arbitrary non-zero number of type arguments;
-     *  2. typealiases to `Array` with incorrect non-zero number of type arguments on JVM;
+     *  2. typealiases to `Array` on JVM (with arbitrary non-zero number of type arguments);
      *  3. reified type parameters with non-zero number of type arguments.
      *
      * Cases like `Array<Int, Int>::class` do not require deprecation since they produced internal error in backend.
@@ -150,21 +154,27 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             }
             reporter.reportOn(argumentList, diagnostic, "for type parameters")
         } else if (argument is FirResolvedQualifier) {
-            if (argument.typeArguments.isEmpty()) return
             val symbol = argument.symbol ?: return
+            if (argument.typeArguments.isNotEmpty()) {
+                val isAllowedGenericArray = fullyExpandedType.isAllowedGenericArrayTypeInClassLiteral()
+                val isTypeAliasToAllowedArray = symbol is FirTypeAliasSymbol && isAllowedGenericArray
+                val isDeprecationCase = symbol.isTypeAliasToNonGeneric || isTypeAliasToAllowedArray
 
-            val isAllowedGenericArray = fullyExpandedType.isAllowedGenericArrayTypeInClassLiteral()
-            val isTypeAliasToAllowedArray = symbol is FirTypeAliasSymbol && isAllowedGenericArray
-            val isDeprecationCase = symbol.isTypeAliasToNonGeneric || isTypeAliasToAllowedArray
-
-            if (!reportWrongNumberOfTypeArguments(argument, isDeprecationCase) && (!isAllowedGenericArray || isTypeAliasToAllowedArray)) {
-                val diagnostic = if (isDeprecationCase && !areUselessTypeArgumentsForbidden) {
-                    FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING
-                } else {
-                    FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
+                if (!reportWrongNumberOfTypeArguments(
+                        argument,
+                        isDeprecationCase
+                    ) && (!isAllowedGenericArray || isTypeAliasToAllowedArray)
+                ) {
+                    val diagnostic = if (isDeprecationCase && !areUselessTypeArgumentsForbidden) {
+                        FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING
+                    } else {
+                        FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
+                    }
+                    reporter.reportOn(getClassSource, diagnostic)
+                    return
                 }
-                reporter.reportOn(getClassSource, diagnostic)
             }
+            checkUpperBoundViolationsInTypeAlias(argument, symbol, fullyExpandedType)
         }
     }
 
@@ -217,6 +227,28 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         return (this is ConeClassLikeType && typeArguments.isEmpty())
                 || (this is ConeTypeParameterType && lookupTag.typeParameterSymbol.isReified)
                 || isAllowedGenericArrayTypeInClassLiteral()
+    }
+
+    /**
+     * Sometimes, substituting type parameters of type alias with all stars results in upper bound violations.
+     * In this case, we report a warning.
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkUpperBoundViolationsInTypeAlias(
+        argument: FirResolvedQualifier,
+        symbol: FirClassLikeSymbol<*>,
+        fullyExpandedType: ConeKotlinType,
+    ) {
+        if (symbol is FirTypeAliasSymbol) {
+            val typeParameterSymbolsOfExpandedType = fullyExpandedType.toSymbol()?.typeParameterSymbols ?: return
+            val typeArgumentsOfExpandedType = fullyExpandedType.typeArguments.toList()
+            checkUpperBoundViolatedInLhsOfGetClass(
+                typeParameterSymbolsOfExpandedType,
+                typeArgumentsOfExpandedType,
+                FE10LikeConeSubstitutor(typeParameterSymbolsOfExpandedType, typeArgumentsOfExpandedType, context.session),
+                argument.source,
+            )
+        }
     }
 }
 

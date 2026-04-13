@@ -17,7 +17,7 @@ public class Foo {
 
 fun main() {
     val foo = Foo()
-    <!VAL_REASSIGNMENT!>foo.foo<!> = 1
+    foo.<!VAL_REASSIGNMENT!>foo<!> = 1
     foo.bar = 1
 }
 

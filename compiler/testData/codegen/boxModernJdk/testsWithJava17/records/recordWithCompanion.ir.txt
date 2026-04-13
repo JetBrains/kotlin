@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Tag
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
-        public abstract fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.lang.Record
+        public abstract fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.lang.Record
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH

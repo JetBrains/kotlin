@@ -1,16 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>Any<!>)<!> fun f1()<!> = 0
-<!CONFLICTING_OVERLOADS!>fun f1()<!> = ""
+context(_: Any) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun f1()<!> = 0
+fun f1() = ""
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>Any<!>)<!> fun f2()<!> {}
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!> fun f2()<!> {}
+context(_: Any) fun f2() {}
+context(_: String) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun f2()<!> {}
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>Any<!>)<!> fun f3()<!> {}
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>, _: <!DEBUG_INFO_MISSING_UNRESOLVED!>Any<!>)<!> fun f3()<!> {}
+context(_: Any) fun f3() {}
+context(_: String, _: Any) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun f3()<!> {}
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+context(_: String)
 fun test() {
     val x: Int = <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>()
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>()

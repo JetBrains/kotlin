@@ -36,11 +36,11 @@ inline fun <reified T, reified K> case_2(x: T) {
  * ISSUES: KT-28965
  */
 inline fun <reified T, reified K> case_3() {
-    var x: T? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>10 as T<!>
+    var x: T? = 10 as T
     x = null
-    if (<!DEBUG_INFO_CONSTANT!>x<!> is K) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("K & T? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
-        <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("K & T? & kotlin.Nothing?")!>x<!>
+    if (x is K) {
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & K")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & K")!>x<!>
         println(1)
     }
 }
@@ -69,8 +69,8 @@ inline fun <reified T, reified K> case_6() {
     var x: T? = 10 as T
     if (x is K) {
         x = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
-        <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
         println(1)
     }
 }

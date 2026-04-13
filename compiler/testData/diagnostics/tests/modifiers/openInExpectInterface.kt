@@ -4,7 +4,7 @@
 // FILE: common.kt
 // TODO: .fir.kt version is just a stub.
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>My<!> {
+expect interface My {
     open fun bar()
     <!EXPECTED_DECLARATION_WITH_BODY!>open fun bas()<!> {}
     <!REDUNDANT_MODIFIER!>open<!> abstract fun bat(): Int
@@ -22,13 +22,13 @@ expect interface <!NO_ACTUAL_FOR_EXPECT!>My<!> {
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyImpl1<!>: My
 
-class MyImpl2: My {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class MyImpl2<!>: My {
     override fun foo() {}
     override val f = 0
     override val e = 1
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT!>Outer<!> {
+expect interface Outer {
     interface Inner {
         open fun bar()
         <!EXPECTED_DECLARATION_WITH_BODY!>open fun bas()<!> {}

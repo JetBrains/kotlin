@@ -25,18 +25,18 @@ class A {
 import p1.*
 import p2.*
 
-fun test(a: A) {
+<!CONFLICTING_OVERLOADS!>fun test(a: A)<!> {
     a.<!UNRESOLVED_REFERENCE!>m1<!>()
     a.m2()
 }
 
 // FILE: explicitlyImportP1.kt
-import p1.<!API_NOT_AVAILABLE!>A<!>
+import p1.A
 import p2.*
 
-fun test(a: <!API_NOT_AVAILABLE!>A<!>) {
-    a.m1()
-    a.<!UNRESOLVED_REFERENCE!>m2<!>()
+<!CONFLICTING_OVERLOADS!>fun test(a: A)<!> {
+    a.<!UNRESOLVED_REFERENCE!>m1<!>()
+    a.m2()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

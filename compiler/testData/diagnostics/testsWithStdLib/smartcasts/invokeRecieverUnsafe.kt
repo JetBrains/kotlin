@@ -5,7 +5,7 @@
 operator fun Int.invoke(unused: Int) {}
 
 fun test1(a: Int?) {
-    <!UNSAFE_CALL!>a<!>(a!!)
+    <!UNSAFE_IMPLICIT_INVOKE_CALL!>a<!>(a!!)
 }
 
 fun test2(a: Int?) {

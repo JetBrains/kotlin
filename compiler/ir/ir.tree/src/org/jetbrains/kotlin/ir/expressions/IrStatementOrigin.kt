@@ -110,7 +110,11 @@ interface IrStatementOrigin {
         val ANONYMOUS_FUNCTION by IrStatementOriginImpl
         val OBJECT_LITERAL by IrStatementOriginImpl
         val ADAPTED_FUNCTION_REFERENCE by IrStatementOriginImpl
-        val SUSPEND_CONVERSION by IrStatementOriginImpl
+
+        /**
+         * For conversion IrBlock node from `() -> Int` to `() -> Unit` or to `suspend () -> Int/Unit`
+         */
+        val FUNCTION_TYPE_EXPRESSION_CONVERSION by IrStatementOriginImpl
         val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by IrStatementOriginImpl
 
         val INITIALIZE_PROPERTY_FROM_PARAMETER by IrStatementOriginImpl

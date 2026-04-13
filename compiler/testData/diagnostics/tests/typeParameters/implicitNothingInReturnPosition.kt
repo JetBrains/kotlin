@@ -8,7 +8,7 @@ fun <T>test_2(x: () -> T): T = null as T
 
 fun case_1() {
     null?.run { return }
-    null!!.<!UNREACHABLE_CODE!>run { throw Exception() }<!>
+    null!!.run { throw Exception() }
 }
 
 fun case_2() {
@@ -26,11 +26,11 @@ fun case_6() {
 }
 
 fun case_7(x: Boolean?) {
-    <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (x) {
+    when (x) {
         true -> throw Exception()
         false -> throw Exception()
         null -> throw Exception()
-    }<!>
+    }
 }
 
 fun <T> something(): T = Any() as T
@@ -40,19 +40,19 @@ class Context<T>
 fun <T> Any.decodeIn(typeFrom: Context<in T>): T = something()
 
 fun <T> Any?.decodeOut1(typeFrom: Context<out T>): T {
-    return <!TYPE_MISMATCH!>this?.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom) ?: kotlin.Unit<!>
+    return <!RETURN_TYPE_MISMATCH!>this?.decodeIn(typeFrom) ?: kotlin.Unit<!>
 }
 
 fun <T> Any.decodeOut2(typeFrom: Context<out T>): T {
-    <!UNREACHABLE_CODE!>val x: Nothing =<!> this.decodeIn(typeFrom)
+    val x: Nothing = this.decodeIn(typeFrom)
 }
 
 fun <T> Any.decodeOut3(typeFrom: Context<out T>): T {
-    <!UNREACHABLE_CODE!>val x =<!> this.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom)
+    val x = this.decodeIn(typeFrom)
 }
 
 fun <T> Any.decodeOut4(typeFrom: Context<out T>): T {
-    <!UNREACHABLE_CODE!>val x: Any =<!> this.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>decodeIn<!>(typeFrom)
+    val x: Any = this.decodeIn(typeFrom)
 }
 
 class TrieNode<out E> {

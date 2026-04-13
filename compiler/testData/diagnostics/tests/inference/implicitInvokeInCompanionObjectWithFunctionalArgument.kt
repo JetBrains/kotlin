@@ -12,8 +12,8 @@ fun test(s: String): String {
     val a = TestClass { "K" }
     a checkType { _<String>() }
 
-    <!UNREACHABLE_CODE!>val b =<!> TestClass { return s }
-    <!UNREACHABLE_CODE!>b checkType { _<Nothing>() }<!>
+    val b = TestClass { return s }
+    b checkType { _<Nothing>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, functionalType,

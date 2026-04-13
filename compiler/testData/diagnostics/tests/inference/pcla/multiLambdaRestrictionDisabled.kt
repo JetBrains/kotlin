@@ -9,7 +9,7 @@ fun <T> List<T>.myGenericExt() {}
 fun <R> a(first: R, second: (List<R>) -> Unit) {}
 
 fun test1() {
-    <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>a<!>(
+    a(
         buildList { add("") },
         second = {
             it.myGenericExt()
@@ -26,7 +26,7 @@ fun test2() {
             buildList { add("") }
         },
         second = {
-            it.myExt() // Note: must be extension to add constraints
+            <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>it<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>myExt<!>() // Note: must be extension to add constraints
         }
     )
 }

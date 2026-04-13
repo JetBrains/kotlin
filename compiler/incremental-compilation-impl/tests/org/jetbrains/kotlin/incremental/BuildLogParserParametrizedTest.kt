@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,7 +57,7 @@ class BuildLogParserParametrizedTest {
     }
 
     companion object {
-        private val TEST_ROOT = File("compiler/incremental-compilation-impl/testData/buildLogsParserData")
+        private val TEST_ROOT = ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/buildLogsParserData")
         private val LOG_FILE_NAME = "build.log"
         private val EXPECTED_PARSED_LOG_FILE_NAME = "expected.txt"
 

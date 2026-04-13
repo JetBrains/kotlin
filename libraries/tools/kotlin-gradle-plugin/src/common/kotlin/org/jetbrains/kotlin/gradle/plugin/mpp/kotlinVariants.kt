@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ModuleVersionIdentifier
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.publish.maven.MavenPublication
@@ -84,20 +83,6 @@ open class KotlinVariant(
     override val publishableOnCurrentHost: Boolean
         get() = publishable && target.publishable
 
-    @Deprecated(
-        message = "Sources artifacts are now published as separate variant " +
-                "use target.sourcesElementsConfigurationName to obtain necessary information. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName"),
-        level = DeprecationLevel.ERROR,
-    )
-    override val sourcesArtifacts: Set<PublishArtifact>
-        get() = target
-            .project
-            .configurations
-            .findByName(target.sourcesElementsConfigurationName)
-            ?.artifacts
-            ?: emptySet()
-
     internal var defaultArtifactIdSuffix: String? = null
 
     override val defaultArtifactId: String
@@ -145,10 +130,4 @@ class JointAndroidKotlinTargetComponent(
 
     override var publicationDelegate: MavenPublication? = null
 
-    @Deprecated(
-        message = "Sources artifacts are now published as separate variant " +
-                "use target.sourcesElementsConfigurationName to obtain necessary information",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
-    )
-    override val sourcesArtifacts: Set<PublishArtifact> = emptySet()
 }

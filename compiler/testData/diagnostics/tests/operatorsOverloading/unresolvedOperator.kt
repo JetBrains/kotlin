@@ -10,7 +10,7 @@ fun test() {
     <!UNRESOLVED_REFERENCE!>-<!>a
     <!UNRESOLVED_REFERENCE!>!<!>a
     a <!UNRESOLVED_REFERENCE!>*<!> a
-    true <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> false
+    true <!UNRESOLVED_REFERENCE!>+<!> false
     a <!UNRESOLVED_REFERENCE!>-<!> a
     a <!UNRESOLVED_REFERENCE!>/<!> a
     a <!UNRESOLVED_REFERENCE!>%<!> a

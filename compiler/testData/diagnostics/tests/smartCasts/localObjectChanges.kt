@@ -5,7 +5,7 @@ fun foo() {
     var i: Int? = 5    
     if (i != null) {
         // Write is AFTER this place
-        <!DEBUG_INFO_SMARTCAST!>i<!>.hashCode()
+        i.hashCode()
         object {
             fun bar() {
                 i = null

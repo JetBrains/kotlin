@@ -1,4 +1,4 @@
 Diagnostics from file:
-  for PSI element of type KtProperty at (37,5-52)
-    INITIALIZER_TYPE_MISMATCH      text ranges: [(245,246)]
-      PSI: KtProperty at (37,5-52)
+  for PSI element of type KtProperty at (36,5-52)
+    INITIALIZER_TYPE_MISMATCH      text ranges: [(244,245)]
+      PSI: KtProperty at (36,5-52)

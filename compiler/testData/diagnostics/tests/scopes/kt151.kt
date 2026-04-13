@@ -11,7 +11,7 @@ class B : A() {
 }
 
 fun test(b: B) {
-    b.<!INVISIBLE_MEMBER!>x<!>()
+    b.<!INVISIBLE_REFERENCE!>x<!>()
 }
 
 

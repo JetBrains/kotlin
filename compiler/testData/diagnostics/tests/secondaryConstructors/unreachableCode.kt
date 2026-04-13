@@ -18,7 +18,7 @@ class A1 {
         if (1 == 1) {
             return
         } else null!!
-        <!UNREACHABLE_CODE!>x = 1<!>
+        x = 1
     }
 }
 

@@ -16,7 +16,7 @@ operator fun Boolean.plus(x: Boolean): Boolean {
 
 fun test_plus(x: Any) {
     if (true + (x is String)) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -29,7 +29,7 @@ operator fun Boolean.minus(x: Boolean): Boolean {
 
 fun test_minus(x: Any) {
     if (true - (x is Int)) {
-        x.<!UNRESOLVED_REFERENCE!>toChar<!>()
+        x.toChar()
     }
 }
 
@@ -62,11 +62,11 @@ operator fun A.remAssign(body: () -> Int) {
 
 fun test_xAssign() {
     var a = A()
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>plus<!>: Boolean; a += { <!CAPTURED_VAL_INITIALIZATION!>plus<!> = true; 1 }
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>minus<!>: Boolean; a -= { <!CAPTURED_VAL_INITIALIZATION!>minus<!> = true; 1 }
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>times<!>: Boolean; a *= { <!CAPTURED_VAL_INITIALIZATION!>times<!> = true; 1 }
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>div<!>: Boolean; a /= { <!CAPTURED_VAL_INITIALIZATION!>div<!> = true; 1 }
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>rem<!>: Boolean; a %= { <!CAPTURED_VAL_INITIALIZATION!>rem<!> = true; 1 }
+    val plus: Boolean; a += { plus = true; 1 }
+    val minus: Boolean; a -= { minus = true; 1 }
+    val times: Boolean; a *= { times = true; 1 }
+    val div: Boolean; a /= { div = true; 1 }
+    val rem: Boolean; a %= { rem = true; 1 }
 }
 
 // indexed access
@@ -79,15 +79,15 @@ operator fun A.get(i: Int?): Int {
 operator fun A?.set(i: Int, vnew: Int) {
     <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (this@set != null) }
     this!!
-    <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>v<!> = vnew
+    v = vnew
 }
 
 fun test_indexed(a1: A, i: Int?, a2: A?) {
     if (a1[i] == 0) {
-        i <!UNSAFE_OPERATOR_CALL!>+<!> 1
+        i + 1
     }
     a2[0] = 1
-    a2<!UNSAFE_CALL!>.<!>v
+    a2.v
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, contractCallsEffect,

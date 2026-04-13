@@ -34,25 +34,25 @@ import p.*
 
 fun test2() {
     propPublic
-    <!INVISIBLE_MEMBER!>propInternal<!>
-    <!INVISIBLE_MEMBER!>propPrivate<!>
+    <!INVISIBLE_REFERENCE!>propInternal<!>
+    <!INVISIBLE_REFERENCE!>propPrivate<!>
     funPublic()
-    <!INVISIBLE_MEMBER!>funInternal<!>()
-    <!INVISIBLE_MEMBER!>funPrivate<!>()
+    <!INVISIBLE_REFERENCE!>funInternal<!>()
+    <!INVISIBLE_REFERENCE!>funPrivate<!>()
     ClassPublic()
-    <!INVISIBLE_MEMBER!>ClassInternal<!>()
-    <!INVISIBLE_MEMBER!>ClassPrivate<!>()
+    <!INVISIBLE_REFERENCE!>ClassInternal<!>()
+    <!INVISIBLE_REFERENCE!>ClassPrivate<!>()
 
     val inst = A()
     inst.propPublic
-    inst.<!INVISIBLE_MEMBER!>propInternal<!>
-    inst.<!INVISIBLE_MEMBER!>propPrivate<!>
+    inst.<!INVISIBLE_REFERENCE!>propInternal<!>
+    inst.<!INVISIBLE_REFERENCE!>propPrivate<!>
     inst.funPublic()
-    inst.<!INVISIBLE_MEMBER!>funInternal<!>()
-    inst.<!INVISIBLE_MEMBER!>funPrivate<!>()
+    inst.<!INVISIBLE_REFERENCE!>funInternal<!>()
+    inst.<!INVISIBLE_REFERENCE!>funPrivate<!>()
     inst.ClassPublic()
-    inst.<!INVISIBLE_MEMBER!>ClassInternal<!>()
-    inst.<!INVISIBLE_MEMBER!>ClassPrivate<!>()
+    inst.<!INVISIBLE_REFERENCE!>ClassInternal<!>()
+    inst.<!INVISIBLE_REFERENCE!>ClassPrivate<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

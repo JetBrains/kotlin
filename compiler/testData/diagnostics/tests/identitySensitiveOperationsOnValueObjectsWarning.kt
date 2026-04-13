@@ -16,85 +16,85 @@ value class VcString(val s: String) : Runnable {
 }
 
 fun testCallArguments(p1: Int, p2: LocalDate, p3: VcString, p4: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Character<!>, p5: java.lang.Runtime.Version, p6: java.time.chrono.JapaneseDate, p7: java.lang.ProcessHandle) {
-    System.identityHashCode(p1)
-    System.identityHashCode(p2)
-    System.identityHashCode(p3)
-    System.identityHashCode(p4)
-    System.identityHashCode(p5)
-    System.identityHashCode(p6)
-    System.identityHashCode(p7)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
 
-    WeakReference(p1)
-    WeakReference(p2)
-    WeakReference(p3)
-    WeakReference(p4)
-    WeakReference(p5)
-    WeakReference(p6)
-    WeakReference(p7)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>WeakReference<!>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
 
-    SoftReference(p1)
-    SoftReference(p2)
-    SoftReference(p3)
-    SoftReference(p4)
-    SoftReference(p5)
-    SoftReference(p6)
-    SoftReference(p7)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>SoftReference<!>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>)
+    SoftReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>)
 
     val refQueue = ReferenceQueue<Any?>()
-    PhantomReference(p1, refQueue)
-    PhantomReference(p2, refQueue)
-    PhantomReference(p3, refQueue)
-    PhantomReference(p4, refQueue)
-    PhantomReference(p5, refQueue)
-    PhantomReference(p6, refQueue)
-    PhantomReference(p7, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>, refQueue)
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>PhantomReference<!>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>, refQueue)
+    PhantomReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>, refQueue)
 
     val cleaner = Cleaner.create()
-    cleaner.register(p1) {}
-    cleaner.register(p2) {}
-    cleaner.register(p3) {}
-    cleaner.register(p4) {}
-    cleaner.register(p5) {}
-    cleaner.register(p6) {}
-    cleaner.register(p7) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p4<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p5<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p6<!>) {}
+    cleaner.register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p7<!>) {}
 
     // Don't report if 2nd parameter
     cleaner.register(Any(), p3)
 }
 
 fun testNullable(p1: Int?, p2: LocalDate?, p3: VcString?) {
-    WeakReference(p1)
-    WeakReference(p2)
-    WeakReference(p3)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p3<!>)
 }
 
 fun testTypeParameters() {
-    WeakHashMap<Int, Any>()
-    WeakHashMap<LocalDate, Any>()
-    WeakHashMap<VcString, Any>()
+    WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Int<!>, Any>()
+    WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>LocalDate<!>, Any>()
+    WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>VcString<!>, Any>()
 
-    IdentityHashMap<Int, Any>()
-    IdentityHashMap<LocalDate, Any>()
-    IdentityHashMap<VcString, Any>()
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Int<!>, Any>()
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>LocalDate<!>, Any>()
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>VcString<!>, Any>()
 
-    WeakHashMap<Int?, Any>()
-    WeakHashMap<LocalDate?, Any>()
-    WeakHashMap<VcString?, Any>()
+    WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Int?<!>, Any>()
+    WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>LocalDate?<!>, Any>()
+    WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>VcString?<!>, Any>()
 
     // Test inferred parameters from the expected type
-    val t1: Map<Int, Any> = WeakHashMap()
-    val t2: Map<Int, Any> = WeakHashMap<_, _>()
+    val t1: Map<Int, Any> = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>WeakHashMap<!>()
+    val t2: Map<Int, Any> = WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>_<!>, _>()
 }
 
 fun testFlexibleTypes() {
-    System.identityHashCode(Integer.valueOf(1))
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Integer.valueOf(1)<!>)
 }
 
 fun testOtherEqOperations(p1: LocalDate, p2: LocalDate) {
     p1 == p2
     p1 != p2
-    p1 === p2
-    p1 !== p2
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!> !== <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral,

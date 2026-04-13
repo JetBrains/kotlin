@@ -7,7 +7,7 @@ expect fun interface F1 {
     fun run()
 }
 
-expect fun interface F2 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F2 {
     fun run()
 }
 
@@ -23,11 +23,11 @@ expect fun interface F5 {
     fun run()
 }
 
-expect fun interface F6 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F6 {
     fun run()
 }
 
-expect fun interface F7 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F7 {
     fun run()
 }
 
@@ -44,7 +44,7 @@ actual fun interface F1 {
     actual fun run()
 }
 
-<!ACTUAL_WITHOUT_EXPECT!>actual<!> interface F2 {
+actual interface <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F2<!> {
     actual fun run()
 }
 
@@ -64,9 +64,9 @@ interface F6Typealias {
     fun run()
 }
 
-<!ACTUAL_WITHOUT_EXPECT!>actual<!> typealias F6 = F6Typealias
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F6<!> = F6Typealias
 
-<!ACTUAL_WITHOUT_EXPECT!>actual<!> typealias F7 = NotSam
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F7<!> = NotSam
 
 /* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, interfaceDeclaration, javaType,
 typeAliasDeclaration */

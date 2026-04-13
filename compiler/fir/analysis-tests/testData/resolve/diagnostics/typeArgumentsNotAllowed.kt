@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier
 package rest
 
 abstract class Foo<T> {
@@ -18,7 +19,7 @@ object Best {
 
 }
 
-val a = <!TYPE_ARGUMENTS_NOT_ALLOWED!>rest<Int><!>.<!UNRESOLVED_REFERENCE!>MyClass<!><String>
+val a = <!UNRESOLVED_REFERENCE!>rest<!><Int>.MyClass<String>
 val b = Best.<!UNRESOLVED_REFERENCE!>MyClass<!><String>
 
 class B<E>

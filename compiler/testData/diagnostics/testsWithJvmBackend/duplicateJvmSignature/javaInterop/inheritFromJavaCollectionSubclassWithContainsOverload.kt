@@ -8,5 +8,5 @@ abstract public class A implements java.util.Collection<String> {
 
 // FILE: main.kt
 abstract class KA : A() {
-    override <!ACCIDENTAL_OVERRIDE!>fun contains(x: String) = false<!>
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>contains<!>(x: String) = false
 }

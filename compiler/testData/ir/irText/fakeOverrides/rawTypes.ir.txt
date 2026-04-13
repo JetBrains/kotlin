@@ -106,12 +106,12 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
     FUN FAKE_OVERRIDE name:foo1 visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
       overridden:
         public abstract fun foo1 (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:foo3 visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv2<kotlin.Any?, kotlin.Any?>?
       overridden:
         public abstract fun foo3 (t: @[FlexibleNullability] @[RawType] <root>.Inv2<kotlin.Any?, kotlin.Any?>?): kotlin.Unit declared in <root>.B
@@ -155,17 +155,17 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
     FUN FAKE_OVERRIDE name:foo1 visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
       overridden:
         public abstract fun foo1 (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:foo2 visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
       overridden:
         public abstract fun foo2 (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:foo3 visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv2<kotlin.Any?, kotlin.Any?>?
       overridden:
         public abstract fun foo3 (t: @[FlexibleNullability] @[RawType] <root>.Inv2<kotlin.Any?, kotlin.Any?>?): kotlin.Unit declared in <root>.B

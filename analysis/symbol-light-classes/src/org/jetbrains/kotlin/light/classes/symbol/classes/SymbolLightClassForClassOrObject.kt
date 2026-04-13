@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.records.SymbolLightRecordHeader
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.KtClass
@@ -294,9 +295,22 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
     override fun classKind(): KaClassKind = withClassSymbol { it.classKind }
+
     override fun isRecord(): Boolean {
         return modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
     }
+
+    override fun getRecordHeader(): PsiRecordHeader? = cachedValue {
+        if (!isRecord) return@cachedValue null
+
+        SymbolLightRecordHeader(
+            kotlinOrigin = (classOrObjectDeclaration as? KtClass)?.primaryConstructor,
+            containingClass = this@SymbolLightClassForClassOrObject,
+        )
+    }
+
+    override fun getRecordComponents(): Array<PsiRecordComponent> =
+        recordHeader?.recordComponents ?: PsiRecordComponent.EMPTY_ARRAY
 
     override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
         classOrObjectDeclaration = classOrObjectDeclaration,

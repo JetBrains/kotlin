@@ -20,7 +20,7 @@ public class Bar extends Foo<String> {}
 import test.Bar
 
 fun test() {
-    Bar.<!DEBUG_INFO_CALLABLE_OWNER("test.Bar.getValue in test.Bar")!>getValue("bar")<!>
+    <!DEBUG_INFO_CALLABLE_OWNER("test.Foo.getValue in test.Foo")!>Bar.getValue("bar")<!>
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, stringLiteral */

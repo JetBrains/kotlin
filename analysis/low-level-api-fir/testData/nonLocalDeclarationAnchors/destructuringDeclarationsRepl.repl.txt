@@ -1,0 +1,22 @@
+/* anchor (KtScript) --> */val (/* anchor (KtDestructuringDeclarationEntry) --> */a/* <-- */, /* anchor (KtDestructuringDeclarationEntry) --> */b/* <-- */) = 1 to 2
+
+/* anchor (KtClass) --> */class Foo {
+    /* anchor (KtDestructuringDeclaration) --> */val (c, d) = 3 to 4/* <-- */
+}/* <-- */
+
+if (true) {
+    val (e, f) = 5 to 6
+}
+
+/* anchor (KtNamedFunction) --> */fun foo() {
+    val (g, h) = 7 to 9
+
+    ba { (a, b), c ->
+
+    }
+}/* <-- */
+
+ba { (a, b), c ->
+
+}
+/* <-- */

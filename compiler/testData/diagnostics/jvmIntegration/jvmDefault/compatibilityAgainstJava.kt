@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // MODULE: library
 // KOTLINC_ARGS: -jvm-default=disable
 // JVM_DEFAULT_MODE: disable

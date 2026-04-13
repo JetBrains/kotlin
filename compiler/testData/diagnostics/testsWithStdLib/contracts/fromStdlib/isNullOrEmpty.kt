@@ -7,13 +7,13 @@ fun testIsNullOrEmpty(x: String?) {
         x<!UNSAFE_CALL!>.<!>length
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 
 fun testIsNotNullOrEmpty(x: String?) {
     if (!x.isNullOrEmpty()) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 
     x<!UNSAFE_CALL!>.<!>length

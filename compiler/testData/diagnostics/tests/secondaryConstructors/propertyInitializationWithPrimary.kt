@@ -13,7 +13,7 @@ class A(val w: Char) {
         y = 1
 
         <!VAL_REASSIGNMENT!>overinitialized<!> = 2
-        <!VAL_REASSIGNMENT!>uninitialized<!> = 3
+        uninitialized = 3
     }
 
     // anonymous

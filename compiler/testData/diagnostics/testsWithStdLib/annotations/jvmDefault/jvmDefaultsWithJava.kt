@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // JVM_DEFAULT_MODE: no-compatibility
 // JVM_TARGET: 1.8
 // FILE: JavaInterface.java

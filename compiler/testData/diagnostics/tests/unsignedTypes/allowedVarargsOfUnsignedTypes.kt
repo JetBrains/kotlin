@@ -1,16 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
-fun ubyte(vararg a: UByte) {}
-fun ushort(vararg a: UShort) {}
-fun uint(vararg a: UInt) {}
-fun ulong(vararg a: ULong) {}
+fun ubyte(vararg a: <!OPT_IN_USAGE!>UByte<!>) {}
+fun ushort(vararg a: <!OPT_IN_USAGE!>UShort<!>) {}
+fun uint(vararg a: <!OPT_IN_USAGE!>UInt<!>) {}
+fun ulong(vararg a: <!OPT_IN_USAGE!>ULong<!>) {}
 
-class ValueParam(vararg val a: ULong)
+class ValueParam(vararg val a: <!OPT_IN_USAGE!>ULong<!>)
 
-annotation class Ann(vararg val a: UInt)
+annotation class Ann(vararg val a: <!OPT_IN_USAGE!>UInt<!>)
 
-fun array(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> a: UIntArray) {}
+fun array(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> a: <!OPT_IN_USAGE!>UIntArray<!>) {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, primaryConstructor,
 propertyDeclaration, vararg */

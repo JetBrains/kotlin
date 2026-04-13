@@ -1,2 +1,0 @@
-KtNameReferenceExpression(120,125): 'Named'
-  null

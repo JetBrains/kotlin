@@ -6,10 +6,10 @@
 fun main() {
     while(true) {
         run {
-            <!UNSUPPORTED_FEATURE!>break<!>
+            break
         }
     }
-    <!UNREACHABLE_CODE!>println("hi!")<!>
+    println("hi!")
 }
 
 /* GENERATED_FIR_TAGS: break, functionDeclaration, lambdaLiteral, stringLiteral, whileLoop */

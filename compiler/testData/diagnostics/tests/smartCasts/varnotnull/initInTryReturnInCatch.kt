@@ -9,7 +9,7 @@ fun test() {
     catch (e: Exception) {
         return
     }
-    <!DEBUG_INFO_SMARTCAST!>a<!>.hashCode() // a is never null here
+    a.hashCode() // a is never null here
 }
 class A: Exception()
 class B: Exception()
@@ -24,7 +24,7 @@ fun test2() {
     catch (e: B) {
         return
     }
-    <!DEBUG_INFO_SMARTCAST!>a<!>.hashCode() // a is never null here
+    a.hashCode() // a is never null here
 }
 fun test3() {
     var a: Int? = null
@@ -63,7 +63,7 @@ fun test5() {
     finally {
         a = 5
     }
-    <!DEBUG_INFO_SMARTCAST!>a<!>.hashCode() // a is never null here
+    a.hashCode() // a is never null here
 }
 fun test6() {
     var a: Int?// = null

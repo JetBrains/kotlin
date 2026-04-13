@@ -8,27 +8,27 @@ inline fun <T, R> T.selector(condition: (T) -> Boolean, a: (T) -> R, b: (T) -> R
     contract {
         callsInPlace(a, InvocationKind.AT_MOST_ONCE)
         callsInPlace(b, InvocationKind.AT_MOST_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(a)<!>
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(b)<!>
+        returnsResultOf(a)
+        returnsResultOf(b)
     }
     return if (condition(this)) a(this) else b(this)
 }
 
 fun testSelector(s: String, sb: StringBuilder): Int {
     val cond = String::isEmpty
-    s.selector(cond, { it + "a" }, { it + "b" }) // both non-ignorable
-    s.selector(cond, { sb.append(it) }, { it + "b" }) // one non-ignorable
-    s.selector(cond, { it + "a" }, sb::append) // one non-ignorable
+    s.<!RETURN_VALUE_NOT_USED!>selector<!>(cond, { it + "a" }, { it + "b" }) // both non-ignorable
+    s.<!RETURN_VALUE_NOT_USED!>selector<!>(cond, { sb.append(it) }, { it + "b" }) // one non-ignorable
+    s.<!RETURN_VALUE_NOT_USED!>selector<!>(cond, { it + "a" }, sb::append) // one non-ignorable
     s.selector(cond, { sb.append(it) }, sb::append) // both ignorable => ignorable
     s.selector(cond, { sb.append(it) }, { return 42 }) // ignorable, non-local return => ignorable
-    s.selector(cond, { return 42 }, { "return 42" }) // non-local return, non-ignorable => non-ignorable
+    s.<!RETURN_VALUE_NOT_USED!>selector<!>(cond, { return 42 }, { "return 42" }) // non-local return, non-ignorable => non-ignorable
 
     return 0
 }
 
 // Test that lambdas which are not mentioned in contract do not propagate ignorability:
 fun testIgnorableInCondition(s: String, sb: StringBuilder, list: MutableList<String>) {
-    s.selector(
+    s.<!RETURN_VALUE_NOT_USED!>selector<!>(
         { list.add(it) },
         sb::append,
         { it + "b" }

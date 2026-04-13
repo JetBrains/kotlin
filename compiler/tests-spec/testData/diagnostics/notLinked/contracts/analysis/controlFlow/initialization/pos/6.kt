@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*

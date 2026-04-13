@@ -27,7 +27,7 @@ open class C: A() {
     fun foo() = ""
 
     init {
-        val a: String = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+        val a: String = foo()
         val b: String = bar
     }
 }

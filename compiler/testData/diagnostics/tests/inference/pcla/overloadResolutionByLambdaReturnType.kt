@@ -11,7 +11,7 @@ fun <E1> buildL(x: MutableList<E1>.() -> Int): Int = 1
 fun <E2> buildL(x: MutableList<E2>.() -> String): String = ""
 
 fun main() {
-    <!NONE_APPLICABLE!>buildL<!> {
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>buildL<!> {
         <!UNRESOLVED_REFERENCE!>add<!>("")
         ""
     }

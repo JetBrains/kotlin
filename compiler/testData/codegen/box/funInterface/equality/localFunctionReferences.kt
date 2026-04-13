@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3.0
+// KT-85411: Supported in 2.4.0-Beta2
 
 fun checkEqual(x: Any, y: Any) {
     if (x != y || y != x) throw AssertionError("$x and $y should be equal")

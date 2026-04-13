@@ -4,7 +4,7 @@
 
 fun foo(): Int = 123
 
-val <!UNDERSCORE_IS_RESERVED!>_<!> = foo()
+val _ = foo()
 
 object Test {
     val <!UNDERSCORE_IS_RESERVED!>_<!> = foo()

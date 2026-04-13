@@ -2,7 +2,7 @@
 fun foo() = withIntList {
     withStringSequence {
         forEach { line ->
-            line.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>rem<!>(1)
+            line.<!UNRESOLVED_REFERENCE!>rem<!>(1)
             line.length
         }
     }

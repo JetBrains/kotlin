@@ -1,4 +1,9 @@
 /*
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
+/*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -911,6 +916,16 @@ class PatternTest {
         testString = "c\u0301\u0327"
         regex = Regex(baseString, RegexOption.CANON_EQ)
         assertTrue(regex.matches(testString))
+
+        baseString = "c\u0327\u0301"
+        testString = "c\u0327\u0300"
+        regex = Regex(baseString, RegexOption.CANON_EQ)
+        assertFalse(regex.matches(testString))
+
+        baseString = "c\u0327\u0301"
+        testString = "c\u0328\u0301"
+        regex = Regex(baseString, RegexOption.CANON_EQ)
+        assertFalse(regex.matches(testString))
 
         /*
          * Hangul decompositions

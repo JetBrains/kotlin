@@ -8,7 +8,7 @@ enum class Foo {
 }
 
 fun main() {
-    Foo.<!UNSUPPORTED_FEATURE!>entries<!>
+    Foo.entries
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

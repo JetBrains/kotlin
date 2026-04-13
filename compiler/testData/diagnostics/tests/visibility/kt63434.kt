@@ -12,7 +12,7 @@ fun checkCannotAccess() {
     object : InlineCompletionSessionManager() {
         fun chch() {
             val b: Proto = Proto()
-            if (b is <!INCOMPATIBLE_TYPES!>Proto.Some<!>) return
+            if (<!IMPOSSIBLE_IS_CHECK_ERROR!>b is Proto.Some<!>) return
         }
     }
 }

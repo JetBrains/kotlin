@@ -10,10 +10,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
-import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
-import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
+import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -49,6 +46,11 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
         file = null, // no psi should be copied
         kind = kind,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinFileStubImpl &&
+                other.kind == kind
 
     @OptIn(KtImplementationDetail::class)
     companion object {

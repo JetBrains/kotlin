@@ -1,6 +1,0 @@
-KtCollectionLiteralExpression(213,223): '["1", "2"]'
-  KaSymbolResolutionError:
-    candidateSymbols = [
-      kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with arrayOf>

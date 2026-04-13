@@ -10,8 +10,8 @@ fun <T, V> foo(t: C<out T>, v: C<out V>) {
     if (t == v) {
         // => {t,v} is C<out T> & C<out V>
         // => {t,v}.value is T & V
-        assignable<T> { <!TYPE_MISMATCH!>t.value<!> }
-        assignable<V> { <!TYPE_MISMATCH!>v.value<!> }
+        assignable<T> { t.value }
+        assignable<V> { v.value }
         assignable<T> { v.value }
         assignable<V> { t.value }
     }

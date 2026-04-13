@@ -11,7 +11,7 @@ class Foo<out T>(name: T) {
         val ok2 = this@Foo::prop
         val ok3 = object { val y: Any = this@Foo::prop }
 
-        val fail1 = Foo(prop)::<!INVISIBLE_MEMBER!>prop<!>
+        val fail1 = Foo(prop)::<!INVISIBLE_REFERENCE!>prop<!>
     }
 
     fun testFunc() {
@@ -19,17 +19,17 @@ class Foo<out T>(name: T) {
         val ok2 = this@Foo::func
         val ok3 = object { val y: Any = this@Foo::func }
 
-        val fail1 = Foo(prop)::<!INVISIBLE_MEMBER!>func<!>
+        val fail1 = Foo(prop)::<!INVISIBLE_REFERENCE!>func<!>
 
         with(prop) {
-            val fail2 = Foo(prop).func2()
+            val fail2 = Foo(prop).<!INVISIBLE_REFERENCE!>func2<!>()
         }
     }
 
     private fun func(t: T): T = t
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(t: <!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>)<!>
-    private fun func2(): T = <!UNRESOLVED_REFERENCE!>t<!>
+    context(t: T)
+    private fun func2(): T = t
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration,

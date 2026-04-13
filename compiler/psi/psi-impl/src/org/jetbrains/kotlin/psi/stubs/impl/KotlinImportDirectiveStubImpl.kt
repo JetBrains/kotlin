@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -30,4 +31,11 @@ class KotlinImportDirectiveStubImpl(
         importedFqNameRef = importedFqNameRef,
         isValid = isValid,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinImportDirectiveStubImpl &&
+                other.isAllUnder == isAllUnder &&
+                other.importedFqNameRef == importedFqNameRef &&
+                other.isValid == isValid
 }

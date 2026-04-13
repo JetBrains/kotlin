@@ -37,14 +37,12 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -245,7 +243,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
 
         val commonExtension = ".fir.txt"
         val (specificExtension, otherSpecificExtension) = when (frontendKind) {
-            FrontendKinds.ClassicFrontend -> ".fir.k1.txt" to ".fir.k2.txt"
             FrontendKinds.FIR -> ".fir.k2.txt" to ".fir.k1.txt"
             else -> shouldNotBeCalled()
         }
@@ -376,16 +373,9 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     }
 
     private fun extractNames(module: TestModule, packageFqName: FqName): Collection<Name> {
-        testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.ClassicFrontend)
-            ?.let { return extractNames(it, packageFqName) }
         testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)
             ?.let { return extractNames(it, packageFqName) }
         error("Frontend artifact for module $module not found")
-    }
-
-    private fun extractNames(artifact: ClassicFrontendOutputArtifact, packageFqName: FqName): Collection<Name> {
-        return DescriptorUtils.getAllDescriptors(artifact.analysisResult.moduleDescriptor.getPackage(packageFqName).memberScope)
-            .mapTo(sortedSetOf()) { it.name }
     }
 
     private fun extractNames(artifact: FirOutputArtifact, packageFqName: FqName): Collection<Name> {

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // JDK_KIND: FULL_JDK_17
 // MODULE: module
 // FILE: module-info.java

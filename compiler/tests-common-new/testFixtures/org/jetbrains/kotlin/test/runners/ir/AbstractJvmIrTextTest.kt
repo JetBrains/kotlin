@@ -5,41 +5,30 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
-import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.backend.handlers.JvmNewKotlinReflectCompatibilityCheck
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
-import org.jetbrains.kotlin.test.configuration.commonHandlersForCodegenTest
-import org.jetbrains.kotlin.test.configuration.setupDefaultDirectivesForIrTextTest
-import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
-import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
-    val targetFrontend: FrontendKind<FrontendOutput>
-) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
-    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
+abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForJvmTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
+        setupJvmPipelineSteps(parser)
         commonHandlersForCodegenTest()
         setupDefaultDirectivesForIrTextTest()
         configureIrHandlersStep {
             setupIrTextDumpHandlers()
         }
+        additionalK2ConfigurationForIrTextTest(parser)
 
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
@@ -49,13 +38,17 @@ abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.Frontend
     }
 }
 
-open class AbstractClassicJvmIrTextTest : AbstractJvmIrTextTest<ClassicFrontendOutputArtifact>(FrontendKinds.ClassicFrontend) {
-    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
 
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::JvmIrBackendFacade
+open class AbstractFirLightTreeJvmIrTextTest : AbstractJvmIrTextTest(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            configureJvmArtifactsHandlersStep {
+                useHandlers(::JvmNewKotlinReflectCompatibilityCheck)
+            }
+        }
+    }
 }
+
+@FirPsiCodegenTest
+open class AbstractFirPsiJvmIrTextTest : AbstractJvmIrTextTest(FirParser.Psi)

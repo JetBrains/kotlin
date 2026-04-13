@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
@@ -87,7 +86,7 @@ class IdeStdlibResolutionTest {
         val project = createProjectWithDefaultStdlibEnabled()
 
         val kotlin = project.multiplatformExtension
-        kotlin.js(KotlinJsCompilerType.IR)
+        kotlin.js()
 
         project.evaluate()
 

@@ -1,6 +1,0 @@
-ALL:
-  /B.foo.<no name>: Unit
-  /A.foo.<no name>: Unit
-DIRECT:
-  /B.foo.<no name>: Unit
-INTERSECTION:

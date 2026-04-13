@@ -8,33 +8,33 @@ fun <T> fooSame(t: (T) -> T): T = null!!
 fun <A, B> fooDifferent(t: (A) -> B): B = null!!
 
 fun testFoo() {
-    val bar: String = <!TYPE_MISMATCH!>foo {
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>""<!><!>
-    }<!>
+    val bar: String = foo {
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
+    }
 
     foo<String> {
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>""<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
     }
 
     fooSame<String> {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun() = ""<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
     }
 
     val barSame: String = fooSame {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun() = it<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it<!>
     }
 
     fooSame { it: String ->
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>it<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it<!>
     }
 
     fooDifferent<Int, String> { it->
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>it.toString()<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it.toString()<!>
     }
 
-    val barDifferent: String = <!TYPE_MISMATCH!>fooDifferent { it: Int ->
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>it.toString()<!><!>
-    }<!>
+    val barDifferent: String = fooDifferent { it: Int ->
+        <!RETURN_TYPE_MISMATCH!>fun() = it.toString()<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, functionalType, lambdaLiteral, typeParameter */

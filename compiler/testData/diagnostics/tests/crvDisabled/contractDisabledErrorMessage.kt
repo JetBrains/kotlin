@@ -7,7 +7,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unrecognized effect")!>returnsResultOf(block)<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION("requires language feature 'return value checker' to be enabled")!>returnsResultOf(block)<!>
     }
     return block(this)
 }

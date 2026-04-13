@@ -29,12 +29,12 @@ fun <T, B> T.removeTraitIfPresent(/*...*/): T
 }
 
 fun test1(shape: OperationShape) {
-    shape.removeTraitIfPresent()
+    shape.<!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>removeTraitIfPresent<!>()
 }
 
 fun test2(shape: OperationShape) {
     // The type the diagnostic in `test1` suggests
-    shape.removeTraitIfPresent<OperationShape, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>SmithyBuilder<OperationShape><!>, OperationShape><!>>()
+    shape.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeTraitIfPresent<!><OperationShape, AbstractShapeBuilder<SmithyBuilder<OperationShape>, OperationShape>>()
 }
 
 fun test3(shape: OperationShape) {
@@ -44,7 +44,7 @@ fun test3(shape: OperationShape) {
 
 fun test4(shape: OperationShape) {
     // A type that "feels right"
-    shape.removeTraitIfPresent<OperationShape, <!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, OperationShape><!>>()
+    shape.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeTraitIfPresent<!><OperationShape, AbstractShapeBuilder<*, OperationShape>>()
 }
 
 @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
@@ -55,17 +55,17 @@ fun <B : AbstractShapeBuilder<B, S>, S : Shape> shapeToBuilder(shape: S): B =
 abstract class SimpleShape : Shape()
 
 fun testA(target: SimpleShape) {
-    val builder: AbstractShapeBuilder<*, *> = shapeToBuilder(target)
+    val builder: AbstractShapeBuilder<*, *> = <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>shapeToBuilder<!>(target)
 }
 
 fun testB(target: SimpleShape) {
     // The type the diagnostic in `testA` suggests
-    val builder: AbstractShapeBuilder<*, *> = <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>shapeToBuilder<<!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<out <!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, *><!>, SimpleShape><!>, SimpleShape><!>, SimpleShape>(target)<!>
+    val builder: AbstractShapeBuilder<*, *> = <!INAPPLICABLE_CANDIDATE!>shapeToBuilder<!><<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<<!UPPER_BOUND_VIOLATED!>out AbstractShapeBuilder<*, *><!>, SimpleShape><!>, SimpleShape><!>, SimpleShape>(target)
 }
 
 fun testC(target: SimpleShape) {
     // A type that "feels right"
-    val builder: AbstractShapeBuilder<*, *> = shapeToBuilder<<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, SimpleShape><!>, SimpleShape>(target)
+    val builder: AbstractShapeBuilder<*, *> = <!INAPPLICABLE_CANDIDATE!>shapeToBuilder<!><<!UPPER_BOUND_VIOLATED!>AbstractShapeBuilder<*, SimpleShape><!>, SimpleShape>(target)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, primaryConstructor,

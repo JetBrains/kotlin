@@ -16,15 +16,15 @@ enum class CorrectTypeEnum(override val value: String) : MyInterface {
     CorrectEnum2("2"),
 }
 
-fun <T : Enum<out MyInterface>> myFunction(arg: T) {}
+fun <T : Enum<<!UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_ERROR!>out MyInterface<!>>> myFunction(arg: T) {}
 
-class MyClass<T : Enum<out <!UPPER_BOUND_VIOLATED!>MyInterface<!>>>(val arg: T)
+class MyClass<T : Enum<<!UPPER_BOUND_VIOLATED!>out MyInterface<!>>>(val arg: T)
 
 fun test() {
     myFunction(CorrectTypeEnum.CorrectEnum1)
-    myFunction(<!TYPE_MISMATCH!>WrongTypeEnum.WrongEnum1<!>)
+    myFunction(<!ARGUMENT_TYPE_MISMATCH!>WrongTypeEnum.WrongEnum1<!>)
     MyClass(CorrectTypeEnum.CorrectEnum1)
-    MyClass(<!TYPE_MISMATCH!>WrongTypeEnum.WrongEnum1<!>)
+    MyClass(<!ARGUMENT_TYPE_MISMATCH!>WrongTypeEnum.WrongEnum1<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration,

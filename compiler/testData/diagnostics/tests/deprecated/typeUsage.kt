@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 @Deprecated("Class")
 open class Obsolete {
     fun use() {}

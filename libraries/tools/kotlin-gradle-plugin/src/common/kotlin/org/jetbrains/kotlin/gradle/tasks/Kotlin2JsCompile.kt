@@ -123,14 +123,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
-    @get:Deprecated(
-        message = "Task.moduleName is not used in Kotlin/JS. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Optional
-    @get:Input
-    abstract override val moduleName: Property<String>
-
     @get:Internal
     internal abstract val mainCompilationModuleName: Property<String>
 

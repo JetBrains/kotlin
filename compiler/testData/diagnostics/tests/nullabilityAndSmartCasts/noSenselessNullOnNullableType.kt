@@ -11,7 +11,7 @@ class A {
 
 fun bar() = when (A.foo()) {
     null -> "null"
-    else -> "else"
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "else"
 }
 
 fun <T : Number?> baz(t: T) = when (t) {

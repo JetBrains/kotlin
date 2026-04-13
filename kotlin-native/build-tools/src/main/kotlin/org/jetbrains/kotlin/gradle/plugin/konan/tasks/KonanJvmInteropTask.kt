@@ -131,7 +131,7 @@ open class KonanJvmInteropTask @Inject constructor(
     val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
     @get:Nested
-    protected val platformManagerProvider = objectFactory.platformManagerProvider(project)
+    val platformManagerProvider = objectFactory.platformManagerProvider(project)
 
     @TaskAction
     fun run() {

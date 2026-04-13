@@ -6,9 +6,9 @@ open class Base<T> {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y: T<!>
 
     init {
-        <!DEBUG_INFO_LEAKING_THIS!>this<!> as Derived
+        this as Derived
         x = "O"
-        <!VAL_REASSIGNMENT!><!DEBUG_INFO_SMARTCAST!>this<!>.y<!> = "O"
+        this.<!VAL_REASSIGNMENT!>y<!> <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "O"
     }
 }
 

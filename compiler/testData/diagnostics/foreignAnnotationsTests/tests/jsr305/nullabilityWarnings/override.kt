@@ -49,36 +49,36 @@ public interface I<T> {
 package test;
 
 abstract class Multiple<T> : Provider<T>, I<T> {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun get(): T = null!!
-    override fun set(x: T) {} // Missing warning in K1, K2 get's this right
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun get(): T = null!!
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun set(x: T) {} // Missing warning in K1, K2 get's this right
 }
 
 abstract class A<T> : Provider<T> {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun get(): T = null!!
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun get(): T = null!!
     override fun getNullable(): T = null!!
-    override fun set(x: T) {} // Missing warning in K1, K2 get's this right
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun set(x: T) {} // Missing warning in K1, K2 get's this right
     <!NOTHING_TO_OVERRIDE!>override<!> fun setNullable(x: T) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun getSet(x: T): T = x
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun getSet(x: T): T = x
     <!NOTHING_TO_OVERRIDE!>override<!> fun getSetNullable(x: T): T = x
 }
 
 abstract class B<T> : Provider<T> {
     override fun get(): T & Any = null!!
     override fun getNullable(): T? = null!!
-    <!NOTHING_TO_OVERRIDE!>override<!> fun set(x: T & Any) {} // False positive in K1
+    override fun set(x: T & Any) {} // False positive in K1
     override fun setNullable(x: T?) {}
 
-    <!NOTHING_TO_OVERRIDE!>override<!> fun getSet(x: T & Any): T & Any = x // False positive in K1
+    override fun getSet(x: T & Any): T & Any = x // False positive in K1
     override fun getSetNullable(x: T?): T? = x
 }
 
 abstract class C<T> : Provider<T> {
-    override fun getSet(x: T): T & Any = x!! // Missing warning in K1, K2 get's this right
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun getSet(x: T): T & Any = x!! // Missing warning in K1, K2 get's this right
     <!NOTHING_TO_OVERRIDE!>override<!> fun getSetNullable(x: T): T? = x
 }
 
 abstract class D<T> : Provider<T> {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun getSet(x: T & Any): T = x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> // False positive in K1
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun getSet(x: T & Any): T = x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> // False positive in K1
     override fun getSetNullable(x: T?): T = x!!
 }

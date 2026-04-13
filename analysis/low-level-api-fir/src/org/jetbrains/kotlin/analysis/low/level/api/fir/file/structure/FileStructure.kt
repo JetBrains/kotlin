@@ -141,22 +141,13 @@ internal class FileStructure private constructor(
         return false
     }
 
-    fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
+    fun diagnostics(diagnosticCheckerFilter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> = sequence {
         val structureElements = getAllStructureElements()
-        return buildList {
-            collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
-        }
-    }
-
-    private fun MutableCollection<KtPsiDiagnostic>.collectDiagnosticsFromStructureElements(
-        structureElements: Collection<FileStructureElement>,
-        diagnosticCheckerFilter: DiagnosticCheckerFilter,
-    ) {
         structureElements.forEach { structureElement ->
             ProgressManager.checkCanceled()
 
             structureElement.diagnostics.forEach(diagnosticCheckerFilter) { diagnostics ->
-                addAll(diagnostics)
+                yieldAll(diagnostics)
             }
         }
     }

@@ -5,47 +5,52 @@
 
 package org.jetbrains.kotlin.konan.test.configuration
 
+import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
+import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
-@Suppress("reformat")
+
 fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerialization(
-    targetFrontend: FrontendKind<FirOutputArtifact>,
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>,
-    frontendToIrConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>,
-    irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>,
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+) {
+    commonConfigurationForNativeCodegenTest(customIgnoreDirective = customIgnoreDirective)
+    setupStepsForNativeFirstStageUpToSerialization()
+}
+
+/**
+ * Sets up directives and services which are applicable for both stages of
+ * any native codegen test.
+ */
+fun TestConfigurationBuilderBase<*, *>.commonConfigurationForNativeCodegenTest(
+    firParser: FirParser = FirParser.LightTree,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ) {
     commonCodegenConfiguration()
 
     globalDefaults {
-        frontend = targetFrontend
+        frontend = FrontendKinds.FIR
         targetPlatform = NativePlatforms.unspecifiedNativePlatform
+        targetBackend = TargetBackend.NATIVE
         dependencyKind = DependencyKind.Binary
     }
 
@@ -53,6 +58,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerializa
         +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         +ConfigurationDirectives.WITH_STDLIB
     }
+    configureFirParser(firParser)
 
     useAdditionalService(::LibraryProvider)
     useAdditionalSourceProviders(
@@ -62,20 +68,32 @@ fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerializa
     useAfterAnalysisCheckers(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
     )
+}
 
-    facadeStep(frontendFacade)
+/**
+ * Sets up all first-stage steps from frontend till pre-serialization lowerings (included).
+ * Also, sets up corresponding handlers steps for each facade step.
+ */
+fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(includeFirHandlers: Boolean = true) {
+    facadeStep(::FirCliNativeFacade)
     firHandlersStep {
         commonFirHandlersForCodegenTest()
-        useHandlers(
-            ::FirDumpHandler,
-            ::FirCfgDumpHandler,
-            ::FirCfgConsistencyHandler,
-            ::FirResolvedTypesVerifier,
-            ::FirDiagnosticsHandler,
-        )
+        if (includeFirHandlers) {
+            useHandlers(
+                ::FirDumpHandler,
+                ::FirCfgDumpHandler,
+                ::FirCfgConsistencyHandler,
+                ::FirResolvedTypesVerifier,
+                ::FirDiagnosticsHandler,
+            )
+        }
     }
 
-    facadeStep(frontendToIrConverter)
+    facadeStep(::Fir2IrCliNativeFacade)
+// TODO(KT-85460): uncomment and fix failing tests
+//    irHandlersStep()
 
-    facadeStep(irPreSerializationLoweringFacade)
+    facadeStep(::NativePreSerializationLoweringCliFacade)
+// TODO(KT-85460): uncomment and fix failing tests
+//    loweredIrHandlersStep()
 }

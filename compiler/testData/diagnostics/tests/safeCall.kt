@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 
 fun f(s: String, action: (String.() -> Unit)?) {
     s.foo().bar().<!UNSAFE_IMPLICIT_INVOKE_CALL!>action<!>()

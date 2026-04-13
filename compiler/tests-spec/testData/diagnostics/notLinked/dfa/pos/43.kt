@@ -19,9 +19,9 @@ fun case_1(a: Interface1?, b: Interface2?) {
     a as Interface2?
     val c = select(a, b)
     if (c != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
     }
 }
 
@@ -34,9 +34,9 @@ fun case_2(a: Interface1?, b: Interface2?) {
     a as Interface2?
 
     select(a, b)!!.run {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>this<!>.itest()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>this<!>.itest1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>this<!>.itest2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>this<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>this<!>.itest1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>this<!>.itest2()
     }
 }
 
@@ -49,9 +49,9 @@ fun case_3(a: Interface1?, b: Interface2?) {
     a as Interface2?
 
     val c = select(a, b)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest()
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest1()
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest2()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
 }
 
 /*
@@ -63,9 +63,9 @@ fun case_4(a: Interface1?, b: Interface2?) {
     a as Interface2?
 
     val c = select(a, b) ?: return
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest()
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest1()
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest2()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
 }
 
 /*
@@ -79,9 +79,9 @@ fun case_5(a: Interface1?, b: Interface2?) {
     val foo = l1@ fun(): Any {
         val bar = l2@ fun() {
             val c = select(a, b) ?: return@l2
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest1()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2}")!>c<!>.itest2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
         }
         return bar
     }
@@ -98,9 +98,9 @@ fun case_6(a: Interface1?, b: Interface2?) {
 
     val c = select(a, b)
     c ?: return
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest()
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest1()
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest2()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+    <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
 }
 
 /*
@@ -115,9 +115,9 @@ fun case_7(a: Interface1?, b: Interface2?) {
         val bar = l2@ fun() {
             val c = select(a, b)
             c ?: return@l2
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest1()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & Interface2} & {Interface1? & Interface2?}"), DEBUG_INFO_SMARTCAST!>c<!>.itest2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & Interface1")!>c<!>.itest2()
         }
         return bar
     }

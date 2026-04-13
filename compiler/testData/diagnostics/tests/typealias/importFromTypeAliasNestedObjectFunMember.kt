@@ -13,6 +13,6 @@ class Outer1 {
 typealias ObjectInNestedClass = Outer1.Nested.Object
 
 // FILE: 2.kt
-import objectInClass.ObjectInNestedClass.clbl1
+import objectInClass.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR("ObjectInNestedClass; Object")!>ObjectInNestedClass<!>.clbl1
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, typeAliasDeclaration */

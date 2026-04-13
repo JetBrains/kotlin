@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.AppMigrationKit
+
+modules = AppMigrationKit
+compilerOpts = -framework AppMigrationKit
+linkerOpts = -framework AppMigrationKit
+#Disabled: Swift-only framework

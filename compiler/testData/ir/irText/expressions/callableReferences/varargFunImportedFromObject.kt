@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // SKIP_KT_DUMP
 import Host.foo
 

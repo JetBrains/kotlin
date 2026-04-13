@@ -4,7 +4,7 @@ class MutableVector<T>(
     var content: Array<T>,
 ) {
     inline fun <reified T: Any> foo(block: (T) -> Unit) {
-        block(<!TYPE_MISMATCH!>content[0]<!>)
+        block(<!ARGUMENT_TYPE_MISMATCH!>content[0]<!>)
     }
 }
 
@@ -13,11 +13,11 @@ interface Consumer<T> {
 }
 
 fun f(c: Consumer<in String>) {
-    c.accept(<!TYPE_MISMATCH!>c.accept(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>)
+    c.accept(c.accept(<!NULL_FOR_NONNULL_TYPE!>null<!>))
 }
 
 fun test(mapper: Mapper.Impl<*, *>, out: Out<*>) {
-    mapper.get().bar(out) // K2: argument type mismatch, K1: Ok
+    mapper.get().bar(<!ARGUMENT_TYPE_MISMATCH!>out<!>) // K2: argument type mismatch, K1: Ok
 }
 
 interface Out<out T> {

@@ -5,7 +5,7 @@
 // - Old BE: Couldn't inline method call: with(A()) { ... }
 // - See also: KT-57584, KT-58110
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // ISSUE: KT-53718
 
 class A

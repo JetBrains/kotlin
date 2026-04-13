@@ -229,27 +229,26 @@ private fun IrDeclaration.isDeclaredInJava(): Boolean {
 private fun IrDeclaration.isJavaBackedCallable(): Boolean {
     if (isDeclaredInJava()) return true
 
-    when (this) {
+    val functions = when (this) {
         is IrSimpleFunction -> {
-            if (this.isFakeOverride) {
-                return ifAnyDFS(
-                    listOf(this),
-                    { current -> current.overriddenSymbols.map { it.owner } },
-                    { current -> current.isDeclaredInJava() }
-                )
-            }
+            // Check if the function a fake override of a Java declaration.
+            listOf(this)
         }
         is IrProperty -> {
-            // Check accessors and their overrides
-            val accs = listOfNotNull(getter, setter)
-            if (accs.any { it.isFakeOverride }) {
-                return ifAnyDFS(
-                    accs,
-                    { current -> current.overriddenSymbols.map { it.owner } },
-                    { current -> current.isDeclaredInJava() }
-                )
-            }
+            // Check property accessors.
+            listOfNotNull(getter, setter)
         }
+        else -> emptyList()
+    }
+
+    if (functions.any { it.isFakeOverride }) {
+        return ifAnyDFS(
+            functions,
+            { current ->
+                if (current.isFakeOverride) current.overriddenSymbols.map { it.owner } else emptyList()
+            },
+            { current -> current.isDeclaredInJava() },
+        )
     }
     return false
 }

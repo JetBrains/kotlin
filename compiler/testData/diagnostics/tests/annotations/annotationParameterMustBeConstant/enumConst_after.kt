@@ -12,7 +12,7 @@ enum class MyEnum {
     A
 }
 
-@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>Test()<!>)
+@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>Test()<!>)
 class Test2
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, primaryConstructor,

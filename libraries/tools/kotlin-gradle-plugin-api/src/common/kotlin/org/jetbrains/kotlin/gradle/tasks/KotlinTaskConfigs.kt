@@ -113,7 +113,12 @@ interface BaseKotlinCompile : KotlinCompileTool {
     /**
      * @suppress
      */
+    @get:Deprecated(
+        message = "Task.moduleName is only used in metadata compilations",
+        level = DeprecationLevel.WARNING,
+    )
     @get:Input
+    @get:Optional
     val moduleName: Property<String>
 
     /**
@@ -143,30 +148,6 @@ interface KotlinJvmCompile : BaseKotlinCompile,
     KotlinCompileDeprecated<KotlinJvmOptionsDeprecated>,
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
     UsesKotlinJavaToolchain {
-
-    /**
-     * @suppress
-     */
-    @get:Deprecated(
-        message = "Please migrate to compilerOptions.moduleName. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compilerOptions.moduleName"),
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Optional
-    @get:Input
-    override val moduleName: Property<String>
-
-    /**
-     * @suppress
-     */
-    // JVM specific
-    @get:Internal("Takes part in compiler args.")
-    @Deprecated(
-        message = "Configure compilerOptions directly. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compilerOptions"),
-        level = DeprecationLevel.ERROR,
-    )
-    val parentKotlinOptions: Property<KotlinJvmOptionsDeprecated>
 
     /**
      * Controls JVM target validation mode between this task and the Java compilation task from Gradle for the same source set.
@@ -217,17 +198,6 @@ interface KaptGenerateStubs : KotlinJvmCompile {
     @get:Internal("Not an input, just passed as kapt args. ")
     val kaptClasspath: ConfigurableFileCollection
 
-    /**
-     * @suppress
-     */
-    @get:Deprecated(
-        message = "Please migrate to compilerOptions.moduleName. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compilerOptions.moduleName"),
-        level = DeprecationLevel.ERROR,
-    )
-    @get:Optional
-    @get:Input
-    override val moduleName: Property<String>
 }
 
 /**

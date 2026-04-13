@@ -5,18 +5,18 @@
 annotation class Ann
 
 @Ann
-expect inline fun hasWeakIncompatibility()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> inline fun hasWeakIncompatibility()
 
 @Ann
-expect fun hasStrongIncompatibility<!NO_ACTUAL_FOR_EXPECT{JVM}!>(arg: Int)<!>
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun hasStrongIncompatibility(arg: Int)
 
 expect fun hasStrongIncompatibility(arg: Double)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_WITHOUT_EXPECT!>actual<!> fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>hasWeakIncompatibility<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun <!EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET!>hasWeakIncompatibility<!>() {}
 
-actual fun hasStrongIncompatibility<!ACTUAL_WITHOUT_EXPECT!>(arg: Any?)<!> {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>hasStrongIncompatibility<!>(arg: Any?) {}
 
 actual fun hasStrongIncompatibility(arg: Double) {}
 

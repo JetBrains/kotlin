@@ -4,7 +4,7 @@ interface A {
 }
 
 interface B : A {
-    override fun test(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Unit<!> = <!TYPE_MISMATCH!>"B"<!>
+    override fun test(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Unit<!> = <!RETURN_TYPE_MISMATCH!>"B"<!>
 }
 
 open class C : A

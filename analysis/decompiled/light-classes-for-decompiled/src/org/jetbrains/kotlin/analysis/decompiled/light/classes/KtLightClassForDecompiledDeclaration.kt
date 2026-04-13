@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
@@ -35,7 +36,7 @@ internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
     )
 }
 
-private inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
+internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
     return if (isNotEmpty()) toTypedArray() else default
 }
 
@@ -121,6 +122,23 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun isEnum(): Boolean = clsDelegate.isEnum
     override fun isRecord(): Boolean = clsDelegate.isRecord
+
+    override fun getRecordHeader(): PsiRecordHeader? = cachedValueWithLibraryTracker {
+        val clsRecordHeader = clsDelegate.recordHeader
+        if (clsRecordHeader != null) {
+            KtLightRecordHeaderForDecompiledDeclaration(
+                clsDelegate = clsRecordHeader,
+                containingClass = this,
+                kotlinOrigin = kotlinOrigin?.primaryConstructor,
+            )
+        } else {
+            null
+        }
+    }
+
+    override fun getRecordComponents(): Array<PsiRecordComponent> =
+        recordHeader?.recordComponents ?: PsiRecordComponent.EMPTY_ARRAY
+
     override fun getExtendsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getExtendsListTypes(this)
     override fun getTypeParameterList(): PsiTypeParameterList? = clsDelegate.typeParameterList
     override fun isAnnotationType(): Boolean = clsDelegate.isAnnotationType

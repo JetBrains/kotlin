@@ -32,7 +32,7 @@ fun branchingIndetermineFlow(a: Any) {
     var x: Int
 
     if (a is String) {
-        repeat(<!DEBUG_INFO_SMARTCAST!>a<!>.length) {
+        repeat(a.length) {
             myRun { x = 42 }
         }
     }

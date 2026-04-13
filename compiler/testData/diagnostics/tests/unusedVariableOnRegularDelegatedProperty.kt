@@ -8,8 +8,8 @@ class Example {
     val varProp: String by Delegate()
 
     fun foo() {
-        val <!UNUSED_VARIABLE!>valVariable<!> by Delegate()
-        val <!UNUSED_VARIABLE!>varVariable<!> by Delegate()
+        val valVariable by Delegate()
+        val varVariable by Delegate()
     }
 }
 

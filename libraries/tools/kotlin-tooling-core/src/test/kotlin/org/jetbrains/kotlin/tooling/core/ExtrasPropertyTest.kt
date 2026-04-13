@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.tooling.core
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 
-@Suppress("DEPRECATION_ERROR")
 class ExtrasPropertyTest {
 
     class Subject : HasMutableExtras {
@@ -21,35 +20,23 @@ class ExtrasPropertyTest {
     private val keyB = extrasKeyOf<Int>("b")
     private val keyANullable = extrasKeyOf<Int?>("a")
 
-    private val Subject.readA: Int? by keyA.readProperty
-    private val Subject.readB: Int? by keyB.readProperty
+    private val Subject.readA: Int? by keyA.readWriteProperty
+    private val Subject.readB: Int? by keyB.readWriteProperty
 
     private var Subject.readWriteA: Int? by keyA.readWriteProperty
     private var Subject.readWriteB: Int? by keyB.readWriteProperty
 
-    private val Subject.notNullReadA: Int by keyA.readProperty.notNull(1)
-    private val Subject.notNullReadB: Int by keyB.readProperty.notNull(2)
+    private val Subject.notNullReadA: Int by keyA.readWriteProperty.notNull(1)
+    private val Subject.notNullReadB: Int by keyB.readWriteProperty.notNull(2)
 
     private var Subject.notNullReadWriteA: Int by keyA.readWriteProperty.notNull(3)
     private var Subject.notNullReadWriteB: Int by keyB.readWriteProperty.notNull(4)
 
     private val keyList = extrasKeyOf<MutableList<Dummy>>()
-    private val Subject.factoryList: MutableList<Dummy> by keyList.factoryProperty { mutableListOf() }
+    private val Subject.factoryList: MutableList<Dummy> by keyList.lazyProperty { mutableListOf() }
 
     private val keySubjectList = extrasKeyOf<MutableList<Subject>>()
     private val Subject.lazyList: MutableList<Subject> by keySubjectList.lazyProperty { mutableListOf(this) }
-
-    private val lazyNullStringInvocations = mutableListOf<Subject>()
-    private val Subject.lazyNullString: String? by extrasNullableLazyProperty("null") {
-        lazyNullStringInvocations.add(this)
-        null
-    }
-
-    private val lazyNullableStringInvocations = mutableListOf<Subject>()
-    private val Subject.lazyNullableString: String? by extrasNullableLazyProperty("not-null") {
-        lazyNullableStringInvocations.add(this)
-        "OK"
-    }
 
     @Test
     fun `test - readOnlyProperty`() {
@@ -149,29 +136,6 @@ class ExtrasPropertyTest {
             subject.extras[keySubjectList] = list
             assertSame(list, subject.lazyList)
         }
-    }
-
-    @Test
-    fun `test - lazyNullableProperty`() {
-        val subject1 = Subject()
-        val subject2 = Subject()
-
-        assertNull(subject1.lazyNullString)
-        assertNull(subject1.lazyNullString)
-        assertEquals(listOf(subject1), lazyNullStringInvocations)
-
-        assertNull(subject2.lazyNullString)
-        assertNull(subject2.lazyNullString)
-        assertEquals(listOf(subject1, subject2), lazyNullStringInvocations)
-
-
-        assertEquals("OK", subject1.lazyNullableString)
-        assertEquals("OK", subject1.lazyNullableString)
-        assertEquals(listOf(subject1), lazyNullableStringInvocations)
-
-        assertEquals("OK", subject2.lazyNullableString)
-        assertEquals("OK", subject2.lazyNullableString)
-        assertEquals(listOf(subject1, subject2), lazyNullableStringInvocations)
     }
 
     @Test

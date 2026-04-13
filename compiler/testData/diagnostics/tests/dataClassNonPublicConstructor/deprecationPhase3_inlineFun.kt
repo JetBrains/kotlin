@@ -5,7 +5,7 @@
 data class PrivateInline private constructor(val value: Int) {
     inline fun huh1() {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateInline<!>(1)
-        copy()
+        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>copy<!>()
     }
 
     private inline fun huh2() {
@@ -22,7 +22,7 @@ data class PrivateInline private constructor(val value: Int) {
 data class PublishedApiInline @PublishedApi internal constructor(val value: Int) {
     inline fun huh1() {
         PublishedApiInline(1)
-        copy()
+        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>copy<!>()
     }
 
     internal inline fun huh2() {
@@ -34,7 +34,7 @@ data class PublishedApiInline @PublishedApi internal constructor(val value: Int)
 data class InternalInline internal constructor(val value: Int) {
     inline fun huh1() {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalInline<!>(1)
-        copy()
+        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>copy<!>()
     }
 
     internal inline fun huh2() {

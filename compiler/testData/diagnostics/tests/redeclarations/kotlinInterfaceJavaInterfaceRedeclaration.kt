@@ -2,7 +2,7 @@
 // FILE: test/A.kt
 package test
 
-interface A
+interface <!CLASSIFIER_REDECLARATION!>A<!>
 
 // FILE: test/A.java
 package test;

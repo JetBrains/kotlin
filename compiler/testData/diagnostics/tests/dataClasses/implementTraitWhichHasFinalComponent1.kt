@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface T {
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>final<!> fun component1(): Int = 42
 }

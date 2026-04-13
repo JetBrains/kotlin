@@ -22,7 +22,7 @@ fun test1() {
     val a: ImplBase = DefaultImpl()
     if (a is DefaultImpl) {
         a.x as String
-        <!SMARTCAST_IMPOSSIBLE!>a.x<!>.length // ok
+        a.x.length // ok
     }
 }
 
@@ -30,7 +30,7 @@ fun test2() {
     var b: I = DefaultImpl()
     if (b is DefaultImpl) {
         b.x as String
-        <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length // ok
+        b.x.length // ok
 
         b = makeUnstableImpl()
         b.x as String
@@ -41,8 +41,8 @@ fun test2() {
 fun test3() {
     val c: Any = DefaultImpl()
     if (c is DefaultImpl) {
-        <!DEBUG_INFO_SMARTCAST!>c<!>.x as String
-        <!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>c<!>.x<!>.length // ok
+        c.x as String
+        c.x.length // ok
     }
 }
 
@@ -70,7 +70,7 @@ fun test6(){
     var b  = Stable()
     b.x as String
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>b.x<!>.length
+        b.x<!UNSAFE_CALL!>.<!>length
         b = Stable()
     }
 }

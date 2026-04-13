@@ -10,7 +10,7 @@ fun A?.bar() {
     if (this == null) {
         return
     }
-    <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>foo<!>()
+    foo()
 }
 
 fun A.baz() {

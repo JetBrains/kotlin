@@ -13,7 +13,7 @@ interface A {
 
 expect interface B
 
-class C : A, <!SUPERTYPE_APPEARS_TWICE{JVM}!>B<!> {}
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class C : A, <!SUPERTYPE_APPEARS_TWICE!>B<!> {}<!>
 
 // MODULE: jvm()()(common)
 

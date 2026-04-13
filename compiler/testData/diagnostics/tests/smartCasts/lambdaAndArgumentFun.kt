@@ -9,7 +9,7 @@ fun use() {
     var x: Int?
     x = 5
     // Write to x is AFTER
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
     // No smart cast should be here!
     foo(bar { x = null }, <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode())
 }

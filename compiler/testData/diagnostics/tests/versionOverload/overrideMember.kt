@@ -8,7 +8,7 @@ open class B {
 }
 
 class D : B() {
-    override fun foo(
+    override fun <!INVALID_VERSIONING_ON_NONFINAL_FUNCTION!>foo<!>(
     a: Int,
     @IntroducedAt("1") b: Int = <!DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE!>1<!>,
     )

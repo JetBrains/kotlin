@@ -15,7 +15,7 @@ fun bar(any: Any): <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<Int><!>
     val c : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<String><!>? = null
 
     if (any is <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>) {
-        checkSubtype<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>>(<!DEBUG_INFO_SMARTCAST!>any<!>)
+        checkSubtype<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>>(any)
     }
     any as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>
     return null

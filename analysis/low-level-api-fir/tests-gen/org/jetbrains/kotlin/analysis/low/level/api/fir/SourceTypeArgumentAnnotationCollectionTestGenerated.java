@@ -24,7 +24,7 @@ public class SourceTypeArgumentAnnotationCollectionTestGenerated extends Abstrac
 
   @Test
   public void testAllFilesPresentInAnnotationPlacement() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/annotationPlacement"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/annotationPlacement"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
   @Test

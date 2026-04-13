@@ -11,7 +11,7 @@ public class State<C extends Configuration<? extends State<C>>> {}
 // FILE: Main.kt
 fun setup(configuration: Configuration<*>) {
     configuration.apply {
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>directoryPath<!>
+        directoryPath
     }
 }
 

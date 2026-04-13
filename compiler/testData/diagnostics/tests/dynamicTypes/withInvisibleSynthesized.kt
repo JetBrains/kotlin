@@ -22,15 +22,15 @@ import p.*
 
 class K: J.C() {
     fun <!DYNAMIC_RECEIVER_NOT_ALLOWED, UNSUPPORTED!>dynamic<!>.test() {
-        <!DEBUG_INFO_DYNAMIC!>sam<!>(null)
-        <!DEBUG_INFO_DYNAMIC!>sam<!>(
+        sam(null)
+        sam(
             name = null,
-            <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_PASSED_TWICE!>name<!> = null
-        )<!>
+            <!ARGUMENT_PASSED_TWICE!>name<!> = null
+        )
     }
 
     fun test() {
-        <!INVISIBLE_MEMBER!>sam<!>(null)
+        <!INVISIBLE_REFERENCE!>sam<!>(null)
     }
 
 }

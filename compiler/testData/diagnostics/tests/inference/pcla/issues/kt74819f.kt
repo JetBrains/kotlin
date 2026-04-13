@@ -5,7 +5,7 @@
 fun foo(x: List<String>) =
     buildList {
         add("")
-        addAll(flatMap { listOf(2) })
+        addAll(<!ARGUMENT_TYPE_MISMATCH!>flatMap { listOf(2) }<!>)
         addAll(flatMap { x })
     }
 

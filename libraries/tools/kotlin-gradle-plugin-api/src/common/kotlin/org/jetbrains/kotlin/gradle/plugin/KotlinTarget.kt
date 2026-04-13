@@ -162,15 +162,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
      */
     override fun getName(): String = targetName
 
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        "Accessing 'sourceSets' container on the Kotlin target level DSL is deprecated. " +
-                "Consider configuring 'sourceSets' on the Kotlin extension level. This API is scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }
 
 /**

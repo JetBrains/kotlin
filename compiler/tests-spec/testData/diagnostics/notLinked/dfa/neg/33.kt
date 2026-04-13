@@ -20,7 +20,7 @@ fun nullableStringArg(number: String?) {}
  */
 fun case_1(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -30,8 +30,8 @@ fun case_1(x: Int?) {
  * ISSUES: KT-25453
  */
 fun case_2(x: Int?, y: Nothing?) {
-    if (x == <!DEBUG_INFO_CONSTANT!>y<!>) {
-        nullableStringArg(<!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+    if (x == y) {
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -42,7 +42,7 @@ fun case_2(x: Int?, y: Nothing?) {
  */
 fun case_3(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -53,7 +53,7 @@ fun case_3(x: Int?) {
  */
 fun case_4(x: Int?) {
     if (x == null) {
-        nullableStringArg(<!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>)
     }
 }
 
@@ -64,7 +64,7 @@ fun case_4(x: Int?) {
  */
 fun case_5(x: Int?) {
     if (x == null) {
-        var y = <!DEBUG_INFO_CONSTANT!>x<!>
-        nullableStringArg(<!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>y<!>)
+        var y = x
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>y<!>)
     }
 }

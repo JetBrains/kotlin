@@ -6,10 +6,10 @@ import kotlin.contracts.*
 
 fun test(x: Any) {
     contract {
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callsInPlace<!><!NO_VALUE_FOR_PARAMETER!>()<!>
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>true.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OPT_IN_USAGE_ERROR!>holdsIn<!><!NO_VALUE_FOR_PARAMETER!>()<!><!>
-        true.<!OPT_IN_USAGE_ERROR!>implies<!>(<!UNRESOLVED_REFERENCE!>a<!><!DEBUG_INFO_MISSING_UNRESOLVED!>==<!><!SYNTAX!><!>)
-        true.<!OPT_IN_USAGE_ERROR!>implies<!>(<!SYNTAX!><!SYNTAX!><!>is<!> <!UNRESOLVED_REFERENCE!>Int<!><!SYNTAX!><!SYNTAX!><!>)<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION!><!CANNOT_INFER_PARAMETER_TYPE!>callsInPlace<!><!NO_VALUE_FOR_PARAMETER!>()<!><!>
+        true.<!ERROR_IN_CONTRACT_DESCRIPTION!><!CANNOT_INFER_PARAMETER_TYPE, OPT_IN_USAGE_ERROR!>holdsIn<!><!NO_VALUE_FOR_PARAMETER!>()<!><!>
+        true.implies(<!UNRESOLVED_REFERENCE!>a<!>==<!SYNTAX!><!>)
+        true.implies(<!SYNTAX!><!SYNTAX!><!>is<!> <!UNRESOLVED_REFERENCE!>Int<!><!SYNTAX!><!SYNTAX!><!>)<!>
     }
 }
 

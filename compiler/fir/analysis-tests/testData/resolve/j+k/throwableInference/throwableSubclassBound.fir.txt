@@ -1,0 +1,7 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval result: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.computeRuntime*s|<R|kotlin/String!|, R|java/lang/RuntimeException!|>(<L> = SAM(computeRuntime@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+    }

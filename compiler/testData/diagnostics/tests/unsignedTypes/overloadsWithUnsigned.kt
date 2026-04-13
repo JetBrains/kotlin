@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: -CorrectSpecificityCheckForSignedAndUnsigned
 fun doStuff(value: Any) = "Any"
 fun doStuff(value: UByte) = "UByte"

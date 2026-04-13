@@ -3,8 +3,8 @@
 
 fun foo(x: Number, y: String?): String {
     val result = "abcde $x ${x as Int} ${y!!} $x $y"
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
-    checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>y<!>)
+    checkSubtype<Int>(x)
+    checkSubtype<String>(y)
     return result
 }
 

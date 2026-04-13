@@ -32,7 +32,7 @@ Tower Data Context:
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty_initializerWithLambda.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> myRun([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> myRun([ResolvedTo(STATUS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParameter> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParameter>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/String| = String(foo), [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = R|/myRun|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] myRun@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
             ^ R|<local>/a|.R|kotlin/String.length|

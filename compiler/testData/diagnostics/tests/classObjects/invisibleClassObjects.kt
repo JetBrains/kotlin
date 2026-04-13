@@ -41,17 +41,17 @@ import a.<!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_REFERENCE!>Companion<!>.quux
 
 fun test() {
     f(A)
-    f(<!INVISIBLE_MEMBER!>B<!>)
-    f(<!INVISIBLE_MEMBER!>C<!>)
-    f(<!INVISIBLE_MEMBER!>D<!>)
+    f(<!INVISIBLE_REFERENCE!>B<!>)
+    f(<!INVISIBLE_REFERENCE!>C<!>)
+    f(<!INVISIBLE_REFERENCE!>D<!>)
 
     A.foo()
-    <!INVISIBLE_REFERENCE!>B<!>.<!INVISIBLE_MEMBER!>bar<!>()
-    C.<!INVISIBLE_MEMBER!>baz<!>()
-    <!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_MEMBER!>quux<!>()
+    <!INVISIBLE_REFERENCE!>B<!>.<!INVISIBLE_REFERENCE!>bar<!>()
+    C.<!INVISIBLE_REFERENCE!>baz<!>()
+    <!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_REFERENCE!>quux<!>()
 
     a.A.foo()
-    a.C.<!INVISIBLE_MEMBER!>baz<!>()
+    a.C.<!INVISIBLE_REFERENCE!>baz<!>()
 }
 
 fun f(unused: Any) {}

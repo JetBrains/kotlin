@@ -47,18 +47,18 @@ public class UnannotatedTypeWithNullMarkedConstructor {
 // FILE: kotlin.kt
 
 interface TestA: nullunmarkedpackage.NullMarkedType {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun unannotatedProduce(): String?
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun unannotatedProduce(): String?
 }
 
 interface TestB: nullunmarkedpackage.UnannotatedType {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun nullMarkedProduce(): String?
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun nullMarkedProduce(): String?
 }
 
 fun test(
     a: nullunmarkedpackage.NullMarkedType,
     b: nullunmarkedpackage.UnannotatedType
 ) {
-    a.unannotatedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    b.nullMarkedConsume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
-    nullunmarkedpackage.UnannotatedTypeWithNullMarkedConstructor(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a.unannotatedConsume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    b.nullMarkedConsume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    nullunmarkedpackage.UnannotatedTypeWithNullMarkedConstructor(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

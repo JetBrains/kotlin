@@ -11,8 +11,8 @@ fun foo(s: String) {}
 fun r(): Int? = null
 
 fun test() {
-    foo(<!TYPE_MISMATCH!>F().p()<!>)
-    foo(<!TYPE_MISMATCH!>r()<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>F().p()<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>r()<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType */

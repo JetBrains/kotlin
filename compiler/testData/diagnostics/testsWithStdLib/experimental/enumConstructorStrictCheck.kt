@@ -5,13 +5,13 @@ annotation class O
 
 enum class Enum1 @O constructor() {
     ENTRY<!OPT_IN_USAGE_ERROR!><!>(),
-    ENTRY2,
+    <!OPT_IN_USAGE_ERROR!>ENTRY2<!>,
     @OptIn(O::class) ENTRY3;
 }
 
 enum class Enum2 {
     ENTRY<!OPT_IN_USAGE_ERROR!><!>(),
-    ENTRY2,
+    <!OPT_IN_USAGE_ERROR!>ENTRY2<!>,
     ENTRY3<!OPT_IN_USAGE_ERROR!><!>(0);
 
     val x: Int
@@ -23,7 +23,7 @@ enum class Enum2 {
 
 enum class Enum3 @O constructor(x: Int = 42) {
     ENTRY(),
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2,<!>
+    ENTRY2,
     ENTRY3<!OPT_IN_USAGE_ERROR!><!>(3);
 
     val x: Int = x

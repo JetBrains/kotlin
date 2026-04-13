@@ -1,6 +1,5 @@
 // IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
-// FIR_IDENTICAL
 
 // FILE: stringVsTAny.kt
 fun <T : Any> useTAny(fn: () -> T) = fn()

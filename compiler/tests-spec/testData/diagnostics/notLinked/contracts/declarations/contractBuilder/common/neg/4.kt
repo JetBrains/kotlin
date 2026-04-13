@@ -13,18 +13,18 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(): Boolean? {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returnsNotNull() implies (<!NULL_FOR_NONNULL_TYPE!>null<!>) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (<!NULL_FOR_NONNULL_TYPE!>null<!>)<!> }
     return true
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(): Boolean {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(false) implies <!CONSTANT_EXPECTED_TYPE_MISMATCH!>0.000001<!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(false) implies <!ARGUMENT_TYPE_MISMATCH!>0.000001<!><!> }
     return true
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(): Boolean? {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(null) implies <!TYPE_MISMATCH!>""<!> }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!>""<!><!> }
     return null
 }

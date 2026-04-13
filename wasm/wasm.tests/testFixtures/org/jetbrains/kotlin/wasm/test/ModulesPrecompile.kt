@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
@@ -13,18 +12,13 @@ import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.create
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoadingPipelinePhase
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
-import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.wasm.config.*
@@ -88,13 +82,6 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
 
     val input = ConfigurationPipelineArtifact(configuration) {}
 
-    @OptIn(K1Deprecation::class)
-    val environment = KotlinCoreEnvironment.createForProduction(
-        input.rootDisposable,
-        configuration,
-        EnvironmentConfigFiles.WASM_CONFIG_FILES,
-    )
-
     fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, outputDir: File) {
         with(configuration) {
             this.outputDir = outputDir
@@ -106,21 +93,9 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             this.includes = includes
         }
 
-        val klibs = loadWebKlibs(
-            configuration = configuration,
-            platformChecker = KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
-        )
-
-        val module = ModulesStructure(
-            project = environment.project,
-            mainModule = MainModule.Klib(includes),
-            compilerConfiguration = configuration,
-            klibs = klibs,
-        )
-
+        val loadedIr = WasmIrLoadingPipelinePhase.executePhase(input)
         val parametersForCompile = WasmBackendPipelinePhase.compileNonIncrementally(
-            configuration = configuration,
-            module = module,
+            loadedIr,
             mainCallArguments = null
         ).first()
 

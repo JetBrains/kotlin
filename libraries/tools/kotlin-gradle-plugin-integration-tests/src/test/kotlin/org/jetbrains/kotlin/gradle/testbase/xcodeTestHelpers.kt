@@ -32,6 +32,7 @@ internal fun TestProject.buildXcodeProject(
     testRunEnvironment: Map<String, String> = emptyMap(),
     buildSettingOverrides: Map<String, String> = emptyMap(),
     appendToProperties: () -> String = { "" },
+    derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
     expectedExitCode: Int = 0,
 ) {
     prepareForXcodebuild(appendToProperties)
@@ -45,6 +46,7 @@ internal fun TestProject.buildXcodeProject(
         action = action,
         buildSettingOverrides = buildSettingOverrides,
         testRunEnvironment = testRunEnvironment,
+        derivedDataPath = derivedDataPath,
         expectedExitCode = expectedExitCode,
     )
 }

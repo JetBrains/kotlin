@@ -16,7 +16,7 @@ fun test1(y: Any) {
     invokeInline(
         { <!UNINITIALIZED_VARIABLE!>x<!>.length },
         when(y) {
-            is String <!UNSUPPORTED_FEATURE!>if { x=" "; true }()<!>  -> ""
+            is String if { <!CAPTURED_VAL_INITIALIZATION!>x<!>=" "; true }()  -> ""
             else -> "1"
         }
     )
@@ -27,7 +27,7 @@ fun test2(y: Any) {
     invokeLater(
         { <!UNINITIALIZED_VARIABLE!>x<!>.length },
         when(y) {
-            is String <!UNSUPPORTED_FEATURE!>if { x=" "; true }()<!>  -> ""
+            is String if { <!CAPTURED_VAL_INITIALIZATION!>x<!>=" "; true }()  -> ""
             else -> "1"
         }
     )
@@ -41,7 +41,7 @@ fun test3() {
             if (true) {
                 <!CAPTURED_VAL_INITIALIZATION!>x<!> = "";""
             } else {
-                x = "";""
+                <!CAPTURED_VAL_INITIALIZATION!>x<!> = "";""
             }
         }
     )
@@ -55,7 +55,7 @@ fun test4() {
             if (true) {
                 <!CAPTURED_VAL_INITIALIZATION!>x<!> = "";""
             } else {
-                x = "";""
+                <!CAPTURED_VAL_INITIALIZATION!>x<!> = "";""
             }
         }
     )
@@ -89,7 +89,7 @@ fun test7() {
     val x: String
     invokeInline(
         { <!UNINITIALIZED_VARIABLE!>x<!>.length },
-        { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" } <!USELESS_ELVIS!>?: { x = "" ; "" }<!>
+        { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" } <!USELESS_ELVIS!>?: { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" }<!>
     )
 }
 
@@ -97,7 +97,7 @@ fun test8() {
     val x: String
     invokeLater(
         { <!UNINITIALIZED_VARIABLE!>x<!>.length },
-        { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" } <!USELESS_ELVIS!>?: { x = "" ; "" }<!>
+        { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" } <!USELESS_ELVIS!>?: { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" }<!>
     )
 }
 

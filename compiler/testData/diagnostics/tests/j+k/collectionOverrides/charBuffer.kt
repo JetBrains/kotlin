@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: CharBuffer.java
 
 public class CharBuffer implements CharSequence {

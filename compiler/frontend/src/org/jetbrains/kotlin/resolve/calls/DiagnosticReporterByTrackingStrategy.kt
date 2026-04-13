@@ -603,7 +603,8 @@ class DiagnosticReporterByTrackingStrategy(
             is InjectedAnotherStubTypeConstraintPosition<*>,
             is SimpleConstraintSystemConstraintPosition,
             ProvideDelegateFixationPosition,
-            is SemiFixVariableConstraintPosition
+            is ThrowableUpperBoundAllowingToFixIntoIt,
+            is SemiFixVariableConstraintPosition,
             -> {
                 if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                     throw AssertionError("Constraint error in unexpected position: $position")

@@ -20,6 +20,8 @@ The module defines test suites using the `jvm-test-suite` plugin.
       the overall test execution time.
 * Escapable characters: a special test suit that runs against classpath and module paths containing symbols that typically should be escaped (whitespaces, hashes, etc)
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testEscapableCharacters` to run them
+* Restricted arguments: verifies that arguments not supported via `applyArgumentStrings` (e.g. `-Xbuild-file`, `-d`) are properly rejected
+    * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testRestrictedArguments` to run them
 * Example: provides examples of the DSL usage. Excluded from the `check` task
     * Use `./gradlew :compiler:build-tools:kotlin-build-tools-api-tests:testExample` to run them
 

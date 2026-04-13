@@ -69,7 +69,7 @@ class Case4() : I {
 
     fun case() {
         I.<!DEBUG_INFO_CALL("fqName: I.Companion.invoke; typeCall: operator function")!>invoke("")<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>I.invoke("")<!>
+        I.invoke("")
         <!DEBUG_INFO_CALL("fqName: Case4.Companion.invoke; typeCall: operator function")!>invoke("")<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>invoke("")<!>
         <!DEBUG_INFO_CALL("fqName: I.Companion.invoke; typeCall: variable&invoke")!>I("")<!>

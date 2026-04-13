@@ -8,7 +8,7 @@ fun run(block: () -> Unit) {
 fun tlFun() {
     class Local {
         inner class Inner {
-            companion object
+            companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
         }
     }
 
@@ -16,7 +16,7 @@ fun tlFun() {
         class Local {
             inner class Inner {
                 companion
-                object
+                <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
             }
         }
     }
@@ -25,7 +25,7 @@ fun tlFun() {
 val lambda = {
     class Local {
         inner class Inner {
-            companion object
+            companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
         }
     }
 }
@@ -33,7 +33,7 @@ val lambda = {
 val anonymous = fun() {
     class Local {
         inner class Inner {
-            companion object
+            companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
         }
     }
 }
@@ -44,7 +44,7 @@ class Class {
             class Local1 {
                 inner class Inner {
                     companion
-                    object
+                    <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
                 }
             }
             return propSetGet
@@ -53,7 +53,7 @@ class Class {
             propSetGet = arg
             class Local2 {
                 inner class Inner {
-                    companion object
+                    companion <!NESTED_CLASS_NOT_ALLOWED_IN_LOCAL_WARNING!>object<!>
                 }
             }
         }

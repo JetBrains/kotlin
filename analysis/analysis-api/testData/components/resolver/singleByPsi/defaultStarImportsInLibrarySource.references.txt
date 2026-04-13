@@ -1,4 +1,4 @@
-KtNameReferenceExpression(68,76): 'Sequence'
+KtNameReferenceExpression(67,75): 'Sequence'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

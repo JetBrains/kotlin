@@ -1,7 +1,0 @@
-package
-
-private val PRIMITIVE_CLASSES: kotlin.collections.List<kotlin.reflect.KClass<out kotlin.Any>>
-private val PRIMITIVE_TO_WRAPPER: kotlin.collections.Map<java.lang.Class<out kotlin.Any>?, java.lang.Class<out kotlin.Any>>
-private val WRAPPER_TO_PRIMITIVE: kotlin.collections.Map<java.lang.Class<out kotlin.Any>, java.lang.Class<out kotlin.Any>?>
-public val java.lang.Class<*>.primitiveByWrapper: java.lang.Class<*>?
-public val java.lang.Class<*>.wrapperByPrimitive: java.lang.Class<*>?

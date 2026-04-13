@@ -7,7 +7,7 @@ fun equalityNotApplicable(a: Int, b: B) {
 
 fun equalityNotApplicableSmartCast(a: Any?, b: Any?) {
     if (a is Int && b is B) {
-        a == b
+        <!EQUALITY_NOT_APPLICABLE_WARNING!>a == b<!>
     }
 }
 
@@ -17,12 +17,12 @@ value class C(val int: Int)
 value class D(val bool: Boolean)
 
 fun forbiddenIdentityEquals(c: C, d: D) {
-    <!EQUALITY_NOT_APPLICABLE, FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
 }
 
 fun forbiddenIdentityEqualsSmartCast(c: Any?, d: Any?) {
     if (c is C && d is D) {
-        c === d
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>c === d<!>
     }
 }
 
@@ -32,7 +32,7 @@ fun implicitBoxingInIdentityEquals(i: Int, a: Any?) {
 
 fun implicitBoxingInIdentityEqualsSmartCast(i: Any?, a: Any?) {
     if (i is Int) {
-        i === a
+        <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>i === a<!>
     }
 }
 
@@ -42,7 +42,7 @@ fun deprecatedIdentityEquals(a: Int, b: Int) {
 
 fun deprecatedIdentityEqualsSmartCast(a: Any?, b: Any?) {
     if (a is Int && b is Int) {
-        a === b
+        <!DEPRECATED_IDENTITY_EQUALS!>a === b<!>
     }
 }
 
@@ -53,8 +53,8 @@ fun incompatibleTypes(a: Int) = when(a) {
 
 fun incompatibleTypesSmartCast(a: Any?) {
     if (a is Int) {
-        when(<!DEBUG_INFO_SMARTCAST!>a<!>) {
-            C(10) -> 1
+        when(a) {
+            <!INCOMPATIBLE_TYPES_WARNING!>C(10)<!> -> 1
             else -> 2
         }
     }
@@ -70,19 +70,19 @@ fun incompatibleEnumComparison(c: B, e: E) {
 
 fun incompatibleEnumComparisonSmartCast(c: Any?, e: Any?) {
     if (c is B && e is E) {
-        c == e
+        <!INCOMPATIBLE_ENUM_COMPARISON!>c == e<!>
     }
 }
 
 fun incompatibleIdentityRegardlessNullability(a: Int?, b: String?) {
     <!EQUALITY_NOT_APPLICABLE!>a == b<!>
-    <!EQUALITY_NOT_APPLICABLE!>a === b<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>a === b<!>
 }
 
 fun incompatibleIdentityRegardlessNullabilitySmartCast(a: Any?, b: Any?) {
     if (a is Int? && b is String?) {
-        a == b
-        a === b
+        <!EQUALITY_NOT_APPLICABLE_WARNING!>a == b<!>
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>
     }
 }
 
@@ -93,31 +93,31 @@ fun incompatibleIdentityRegardlessNullabilityWithNull(a: Int?) {
 
 fun incompatibleIdentityRegardlessNullabilityWithValueClasses(c: C?, d: D?) {
     <!EQUALITY_NOT_APPLICABLE!>c == d<!>
-    <!EQUALITY_NOT_APPLICABLE, FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
 }
 
 fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, d: Any?) {
     if (c is C? && d is D?) {
-        c == d
-        c === d
+        <!EQUALITY_NOT_APPLICABLE_WARNING!>c == d<!>
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>c === d<!>
     }
 }
 
 enum class F
 
 fun <T: E, K: F> incompatibleEnumComparisonWithTypeParameters(e: T, f: K) {
-    e == f
+    <!INCOMPATIBLE_ENUM_COMPARISON!>e == f<!>
 }
 
 interface A
 enum class G : B
 
 fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: I?) {
-    x == i
+    <!INCOMPATIBLE_ENUM_COMPARISON!>x == i<!>
 }
 
 fun incompatibleEnumAndUnrelatedInterface(x: G?, i: A?) {
-    x == i
+    <!INCOMPATIBLE_ENUM_COMPARISON!>x == i<!>
 }
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, enumDeclaration, enumEntry, equalityExpression,

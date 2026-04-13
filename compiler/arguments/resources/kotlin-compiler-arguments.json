@@ -384,6 +384,24 @@
             "major": 2,
             "minor": 4,
             "patch": 0
+        },
+        {
+            "name": "2.4.20",
+            "major": 2,
+            "minor": 4,
+            "patch": 20
+        },
+        {
+            "name": "2.5.0",
+            "major": 2,
+            "minor": 5,
+            "patch": 0
+        },
+        {
+            "name": "2.6.0",
+            "major": 2,
+            "minor": 6,
+            "patch": 0
         }
     ],
     "types": {
@@ -6654,7 +6672,7 @@
                                     "current": "Paths to output directories for friend modules (modules whose internals should be visible).",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "Default",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
@@ -6955,7 +6973,7 @@
                                     "current": "Paths to directories with Java source files.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "Default",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
@@ -7316,7 +7334,7 @@
                                     "current": "Paths to cross-platform libraries in the .klib format.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -7445,7 +7463,7 @@
                                     "current": "Paths to Java 9+ modules.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -8827,7 +8845,7 @@
                                     "current": "List of directories and JAR/ZIP archives to search for user class files.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": null,
+                                "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -9596,7 +9614,7 @@
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "2.0.20",
                                     "stabilizedVersion": null,
-                                    "deprecatedVersion": null,
+                                    "deprecatedVersion": "2.4.20",
                                     "removedVersion": null
                                 },
                                 "argumentType": {

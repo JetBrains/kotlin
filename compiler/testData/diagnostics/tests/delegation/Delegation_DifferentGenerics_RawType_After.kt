@@ -41,9 +41,9 @@ interface KI {
 
 // FILE: test.kt
 
-class C: JI by JC()
+class C: <!IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_ERROR!>JI<!> by JC()
 
-class C2: KI by JKC()
+class C2: <!IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_ERROR!>KI<!> by JKC()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, javaFunction,
 javaType, nullableType, typeParameter */

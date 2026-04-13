@@ -2,7 +2,7 @@
 enum class My { V }
 
 fun test() {
-    val ref = My::<!UNRESOLVED_REFERENCE!>V<!>
+    val ref = My::<!UNSUPPORTED!>V<!>
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

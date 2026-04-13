@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/samConversionClassInProjection.kt
         CALL 'public final fun foo <T> (comparator: <root>.Cmp<in T of <root>.foo>, x: T of <root>.foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.Int
           ARG comparator: TYPE_OP type=<root>.Cmp<kotlin.Int> origin=SAM_CONVERSION typeOperand=<root>.Cmp<kotlin.Int>
-            FUN_EXPR type=kotlin.Function2<@[ParameterName(name = "a")] kotlin.Int, @[ParameterName(name = "b")] kotlin.Int, kotlin.Int> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
                 VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
                 VALUE_PARAMETER kind:Regular name:b index:1 type:kotlin.Int

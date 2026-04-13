@@ -10,10 +10,10 @@ annotation class Ann(
 )
 
 @Ann(
-    p1 = <!INTEGER_OVERFLOW!>java.lang.Integer.MAX_VALUE + 1<!>,
+    p1 = java.lang.Integer.MAX_VALUE + 1,
     p2 = 1 + 1,
-    p3 = <!INTEGER_OVERFLOW, TYPE_MISMATCH!>java.lang.Integer.MAX_VALUE + 1<!>,
-    p4 = <!TYPE_MISMATCH!>1L.toInt() + 1L.toInt()<!>,
+    p3 = <!ARGUMENT_TYPE_MISMATCH!>java.lang.Integer.MAX_VALUE + 1<!>,
+    p4 = <!ARGUMENT_TYPE_MISMATCH!>1L.toInt() + 1L.toInt()<!>,
     p5 = 1L.toInt() + 1L.toInt()
 ) class MyClass
 

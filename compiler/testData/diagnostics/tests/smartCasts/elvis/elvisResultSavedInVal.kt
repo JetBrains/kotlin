@@ -20,7 +20,7 @@ class A {
 fun test1(test:Test?){
     val doAction = test?.booleanValue ?: false
     if(doAction){
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 
@@ -34,23 +34,23 @@ fun test2(test:Test?){
 fun test3(test:Test?){
     val doAction = test?.booleanNullableValue ?: false
     if(doAction){
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 
 fun test4(test:Test?){
     val doAction = test?.callableVal?.invoke() ?: false
     if(doAction){
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 
 fun test5(test:Test?){
     val doAction = test?.a?.booleanValue ?: false
     if(doAction){
-        test<!UNSAFE_CALL!>.<!>doAction()
-        test<!UNSAFE_CALL!>.<!>a<!UNSAFE_CALL!>.<!>doAction()
-        val b: Boolean = <!TYPE_MISMATCH!>test<!UNSAFE_CALL!>.<!>a<!UNSAFE_CALL!>.<!>booleanValue<!>
+        test.doAction()
+        test.a.doAction()
+        val b: Boolean = test.a.booleanValue
     }
 }
 
@@ -58,7 +58,7 @@ fun test6(test:Test?){
     val temp = test
     val doAction = temp?.booleanValue ?: false
     if(doAction){
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 
@@ -66,45 +66,45 @@ fun test7(test:Test?){
     val doAction = test?.booleanValue ?: false
     val temp = doAction
     if(temp) {
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 
 fun test8(test:Test?) {
     val doAction = test?.booleanValue ?: throw Exception()
     if (doAction) {
-        <!DEBUG_INFO_SMARTCAST!>test<!>.doAction()
+        test.doAction()
     }
-    <!DEBUG_INFO_SMARTCAST!>test<!>.doAction()
+    test.doAction()
 }
 
 fun test9(test:Test?) {
     val doAction = test?.booleanValue ?: return
     if (doAction) {
-        <!DEBUG_INFO_SMARTCAST!>test<!>.doAction()
+        test.doAction()
     }
-    <!DEBUG_INFO_SMARTCAST!>test<!>.doAction()
+    test.doAction()
 }
 
 fun test10(test:Test?) {
     val doAction = test!!.booleanNullableValue <!USELESS_ELVIS!>?: false<!>
     if (doAction) {
-        <!DEBUG_INFO_SMARTCAST!>test<!>.doAction()
+        test.doAction()
     }
-    <!DEBUG_INFO_SMARTCAST!>test<!>.doAction()
+    test.doAction()
 }
 
 fun test11(test: TestTypeParameter<Boolean>?){
     val doAction = test?.data ?: false
     if (doAction) {
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 
 fun test12(test: TestTypeParameter<out Boolean>?){
     val doAction = test?.data ?: false
     if (doAction) {
-        test<!UNSAFE_CALL!>.<!>doAction()
+        test.doAction()
     }
 }
 

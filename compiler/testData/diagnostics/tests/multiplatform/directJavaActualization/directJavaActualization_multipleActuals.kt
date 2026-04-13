@@ -5,8 +5,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class <!AMBIGUOUS_ACTUALS{JVM}, IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>(i: Int) {
-    fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
+expect class Foo(i: Int) {
+    fun foo()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -19,8 +19,8 @@ public class Foo {
 
 // FILE: jvm.kt
 
-class <!ACTUAL_MISSING!>Foo<!><T>(t: T) {
-    fun foo() {}
+class <!ACTUAL_MISSING, CLASSIFIER_REDECLARATION!>Foo<!><T>(t: T) {
+    fun <!ACTUAL_MISSING!>foo<!>() {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor, typeParameter */

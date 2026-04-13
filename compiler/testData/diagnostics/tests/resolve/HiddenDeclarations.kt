@@ -18,7 +18,7 @@ fun String.topLevelExtensionFun(){}
 val String.topLevelExtensionProperty: Int get() = 1
 
 open class A {
-    constructor(p: Int) : this(<!TYPE_MISMATCH!>""<!>) {}
+    constructor(p: Int) : this(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     constructor(s: String){}
@@ -41,7 +41,7 @@ open class A {
     fun foo() {
         <!UNRESOLVED_REFERENCE!>topLevelFun<!>()
         <!UNRESOLVED_REFERENCE!>topLevelFun<!>(1)
-        <!UNRESOLVED_REFERENCE, VARIABLE_EXPECTED!>topLevelProperty<!><!DEBUG_INFO_MISSING_UNRESOLVED!>++<!>
+        <!UNRESOLVED_REFERENCE!>topLevelProperty<!><!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>++<!>
         "".<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
         1.<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
         "".<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>
@@ -57,7 +57,7 @@ open class A {
         "".<!UNRESOLVED_REFERENCE!>memberExtensionProperty<!>
         1.<!UNRESOLVED_REFERENCE!>memberExtensionProperty<!>
 
-        A(<!TYPE_MISMATCH!>""<!>)
+        A(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
 }
 
@@ -74,7 +74,7 @@ interface I {
     }
 }
 
-class B : A(<!TYPE_MISMATCH!>""<!>) {
+class B : A(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
     // still can override it
     override fun <!OVERRIDE_DEPRECATION!>memberFun<!>() {
         super.<!UNRESOLVED_REFERENCE!>memberFun<!>() // but cannot call super :)
@@ -84,7 +84,7 @@ class B : A(<!TYPE_MISMATCH!>""<!>) {
 }
 
 class C : A {
-    constructor() : super(<!TYPE_MISMATCH!>""<!>)
+    constructor() : super(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,

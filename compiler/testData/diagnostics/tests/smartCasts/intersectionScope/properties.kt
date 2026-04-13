@@ -14,10 +14,10 @@ interface B: A {
 
 fun test(a: A) {
     if (a is B && a is C) {
-        <!DEBUG_INFO_SMARTCAST!>a<!>.foo = ""
-        <!DEBUG_INFO_SMARTCAST!>a<!>.foo = <!NULL_FOR_NONNULL_TYPE!>null<!>
+        a.foo = ""
+        a.foo = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
-        <!DEBUG_INFO_SMARTCAST!>a<!>.foo.checkType { _<String>() }
+        a.foo.checkType { _<String>() }
     }
 }
 

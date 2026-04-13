@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated as KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -146,24 +145,10 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
     @GradleTest
     @GradleTestVersions
-    @ParameterizedTest(name = "{0} isolated projects support: {1} {displayName}")
-    @GradleTestExtraStringArguments("ENABLE", "DISABLE")
     fun testCustomGroupForMppPublicationInTransitiveDependencies(
         gradleVersion: GradleVersion,
-        kmpIsolatedProjectsSupport: String,
     ) {
-        val kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.valueOf(kmpIsolatedProjectsSupport)
-        var buildOptions = defaultBuildOptions.copy(kmpIsolatedProjectsSupport = kmpIsolatedProjectsSupport)
-
-        if (kmpIsolatedProjectsSupport == @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE) {
-            // See: KT-72394 (Dependency.getProjectDependency is deprecated)
-            if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_11) &&
-                gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_0)
-            ) {
-                buildOptions = buildOptions.copy(warningMode = WarningMode.Summary)
-            }
-            buildOptions = buildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED)
-        }
+        val buildOptions = defaultBuildOptions
 
         fun GradleProject.configureKotlinMultiplatform() {
             buildScriptInjection {
@@ -267,7 +252,6 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 defaultBuildOptions.copy(
                     configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
                     isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-                    kmpIsolatedProjectsSupport = @Suppress("DEPRECATION") KmpIsolatedProjectsSupport.DISABLE,
                 )
             },
         )

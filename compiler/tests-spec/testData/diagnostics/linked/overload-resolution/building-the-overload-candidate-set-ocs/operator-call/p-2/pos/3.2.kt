@@ -88,7 +88,7 @@ class Case() {
         run {
             operator fun E.plus(value: Int) = Case()
 
-            <!DEBUG_INFO_CALL("fqName: testPackCase2.Case.foo.<anonymous>.plus; typeCall: operator extension function")!>e + 1<!>
+            <!DEBUG_INFO_CALL("fqName: testPackCase2.Case.foo.plus; typeCall: operator extension function")!>e + 1<!>
         }
         <!DEBUG_INFO_CALL("fqName: testPackCase2.Case.foo.plus; typeCall: operator extension function")!>e + 1<!>
     }
@@ -169,7 +169,7 @@ class Case() {
         run {
             operator fun E.plusAssign(value: Int) {}
 
-            <!DEBUG_INFO_CALL("fqName: testPackCase4.Case.foo.<anonymous>.plusAssign; typeCall: operator extension function")!>e += 1<!>
+            <!DEBUG_INFO_CALL("fqName: testPackCase4.Case.foo.plusAssign; typeCall: operator extension function")!>e += 1<!>
         }
         <!DEBUG_INFO_CALL("fqName: testPackCase4.Case.foo.plusAssign; typeCall: operator extension function")!>e += 1<!>
     }
@@ -201,7 +201,7 @@ operator fun Delegate.setValue(thisRef: Any?, property: KProperty<*>, value: Str
 
 fun case() {
     class Test {
-        var p: String <!OPERATOR_MODIFIER_REQUIRED, OPERATOR_MODIFIER_REQUIRED!>by<!> Delegate()
+        var p: String by Delegate()
 
         operator fun Delegate.getValue(thisRef: Any?, property: KProperty<*>): String {
             return ""

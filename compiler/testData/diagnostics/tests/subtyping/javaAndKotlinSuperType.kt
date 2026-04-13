@@ -21,11 +21,11 @@ fun test(b: B, c: C, d: D, e: E) {
     eatAString(b)
     eatAString(c)
     eatAString(d)
-    eatAString(<!TYPE_MISMATCH!>e<!>)
+    eatAString(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
 
     eatAStringN(b)
     eatAStringN(c)
-    eatAStringN(<!TYPE_MISMATCH!>d<!>)
+    eatAStringN(<!ARGUMENT_TYPE_MISMATCH!>d<!>)
     eatAStringN(e)
 }
 
@@ -39,7 +39,7 @@ class W: B(), Z
 
 fun test2(w: W) {
     eatAString(w)
-    eatAStringN(<!TYPE_MISMATCH!>w<!>)
+    eatAStringN(<!ARGUMENT_TYPE_MISMATCH!>w<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType */

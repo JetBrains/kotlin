@@ -10,11 +10,11 @@ class X {
 
 
 fun testStar(y: X.Y<*>, t: Any) {
-    X().foo(y, <!TYPE_MISMATCH("CapturedType(*); Any")!>t<!>)
+    X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }
 
 fun testOut(y: X.Y<out Any>, t: Any) {
-    X().foo(y, <!TYPE_MISMATCH("CapturedType(out Any); Any")!>t<!>)
+    X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }
 
 fun testIn(y: X.Y<in Any>, t: Any) {
@@ -22,11 +22,11 @@ fun testIn(y: X.Y<in Any>, t: Any) {
 }
 
 fun <T : Any> testWithParameter(y: X.Y<T>, t: Any) {
-    X().foo(y, <!TYPE_MISMATCH("T; Any")!>t<!>)
+    X().foo(y, <!ARGUMENT_TYPE_MISMATCH!>t<!>)
 }
 
 fun <T : Any> testWithCapturedParameter(y: X.Y<out T>, t: Any) {
-    X().foo(y, <!TYPE_MISMATCH("CapturedType(out T); Any")!>t<!>)
+    X().foo(y, <!MEMBER_PROJECTED_OUT!>t<!>)
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, nestedClass, outProjection,

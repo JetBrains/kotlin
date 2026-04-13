@@ -94,14 +94,14 @@ import contracts.*
 fun case_1(value_1: Any?, value_2: Any?) {
     contracts.case_1(value_1, value_2)
     println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?, value_2: Any?) {
     contracts.case_2(value_1, value_2)
     println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -121,19 +121,19 @@ class case_3_class {
 fun case_4(value_1: Any?, value_2: Any?) {
     if (contracts.case_4_1(value_1, value_2)) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!contracts.case_4_2(value_1, value_2)) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_4_3(value_1, value_2) != null) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_4_4(value_1, value_2) == null) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -141,19 +141,19 @@ fun case_4(value_1: Any?, value_2: Any?) {
 fun case_5(value_1: Any?, value_2: Any?) {
     if (contracts.case_5_1(value_1, value_2)) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!contracts.case_5_2(value_1, value_2)) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_3(value_1, value_2) == null) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_4(value_1, value_2) != null) {
         println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 

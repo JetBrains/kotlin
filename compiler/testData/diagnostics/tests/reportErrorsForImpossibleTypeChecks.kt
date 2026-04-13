@@ -3,7 +3,7 @@
 
 fun main() {
     val x: Int = 42
-    x is <!INCOMPATIBLE_TYPES!>Byte<!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>x is Byte<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, isExpression, localProperty, propertyDeclaration */

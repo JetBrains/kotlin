@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    js(IR) {
+    js {
         binaries.executable()
         nodejs {
         }

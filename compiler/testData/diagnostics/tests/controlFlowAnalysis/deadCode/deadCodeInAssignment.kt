@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun testAssignment() {
-    var <!UNUSED_VARIABLE!>a<!> = 1
-    <!UNREACHABLE_CODE!>a =<!> todo()
+    var <!VARIABLE_NEVER_READ!>a<!> = 1
+    <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> =<!> todo()
 }
 
 class Foo {
@@ -18,15 +18,15 @@ fun testVariableDeclaration() {
 }
 
 fun testPlusAssign() {
-    operator fun Int.plusAssign(<!UNUSED_PARAMETER!>i<!>: Int) {}
+    operator fun Int.plusAssign(i: Int) {}
 
-    var a = 1
+    <!CAN_BE_VAL!>var<!> a = 1
     a <!UNREACHABLE_CODE!>+=<!> todo()
 }
 
 fun testClassPropertyPlusAssign(foo: Foo) {
     foo.property += 1
-    foo.property <!UNREACHABLE_CODE!>+=<!> todo() as Int
+    foo<!UNREACHABLE_CODE!>.property<!> += todo() as Int
 }
 
 

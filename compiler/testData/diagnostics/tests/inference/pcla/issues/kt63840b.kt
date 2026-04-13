@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         if (true)
-            <!TYPE_MISMATCH("DifferentType; TargetType"), TYPE_MISMATCH("DifferentType; TargetType")!>replaceTypeVariable(TargetType())<!>
+            replaceTypeVariable(TargetType())
         else
             DifferentType()
     }

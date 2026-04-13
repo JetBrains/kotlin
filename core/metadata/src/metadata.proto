@@ -213,9 +213,9 @@ message Class {
 
   /*
     hasAnnotations
-    Visibility
-    Modality
-    ClassKind
+    Visibility (3 bits)
+    Modality (2 bits)
+    ClassKind (3 bits)
     isInner
     isData
     isExternal
@@ -295,9 +295,10 @@ message TypeTable {
 message Constructor {
   /*
     hasAnnotations
-    Visibility
+    Visibility (2 bits)
     isSecondary
     hasNonStableParameterNames
+    ReturnValueStatus (2 bits)
   */
   optional int32 flags = 1 [default = 6 /* public constructor, no annotations */];
 
@@ -318,9 +319,9 @@ message Constructor {
 message Function {
   /*
     hasAnnotations
-    Visibility
-    Modality
-    MemberKind
+    Visibility (3 bits)
+    Modality (2 bits)
+    MemberKind (2 bits)
     isOperator
     isInfix
     isInline
@@ -329,6 +330,8 @@ message Function {
     isSuspend
     isExpect
     hasNonStableParameterNames
+    ReturnValueStatus (2 bits)
+    isStatic
   */
   optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
   optional int32 old_flags = 1 [default = 6];
@@ -370,9 +373,9 @@ message Function {
 message Property {
   /*
     hasAnnotations
-    Visibility
-    Modality
-    MemberKind
+    Visibility (3 bits)
+    Modality (2 bits)
+    MemberKind (2 bits)
     isVar
     hasGetter
     hasSetter
@@ -382,6 +385,8 @@ message Property {
     isExternal
     isDelegated
     isExpect
+    ReturnValueStatus (2 bits)
+    isStatic
   */
   optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
   optional int32 old_flags = 1 [default = 2054];
@@ -405,8 +410,8 @@ message Property {
 
   /*
     hasAnnotations
-    Visibility
-    Modality
+    Visibility (3 bits)
+    Modality (2 bits)
     isNotDefault
     isExternal
     isInline
@@ -465,7 +470,7 @@ message ValueParameter {
 message TypeAlias {
   /*
     hasAnnotations
-    Visibility
+    Visibility (2 bits)
   */
   optional int32 flags = 1 [default = 6 /* public, no annotations */];
 

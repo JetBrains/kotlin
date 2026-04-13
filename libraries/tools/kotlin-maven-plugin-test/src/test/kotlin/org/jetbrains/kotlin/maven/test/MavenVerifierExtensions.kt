@@ -18,6 +18,7 @@ import java.util.jar.JarFile
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedReader
 import kotlin.io.path.exists
+import kotlin.io.path.readText
 import kotlin.sequences.forEach
 
 fun Verifier.printLog() {
@@ -58,6 +59,26 @@ fun Verifier.assertFileExists(
     assertTrue(path.exists(), messageSupplier)
 }
 
+fun Verifier.assertFileDoesNotExist(
+    relativePath: String,
+    messageSupplier: () -> String = { "Expected file to be absent, but it exists: $relativePath" },
+) {
+    val path = Path(basedir).resolve(relativePath)
+    assertFalse(path.exists(), messageSupplier)
+}
+
+fun Verifier.assertFileContains(
+    relativePath: String,
+    expectedSubstring: String
+) {
+    val path = Path(basedir).resolve(relativePath)
+    assertTrue(path.exists()) { "Expected file '$relativePath' does not exist" }
+    var contents = path.readText()
+    assertTrue(contents.contains(expectedSubstring)) {
+        "Expected substring '$expectedSubstring' is not found in file '$relativePath' with contents:\n$contents\n\n"
+    }
+}
+
 fun Verifier.assertJarExistsAndNotEmpty(relativePath: String) {
     assertFileExists(relativePath)
     val jarPath = Path(basedir).resolve(relativePath)
@@ -91,6 +112,51 @@ fun Verifier.assertDependencyTreeContains(groupId: String, artifactId: String, v
     assertBuildLogContains("$groupId:$artifactId:jar:$version:$scope")
 }
 
+fun Verifier.assertGoalLogContains(goal: String, vararg substrings: String) {
+    val remaining = substrings.toMutableSet()
+    var inGoal = false
+    forEachBuildLogLine { line ->
+        if ("--- " in line) {
+            inGoal = ":$goal " in line
+        } else if (inGoal) {
+            remaining.removeAll { it in line }
+            if (remaining.isEmpty()) return
+        }
+    }
+    Assertions.fail<Unit>("Build log for goal '$goal' does not contain: ${remaining.joinToString { "'$it'" }}")
+}
+
+fun Verifier.assertModuleGoalLogContains(module: String, goal: String, vararg substrings: String) {
+    val remaining = substrings.toMutableSet()
+    var inGoal = false
+    forEachBuildLogLine { line ->
+        if ("--- " in line) {
+            inGoal = ":$goal " in line && "@ $module " in line
+        } else if (inGoal) {
+            remaining.removeAll { it in line }
+            if (remaining.isEmpty()) return
+        }
+    }
+    Assertions.fail<Unit>("Build log for goal '$goal' in module '$module' does not contain: ${remaining.joinToString { "'$it'" }}")
+}
+
+fun Verifier.assertToolchainAppliedToGoal(goal: String, jdkHome: String, module: String? = null) {
+    val message = "Overriding JDK home path with toolchain JDK: $jdkHome"
+    if (module != null) {
+        assertModuleGoalLogContains(module, goal, message)
+    } else {
+        assertGoalLogContains(goal, message)
+    }
+}
+
+fun Verifier.assertToolchainIgnoredByGoal(goal: String, jdkHome: String) {
+    assertGoalLogContains(
+        goal,
+        "Toolchains are ignored, overwritten by 'jdkHome' parameter",
+        "Overriding JDK home path with: $jdkHome"
+    )
+}
+
 fun Verifier.assertBuildLogLineCount(substring: String, expectedCount: Int) {
     var actualCount = 0
     forEachBuildLogLine { line ->
@@ -103,10 +169,6 @@ fun Verifier.assertBuildLogLineCount(substring: String, expectedCount: Int) {
 
 fun Verifier.assertTestsPassed(expectedCount: Int) {
     assertBuildLogContains("Tests run: $expectedCount, Failures: 0, Errors: 0, Skipped: 0")
-}
-
-fun Verifier.assertScriptGoalDeprecationWarn() {
-    assertBuildLogContains("[WARNING] Executing scripts in maven build files is deprecated and will be removed in further release.")
 }
 
 fun Verifier.assertCompilationFailed() {
@@ -125,6 +187,38 @@ fun Verifier.assertCompilerArgsContain(vararg expected: String) {
         Assertions.fail<Unit>("No '[DEBUG] Kotlin compiler args:' line found in build log. Did you pass -X to the build?")
     }
     Assertions.fail<Unit>("No '[DEBUG] Kotlin compiler args:' line contains all of: ${expected.toList()}")
+}
+
+fun Verifier.assertCompilerArgsDoNotContain(vararg unexpected: String) {
+    forEachBuildLogLine { line ->
+        if ("[DEBUG] Kotlin compiler args:" in line) {
+            for (arg in unexpected) {
+                if (arg in line) {
+                    Assertions.fail<Unit>("Kotlin compiler args unexpectedly contain '$arg' in line: $line")
+                }
+            }
+        }
+    }
+}
+
+fun Verifier.assertGoalCompilerArgsContain(goal: String, vararg expected: String) {
+    var inGoal = false
+    var foundCompilerArgsLine = false
+    forEachBuildLogLine { line ->
+        if ("--- " in line && ":$goal " in line) {
+            inGoal = true
+        } else if (inGoal && "--- " in line) {
+            inGoal = false
+        }
+        if (inGoal && "[DEBUG] Kotlin compiler args:" in line) {
+            foundCompilerArgsLine = true
+            if (expected.all { it in line }) return
+        }
+    }
+    if (!foundCompilerArgsLine) {
+        Assertions.fail<Unit>("No '[DEBUG] Kotlin compiler args:' line found for goal '$goal'. Did you pass -X to the build?")
+    }
+    Assertions.fail<Unit>("No '[DEBUG] Kotlin compiler args:' line for goal '$goal' contains all of: ${expected.toList()}")
 }
 
 fun Verifier.assertBuildLogContains(vararg substring: String) {
@@ -169,7 +263,7 @@ fun Verifier.assertCompiledKotlin(vararg expectedPaths: String) {
     val actualSorted = normalizedActualPaths.sorted().joinToString("\n")
     val expectedSorted = expectedPaths.map { File(it).toPath().normalize().toString() }.sorted().joinToString("\n")
 
-    Assertions.assertEquals(expectedSorted, actualSorted, "Compiled files differ")
+    assertEquals(expectedSorted, actualSorted, "Compiled files differ")
 }
 
 fun Verifier.assertZipContains(relativePath: String, entryName: String) {
@@ -186,6 +280,11 @@ fun Verifier.assertFilesExist(vararg paths: String) {
         val file = base.resolve(path)
         assertTrue(file.exists()) { "$file does not exist" }
     }
+}
+
+fun Verifier.assertFileNotExists(relativePath: String) {
+    val path = Path(basedir).resolve(relativePath)
+    assertFalse(path.exists()) { "File should not exist: $relativePath" }
 }
 
 /**

@@ -145,10 +145,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         PsiElementFinder.EP.getPoint(project).unregisterFinders<JavaElementFinder>()
 
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
-        for (ktFile in ktFiles.values) {
-            ktFile.script?.markAsReplSnippet()
-        }
-
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
             javaSourcesScope = PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)),

@@ -33,12 +33,12 @@ class Test {
 }
 
 private fun Test.<!EXTENSION_SHADOWED_BY_MEMBER!>publicFoo<!>() {}
-fun Test.internalFoo() {}
+fun Test.<!EXTENSION_SHADOWED_BY_MEMBER!>internalFoo<!>() {}
 fun Test.protectedFoo() {}
 fun Test.privateFoo() {}
 
 val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>publicVal<!>: Int get() = 42
-val Test.internalVal: Int get() = 42
+val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>internalVal<!>: Int get() = 42
 val Test.protectedVal: Int get() = 42
 val Test.privateVal: Int get() = 42
 

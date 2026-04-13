@@ -13,7 +13,7 @@ object X : A() {
     }
 
     <!NOTHING_TO_INLINE!>inline<!> fun doTest(): String {
-        return <!SUPER_CALL_FROM_PUBLIC_INLINE_ERROR!>super.test()<!>
+        return <!SUPER_CALL_FROM_PUBLIC_INLINE!>super<!>.test()
     }
 }
 

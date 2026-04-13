@@ -4,15 +4,15 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-fun foo(): <!UNSUPPORTED, UNSUPPORTED{JVM}!>Array<Nothing?><!> = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, REIFIED_TYPE_FORBIDDEN_SUBSTITUTION{JVM}, UNSUPPORTED, UNSUPPORTED{JVM}!>arrayOf<!>(null, null)
+fun foo(): <!UNSUPPORTED!>Array<Nothing?><!> = <!UNSUPPORTED!>arrayOf<!>(null, null)
 
-fun <<!UPPER_BOUND_CANNOT_BE_ARRAY{JVM}!>T : Array<*><!>> bar(arg: T) {}
+fun <<!UPPER_BOUND_CANNOT_BE_ARRAY!>T : Array<*><!>> bar(arg: T) {}
 
 // MODULE: m2-jvm()()(m1-common)
 
 fun test() {
     val res = <!UNSUPPORTED!>foo<!>()
-    bar(<!UNSUPPORTED!>res<!>)
+    <!UNSUPPORTED!>bar<!>(<!UNSUPPORTED!>res<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, starProjection,

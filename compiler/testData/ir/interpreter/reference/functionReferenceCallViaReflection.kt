@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
-
 @CompileTimeCalculation
 class A(val a: Int) {
     fun foo(): Int {

@@ -83,7 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
             public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getValue([ResolvedTo(ANNOTATION_ARGUMENTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|) [evaluated = String(getValue type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|) [evaluated = String(getValue nested type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|) [evaluated = String(getValue nested nested type ref 0)])  kotlin/Int>>| { LAZY_BLOCK }
 
-            public open override [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -94,4 +94,3 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|) [evaluated = String(set 0)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|) [evaluated = String(getValue type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|) [evaluated = String(getValue nested type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|) [evaluated = String(getValue nested nested type ref 0)])  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
-

@@ -30,29 +30,29 @@ fun withBoxedGenericReceiver(arg: Box<Generic<*>>.() -> Unit) {}
 // FILE: c.kt
 
 fun test() {
-    produceBoxedConcrete()
-    produceBoxedGeneric()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>()
 
-    consumeBoxedConcrete(produceBoxedConcrete())
-    consumeBoxedGeneric(produceBoxedGeneric())
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedConcrete<!>(<!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>())
+    <!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>(<!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>())
 
-    produceBoxedConcrete().useBoxedConcreteAsExtensionReceiver()
-    produceBoxedGeneric().useBoxedGenericAsExtensionReceiver()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>().<!MISSING_DEPENDENCY_CLASS!>useBoxedConcreteAsExtensionReceiver<!>()
+    <!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>().<!MISSING_DEPENDENCY_CLASS!>useBoxedGenericAsExtensionReceiver<!>()
 
-    withBoxedConcreteParameter { arg -> }
-    withBoxedGenericParameter { arg -> }
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteParameter<!> { arg -> }
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericParameter<!> { arg -> }
 
-    withBoxedConcreteParameter(fun(arg) {})
-    withBoxedGenericParameter(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteParameter<!>(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericParameter<!>(fun(arg) {})
 
-    withBoxedConcreteReceiver {}
-    withBoxedGenericReceiver {}
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedConcreteReceiver<!> {}
+    <!MISSING_DEPENDENCY_CLASS!>withBoxedGenericReceiver<!> {}
 
-    ::produceBoxedConcrete
-    ::produceBoxedGeneric
+    ::<!MISSING_DEPENDENCY_CLASS!>produceBoxedConcrete<!>
+    ::<!MISSING_DEPENDENCY_CLASS!>produceBoxedGeneric<!>
 
-    ::consumeBoxedConcrete
-    ::consumeBoxedGeneric
+    ::<!MISSING_DEPENDENCY_CLASS!>consumeBoxedConcrete<!>
+    ::<!MISSING_DEPENDENCY_CLASS!>consumeBoxedGeneric<!>
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, callableReference, checkNotNullCall, funWithExtensionReceiver,

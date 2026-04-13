@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // See also KT-5198 / KT-10186
 
 inline fun doCall(f: () -> Unit) = f()

@@ -11,10 +11,10 @@ open class Container {
         open fun m() {}
     }
 
-    interface <!CYCLIC_SCOPES_WITH_COMPANION!>DerivedAbstract<!> : <!UNRESOLVED_REFERENCE!>Base<!>
+    interface DerivedAbstract : Base
 
-    companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract {
-        <!NOTHING_TO_OVERRIDE!>override<!> fun m() {}
+    companion object : DerivedAbstract {
+        override fun m() {}
     }
 }
 

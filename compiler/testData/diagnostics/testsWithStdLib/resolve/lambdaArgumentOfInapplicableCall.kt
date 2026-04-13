@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // KT-45010
 fun foo(map: MutableMap<Int, String>) {
-    map.getOrPut(<!TYPE_MISMATCH!>"Not an Int"<!>) {
+    map.getOrPut(<!ARGUMENT_TYPE_MISMATCH!>"Not an Int"<!>) {
         "Hello" + " world"
     }
 }

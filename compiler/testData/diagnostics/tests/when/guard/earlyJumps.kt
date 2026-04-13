@@ -7,18 +7,18 @@ typealias BooleanAlias = Boolean
 
 fun earlyJumpInGuard(x: Any) {
     when (x) {
-        is String <!UNSUPPORTED_FEATURE!>if x == "10" ?: throw Exception()<!> -> 3
-        is String <!UNSUPPORTED_FEATURE!>if true && throw Exception()<!> -> 3
-        is String <!UNSUPPORTED_FEATURE!>if false || throw Exception()<!> -> 3
-        is String <!UNSUPPORTED_FEATURE!>if {throw Exception()}()<!> -> 3
-        is String <!UNSUPPORTED_FEATURE!>if true && x == "10" ?: return Unit<!> -> 3
-        is String <!UNSUPPORTED_FEATURE!>if return Unit<!> -> 3
+        is String if x == "10" <!USELESS_ELVIS!>?: throw Exception()<!> -> 3
+        is String if true && throw Exception() -> 3
+        is String if false || throw Exception() -> 3
+        is String if {throw Exception()}() -> 3
+        is String if true && x == "10" <!USELESS_ELVIS!>?: return Unit<!> -> 3
+        is String if return Unit -> 3
     }
 
     for (i in 1 .. 10) {
         when (x) {
-            is String <!UNSUPPORTED_FEATURE!>if x == "" || break<!> -> 100
-            is BooleanAlias <!UNSUPPORTED_FEATURE!>if x && continue<!> -> 200
+            is String if x == "" || break -> 100
+            is BooleanAlias if x && continue -> 200
         }
     }
 }

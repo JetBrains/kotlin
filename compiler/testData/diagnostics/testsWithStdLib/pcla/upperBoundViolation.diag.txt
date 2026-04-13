@@ -1,4 +1,3 @@
-/upperBoundViolation.kt:10:9: error: upper bound violation for generic parameter `T` of `printGenericNumber`: String is not a subtype of Number
-        printGenericNumber(this[0])
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/upperBoundViolation.kt:(257,275): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
 
+/upperBoundViolation.kt:(276,283): error: Argument type mismatch: actual type is 'String', but 'Number' was expected.

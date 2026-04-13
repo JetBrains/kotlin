@@ -1,0 +1,9 @@
+# Changes to the parser
+watch = [
+    "compiler/psi/parser/src/org/jetbrains/kotlin/",
+]
+
+# Most likely require changes/new cases in the test data
+requires = [
+    "compiler/psi/psi-impl/testData/",
+]

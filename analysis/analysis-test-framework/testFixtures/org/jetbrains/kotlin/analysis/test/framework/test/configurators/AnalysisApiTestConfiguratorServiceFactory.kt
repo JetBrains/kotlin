@@ -39,16 +39,17 @@ fun AnalysisApiTestConfiguratorFactoryData.defaultPattern(): String = when (modu
 
 enum class AnalysisSessionMode(val suffix: String) {
     Normal("Normal"),
-
-    Dependent("Dependent");
+    Dependent("Dependent"),
+    ;
 }
 
 enum class AnalysisApiMode(val suffix: String) {
     Ide("Ide"),
-    Standalone("Standalone");
+    Standalone("Standalone"),
+    ;
 }
 
 enum class FrontendKind(val suffix: String) {
     Fir("Fir"),
-    Fe10("Fe10"),
+    ;
 }

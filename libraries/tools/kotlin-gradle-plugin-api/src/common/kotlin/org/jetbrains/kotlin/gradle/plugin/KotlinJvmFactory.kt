@@ -66,22 +66,6 @@ interface KotlinJvmFactory {
     fun createKotlinAndroidExtension(): KotlinAndroidExtension
 
     /**
-     * Creates a new instance of [KotlinJvmOptionsDeprecated] that can be used to configure JVM or Android-specific compilations.
-     *
-     * Note: The [KotlinJvmCompilerOptions] instance inside [KotlinJvmOptionsDeprecated] is different from what is returned
-     * by [createCompilerJvmOptions].
-     *
-     * @since 1.8.0
-     */
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
-    @Deprecated(
-        message = "Replaced by compilerJvmOptions",
-        replaceWith = ReplaceWith("createCompilerJvmOptions()"),
-        level = DeprecationLevel.ERROR,
-    )
-    fun createKotlinJvmOptions(): KotlinJvmOptionsDeprecated
-
-    /**
      * Creates a new instance of [KotlinJvmCompilerOptions] that can be used to configure JVM or Android-specific compilations.
      *
      * @since 1.8.0

@@ -24,23 +24,23 @@ expect var onSetter: String
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetter<!>: String
-    get() = ""
+actual val onGetter: String
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get<!>() = ""
 
-actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetterImplicit<!>: String = ""
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val onGetterImplicit: String = ""
 
-actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetterWithExplicitTarget<!>: String
-    get() = ""
+actual val onGetterWithExplicitTarget: String
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get<!>() = ""
 
 actual val explicitTargetMatchesWithoutTarget: String
     @Ann get() = ""
 
 @Ann
-actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>setOnPropertyWithoutTargetNotMatch<!>: String = ""
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val setOnPropertyWithoutTargetNotMatch: String = ""
 
-actual var <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onSetter<!>: String
+actual var onSetter: String
     get() = ""
-    set(_) {}
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>set<!>(_) {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetPropertyGetter, expect, getter,
 propertyDeclaration, setter, stringLiteral */

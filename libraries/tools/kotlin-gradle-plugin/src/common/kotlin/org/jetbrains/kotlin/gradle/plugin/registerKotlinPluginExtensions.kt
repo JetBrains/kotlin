@@ -107,15 +107,11 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, ConfigureKotlinTopLevelDependenciesDSL)
             register(project, SwiftImportSetupAction)
 
-            if (isKmpProjectIsolationEnabled) {
-                register(project, ProjectStructureMetadataForKMPSetupAction)
-                register(project, ExportCommonSourceSetsMetadataLocations)
-                register(project, ExportCrossCompilationMetadata)
-                register(project, ExportRootModuleCoordinates)
-                register(project, ExportTargetPublicationCoordinates)
-            } else {
-                register(project, GlobalProjectStructureMetadataStorageSetupAction)
-            }
+            register(project, ProjectStructureMetadataForKMPSetupAction)
+            register(project, ExportCommonSourceSetsMetadataLocations)
+            register(project, ExportCrossCompilationMetadata)
+            register(project, ExportRootModuleCoordinates)
+            register(project, ExportTargetPublicationCoordinates)
 
             register(project, NativeToolchainProjectSetupAction)
             register(project, UklibPublicationSetupAction)
@@ -209,15 +205,12 @@ internal fun Project.registerKotlinPluginExtensions() {
     }
 }
 
-private val Project.isKmpProjectIsolationEnabled get() = PropertiesProvider(project).kotlinKmpProjectIsolationEnabled
 
 /* Helper functions to make configuration code above easier to read */
 
 private val Project.isMultiplatform get() = multiplatformExtensionOrNull != null
 
 private val Project.isJvm get() = kotlinJvmExtensionOrNull != null
-
-private val Project.isJs get() = kotlinExtensionOrNull is KotlinJsProjectExtension
 
 private val Project.isAndroid get() = kotlinExtension is KotlinAndroidProjectExtension
 

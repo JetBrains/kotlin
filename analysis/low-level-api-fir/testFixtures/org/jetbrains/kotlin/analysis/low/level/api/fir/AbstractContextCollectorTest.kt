@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -138,7 +138,6 @@ internal object ElementContextRenderer {
     private fun StringBuilder.renderScope(scope: FirScope) {
         when (scope) {
             is FirDefaultSimpleImportingScope, is FirDefaultStarImportingScope -> {
-                Unit
                 // Skip to avoid fixing default imports in an unrelated test
             }
             is FirPackageMemberScope -> {
@@ -267,7 +266,7 @@ private fun FirScope.flatten(): List<FirScope> {
 }
 
 abstract class AbstractContextCollectorSourceTest : AbstractContextCollectorTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()
 }
 
 abstract class AbstractContextCollectorScriptTest : AbstractContextCollectorTest() {

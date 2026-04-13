@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: ClassWithExternalAnnotatedMembers.java
 import org.jetbrains.annotations.NotNull;
 

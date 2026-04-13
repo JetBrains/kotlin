@@ -15,7 +15,7 @@ class A(val k: String)
 fun test1() {
     val x: String
     invokeInline(
-        { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        { x.length },
         try { x = ""; "" } finally { "" }
     )
 }
@@ -31,7 +31,7 @@ fun test2() {
 fun test3() {
     val x: String
     invokeInline(
-        { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        { x.length },
         try { "" } catch (e: Exception) { "" } finally { x=""; "" }
     )
 }
@@ -47,7 +47,7 @@ fun test4() {
 fun test5() {
     val x: String
     invokeInline(
-        { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        { x.length },
         object {
             init {
                 x = ""
@@ -71,7 +71,7 @@ fun test6() {
 fun test7() {
     val x: String
     invokeInline(
-        { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        { x.length },
         A(if (true) { x = ""; "" } else { x = ""; "" })
     )
 }

@@ -19,7 +19,7 @@ val myProp = 8
 inline fun case_8(block: () -> Unit) {
     myProp
     <!CONTRACT_NOT_ALLOWED!>contract<!> {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
 }
 

@@ -39,8 +39,8 @@ fun case_3(value_1: Any?): String = when (value_1) {
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any): String = when (value_1) {
-    <!USELESS_IS_CHECK!>is Any<!USELESS_NULLABLE_CHECK!>?<!><!> -> ""
-    else -> ""
+    <!USELESS_IS_CHECK!>is Any?<!> -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*

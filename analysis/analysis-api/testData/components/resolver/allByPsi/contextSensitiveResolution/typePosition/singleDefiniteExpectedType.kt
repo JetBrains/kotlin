@@ -114,5 +114,3 @@ fun test(arg: ITestContravariant2<in SealedClass>): String = when (arg.a) {
     is SealedInheritor2 -> "201"
     else -> "301"
 }
-
-// IGNORE_STABILITY_K1: candidates

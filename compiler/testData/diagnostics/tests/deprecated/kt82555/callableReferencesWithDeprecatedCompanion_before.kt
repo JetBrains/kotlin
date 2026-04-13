@@ -15,9 +15,9 @@ typealias T = C
 
 fun test() {
     val ref = C::foo
-    val wrongRef = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>C::bar<!>
+    val wrongRef = <!DEPRECATION_ERROR!>C<!>::bar
     val typealiasRef = T::foo
-    val wrongTypealiasRef = T::bar
+    val wrongTypealiasRef = <!DEPRECATION_ERROR!>T<!>::bar
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, localProperty,

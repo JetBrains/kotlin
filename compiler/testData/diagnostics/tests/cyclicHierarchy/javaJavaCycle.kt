@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// FIR_IDENTICAL
 // FILE: A.java
 
 public interface A extends A {

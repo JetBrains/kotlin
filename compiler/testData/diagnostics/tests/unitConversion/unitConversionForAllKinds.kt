@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
@@ -13,7 +14,7 @@ fun test(g: () -> String, h: (Float) -> String) {
     foo { "something" }
     foo(g)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float")!>fooGeneric(h)<!>
+    fooGeneric(h)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, nullableType,

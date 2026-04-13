@@ -9,7 +9,7 @@ public class Jaba {
 
 // FILE: test.kt
 class My : Jaba() {
-    private val a: String = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!>: String = "FAIL"
 
     operator fun plus(my: My) = my
 }
@@ -17,7 +17,7 @@ class My : Jaba() {
 fun create(): My? = My()
 
 fun box(): String {
-    return (create() ?: My()).a
+    return (create() ?: My()).<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, flexibleType, functionDeclaration, javaProperty, javaType,

@@ -15,13 +15,13 @@ interface Process {
 }
 
 fun run(filter: IntPredicate, allProcesses: Stream<Process>): List<IntLongPair> {
-    return allProcesses.filter {
+    return <!RETURN_TYPE_MISMATCH!>allProcesses.filter {
         filter.test(it.pid())
     }.map<IntLongPair?> {
         val duration = it.totalCpuDuration()
-        if (duration != null) IntLongPair(it.pid(), <!DEBUG_INFO_SMARTCAST!>duration<!>)
+        if (duration != null) IntLongPair(it.pid(), duration)
         else null
-    }.toList()
+    }.toList()<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,

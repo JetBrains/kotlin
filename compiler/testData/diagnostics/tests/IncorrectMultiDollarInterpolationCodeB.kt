@@ -10,16 +10,16 @@
 // string literal kinds: single-line, multi-line
 fun emptyInterpolation() {
     "${<!SYNTAX!><!>}"
-    $"${<!SYNTAX!><!>}"
-    $$"$${<!SYNTAX!><!>}"
-    $$$$"$$$${<!SYNTAX!><!>}"
-    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>}"
+    <!UNSUPPORTED_FEATURE{LT}!>$"${<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"$${<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"$$$${<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"$$$$$$$${<!SYNTAX!><!>}"<!>
 
     """${<!SYNTAX!><!>}"""
-    $"""${<!SYNTAX!><!>}"""
-    $$"""$${<!SYNTAX!><!>}"""
-    $$$$"""$$$${<!SYNTAX!><!>}"""
-    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>}"""
+    <!UNSUPPORTED_FEATURE{LT}!>$"""${<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"""$${<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"""$$$${<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"""$$$$$$$${<!SYNTAX!><!>}"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -27,16 +27,16 @@ fun emptyInterpolation() {
 // string literal kinds: single-line, multi-line
 fun blankInterpolation() {
     "${<!SYNTAX!><!>    }"
-    $"${<!SYNTAX!><!>    }"
-    $$"$${<!SYNTAX!><!>    }"
-    $$$$"$$$${<!SYNTAX!><!>    }"
-    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>    }"
+    <!UNSUPPORTED_FEATURE{LT}!>$"${<!SYNTAX!><!>    }"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"$${<!SYNTAX!><!>    }"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"$$$${<!SYNTAX!><!>    }"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"$$$$$$$${<!SYNTAX!><!>    }"<!>
 
     """${<!SYNTAX!><!>    }"""
-    $"""${<!SYNTAX!><!>    }"""
-    $$"""$${<!SYNTAX!><!>    }"""
-    $$$$"""$$$${<!SYNTAX!><!>    }"""
-    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>    }"""
+    <!UNSUPPORTED_FEATURE{LT}!>$"""${<!SYNTAX!><!>    }"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"""$${<!SYNTAX!><!>    }"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"""$$$${<!SYNTAX!><!>    }"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"""$$$$$$$${<!SYNTAX!><!>    }"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -45,25 +45,25 @@ fun blankInterpolation() {
 fun linebreakInterpolation() {
     "${<!SYNTAX!><!>
     }"
-    $"${<!SYNTAX!><!>
-    }"
-    $$"$${<!SYNTAX!><!>
-    }"
-    $$$$"$$$${<!SYNTAX!><!>
-    }"
-    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>
-    }"
+    <!UNSUPPORTED_FEATURE{LT}!>$"${<!SYNTAX!><!>
+    }"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"$${<!SYNTAX!><!>
+    }"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"$$$${<!SYNTAX!><!>
+    }"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"$$$$$$$${<!SYNTAX!><!>
+    }"<!>
 
     """${<!SYNTAX!><!>
     }"""
-    $"""${<!SYNTAX!><!>
-    }"""
-    $$"""$${<!SYNTAX!><!>
-    }"""
-    $$$$"""$$$${<!SYNTAX!><!>
-    }"""
-    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>
-    }"""
+    <!UNSUPPORTED_FEATURE{LT}!>$"""${<!SYNTAX!><!>
+    }"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"""$${<!SYNTAX!><!>
+    }"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"""$$$${<!SYNTAX!><!>
+    }"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"""$$$$$$$${<!SYNTAX!><!>
+    }"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -119,10 +119,10 @@ fun interpolationOfMisplacedDollar() {
     <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"<!>
 
     "${<!SYNTAX!><!>$<!SYNTAX!><!>}"
-    $"${<!SYNTAX!><!>$<!SYNTAX!><!>}"
-    $$"$${<!SYNTAX!><!>$<!SYNTAX!><!>}"
-    $$$$"$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"
-    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"
+    <!UNSUPPORTED_FEATURE{LT}!>$"${<!SYNTAX!><!>$<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"$${<!SYNTAX!><!>$<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"<!>
 
 
     """$<!UNRESOLVED_REFERENCE!>`$`<!>"""
@@ -132,10 +132,10 @@ fun interpolationOfMisplacedDollar() {
     <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$`<!>"""<!>
 
     """${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
-    $"""${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
-    $$"""$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
-    $$$$"""$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
-    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""
+    <!UNSUPPORTED_FEATURE{LT}!>$"""${<!SYNTAX!><!>$<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"""$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"""$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"""$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>}"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
@@ -149,10 +149,10 @@ fun interpolationOfMisplacedInterpolation() {
     <!UNSUPPORTED_FEATURE!>$$$$$$$$"$$$$$$$$<!UNRESOLVED_REFERENCE!>`$$$$$$$$value`<!>"<!>
 
     "${<!SYNTAX!><!>$value<!SYNTAX!><!>}"
-    $"${<!SYNTAX!><!>$value<!SYNTAX!><!>}"
-    $$"$${<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"
-    $$$$"$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"
-    $$$$$$$$"$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"
+    <!UNSUPPORTED_FEATURE{LT}!>$"${<!SYNTAX!><!>$value<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"$${<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"<!>
 
 
     """$<!UNRESOLVED_REFERENCE!>`$value`<!>"""
@@ -162,27 +162,27 @@ fun interpolationOfMisplacedInterpolation() {
     <!UNSUPPORTED_FEATURE!>$$$$$$$$"""$$$$$$$$<!UNRESOLVED_REFERENCE!>`$$$$$$$$value`<!>"""<!>
 
     """${<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
-    $"""${<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
-    $$"""$${<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
-    $$$$"""$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
-    $$$$$$$$"""$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"""
+    <!UNSUPPORTED_FEATURE{LT}!>$"""${<!SYNTAX!><!>$value<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"""$${<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"""$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"""$$$$$$$${<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$<!SYNTAX!><!>$value<!SYNTAX!><!>}"""<!>
 }
 
 // interpolation prefix length: 0, 1, 2, 4, 8
 // interpolation kinds: of arbitrary expression
 // string literal kinds: single-line, multi-line
 fun interpolationOfIncorrectExpression() {
-    "${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    $"${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    $$"$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    $$$$"$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
-    $$$$$$$$"$$$$$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"
+    "${42 +<!SYNTAX!><!>}"
+    <!UNSUPPORTED_FEATURE{LT}!>$"${42 +<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"$${42 +<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"$$$${42 +<!SYNTAX!><!>}"<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"$$$$$$$${42 +<!SYNTAX!><!>}"<!>
 
-    """${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    $"""${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    $$"""$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    $$$$"""$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
-    $$$$$$$$"""$$$$$$$${42 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!><!SYNTAX!><!>}"""
+    """${42 +<!SYNTAX!><!>}"""
+    <!UNSUPPORTED_FEATURE{LT}!>$"""${42 +<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$"""$${42 +<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$"""$$$${42 +<!SYNTAX!><!>}"""<!>
+    <!UNSUPPORTED_FEATURE{LT}!>$$$$$$$$"""$$$$$$$${42 +<!SYNTAX!><!>}"""<!>
 }
 
 val runTimeConstant get() = 42

@@ -3,395 +3,395 @@
 
 open class MemberScope {
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testBasic()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testBasic()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testBasic()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testBasic()<!> {}
     
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testIdenticalReturnTypes(): UserKlass<!> = UserKlass()
-    <!CONFLICTING_OVERLOADS!>open fun testIdenticalReturnTypes(): UserKlass<!> = UserKlass()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testIdenticalReturnTypes(): UserKlass<!> = UserKlass()
+    open <!CONFLICTING_OVERLOADS!>fun testIdenticalReturnTypes(): UserKlass<!> = UserKlass()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testDifferencesInReturnTypePresence(): Unit<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testDifferencesInReturnTypePresence()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testDifferencesInReturnTypePresence(): Unit<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testDifferencesInReturnTypePresence()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun testDifferencesInReturnTypePresenceReverse(): Unit<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testDifferencesInReturnTypePresenceReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testDifferencesInReturnTypePresenceReverse(): Unit<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testDifferencesInReturnTypePresenceReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testDifferentReturnTypes(): UserKlassA<!> = UserKlassA()
-    <!CONFLICTING_OVERLOADS!>open fun testDifferentReturnTypes(): UserKlassB<!> = UserKlassB()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testDifferentReturnTypes(): UserKlassA<!> = UserKlassA()
+    open <!CONFLICTING_OVERLOADS!>fun testDifferentReturnTypes(): UserKlassB<!> = UserKlassB()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesA(): Invariant<UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesA(): Invariant<out UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesA(): Invariant<UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesA(): Invariant<out UserKlass><!> = Invariant()
 
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesAReverse(): Invariant<UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesAReverse(): Invariant<out UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesAReverse(): Invariant<UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesAReverse(): Invariant<out UserKlass><!> = Invariant()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesB(): Invariant<UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesB(): Invariant<in UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesB(): Invariant<UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesB(): Invariant<in UserKlass><!> = Invariant()
 
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesBReverse(): Invariant<UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesBReverse(): Invariant<in UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesBReverse(): Invariant<UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesBReverse(): Invariant<in UserKlass><!> = Invariant()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesC(): Invariant<UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesC(): Invariant<*><!> = Invariant<UserKlass>()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesC(): Invariant<UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesC(): Invariant<*><!> = Invariant<UserKlass>()
 
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesCReverse(): Invariant<UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesCReverse(): Invariant<*><!> = Invariant<UserKlass>()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesCReverse(): Invariant<UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesCReverse(): Invariant<*><!> = Invariant<UserKlass>()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesD(): Invariant<out UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesD(): Invariant<*><!> = Invariant<UserKlass>()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesD(): Invariant<out UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesD(): Invariant<*><!> = Invariant<UserKlass>()
 
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesDReverse(): Invariant<out UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesDReverse(): Invariant<*><!> = Invariant<UserKlass>()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesDReverse(): Invariant<out UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesDReverse(): Invariant<*><!> = Invariant<UserKlass>()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesE(): Invariant<in UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesE(): Invariant<*><!> = Invariant<UserKlass>()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesE(): Invariant<in UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesE(): Invariant<*><!> = Invariant<UserKlass>()
 
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesEReverse(): Invariant<in UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesEReverse(): Invariant<*><!> = Invariant<UserKlass>()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesEReverse(): Invariant<in UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesEReverse(): Invariant<*><!> = Invariant<UserKlass>()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesF(): Invariant<out UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesF(): Invariant<in UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesF(): Invariant<out UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesF(): Invariant<in UserKlass><!> = Invariant()
 
-    <!CONFLICTING_OVERLOADS!>open fun testVarianceDifferentReturnTypesFReverse(): Invariant<out UserKlass><!> = Invariant()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testVarianceDifferentReturnTypesFReverse(): Invariant<in UserKlass><!> = Invariant()
+    open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesFReverse(): Invariant<out UserKlass><!> = Invariant()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testVarianceDifferentReturnTypesFReverse(): Invariant<in UserKlass><!> = Invariant()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testTypeAliasedReturnTypes(): UserKlass<!> = UserKlass()
-    <!CONFLICTING_OVERLOADS!>open fun testTypeAliasedReturnTypes(): SameUserKlass<!> = UserKlass()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedReturnTypes(): UserKlass<!> = UserKlass()
+    open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedReturnTypes(): SameUserKlass<!> = UserKlass()
 
-    <!CONFLICTING_OVERLOADS!>open fun testTypeAliasedReturnTypesReverse(): UserKlass<!> = UserKlass()
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testTypeAliasedReturnTypesReverse(): SameUserKlass<!> = UserKlass()
+    open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedReturnTypesReverse(): UserKlass<!> = UserKlass()
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedReturnTypesReverse(): SameUserKlass<!> = UserKlass()
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun UserKlass.testIdenticalExtensionReceivers()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun UserKlass.testIdenticalExtensionReceivers()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun UserKlass.testIdenticalExtensionReceivers()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun UserKlass.testIdenticalExtensionReceivers()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun UserKlass.testTypeAliasedExtensionReceivers()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun SameUserKlass.testTypeAliasedExtensionReceivers()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun UserKlass.testTypeAliasedExtensionReceivers()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun SameUserKlass.testTypeAliasedExtensionReceivers()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun UserKlass.testTypeAliasedExtensionReceiversReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun SameUserKlass.testTypeAliasedExtensionReceiversReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun UserKlass.testTypeAliasedExtensionReceiversReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun SameUserKlass.testTypeAliasedExtensionReceiversReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testIdenticalValueParameters(arg: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testIdenticalValueParameters(arg: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testIdenticalValueParameters(arg: UserKlass)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testIdenticalValueParameters(arg: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testDifferentlyNamedValueParameters(argA: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testDifferentlyNamedValueParameters(argB: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testDifferentlyNamedValueParameters(argA: UserKlass)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testDifferentlyNamedValueParameters(argB: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testTypeAliasedValueParameterTypes(arg: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testTypeAliasedValueParameterTypes(arg: SameUserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedValueParameterTypes(arg: UserKlass)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedValueParameterTypes(arg: SameUserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun testTypeAliasedValueParameterTypesReverse(arg: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testTypeAliasedValueParameterTypesReverse(arg: SameUserKlass)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedValueParameterTypesReverse(arg: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testTypeAliasedValueParameterTypesReverse(arg: SameUserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleIdenticalValueParameters(arg1: UserKlassA, arg2: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleIdenticalValueParameters(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleIdenticalValueParameters(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleIdenticalValueParameters(arg1: UserKlassA, arg2: UserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleDifferentlyNamedValueParametersA(arg1: UserKlassA, arg2A: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleDifferentlyNamedValueParametersA(arg1: UserKlassA, arg2B: UserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleDifferentlyNamedValueParametersA(arg1: UserKlassA, arg2A: UserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleDifferentlyNamedValueParametersA(arg1: UserKlassA, arg2B: UserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleDifferentlyNamedValueParametersB(arg1A: UserKlassA, arg2A: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleDifferentlyNamedValueParametersB(arg1B: UserKlassA, arg2B: UserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleDifferentlyNamedValueParametersB(arg1A: UserKlassA, arg2A: UserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleDifferentlyNamedValueParametersB(arg1B: UserKlassA, arg2B: UserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleTypeAliasedValueParameterTypesA(arg1: UserKlassA, arg2: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleTypeAliasedValueParameterTypesA(arg1: UserKlassA, arg2: SameUserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesA(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesA(arg1: UserKlassA, arg2: SameUserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleTypeAliasedValueParameterTypesAReverse(arg1: UserKlassA, arg2: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleTypeAliasedValueParameterTypesAReverse(arg1: UserKlassA, arg2: SameUserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesAReverse(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesAReverse(arg1: UserKlassA, arg2: SameUserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleTypeAliasedValueParameterTypesB(arg1: UserKlassA, arg2: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleTypeAliasedValueParameterTypesB(arg1: SameUserKlassA, arg2: SameUserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesB(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesB(arg1: SameUserKlassA, arg2: SameUserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun testMultipleTypeAliasedValueParameterTypesBReverse(arg1: UserKlassA, arg2: UserKlassB)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testMultipleTypeAliasedValueParameterTypesBReverse(arg1: SameUserKlassA, arg2: SameUserKlassB)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesBReverse(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testMultipleTypeAliasedValueParameterTypesBReverse(arg1: SameUserKlassA, arg2: SameUserKlassB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithIdenticalDefaultArguments(arg: UserKlass = defaultArgument)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testDifferencesInValueParameterDefaultArgumentsPresence(arg: UserKlass = defaultArgument)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testDifferencesInValueParameterDefaultArgumentsPresence(arg: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testDifferencesInValueParameterDefaultArgumentsPresence(arg: UserKlass = defaultArgument)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testDifferencesInValueParameterDefaultArgumentsPresence(arg: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(arg: UserKlass = defaultArgument)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(arg: UserKlass)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(arg: UserKlass = defaultArgument)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(arg: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentA)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentA)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithDifferentDefaultArguments(arg: UserKlass = defaultArgumentB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = defaultArgument)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = sameDefaultArgument)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = defaultArgument)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithAliasedDefaultArguments(arg: UserKlass = sameDefaultArgument)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = defaultArgument)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = sameDefaultArgument)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = defaultArgument)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun testValueParameterWithAliasedDefaultArgumentsReverse(arg: UserKlass = sameDefaultArgument)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testIdenticalTypeParametersA()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testIdenticalTypeParametersA()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testIdenticalTypeParametersA()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testIdenticalTypeParametersA()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testIdenticalTypeParametersB(arg: T)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testIdenticalTypeParametersB(arg: T)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testIdenticalTypeParametersB(arg: T)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testIdenticalTypeParametersB(arg: T)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testIdenticalTypeParametersC(arg: Invariant<T>)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testIdenticalTypeParametersC(arg: Invariant<T>)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testIdenticalTypeParametersC(arg: Invariant<T>)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testIdenticalTypeParametersC(arg: Invariant<T>)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <TA> testDifferentlyNamedTypeParametersA()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <TB> testDifferentlyNamedTypeParametersA()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <TA> testDifferentlyNamedTypeParametersA()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <TB> testDifferentlyNamedTypeParametersA()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <TA> testDifferentlyNamedTypeParametersB(arg: TA)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <TB> testDifferentlyNamedTypeParametersB(arg: TB)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <TA> testDifferentlyNamedTypeParametersB(arg: TA)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <TB> testDifferentlyNamedTypeParametersB(arg: TB)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <TA> testDifferentlyNamedTypeParametersC(arg: Invariant<TA>)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <TB> testDifferentlyNamedTypeParametersC(arg: Invariant<TB>)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <TA> testDifferentlyNamedTypeParametersC(arg: Invariant<TA>)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <TB> testDifferentlyNamedTypeParametersC(arg: Invariant<TB>)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T1, T2> testMultipleIdenticalTypeParameters()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T1, T2> testMultipleIdenticalTypeParameters()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T1, T2> testMultipleIdenticalTypeParameters()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T1, T2> testMultipleIdenticalTypeParameters()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T1, T2A> testMultipleDifferentlyNamedTypeParametersA()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T1, T2B> testMultipleDifferentlyNamedTypeParametersA()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T1, T2A> testMultipleDifferentlyNamedTypeParametersA()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T1, T2B> testMultipleDifferentlyNamedTypeParametersA()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T1A, T2A> testMultipleDifferentlyNamedTypeParametersB()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T1B, T2B> testMultipleDifferentlyNamedTypeParametersB()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T1A, T2A> testMultipleDifferentlyNamedTypeParametersB()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T1B, T2B> testMultipleDifferentlyNamedTypeParametersB()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsA()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsA()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsA()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsA()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsB(arg: T)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsB(arg: T)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsB(arg: T)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsB(arg: T)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsC(arg: Invariant<T>)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsC(arg: Invariant<T>)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsC(arg: Invariant<T>)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithIdenticalUpperBoundsC(arg: Invariant<T>)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testDifferencesInTypeParameterUpperBoundsPresence()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testDifferencesInTypeParameterUpperBoundsPresence()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testDifferencesInTypeParameterUpperBoundsPresence()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testDifferencesInTypeParameterUpperBoundsPresence()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testDifferencesInTypeParameterUpperBoundsPresenceReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testDifferencesInTypeParameterUpperBoundsPresenceReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testDifferencesInTypeParameterUpperBoundsPresenceReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testDifferencesInTypeParameterUpperBoundsPresenceReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithDifferentUpperBounds()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithDifferentUpperBounds()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithDifferentUpperBounds()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithDifferentUpperBounds()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsA()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsA()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsA()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsA()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsAReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsAReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsAReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsAReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsB()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsB()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsB()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsB()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsBReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsBReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsBReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsBReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsC()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsC()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsC()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsC()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsCReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsCReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsCReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsCReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsD()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsD()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsD()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsD()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsDReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsDReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsDReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsDReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsE()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsE()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsE()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsE()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsEReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsEReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsEReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsEReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsF()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsF()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsF()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsF()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsFReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsFReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<out UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsFReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: Invariant<in UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsFReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsA()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsA()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsA()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsA()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsAReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsAReverse()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsAReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsAReverse()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsB(arg: T)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsB(arg: T)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsB(arg: T)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsB(arg: T)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsBReverse(arg: T)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsBReverse(arg: T)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsBReverse(arg: T)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsBReverse(arg: T)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsC(arg: Invariant<T>)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsC(arg: Invariant<T>)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsC(arg: Invariant<T>)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsC(arg: Invariant<T>)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsCReverse(arg: Invariant<T>)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsCReverse(arg: Invariant<T>)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterface> testTypeParameterWithTypeAliasedUpperBoundsCReverse(arg: Invariant<T>)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterface> testTypeParameterWithTypeAliasedUpperBoundsCReverse(arg: Invariant<T>)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleIdenticalUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBA()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBA()<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBA()<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBA()<!> where T: UserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testDifferencesInTypeParameterMultipleUpperBoundsPresenceA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testDifferencesInTypeParameterMultipleUpperBoundsPresenceA()<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testDifferencesInTypeParameterMultipleUpperBoundsPresenceA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testDifferencesInTypeParameterMultipleUpperBoundsPresenceA()<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceB()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceB()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceB()<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceB()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleDifferentUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleDifferentUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceC {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleDifferentUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleDifferentUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceC {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAB()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAB()<!> where T: UserInterfaceC {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAB()<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAB()<!> where T: UserInterfaceC {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceB> testTypeParameterWithMultipleDifferentUpperBoundsAC()<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsAC()<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleDifferentUpperBoundsAC()<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsAC()<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleDifferentUpperBoundsBA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleDifferentUpperBoundsBA()<!> where T: UserInterfaceC, T: UserInterfaceD {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleDifferentUpperBoundsBA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleDifferentUpperBoundsBA()<!> where T: UserInterfaceC, T: UserInterfaceD {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsBB()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsBB()<!> where T: UserInterfaceD {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsBB()<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsBB()<!> where T: UserInterfaceD {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAA()<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAA()<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAAReverse()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAAReverse()<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAAReverse()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAAReverse()<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAB(arg: T)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAB(arg: T)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAABReverse(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAABReverse(arg: T)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAABReverse(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAABReverse(arg: T)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsAACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABA()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABA()<!> where T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABA()<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABA()<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABAReverse()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABAReverse()<!> where T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABAReverse()<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABAReverse()<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABB(arg: T)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABB(arg: T)<!> where T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABB(arg: T)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABB(arg: T)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABBReverse(arg: T)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABBReverse(arg: T)<!> where T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABBReverse(arg: T)<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABBReverse(arg: T)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABC(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABC(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABCReverse(arg: Invariant<T>)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABCReverse(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABCReverse(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABCReverse(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACA()<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACA()<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACA()<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACA()<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACAReverse()<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACAReverse()<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACAReverse()<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACAReverse()<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACB(arg: T)<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACB(arg: T)<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACB(arg: T)<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACB(arg: T)<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACBReverse(arg: T)<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACBReverse(arg: T)<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACBReverse(arg: T)<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACBReverse(arg: T)<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACC(arg: Invariant<T>)<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACC(arg: Invariant<T>)<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACC(arg: Invariant<T>)<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACC(arg: Invariant<T>)<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACCReverse(arg: Invariant<T>)<!> where T: UserInterfaceA {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACCReverse(arg: Invariant<T>)<!> where T: UserInterfaceA {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACCReverse(arg: Invariant<T>)<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACCReverse(arg: Invariant<T>)<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAA()<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAA()<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAAReverse()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAAReverse()<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAAReverse()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAAReverse()<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAB(arg: T)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAB(arg: T)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBABReverse(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBABReverse(arg: T)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBABReverse(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBABReverse(arg: T)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAC(arg: Invariant<T>)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAC(arg: Invariant<T>)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBACReverse(arg: Invariant<T>)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleTypeAliasedUpperBoundsBACReverse(arg: Invariant<T>)<!> where T: SameUserInterfaceA, T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBA()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBA()<!> where T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBA()<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBA()<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBAReverse()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBAReverse()<!> where T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBAReverse()<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBAReverse()<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBB(arg: T)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBB(arg: T)<!> where T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBB(arg: T)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBB(arg: T)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBBReverse(arg: T)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBBReverse(arg: T)<!> where T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBBReverse(arg: T)<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBBReverse(arg: T)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBC(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBC(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBCReverse(arg: Invariant<T>)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBCReverse(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBCReverse(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: SameUserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBCReverse(arg: Invariant<T>)<!> where T: SameUserInterfaceB {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAA()<!> where T: UserInterfaceB, T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAA()<!> where T: UserInterfaceB, T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAB(arg: T)<!> where T: UserInterfaceB, T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAB(arg: T)<!> where T: UserInterfaceB, T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceB, T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T> testTypeParameterWithMultipleShuffledUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceB, T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBA()<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBA()<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBA()<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBA()<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBB(arg: T)<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBB(arg: T)<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun <T: UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
-    <!CONFLICTING_OVERLOADS!>open fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceA {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+    open <!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceA {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) infix open fun UserKlass.testIdenticalPresenceOfInfixModifier(arg: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>infix open fun UserKlass.testIdenticalPresenceOfInfixModifier(arg: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) infix open <!CONFLICTING_OVERLOADS!>fun UserKlass.testIdenticalPresenceOfInfixModifier(arg: UserKlass)<!> {}
+    infix open <!CONFLICTING_OVERLOADS!>fun UserKlass.testIdenticalPresenceOfInfixModifier(arg: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) infix open fun UserKlass.testDifferencesInInfixModifierPresence(arg: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun UserKlass.testDifferencesInInfixModifierPresence(arg: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) infix open <!CONFLICTING_OVERLOADS!>fun UserKlass.testDifferencesInInfixModifierPresence(arg: UserKlass)<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun UserKlass.testDifferencesInInfixModifierPresence(arg: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>infix open fun UserKlass.testDifferencesInInfixModifierPresenceReverse(arg: UserKlass)<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun UserKlass.testDifferencesInInfixModifierPresenceReverse(arg: UserKlass)<!> {}
+    infix open <!CONFLICTING_OVERLOADS!>fun UserKlass.testDifferencesInInfixModifierPresenceReverse(arg: UserKlass)<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun UserKlass.testDifferencesInInfixModifierPresenceReverse(arg: UserKlass)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) operator open fun UserKlassA.unaryPlus()<!> {}
-    <!CONFLICTING_OVERLOADS!>operator open fun UserKlassA.unaryPlus()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) operator open <!CONFLICTING_OVERLOADS!>fun UserKlassA.unaryPlus()<!> {}
+    operator open <!CONFLICTING_OVERLOADS!>fun UserKlassA.unaryPlus()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) operator open fun UserKlassB.unaryPlus()<!> {}
-    <!CONFLICTING_OVERLOADS!>open fun UserKlassB.unaryPlus()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) operator open <!CONFLICTING_OVERLOADS!>fun UserKlassB.unaryPlus()<!> {}
+    open <!CONFLICTING_OVERLOADS!>fun UserKlassB.unaryPlus()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>operator open fun UserKlassB.unaryMinus()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) open fun UserKlassB.unaryMinus()<!> {}
+    operator open <!CONFLICTING_OVERLOADS!>fun UserKlassB.unaryMinus()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun UserKlassB.unaryMinus()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal open fun testIdenticalInternalVisibility()<!> {}
-    <!CONFLICTING_OVERLOADS!>internal open fun testIdenticalInternalVisibility()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal open <!CONFLICTING_OVERLOADS!>fun testIdenticalInternalVisibility()<!> {}
+    internal open <!CONFLICTING_OVERLOADS!>fun testIdenticalInternalVisibility()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal open fun testDifferencesInInternalAndPublicVisibilities()<!> {}
-    <!CONFLICTING_OVERLOADS!>public open fun testDifferencesInInternalAndPublicVisibilities()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal open <!CONFLICTING_OVERLOADS!>fun testDifferencesInInternalAndPublicVisibilities()<!> {}
+    public open <!CONFLICTING_OVERLOADS!>fun testDifferencesInInternalAndPublicVisibilities()<!> {}
 
-    <!CONFLICTING_OVERLOADS!>internal open fun testDifferencesInInternalAndPublicVisibilitiesReverse()<!> {}
-    <!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) public open fun testDifferencesInInternalAndPublicVisibilitiesReverse()<!> {}
+    internal open <!CONFLICTING_OVERLOADS!>fun testDifferencesInInternalAndPublicVisibilitiesReverse()<!> {}
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) public open <!CONFLICTING_OVERLOADS!>fun testDifferencesInInternalAndPublicVisibilitiesReverse()<!> {}
 
 }
 

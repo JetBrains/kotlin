@@ -19,5 +19,5 @@ FILE: [ResolvedTo(IMPORTS)] second.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun withAnno(): R|@R|Anno|()  kotlin/String| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun withoutAnno(): R|kotlin/String| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun withAnno(): R|@R|Anno|()  kotlin/String| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun withoutAnno(): R|kotlin/String| { LAZY_BLOCK }

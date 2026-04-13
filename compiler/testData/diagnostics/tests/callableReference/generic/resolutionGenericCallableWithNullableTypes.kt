@@ -17,9 +17,9 @@ fun test1() {
     baz<String>(::foo).checkType { _<String?>() }
     baz<Boolean>(::foo).checkType { _<Boolean?>() }
 
-    val b1: Int = <!TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)<!>
-    val b2: String = <!TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)<!>
-    val b3: Boolean = <!TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)<!>
+    val b1: Int = <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+    val b2: String = <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
+    val b3: Boolean = <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,

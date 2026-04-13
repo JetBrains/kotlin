@@ -14,7 +14,7 @@ actual annotation class Measurement(actual val iterations: Int)
 
 @Measurement()
 fun test() {
-    Inline<!NO_VALUE_FOR_PARAMETER!>()<!> // KT-60476 Fixed in K2
+    Inline() // KT-60476 Fixed in K2
 }
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, integerLiteral,

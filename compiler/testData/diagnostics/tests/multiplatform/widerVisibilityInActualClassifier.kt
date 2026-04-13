@@ -18,9 +18,9 @@ internal expect open class Other {
 }
 
 // MODULE: platform-jvm()()(common)
-<!ACTUAL_WITHOUT_EXPECT!>public<!> actual open class Some { // should be allowed
-    <!ACTUAL_WITHOUT_EXPECT!>public<!> class <!ACTUAL_MISSING!>ProtectedNested<!>  // should be allowed
-    <!ACTUAL_WITHOUT_EXPECT!>public<!> class <!ACTUAL_MISSING!>InternalNested<!> // should be allowed
+public actual open class Some { // should be allowed
+    public class <!ACTUAL_MISSING!>ProtectedNested<!>  // should be allowed
+    public class <!ACTUAL_MISSING!>InternalNested<!> // should be allowed
 
     public actual fun publicFun() {} // should be allowed
     public actual fun internalFun() {} // should be allowed
@@ -32,6 +32,6 @@ public open class PlatformOther { // should be allowed
     public class InternalNested // should be allowed
 }
 
-<!ACTUAL_WITHOUT_EXPECT!>internal<!> actual typealias Other = PlatformOther // should be allowed
+internal actual typealias Other = PlatformOther // should be allowed
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

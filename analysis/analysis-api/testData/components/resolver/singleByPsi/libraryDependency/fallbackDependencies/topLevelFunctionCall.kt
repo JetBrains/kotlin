@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // FE10 expects tests to have at least one source module.
 
 // MODULE: library

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 //KT-776 Wrong detection of unreachable code
 
 package kt776

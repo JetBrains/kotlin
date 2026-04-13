@@ -23,7 +23,7 @@ fun B.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(): Double = 0.0
 fun call(a: Any) {}
 
 fun testA(a: A) {
-    call(<!COMPATIBILITY_WARNING!>A::foo<!>)
+    call(A::foo)
     call(A.Companion::foo)
 }
 

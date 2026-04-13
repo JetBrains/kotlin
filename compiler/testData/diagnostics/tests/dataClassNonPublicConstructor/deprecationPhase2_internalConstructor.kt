@@ -5,7 +5,7 @@
 // FILE: a.kt
 package a
 
-data class Data internal constructor(val x: Int) {
+data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR!>internal<!> constructor(val x: Int) {
     fun member() {
         copy()
         this.copy()
@@ -27,7 +27,7 @@ fun Data.topLevelExtension() {
 }
 
 fun local() {
-    data class Local internal constructor(val x: Int)
+    data class Local <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR!>internal<!> constructor(val x: Int)
 
     fun Local.foo() {
         copy()

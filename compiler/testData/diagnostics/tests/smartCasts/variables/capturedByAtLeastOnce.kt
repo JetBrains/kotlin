@@ -26,32 +26,32 @@ inline fun exactlyOnce(block: () -> Unit) {
 }
 
 fun test() {
-    var s: String? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+    var s: String? = null
     s = ""
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>s<!>.length // unstable since lambda can be called twice
+        s<!UNSAFE_CALL!>.<!>length // unstable since lambda can be called twice
         s = null
-        var s2: String? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+        var s2: String? = null
         s2 = ""
-        <!DEBUG_INFO_SMARTCAST!>s2<!>.length // local variable declared inside lambda is stable
+        s2.length // local variable declared inside lambda is stable
         s2 = null
     }
     s = ""
     exactlyOnce {
-        <!SMARTCAST_IMPOSSIBLE!>s<!>.length // stable since lambda can be called only once
+        s.length // stable since lambda can be called only once
         s = null
-        var s2: String? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+        var s2: String? = null
         s2 = ""
-        <!SMARTCAST_IMPOSSIBLE!>s2<!>.length // local variable declared inside lambda is stable
+        s2.length // local variable declared inside lambda is stable
         s2 = null
     }
     s = ""
     atMostOnce {
-        <!SMARTCAST_IMPOSSIBLE!>s<!>.length // stable since lambda can be called at most once
+        s.length // stable since lambda can be called at most once
         s = null
-        var s2: String? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+        var s2: String? = null
         s2 = ""
-        <!SMARTCAST_IMPOSSIBLE!>s2<!>.length // local variable declared inside lambda is stable
+        s2.length // local variable declared inside lambda is stable
         s2 = null
     }
 }

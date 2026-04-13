@@ -1,4 +1,4 @@
-KtOperationReferenceExpression(150,151): '='
+KtOperationReferenceExpression(148,149): '='
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

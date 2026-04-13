@@ -11,7 +11,7 @@ sealed class Sealed(val x: Int) {
 fun foo(s: Sealed): Int {
     return when(s) {
         !is Sealed.First -> 1
-        !is Sealed.Last -> 0
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>!is Sealed.Last<!> -> 0
         // no else required
     }
 }

@@ -12,33 +12,33 @@ sealed class B {
 }
 
 fun foo(a: A) {
-    if (<!USELESS_IS_CHECK!>a !is B<!>) return
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>a !is B<!>) return
 
-    <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-        is A.A1 -> ""
-        is A.A2 -> "v"
+    when (a) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A2<!> -> "v"
     }.length
 
-    <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-        is A.A1 -> ""
-        is A.A2 -> "v"
+    when (a) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A2<!> -> "v"
     }.length // OK
 
-    <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-        is A.A1 -> ""
-        is A.A2 -> "v"
-        is <!INCOMPATIBLE_TYPES!>B.B1<!> -> "..." // should be warning: unreachable code
+    when (a) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A2<!> -> "v"
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..." // should be warning: unreachable code
     }.length // OK
 
-    <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-        is A.A1 -> ""
-        is <!INCOMPATIBLE_TYPES!>B.B1<!> -> "..."
-        is A.A2 -> "v"
+    when (a) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A2<!> -> "v"
     }.length // OK
 
-    <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-        is A.A1 -> ""
-        is <!INCOMPATIBLE_TYPES!>B.B1<!> -> "..."
+    <!NO_ELSE_IN_WHEN!>when<!> (a) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is A.A1<!> -> ""
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is B.B1<!> -> "..."
     }.length
 }
 

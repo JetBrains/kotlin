@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 open class A {
     fun f() = 1
     val aVal = 42

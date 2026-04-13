@@ -28,28 +28,28 @@ fun testResultOfLambda2() =
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
-            return <!TYPE_MISMATCH!>when {
-                true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-                else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>when {
+                true -> 42
+                else -> println()
             }<!>
         }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
-            return <!TYPE_MISMATCH!>when {
-                true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>when {
+                true -> 42
                 else ->
                     when {
-                        true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-                        else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
+                        true -> 42
+                        else -> println()
                     }
             }<!>
         }
 
 fun testUsage1() =
         when {
-            true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-            else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
+            true -> 42
+            else -> println()
         }
 
 fun testUsage2() =
@@ -66,16 +66,16 @@ fun testUsage2Generic() =
 
 val testUsage3 =
         when {
-            true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-            else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
+            true -> 42
+            else -> println()
         }
 
 val testUsage4 =
         when {
-            true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-            true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-            true -> <!IMPLICIT_CAST_TO_ANY!>42<!>
-            else -> <!IMPLICIT_CAST_TO_ANY!>println()<!>
+            true -> 42
+            true -> 42
+            true -> 42
+            else -> println()
         }
 
 val testUsage5: Any get() =

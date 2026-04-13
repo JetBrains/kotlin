@@ -39,7 +39,7 @@ public class CompileEnvironmentTest extends TestCase {
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             ExitCode exitCode = new K2JVMCompiler().exec(
                     System.out,
-                    KtTestUtil.getTestDataPathBase() + "/compiler/smoke/Smoke.kt",
+                    ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/smoke/Smoke.kt").getAbsolutePath(),
                     "-d", out.getAbsolutePath(),
                     "-no-stdlib",
                     "-classpath", stdlib.getAbsolutePath()

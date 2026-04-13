@@ -23,10 +23,10 @@ fun testUnresolved() {
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
-    for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
-       var i: Int = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>j<!>
+    for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {
+       var i: Int = j
        i += 1
-       foo1(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>j<!>)
+       foo1(j)
     }
 }
 

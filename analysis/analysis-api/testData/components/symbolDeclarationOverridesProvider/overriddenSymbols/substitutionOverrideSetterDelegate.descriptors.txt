@@ -1,5 +1,0 @@
-ALL:
-  test/Foo.obj.<no name>: Unit
-DIRECT:
-  test/Foo.obj.<no name>: Unit
-INTERSECTION:

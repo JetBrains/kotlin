@@ -13,7 +13,7 @@ class FooB : Foo<FooB> {
 }
 
 fun testStar(foo1: Foo<*>, foo2: Foo<*>) {
-    val x = foo1.bar(foo2)
+    val x = foo1.bar(<!MEMBER_PROJECTED_OUT!>foo2<!>)
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,

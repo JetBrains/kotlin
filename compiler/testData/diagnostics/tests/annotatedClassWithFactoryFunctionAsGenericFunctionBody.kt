@@ -5,10 +5,10 @@ annotation class Anno
 
 fun <T> genericFun(): T =
 
-<!DECLARATION_IN_ILLEGAL_CONTEXT!>@Anno
+<!EXPRESSION_EXPECTED!>@Anno
 class Annotated {
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {
-        fun getAnnotated(): <!UNRESOLVED_REFERENCE!>Annotated<!> = <!UNRESOLVED_REFERENCE!>Annotated<!>()
+        fun getAnnotated(): Annotated = Annotated()
     }
 }<!>
 

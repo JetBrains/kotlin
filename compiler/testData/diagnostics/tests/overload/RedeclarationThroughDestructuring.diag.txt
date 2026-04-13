@@ -1,7 +1,7 @@
-/RedeclarationThroughDestructuring.kt:6:14: error: conflicting declarations: val b: String, val b: Int
-        val (b, b) = e
-             ^
-/RedeclarationThroughDestructuring.kt:6:17: error: conflicting declarations: val b: String, val b: Int
-        val (b, b) = e
-                ^
+/RedeclarationThroughDestructuring.kt:(298,299): error: Conflicting declarations:
+local val b: String
+local val b: Int
 
+/RedeclarationThroughDestructuring.kt:(301,302): error: Conflicting declarations:
+local val b: String
+local val b: Int

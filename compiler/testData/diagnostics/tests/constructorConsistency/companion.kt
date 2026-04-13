@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 class My {
 
-    val x = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+    val x = foo()
 
     val w = bar()
 
@@ -11,7 +11,7 @@ class My {
         
         val y = <!UNRESOLVED_REFERENCE!>foo<!>()
 
-        val u = <!DEBUG_INFO_LEAKING_THIS!>bar<!>()
+        val u = bar()
 
         val z: String? = bar()
 

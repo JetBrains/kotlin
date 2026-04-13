@@ -67,3 +67,5 @@ kotlin-ide/
 .claude/local.md
 .claude/CLAUDE.md
 .claude/settings.local.json
+**/xcuserdata
+.test-federation.*

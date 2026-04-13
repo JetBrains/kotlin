@@ -90,3 +90,5 @@ project.configurations.configureEach {
         }
     }
 }
+
+kotlin.compilerOptions.moduleName.value(project.name)

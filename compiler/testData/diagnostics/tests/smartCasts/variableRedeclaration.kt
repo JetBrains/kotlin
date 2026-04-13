@@ -7,17 +7,17 @@ fun testLoop(b: Boolean) {
     var x: Any = ""
     x as String
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x.length
     while (b) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         var x: Any = "hello"
         x = 1
     }
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
     invokeLater {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -25,17 +25,17 @@ fun testLocalFunction() {
     var x: Any = ""
     x as String
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x.length
     fun f() {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
         var x: Any = "hello"
         x = 1
     }
-    <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    x.length
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 
@@ -43,19 +43,19 @@ fun testLocalClass() {
     var x: Any = ""
     x as String
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x.length
     class F {
         init {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             var x: Any = "hello"
             x = 1
         }
     }
-    <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    x.length
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 
@@ -63,19 +63,19 @@ fun testAnonymousClass() {
     var x: Any = ""
     x as String
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x.length
     val f = object {
         init {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             var x: Any = "hello"
             x = 1
         }
     }
-    <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    x.length
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 
@@ -83,17 +83,17 @@ fun testLambda() {
     var x: Any = ""
     x as String
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x.length
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
         var x: Any = "hello"
         x = 1
     }
-    <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+    x.length
     invokeLater {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 

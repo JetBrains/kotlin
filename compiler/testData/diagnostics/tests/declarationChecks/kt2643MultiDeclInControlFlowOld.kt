@@ -18,12 +18,12 @@ fun test2(c: C) {
 }
 
 fun test3(c: C) {
-    var (<!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!>, b) = c
+    var (a, b) = c
     a = 3
 }
 
 fun test4(c: C) {
-    var (<!VARIABLE_WITH_REDUNDANT_INITIALIZER!>a<!>, b) = c
+    var (a, b) = c
     a = 3
     a + 1
 }

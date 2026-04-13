@@ -41,6 +41,5 @@ fun case1(case: Case1) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case1.boo; typeCall: infix function")!>boo(1)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1)<!>
+    case.boo(1)
 }
-

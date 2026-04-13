@@ -68,8 +68,7 @@ FILE fqName:<root> fileName:/for_loops_array_break_continue.kt
       CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
         TYPE_ARG T: kotlin.String
         ARG expected: CONST String type=kotlin.String value="403\n\n"
-        ARG actual: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.lang.StringBuilder' type=@[EnhancedNullability] kotlin.String origin=null
-            ARG <this>: CALL 'public final fun <get-sb> (): java.lang.StringBuilder declared in <root>' type=java.lang.StringBuilder origin=GET_PROPERTY
+        ARG actual: CALL 'public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.lang.StringBuilder' type=@[EnhancedNullability] kotlin.String origin=null
+          ARG <this>: CALL 'public final fun <get-sb> (): java.lang.StringBuilder declared in <root>' type=java.lang.StringBuilder origin=GET_PROPERTY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"

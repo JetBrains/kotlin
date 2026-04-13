@@ -87,7 +87,8 @@ constructor(
         }
     }
 
-    @Deprecated("Visibility will be lifted to private in Kotlin 2.3.", level = DeprecationLevel.ERROR)
+    // Used by IDEA import, should be addressed via KTIJ-38346
+    @Deprecated("Visibility will be lifted to private in future Kotlin releases", level = DeprecationLevel.ERROR)
     @get:Internal
     val compilation: KotlinNativeCompilation
         get() = binary.compilation
@@ -146,7 +147,10 @@ constructor(
     }
 
     @Suppress("DEPRECATION_ERROR")
-    @Deprecated("Use toolOptions to configure the task")
+    @Deprecated(
+        message = "Use toolOptions to configure the task",
+        level = DeprecationLevel.ERROR,
+    )
     @get:Internal
     val languageSettings: LanguageSettings = compilation.defaultSourceSet.languageSettings
 
@@ -190,7 +194,8 @@ constructor(
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
-        "Use toolOptions.freeCompilerArgs",
+        message = "Use toolOptions.freeCompilerArgs",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("toolOptions.freeCompilerArgs.get()")
     )
     @get:Internal
@@ -279,8 +284,6 @@ constructor(
 
     @get:Internal
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
-
-    private val gradleUserHomeDir = project.gradle.gradleUserHomeDir
 
     private class CacheSettings(
         val icEnabled: Boolean,
@@ -424,11 +427,6 @@ constructor(
     @get:Classpath
     protected val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
-    @Suppress("DEPRECATION_ERROR")
-    private val resolvedConfiguration = LazyResolvedConfigurationWithArtifacts(
-        project.configurations.getByName(compilation.compileDependencyConfigurationName)
-    )
-
     @get:Internal
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
@@ -472,12 +470,14 @@ constructor(
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Internal
     val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }

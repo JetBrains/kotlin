@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedSuperFromOuterClass3.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public open [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(STATUS)] class C2 : R|C1| {

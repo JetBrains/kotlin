@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // callable: one/foo
 // LANGUAGE: +ContextParameters
 // KT-75318

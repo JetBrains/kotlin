@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -88,6 +88,21 @@ class MapKey(
         get() = listOf(keyType, valueType)
 }
 
+class SetKey(
+    override val name: String,
+    val elementType: KType,
+    override val importsToAdd: List<String>,
+    override val accessorName: String,
+    override val comment: String?,
+    override val optIns: List<Annotation>,
+) : CollectionKey() {
+    override val typeString: String
+        get() = "Set<${elementType.name}>"
+
+    override val types: List<KType>
+        get() = listOf(elementType)
+}
+
 class DeprecatedKey(
     override val name: String,
     val type: KType,
@@ -147,6 +162,14 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                         optIns,
                     )
                 }
+                "kotlin.collections.Set" -> SetKey(
+                    name,
+                    elementType = type.arguments[0].type!!,
+                    importsToAdd,
+                    accessorName ?: name.toCamelCase(),
+                    comment,
+                    optIns,
+                )
                 else -> SimpleKey(
                     name,
                     type,

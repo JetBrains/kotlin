@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -29,8 +29,8 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        children.forEach {
-            val shift = it.matches(startIndex, testString, matchResult)
+        forEachChildIndexed { _, child ->
+            val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 // PosLookaheadFset always returns true, position remains the same next.match() from;
                 return next.matches(startIndex, testString, matchResult)
@@ -43,7 +43,7 @@ internal class PositiveLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
         get() = "PositiveLookaheadJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        children.forEach { it.collectProperties(properties, fSet) }
+        forEachChildIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
     }
@@ -56,8 +56,8 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
 
     /** Returns startIndex+shift, the next position to match */
     override fun tryToMatch(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
-        children.forEach {
-            if (it.matches(startIndex, testString, matchResult) >= 0) {
+        forEachChildIndexed { _, child ->
+            if (child.matches(startIndex, testString, matchResult) >= 0) {
                 return -1
             }
         }
@@ -69,7 +69,7 @@ internal class NegativeLookAheadSet(children: List<AbstractSet>, fSet: FSet) : L
         get() = "NegativeLookaheadJointSet"
 
     override fun reportOwnProperties(properties: SetProperties) {
-        children.forEach { it.collectProperties(properties, fSet) }
+        forEachChildIndexed { _, child -> child.collectProperties(properties, fSet) }
         properties.nonTrivialBacktracking = true // just in case
         properties.requiresCheckpointing = true
     }

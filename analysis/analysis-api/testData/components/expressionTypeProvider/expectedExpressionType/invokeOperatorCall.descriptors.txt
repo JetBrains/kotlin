@@ -1,4 +1,0 @@
-expression: arg
-expected type: KaTypeParameterType:
-  annotations: []
-  type: P1

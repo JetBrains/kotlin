@@ -16,15 +16,15 @@ class MyBoxIn<in T : String?> {
 }
 
 fun <T : String?> foo(box: MyBoxIn<T & Any>, arg: T) {
-    box.foo(<!TYPE_MISMATCH!>arg<!>)
+    box.foo(<!ARGUMENT_TYPE_MISMATCH!>arg<!>)
 }
 
 fun main() {
     val emptyBoxInv = MyBoxInv<String?>(null)
-    getSizeInv(<!TYPE_MISMATCH!>emptyBoxInv<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>getSizeInv<!>(<!ARGUMENT_TYPE_MISMATCH!>emptyBoxInv<!>)
 
     val emptyBoxOut = MyBoxOut<String?>(null)
-    getSizeOut(<!TYPE_MISMATCH!>emptyBoxOut<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>getSizeOut<!>(<!ARGUMENT_TYPE_MISMATCH!>emptyBoxOut<!>)
 
     val emptyBoxIn = MyBoxIn<String?>()
     foo(emptyBoxIn, null)

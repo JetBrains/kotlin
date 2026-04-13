@@ -1,5 +1,0 @@
-expression: "Analysis API".toString()
-constant: "Analysis API"
-constantValueKind: StringValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

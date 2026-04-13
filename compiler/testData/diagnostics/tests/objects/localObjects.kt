@@ -6,7 +6,7 @@ fun foo() {
     val b = object {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object c<!> {}
     }
-    b.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>c<!>
+    b.<!UNRESOLVED_REFERENCE!>c<!>
     class A {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object d<!> {}
     }

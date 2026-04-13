@@ -7,7 +7,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block(this)
 }
@@ -20,20 +20,20 @@ fun ign(): String = ""
 fun unit(): Unit = Unit
 
 fun testLiterals(s: String) {
-    s.myLet { 42 }
+    s.<!RETURN_VALUE_NOT_USED!>myLet<!> { 42 }
     s.myLet { it }
 }
 
 fun testFunctions(s: String?) {
-    s?.myLet { fooS() }
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> { fooS() }
     s?.myLet { ign() }
     s?.myLet { unit() }
 }
 
 fun testOperators(s: String, m: MutableList<String>) {
-    s.myLet { "" + it }
-    s.myLet { "foo$it" }
-    s.myLet { String::class }
+    s.<!RETURN_VALUE_NOT_USED!>myLet<!> { "" + it }
+    s.<!RETURN_VALUE_NOT_USED!>myLet<!> { "foo$it" }
+    s.<!RETURN_VALUE_NOT_USED!>myLet<!> { String::class }
 
     // This is not reported because operator MutableList.set is ignorable, but will be reported for non-unit .set in general
     s.myLet { m[0] = it }
@@ -44,13 +44,13 @@ fun testIgnorability(s: String?, sb: StringBuilder) {
 }
 
 fun testMultiline(s: String?, sb: StringBuilder) {
-    s?.myLet {
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
         val x = 1 + 2
         x + 3
     }
 
-    s?.myLet {
-        it.last().myLet {
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
+        it.last().<!RETURN_VALUE_NOT_USED!>myLet<!> {
             it + "b"
         }
         it.last().myLet {

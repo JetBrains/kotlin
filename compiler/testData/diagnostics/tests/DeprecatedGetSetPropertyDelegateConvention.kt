@@ -34,15 +34,15 @@ operator fun CustomDelegate3.setValue(thisRef: Any?, prop: KProperty<*>, value: 
 
 class Example {
 
-    var a by <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_MISSING!>CustomDelegate()<!>
-    val aval by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>CustomDelegate()<!>
+    var a <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> CustomDelegate()
+    val aval <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> CustomDelegate()
     var b by OkDelegate()
     var c by CustomDelegate2()
     var d by CustomDelegate3()
 
     fun test() {
-        requireString(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
-        requireString(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>aval<!>)
+        requireString(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+        requireString(<!ARGUMENT_TYPE_MISMATCH!>aval<!>)
         requireString(b)
         requireInt(c)
         requireInt(d)

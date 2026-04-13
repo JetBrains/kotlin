@@ -1,5 +1,5 @@
 <caret_1>:
-  KtNameReferenceExpression(115,124): 'something'
+  KtNameReferenceExpression(112,121): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -8,7 +8,7 @@
         (in JavaClass) open var something: kotlin.Int
 
 <caret_2>:
-  KtNameReferenceExpression(140,149): 'something'
+  KtNameReferenceExpression(137,146): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -17,7 +17,7 @@
         (in JavaClass) open var something: kotlin.Int
 
 <caret_3>:
-  KtNameReferenceExpression(168,177): 'something'
+  KtNameReferenceExpression(165,174): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -33,7 +33,7 @@
         (in JavaClass) open var something: kotlin.Int
 
 <caret_4>:
-  KtNameReferenceExpression(197,206): 'something'
+  KtNameReferenceExpression(194,203): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -49,7 +49,7 @@
         (in JavaClass) open var something: kotlin.Int
 
 <caret_5>:
-  KtNameReferenceExpression(225,234): 'something'
+  KtNameReferenceExpression(222,231): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -65,7 +65,7 @@
         (in JavaClass) open var something: kotlin.Int
 
 <caret_6>:
-  KtNameReferenceExpression(240,249): 'something'
+  KtNameReferenceExpression(237,246): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false

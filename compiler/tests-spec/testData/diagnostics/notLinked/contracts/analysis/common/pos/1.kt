@@ -46,7 +46,7 @@ import contracts.*
 fun case_1(value_1: Int?) {
     val value_3: Int
     if (contracts.case_1(value_1) { value_3 = 10 }) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+        value_1.inv()
         println(value_3)
     } else {
         println(value_3)
@@ -58,10 +58,10 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
     val value_4: Int
     when (value_1.case_2(value_2, value_3) { value_4 = 10 }) {
         true -> {
-            println(<!DEBUG_INFO_SMARTCAST!>value_3<!>?.xor(true))
+            println(value_3?.xor(true))
             println(value_4)
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
-            println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.inv())
+            println(value_1.inv())
+            println(value_2.inv())
         }
         false -> {
             println(value_4)
@@ -69,7 +69,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
             println(value_2)
         }
         null -> {
-            println(<!DEBUG_INFO_SMARTCAST!>value_3<!>?.xor(true))
+            println(value_3?.xor(true))
             println(value_4)
             println(value_1)
             println(value_2)

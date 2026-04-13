@@ -1,8 +1,0 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// DIAGNOSTICS: -UNUSED_EXPRESSION
-fun foo(i: Int) {
-    <!UNRESOLVED_REFERENCE!>i<!>()
-    <!FUNCTION_EXPECTED!>1<!>()
-}
-
-/* GENERATED_FIR_TAGS: functionDeclaration */

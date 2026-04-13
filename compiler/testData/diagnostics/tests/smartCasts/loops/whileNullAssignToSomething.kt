@@ -6,7 +6,7 @@ fun main() {
         if (i == 10) result = "non null"
         else i++
     }
-    <!DEBUG_INFO_SMARTCAST!>result<!>.length
+    result.length
 }
 
 /* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, incrementDecrementExpression,

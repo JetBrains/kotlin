@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.abi.tools.impl.jvm.dump
 import org.jetbrains.kotlin.abi.tools.impl.jvm.filterByMatcher
 import org.jetbrains.kotlin.abi.tools.impl.klib.KlibDumpImpl
 import org.jetbrains.kotlin.abi.tools.impl.jvm.loadApiFromJvmClasses
+import org.jetbrains.kotlin.abi.tools.impl.jvm.readClassNode
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
-import java.io.InputStream
 import java.util.jar.JarFile
 
 internal object AbiToolsImpl : AbiTools {
@@ -28,7 +29,7 @@ internal object AbiToolsImpl : AbiTools {
     ) {
         val filtersMatcher = compileMatcher(filters)
 
-        val signatures = streamsForInputFiles(inputFiles)
+        val signatures = nodesForInputFiles(inputFiles)
             .loadApiFromJvmClasses()
             .filterByMatcher(filtersMatcher)
 
@@ -76,24 +77,30 @@ internal object AbiToolsImpl : AbiTools {
         return diff.joinToString("\n")
     }
 
-    private fun streamsFromJar(jarFile: File): Sequence<InputStream> {
-        val jar = JarFile(jarFile)
-        return jar.entries().iterator().asSequence()
-            .filter { file ->
-                !file.isDirectory && file.name.endsWith(".class") && !file.name.startsWith("META-INF/")
-            }.map { entry -> jar.getInputStream(entry) }
+    private fun streamsFromJar(jarFile: File): List<ClassNode> {
+        return JarFile(jarFile).use { jar ->
+            jar.entries().iterator().asSequence()
+                .filter { file ->
+                    !file.isDirectory && file.name.endsWith(".class") && !file.name.startsWith("META-INF/")
+                }.mapNotNull { entry ->
+                    jar.getInputStream(entry).readClassNode()
+                }.toList()
+        }
     }
 
-    private fun streamsForInputFiles(inputFiles: Iterable<File>): Sequence<InputStream> {
-        return inputFiles.asSequence().flatMap { file ->
-            if (!file.exists() || !file.isFile) {
-                return@flatMap emptySequence()
-            }
-            when (file.extension) {
-                "jar" -> streamsFromJar(file)
-                "class" -> sequenceOf(file.inputStream())
-                else -> emptySequence()
-            }
+    private fun nodesForInputFiles(inputFiles: Iterable<File>): Sequence<ClassNode> {
+        val classFiles = inputFiles.asSequence().filter { file ->
+            file.exists() && file.isFile && file.extension == "class"
+        }.mapNotNull { file ->
+            file.inputStream().readClassNode()
         }
+
+        val fromJars = inputFiles.asSequence().filter { file ->
+            file.exists() && file.isFile && file.extension == "jar"
+        }.flatMap { file ->
+            streamsFromJar(file)
+        }
+
+        return classFiles + fromJars
     }
 }

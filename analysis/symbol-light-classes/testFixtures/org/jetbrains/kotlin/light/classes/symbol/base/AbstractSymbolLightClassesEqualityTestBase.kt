@@ -10,6 +10,7 @@ import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiEnumConstant
+import com.intellij.psi.PsiRecordHeader
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalModuleStateModificationEvent
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
@@ -65,11 +66,19 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
         assertions: AssertionsService,
     ): PsiElementVisitor = object : JavaElementVisitor() {
         override fun visitClass(aClass: PsiClass) {
+            compareElementsWithInvalidation(aClass, PsiClass::getRecordHeader)
+            compareArrayElementsWithInvalidation(aClass, PsiClass::getRecordComponents)
             compareArrayElementsWithInvalidation(aClass, PsiClass::getMethods)
             compareArrayElementsWithInvalidation(aClass, PsiClass::getFields)
             compareArrayElementsWithInvalidation(aClass, PsiClass::getInnerClasses)
 
             super.visitClass(aClass)
+        }
+
+        override fun visitRecordHeader(recordHeader: PsiRecordHeader) {
+            compareArrayElementsWithInvalidation(recordHeader, PsiRecordHeader::getRecordComponents)
+
+            super.visitRecordHeader(recordHeader)
         }
 
         override fun visitEnumConstant(enumConstant: PsiEnumConstant) {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt

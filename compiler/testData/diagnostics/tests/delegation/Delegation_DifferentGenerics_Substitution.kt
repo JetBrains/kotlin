@@ -30,8 +30,8 @@ public class JC implements JI<String> {
 
 // FILE: test.kt
 
-class C1(client: JC) : JI<Int> by <!TYPE_MISMATCH!>client<!>
+class C1(client: JC) : <!IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_WARNING, IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_WARNING!>JI<Int><!> by <!TYPE_MISMATCH!>client<!>
 
-class C2(client: JC) : JI<String> by client
+class C2(client: JC) : <!IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_WARNING, IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE_WARNING!>JI<String><!> by client
 
 /* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, javaType, primaryConstructor */

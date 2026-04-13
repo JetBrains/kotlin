@@ -45,26 +45,21 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
     BLOCK_BODY
   FUN name:testProperty visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
-      BLOCK type=kotlin.Unit origin=PLUSEQ
-        CALL 'public final fun plusAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
-          ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=PLUSEQ
-          ARG s: CONST String type=kotlin.String value="+="
-      BLOCK type=kotlin.Unit origin=MINUSEQ
-        CALL 'public final fun minusAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MINUSEQ
-          ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=MINUSEQ
-          ARG s: CONST String type=kotlin.String value="-="
-      BLOCK type=kotlin.Unit origin=MULTEQ
-        CALL 'public final fun timesAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MULTEQ
-          ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=MULTEQ
-          ARG s: CONST String type=kotlin.String value="*="
-      BLOCK type=kotlin.Unit origin=DIVEQ
-        CALL 'public final fun divAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=DIVEQ
-          ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=DIVEQ
-          ARG s: CONST String type=kotlin.String value="/="
-      BLOCK type=kotlin.Unit origin=PERCEQ
-        CALL 'public final fun remAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PERCEQ
-          ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=PERCEQ
-          ARG s: CONST String type=kotlin.String value="%="
+      CALL 'public final fun plusAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
+        ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=PLUSEQ
+        ARG s: CONST String type=kotlin.String value="+="
+      CALL 'public final fun minusAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MINUSEQ
+        ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=MINUSEQ
+        ARG s: CONST String type=kotlin.String value="-="
+      CALL 'public final fun timesAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=MULTEQ
+        ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=MULTEQ
+        ARG s: CONST String type=kotlin.String value="*="
+      CALL 'public final fun divAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=DIVEQ
+        ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=DIVEQ
+        ARG s: CONST String type=kotlin.String value="/="
+      CALL 'public final fun remAssign (<this>: <root>.A, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PERCEQ
+        ARG <this>: CALL 'public final fun <get-p> (): <root>.A declared in <root>' type=<root>.A origin=PERCEQ
+        ARG s: CONST String type=kotlin.String value="%="
   FUN name:testVariable visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a type:<root>.A [val]

@@ -23,33 +23,7 @@ fun box() {
     a.x = x0
 }
 
-// EXPECTATIONS ClassicFrontend JVM_IR
-// test.kt:21 box
-// test.kt:4 <init>
-// test.kt:7 <init>
-// test.kt:10 <init>
-// test.kt:7 <init>
-// test.kt:4 <init>
-// test.kt:21 box
-// test.kt:22 box
-// test.kt:6 getX
-// test.kt:1 getX
-// test.kt:6 getX
-// test.kt:7 getX
-// test.kt:12 getValue
-// test.kt:7 getX
-// test.kt:22 box
-// test.kt:23 box
-// test.kt:6 setX
-// test.kt:1 setX
-// test.kt:6 setX
-// test.kt:7 setX
-// test.kt:16 setValue
-// test.kt:17 setValue
-// test.kt:7 setX
-// test.kt:24 box
-
-// EXPECTATIONS FIR JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:21 box
 // test.kt:4 <init>
 // test.kt:7 <init>

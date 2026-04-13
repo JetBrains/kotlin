@@ -12,7 +12,7 @@ fun CharSequence?.isNullOrEmpty(): Boolean {
         returns(false) implies (this@isNullOrEmpty != null)
     }
 
-    return this == null || <!DEBUG_INFO_SMARTCAST!>this<!>.length == 0
+    return this == null || this.length == 0
 }
 
 fun smartcastOnReceiver(s: String?) {
@@ -21,14 +21,14 @@ fun smartcastOnReceiver(s: String?) {
             <!UNSAFE_CALL!>length<!>
         }
         else {
-            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>length<!>
+            length
         }
     }
 }
 
 fun mixedReceiver(s: String?) {
     if (!s.isNullOrEmpty()) {
-        with(<!DEBUG_INFO_SMARTCAST!>s<!>) {
+        with(s) {
             length
         }
     } else {

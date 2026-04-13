@@ -4,7 +4,7 @@
 @file:OptIn(ExperimentalVersionOverloading::class)
 
 fun foo(
-    @IntroducedAt("1") a: Int = object { val v = <!UNINITIALIZED_PARAMETER, UNINITIALIZED_PARAMETER!>b<!> }.v,
+    @IntroducedAt("1") a: Int = <!VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION!>object<!> { val v = b }.v,
     @IntroducedAt("2") b: Int = 2,
 ) {}
 

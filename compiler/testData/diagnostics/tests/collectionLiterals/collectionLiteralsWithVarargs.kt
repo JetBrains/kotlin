@@ -9,7 +9,7 @@ annotation class Ann4(vararg val a: String = ["/"])
 annotation class Ann5(vararg val a: Ann4 = [])
 annotation class Ann6(vararg val a: Ann4 = [Ann4(*["a", "b"])])
 
-annotation class Ann7(vararg val a: Long = [1L, <!NULL_FOR_NONNULL_TYPE!>null<!>, <!TYPE_MISMATCH!>""<!>])
+annotation class Ann7(vararg val a: Long = [1L, <!NULL_FOR_NONNULL_TYPE!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>])
 
 @Ann1(*[])
 fun test1_0() {}
@@ -17,13 +17,13 @@ fun test1_0() {}
 @Ann1(*["a", "b"])
 fun test1_1() {}
 
-@Ann1(*<!TYPE_MISMATCH, TYPE_MISMATCH!>["a", 1, <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>null<!>]<!>)
+@Ann1(*<!ARGUMENT_TYPE_MISMATCH!>["a", 1, null]<!>)
 fun test1_2() {}
 
 @Ann2(*[])
 fun test2() {}
 
-@Ann3(a = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>[0f, <!DIVISION_BY_ZERO!>1 / 0f<!>]<!>)
+@Ann3(a = <!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>*<!>[0f, <!DIVISION_BY_ZERO!>1 / 0f<!>])
 fun test3() {}
 
 @Ann5(Ann4(*["/"]))
@@ -37,10 +37,10 @@ fun test7() {}
 
 annotation class AnnArray(val a: Array<String>)
 
-@AnnArray(<!NON_VARARG_SPREAD_ERROR!>*<!>["/"])
+@AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!TYPE_MISMATCH, TYPE_MISMATCH!>[""]<!>)
+@Ann1(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>)
 fun testVararg() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,

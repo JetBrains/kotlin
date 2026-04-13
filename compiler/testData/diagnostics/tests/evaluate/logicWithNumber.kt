@@ -5,7 +5,7 @@ fun bar() {
 
 // See exception in KT-13421
 fun foo() {
-    42 and <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>
+    42 and <!ARGUMENT_TYPE_MISMATCH!>false<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

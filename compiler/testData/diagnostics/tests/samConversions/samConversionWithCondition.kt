@@ -11,7 +11,7 @@ fun main(arg: Nothing?) {
         try { { num -> num.dec() } } catch (e: Exception) { null }
     )
     consumeTicker(
-        <!DEBUG_INFO_CONSTANT!>arg<!> ?: { num -> num.dec() }
+        arg ?: { num -> num.dec() }
     )
     consumeTicker(
         if (!flag) ::tick else null
@@ -30,7 +30,7 @@ fun main(arg: Nothing?) {
         try { null } catch (e: Exception) { null } catch (e: Throwable) { ::tick }
     )
     consumeTicker(
-        <!DEBUG_INFO_CONSTANT!>arg<!> ?: ::tick
+        arg ?: ::tick
     )
 }
 

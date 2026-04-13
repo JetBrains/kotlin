@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 package a
 
 //KT-2166 Control flow analysis doesn't detect that a 'while(true)' loop never terminates

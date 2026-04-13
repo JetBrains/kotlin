@@ -4,16 +4,16 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common
-<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
-<!WRONG_ANNOTATION_TARGET{JVM}!>@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExpectRefinement<!><!>
-expect fun foo()
+@OptIn(ExperimentalMultiplatform::class)
+<!WRONG_ANNOTATION_TARGET!>@kotlin.experimental.ExpectRefinement<!>
+expect fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>()
 
-<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
-@kotlin.<!UNRESOLVED_REFERENCE!>experimental<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ExpectRefinement<!>
-expect class Foo
+@OptIn(ExperimentalMultiplatform::class)
+@kotlin.experimental.ExpectRefinement
+expect class <!ACTUAL_WITHOUT_EXPECT!>Foo<!>
 
 // MODULE: main()()(common)
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>() {}
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> {}
+actual fun foo() {}
+actual class Foo {}
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

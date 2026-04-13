@@ -19,16 +19,16 @@ fun foo() : Int {
     val s = ""
     val x = 1
     when (x) {
-      is <!INCOMPATIBLE_TYPES!>String<!> -> 1
+      <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> 1
       <!USELESS_IS_CHECK!>!is Int<!> -> 1
-      <!USELESS_IS_CHECK!>is Any<!USELESS_NULLABLE_CHECK!>?<!><!> -> 1
+      <!USELESS_IS_CHECK!>is Any?<!> -> 1
       <!USELESS_IS_CHECK!>is Any<!> -> 1
       <!INCOMPATIBLE_TYPES!>s<!> -> 1
       1 -> 1
       1 + <!UNRESOLVED_REFERENCE!>a<!> -> 1
       in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
       !in 1..<!UNRESOLVED_REFERENCE!>a<!> -> 1
-      else -> 1
+      <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 1
     }
 
     return 0
@@ -41,7 +41,7 @@ fun test() {
   val s = "";
 
   when (x) {
-    <!DUPLICATE_LABEL_IN_WHEN, INCOMPATIBLE_TYPES!>s<!> -> 1
+    <!INCOMPATIBLE_TYPES!>s<!> -> 1
     <!INCOMPATIBLE_TYPES!>""<!> -> 1
     x -> 1
     1 -> 1
@@ -51,7 +51,7 @@ fun test() {
 
   when (z) {
     <!ELSE_MISPLACED_IN_WHEN!>else<!> -> 1
-    <!UNREACHABLE_CODE!>1 -> 2<!>
+    1 -> 2
   }
 
   when (z) {

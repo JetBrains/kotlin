@@ -25,8 +25,8 @@ class KotlinSubclassOfJavaGetterOverrides : JavaBaseClass() {
     fun consumeString(x: String) {}
 
     init {
-        consumeString(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField)
-        consumeInt(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField<!>)
+        consumeString(super.missingField)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.missingField<!>)
     }
 
     override fun getMissingField(): String {
@@ -34,8 +34,8 @@ class KotlinSubclassOfJavaGetterOverrides : JavaBaseClass() {
     }
 
     init {
-        consumeString(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER, MISSING_DEPENDENCY_CLASS!>privateField<!><!>)
-        consumeInt(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER, MISSING_DEPENDENCY_CLASS!>privateField<!><!>)
+        consumeString(super.privateField)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.privateField<!>)
     }
 
     override fun getPrivateField(): String {
@@ -49,8 +49,8 @@ class KotlinSubclassOfJavaSubclassGetterOverridesInBase : EmptySubclass() {
     fun consumeString(x: String) {}
 
     init {
-        consumeString(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField)
-        consumeInt(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField<!>)
+        consumeString(super.missingField)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.missingField<!>)
     }
 
     override fun getMissingField(): String {
@@ -58,8 +58,8 @@ class KotlinSubclassOfJavaSubclassGetterOverridesInBase : EmptySubclass() {
     }
 
     init {
-        consumeString(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER, MISSING_DEPENDENCY_CLASS!>privateField<!><!>)
-        consumeInt(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER, MISSING_DEPENDENCY_CLASS!>privateField<!><!>)
+        consumeString(super.privateField)
+        consumeInt(<!ARGUMENT_TYPE_MISMATCH!>super.privateField<!>)
     }
 
     override fun getPrivateField(): String {

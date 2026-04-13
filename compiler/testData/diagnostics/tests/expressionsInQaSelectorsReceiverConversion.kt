@@ -3,7 +3,7 @@
 // FIR_DUMP
 
 fun test(f: (Int) -> Int) {
-    2.<!NO_RECEIVER_ALLOWED!>(f)<!>()
+    <!NO_RECEIVER_ALLOWED!>2.(f)()<!>
 }
 
 typealias TA = Int.() -> Int

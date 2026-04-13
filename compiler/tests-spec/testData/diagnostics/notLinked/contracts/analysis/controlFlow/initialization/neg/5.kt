@@ -30,7 +30,7 @@ fun case_2() {
 fun case_3() {
     var value_1: Int
     funWithAtLeastOnceCallsInPlace(fun () { value_1 = 10 })
-    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
+    value_1.inc()
 }
 
 // TESTCASE NUMBER: 4

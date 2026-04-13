@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // ^KT-63732
 
 lateinit var foo: Any

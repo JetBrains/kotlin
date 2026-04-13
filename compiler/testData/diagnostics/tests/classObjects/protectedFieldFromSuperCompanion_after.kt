@@ -17,8 +17,8 @@ abstract class A {
 import a.A
 
 class B : A() {
-    fun f1() = <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>constVal<!>
-    fun f2() = <!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>jvmFieldVal<!>
+    fun f1() = constVal
+    fun f2() = jvmFieldVal
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, objectDeclaration,

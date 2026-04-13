@@ -7,7 +7,7 @@ class Outer {
         @Deprecated("", level = DeprecationLevel.HIDDEN)
         companion object
 
-        val obj = C
+        val obj = <!DEPRECATION_ERROR!>C<!>
     }
 }
 

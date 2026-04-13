@@ -37,99 +37,99 @@ fun <K> foo23(x: K?, y: Foo<Foo<Bar<out K>>>) {}
 fun <K> foo24(x: K?, y: Foo<Foo<Bar<in K>>>) {}
 
 fun <L> main(x: L?, y: L) {
-    foo0(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-    foo0(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
+    foo0(x, Bar())
+    foo0(y, Bar())
 
-    foo1(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-    foo1(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-
-    if (x != null && y != null) {
-        foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & Any & L?")!>x<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-        foo1(<!DEBUG_INFO_EXPRESSION_TYPE("L & L & Any")!>y<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-    }
-
-    foo2(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-    foo2(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-
-    foo3(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-    foo3(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-
-    foo4(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<out L & Any>>")!>Foo(Bar())<!>)
-    foo4(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<out L & Any>>")!>Foo(Bar())<!>)
-
-    foo5(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-    foo5(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-
-    foo6(x, <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<L & Any>")!>OutBar()<!>)
-    foo6(y, <!DEBUG_INFO_EXPRESSION_TYPE("OutBar<L & Any>")!>OutBar()<!>)
-
-    foo7(x, <!DEBUG_INFO_EXPRESSION_TYPE("InBar<L & Any>")!>InBar()<!>)
-    foo7(y, <!DEBUG_INFO_EXPRESSION_TYPE("InBar<L & Any>")!>InBar()<!>)
-
-    foo8(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-    foo8(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-
-    foo9(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-    foo9(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>)
-
-    foo10(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-    foo10(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-
-    foo11(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-    foo11(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Bar<L & Any>>")!>Foo(Bar())<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
+    foo1(x, Foo(Bar()))
+    foo1(y, Foo(Bar()))
 
     if (x != null && y != null) {
-        foo12(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-        foo12(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
+        foo1(x, Foo(Bar()))
+        foo1(y, Foo(Bar()))
     }
 
-    foo12(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-    foo12(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
+    foo2(x, Foo(Bar()))
+    foo2(y, Foo(Bar()))
 
-    Foo13(x).foo1(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
-    Foo13(x).foo2(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
-    Foo13(y).foo1(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>Bar()<!>)
-    Foo13(y).foo2(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>Bar()<!>)
+    foo3(x, Foo(Bar()))
+    foo3(y, Foo(Bar()))
+
+    foo4(x, Foo(Bar()))
+    foo4(y, Foo(Bar()))
+
+    foo5(x, Bar())
+    foo5(y, Bar())
+
+    foo6(x, OutBar())
+    foo6(y, OutBar())
+
+    foo7(x, InBar())
+    foo7(y, InBar())
+
+    foo8(x, Foo(Bar()))
+    foo8(y, Foo(Bar()))
+
+    foo9(x, Foo(Bar()))
+    foo9(y, Foo(Bar()))
+
+    foo10(x, Foo(Bar()), Bar())
+    foo10(y, Foo(Bar()), Bar())
+
+    foo11(x, Foo(Bar()), Bar())
+    foo11(y, Foo(Bar()), Bar())
+
+    if (x != null && y != null) {
+        foo12(x, Bar())
+        foo12(y, Bar())
+    }
+
+    foo12(x, Bar())
+    foo12(y, Bar())
+
+    Foo13(x).foo1(x, Bar())
+    Foo13(x).foo2(y, Bar())
+    Foo13(y).foo1(x, Bar())
+    Foo13(y).foo2(y, Bar())
     if (x != null) {
-        Foo13(<!DEBUG_INFO_SMARTCAST!>x<!>).foo2(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-        Foo13(y).foo2(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>Bar()<!>)
+        Foo13(x).foo2(y, Bar())
+        Foo13(y).foo2(x, Bar())
     }
     if (y != null) {
-        Foo13(x).foo2(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
-        Foo13(<!DEBUG_INFO_SMARTCAST!>y<!>).foo2(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
+        Foo13(x).foo2(y, Bar())
+        Foo13(y).foo2(x, Bar())
     }
 
-    foo14("y", <!DEBUG_INFO_EXPRESSION_TYPE("Bar<kotlin.String>")!>Bar()<!>)
-    foo14("x", <!DEBUG_INFO_EXPRESSION_TYPE("Bar<kotlin.String>")!>Bar()<!>)
+    foo14("y", Bar())
+    foo14("x", Bar())
 
-    foo15(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
-    foo15(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
+    foo15(x, Bar())
+    foo15(y, Bar())
     if (x != null && y != null) {
-        foo15(<!DEBUG_INFO_SMARTCAST!>x<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
-        foo15(<!DEBUG_INFO_SMARTCAST!>y<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L?>")!>Bar()<!>)
+        foo15(x, Bar())
+        foo15(y, Bar())
     }
 
-    foo16(x, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>Bar()<!>)
-    foo16(y, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L>")!>Bar()<!>)
+    foo16(x, Bar())
+    foo16(y, Bar())
     if (x != null && y != null) {
-        foo16(<!DEBUG_INFO_SMARTCAST!>x<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
-        foo16(<!DEBUG_INFO_SMARTCAST!>y<!>, <!DEBUG_INFO_EXPRESSION_TYPE("Bar<L & Any>")!>Bar()<!>)
+        foo16(x, Bar())
+        foo16(y, Bar())
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>()<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo18<!>(x)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>()<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo18<!>(y)
+    <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>().foo18(x)
+    <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>().foo18(y)
 
-    foo21(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<OutBar<L & Any>>>")!>Foo(Foo(OutBar()))<!>)
-    foo21(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<OutBar<L & Any>>>")!>Foo(Foo(OutBar()))<!>)
+    foo21(x, Foo(Foo(OutBar())))
+    foo21(y, Foo(Foo(OutBar())))
 
-    foo22(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<InBar<L & Any>>>")!>Foo(Foo(InBar()))<!>)
-    foo22(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<InBar<L & Any>>>")!>Foo(Foo(InBar()))<!>)
+    foo22(x, Foo(Foo(InBar())))
+    foo22(y, Foo(Foo(InBar())))
 
-    foo23(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<out L & Any>>>")!>Foo(Foo(Bar()))<!>)
-    foo23(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<out L & Any>>>")!>Foo(Foo(Bar()))<!>)
+    foo23(x, Foo(Foo(Bar())))
+    foo23(y, Foo(Foo(Bar())))
 
-    foo24(x, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L & Any>>>")!>Foo(Foo(Bar()))<!>)
-    foo24(y, <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Foo<Bar<in L & Any>>>")!>Foo(Foo(Bar()))<!>)
+    foo24(x, Foo(Foo(Bar())))
+    foo24(y, Foo(Foo(Bar())))
 }
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver,

@@ -9,6 +9,6 @@ package a
 
 import pack1.*
 
-private class X : <!INVISIBLE_MEMBER, INVISIBLE_REFERENCE!>SomeClass<!>()
+private class X : <!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>SomeClass<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration */

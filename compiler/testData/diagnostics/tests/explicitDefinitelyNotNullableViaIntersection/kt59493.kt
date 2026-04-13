@@ -14,7 +14,7 @@ fun <T> Foo<T>.bar(prop: KProperty1<T & Any, *>): Ext = Ext()
 class Bar<T> {
     fun bar(prop: KProperty1<T & Any, *>): Mem = Mem()
 }
-fun <T> Bar<T>.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>(prop: KProperty1<T & Any, *>): Ext = Ext()
+fun <T> Bar<T>.bar(prop: KProperty1<T & Any, *>): Ext = Ext()
 
 class Baz<T> {
     fun baz(prop: KProperty1<T, *>): Mem = Mem()
@@ -27,13 +27,13 @@ fun main() {
     val r01: Mem = Foo<String?>().foo(String::length)
     val r02: Mem = Foo<String?>().foo(id(String::length))
 
-    val r03: Ext = Foo<String?>().bar(<!TYPE_MISMATCH!>String::length<!>)
+    val r03: Ext = Foo<String?>().bar(String::length)
     val r04: Ext = Foo<String?>().bar(id(String::length))
 
     val r05: Mem = Bar<String?>().bar(String::length)
     val r06: Mem = Bar<String?>().bar(id(String::length))
 
-    val r07 = <!DEBUG_INFO_EXPRESSION_TYPE("Mem")!>Baz<String?>().baz(<!TYPE_MISMATCH!>String::length<!>)<!>
+    val r07 = <!DEBUG_INFO_EXPRESSION_TYPE("Ext")!>Baz<String?>().baz(String::length)<!>
     val r08: Ext = Baz<String?>().baz(id(String::length))
 }
 

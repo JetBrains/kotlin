@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCached
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.RENDER_IS_PUBLIC_API
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerPro
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.analysis.test.framework.utils.stripOutSnapshotVersion
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.directives.model.Directive
@@ -44,7 +41,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -210,11 +206,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
      */
     open fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> = setOf(mainFile)
 
-    private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? = findSpecificDirective(
-        commonDirective = DO_NOT_REQUIRE_SYMBOL_RESTORATION,
-        k1Directive = DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1,
-        k2Directive = DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2,
-    )
+    private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? {
+        return DO_NOT_REQUIRE_SYMBOL_RESTORATION.takeIf { it in this }
+    }
 
     private fun RegisteredDirectives.doNotCheckNonPsiSymbolRestoreDirective(): Directive? =
         DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION.takeIf { it in this }
@@ -244,7 +238,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     private fun List<PointerWithRenderedSymbol>.renderDeclarations(): String =
         mapNotNull { it.rendered.takeIf { _ -> it.shouldBeRendered } }
             .renderAsDeclarations()
-            .applyIf(configurator.frontendKind == FrontendKind.Fe10) { stripOutSnapshotVersion() }
 
     private fun List<String>.renderAsDeclarations(): String =
         if (isEmpty()) "NO_SYMBOLS"
@@ -415,14 +408,6 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 object SymbolTestDirectives : SimpleDirectivesContainer() {
     val DO_NOT_REQUIRE_SYMBOL_RESTORATION by directive(
         description = "Symbol restoring for some symbols in current test is not supported yet",
-    )
-
-    val DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1 by directive(
-        description = "Symbol restoring for some symbols in current test is not supported yet in K1",
-    )
-
-    val DO_NOT_REQUIRE_SYMBOL_RESTORATION_K2 by directive(
-        description = "Symbol restoring for some symbols in current test is not supported yet in K2",
     )
 
     val DO_NOT_REQUIRE_NON_PSI_SYMBOL_RESTORATION by directive(

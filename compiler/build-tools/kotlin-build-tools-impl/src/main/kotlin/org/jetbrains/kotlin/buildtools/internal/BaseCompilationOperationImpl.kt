@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.arguments.reportRestrictedViolations
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.Option
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
@@ -79,6 +80,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
+        compilerArguments.reportRestrictedViolations(kotlinLogger)
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
 
         return when (executionPolicy) {

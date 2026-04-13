@@ -3,17 +3,17 @@
 // LANGUAGE: +ContextParameters
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+context(x: Int)
 fun d(): Unit = js("console.log(x)")
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+<!EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
 @JsFun("console.log(x)")
-external fun d2(): Unit
+external fun d2(): Unit<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
-external fun d3(): Unit
+<!EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
+external fun d3(): Unit<!>
 
 external class E {
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
-    fun d4(): Unit
+    <!EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
+    fun d4(): Unit<!>
 }

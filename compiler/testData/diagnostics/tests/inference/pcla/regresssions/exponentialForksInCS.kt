@@ -18,7 +18,7 @@ fun <F> Controller<F>.baz(a: A<F>, f: F) {}
 fun <T> bar(a: A<T>, w: T) {
     generate {
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, 1)
+            baz(a, 1)
         }
 
         foo()

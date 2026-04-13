@@ -119,7 +119,7 @@ class JsIrBackendContext(
 
     override val internalPackageFqn = JsStandardClassIds.BASE_JS_PACKAGE
 
-    private val operatorMap = referenceOperators()
+    private val operatorMap by lazy { referenceOperators() }
 
     fun getOperatorByName(name: Name, lhsType: IrSimpleType, rhsType: IrSimpleType?) =
         operatorMap[name]?.get(lhsType.classifier)?.let { candidates ->

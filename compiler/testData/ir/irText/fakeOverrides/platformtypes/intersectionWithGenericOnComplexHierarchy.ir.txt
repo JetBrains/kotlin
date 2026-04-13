@@ -37,12 +37,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract a: @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT returnType:@[FlexibleNullability] T of <root>.B? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] T of <root>.B?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2<T of <root>.B>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] T of <root>.B?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2<T of <root>.B>
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:@[FlexibleNullability] T of <root>.B?
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
@@ -151,12 +151,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract a: @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT returnType:@[FlexibleNullability] T of <root>.D? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] T of <root>.D?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2<T of <root>.D>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.Java2? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] T of <root>.D?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2<T of <root>.D>
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:@[FlexibleNullability] T of <root>.D?
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:

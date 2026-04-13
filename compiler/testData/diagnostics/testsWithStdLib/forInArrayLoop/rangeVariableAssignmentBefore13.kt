@@ -7,7 +7,7 @@ fun testObjectArray() {
     var xs = arrayOf("a", "b", "c")
     for (x in xs) {
         println(x)
-        <!ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE!>xs<!> = arrayOf("d", "e", "f")
+        xs = arrayOf("d", "e", "f")
     }
 }
 
@@ -15,7 +15,7 @@ fun testPrimitiveArray() {
     var xs = intArrayOf(1, 2, 3)
     for (x in xs) {
         println(x)
-        <!ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE!>xs<!> = intArrayOf(4, 5, 6)
+        xs = intArrayOf(4, 5, 6)
     }
 }
 

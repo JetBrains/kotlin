@@ -83,11 +83,12 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
     }
 
     /**
-     * compiler.xml needs to be in both compiler & ide module for tests execution.
+     * 'compiler.xml' and 'compiler-cli-root.xml' need to be in both compiler & ide module for tests execution.
      * To avoid file duplication copy it to the out dir idea module before test execution.
      */
     private static void ensureCompilerExtensionFilesExists() {
         copyCompilerResourceFile("compiler.xml");
+        copyCompilerResourceFile("compiler-cli-root.xml");
     }
 
     private static void copyCompilerResourceFile(String fileName) {

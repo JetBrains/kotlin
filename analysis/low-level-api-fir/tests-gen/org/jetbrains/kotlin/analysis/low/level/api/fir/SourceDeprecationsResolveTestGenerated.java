@@ -25,7 +25,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
   @Test
   public void testAllFilesPresentInLazyResolveDeprecation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
   @Nested
@@ -38,7 +38,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
     @Test
     public void testAllFilesPresentInClasses() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/classes"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/classes"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
@@ -76,7 +76,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
     @Test
     public void testAllFilesPresentInFunctions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/functions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/functions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
     @Test
     public void testAllFilesPresentInJava() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/java"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/java"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
     @Test
     public void testAllFilesPresentInProperties() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/properties"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/properties"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Nested
@@ -177,7 +177,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
       @Test
       public void testAllFilesPresentInNoAcessors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/properties/noAcessors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/properties/noAcessors"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
       @Test
@@ -209,7 +209,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
       @Test
       public void testAllFilesPresentInWithAcessors() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/properties/withAcessors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/properties/withAcessors"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
       @Test
@@ -290,7 +290,7 @@ public class SourceDeprecationsResolveTestGenerated extends AbstractSourceDeprec
 
     @Test
     public void testAllFilesPresentInTypeAliases() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/typeAliases"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveDeprecation/typeAliases"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test

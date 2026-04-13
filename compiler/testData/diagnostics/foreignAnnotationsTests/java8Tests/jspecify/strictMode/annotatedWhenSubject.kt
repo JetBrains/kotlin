@@ -26,7 +26,7 @@ fun test() {
         null -> {}
     }
 
-    <!NO_ELSE_IN_WHEN!>when<!> (J.identity(C1() as Sealed1)) {
+    when (J.identity(C1() as Sealed1)) {
         is C1? -> {}
     }
 

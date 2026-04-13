@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-79076
 // LANGUAGE: -FixationEnhancementsIn22
 

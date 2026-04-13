@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 import kotlin.reflect.KProperty
 
@@ -34,24 +35,24 @@ class IndexibleRefRef(val ref: IndexibleRef?)
 
 fun ban(refRef: IndexibleRefRef?, ref: IndexibleRef?) {
     val lambda = {
-        <!UNSAFE_CALL!>ref?.ind[1]<!> = "X"
+        ref?.ind[1] = "X"
     }
     foo(lambda)
 
     val lambda2 = {
-        <!UNSAFE_CALL!>refRef?.ref?.ind[1]<!> = "X"
+        refRef?.ref?.ind[1] = "X"
     }
     foo(lambda2)
 
     val lambda3 = {
         ref?.ind?.set(1, "X")
     }
-    foo(<!UNSUPPORTED_FEATURE!>lambda3<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>lambda3<!>)
 
     val lambda4 = {
         refRef?.ref?.ind?.set(1, "X")
     }
-    foo(<!UNSUPPORTED_FEATURE!>lambda4<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>lambda4<!>)
 }
 
 object PlusAssignable {
@@ -67,7 +68,7 @@ class Indexible2Ref(val ind: Indexible2)
 
 fun bam(ref: Indexible2Ref?) {
     val lambda = {
-        <!UNSAFE_CALL!>ref?.ind[1]<!> += 1
+        ref?.ind[1] += 1
     }
     foo(lambda)
 

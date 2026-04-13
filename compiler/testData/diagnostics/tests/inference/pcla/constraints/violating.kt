@@ -9,27 +9,27 @@ interface A {
 @ExperimentalStdlibApi
 fun main() {
     buildList {
-        add(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>3<!>)
+        add(3)
         object : A {
-            override fun foo(): MutableList<String> = this@buildList
+            override fun foo(): MutableList<String> = <!RETURN_TYPE_MISMATCH!>this@buildList<!>
         }
     }
     buildList {
-        add(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>3<!>)
-        val x: String = get(0)
+        add(3)
+        val x: String <!INITIALIZER_TYPE_MISMATCH!>=<!> get(0)
     }
     buildList {
-        add(<!TYPE_MISMATCH!>"3"<!>)
-        val x: MutableList<Int> = this@buildList
+        add("3")
+        val x: MutableList<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!> this@buildList
     }
     buildList {
         val y: CharSequence = ""
-        add(<!TYPE_MISMATCH, TYPE_MISMATCH!>y<!>)
-        val x: MutableList<String> = this@buildList
+        add(y)
+        val x: MutableList<String> <!INITIALIZER_TYPE_MISMATCH!>=<!> this@buildList
     }
     buildList {
-        add(<!TYPE_MISMATCH!>""<!>)
-        val x: StringBuilder = get(0)
+        add("")
+        val x: StringBuilder <!INITIALIZER_TYPE_MISMATCH!>=<!> get(0)
     }
 }
 

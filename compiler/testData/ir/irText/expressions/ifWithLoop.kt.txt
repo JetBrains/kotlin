@@ -2,21 +2,17 @@ fun topLevelMethod() {
   var z: Int = 1
   when {
     true -> { // BLOCK
-      { // BLOCK
-        val tmp_0: IntIterator = 0.rangeTo(other = 2).iterator()
-        while (tmp_0.hasNext()) { // BLOCK
-          val i: Int = tmp_0.next()
-          z = z.plus(other = i)
-        }
+      val tmp_0: IntIterator = 0.rangeTo(other = 2).iterator()
+      while (tmp_0.hasNext()) { // BLOCK
+        val i: Int = tmp_0.next()
+        z = z.plus(other = i)
       }
     }
     else -> { // BLOCK
-      { // BLOCK
-        val tmp_1: IntIterator = 0.rangeTo(other = 3).iterator()
-        while (tmp_1.hasNext()) { // BLOCK
-          val i: Int = tmp_1.next()
-          z = z.plus(other = i)
-        }
+      val tmp_1: IntIterator = 0.rangeTo(other = 3).iterator()
+      while (tmp_1.hasNext()) { // BLOCK
+        val i: Int = tmp_1.next()
+        z = z.plus(other = i)
       }
     }
   }
@@ -50,18 +46,14 @@ fun topLevelMethod() {
   }
   when {
     true -> { // BLOCK
-      { // BLOCK
-        do// COMPOSITE {
-        z = z.plus(other = 10)
-        // }        while (false)
-      }
+      do// COMPOSITE {
+      z = z.plus(other = 10)
+      // }      while (false)
     }
     else -> { // BLOCK
-      { // BLOCK
-        do// COMPOSITE {
-        z = z.plus(other = 11)
-        // }        while (false)
-      }
+      do// COMPOSITE {
+      z = z.plus(other = 11)
+      // }      while (false)
     }
   }
   when {
@@ -80,21 +72,17 @@ fun topLevelMethod() {
     val tmp_4: Int = z
     when {
       EQEQ(arg0 = tmp_4, arg1 = 1) -> { // BLOCK
-        { // BLOCK
-          val tmp_5: IntIterator = 0.rangeTo(other = 14).iterator()
-          while (tmp_5.hasNext()) { // BLOCK
-            val i: Int = tmp_5.next()
-            z = z.plus(other = i)
-          }
+        val tmp_5: IntIterator = 0.rangeTo(other = 14).iterator()
+        while (tmp_5.hasNext()) { // BLOCK
+          val i: Int = tmp_5.next()
+          z = z.plus(other = i)
         }
       }
       else -> { // BLOCK
-        { // BLOCK
-          val tmp_6: IntIterator = 0.rangeTo(other = 15).iterator()
-          while (tmp_6.hasNext()) { // BLOCK
-            val i: Int = tmp_6.next()
-            z = z.plus(other = i)
-          }
+        val tmp_6: IntIterator = 0.rangeTo(other = 15).iterator()
+        while (tmp_6.hasNext()) { // BLOCK
+          val i: Int = tmp_6.next()
+          z = z.plus(other = i)
         }
       }
     }
@@ -140,18 +128,14 @@ fun topLevelMethod() {
     val tmp_12: Int = z
     when {
       EQEQ(arg0 = tmp_12, arg1 = 1) -> { // BLOCK
-        { // BLOCK
-          do// COMPOSITE {
-          z = z.plus(other = 22)
-          // }          while (false)
-        }
+        do// COMPOSITE {
+        z = z.plus(other = 22)
+        // }        while (false)
       }
       else -> { // BLOCK
-        { // BLOCK
-          do// COMPOSITE {
-          z = z.plus(other = 23)
-          // }          while (false)
-        }
+        do// COMPOSITE {
+        z = z.plus(other = 23)
+        // }        while (false)
       }
     }
   }

@@ -15,10 +15,10 @@ fun foo() {
     noSetter checkType { _<Int>() }
 
     x = 1
-    x = <!TYPE_MISMATCH!>""<!>
+    x <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
 
     noSetter = 2
-    noSetter = <!TYPE_MISMATCH!>""<!>
+    noSetter <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

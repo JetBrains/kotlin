@@ -22,20 +22,20 @@ public class J {
 // FILE: main.kt
 fun nullableKeyNonNullValue() {
     val p = J.pair<String?, String>("a", "b")
-    p.first.length
+    p.first<!UNSAFE_CALL!>.<!>length
     p.second.length
 }
 
 fun nonNullKeyNullableValue() {
     val p = J.pair<String, String?>("a", "b")
     p.first.length
-    p.second.length
+    p.second<!UNSAFE_CALL!>.<!>length
 }
 
 fun bothNullable() {
     val p = J.pair<String?, String?>("a", "b")
-    p.first.length
-    p.second.length
+    p.first<!UNSAFE_CALL!>.<!>length
+    p.second<!UNSAFE_CALL!>.<!>length
 }
 
 fun bothNonNullBaseline() {

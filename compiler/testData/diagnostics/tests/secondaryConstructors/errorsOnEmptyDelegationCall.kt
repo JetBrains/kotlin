@@ -28,7 +28,7 @@ open class B2 {
 
 class A2 : B2 {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(x: Int) : <!NONE_APPLICABLE!>super<!>()
+    constructor(x: Int) : <!NONE_APPLICABLE, NO_VALUE_FOR_PARAMETER!>super<!>()
 }
 
 // --------------------------
@@ -39,7 +39,7 @@ open class B3 {
 
 class A3 : B3 {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(x: Int) : <!INVISIBLE_MEMBER!>super<!>()
+    constructor(x: Int) : <!INVISIBLE_REFERENCE!>super<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, secondaryConstructor */

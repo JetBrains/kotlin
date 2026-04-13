@@ -14,15 +14,15 @@ class B {
 
     fun f() {
         a = A()
-        <!SMARTCAST_IMPOSSIBLE!>a<!>.f(true)
-        takeInt(<!SMARTCAST_IMPOSSIBLE!>a<!>.f(""))
-        a.<!NONE_APPLICABLE!>f<!>()
+        a<!UNSAFE_CALL!>.<!>f(true)
+        takeInt(a<!UNSAFE_CALL!>.<!>f(""))
+        a.<!NONE_APPLICABLE, UNSAFE_CALL!>f<!>()
     }
 
     fun g() {
         takeInt(if (3 > 2) {
             a = A()
-            <!SMARTCAST_IMPOSSIBLE!>a<!>.f(true)
+            a<!UNSAFE_CALL!>.<!>f(true)
         } else {
             6
         })

@@ -18,7 +18,7 @@ FILE: reorderRange.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_09I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -43,13 +43,13 @@ FILE: reorderRange.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_09I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Invoke_09 : R|<local>/Invoke_09I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Invoke_09|
 
@@ -59,7 +59,7 @@ FILE: reorderRange.kt
         }
         )
         lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_83>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/reorder|<R|<local>/Invoke_09|, R|kotlin/Any?|>(<L> = reorder@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/Any?>| <inline=NoInline>  {
-            ^ (this@R|special/anonymous|, (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.name|).R|org/jetbrains/kotlinx/dataframe/api/ColumnRangeColumnsSelectionDsl.rangeTo|((this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.age|)
+            ^ (this@R|special/anonymous|, (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.name|).R|org/jetbrains/kotlinx/dataframe/api/ColumnRangeColumnsSelectionDsl.rangeTo|((this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.age|)
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Reorder<<local>/Invoke_09, kotlin/Any?>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_83>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Reorder<<local>/Invoke_09, kotlin/Any?>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_83>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Invoke_83I : R|kotlin/Any| {
@@ -79,7 +79,7 @@ FILE: reorderRange.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_83I>|.age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
@@ -104,13 +104,13 @@ FILE: reorderRange.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_83I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Invoke_83 : R|<local>/Invoke_83I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Invoke_83|
 
@@ -120,7 +120,7 @@ FILE: reorderRange.kt
         }
         )
         lval df2: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_47>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/reorder|<R|<local>/Invoke_09|, R|kotlin/Any?|>(<L> = reorder@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<kotlin/Any?>| <inline=NoInline>  {
-            ^ (this@R|special/anonymous|, (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.name|).R|org/jetbrains/kotlinx/dataframe/api/ColumnRangeColumnsSelectionDsl.rangeTo|((this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.city|)
+            ^ (this@R|special/anonymous|, (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.name|).R|org/jetbrains/kotlinx/dataframe/api/ColumnRangeColumnsSelectionDsl.rangeTo|((this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.city|)
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Reorder<<local>/Invoke_09, kotlin/Any?>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_47>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Reorder<<local>/Invoke_09, kotlin/Any?>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/Invoke_47>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class Invoke_47I : R|kotlin/Any| {
@@ -140,7 +140,7 @@ FILE: reorderRange.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_47I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -165,13 +165,13 @@ FILE: reorderRange.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_47I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Invoke_47 : R|<local>/Invoke_47I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Invoke_47|
 

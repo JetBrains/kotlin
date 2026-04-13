@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidUsingSupertypesWithInaccessibleContentInTypeArguments +ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
+// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
 
 // MODULE: missing
 // FILE: Base.kt
@@ -11,6 +11,6 @@ class Derived : Base() {}
 
 // MODULE: use(intermediate)
 // FILE: use.kt
-fun foo(): Derived = Derived()
+fun foo(): Derived = <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

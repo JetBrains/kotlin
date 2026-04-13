@@ -5,9 +5,9 @@ package typeConstructorMismatch
 import java.util.*
 
 fun test(set: Set<String>) {
-    elemAndList("2", <!TYPE_MISMATCH!>set<!>)
+    elemAndList("2", <!ARGUMENT_TYPE_MISMATCH!>set<!>)
 
-    "".elemAndListWithReceiver("", <!TYPE_MISMATCH!>set<!>)
+    "".elemAndListWithReceiver("", <!ARGUMENT_TYPE_MISMATCH!>set<!>)
 }
 
 fun <R> elemAndList(r: R, t: List<R>): R = r

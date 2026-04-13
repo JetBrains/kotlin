@@ -458,18 +458,18 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>, ScriptTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
+        public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>, ScriptTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/a|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
             public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
@@ -477,8 +477,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair], ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
@@ -507,18 +507,18 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>, ScriptTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
+        public final data [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-destructEntry.kts>, ScriptTopLevelDeclaration=true] class MyPair : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/MyPair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, [ResolvedTo(STATUS)] [CorrespondingProperty=util/MyPair.b] b: R|kotlin/Int|): R|util/MyPair| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/a|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
             public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
@@ -526,8 +526,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/MyPair.MyPair], ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
@@ -561,13 +561,13 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
             public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
@@ -575,8 +575,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
@@ -610,13 +610,13 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/a|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=util/MyPair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=MyPair] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
 
             public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 
@@ -624,8 +624,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|<local>/<destruct>|.R|util/MyPair.component1|()
@@ -682,4 +682,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntry.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val right: R|kotlin/Int| = R|<local>/<destruct>|.R|util/MyPair.component2|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-

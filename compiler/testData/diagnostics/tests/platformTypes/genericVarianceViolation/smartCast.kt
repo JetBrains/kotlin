@@ -11,8 +11,8 @@ public class A {
 
 fun main(a: A, ml: Any) {
     if (ml is <!CANNOT_CHECK_FOR_ERASED!>MutableList<String><!>) {
-        a.foo(<!DEBUG_INFO_SMARTCAST, JAVA_TYPE_MISMATCH!>ml<!>)
-        a.foo(ml <!UNCHECKED_CAST!>as List<Any><!>)
+        a.foo(<!JAVA_TYPE_MISMATCH!>ml<!>)
+        a.foo(ml as List<Any>)
     }
 }
 

@@ -17,7 +17,7 @@ class Case1 {
 
     fun <T : Number> case(list: List<T>, x: T) {
         list.<!DEBUG_INFO_CALL("fqName: Case1.foo; typeCall: extension function")!>foo(x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(x)<!>
+        list.foo(x)
     }
 
 }
@@ -29,7 +29,7 @@ class Case2 {
 
     fun case(list: List<Any>) {
         list.<!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: extension function")!>foo(1)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(1)<!>
+        list.foo(1)
     }
 }
 
@@ -41,7 +41,7 @@ class Case3 {
 
     fun case(list: List<Int>) {
         list.<!DEBUG_INFO_CALL("fqName: Case3.foo; typeCall: extension function")!>foo('a')<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo('a')<!>
+        list.foo('a')
     }
 }
 
@@ -55,7 +55,7 @@ class Case4 {
 
     fun case(list: List<Short>, x: Any) {
         list.<!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: extension function")!>foo(x, "str")<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(x, "str")<!>
+        list.foo(x, "str")
     }
 }
 

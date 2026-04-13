@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: 1.kt
 package a
 import b.ObserverSupport

@@ -26,44 +26,44 @@ public class JavaBox<T> {
 
 // FILE: Test.kt
 fun geneticFunTest() {
-    takeAny(JavaWithGenericFun.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(JavaBox("")).a)
+    takeAny(JavaWithGenericFun.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(JavaBox("")).a)
     takeAny(JavaWithGenericFun.foo<String>(JavaBox("")).a)
     takeAny(JavaWithGenericFun.foo<String>(JavaBox(null)).a)
     takeAny(JavaWithGenericFun.foo<String?>(JavaBox(null)).a)
     takeAny(JavaWithGenericFun.foo<String?>(JavaBox("")).a)
 
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2(JavaBox(1)).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2(JavaBox(null)).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2<Int>(JavaBox(1)).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo2<Int?>(JavaBox(1)).a<!>)
+    takeAny(JavaWithGenericFun.foo2(JavaBox(1)).a)
+    takeAny(JavaWithGenericFun.foo2(JavaBox(null)).a)
+    takeAny(JavaWithGenericFun.foo2<Int>(JavaBox(1)).a)
+    takeAny(JavaWithGenericFun.foo2<Int?>(JavaBox(1)).a)
 
     takeString(JavaWithGenericFun.foo3(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo3<String>(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo3<String?>(JavaBox("")).a)
-    takeString(<!TYPE_MISMATCH!>JavaWithGenericFun.foo3(JavaBox(null)).a<!>)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo3(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo3<String>(JavaBox(null)).a)
     takeString(JavaWithGenericFun.foo3<String?>(JavaBox(null)).a)
 
     takeString(JavaWithGenericFun.foo4(JavaBox(JavaBox(""))).a.a)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(""))).a.a)
-    takeString(JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(""))).a.a)
-    takeString(<!TYPE_MISMATCH!>JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a<!>)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(""))).a.a<!>)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo4(JavaBox(JavaBox(null))).a.a<!>)
     takeString(JavaWithGenericFun.foo4<String>(JavaBox(JavaBox(null))).a.a)
-    takeString(JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(null))).a.a)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo4<String?>(JavaBox(JavaBox(null))).a.a<!>)
 
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5(JavaBox(JavaBox(""))).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(""))).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(""))).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5(JavaBox(JavaBox(null))).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(null))).a<!>)
-    takeAny(<!TYPE_MISMATCH!>JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(null))).a<!>)
+    takeAny(JavaWithGenericFun.foo5(JavaBox(JavaBox(""))).a)
+    takeAny(JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(""))).a)
+    takeAny(JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(""))).a)
+    takeAny(JavaWithGenericFun.foo5(JavaBox(JavaBox(null))).a)
+    takeAny(JavaWithGenericFun.foo5<String>(JavaBox(JavaBox(null))).a)
+    takeAny(JavaWithGenericFun.foo5<String?>(JavaBox(JavaBox(null))).a)
 
     takeString(JavaWithGenericFun.foo6(JavaBox("")).a)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox("")).a)
-    takeString(JavaWithGenericFun.foo6<String?>(JavaBox("")).a)
-    takeString(<!TYPE_MISMATCH!>JavaWithGenericFun.foo6(JavaBox(null)).a<!>)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo6<String?>(JavaBox("")).a<!>)
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWithGenericFun.foo6(JavaBox(null)).a<!>)
     takeString(JavaWithGenericFun.foo6<String>(JavaBox(null)).a)
-    takeString(JavaWithGenericFun.foo6<String?>(JavaBox(null)).a)
+    takeString(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("String?; String;  This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>JavaWithGenericFun.foo6<String?>(JavaBox(null)).a<!>)
 }
 
 fun takeString(a: String){}

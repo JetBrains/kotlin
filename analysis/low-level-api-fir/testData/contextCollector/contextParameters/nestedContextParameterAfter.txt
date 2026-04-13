@@ -65,8 +65,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedContextParameterAfter.kt
         }
 
     }
-    context([ResolvedTo(CONTRACTS)] <unused var>: R|A|, [ResolvedTo(CONTRACTS)] <unused var>: R|B|, [ResolvedTo(CONTRACTS)] <unused var>: R|C|, [ResolvedTo(CONTRACTS)] <unused var>: R|D|)
-    public final [ResolvedTo(CONTRACTS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(STATUS)] <unused var>: R|A|, [ResolvedTo(STATUS)] <unused var>: R|B|, [ResolvedTo(STATUS)] <unused var>: R|C|, [ResolvedTo(STATUS)] <unused var>: R|D|)
+    public final [ResolvedTo(STATUS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
     context([ResolvedTo(BODY_RESOLVE)] a: R|T|)
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|Another?|> usage([ResolvedTo(BODY_RESOLVE)] action: R|@ContextFunctionTypeParams(1) context(D) (context(B) C.() -> kotlin/Unit) -> kotlin/Unit|): R|kotlin/Unit| {
         when () {

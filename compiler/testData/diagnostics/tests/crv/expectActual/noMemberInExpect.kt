@@ -26,7 +26,7 @@ actual interface Impl: A {
 }
 
 fun testPlatform(i: Impl) {
-    i.x()
+    i.<!RETURN_VALUE_NOT_USED!>x<!>()
     i.ign()
 }
 

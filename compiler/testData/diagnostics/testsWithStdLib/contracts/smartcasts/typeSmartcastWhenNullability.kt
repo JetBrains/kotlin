@@ -30,7 +30,7 @@ fun nullWhenNotString(x: Any?): Int? {
 fun test1(x: Any?) {
     // condition == true <=> function returned null <=> 'x' is String
     if (nullWhenString(x) == null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -44,7 +44,7 @@ fun test2(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 

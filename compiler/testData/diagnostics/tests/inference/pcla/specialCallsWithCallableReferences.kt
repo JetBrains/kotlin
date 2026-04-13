@@ -81,63 +81,63 @@ fun poll05(): Flow<String> {
 
 fun poll06(): Flow<String> {
     return flow {
-        val inv = select(foo7(), <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!>)
+        val inv = select(foo7(), ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!>)
         inv
     }
 }
 
 fun poll1(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo2<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::bar2 } else { ::foo2 }
+        inv()
     }
 }
 
 fun poll11(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo2<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::bar2 } else { ::foo2 }
+        inv()
     }
 }
 
 fun poll12(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar3<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::bar3 } else { ::foo3 }
+        inv()
     }
 }
 
 fun poll13(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::bar2 } else { ::foo3 }
+        inv()
     }
 }
 
 fun poll14(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar4<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo4<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::bar4 } else { ::foo4 }
+        inv()
     }
 }
 
 fun poll15(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar5<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::bar5 } else { ::foo5 }
+        inv()
     }
 }
 
 fun poll16(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!><!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = if (flag) { ::Foo6 } else { ::Foo6 }
+        inv()
     }
 }
 
 fun poll17(flag: Boolean): Flow<String> {
     return flow {
-        val inv = if (flag) { foo7() } else { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo7<!> }
+        val inv = if (flag) { foo7() } else { ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> }
         inv
     }
 }
@@ -186,7 +186,7 @@ fun poll25(flag: Boolean): Flow<String> {
 
 fun poll26(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!IMPLICIT_CAST_TO_ANY, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> false -> <!IMPLICIT_CAST_TO_ANY!>foo7()<!> <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> <!IMPLICIT_CAST_TO_ANY, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> }
+        val inv = when (flag) { true -> ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> false -> foo7() <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> }
         inv
     }
 }
@@ -235,105 +235,105 @@ fun poll35(flag: Boolean): Flow<String> {
 
 fun poll36(flag: Boolean): Flow<String> {
     return flow {
-        val inv = when (flag) { true -> <!IMPLICIT_CAST_TO_ANY, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> false -> <!IMPLICIT_CAST_TO_ANY!>foo7()<!> }
+        val inv = when (flag) { true -> ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> false -> foo7() }
         inv
     }
 }
 
 fun poll4(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar } finally { ::foo }
+        inv()
     }
 }
 
 fun poll41(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo2<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar2 } finally { ::foo2 }
+        inv()
     }
 }
 
 fun poll42(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar3<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar3 } finally { ::foo3 }
+        inv()
     }
 }
 
 fun poll43(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar4<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo4<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar4 } finally { ::foo4 }
+        inv()
     }
 }
 
 fun poll44(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar5<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar5 } finally { ::foo5 }
+        inv()
     }
 }
 
 fun poll45(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::Foo6 } finally { ::Foo6 }
+        inv()
     }
 }
 
 fun poll46(): Flow<String> {
     return flow {
-        val inv = try { foo7() } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo7<!> }
+        val inv = try { foo7() } finally { ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> }
         inv
     }
 }
 
 fun poll5(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!><!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar } catch (e: Exception) { ::foo } finally { ::foo }
+        inv()
     }
 }
 
 fun poll51(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar2<!><!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo2<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo2<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar2 } catch (e: Exception) { ::foo2 } finally { ::foo2 }
+        inv()
     }
 }
 
 fun poll52(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar3<!><!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo3<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar3 } catch (e: Exception) { ::foo3 } finally { ::foo3 }
+        inv()
     }
 }
 
 fun poll53(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar4<!><!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo4<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo4<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar4 } catch (e: Exception) { ::foo4 } finally { ::foo4 }
+        inv()
     }
 }
 
 fun poll54(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar5<!><!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo5<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { ::foo5 }
+        inv()
     }
 }
 
 fun poll55(): Flow<String> {
     return flow {
-        val inv = try { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!><!> } catch (e: Exception) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!><!> } finally { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo6<!> }
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        val inv = try { ::Foo6 } catch (e: Exception) { ::Foo6 } finally { ::Foo6 }
+        inv()
     }
 }
 
 fun poll56(): Flow<String> {
     return flow {
-        val inv = try { ::<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
+        val inv = try { ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
         inv
     }
 }
@@ -382,8 +382,8 @@ fun poll65(): Flow<String> {
 
 fun poll66(): Flow<String> {
     return flow {
-        val inv = ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!>
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        val inv = ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!>
+        inv
     }
 }
 
@@ -431,36 +431,36 @@ fun poll75(): Flow<String> {
 
 fun poll76(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        val inv = ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!><!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>
+        inv
     }
 }
 
 fun poll8(): Flow<String> {
     return flow {
         val inv = ::bar in setOf(::foo)
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 fun poll81(): Flow<String> {
     return flow {
         val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo2)
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>inv<!>()
+        <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 fun poll82(): Flow<String> {
     return flow {
         val inv = ::bar3 in setOf(::foo3)
-        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 fun poll83(): Flow<String> {
     return flow {
         val inv = ::bar4 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo4)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        inv
     }
 }
 
@@ -480,21 +480,21 @@ fun poll85(): Flow<String> {
 
 fun poll86(): Flow<String> {
     return flow {
-        val inv = ::Foo7 in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!>)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        val inv = ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> in <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!>)
+        inv
     }
 }
 
 fun poll87(): Flow<String> {
     return flow {
-        val inv = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(foo7())
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inv<!>
+        val inv = ::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!> <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(foo7())
+        inv
     }
 }
 
 fun poll88(): Flow<String> {
     return flow {
-        val inv = foo7() in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!>)
+        val inv = foo7() in <!CANNOT_INFER_PARAMETER_TYPE!>setOf<!>(::<!CANNOT_INFER_PARAMETER_TYPE!>Foo7<!>)
         inv
     }
 }

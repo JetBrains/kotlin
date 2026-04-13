@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun box(): String {
     return object {

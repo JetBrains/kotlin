@@ -11,7 +11,7 @@ expect class Bar {
 }
 
 fun testCommon() {
-    <!RESOLUTION_TO_CLASSIFIER!>Bar<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
+    <!EXPECT_CLASS_AS_FUNCTION!>Bar<!>().<!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 // MODULE: m1-jvm()()(m1-common)

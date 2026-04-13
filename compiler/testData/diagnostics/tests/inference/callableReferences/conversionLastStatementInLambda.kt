@@ -15,16 +15,16 @@ fun main(b: Boolean) {
 
     callWithLambda {
         // Doesn't work in K1, but does in K2 (see KT-55931)
-        if (b) <!TYPE_MISMATCH!>{
-            <!TYPE_MISMATCH!>::<!TYPE_MISMATCH!>test1<!><!>
-        }<!> else <!TYPE_MISMATCH!>{
-            <!TYPE_MISMATCH!>::<!TYPE_MISMATCH!>test2<!><!>
-        }<!>
+        if (b) {
+            ::test1
+        } else {
+            ::test2
+        }
     }
 
     callWithLambda {
         // Doesn't work in K1, but does in K2
-        (<!TYPE_MISMATCH, TYPE_MISMATCH!>::<!TYPE_MISMATCH!>test1<!><!>)
+        (::test1)
     }
 }
 

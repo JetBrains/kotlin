@@ -1,28 +1,28 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun <S : Any> foo1(x: Array<out S?>, y: Array<in S?>) {
-    val xo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>outANullable(x)<!>
-    val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inANullable(y)<!>
+    val xo = outANullable(x)
+    val yo = inANullable(y)
 
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>f<!>: Array<S> = xo
+    var f: Array<S> = xo
     f = yo
 }
 
 fun <S : Any> foo2(x: Array<out S>, y: Array<in S>) {
-    val xo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>outA(x)<!>
-    val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inA(y)<!>
+    val xo = outA(x)
+    val yo = inA(y)
 
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>f<!>: Array<S> = xo
+    var f: Array<S> = xo
     f = yo
 }
 
 class A1<S : Any>(x: Array<out S?>, y: Array<in S?>) {
-    val xo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>outANullable(x)<!>
-    val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inANullable(y)<!>
+    val xo = outANullable(x)
+    val yo = inANullable(y)
 }
 
 class A2<S : Any>(x: Array<out S>, y: Array<in S>) {
-    val xo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>outA(x)<!>
-    val yo = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<S>")!>inA(y)<!>
+    val xo = outA(x)
+    val yo = inA(y)
 }
 
 fun <X : Any> outANullable(x: Array<out X?>): Array<X> = TODO()

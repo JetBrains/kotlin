@@ -1,7 +1,6 @@
 // LANGUAGE: -SkipHiddenObjectsInResolution
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82555
-// FIR_IDENTICAL
 
 class Outer {
     enum class E {

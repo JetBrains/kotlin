@@ -4,7 +4,7 @@ final class CodeFragment$run$1$1 {
     public final static field INSTANCE: CodeFragment$run$1$1
     inner (anonymous) class CodeFragment$run$1$1
     inner (local) class test/SourceKt$test$df$1$DataFrameOf_92 DataFrameOf_92
-    inner (local) class test/SourceKt$test$df$1$Scope0 Scope0
+    inner (local) class test/SourceKt$test$df$1$DataFramePropertiesScope0 DataFramePropertiesScope0
     static method <clinit>(): void
     method <init>(): void
     public synthetic bridge method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
@@ -16,10 +16,10 @@ public abstract class CodeFragment$run$1$DataFrameOf_23 {
     enclosing method CodeFragment.run(Lorg/jetbrains/kotlinx/dataframe/DataFrame;)Lorg/jetbrains/kotlinx/dataframe/DataColumn;
     inner (local) class CodeFragment$run$1$DataFrameOf_23 DataFrameOf_23
     inner (local) class CodeFragment$run$1$DataFrameOf_23I DataFrameOf_23I
-    inner (local) class CodeFragment$run$1$Scope0 Scope0
+    inner (local) class CodeFragment$run$1$DataFramePropertiesScope0 DataFramePropertiesScope0
     public method <init>(): void
-    public synthetic deprecated static method getScope0$annotations(): void
-    public abstract method getScope0(): CodeFragment$run$1$Scope0
+    public synthetic deprecated static method getDataFramePropertiesScope0$annotations(): void
+    public abstract method getDataFramePropertiesScope0(): CodeFragment$run$1$DataFramePropertiesScope0
 }
 
 public abstract class CodeFragment$run$1$DataFrameOf_23I {
@@ -36,7 +36,7 @@ public abstract class CodeFragment$run$1$DataFrameOf_23I {
     public inner class org/jetbrains/kotlinx/dataframe/annotations/Order$Container
 }
 
-public final class CodeFragment$run$1$Scope0 {
+public final class CodeFragment$run$1$DataFramePropertiesScope0 {
     // source: 'fragment.kt'
     enclosing method CodeFragment.run(Lorg/jetbrains/kotlinx/dataframe/DataFrame;)Lorg/jetbrains/kotlinx/dataframe/DataColumn;
     private final field age$1: org.jetbrains.kotlinx.dataframe.DataColumn
@@ -46,7 +46,7 @@ public final class CodeFragment$run$1$Scope0 {
     private final field name$1: org.jetbrains.kotlinx.dataframe.DataColumn
     private final field name: java.lang.String
     inner (local) class CodeFragment$run$1$DataFrameOf_23I DataFrameOf_23I
-    inner (local) class CodeFragment$run$1$Scope0 Scope0
+    inner (local) class CodeFragment$run$1$DataFramePropertiesScope0 DataFramePropertiesScope0
     public method <init>(): void
     public final method _age(p0: org.jetbrains.kotlinx.dataframe.ColumnsScope): org.jetbrains.kotlinx.dataframe.DataColumn
     public final method _age(p0: org.jetbrains.kotlinx.dataframe.DataRow): int
@@ -61,7 +61,7 @@ public final class CodeFragment {
     inner (anonymous) class CodeFragment$run$1$1
     inner (local) class CodeFragment$run$1$DataFrameOf_23 DataFrameOf_23
     inner (local) class CodeFragment$run$1$DataFrameOf_23I DataFrameOf_23I
-    inner (local) class CodeFragment$run$1$Scope0 Scope0
+    inner (local) class CodeFragment$run$1$DataFramePropertiesScope0 DataFramePropertiesScope0
     inner (local) class test/SourceKt$test$df$1$DataFrameOf_92 DataFrameOf_92
     public method <init>(): void
     public final static method run(p0: org.jetbrains.kotlinx.dataframe.DataFrame): org.jetbrains.kotlinx.dataframe.DataColumn

@@ -8,7 +8,7 @@ public fun foo(p: String?): Int {
     } while (!x())
     // Do-while loop is executed at least once, so
     // p should be not null here
-    return <!DEBUG_INFO_SMARTCAST!>p<!>.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, doWhileLoop, functionDeclaration, nullableType, smartcast */

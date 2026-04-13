@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -28,4 +29,10 @@ class KotlinScriptStubImpl(
         fqNameRef = fqNameRef,
         isReplSnippet = isReplSnippet,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinScriptStubImpl &&
+                other.isReplSnippet == isReplSnippet &&
+                other.fqNameRef == fqNameRef
 }

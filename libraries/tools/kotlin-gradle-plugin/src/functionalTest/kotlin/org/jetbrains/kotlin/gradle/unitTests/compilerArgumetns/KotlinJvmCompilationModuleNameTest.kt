@@ -177,6 +177,77 @@ class KotlinJvmCompilationModuleNameTest {
     }
 
 
+    @Test
+    fun testJVMProjectWithGroupOldCompiler() {
+        val project = buildProjectWithJvm(
+            projectBuilder = {
+                withName(PROJECT_NAME)
+            },
+            preApplyCode = {
+                group = GROUP_ID
+            }
+        )
+        project.kotlinJvmExtension.compilerVersion.set("2.3.20")
+
+        project.evaluate()
+
+        assertEquals(
+            PROJECT_NAME,
+            project.kotlinJvmExtension.compilerOptions.moduleName.get(),
+            "JVM project with old compiler should use plain project name without group prefix in extension options",
+        )
+
+        val jvmMainCompilationTaskCompilerOptions = project.kotlinJvmExtension.target.compilations.main.compileTaskProvider
+            .map { it.compilerOptions as KotlinJvmCompilerOptions }
+        assertEquals(
+            PROJECT_NAME,
+            jvmMainCompilationTaskCompilerOptions.get().moduleName.get(),
+            "JVM project with old compiler should use plain project name without group prefix in task options",
+        )
+
+        val jvmTestCompilationTaskCompilerOptions = project.kotlinJvmExtension.target.compilations.test.compileTaskProvider
+            .map { it.compilerOptions as KotlinJvmCompilerOptions }
+        assertEquals(
+            "${PROJECT_NAME}_test",
+            jvmTestCompilationTaskCompilerOptions.get().moduleName.get(),
+            "JVM project with old compiler should use plain project name with _test suffix without group prefix in task options",
+        )
+    }
+
+    @Test
+    fun testKmpJVMTargetWithGroupOldCompiler() {
+        val project = buildProjectWithMPP(
+            projectBuilder = {
+                withName(PROJECT_NAME)
+            },
+            preApplyCode = {
+                group = GROUP_ID
+            }
+        )
+        project.multiplatformExtension.compilerVersion.set("2.3.20")
+        val jvmTarget = project.multiplatformExtension.jvm()
+
+        project.evaluate()
+
+        assertEquals(
+            PROJECT_NAME,
+            jvmTarget.compilerOptions.moduleName.get(),
+            "KMP JVM target with old compiler should use plain project name without group prefix in options"
+        )
+
+        assertEquals(
+            PROJECT_NAME,
+            jvmTarget.compilations.main.compileTaskProvider.get().compilerOptions.moduleName.get(),
+            "KMP JVM main compilation with old compiler should use plain project name without group prefix in task options"
+        )
+
+        assertEquals(
+            "${PROJECT_NAME}_test",
+            jvmTarget.compilations.test.compileTaskProvider.get().compilerOptions.moduleName.get(),
+            "KMP JVM test compilation with old compiler should use plain project name with _test suffix without group prefix"
+        )
+    }
+
     companion object {
         const val PROJECT_NAME = "jvmProject"
         const val GROUP_ID = "com.example"

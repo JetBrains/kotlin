@@ -3,12 +3,12 @@
 
 // exhaustive
 fun test1(n: Nothing) = when (n) { }
-fun test2(n: Nothing?) = <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_CONSTANT!>n<!>) {
-    null -> {}
+fun test2(n: Nothing?) = when (n) {
+    <!SENSELESS_COMPARISON!>null<!> -> {}
 }
 
 // not exhaustive
-fun test3(n: Nothing?) = <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_CONSTANT!>n<!>) {
+fun test3(n: Nothing?) = <!NO_ELSE_IN_WHEN!>when<!> (n) {
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, whenExpression, whenWithSubject */

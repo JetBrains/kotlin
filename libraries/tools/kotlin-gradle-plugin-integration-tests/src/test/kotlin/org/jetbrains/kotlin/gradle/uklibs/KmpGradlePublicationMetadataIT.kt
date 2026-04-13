@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import com.android.build.gradle.LibraryExtension
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
-import org.jetbrains.kotlin.gradle.uklibs.KmpGradlePublicationMetadataIT.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -29,31 +26,6 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
     private val json = Json {
         ignoreUnknownKeys = true
     }
-
-    @Serializable
-    data class GradleMetadata(
-        val variants: Set<Variant>,
-    )
-
-    @Serializable
-    data class Variant(
-        val name: String,
-        val attributes: Map<String, String>,
-        @SerialName("available-at")
-        val availableAt: ComponentPointer? = null,
-        val files: List<VariantFile> = emptyList(),
-    )
-
-    @Serializable
-    data class ComponentPointer(
-        val url: String,
-    )
-
-    @Serializable
-    data class VariantFile(
-        val name: String,
-        val url: String,
-    )
 
     // FIXME: Test standard publication with Android - KT-76700
 

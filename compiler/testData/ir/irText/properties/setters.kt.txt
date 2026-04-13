@@ -14,7 +14,7 @@ class Bar : Foo {
     override get(): Int {
       return super<Foo>.<get-foo>()
     }
-    override set(<anonymous parameter 0>: Int) {
+    override set(_: Int) {
     }
 
 }
@@ -53,6 +53,6 @@ var qux: Int
   get(): Int {
     return 42
   }
-  set(<anonymous parameter 0>: Int) {
+  set(_: Int) {
     return Unit
   }

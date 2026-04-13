@@ -11,8 +11,8 @@ suspend fun String.id(): String = this
 fun box() {
     val x = "f"
     builder {
-        go1(<!TYPE_MISMATCH!>x::id<!>)
-        go2(<!TYPE_MISMATCH!>x::id<!>)
+        go1(x::<!INAPPLICABLE_CANDIDATE!>id<!>)
+        go2(x::<!INAPPLICABLE_CANDIDATE!>id<!>)
     }
 }
 

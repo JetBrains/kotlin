@@ -1,5 +1,0 @@
-KaType: ERROR
-PsiType: null
-
-Compilation result:
-ERROR<CONTEXT_PARAMETERS_UNSUPPORTED: Context parameters are not supported in K1 mode. Consider using a more recent language version and switching to K2 mode.>

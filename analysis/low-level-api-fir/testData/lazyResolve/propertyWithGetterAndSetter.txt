@@ -100,10 +100,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetter.kt
         R|/receive|(R|/withGetterAndSetter|)
         R|/withGetterAndSetter| = Int(123)
     }
-    public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] var withGetterAndSetter: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun receive([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] var withGetterAndSetter: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithGetterAndSetter.kt

@@ -15,6 +15,6 @@ class FooImpl {
     }
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = FooImpl
+actual typealias Foo = FooImpl
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

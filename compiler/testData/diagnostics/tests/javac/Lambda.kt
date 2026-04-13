@@ -15,8 +15,8 @@ sealed class Result<out Success, out Error> {
 
     inline fun <Mapped> mapError(transform: (Error) -> Mapped): Result<Success, Mapped> =
         when (this) {
-            is Result.Success -> <!DEBUG_INFO_SMARTCAST!>this<!>
-            is Result.Error -> Error(transform(<!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>error<!>))
+            is Result.Success -> this
+            is Result.Error -> Error(transform(error))
         }
 }
 
@@ -81,13 +81,13 @@ import com.repo.request_withNested
 
 class Model {
     fun call() {
-        request_a().mapError { 1 + 1 }
-        request_a().mapError { it -> 1 + 1 }
-        request_withNested().mapError { 1 + 1 }
+        <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>request_a<!>().<!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>mapError<!> <!MISSING_DEPENDENCY_CLASS!>{ 1 + 1 }<!>
+        <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>request_a<!>().<!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>mapError<!> { <!MISSING_DEPENDENCY_CLASS!>it<!> -> 1 + 1 }
+        <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>request_withNested<!>().<!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>mapError<!> <!MISSING_DEPENDENCY_CLASS!>{ 1 + 1 }<!>
     }
 }
 
-fun simple(b: com.<!UNRESOLVED_REFERENCE!>result<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>B<!><*>) {}
+fun simple(b: com.<!UNRESOLVED_REFERENCE!>result<!>.B<*>) {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
 inner, integerLiteral, isExpression, javaFunction, lambdaLiteral, nestedClass, nullableType, out, primaryConstructor,

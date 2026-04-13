@@ -148,7 +148,7 @@ FILE fqName:<root> fileName:/1.kt
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.String declared in <root>.D'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
             CALL 'public open fun bar (): @[FlexibleNullability] kotlin.String? declared in <root>.Java1' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java1 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] kotlin.String? origin=null
-              ARG <this>: GET_VAR '<this>: <root>.D declared in <root>.D.bar' type=<root>.D origin=null
+              ARG <this>: GET_VAR '<this>: <root>.D declared in <root>.D.bar' type=<root>.D origin=IMPLICIT_ARGUMENT
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.D
       VALUE_PARAMETER kind:Regular name:s index:1 type:kotlin.String?
@@ -161,7 +161,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java3
       BLOCK_BODY
         CALL 'public open fun foo (s: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java1 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '<this>: <root>.D declared in <root>.D.foo' type=<root>.D origin=null
+          ARG <this>: GET_VAR '<this>: <root>.D declared in <root>.D.foo' type=<root>.D origin=IMPLICIT_ARGUMENT
           ARG s: GET_VAR 's: kotlin.String? declared in <root>.D.foo' type=kotlin.String? origin=null
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:

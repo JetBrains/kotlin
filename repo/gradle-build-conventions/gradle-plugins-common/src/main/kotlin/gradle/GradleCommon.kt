@@ -47,6 +47,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -506,6 +508,11 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
     val mainCompilation = kotlinJvmTarget.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
     tasks.named<KotlinCompile>(mainCompilation.compileKotlinTaskName) {
         configureGradleCompatibility()
+
+        // workaround for KT-85412
+        compilerOptions.moduleName.value(
+            project.name.replace(invalidModuleNameCharactersRegex, "_")
+        ).disallowChanges()
     }
 
     // Fix common sources visibility for tests
@@ -648,6 +655,8 @@ fun KotlinCompile.configureGradleCompatibility() {
     }
 }
 
+internal val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
+
 /**
  * Configures the main JVM compile task in the project to use specific setup for compatibility with [GradlePluginVariant.GRADLE_MIN]
  * If you need to configure it for specific tasks, please use [configureGradleCompatibility] and [configureBuildToolsApiVersionForGradleCompatibility].
@@ -656,6 +665,35 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
     configureBuildToolsApiVersionForGradleCompatibility()
     tasks.named("compileKotlin", KotlinCompile::class.java) {
         configureGradleCompatibility()
+    }
+
+    // workaround for KT-85412
+    extensions.findByType<KotlinJvmExtension>()?.target?.compilations?.configureEach {
+        compileTaskProvider.configure {
+            if (this@configureEach.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                (compilerOptions as KotlinJvmCompilerOptions).moduleName.value(
+                    project.name.replace(invalidModuleNameCharactersRegex, "_")
+                ).disallowChanges()
+            } else {
+                (compilerOptions as KotlinJvmCompilerOptions).moduleName.value(
+                    "${project.name}_${this@configureEach.name}".replace(invalidModuleNameCharactersRegex, "_")
+                ).disallowChanges()
+            }
+        }
+    }
+}
+
+fun Project.applyWorkaroundForKt85412ForTestCompilations() {
+    // workaround for KT-85412
+    // main compilations are handled separately in this file
+    extensions.findByType<KotlinJvmExtension>()?.target?.compilations?.configureEach {
+        if (name.contains("test", ignoreCase = true)) {
+            compileTaskProvider.configure {
+                (compilerOptions as KotlinJvmCompilerOptions).moduleName.value(
+                    "${project.name}_${this@configureEach.name}".replace(invalidModuleNameCharactersRegex, "_")
+                ).disallowChanges()
+            }
+        }
     }
 }
 

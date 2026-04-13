@@ -5,7 +5,7 @@
 import kotlin.reflect.KProperty
 
 class B {
-    val c by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate(<!UNRESOLVED_REFERENCE!>ag<!>)<!>
+    val c <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>Delegate<!>(<!UNRESOLVED_REFERENCE!>ag<!>)
 }
 
 class Delegate<T: Any>(val init: T) {

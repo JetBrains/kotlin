@@ -17,8 +17,8 @@ fun case_1() {
     outer@ while (x != null) {
         inner@ do {
             x = null
-        } while (x == null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?"), DEBUG_INFO_SMARTCAST!>x<!>.length
+        } while (<!SENSELESS_COMPARISON!>x == null<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.length
     }
 }

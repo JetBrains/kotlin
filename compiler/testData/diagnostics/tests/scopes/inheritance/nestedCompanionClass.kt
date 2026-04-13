@@ -8,33 +8,33 @@ open class A {
 }
 
 class C: A() {
-    val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
+    val b: <!UNRESOLVED_REFERENCE!>B<!> = null!!
 
     init {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
+        <!UNRESOLVED_REFERENCE!>B<!>()
     }
 
     object O {
-        val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
+        val b: <!UNRESOLVED_REFERENCE!>B<!> = null!!
 
         init {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
+            <!UNRESOLVED_REFERENCE!>B<!>()
         }
     }
 
     class K {
-        val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
+        val b: <!UNRESOLVED_REFERENCE!>B<!> = null!!
 
         init {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
+            <!UNRESOLVED_REFERENCE!>B<!>()
         }
     }
 
     inner class I {
-        val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
+        val b: <!UNRESOLVED_REFERENCE!>B<!> = null!!
 
         init {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
+            <!UNRESOLVED_REFERENCE!>B<!>()
         }
     }
 }

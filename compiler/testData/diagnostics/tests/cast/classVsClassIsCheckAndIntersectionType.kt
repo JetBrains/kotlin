@@ -6,12 +6,12 @@ open class B
 open class C
 
 fun test1(a: A) {
-    <!USELESS_IS_CHECK!>a is B<!> && <!USELESS_IS_CHECK!>a is C<!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<!> && <!IMPOSSIBLE_IS_CHECK_ERROR!>a is C<!>
 }
 
 fun test2(a: A) {
-    <!USELESS_IS_CHECK!>a !is B<!> && return
-    <!USELESS_IS_CHECK!>a is C<!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a !is B<!> && return
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is C<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

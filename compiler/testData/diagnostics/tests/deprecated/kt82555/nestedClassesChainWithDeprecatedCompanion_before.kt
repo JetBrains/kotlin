@@ -16,8 +16,8 @@ class A {
 typealias AB = A.B
 
 fun test() {
-    <!NO_COMPANION_OBJECT!>AB<!>
-    A.<!NO_COMPANION_OBJECT!>B<!>
+    <!DEPRECATION_ERROR!>AB<!>
+    A.<!DEPRECATION_ERROR!>B<!>
     A.B.<!NO_COMPANION_OBJECT!>C<!>
     A.B.C.D
 }

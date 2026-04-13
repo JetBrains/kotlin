@@ -54,9 +54,9 @@ fun interface KJK6 : KJ6
 fun interface KJK7 : KJ7
 
 fun test() {
-    <!RESOLUTION_TO_CLASSIFIER!>J1<!> { TODO() }
-    <!RESOLUTION_TO_CLASSIFIER!>J2<!> { TODO() }
-    <!RESOLUTION_TO_CLASSIFIER!>J3<!> { TODO() }
+    <!INTERFACE_AS_FUNCTION!>J1<!> { TODO() }
+    <!INTERFACE_AS_FUNCTION!>J2<!> { TODO() }
+    <!INTERFACE_AS_FUNCTION!>J3<!> { TODO() }
 
     KJ1 { TODO() }
     KJ2 { TODO() }
@@ -74,9 +74,9 @@ fun test() {
     K6 { TODO() }
     K7 { TODO() }
 
-    <!RESOLUTION_TO_CLASSIFIER!>JK1<!> { TODO() }
-    <!RESOLUTION_TO_CLASSIFIER!>JK2<!> { TODO() }
-    <!RESOLUTION_TO_CLASSIFIER!>JK3<!> { TODO() }
+    <!INTERFACE_AS_FUNCTION!>JK1<!> { TODO() }
+    <!INTERFACE_AS_FUNCTION!>JK2<!> { TODO() }
+    <!INTERFACE_AS_FUNCTION!>JK3<!> { TODO() }
 
     KJK1 { TODO() }
     KJK2 { TODO() }

@@ -28,14 +28,14 @@ var v6: String
     set(value) {}
 
 fun test() {
-    <!DEPRECATION_ERROR!>v1<!>
+    <!UNRESOLVED_REFERENCE!>v1<!>
     <!UNRESOLVED_REFERENCE!>v2<!>
-    <!DEPRECATION_ERROR!>v3<!>
+    <!UNRESOLVED_REFERENCE!>v3<!>
     v3 = ""
     v4
-    <!DEPRECATION_ERROR!>v4<!> = ""
-    <!DEPRECATION_ERROR!>v5<!>
-    <!DEPRECATION_ERROR!>v5<!> = ""
+    <!UNRESOLVED_REFERENCE!>v4<!> = ""
+    <!UNRESOLVED_REFERENCE!>v5<!>
+    <!UNRESOLVED_REFERENCE!>v5<!> = ""
     <!UNRESOLVED_REFERENCE!>v6<!>
     <!UNRESOLVED_REFERENCE!>v6<!> = ""
 }

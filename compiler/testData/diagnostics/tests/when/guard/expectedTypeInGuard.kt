@@ -8,9 +8,9 @@ fun <T> materialize(): T {
 
 fun expectedTypeInGuard(x: Any) {
     when(x) {
-        is Int <!UNSUPPORTED_FEATURE!>if materialize<Boolean>()<!> -> 100
-        is String <!UNSUPPORTED_FEATURE!>if materialize()<!> -> 200
-        is Double <!UNSUPPORTED_FEATURE!>if materialize<String>()<!> -> 100
+        is Int if materialize<Boolean>() -> 100
+        is String if materialize() -> 200
+        is Double if <!CONDITION_TYPE_MISMATCH!>materialize<String>()<!> -> 100
         else -> 0
     }
 }

@@ -62,7 +62,7 @@ data class KotlinCompilerArgument(
     enum class Delimiter(val constantName: String) {
         Default("default"),
         None("none"),
-        PathSeparator("path-separator"),
+        PathSeparator("pathSeparator"),
         Space("space"),
         Semicolon("semicolon"),
     }

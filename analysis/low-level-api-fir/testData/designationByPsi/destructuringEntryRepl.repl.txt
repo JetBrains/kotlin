@@ -1,0 +1,5 @@
+KT element: KtDestructuringDeclarationEntry
+Resolve target: destructuringEntryRepl.repl.kts -> <snippet-destructuringEntryRepl.repl.kts> -> DestructuringEntryRepl_repl -> aaa
+FIR:
+  public final val aaa: <implicit> = REPL_EXPRESSION_REF
+      public get(): <implicit>

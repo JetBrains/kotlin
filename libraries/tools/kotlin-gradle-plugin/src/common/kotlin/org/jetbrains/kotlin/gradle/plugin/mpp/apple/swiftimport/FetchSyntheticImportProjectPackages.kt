@@ -20,7 +20,13 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import javax.inject.Inject
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
+import kotlin.text.startsWith
 
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -47,6 +53,10 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         get() = syntheticImportProjectRoot
             .asFileTree
             .matching {
+                // Don't traverse these for performance reasons
+                it.exclude(".swiftpm")
+                it.exclude(".build")
+
                 it.include("**/Package.swift")
             }
 
@@ -78,6 +88,9 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     abstract val additionalXcodeArgs: ListProperty<String>
 
     @get:Internal
+    abstract val additionalSwiftPackageResolveArgs: ListProperty<String>
+
+    @get:Internal
     protected val swiftPMDependenciesCheckoutLogs: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftPMCheckoutDD")
     )
@@ -91,6 +104,27 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     }
 
     private fun checkoutSwiftPMDependencies() {
+        // Do a pre-resolution step using swift package resolve because of issue with xcodebuild and lock files
+        execOps.exec { exec ->
+            exec.workingDir(syntheticImportProjectRoot.get().asFile)
+
+            val args = mutableListOf("/usr/bin/swift", "package", "resolve")
+            if (additionalSwiftPackageResolveArgs.isPresent) {
+                args.addAll(additionalSwiftPackageResolveArgs.get())
+            }
+
+            val environmentToFilter = listOf(
+                "SDKROOT",
+            )
+            environmentToFilter.forEach {
+                if (exec.environment.containsKey(it)) {
+                    exec.environment.remove(it)
+                }
+            }
+
+            exec.commandLine(args)
+        }
+
         execOps.exec {
             it.workingDir(syntheticImportProjectRoot.get().asFile)
             /**
@@ -115,7 +149,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
                 "-derivedDataPath", swiftPMDependenciesCheckoutLogs.get().asFile.path,
             )
 
-            if(additionalXcodeArgs.isPresent) {
+            if (additionalXcodeArgs.isPresent) {
                 args.addAll(additionalXcodeArgs.get())
             }
 
@@ -125,6 +159,10 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
     companion object {
         const val TASK_NAME = "fetchSyntheticImportProjectPackages"
+        fun fetchUmbrellaPackageTaskName(identifier: String) = lowerCamelCaseName(
+            "fetchUmbrellaPackageIdentifierFor",
+            identifier
+        )
         const val XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER = "-clonedSourcePackagesDirPath"
     }
 }

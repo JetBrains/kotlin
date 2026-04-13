@@ -13,9 +13,9 @@ fun test1(s1: String?) {
         return
     }
     finally {
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        s.length
     }
-    <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    s.length
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast,

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.SoftwareComponent
 
 /**
@@ -48,14 +47,4 @@ interface KotlinTargetComponent : SoftwareComponent {
      */
     val defaultArtifactId: String
 
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        message = "Scheduled for removal in Kotlin 2.3. Sources artifacts are now published as separate variant " +
-                "use target.sourcesElementsConfigurationName to obtain necessary information",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName"),
-        level = DeprecationLevel.ERROR,
-    )
-    val sourcesArtifacts: Set<PublishArtifact>
 }

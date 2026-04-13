@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package test
 
 // Checks that there is no rewrite error at ANNOTATION slice because of resolving annotations for object in lazy resolve and resolving

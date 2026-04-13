@@ -21,7 +21,7 @@ interface Base {
 }
 
 class Foo : Base {
-    <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT!>override val foo: Int<!>
+    override <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT!>val foo: Int<!>
 
     init {
         foo = 1

@@ -9,8 +9,8 @@ class Clazz() {
         }
 
     init {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!> = "hello"
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!> = 0
+        foo = "hello"
+        bar = 0
     }
 }
 

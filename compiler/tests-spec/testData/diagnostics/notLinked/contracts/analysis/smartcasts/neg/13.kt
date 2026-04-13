@@ -53,6 +53,6 @@ fun case_1(value_1: Any?) {
  */
 fun case_2(value_1: Any?) {
     if (value_1.case_2_1() || !value_1.case_2_2()) {
-        println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_1.toByte())
     }
 }

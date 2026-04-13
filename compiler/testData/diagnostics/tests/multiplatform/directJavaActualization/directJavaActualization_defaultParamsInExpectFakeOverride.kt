@@ -5,8 +5,8 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> : Base {
-}
+<!JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION{JVM}!>expect class Foo : Base {
+}<!>
 
 open class Base {
     fun foo(a: Int = 1) {}

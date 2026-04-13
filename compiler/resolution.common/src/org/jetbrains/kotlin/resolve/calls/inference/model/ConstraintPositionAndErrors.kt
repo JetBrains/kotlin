@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
-import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -105,6 +104,8 @@ object BuilderInferencePosition : ConstraintPosition() {
 }
 
 data object ProvideDelegateFixationPosition : ConstraintPosition()
+
+data object ThrowableUpperBoundAllowingToFixIntoIt : ConstraintPosition()
 
 // TODO: should be used only in SimpleConstraintSystemImpl, KT-59675
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()

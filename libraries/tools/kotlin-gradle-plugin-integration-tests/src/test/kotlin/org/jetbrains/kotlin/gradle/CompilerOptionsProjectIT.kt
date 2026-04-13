@@ -335,41 +335,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-57688: task moduleName input overrides project level moduleName")
-    @JvmGradlePluginTests
-    @GradleTest
-    fun moduleNameTaskOverrideProject(gradleVersion: GradleVersion) {
-        project(
-            projectName = "simpleProject",
-            gradleVersion = gradleVersion,
-        ) {
-            buildGradle.appendText(
-                //language=Groovy
-                """
-                |
-                |kotlin {
-                |    compilerOptions {
-                |         moduleName = "customModule"
-                |    }
-                |}
-                |
-                |tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configure {
-                |    moduleName = "otherCustomModuleName"
-                |}
-                """.trimMargin()
-            )
-
-            build("compileKotlin") {
-                assertTasksExecuted(":compileKotlin")
-
-                assertOutputContains(
-                    "w: :compileKotlin 'KotlinJvmCompile.moduleName' is deprecated, please migrate to 'compilerOptions.moduleName'!"
-                )
-                assertCompilerArgument(":compileKotlin", "-module-name otherCustomModuleName", logLevel = LogLevel.INFO)
-            }
-        }
-    }
-
     @DisplayName("KT-57959: should be possible to configure module name in MPP/android")
     @GradleAndroidTest
     @AndroidGradlePluginTests

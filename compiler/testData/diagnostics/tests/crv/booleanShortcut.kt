@@ -18,8 +18,8 @@ fun a(): Int {
 }
 
 fun b() {
-    condition() || ignCond()
-    ignCond() && condition()
-    ignCond() && ignCond()
+    condition() <!RETURN_VALUE_NOT_USED!>||<!> ignCond()
+    ignCond() <!RETURN_VALUE_NOT_USED!>&&<!> condition()
+    ignCond() <!RETURN_VALUE_NOT_USED!>&&<!> ignCond()
 }
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, disjunctionExpression, functionDeclaration, integerLiteral */

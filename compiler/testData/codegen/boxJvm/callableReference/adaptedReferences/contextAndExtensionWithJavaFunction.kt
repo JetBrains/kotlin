@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // TARGET_BACKEND: JVM
 // LANGUAGE: +ContextParameters
 // FILE: JavaClass.java

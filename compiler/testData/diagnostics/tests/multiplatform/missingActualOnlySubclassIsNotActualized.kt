@@ -7,7 +7,7 @@ open expect class A1() {
     open fun foo(): String
 }
 
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>B1<!>() : A1
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class B1() : A1
 
 fun test1() = B1().foo()
 
@@ -15,7 +15,7 @@ open class A2() {
     open fun foo(): String = "OK"
 }
 
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>B2<!>() : A2
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class B2() : A2
 
 fun test2() = B2().foo()
 

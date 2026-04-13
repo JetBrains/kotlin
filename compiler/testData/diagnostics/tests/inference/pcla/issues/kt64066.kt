@@ -5,7 +5,7 @@
 fun box() {
     val map = buildMap {
         put(1, 1)
-        for (<!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>v<!> in values) {}
+        for (v in values) {}
     }
 }
 

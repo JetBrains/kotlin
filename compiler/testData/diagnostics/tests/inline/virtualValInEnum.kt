@@ -9,9 +9,9 @@ enum class B2() {
     };
 
     open val foo
-    <!DECLARATION_CANT_BE_INLINED_WARNING!>inline<!> get() = "foo"
+    <!DECLARATION_CANT_BE_INLINED!>inline<!> get() = "foo"
 
-    open <!DECLARATION_CANT_BE_INLINED_WARNING!>inline<!> val bar
+    open <!DECLARATION_CANT_BE_INLINED!>inline<!> val bar
         get() = "bar1"
 }
 

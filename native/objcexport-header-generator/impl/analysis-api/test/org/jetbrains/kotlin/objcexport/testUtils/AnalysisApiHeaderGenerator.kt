@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCHeader
 import org.jetbrains.kotlin.backend.konan.testUtils.HeaderGenerator
+import org.jetbrains.kotlin.export.test.LibraryModuleInfo
 import org.jetbrains.kotlin.export.test.createStandaloneAnalysisApiSession
 import org.jetbrains.kotlin.export.test.defaultKotlinSourceModuleName
+import org.jetbrains.kotlin.konan.test.Library
 import org.jetbrains.kotlin.objcexport.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.tooling.core.withClosure
@@ -36,15 +38,18 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
         val session = createStandaloneAnalysisApiSession(
             kotlinSourceModuleName = defaultKotlinSourceModuleName,
             kotlinFiles = root.listFiles().orEmpty().filter { it.extension == "kt" },
-            dependencyKlibs = configuration.dependencies
+            dependencies = configuration.dependencies.map { it.toLibraryModuleInfo() }
         )
 
         val (module, files) = session.modulesWithFiles.entries.single()
         return analyze(module) {
             val kaSession = this
+            val exportedLibraryNames = configuration.exportedDependencies
+                .map { it.toLibraryModuleInfo().libraryName }.toSet()
+
             val exportedLibraries = module.withClosure<KaModule> { currentModule -> currentModule.allDirectDependencies().toList() }
                 .filterIsInstance<KaLibraryModule>()
-                .filter { libraryModule -> libraryModule.binaryRoots.first() in configuration.exportedDependencies }
+                .filter { libraryModule -> libraryModule.libraryName in exportedLibraryNames }
                 .toSet()
 
             val exportedLibraryFiles = exportedLibraries
@@ -69,4 +74,9 @@ object AnalysisApiHeaderGenerator : HeaderGenerator {
             }
         }
     }
+
+    private fun Library.toLibraryModuleInfo() = LibraryModuleInfo(
+        libraryName = "Gradle: org.foo.bar:${this.name}:1.2.3",
+        klibs = this.klibs,
+    )
 }

@@ -21,7 +21,7 @@ fun nullableToStringStaysSafe() {
 }
 
 fun nullableDirectMemberStillUnsafe() {
-    J.id<String?>(null).length
+    J.id<String?>(null)<!UNSAFE_CALL!>.<!>length
 }
 
 fun nonNullBaseline() {

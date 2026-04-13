@@ -12,7 +12,7 @@ public class A {
 package base
 
 open class B : A() {
-    private val f = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>f<!> = "FAIL"
 }
 
 // FILE: C.java
@@ -24,7 +24,7 @@ public class C extends B {}
 // FILE: test.kt
 
 fun box(): String {
-    return C().<!INVISIBLE_MEMBER!>f<!>
+    return C().<!INVISIBLE_REFERENCE!>f<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, propertyDeclaration, stringLiteral */

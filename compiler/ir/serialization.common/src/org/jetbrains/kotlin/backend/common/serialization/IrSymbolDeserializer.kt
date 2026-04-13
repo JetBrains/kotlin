@@ -33,7 +33,7 @@ class IrSymbolDeserializer(
     val deserializedSymbolsWithOwnersInCurrentFile: Map<IdSignature, IrSymbol>
         field = hashMapOf()
 
-    private val symbolCache = HashMap<Long, IrSymbol>()
+    private val symbolCache = HashMap<Int, IrSymbol>()
 
     /** Deserializes a symbol known to belong to the current file, [libraryFile]. */
     fun deserializeSymbolWithOwnerInCurrentFile(signature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
@@ -51,7 +51,7 @@ class IrSymbolDeserializer(
         val signature = deserializeIdSignature(symbolData.signatureId)
         val symbol = deserializeSymbolWithOwnerInCurrentFile(signature, symbolData.kind)
 
-        symbolCache[code] = symbol
+        symbolCache[symbolData.signatureId] = symbol
 
         return symbol to signature
     }
@@ -61,8 +61,8 @@ class IrSymbolDeserializer(
      * or belongs to another file (e.g., a symbol in a [IrMemberAccessExpression] being deserialized right now).
      */
     fun deserializeSymbolWithOwnerMaybeInOtherFile(code: Long): IrSymbol {
-        return symbolCache.getOrPut(code) {
-            val symbolData = parseSymbolData(code)
+        val symbolData = parseSymbolData(code)
+        return symbolCache.getOrPut(symbolData.signatureId) {
             val signature = deserializeIdSignature(symbolData.signatureId)
             deserializeSymbolWithOwnerMaybeInOtherFile(signature, symbolData.kind)
         }

@@ -18,7 +18,6 @@ object ExtraDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
         RedundantVisibilityModifierSyntaxChecker,
         RedundantModalityModifierSyntaxChecker,
-        FirUnusedExpressionChecker,
     )
 
     override val propertyCheckers: Set<FirPropertyChecker> = setOf(

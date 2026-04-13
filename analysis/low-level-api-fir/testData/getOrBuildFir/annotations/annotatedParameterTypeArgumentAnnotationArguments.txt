@@ -18,13 +18,13 @@ FILE: [ResolvedTo(IMPORTS)] anno.kt
     }
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] first.kt
-    public final [ResolvedTo(CONTRACTS)] class Foo<[ResolvedTo(CONTRACTS)] T> : R|kotlin/Any| {
-        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.value] value: R|T|): R|Foo<T>| {
+    public final [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.value] value: R|T|): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|T|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|T|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] foo: R|Foo<@R|Anno|(value = Boolean(true) [evaluated = Boolean(true)])  kotlin/String>|): R|kotlin/Unit| {

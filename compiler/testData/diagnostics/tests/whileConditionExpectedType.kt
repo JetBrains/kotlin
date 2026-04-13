@@ -16,7 +16,7 @@ fun test() {
     }
 
     when (val it = materialize<Boolean>()) {
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>() -> {}
+        materialize() -> {}
         else -> {}
     }
 }

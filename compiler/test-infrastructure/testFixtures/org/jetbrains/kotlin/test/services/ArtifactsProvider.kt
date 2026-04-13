@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 /**
  * This service stores artifacts produced by all test facades for each module
  */
-class ArtifactsProvider(
-    private val testServices: TestServices,
-    private val testModules: List<TestModule>
-) : TestService {
+class ArtifactsProvider : TestService {
     private val artifactsByModule: MutableMap<TestModule, MutableMap<TestArtifactKind<*>, ResultingArtifact<*>>> = mutableMapOf()
 
     fun <OutputArtifact : ResultingArtifact<OutputArtifact>> getArtifactSafe(
@@ -53,7 +50,7 @@ class ArtifactsProvider(
     }
 
     fun copy(): ArtifactsProvider {
-        return ArtifactsProvider(testServices, testModules).also {
+        return ArtifactsProvider().also {
             it.artifactsByModule.putAll(artifactsByModule.mapValues { (_, map) -> map.toMutableMap() })
         }
     }

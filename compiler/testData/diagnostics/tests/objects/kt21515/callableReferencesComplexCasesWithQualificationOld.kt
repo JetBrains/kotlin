@@ -49,7 +49,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>C.Base.Companion.FromBaseCompanion::foo<!>
+        val a = C.Base.Companion.FromBaseCompanion::foo
     }
 }
 

@@ -12,6 +12,6 @@ public enum E {
 
 // MODULE: main(lib)
 // FILE: box.kt
-fun box(): String = E.OK.name
+fun box(): String = <!UNRESOLVED_REFERENCE!>E<!>.OK.name
 
 /* GENERATED_FIR_TAGS: functionDeclaration */

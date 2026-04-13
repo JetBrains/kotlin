@@ -82,8 +82,8 @@ import api.*
 
 fun use() {
     val c: <!OPT_IN_USAGE!>C<!> = <!OPT_IN_USAGE!>C<!>()
-    <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>function<!>()
-    <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>property<!>
+    <!OPT_IN_USAGE!>c<!>.function()
+    <!OPT_IN_USAGE!>c<!>.property
     <!OPT_IN_USAGE!>C<!>.<!OPT_IN_USAGE!>Nested<!>()
     <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>Inner<!>()
     <!OPT_IN_USAGE!>c<!>.<!OPT_IN_USAGE!>extension<!>()

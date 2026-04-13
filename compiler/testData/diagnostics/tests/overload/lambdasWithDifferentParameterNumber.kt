@@ -8,8 +8,8 @@ fun g(block: Int.() -> Unit) {}
 fun g(block: (Int, Int) -> Unit) {}
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!> {}
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!> {}
+    f {}
+    g {}
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithExtension */

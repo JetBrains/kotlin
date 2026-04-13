@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface Super {
     var v: CharSequence
     val v2: CharSequence

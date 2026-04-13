@@ -11,10 +11,10 @@ expect class Bar() {
 }
 
 fun common() {
-    if (foo is String) foo.length
+    if (foo is String) <!SMARTCAST_IMPOSSIBLE!>foo<!>.length
 
     val bar = Bar()
-    if (bar.bus is String) <!SMARTCAST_IMPOSSIBLE{JVM}!>bar.bus<!>.length
+    if (bar.bus is String) <!SMARTCAST_IMPOSSIBLE!>bar.bus<!>.length
 }
 
 // MODULE: m1-jvm()()(m1-common)

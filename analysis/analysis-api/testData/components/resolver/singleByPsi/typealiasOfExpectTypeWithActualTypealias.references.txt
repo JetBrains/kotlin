@@ -3,7 +3,7 @@ common - Common.kt:
 
 jvm - Jvm.kt:
   <caret_return>:
-    KtNameReferenceExpression(183,205): 'ExpectClassCommonAlias'
+    KtNameReferenceExpression(182,204): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
@@ -14,7 +14,7 @@ jvm - Jvm.kt:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
   <caret_instanceCheck>:
-    KtNameReferenceExpression(226,248): 'ExpectClassCommonAlias'
+    KtNameReferenceExpression(225,247): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false
@@ -25,7 +25,7 @@ jvm - Jvm.kt:
           (in ROOT) typealias ExpectClassCommonAlias = ExpectClass /* = JvmClass */
 
   <caret_typeArg>:
-    KtNameReferenceExpression(273,295): 'ExpectClassCommonAlias'
+    KtNameReferenceExpression(272,294): 'ExpectClassCommonAlias'
       KtSimpleNameReference:
         isImplicitReferenceToCompanion: false
         usesContextSensitiveResolution: false

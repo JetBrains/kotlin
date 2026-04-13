@@ -33,14 +33,8 @@ class Test1 : A {
     super/*A*/()
     /* <init>() */
 
-    { // BLOCK
-      val tmp_0: Test1 = <this>
-      tmp_0.<get-x>().plusAssign(x = 42)
-    }
-    { // BLOCK
-      val tmp_1: Test1 = <this>
-      tmp_1.<set-y>(<set-?> = tmp_1.<get-y>().plus(other = 42))
-    }
+    <this>.<get-x>().plusAssign(x = 42)
+    <this>.<set-y>(<set-?> = <this>.<get-y>().plus(other = 42))
   }
 
 }

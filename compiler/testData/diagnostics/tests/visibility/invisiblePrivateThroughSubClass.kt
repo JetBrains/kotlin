@@ -3,7 +3,7 @@
 
 abstract class A {
     fun foo(b: B) {
-        b.<!INVISIBLE_MEMBER!>prv<!>()
+        b.<!INVISIBLE_REFERENCE!>prv<!>()
     }
 
     private fun prv() {}

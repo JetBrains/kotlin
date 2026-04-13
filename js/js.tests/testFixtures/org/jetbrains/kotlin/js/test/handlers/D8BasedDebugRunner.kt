@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSegment
 import org.jetbrains.kotlin.js.parser.sourcemaps.parseJson
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.ResultingArtifact
@@ -195,7 +194,6 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
             }
 
             checkSteppingTestResult(
-                frontendKind = testServices.defaultsProvider.frontendKind,
                 testServices.defaultsProvider.targetBackend!!,
                 originalFile,
                 groupedByLinesSteppingTestLoggedData,

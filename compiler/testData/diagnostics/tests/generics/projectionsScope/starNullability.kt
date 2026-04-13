@@ -13,7 +13,7 @@ fun acceptA(a: A) {
 
 fun main(i: I<*>) {
     i.foo() checkType { _<A?>() }
-    acceptA(<!TYPE_MISMATCH!>i.foo()<!>) // i.foo() should be nullable but isn't
+    acceptA(<!ARGUMENT_TYPE_MISMATCH!>i.foo()<!>) // i.foo() should be nullable but isn't
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

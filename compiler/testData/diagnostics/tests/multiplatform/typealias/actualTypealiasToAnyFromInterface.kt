@@ -6,19 +6,19 @@
 // FILE: common.kt
 expect interface Marker
 
-expect interface NotMarker {
-    val test: String
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> interface NotMarker {
+    val <!NO_ACTUAL_FOR_EXPECT{JVM}!>test<!>: String
 }
 
-open class B : <!SUPERTYPE_NOT_INITIALIZED{JVM}!>Marker<!> {}
-class C : B(), <!MANY_CLASSES_IN_SUPERTYPE_LIST{JVM}, SUPERTYPE_NOT_INITIALIZED{JVM}!>Marker<!> {}
+open class B : Marker {}
+class C : B(), Marker {}
 
-interface Marker2: <!INTERFACE_WITH_SUPERCLASS{JVM}!>Marker<!>
-interface Marker3: Marker2, <!INTERFACE_WITH_SUPERCLASS{JVM}!>Marker<!>
+interface Marker2: Marker
+interface Marker3: Marker2, Marker
 
 // MODULE: jvm()()(common)
 // FILE: main.kt
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>Marker<!> = Any
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>NotMarker<!> = Any
+actual typealias Marker = Any
+actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>NotMarker<!> = Any
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, typeAliasDeclaration */

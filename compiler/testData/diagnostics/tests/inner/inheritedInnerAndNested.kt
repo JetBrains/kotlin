@@ -59,7 +59,7 @@ fun test() {
     B().<!UNRESOLVED_REFERENCE!>Inner<!>().box() // should be an error
     B.Inner().box()
     C().Inner().box()
-    C.<!RESOLUTION_TO_CLASSIFIER!>Inner<!>().box() // should be an error
+    C.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>().<!UNRESOLVED_REFERENCE!>box<!>() // should be an error
     D.Inner().box()
     E.Inner().box()
     F.Inner().box()

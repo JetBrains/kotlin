@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.impl.valueOfOrNull
 import java.io.File
@@ -81,7 +79,6 @@ data class BackendWithDirectives(val backend: TargetBackend) {
 }
 
 fun checkSteppingTestResult(
-    frontendKind: FrontendKind<*>,
     targetBackend: TargetBackend,
     wholeFile: File,
     loggedItems: List<SteppingTestLoggedData>,
@@ -120,7 +117,6 @@ fun checkSteppingTestResult(
     }
 
     var currentBackends = listOf(BackendWithDirectives(TargetBackend.ANY))
-    var currentFrontends = listOf(frontendKind)
     var putExceedingActualLinesAtIndex = -1
     for (line in lineIterator) {
         if (line.isEmpty()) {
@@ -130,7 +126,6 @@ fun checkSteppingTestResult(
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             val options = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
             val backends = mutableListOf<BackendWithDirectives>()
-            val frontends = mutableListOf<FrontendKind<*>>()
             var currentBackendWithDirectives: BackendWithDirectives? = null
             for (option in options) {
                 val backend = valueOfOrNull<TargetBackend>(option)
@@ -141,12 +136,6 @@ fun checkSteppingTestResult(
                     continue
                 }
 
-                val frontend = FrontendKinds.fromString(option)
-                if (frontend != null) {
-                    frontends += frontend
-                    continue
-                }
-
                 val directive = LanguageSettingsDirectives[option.substringAfter(DIRECTIVE_MARKER)]
                 if (directive != null && currentBackendWithDirectives != null) {
                     currentBackendWithDirectives.addDirectiveIfConsidered(directive)
@@ -154,21 +143,19 @@ fun checkSteppingTestResult(
             }
 
             currentBackends = backends.takeIf { it.isNotEmpty() } ?: listOf(BackendWithDirectives(TargetBackend.ANY))
-            currentFrontends = frontends.takeIf { it.isNotEmpty() } ?: listOf(frontendKind)
         }
 
-        val isUnderTargetBackend =
-            currentBackends.any {
-                it.backend == TargetBackend.ANY || (targetBackend.isTransitivelyCompatibleWith(it.backend) && it.contains(directives, directivesInTestFile))
-            }
-        val isUnderTargetBlock = isUnderTargetBackend && currentFrontends.contains(frontendKind)
+        val isUnderTargetBackend = currentBackends.any {
+            it.backend == TargetBackend.ANY ||
+                    (targetBackend.isTransitivelyCompatibleWith(it.backend) && it.contains(directives, directivesInTestFile))
+        }
 
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             actual.add(line)
-            if (isUnderTargetBlock) {
+            if (isUnderTargetBackend) {
                 putExceedingActualLinesAtIndex = actual.size
             }
-        } else if (isUnderTargetBlock) {
+        } else if (isUnderTargetBackend) {
             if (actualLineNumbersIterator.hasNext()) {
                 actual.add(actualLineNumbersIterator.next())
                 putExceedingActualLinesAtIndex = actual.size

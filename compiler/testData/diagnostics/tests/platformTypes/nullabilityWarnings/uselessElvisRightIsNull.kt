@@ -36,7 +36,7 @@ public interface JJJJ<R> {
 fun test() {
     val a = J.staticN <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     foo(a)
-    val b = JJ.staticNN ?: null
+    val b = JJ.staticNN <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     foo(b)
     val c = JJJ.staticNNN <!USELESS_ELVIS!>?: null<!>
     foo(c)
@@ -45,7 +45,7 @@ fun test() {
 fun foo(a: Any?) {
 }
 
-fun <R> test2(j: JJJJ<R>) = j.get() ?: null
+fun <R> test2(j: JJJJ<R>) = j.get() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
 
 /* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaProperty, javaType, localProperty,
 nullableType, propertyDeclaration, typeParameter */

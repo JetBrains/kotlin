@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractLLSourceAnnotationArgumentsCalculatorTest> {
-                model("rawBuilder", pattern = TestGeneratorUtil.KT)
+                model("rawBuilder", pattern = KT_OR_KTS)
             }
 
             testClass<AbstractLLSourceLikeStubBasedResolutionTest> {

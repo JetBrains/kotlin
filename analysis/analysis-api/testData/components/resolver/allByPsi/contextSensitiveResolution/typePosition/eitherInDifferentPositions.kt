@@ -23,5 +23,3 @@ fun foo(s: Either<String, Int>) {
 
     (s as? Right)?.value?.div(1)
 }
-
-// IGNORE_STABILITY_K1: candidates

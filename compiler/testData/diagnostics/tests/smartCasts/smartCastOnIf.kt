@@ -6,7 +6,7 @@ fun baz(s: String?): Int {
     else {
         val u: String? = null
         if (u == null) return 0
-        <!DEBUG_INFO_SMARTCAST!>u<!>
+        u
     }.length
 }
 

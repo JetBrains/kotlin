@@ -8,7 +8,7 @@ public annotation class NoArg {
 @kotlin.Metadata
 public final class Outer$Nested {
     // source: 'nestedClass.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     public method <init>(p0: long): void
     public final inner class Outer$Nested
 }

@@ -5,8 +5,8 @@ fun foo() {
     val x: Int? = null
 
     bar(x ?: 0)
-    if (x != null) bar(x <!USELESS_ELVIS!>?: <!DEBUG_INFO_SMARTCAST!>x<!><!>)
-    bar(<!TYPE_MISMATCH!>x<!>)
+    if (x != null) bar(x <!USELESS_ELVIS!>?: x<!>)
+    bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, elvisExpression, equalityExpression, functionDeclaration, ifExpression,

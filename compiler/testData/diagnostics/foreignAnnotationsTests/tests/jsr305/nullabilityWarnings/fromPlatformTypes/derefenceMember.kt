@@ -29,7 +29,7 @@ fun test() {
         foo()
     }
     with(platformN) {
-        <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>foo<!>()
+        <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>foo()<!>
     }
     with(platformJ) {
         foo()

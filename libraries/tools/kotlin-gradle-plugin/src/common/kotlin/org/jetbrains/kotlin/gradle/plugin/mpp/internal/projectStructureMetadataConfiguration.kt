@@ -92,7 +92,6 @@ internal fun InternalKotlinSourceSet.interprojectUklibMetadataCompilationOutputV
 }
 
 internal suspend fun Project.psmArtifactsForAllDependenciesFromSharedSourceSets(): List<FileCollection> {
-    if (!kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) return emptyList()
     return multiplatformExtension.sourceSets.mapNotNull { sourceSet ->
         if (!sourceSet.internal.isSharedSourceSet()) return@mapNotNull null
         sourceSet.internal.projectStructureMetadataResolvedConfiguration().files

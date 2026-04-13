@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
-    <!VAL_REASSIGNMENT!>javaClass.something1<!>++
-    <!VAL_REASSIGNMENT!>javaClass.something2<!>++
-    <!VAL_REASSIGNMENT!>javaClass.something3<!>++
-    <!VAL_REASSIGNMENT!>javaClass.something4<!>++
-    <!VAL_REASSIGNMENT!>javaClass.something5<!> = null
+    javaClass.<!VAL_REASSIGNMENT!>something1<!>++
+    javaClass.<!VAL_REASSIGNMENT!>something2<!>++
+    javaClass.<!VAL_REASSIGNMENT!>something3<!>++
+    javaClass.<!VAL_REASSIGNMENT!>something4<!>++
+    javaClass.<!VAL_REASSIGNMENT!>something5<!> = null
 }
 
 // FILE: JavaClass.java

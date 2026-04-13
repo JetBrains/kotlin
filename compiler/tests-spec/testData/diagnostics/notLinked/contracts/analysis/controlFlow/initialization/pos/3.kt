@@ -14,13 +14,13 @@
 fun case_1(value_1: EnumClass?) {
     val value_2: Int
 
-    <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (value_1) {
+    when (value_1) {
         EnumClass.NORTH -> funWithExactlyOnceCallsInPlace { value_2 = 1 }
         EnumClass.SOUTH -> funWithExactlyOnceCallsInPlace { value_2 = 2 }
         EnumClass.WEST -> funWithExactlyOnceCallsInPlace { value_2 = 3 }
         EnumClass.EAST -> funWithExactlyOnceCallsInPlace { value_2 = 4 }
         null -> funWithExactlyOnceCallsInPlace { value_2 = 5 }
-    }<!>
+    }
 
     value_2.inc()
 }
@@ -66,7 +66,7 @@ fun case_4(value_1: EnumClassSingle?) {
     var value_2: Int
 
     funWithAtMostOnceCallsInPlace {
-        <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (value_1) {
+        when (value_1) {
             EnumClassSingle.EVERYTHING -> {
                 funWithExactlyOnceCallsInPlace { value_2 = 1 }
                 ++value_2
@@ -75,7 +75,7 @@ fun case_4(value_1: EnumClassSingle?) {
                 funWithAtLeastOnceCallsInPlace { value_2 = 2 }
                 --value_2
             }
-        }<!>
+        }
         value_2.minus(5)
     }
 }

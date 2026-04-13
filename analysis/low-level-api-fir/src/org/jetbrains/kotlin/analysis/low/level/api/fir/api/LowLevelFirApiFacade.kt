@@ -82,14 +82,14 @@ fun KtElement.getDiagnostics(resolutionFacade: LLResolutionFacade, filter: Diagn
     resolutionFacade.getDiagnostics(this, filter)
 
 /**
- * Returns a list of Diagnostics compiler finds for given [KtFile]
+ * Returns a sequence of Diagnostics compiler finds for given [KtFile]
  * This operation could be performance affective because it create FIleStructureElement and resolve non-local declaration into BODY phase
  */
-fun KtFile.collectDiagnosticsForFile(
+fun KtFile.diagnostics(
     resolutionFacade: LLResolutionFacade,
     filter: DiagnosticCheckerFilter
-): Collection<KtPsiDiagnostic> =
-    resolutionFacade.collectDiagnosticsForFile(this, filter)
+): Sequence<KtPsiDiagnostic> =
+    resolutionFacade.diagnostics(this, filter)
 
 /**
  * Build [FirElement] node in its final resolved state for a requested element.

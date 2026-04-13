@@ -2,13 +2,13 @@
 // ISSUE: KT-76766
 
 fun test(e: Exception) {
-    if (<!USELESS_IS_CHECK!>e is Error<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>e is Error<!>) {
         throw e
     }
-    if (<!USELESS_IS_CHECK!>e is AssertionError<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>e is AssertionError<!>) {
         throw e
     }
-    if (e is <!INCOMPATIBLE_TYPES!>NotImplementedError<!>) {
+    if (<!IMPOSSIBLE_IS_CHECK_ERROR!>e is NotImplementedError<!>) {
         throw e
     }
 }

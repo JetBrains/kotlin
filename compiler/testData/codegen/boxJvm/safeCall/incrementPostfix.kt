@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
 // DUMP_IR
 
 var cnt = 0

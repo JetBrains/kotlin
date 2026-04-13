@@ -36,9 +36,9 @@ fun t3() : String {
             <!RETURN_NOT_ALLOWED!>return@t3<!> "1"
         }
         else {
-            <!RETURN_NOT_ALLOWED!>return<!> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!>
+            <!RETURN_NOT_ALLOWED!>return<!> <!RETURN_TYPE_MISMATCH!>2<!>
         }
-        <!UNREACHABLE_CODE!>return@l 0<!>
+        return@l 0
     }
     )
     invoker(

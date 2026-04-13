@@ -23,6 +23,6 @@ fun myRun(block: () -> Unit) {}
 
 fun foo(a: A<String>, b: B<String, Boolean>) {
     myRun {
-        a.foo(b)
+        a.foo(<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>b<!>)
     }
 }

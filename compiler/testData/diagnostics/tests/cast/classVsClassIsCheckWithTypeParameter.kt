@@ -8,23 +8,23 @@ typealias AliasWithTypeParam<T> = B<T>
 typealias Alias = B<*>
 
 fun test1(a: A<Int>){
-    <!USELESS_IS_CHECK!>a is B<*><!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<*><!>
 }
 
 fun test2(a: A<*>){
-    <!USELESS_IS_CHECK!>a is B<*><!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is B<*><!>
 }
 
 fun test3(a: A<Int>) {
-    <!USELESS_IS_CHECK!>a is AliasWithTypeParam<*><!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is AliasWithTypeParam<*><!>
 }
 
 fun test4(a: A<Int>) {
-    <!USELESS_IS_CHECK!>a is Alias<!>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>a is Alias<!>
 }
 
 fun <T : A<T>> test5(x: T) {
-    x is B<*>
+    <!IMPOSSIBLE_IS_CHECK_ERROR!>x is B<*><!>
 }
 
 fun <T> test6(x: T) where T : A<T>, T : CharSequence {

@@ -28,6 +28,7 @@ interface AbiValidationLegacyDumpExtension {
         level = DeprecationLevel.ERROR
     )
     val referenceDumpDir: DirectoryProperty
+        get() = error("Property 'referenceDumpDir' was moved to a higher level.")
 
     /**
      * @deprecated A separate block 'legacyDump' was removed. All its properties have been moved to a higher level.

@@ -11,7 +11,7 @@ class A : Base()
 object B : Base()
 
 fun testCommon(base: Base) {
-    val x = <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE("sealed class"), NO_ELSE_IN_WHEN("'else' branch"), NO_ELSE_IN_WHEN{JVM}("'is C' branch or 'else' branch instead")!>when<!> (base) { // must be an error
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
         is A -> 1
         B -> 2
     }

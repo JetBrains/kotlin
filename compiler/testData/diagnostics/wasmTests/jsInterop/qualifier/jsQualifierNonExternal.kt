@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 @file:JsQualifier("a.b")

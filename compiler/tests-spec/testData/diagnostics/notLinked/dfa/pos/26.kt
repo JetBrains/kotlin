@@ -16,19 +16,19 @@
  */
 open class Case1<K : Number> {
     open inner class Case1_1<L>: Case1<Int>() where L : CharSequence {
-        inner class Case1_2<M>: Case1<K>.Case1_1<M>() where M : Map<K, L> {
+        inner class Case1_2<M>: Case1<K>.Case1_1<<!UPPER_BOUND_VIOLATED!>M<!>>() where M : Map<K, L> {
             inline fun <reified T>case_1(x: Any?) {
                 x <!UNCHECKED_CAST!>as M<!>
                 x <!UNCHECKED_CAST!>as L<!>
                 x <!UNCHECKED_CAST!>as K<!>
                 if (x is T) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("K & L & M & T & Any & kotlin.Any & kotlin.Any?")!>x<!>
-                    <!DEBUG_INFO_EXPRESSION_TYPE("K & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.toByte()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("L & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.length
-                    <!DEBUG_INFO_EXPRESSION_TYPE("L & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.size
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.isEmpty()
-                    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!><!DEBUG_INFO_EXPRESSION_TYPE("M & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>[null]<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>.toByte()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>.length
+                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>.get(0)
+                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>.size
+                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>.isEmpty()
+                    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!><!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T & Any")!>x<!>[null]<!>
                 }
             }
         }
@@ -39,9 +39,9 @@ open class Case1<K : Number> {
 inline fun <reified T : CharSequence>case_2(x: Any?) {
     x as T
     if (<!USELESS_IS_CHECK!>x !is T<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.get(0)
     }
 }
 
@@ -49,9 +49,9 @@ inline fun <reified T : CharSequence>case_2(x: Any?) {
 inline fun <reified T : CharSequence>case_3(x: Any?) {
     x as T?
     if (x is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any & kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.get(0)
     }
 }
 
@@ -59,9 +59,9 @@ inline fun <reified T : CharSequence>case_3(x: Any?) {
 inline fun <reified T : CharSequence>case_4(x: Any?) {
     (x as? T)!!
     if (<!USELESS_IS_CHECK!>x is T?<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any & kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.get(0)
     }
 }
 
@@ -69,9 +69,9 @@ inline fun <reified T : CharSequence>case_4(x: Any?) {
 inline fun <reified T : CharSequence>case_5(x: Any?) {
     if (x as? T != null) {
         if (<!USELESS_IS_CHECK!>x is T?<!>) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any & kotlin.Any & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.length
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.get(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>x<!>.get(0)
         }
     }
 }

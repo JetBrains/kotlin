@@ -4,16 +4,16 @@
 
 // MODULE: common
 // FILE: common.kt
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>bar<!>: String
-expect var <!NO_ACTUAL_FOR_EXPECT{JVM}!>baz<!>: Int
+expect fun foo()
+expect val bar: String
+expect var baz: Int
 
-expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>I<!>
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>C<!> {
+expect interface I
+expect class C {
     fun foo()
     val bar: String
 }
-expect object <!NO_ACTUAL_FOR_EXPECT{JVM}!>O<!>
+expect object O
 
 // MODULE: jvm()()(common)
 // FILE: jvm.kt

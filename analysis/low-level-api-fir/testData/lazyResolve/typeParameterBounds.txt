@@ -115,7 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
     }
     public final? [ResolvedTo(TYPES)] interface Bar<[ResolvedTo(TYPES)] T : R|Foo|> : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] F : R|Foo|, [ResolvedTo(CONTRACTS)] B : R|Bar<F>|> [ResolvedTo(CONTRACTS)] R|F|.util(): R|B| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] F : R|Foo|, [ResolvedTo(STATUS)] B : R|Bar<F>|> [ResolvedTo(STATUS)] R|F|.util(): R|B| { LAZY_BLOCK }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterBounds.kt

@@ -1,8 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes T> expect(expected: T, block: () -> T) {}
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes T> expect(block: () -> T) {}
 
 fun returnNullableString(): String? = ""

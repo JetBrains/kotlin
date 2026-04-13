@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 public sealed class ExportedDeclaration {
     public val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
@@ -214,7 +215,7 @@ public sealed class ExportedType {
     ) : ExportedType()
 
     public data class ClassType(
-        val name: String,
+        val name: FqName,
         val arguments: List<ExportedType>,
         val classId: ClassId? = null,
     ) : ExportedType() {

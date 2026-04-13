@@ -388,7 +388,14 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
             // Script initializers cannot be mapped as the last initializer can be transformed to a result property with an arbitrary name
             is KtClassInitializer -> SpecialNames.ANONYMOUS
             is KtCodeFragment -> SpecialNames.NO_NAME_PROVIDED
-            is KtClassOrObject, is KtTypeAlias, is KtNamedFunction, is KtProperty -> declaration.nameAsSafeName
+
+            is KtClassOrObject,
+            is KtTypeAlias,
+            is KtNamedFunction,
+            is KtProperty,
+            is KtDestructuringDeclarationEntry,
+                -> declaration.nameAsSafeName
+
             is KtScript -> {
                 val fileName = declaration.containingKtFile.name
                 @OptIn(KtExperimentalApi::class)

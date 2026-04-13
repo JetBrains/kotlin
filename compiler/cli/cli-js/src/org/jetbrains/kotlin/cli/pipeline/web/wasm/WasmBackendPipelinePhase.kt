@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,27 +10,25 @@ import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
-import org.jetbrains.kotlin.cli.CliDiagnostics.WEB_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
-import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.js.config.outputDir
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
-object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>("WasmBackendPipelinePhase") {
-    override val configFiles: EnvironmentConfigFiles
-        get() = EnvironmentConfigFiles.WASM_CONFIG_FILES
+object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArtifact, List<WasmIrModuleConfiguration>>(
+    name = "WasmBackendPipelinePhase",
+) {
+    override val klibLoadingPhase: WebIrLoadingPipelinePhase
+        get() = WasmIrLoadingPipelinePhase
 
     override fun compileIntermediate(
         intermediateResult: List<WasmIrModuleConfiguration>,
@@ -63,12 +61,11 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     }
 
     override fun compileNonIncrementally(
-        configuration: CompilerConfiguration,
-        module: ModulesStructure,
-        mainCallArguments: List<String>?,
+        loadedIrArtifact: WebLoadedIrPipelineArtifact,
+        mainCallArguments: List<String>?
     ): List<WasmIrModuleConfiguration> {
-        val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
-
+        val (loadedIr, module, configuration) = loadedIrArtifact
+        val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
         val compiler = when (configuration.wasmCompilationMode()) {
             WasmCompilationMode.MULTI_MODULE ->
                 WholeWorldMultiModuleCompiler(configuration, irFactory)
@@ -76,10 +73,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 SingleModuleCompiler(configuration, irFactory, isWasmStdlib = module.klibs.included?.isWasmStdlib == true)
             WasmCompilationMode.REGULAR ->
                 WholeWorldCompiler(configuration, irFactory)
-        }
-
-        val loadedIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            compiler.loadIr(module)
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {

@@ -1,5 +1,3 @@
-// IGNORE_FE10
-
 // MODULE: context
 
 // FILE: context.kt

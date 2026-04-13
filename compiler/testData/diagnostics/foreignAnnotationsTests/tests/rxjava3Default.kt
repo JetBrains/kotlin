@@ -33,9 +33,9 @@ fun main(a: A<String>, a1: A<String?>) {
     a.field?.length
     a.field<!UNSAFE_CALL!>.<!>length
 
-    <!SMARTCAST_IMPOSSIBLE!>a.baz("")<!>.length
+    a.baz("")<!UNSAFE_CALL!>.<!>length
     a.baz("")?.length
-    <!SMARTCAST_IMPOSSIBLE!>a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!>.length
+    a.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNSAFE_CALL!>.<!>length
 
     a1.baz("")!!.length
     a1.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>)!!.length

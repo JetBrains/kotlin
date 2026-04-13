@@ -24,7 +24,7 @@ fun initialization() {
 fun shadowing() {
     val x = 42
     myRun {
-        val <!NAME_SHADOWING!>x<!> = 43
+        val x = 43
         x.inc()
     }
     x.inc()
@@ -87,7 +87,7 @@ class DefiniteInitializationInInitSection {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y: Int<!>
 
     init {
-        myRun { <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42 }
+        myRun { <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>x<!> = 42 }
         unknownRun { <!CAPTURED_MEMBER_VAL_INITIALIZATION!>y<!> = 239 }
     }
 }

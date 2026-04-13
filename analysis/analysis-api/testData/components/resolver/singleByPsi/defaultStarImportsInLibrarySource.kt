@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // MODULE: StdlibImitation
 // MODULE_KIND: LibrarySource
 // COMPILER_ARGUMENTS: -Xallow-kotlin-package

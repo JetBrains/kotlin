@@ -1,6 +1,5 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class Pair {
     operator fun component1(): Int = null!!
     operator fun component2(): Int = null!!

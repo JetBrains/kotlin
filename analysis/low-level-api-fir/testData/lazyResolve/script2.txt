@@ -522,7 +522,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun consume([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val x: R|kotlin/Int?| = Int(1)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int?|
@@ -619,4 +619,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script2.kts
             }
 
         }
-

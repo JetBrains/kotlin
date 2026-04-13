@@ -39,7 +39,7 @@ abstract class C {
     }
 }
 
-const val delegated: Int <!CONST_VAL_WITH_DELEGATE!>by Delegate()<!>
+const val delegated: Int by <!CONST_VAL_WITH_DELEGATE!>Delegate()<!>
 
 
 const val withGetter: Int
@@ -62,7 +62,7 @@ enum class MyEnum {
 
 class Outer {
     inner class Inner {
-        <!NESTED_CLASS_NOT_ALLOWED("Object")!>object C<!> {
+        <!NESTED_CLASS_NOT_ALLOWED!>object C<!> {
             const val a = 18
         }
     }
@@ -74,7 +74,7 @@ const val defaultGetter = 19
 const val nonConstInitializer1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>foo()<!>
 const val nonConstInitializer2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as String<!>
 const val nonConstInitializer3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0 as String<!>
-const val nonConstInitializer4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as Double<!>
+const val nonConstInitializer4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 <!NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL!>as Double<!><!>
 const val nonConstInitializer5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"2" as Int<!>
 const val nonConstInitializer6 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1/0<!>
 const val nonConstInitializer7 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>-1/0<!>

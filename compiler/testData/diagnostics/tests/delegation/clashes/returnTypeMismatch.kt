@@ -52,7 +52,7 @@ abstract <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Test8<!> : IGeneric<String
 // Can't test due to https://youtrack.jetbrains.com/issue/KT-10258
 // abstract class Test9 : IGeneric<String> by CGeneric<String>(), IGeneric<Int>
 
-abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, MANY_IMPL_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Test10<!> : IInt by CInt(), IStr by CStr(), IAny by CAny()
+abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Test10<!> : IInt by CInt(), IStr by CStr(), IAny by CAny()
 
 abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Test11<!> : IInt, IStr by CStr(), IAny by CAny()
 

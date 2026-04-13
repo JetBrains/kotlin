@@ -88,6 +88,9 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
             ARG <set-?>: GET_VAR '<set-?>: D of <root>.Test1.<set-x>? declared in <root>.Test1.<set-x>' type=D of <root>.Test1.<set-x>? origin=null
   CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[<root>.IBase<kotlin.String>]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test2
+    FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<kotlin.String> visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=null
     PROPERTY name:j visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private
         EXPRESSION_BODY
@@ -107,9 +110,6 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-j>' type=<root>.Test2 origin=null
             value: GET_VAR '<set-?>: <root>.IBase<kotlin.String> declared in <root>.Test2.<set-j>' type=<root>.IBase<kotlin.String> origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<kotlin.String> visibility:private [final]
-      EXPRESSION_BODY
-        GET_VAR 'j: <root>.IBase<kotlin.String> declared in <root>.Test2.<init>' type=<root>.IBase<kotlin.String> origin=null
     CONSTRUCTOR visibility:public returnType:<root>.Test2 [primary]
       VALUE_PARAMETER kind:Regular name:j index:0 type:<root>.IBase<kotlin.String>
       BLOCK_BODY

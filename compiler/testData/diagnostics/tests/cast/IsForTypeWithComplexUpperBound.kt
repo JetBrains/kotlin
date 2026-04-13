@@ -12,7 +12,7 @@ fun <T, S : A<T>, U : S> test2(a: U) {
 
 fun <T : A<String>, V : A<Int>> test3(a: T, b: V) {
     a is B
-    b is <!INCOMPATIBLE_TYPES!>B<!>
+    b is B
 }
 
 fun <T, V : A<out T>> test4(a: T, b: V) {

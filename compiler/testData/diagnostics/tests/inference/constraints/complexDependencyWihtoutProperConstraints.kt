@@ -13,59 +13,59 @@ fun test(bool: Boolean) {
     val test1 = if (bool) {
         { "1" }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.String)?")!>test1<!>
+    test1
 
     val test2 = if (bool) {
         id { "2" }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.String)?")!>test2<!>
+    test2
 
     val test3 = if (bool) {
         Inv { "3" }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<() -> kotlin.String>?")!>test3<!>
+    test3
 
     val test4 = if (bool) {
         4 to { "4" }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("Pair<kotlin.Int, () -> kotlin.String>?")!>test4<!>
+    test4
 
     val test5 = if (bool) {
         {{ "5" }}
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> () -> kotlin.String)?")!>test5<!>
+    test5
 
     val test6 = if (bool) {
         id { { "6" } }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> () -> kotlin.String)?")!>test6<!>
+    test6
 
     val test7 = if (bool) {
         Inv { { "7" } }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<() -> () -> kotlin.String>?")!>test7<!>
+    test7
 
     val test8 = if (bool) {
         8 to { { "8" } }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("Pair<kotlin.Int, () -> () -> kotlin.String>?")!>test8<!>
+    test8
 
     val test9 = select({ "9" }, null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.String)?")!>test9<!>
+    test9
 
     val test10 = select(id { "10" }, null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> kotlin.String)?")!>test10<!>
+    test10
 
     val test11 = select(null, Inv { "11" })
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<() -> kotlin.String>?")!>test11<!>
+    test11
 
     val test12 = select({ 12 to "" }, null)
-    <!DEBUG_INFO_EXPRESSION_TYPE("(() -> Pair<kotlin.Int, kotlin.String>)?")!>test12<!>
+    test12
 
     val test13: Pair<Int, () -> () -> String>? = if(bool) {
         13 to { { "13" } }
     } else null
-    <!DEBUG_INFO_EXPRESSION_TYPE("Pair<kotlin.Int, () -> () -> kotlin.String>?")!>test13<!>
+    test13
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression, infix,

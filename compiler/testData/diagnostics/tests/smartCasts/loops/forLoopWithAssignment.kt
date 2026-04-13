@@ -191,7 +191,7 @@ fun test20() {
     var y = x
     for (i in 1..10) {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y += ""
     }
 }
@@ -201,7 +201,7 @@ fun test21() {
     var y = x
     for (i in 1..10) {
         require(y is Int)
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
         y++
     }
 }
@@ -234,7 +234,7 @@ fun test24() {
     for (i in 1..10) {
         require(y is String)
         y += ""
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -244,7 +244,7 @@ fun test25() {
     for (i in 1..10) {
         require(y is Int)
         y++
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
     }
 }
 
@@ -257,8 +257,8 @@ fun test26() {
     for(i in 1..10) {
         y = 10
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     }
 }
 
@@ -269,8 +269,8 @@ fun test27() {
     for(i in 1..10) {
         y = ""
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     }
 }
 
@@ -279,10 +279,10 @@ fun test28() {
     var y = x
     require(y is String)
     for(i in 1..10) {
-        y <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> ""
+        y <!UNRESOLVED_REFERENCE!>+=<!> ""
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     }
 }
 
@@ -291,10 +291,10 @@ fun test29() {
     var y = x
     require(y is Int)
     for(i in 1..10) {
-        y<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>++<!>
+        y<!UNRESOLVED_REFERENCE!>++<!>
         y = x
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
+        y.inc()
     }
 }
 
@@ -355,7 +355,7 @@ fun test34() {
     val state: Boolean = x is String
     for(i in 1..10) {
         if (state) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }

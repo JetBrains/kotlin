@@ -23,5 +23,5 @@ public class JavaMethodBreakpointType implements JavaBreakpointType<String>{
 // FILE: test.kt
 
 class KotlinFunctionBreakpointType : JavaMethodBreakpointType() {
-    override <!ACCIDENTAL_OVERRIDE!>fun createJavaBreakpoint(breakpoint: Breakpoint<String>) = Breakpoint<String>()<!>
+    <!NOTHING_TO_OVERRIDE!>override<!> <!ACCIDENTAL_OVERRIDE!>fun createJavaBreakpoint(breakpoint: Breakpoint<String>) = Breakpoint<String>()<!>
 }

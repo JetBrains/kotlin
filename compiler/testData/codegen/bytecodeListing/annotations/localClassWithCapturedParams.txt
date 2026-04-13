@@ -7,6 +7,7 @@ public final class LocalClassWithCapturedParamsKt$localCaptured$A {
     inner (local) class LocalClassWithCapturedParamsKt$localCaptured$A A
     public method <init>(p0: int, @Simple(value="K") p1: java.lang.String): void
     public final method getX(): int
+    public synthetic deprecated static @Simple(value="K") method getZ$annotations(): void
     public final method getZ(): java.lang.String
 }
 

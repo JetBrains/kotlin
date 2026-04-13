@@ -1,17 +1,17 @@
 // RUN_PIPELINE_TILL: FRONTEND
 class A() {
-    <!CONFLICTING_OVERLOADS!>fun b()<!> {
+    fun b() {
     }
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated("a", level = DeprecationLevel.HIDDEN) fun b()<!> {
+    @Deprecated("a", level = DeprecationLevel.HIDDEN) fun b() {
     }
 }
 
 open class B() {
-    <!CONFLICTING_OVERLOADS!>open fun b()<!> {
+    open <!CONFLICTING_OVERLOADS!>fun b()<!> {
     }
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated("a", level = DeprecationLevel.HIDDEN) fun b()<!> {
+    @Deprecated("a", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>fun b()<!> {
     }
 }
 
@@ -19,7 +19,7 @@ open class C() {
     <!CONFLICTING_OVERLOADS!>fun b()<!> {
     }
 
-    <!CONFLICTING_OVERLOADS!>@Deprecated("a", level = DeprecationLevel.HIDDEN) open fun b()<!> {
+    @Deprecated("a", level = DeprecationLevel.HIDDEN) open <!CONFLICTING_OVERLOADS!>fun b()<!> {
     }
 }
 

@@ -1,7 +1,0 @@
-package
-
-public fun </*0*/ T : kotlin.CharSequence?> T.bar1(): kotlin.Unit
-public fun kotlin.CharSequence?.bar2(): kotlin.Unit
-public fun </*0*/ T : kotlin.CharSequence> T.bar3(): kotlin.Unit
-public fun kotlin.CharSequence.bar4(): kotlin.Unit
-public fun </*0*/ T : kotlin.String?> T.foo(): kotlin.Unit

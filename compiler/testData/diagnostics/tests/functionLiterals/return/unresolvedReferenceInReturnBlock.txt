@@ -1,4 +1,0 @@
-package
-
-public val a: () -> kotlin.Nothing
-public val b: () -> kotlin.Unit

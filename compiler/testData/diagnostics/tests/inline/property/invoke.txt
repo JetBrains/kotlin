@@ -1,4 +1,0 @@
-package
-
-public var value: (p: kotlin.Int) -> kotlin.String
-public var value2: kotlin.Int.(p: kotlin.Int) -> kotlin.String

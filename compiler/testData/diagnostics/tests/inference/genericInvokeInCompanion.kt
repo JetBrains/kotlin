@@ -10,33 +10,33 @@ class C<T> {
 }
 
 fun main() {
-    C.Companion.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invoke<!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Companion<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invoke<!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Companion<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!>("")
+    C.Companion.<!CANNOT_INFER_PARAMETER_TYPE!>invoke<!>("")
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int, Int, Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
 
-    C.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invoke<!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!>("")
+    C.<!CANNOT_INFER_PARAMETER_TYPE!>invoke<!>("")
+    C<Int>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
+    C<Int, Int, Int>.<!UNRESOLVED_REFERENCE!>invoke<!>("")
 
     C.Companion.invoke<Int>("")
-    <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Companion<!>.invoke<Int>("")
-    <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Companion<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!><Int>("")
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int, Int, Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
 
     C.invoke<Int>("")
-    <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
-    <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!><Int>("")
+    C<Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
+    C<Int, Int, Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int>("")
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>C<!>("")
+    <!CANNOT_INFER_PARAMETER_TYPE!>C<!>("")
     C<Int>("")
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>C<!><Int, Int, Int>("")
+    C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
 
     C.Companion.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Companion<!>.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Companion<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!><Int, Int>("")
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int, Int>("")
+    <!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!>C<Int, Int, Int>.Companion<!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int>("")
 
     C.invoke<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>("")
-    <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int, Int>("")
-    <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!><Int, Int>("")
+    C<Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int, Int>("")
+    C<Int, Int, Int>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int>("")
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration, operator,

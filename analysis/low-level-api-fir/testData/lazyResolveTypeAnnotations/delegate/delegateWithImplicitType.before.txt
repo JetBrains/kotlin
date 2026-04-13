@@ -74,4 +74,4 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }

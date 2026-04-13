@@ -57,15 +57,15 @@
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.component3' type=<root>.C origin=null
     @-1:-1..-1 FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> (<this>:<root>.C, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C
       @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
-      @1:8..18 VALUE_PARAMETER kind:Regular name:x index:1 type:kotlin.Int
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:x index:1 type:kotlin.Int
         @-1:-1..-1 EXPRESSION_BODY
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null
-      @2:8..21 VALUE_PARAMETER kind:Regular name:y index:2 type:kotlin.String
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:y index:2 type:kotlin.String
         @-1:-1..-1 EXPRESSION_BODY
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null
-      @3:8..18 VALUE_PARAMETER kind:Regular name:z index:3 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:z index:3 type:kotlin.Any
         @-1:-1..-1 EXPRESSION_BODY
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null

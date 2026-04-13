@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
-
 // FILE: AccessorsTest.java
 
 import lombok.*;

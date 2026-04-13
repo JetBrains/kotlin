@@ -21,12 +21,12 @@ fun register(owner: Owner<*>) {}
 // FILE: user.kt
 
 fun test(some: Some<String>) {
-    register(some.g)
+    register(some.<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>g<!>)
 }
 
 fun test2(some: Some<String>) {
-    val a = some.g
-    register(a)
+    val a = some.<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>g<!>
+    register(<!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>a<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nullableType,

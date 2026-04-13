@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -65,7 +65,8 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
     private val regularDeclarationsTransformer = FirDeclarationsResolveTransformer(this)
 
     private var contractMode = true
-    private var insideContractDescription = false
+    var insideContractDescription: Boolean = false
+        private set
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
         // Annotations within contracts will be resolved explicitly during BODY_RESOLVE.

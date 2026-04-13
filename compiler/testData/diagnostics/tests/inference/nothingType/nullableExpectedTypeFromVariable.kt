@@ -9,9 +9,9 @@ class Foo<T> {
             currentValue = if (currentValue == null) {
                 appendedValue
             } else {
-                or(<!DEBUG_INFO_SMARTCAST!>currentValue<!>, <!DEBUG_INFO_SMARTCAST!>appendedValue<!>)
+                or(currentValue, appendedValue)
             }
-            map[field] = <!DEBUG_INFO_SMARTCAST!>currentValue<!>
+            map[field] = currentValue
         }
     }
 

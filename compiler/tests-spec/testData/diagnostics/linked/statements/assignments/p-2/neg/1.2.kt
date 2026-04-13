@@ -19,9 +19,9 @@
  */
 fun case1() {
     val x : Case1? = Case1()
-    <!VAL_REASSIGNMENT!>x.x<!> = "0"
-    <!VAL_REASSIGNMENT!>x?.x<!> = "0"
-    <!VARIABLE_EXPECTED!>x::<!TYPE_MISMATCH!>x<!><!> = TODO()
+    x.<!VAL_REASSIGNMENT!>x<!> = "0"
+    x?.<!VAL_REASSIGNMENT!>x<!> = "0"
+    <!VARIABLE_EXPECTED!>x::x<!> = TODO()
 }
 
 class Case1{
@@ -35,9 +35,9 @@ class Case1{
  */
 fun case2() {
     val x : Case2? = Case2(null)
-    <!VAL_REASSIGNMENT!>x.x<!> = "0"
-    <!VAL_REASSIGNMENT!>x?.x<!> = "0"
-    <!VARIABLE_EXPECTED!>x::<!TYPE_MISMATCH!>x<!><!> = TODO()
+    x.<!VAL_REASSIGNMENT!>x<!> = "0"
+    x?.<!VAL_REASSIGNMENT!>x<!> = "0"
+    <!VARIABLE_EXPECTED!>x::x<!> = TODO()
 }
 
 class Case2(val x: Any?) {}
@@ -48,9 +48,9 @@ class Case2(val x: Any?) {}
  */
 fun case3() {
     val x : Case3? = Case3()
-    <!VAL_REASSIGNMENT!>x.x<!> = "0"
-    <!VAL_REASSIGNMENT!>x?.x<!> = "0"
-    <!VARIABLE_EXPECTED!>x::<!TYPE_MISMATCH!>x<!><!> = TODO()
+    x.<!VAL_REASSIGNMENT!>x<!> = "0"
+    x?.<!VAL_REASSIGNMENT!>x<!> = "0"
+    <!VARIABLE_EXPECTED!>x::x<!> = TODO()
 }
 
 class Case3() {

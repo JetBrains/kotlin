@@ -38,22 +38,22 @@ fun foo(
         cs: Collection<String>, ca: Collection<Any?>
 ) {
     a.containsAll(cs)
-    a.containsAll(<!TYPE_MISMATCH!>ca<!>)
+    a.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     b.containsAll(cs)
-    b.containsAll(<!TYPE_MISMATCH!>ca<!>)
+    b.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     ic.containsAll(cs)
-    ic.containsAll(<!TYPE_MISMATCH!>ca<!>)
+    ic.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     ka.containsAll(cs)
-    ka.containsAll(<!TYPE_MISMATCH!>ca<!>)
+    ka.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     kb.containsAll(cs)
-    kb.containsAll(<!TYPE_MISMATCH!>ca<!>)
+    kb.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     al.containsAll(cs)
-    al.containsAll(<!TYPE_MISMATCH!>ca<!>)
+    al.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, override,

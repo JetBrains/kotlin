@@ -15,8 +15,8 @@ fun withGenericReceiver(arg: InaccessibleGenericType<*>.() -> Unit) {}
 // FILE: end.kt
 
 fun test() {
-    withConcreteReceiver {}
-    withGenericReceiver {}
+    <!MISSING_DEPENDENCY_CLASS!>withConcreteReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
+    <!MISSING_DEPENDENCY_CLASS!>withGenericReceiver<!> <!MISSING_DEPENDENCY_CLASS!>{}<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType,

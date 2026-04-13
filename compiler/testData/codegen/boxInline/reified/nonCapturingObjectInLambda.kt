@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 // FILE: 1.kt
 package test

@@ -19,8 +19,8 @@ fun g(i: Int) {}
 fun g(x: B<Int>) {
     val y = x.content
     if (y == null) {
-        f(<!DEBUG_INFO_CONSTANT!>y<!>)
-        <!NONE_APPLICABLE!>g<!>(<!DEBUG_INFO_CONSTANT!>y<!>)
+        f(y)
+        <!NONE_APPLICABLE!>g<!>(y)
     }
 
     if (y is Nothing?) {

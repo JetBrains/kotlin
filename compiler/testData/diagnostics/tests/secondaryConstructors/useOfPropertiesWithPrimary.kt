@@ -12,7 +12,7 @@ class A(val w: Int) {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val uninitialized: Int<!>
 
     constructor(): this(1) {
-        x + y + v + uninitialized + w
+        x + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!> + w
     }
 
     // anonymous

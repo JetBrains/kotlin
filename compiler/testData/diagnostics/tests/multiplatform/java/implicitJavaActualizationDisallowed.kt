@@ -2,7 +2,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() {
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class Foo() {
     fun foo()
 }
 

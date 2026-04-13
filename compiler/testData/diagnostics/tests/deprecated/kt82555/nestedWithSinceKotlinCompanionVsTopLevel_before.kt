@@ -8,7 +8,7 @@ class C {
         companion object
     }
 
-    val obj = Obj
+    val obj = <!API_NOT_AVAILABLE!>Obj<!>
 }
 
 object Obj

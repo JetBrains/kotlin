@@ -19,15 +19,15 @@ inline fun <T> atMostOnce(block: () -> T): T {
 }
 
 val a: String
-exactlyOnce { <!CAPTURED_MEMBER_VAL_INITIALIZATION!>a<!> = "" }
+exactlyOnce { <!VAL_REASSIGNMENT!>a<!> = "" }
 a.length
 
 val b: String
-atLeastOnce { <!VAL_REASSIGNMENT!>b<!> = "" }
+atLeastOnce { <!VAL_REASSIGNMENT, VAL_REASSIGNMENT!>b<!> = "" }
 b.length
 
-<!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val c: String<!>
-atMostOnce { <!CAPTURED_MEMBER_VAL_INITIALIZATION!>c<!> = "" }
+<!MUST_BE_INITIALIZED!>val c: String<!>
+atMostOnce { <!VAL_REASSIGNMENT!>c<!> = "" }
 <!UNINITIALIZED_VARIABLE!>c<!>.length
 
 /* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, init, inline,

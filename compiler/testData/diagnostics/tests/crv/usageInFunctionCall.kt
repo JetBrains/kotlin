@@ -23,7 +23,7 @@ fun usage() {
     fun local(a: String) {}
     local(foo())
 
-    fun(): String { return foo() }
+    <!UNUSED_EXPRESSION!>fun(): String { return foo() }<!>
 
     val anonim = fun(a: String) {}
     anonim(foo())

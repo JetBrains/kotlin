@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 external interface I {

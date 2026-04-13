@@ -9,7 +9,7 @@ fun foo() {
             if (tokenType === "XML_COMMENT_CHARACTERS") {
                 // we should terminate on first occurence of </
                 val end = tokenType
-                for (i in <!DEBUG_INFO_SMARTCAST!>tokenType<!>) {
+                for (i in tokenType) {
                     if (i == ' ') {
                         break@FindTagEnd
                     }

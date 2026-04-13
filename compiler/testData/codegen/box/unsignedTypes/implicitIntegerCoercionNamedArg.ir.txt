@@ -27,7 +27,8 @@ FILE fqName:<root> fileName:/test.kt
             if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 ARG arg0: CALL 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
-                  ARG x: CONST Int type=kotlin.UInt value=5
+                  ARG x: CALL 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=5
                 ARG arg1: CALL 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
                   ARG <this>: CONST Int type=kotlin.Int value=5
             then: CONST String type=kotlin.String value="Fail: testInt(5)"
@@ -35,7 +36,8 @@ FILE fqName:<root> fileName:/test.kt
             if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 ARG arg0: CALL 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
-                  ARG x: CONST Int type=kotlin.UInt value=5
+                  ARG x: CALL 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=5
                 ARG arg1: CALL 'public final fun toUInt (<this>: kotlin.Int): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
                   ARG <this>: CONST Int type=kotlin.Int value=5
             then: CONST String type=kotlin.String value="Fail: testInt(x = 5)"
@@ -43,7 +45,8 @@ FILE fqName:<root> fileName:/test.kt
             if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 ARG arg0: CALL 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
-                  ARG x: CONST Long type=kotlin.ULong value=5
+                  ARG x: CALL 'public final fun toULong (<this>: kotlin.Int): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=5
                 ARG arg1: CALL 'public final fun toULong (<this>: kotlin.Long): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
                   ARG <this>: CONST Long type=kotlin.Long value=5
             then: CONST String type=kotlin.String value="Fail: testLong(5L)"
@@ -51,7 +54,8 @@ FILE fqName:<root> fileName:/test.kt
             if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 ARG arg0: CALL 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
-                  ARG x: CONST Long type=kotlin.ULong value=5
+                  ARG x: CALL 'public final fun toULong (<this>: kotlin.Int): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
+                    ARG <this>: CONST Int type=kotlin.Int value=5
                 ARG arg1: CALL 'public final fun toULong (<this>: kotlin.Long): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
                   ARG <this>: CONST Long type=kotlin.Long value=5
             then: CONST String type=kotlin.String value="Fail: testLong(x = 5L)"

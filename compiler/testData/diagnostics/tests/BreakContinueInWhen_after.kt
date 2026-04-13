@@ -76,8 +76,8 @@ fun testBreakContinueInWhenInDoWhileCondition() {
         ++i
     } while (
         when (i) {
-            1 -> <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!>
-            2 -> <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>
+            1 -> break
+            2 -> continue
             else -> true
         }
     )

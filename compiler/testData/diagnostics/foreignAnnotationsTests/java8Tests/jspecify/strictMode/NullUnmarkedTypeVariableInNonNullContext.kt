@@ -29,9 +29,9 @@ public class NullMarkedType {
 // FILE: kotlin.kt
 
 fun test() {
-    NullMarkedType.TargetType.TYPE_ARGUMENT().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
-    NullMarkedType.TargetType.RAW().consume(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    NullMarkedType.TargetType.TYPE_ARGUMENT().consume(null)
+    NullMarkedType.TargetType.UNBOUNDED_WILDCARD().consume(null)
+    NullMarkedType.TargetType.UPPER_BOUNDED_WILDCARD().consume(null)
+    NullMarkedType.TargetType.LOWER_BOUNDED_WILDCARD().consume(null)
+    NullMarkedType.TargetType.RAW().consume(null)
 }

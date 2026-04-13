@@ -13,7 +13,7 @@
 fun case_1(value_1: Int): String {
     while (true) {
         when (value_1) {
-            break<!UNREACHABLE_CODE!><!> -> <!UNREACHABLE_CODE!>return ""<!>
+            break -> return ""
         }
     }
 
@@ -24,9 +24,9 @@ fun case_1(value_1: Int): String {
 fun case_2(value_1: Int): String {
     while (true) {
         when (value_1) {
-            continue<!UNREACHABLE_CODE!><!> -> <!UNREACHABLE_CODE!>return ""<!>
+            continue -> return ""
         }
     }
 
-    <!UNREACHABLE_CODE!>return ""<!>
+    return ""
 }

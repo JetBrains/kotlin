@@ -36,6 +36,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_0_0,
@@ -259,6 +260,7 @@ The default value is 1.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_4,
@@ -428,6 +430,7 @@ This can be used in the event of problems with the new implementation.""".asRele
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = PathListType.defaultEmpty
+        delimiter = KotlinCompilerArgument.Delimiter.Default
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_40,
@@ -589,6 +592,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = PathListType.defaultEmpty
+        delimiter = KotlinCompilerArgument.Delimiter.Default
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_70,
@@ -619,7 +623,6 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         name = "Xjvm-expose-boxed"
         description = "Expose inline classes and functions, accepting and returning them, to Java.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
-        additionalAnnotations(Enables(LanguageFeature.ImplicitJvmExposeBoxed))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
@@ -721,6 +724,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = SearchPathType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.PathSeparator
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,

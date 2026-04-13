@@ -6,8 +6,8 @@ typealias MaybePair = Pair<Int, Int>?
 
 fun <T: MaybePair> foo(x: T) {
     if (x != null) {
-        println(<!DEBUG_INFO_SMARTCAST!>x<!>.first)
-        println(<!DEBUG_INFO_SMARTCAST!>x<!>.second)
+        println(x.first)
+        println(x.second)
     }
 }
 

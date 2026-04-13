@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: Dict.java
 
 public abstract class Dict<K, V> {

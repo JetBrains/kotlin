@@ -11,7 +11,7 @@ class Test : J {
 
   @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
-    return <this>.#j.returnNotNull()
+    return <this>.#j.returnNotNull() /*!! String */
   }
 
   @Nullable

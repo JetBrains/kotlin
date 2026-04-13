@@ -9,18 +9,18 @@ open enum class MyEnum : Enum<MyEnum> {
 
     val aLambda: Function0<Unit>
       field = local fun <anonymous>() {
-        MyEnum.Z.<set-counter>(<set-?> = 1)
-        MyEnum.Z.foo()
+        <this>.<set-counter>(<set-?> = 1)
+        <this>.foo()
       }
 
       get
 
-    val anObject: Any
+    val anObject: <no name provided>
       field = { // BLOCK
         local class <no name provided> {
           init {
-            MyEnum.Z.<set-counter>(<set-?> = 1)
-            MyEnum.Z.foo()
+            <this>.<set-counter>(<set-?> = 1)
+            <this>.foo()
           }
 
           constructor() /* primary */ {
@@ -30,8 +30,8 @@ open enum class MyEnum : Enum<MyEnum> {
           }
 
           fun test() {
-            MyEnum.Z.<set-counter>(<set-?> = 1)
-            MyEnum.Z.foo()
+            <this>.<set-counter>(<set-?> = 1)
+            <this>.foo()
           }
 
         }
@@ -41,7 +41,7 @@ open enum class MyEnum : Enum<MyEnum> {
       get
 
     private constructor() /* primary */ {
-      super/*MyEnum*/() /*~> Unit */
+      super/*MyEnum*/()
       /* <init>() */
 
     }

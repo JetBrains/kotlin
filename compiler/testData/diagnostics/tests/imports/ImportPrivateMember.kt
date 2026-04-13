@@ -30,10 +30,10 @@ private object TopLevelObject {
 }
 
 fun testAccess() {
-    <!INVISIBLE_MEMBER!>NestedClass<!>()
+    <!INVISIBLE_REFERENCE!>NestedClass<!>()
     E1
-    <!INVISIBLE_MEMBER!>InNested<!>()
-    <!INVISIBLE_MEMBER!>NestedEntry<!>
+    <!INVISIBLE_REFERENCE!>InNested<!>()
+    <!INVISIBLE_REFERENCE!>NestedEntry<!>
     inObject()
 }
 

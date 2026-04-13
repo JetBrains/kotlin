@@ -15,5 +15,5 @@ class Inside2(val foo: List<List<<!SERIALIZER_NOT_FOUND("NonSerializable")!>NonS
 
 @Serializable
 class WithImplicitType {
-    <!SERIALIZER_NOT_FOUND("NonSerializable")!>val foo = NonSerializable()<!>
+    val foo = <!SERIALIZER_NOT_FOUND!>NonSerializable()<!>
 }

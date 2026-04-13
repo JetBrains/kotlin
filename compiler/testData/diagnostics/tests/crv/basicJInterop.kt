@@ -39,15 +39,15 @@ public class JavaImplicitConstructor {}
 
 // FILE: KtFile.kt
 fun simple() {
-    JavaImplicitConstructor()
-    JavaMain()
-    JavaMain().prop
-    JavaMain().checkedMethod()
+    <!RETURN_VALUE_NOT_USED!>JavaImplicitConstructor<!>()
+    <!RETURN_VALUE_NOT_USED!>JavaMain<!>()
+    JavaMain().<!RETURN_VALUE_NOT_USED!>prop<!>
+    JavaMain().<!RETURN_VALUE_NOT_USED!>checkedMethod<!>()
     val annotatedClassMember = JavaMain().checkedMethod()
     JavaMain().ignoredMethod()
     val markedToIgnore = JavaMain().ignoredMethod()
 
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = JavaMain().checkedMethod()
+    val _ = JavaMain().checkedMethod()
 }
 
 fun useInAnotherCall() {

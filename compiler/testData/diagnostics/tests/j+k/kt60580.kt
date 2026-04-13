@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: usage.kt
 @Target(AnnotationTarget.TYPE)
 annotation class Anno

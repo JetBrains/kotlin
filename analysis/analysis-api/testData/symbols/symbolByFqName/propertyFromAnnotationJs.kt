@@ -1,6 +1,5 @@
 // ISSUE: KT-74777
 // TARGET_PLATFORM: JS
-// IGNORE_FE10
 // callable: one/Anno.value
 // MODULE: library
 // MODULE_KIND: LibraryBinary

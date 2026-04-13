@@ -36,18 +36,18 @@ FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_subProperty.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final data [ResolvedTo(CONTRACTS)] class TwoValues : R|kotlin/Any| {
-            public [ResolvedTo(CONTRACTS)] constructor([ResolvedTo(CONTRACTS)] first: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] second: R|kotlin/Int|): R|TwoValues| {
+        public final data [ResolvedTo(STATUS)] class TwoValues : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] first: R|kotlin/Int|, [ResolvedTo(STATUS)] second: R|kotlin/Int|): R|TwoValues| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] val first: R|kotlin/Int| = R|<local>/first|
-                public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+            public final [ResolvedTo(STATUS)] val first: R|kotlin/Int| = R|<local>/first|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
             public final [ResolvedTo(STATUS)] val second: R|kotlin/Int| = R|<local>/second|
                 public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
             public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
 

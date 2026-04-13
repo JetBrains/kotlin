@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 // ISSUE: KT-84059
 
@@ -26,7 +25,7 @@ public class TestBuilders {
 
 // FILE: test.kt
 fun box(): String {
-    val orig = ToBuilderGeneric.builder<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>().value(<!TYPE_MISMATCH!>"not OK"<!>).tag("K").build()
-    val modified: ToBuilderGeneric<String> = <!TYPE_MISMATCH!>orig.toBuilder().value(<!TYPE_MISMATCH!>"O"<!>).build()<!>
+    val orig = ToBuilderGeneric.builder<String>().value("not OK").tag("K").build()
+    val modified: ToBuilderGeneric<String> = orig.<!CANNOT_INFER_PARAMETER_TYPE!>toBuilder<!>().value("O").build()
     return modified.value + modified.tag
 }

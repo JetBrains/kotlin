@@ -7,7 +7,7 @@ fun <T> nullable(): T? = null
 fun <T> dependOn(x: T) = x
 
 fun test() {
-    takeNotNull(notNull()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+    takeNotNull(notNull()!!)
     takeNotNull(nullable()!!)
 
     var x: String? = null

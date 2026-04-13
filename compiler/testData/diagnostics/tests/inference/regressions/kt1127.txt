@@ -1,6 +1,0 @@
-package
-
-package d {
-    public fun </*0*/ T> asList(/*0*/ t: T): kotlin.collections.List<T>?
-    public fun main(): kotlin.Unit
-}

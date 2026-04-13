@@ -7,7 +7,7 @@ class Pair<A>(a: A)
 
 fun test() {
     val v = foo(Pair(1))
-    checkSubtype<Int>(<!TYPE_MISMATCH!>v<!>) // check that it is not error type
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>v<!>) // check that it is not error type
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

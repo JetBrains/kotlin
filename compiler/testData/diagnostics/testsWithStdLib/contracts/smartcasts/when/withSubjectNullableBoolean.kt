@@ -19,18 +19,18 @@ fun elseWithNullableResult(x: Any?) {
     }
 
     when (safeIsString(x)) {
-        true -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        true -> x.length
         else -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when (safeIsString(x)) {
-        true -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        true -> x.length
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
         else -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when (safeIsString(x)) {
-        true -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        true -> x.length
         null -> x.<!UNRESOLVED_REFERENCE!>length<!>
         else -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
@@ -38,21 +38,21 @@ fun elseWithNullableResult(x: Any?) {
 
 fun exhaustiveWithNullableResult(x: Any?) {
     when (safeIsString(x)) {
-        true -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        true -> x.length
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
         null -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when (safeIsString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        true -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        true -> x.length
         null -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when (safeIsString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
         null -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        true -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        true -> x.length
     }
 }
 

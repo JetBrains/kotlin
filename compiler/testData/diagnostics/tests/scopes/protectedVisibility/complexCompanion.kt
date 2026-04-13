@@ -14,7 +14,7 @@ class B {
 
 class C: A() {
     init {
-        B.<!INVISIBLE_MEMBER!>foo<!>() // Error: receiver is not suitable
+        B.<!INVISIBLE_REFERENCE!>foo<!>() // Error: receiver is not suitable
     }
 }
 

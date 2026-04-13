@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-import <!DEPRECATION!>C<!> as C2
+import C as C2
 
 @Deprecated("obsolete")
 class C {

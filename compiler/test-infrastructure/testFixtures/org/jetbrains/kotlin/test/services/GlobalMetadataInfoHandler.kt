@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.preprocessors.MetaInfosCleanupPreprocessor
 
 class GlobalMetadataInfoHandler(
     val testServices: TestServices,
@@ -27,7 +28,8 @@ class GlobalMetadataInfoHandler(
     fun parseExistingMetadataInfosFromAllSources() {
         existingInfosPerFile = buildMap {
             for (file in testServices.moduleStructure.modules.flatMap { it.files }) {
-                put(file, CodeMetaInfoParser.getCodeMetaInfoFromText(file.originalContent))
+                val halfProcessedContent = testServices.sourceFileProvider.getContentOfSourceFile(file) { it !is MetaInfosCleanupPreprocessor }
+                put(file, CodeMetaInfoParser.getCodeMetaInfoFromText(halfProcessedContent))
             }
         }
     }

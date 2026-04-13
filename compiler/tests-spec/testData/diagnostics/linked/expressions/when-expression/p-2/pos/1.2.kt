@@ -28,5 +28,5 @@ fun case_2(value_1: Int): String {
         }
     }
 
-    <!UNREACHABLE_CODE!>return ""<!>
+    return ""
 }

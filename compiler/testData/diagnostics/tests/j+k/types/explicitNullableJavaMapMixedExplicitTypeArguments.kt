@@ -22,10 +22,10 @@ fun test(m1: Map<String, String?>, m2: Map<String, String>) {
     val v2: String = JavaMaps.get<String, String>(m2, "k")
 
     takeNullableString(JavaMaps.get<String, String?>(m1, "k"))
-    takeString(JavaMaps.get<String, String?>(m1, "k"))
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaMaps.get<String, String?>(m1, "k")<!>)
 
-    val badValue: String = JavaMaps.get<String, String?>(m1, "k")
-    val badMap: Map<String, String> = JavaMaps.id<String, String?>(m1)
+    val badValue: String <!INITIALIZER_TYPE_MISMATCH!>=<!> JavaMaps.get<String, String?>(m1, "k")
+    val badMap: Map<String, String> <!INITIALIZER_TYPE_MISMATCH!>=<!> JavaMaps.id<String, String?>(m1)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty,

@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // ^^^ Only JVM allows `main` functions in the same package but in different files.
 
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 // FILE: a.kt

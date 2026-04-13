@@ -3,25 +3,25 @@
 class A
 class B
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
-fun foo() {}
+context(a: A)
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo() {}<!>
 
-fun A.foo() { }
+<!CONFLICTING_JVM_DECLARATIONS!>fun A.foo() { }<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>, b: <!DEBUG_INFO_MISSING_UNRESOLVED!>B<!>)<!>
-fun bar(){}
+context(a: A, b: B)
+<!CONFLICTING_JVM_DECLARATIONS!>fun bar(){}<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
-fun B.bar(){}
+context(a: A)
+<!CONFLICTING_JVM_DECLARATIONS!>fun B.bar(){}<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>, b: <!DEBUG_INFO_MISSING_UNRESOLVED!>B<!>)<!>
-fun qux(){}
+context(a: A, b: B)
+<!CONFLICTING_JVM_DECLARATIONS!>fun qux(){}<!>
 
-fun A.qux(<!UNUSED_PARAMETER!>b<!>: B){}
+<!CONFLICTING_JVM_DECLARATIONS!>fun A.qux(b: B){}<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
+context(a: A)
 val b: String
-    get() = ""
+    <!CONFLICTING_JVM_DECLARATIONS!>get() = ""<!>
 
 val A.b: String
-    get() = ""
+    <!CONFLICTING_JVM_DECLARATIONS!>get() = ""<!>

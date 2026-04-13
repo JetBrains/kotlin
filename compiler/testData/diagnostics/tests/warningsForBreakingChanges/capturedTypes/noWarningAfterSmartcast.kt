@@ -6,7 +6,7 @@ interface Comp<T> {
 
 fun <E : Any> foo(c: Comp<in E>, e: E?) {
     if (e == null) return
-    c.foo(<!DEBUG_INFO_SMARTCAST!>e<!>)
+    c.foo(e)
 }
 
 /* GENERATED_FIR_TAGS: dnnType, equalityExpression, functionDeclaration, ifExpression, inProjection,

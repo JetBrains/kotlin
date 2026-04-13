@@ -13,10 +13,10 @@ public fun foo(p: String?, r: String?, q: String?): Int {
         if (!x()) break
     }
     // Smart cast is possible only for q
-    <!DEBUG_INFO_SMARTCAST!>q<!>.length
+    q.length
     // But not possible for the others
-    r<!UNSAFE_CALL!>.<!>length
-    return p<!UNSAFE_CALL!>.<!>length
+    r.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration,

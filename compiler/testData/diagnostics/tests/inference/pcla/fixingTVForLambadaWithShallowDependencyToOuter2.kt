@@ -17,7 +17,7 @@ fun main() {
         // S <: R
         // Any <: R
         myWith(get()) {
-            it.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
+            it.<!UNRESOLVED_REFERENCE!>length<!>
         }
 
         yield("")

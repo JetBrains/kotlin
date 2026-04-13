@@ -10,6 +10,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtTypeParameter
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
@@ -28,4 +29,9 @@ class KotlinTypeParameterStubImpl(
         parent = newParent,
         name = name,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinTypeParameterStubImpl &&
+                other.name == name
 }

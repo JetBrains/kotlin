@@ -10,7 +10,7 @@ open class A {
 }
 
 class C : B() {
-    internal val a: String = "OK"
+    internal val <!VIRTUAL_MEMBER_HIDDEN!>a<!>: String = "OK"
 }
 
 fun box(): String {

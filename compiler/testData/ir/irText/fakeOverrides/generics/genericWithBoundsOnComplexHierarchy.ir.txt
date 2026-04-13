@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java2]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Any>
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java2
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -15,15 +15,15 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Any>
+      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Number?
+      overridden:
+        public open fun foo (t: @[FlexibleNullability] kotlin.Number?): kotlin.Unit declared in <root>.Java2
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java2
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>
-      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Number?
-      overridden:
-        public open fun foo (t: @[FlexibleNullability] kotlin.Number?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.D [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Any?
+          TYPE_ARG T: kotlin.Any
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java4<kotlin.Any>; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<@[FlexibleNullability] kotlin.Number?>
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Any?
+          TYPE_ARG T: kotlin.Any
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java4<kotlin.Any>; <root>.Java3]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<@[FlexibleNullability] kotlin.Number?>
@@ -189,7 +189,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG T: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[<root>.Java1<kotlin.Int>; <root>.Java5]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Int>
@@ -203,7 +203,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java5
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinInterface<kotlin.Any>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface<kotlin.Any>
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Any
       overridden:
         public abstract fun foo (t: kotlin.Any): kotlin.Unit declared in <root>.Java5
@@ -227,7 +227,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.G [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG T: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>; <root>.Java5]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Int>
@@ -268,7 +268,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Any>
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java2
         public abstract fun bar (): T of <root>.KotlinInterface? declared in <root>.KotlinInterface
@@ -279,16 +279,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Any>
+      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Number?
+      overridden:
+        public open fun foo (t: @[FlexibleNullability] kotlin.Number?): kotlin.Unit declared in <root>.Java2
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Any?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java2
         public abstract fun foo (t: T of <root>.KotlinInterface): kotlin.Unit declared in <root>.KotlinInterface
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>
-      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Number?
-      overridden:
-        public open fun foo (t: @[FlexibleNullability] kotlin.Number?): kotlin.Unit declared in <root>.Java2
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -306,7 +306,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Number? [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Any>
       overridden:
         public open fun bar (): @[FlexibleNullability] kotlin.Number? declared in <root>.Java2
         public abstract fun bar (): T of <root>.KotlinInterface? declared in <root>.KotlinInterface
@@ -317,7 +317,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.Java1<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Any>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Number?
       overridden:
         public open fun foo (t: @[FlexibleNullability] kotlin.Number?): kotlin.Unit declared in <root>.Java2
@@ -344,7 +344,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.KotlinClass<T of <root>.KotlinClass> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] T of <root>.KotlinClass?
+          TYPE_ARG T: T of <root>.KotlinClass
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinClass modality:OPEN visibility:public superTypes:[<root>.Java1<T of <root>.KotlinClass>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.KotlinClass? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.KotlinClass>

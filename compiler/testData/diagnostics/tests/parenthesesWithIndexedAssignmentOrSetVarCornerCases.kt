@@ -24,14 +24,14 @@ object B {
 }
 
 fun ban(b: B?) {
-    <!UNSAFE_CALL!>b?.p<!NO_SET_METHOD!>[0]<!><!> += 10
-    (<!UNSAFE_CALL!>b?.p<!NO_SET_METHOD!>[0]<!><!>) += 10
+    b?.p[0] += 10
+    (b?.p[0]) <!NONE_APPLICABLE!>+=<!> 10
 
-    <!UNSAFE_CALL!>b?.pa[0]<!> += 10
-    (<!UNSAFE_CALL!>b?.pa[0]<!>) += 10
+    b?.pa[0] += 10
+    (b?.pa[0]) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 
-    <!UNSAFE_CALL!>b?.ppa[0]<!> <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 10
-    (<!UNSAFE_CALL!>b?.ppa[0]<!>) <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 10
+    b?.ppa[0] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 10
+    (b?.ppa[0]) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 }
 
 object PlusExt
@@ -51,14 +51,14 @@ object C {
 }
 
 fun bad(c: C?) {
-    <!TYPE_MISMATCH!><!UNSAFE_CALL!>c?.p<!NO_SET_METHOD!>[0]<!><!> += 10<!>
-    <!TYPE_MISMATCH!>(<!UNSAFE_CALL!>c?.p<!NO_SET_METHOD!>[0]<!><!>) += 10<!>
+    c?.p[0] <!UNRESOLVED_REFERENCE!>+=<!> 10
+    (c?.p[0]) <!NONE_APPLICABLE!>+=<!> 10
 
-    <!UNSAFE_CALL!>c?.pa[0]<!> += 10
-    (<!UNSAFE_CALL!>c?.pa[0]<!>) += 10
+    c?.pa[0] += 10
+    (c?.pa[0]) += 10
 
-    <!UNSAFE_CALL!>c?.ppa[0]<!> += 10
-    (<!UNSAFE_CALL!>c?.ppa[0]<!>) += 10
+    c?.ppa[0] += 10
+    (c?.ppa[0]) += 10
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, funWithExtensionReceiver, functionDeclaration, integerLiteral,

@@ -25,7 +25,7 @@ class Another2 {
 }
 
 fun Another2.main(x: Bar2<String>?) {
-    x?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>value<!>(1)
+    x?.value(1)
     x?.value<!UNSAFE_CALL!>.<!>invoke(1)
 }
 
@@ -39,7 +39,7 @@ class Another3<T> {
 }
 
 fun <K> Another3<K>.main(x: Bar3<K>?) {
-    x?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>value<!>(1)
+    x?.value(1)
     x?.value<!UNSAFE_CALL!>.<!>invoke(1)
 }
 
@@ -53,7 +53,7 @@ class Another4<T> {
 }
 
 fun <K> Another4<K>.main(x: Bar4<K>?) {
-    x?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>value<!>(1)
+    x?.value(1)
     x?.value.invoke(1)
 }
 

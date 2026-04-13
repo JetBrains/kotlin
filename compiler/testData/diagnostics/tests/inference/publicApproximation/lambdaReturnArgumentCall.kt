@@ -16,7 +16,7 @@ fun runIntersect(arg: A, arg2: A) = run {
 }
 
 fun test(arg: A) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>runIntersect(arg, arg)<!>
+    runIntersect(arg, arg)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression,

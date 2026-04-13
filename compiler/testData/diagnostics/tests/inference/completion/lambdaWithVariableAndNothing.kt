@@ -13,9 +13,9 @@ fun <E4, F : E4> noSmartCast4(arg: E4?, fn: F): E4 = TODO()
 fun testSmartCast(s: String?) {
     id(
         if (s != null) ""
-        else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>smartCast<!>(null) { "" }
+        else smartCast(null) { "" }
     )
-    <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    s.length
 }
 
 fun testNoSmartCast1(s: String?) {

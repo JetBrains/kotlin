@@ -1,4 +1,4 @@
-FILE: emptyContract.fir.kt
+FILE: emptyContract.kt
     public final fun emptyContract(): R|kotlin/Unit|
         [R|Contract description]
          <

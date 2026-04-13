@@ -9,7 +9,7 @@ import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.findFacadeClass
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.junit.jupiter.api.Test
 
 class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPathString = "testData/custom") {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator = LLSourceLikeTestConfigurator()
 
     @Test
     fun fileModificationTracker(file: KtFile, testServices: TestServices) {

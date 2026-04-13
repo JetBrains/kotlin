@@ -17,11 +17,11 @@ fun testNullWhenNull(x: Int?) {
         x<!UNSAFE_CALL!>.<!>dec()
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.dec()
+        x.dec()
     }
 
     if (nullWhenNull(x) != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.dec()
+        x.dec()
     }
     else {
         x<!UNSAFE_CALL!>.<!>dec()
@@ -40,7 +40,7 @@ fun notNullWhenNotNull (x: Int?): Int? {
 
 fun testNotNullWhenNotNull (x: Int?) {
     if (notNullWhenNotNull(x) == null) {
-        <!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>x<!> == null<!>
+        <!SENSELESS_COMPARISON!>x == null<!>
     }
     else {
         x<!UNSAFE_CALL!>.<!>dec()
@@ -50,7 +50,7 @@ fun testNotNullWhenNotNull (x: Int?) {
         x<!UNSAFE_CALL!>.<!>dec()
     }
     else {
-        <!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>x<!> == null<!>
+        <!SENSELESS_COMPARISON!>x == null<!>
     }
 
     x<!UNSAFE_CALL!>.<!>dec()

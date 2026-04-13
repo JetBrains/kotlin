@@ -9,7 +9,7 @@ public fun foo(p: String?): Int {
     }
     // while (true) loop body is executed at least once
     // so p is not null here
-    return <!DEBUG_INFO_SMARTCAST!>p<!>.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, functionDeclaration, ifExpression, nullableType, smartcast, whileLoop */

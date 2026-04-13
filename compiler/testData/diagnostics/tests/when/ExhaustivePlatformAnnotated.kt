@@ -24,7 +24,7 @@ public enum J {
 // FILE: K.kt
 
 fun test_1(): Int {
-    return when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.getPlatform()<!>) {
+    return when (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
     }
@@ -51,7 +51,7 @@ fun test_4(): Int {
         J.A -> 1
         J.B -> 2
         null -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
 

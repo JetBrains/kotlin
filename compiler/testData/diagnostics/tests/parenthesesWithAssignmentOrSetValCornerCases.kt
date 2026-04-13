@@ -25,13 +25,13 @@ object B {
 }
 
 fun ban(b: B?) {
-    <!VAL_REASSIGNMENT!>b?.p<!> <!UNSAFE_OPERATOR_CALL!>+=<!> 10
-    (<!VAL_REASSIGNMENT!>b?.p<!>) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
+    b?.<!VAL_REASSIGNMENT!>p<!> += 10
+    (b?.p) <!NONE_APPLICABLE!>+=<!> 10
 
-    b?.pa <!UNSAFE_OPERATOR_CALL!>+=<!> 10
+    b?.pa += 10
     (b?.pa) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 
-    b?.ppa <!UNSAFE_OPERATOR_CALL!>+=<!> 10
+    b?.ppa += 10
     (b?.ppa) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 }
 
@@ -52,13 +52,13 @@ object C {
 }
 
 fun bad(c: C?) {
-    <!VAL_REASSIGNMENT!>c?.p<!> += 10
-    (<!VAL_REASSIGNMENT!>c?.p<!>) += 10
+    c?.<!VAL_REASSIGNMENT!>p<!> <!ASSIGNMENT_TYPE_MISMATCH!>+=<!> 10
+    (c?.p) <!NONE_APPLICABLE!>+=<!> 10
 
-    c?.pa <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> 10
+    c?.pa += 10
     (c?.pa) += 10
 
-    c?.ppa <!NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER!>+=<!> 10
+    c?.ppa += 10
     (c?.ppa) += 10
 }
 

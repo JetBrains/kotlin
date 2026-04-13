@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
-
 // FILE: OverriddenFluent.java
 
 import lombok.Getter;

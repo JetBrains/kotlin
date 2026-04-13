@@ -10,6 +10,7 @@ import kotlin.reflect.KDeclarationContainer
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.createTypeImpl
 
 private val K_CLASS_CACHE = createCache { KClassImpl(it) }
 private val K_PACKAGE_CACHE = createCache { KPackageImpl(it) }
@@ -32,11 +33,11 @@ internal fun clearCaches() {
 
 // Without type arguments and nullability
 private val CACHE_FOR_BASE_CLASSIFIERS = createCache {
-    getOrCreateKotlinClass(it).createType(emptyList(), false, emptyList())
+    getOrCreateKotlinClass(it).createTypeImpl(emptyList(), false, emptyList())
 }
 
 private val CACHE_FOR_NULLABLE_BASE_CLASSIFIERS = createCache {
-    getOrCreateKotlinClass(it).createType(emptyList(), true, emptyList())
+    getOrCreateKotlinClass(it).createTypeImpl(emptyList(), true, emptyList())
 }
 
 private typealias Key = Pair<List<KTypeProjection>, Boolean>
@@ -64,7 +65,7 @@ private fun <T : Any> getOrCreateKTypeWithTypeArguments(
 ): KType {
     val cache = CACHE_FOR_GENERIC_CLASSIFIERS.get(jClass)
     return cache.getOrPut(arguments to isMarkedNullable) {
-        getOrCreateKotlinClass(jClass).createType(arguments, isMarkedNullable, emptyList())
+        getOrCreateKotlinClass(jClass).createTypeImpl(arguments, isMarkedNullable, emptyList())
     }
 }
 

@@ -30,14 +30,14 @@ internal class TowerDataElementsForName2() {
 }
 
 internal class TowerDataElementsForName3() {
-    val reversedFilteredLocalScopes by <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>lazy(LazyThreadSafetyMode.NONE) {
+    val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
         @OptIn(ExperimentalStdlibApi::class)
         buildList l1@ {
             for (i in lastIndex downTo 0) {
                 val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
                     @OptIn(ExperimentalStdlibApi::class)
                     buildList {
-                        for (<!NAME_SHADOWING!>i<!> in lastIndex downTo 0) {
+                        for (i in lastIndex downTo 0) {
                         add("")
                         this@l1.add("")
                     }
@@ -45,12 +45,12 @@ internal class TowerDataElementsForName3() {
                 }
             }
         }
-    }<!>
+    }
 }
 
 internal class TowerDataElementsForName4() {
     @OptIn(ExperimentalStdlibApi::class)
-    val reversedFilteredLocalScopes = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> l1@ {
+    val reversedFilteredLocalScopes = buildList l1@ {
         class Foo {
             val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
                 @OptIn(ExperimentalStdlibApi::class)

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-64466
 
 annotation class Ann

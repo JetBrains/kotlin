@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+// Could be removed once minimal supported AGP version 8.8+
 /**
  * @suppress
  */
-@Deprecated("Scheduled for removal in Kotlin 2.3. Use KotlinSourceSetTree instead", level = DeprecationLevel.ERROR)
+@Deprecated("Use KotlinSourceSetTree instead", level = DeprecationLevel.ERROR)
 interface KotlinTargetHierarchy {
 
     /**
      * @suppress
      */
     @Deprecated(
-        "Scheduled for removal in Kotlin 2.3. Use KotlinSourceSetTree instead",
+        "Use KotlinSourceSetTree instead",
         level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("KotlinSourceSetTree")
     )
@@ -32,7 +33,7 @@ interface KotlinTargetHierarchy {
         }
 
         @Deprecated(
-            "Scheduled for removal in Kotlin 2.3. Use KotlinSourceSetTree instead",
+            "Use KotlinSourceSetTree instead",
             level = DeprecationLevel.ERROR,
             replaceWith = ReplaceWith("KotlinSourceSetTree")
         )

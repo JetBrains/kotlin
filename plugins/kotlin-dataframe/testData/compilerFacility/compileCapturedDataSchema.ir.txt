@@ -19,7 +19,7 @@ MODULE_FRAGMENT
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$filter: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>, it: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84>): kotlin.Boolean declared in <root>.CodeFragment.run'
                       CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        ARG arg0: CALL 'public final fun <get-col> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84I>): kotlin.Int declared in test.SourceKt.test.test$lambda$0.Scope0' type=kotlin.Int origin=GET_PROPERTY
-                          ARG <this>(index:0): CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.SourceKt.test.test$lambda$0.Scope0' type=test.SourceKt.test.test$lambda$0.Scope0 origin=null
+                        ARG arg0: CALL 'public final fun <get-col> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84I>): kotlin.Int declared in test.SourceKt.test.test$lambda$0.DataFramePropertiesScope0' type=kotlin.Int origin=GET_PROPERTY
+                          ARG <this>(index:0): CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.SourceKt.test.test$lambda$0.DataFramePropertiesScope0' type=test.SourceKt.test.test$lambda$0.DataFramePropertiesScope0 origin=null
                           ARG <this>(index:1): GET_VAR '$this$filter: org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84> declared in <root>.CodeFragment.run.<anonymous>' type=org.jetbrains.kotlinx.dataframe.DataRow<test.SourceKt.test.test$lambda$0.DataFrameOf_84> origin=IMPLICIT_ARGUMENT
                         ARG arg1: CONST Int type=kotlin.Int value=1

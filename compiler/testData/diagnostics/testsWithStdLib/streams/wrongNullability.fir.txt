@@ -1,4 +1,4 @@
-FILE: wrongNullability.fir.kt
+FILE: wrongNullability.kt
     public final class IntLongPair : R|kotlin/Any| {
         public constructor(i: R|kotlin/Int|, l: R|kotlin/Long|): R|IntLongPair| {
             super<R|kotlin/Any|>()

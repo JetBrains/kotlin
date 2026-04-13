@@ -3,14 +3,14 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>KotlinModifiers<!> {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class KotlinModifiers {
     operator fun plus(i: Int)
-    inline fun foo()
-    suspend fun bar()
-    infix fun qux(i: Int)
+    inline fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>()
+    suspend fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>bar<!>()
+    infix fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>qux<!>(i: Int)
 }
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>JavaModifiers<!> {
+expect class JavaModifiers {
     fun foo()
     fun bar()
     fun qux()

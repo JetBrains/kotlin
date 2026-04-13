@@ -3,10 +3,11 @@ fun testImplicitCast(a: Any) {
     a !is String -> return Unit
   }
   val t: String = try { // BLOCK
-    a
-  } /*as String */
+    a /*as String */
+  }
   catch (e: Throwable){ // BLOCK
     ""
   }
 
 }
+

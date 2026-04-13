@@ -10,7 +10,7 @@ class B : A()
 
 fun test() {
     val b = B()
-    b<!UNREACHABLE_CODE!>.x =<!> throw Exception()
+    b.<!INVISIBLE_SETTER!>x<!> = throw Exception()
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty,

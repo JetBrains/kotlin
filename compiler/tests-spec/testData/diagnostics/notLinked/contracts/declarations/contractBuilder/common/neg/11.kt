@@ -17,7 +17,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1, 2
 inline fun contractBuilder(block: () -> Unit): ContractBuilder.() -> Unit = {
-    callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 }
 
 // FILE: main.kt
@@ -27,12 +27,12 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
-    contract(<!ERROR_IN_CONTRACT_DESCRIPTION!>contractBuilder(block)<!>)
+    <!CONTRACT_NOT_ALLOWED!>contract<!>(contractBuilder(block))
     return block()
 }
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    contract(builder = <!ERROR_IN_CONTRACT_DESCRIPTION!>contractBuilder(block)<!>)
+    <!CONTRACT_NOT_ALLOWED!>contract<!>(builder = contractBuilder(block))
     return block()
 }

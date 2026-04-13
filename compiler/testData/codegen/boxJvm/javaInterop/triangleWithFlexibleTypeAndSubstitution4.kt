@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // K2 status: KT-66529 K2: MANY_IMPL_MEMBER_NOT_IMPLEMENTED on inheriting Java member with generic type and Kotlin member with primitive type
 
 // FILE: A.java

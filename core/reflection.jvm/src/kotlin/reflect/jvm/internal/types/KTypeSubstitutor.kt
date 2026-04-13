@@ -214,8 +214,8 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(seedTypeOfTheRecursi
 
         val classifier =
             classifier ?: error("Error inside type '$seedTypeOfTheRecursionForDebug'. The current type '$type' is not denotable")
-        val lower = classifier.createType(arguments = newLowerBoundArguments, nullable = isMarkedNullable)
-        val upper = classifier.createType(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = isMarkedNullable)
+        val lower = classifier.createTypeImpl(arguments = newLowerBoundArguments, nullable = isMarkedNullable)
+        val upper = classifier.createTypeImpl(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = isMarkedNullable)
         return createPlatformKType(lower, upper, isRawType = true)
     }
 }

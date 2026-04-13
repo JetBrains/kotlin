@@ -11,8 +11,8 @@ interface B : A {
 
 fun test(a: A) {
     if (a is B) {
-        <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
-        <!DEBUG_INFO_SMARTCAST!>a<!>.foo().checkType { _<String>() }
+        a.foo()
+        a.foo().checkType { _<String>() }
     }
 }
 

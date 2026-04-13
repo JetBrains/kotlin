@@ -7,7 +7,7 @@ fun foo(): Any = 42
 fun test(x: Any) {
     // NB check that we still resolve 'y', even though current language version doesn' support variable declaration in when subject
 
-    val z1 = when (<!UNSUPPORTED_FEATURE!>val y = foo()<!>) {
+    val z1 = when (val y = foo()) {
         42 -> "Magic: $y, $x"
         else -> {
             "Not magic: $y, $x"

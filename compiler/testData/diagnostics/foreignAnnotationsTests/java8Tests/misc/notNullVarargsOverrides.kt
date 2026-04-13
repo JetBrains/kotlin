@@ -10,7 +10,7 @@ public class BaseClass {
 class A : BaseClass() {
     // org.checkerframework.checker.nullness.qual.NonNull has @Target TYPE_USE, so it affects only elements type
     <!NOTHING_TO_OVERRIDE!>override<!> fun loadCache(vararg args: Any?) {
-        super.loadCache(*<!TYPE_MISMATCH!>args<!>)
+        super.loadCache(*<!ARGUMENT_TYPE_MISMATCH!>args<!>)
     }
 }
 

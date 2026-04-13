@@ -24,7 +24,6 @@ dependencies {
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
@@ -64,7 +63,6 @@ projectTests {
     withDist()
 
     testData(project.isolated, "testData")
-    testData(project(":compiler").isolated, "testData/asJava/lightClasses")
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

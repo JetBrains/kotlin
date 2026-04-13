@@ -17,14 +17,14 @@ import abc.Bar
 
 fun ifProblem(b: Boolean): String? {
     return run {
-        if (b) { Bar.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>bar<!>() } else null
+        if (b) { Bar.bar() } else null
     }
 }
 
 fun whenProblem(b: Boolean): String? {
     return run {
         when {
-            b -> Bar.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>bar<!>()
+            b -> Bar.bar()
             else -> null
         }
     }
@@ -33,7 +33,7 @@ fun whenProblem(b: Boolean): String? {
 fun tryProblem(): String? {
     return run {
         try {
-            Bar.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>bar<!>()
+            Bar.bar()
         } catch (e: Exception) {
             null
         }

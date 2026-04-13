@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclarationModifierList> implements KotlinModifierListStub {
@@ -54,5 +55,11 @@ public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclaration
                 newParent,
                 mask
         );
+    }
+
+    @Override
+    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
+        if (!(other instanceof KotlinModifierListStubImpl)) return false;
+        return this.mask == ((KotlinModifierListStubImpl) other).mask;
     }
 }

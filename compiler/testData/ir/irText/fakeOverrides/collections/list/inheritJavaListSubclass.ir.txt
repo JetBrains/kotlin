@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.List<@[FlexibleNullability] kotlin.String?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in <root>.Java1

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // FILE: J.java
 public class J implements K1, K2 {

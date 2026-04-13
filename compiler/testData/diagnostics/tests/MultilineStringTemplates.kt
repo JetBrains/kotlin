@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun box() : String {
     val s = "abc"
     val test1 = """$s"""

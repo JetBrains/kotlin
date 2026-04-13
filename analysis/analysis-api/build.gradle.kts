@@ -19,7 +19,6 @@ dependencies {
     compileOnly(project(":core:language.targets"))
     compileOnly(project(":core:language.version-settings"))
     compileOnly(project(":compiler:psi:psi-api"))
-    implementation(project(":compiler:backend"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))

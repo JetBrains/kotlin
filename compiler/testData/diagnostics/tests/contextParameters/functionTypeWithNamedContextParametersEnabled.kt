@@ -2,11 +2,11 @@
 // LANGUAGE: +ContextParameters
 
 fun foo(
-    f: <!CONTEXT_PARAMETERS_UNSUPPORTED, UNSUPPORTED_FEATURE!>context(s: String)<!> () -> Unit
+    f: context(<!NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE!>s: String<!>) () -> Unit
 ) {
     foo { <!UNRESOLVED_REFERENCE!>s<!> }
 }
 
-fun bar(f: <!CONTEXT_PARAMETERS_UNSUPPORTED, UNSUPPORTED_FEATURE!>context(_: String)<!> () -> Unit) {}
+fun bar(f: context(<!NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE!>_: String<!>) () -> Unit) {}
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithContext */

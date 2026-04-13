@@ -19,9 +19,9 @@ object MismatchingTypes {
 }
 
 fun testMismatchingTypes() {
-    ++MismatchingTypes<!NO_SET_METHOD!>[0]<!>
-    MismatchingTypes<!NO_SET_METHOD!>[0]<!>++
-    MismatchingTypes<!NO_SET_METHOD!>[0]<!> += 1
+    <!ARGUMENT_TYPE_MISMATCH!>++MismatchingTypes[0]<!>
+    <!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]++<!>
+    MismatchingTypes[0] <!UNRESOLVED_REFERENCE!>+=<!> 1
 }
 
 object MismatchingArities1 {
@@ -35,9 +35,9 @@ object MismatchingArities2 {
 }
 
 fun testMismatchingArities() {
-    ++MismatchingArities1<!NO_SET_METHOD!>[0]<!>
-    MismatchingArities1<!NO_SET_METHOD!>[0]<!>++
-    MismatchingArities1<!NO_SET_METHOD!>[0]<!> += 1
+    <!NO_VALUE_FOR_PARAMETER!>++MismatchingArities1[0]<!>
+    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities1[0]++<!>
+    MismatchingArities1[0] <!UNRESOLVED_REFERENCE!>+=<!> 1
 
     ++<!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!>
     <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!>++

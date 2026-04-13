@@ -1,4 +1,0 @@
-fun bar()
-
-val foo: kotlin.Int
-  get()

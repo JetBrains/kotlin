@@ -14,7 +14,7 @@ fun myAssert(condition: Boolean) {
 
 fun testAssertSmartcast(x: Any?) {
     myAssert(x is String)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun testInvertedAssert(x: Any?) {
@@ -25,24 +25,24 @@ fun testInvertedAssert(x: Any?) {
 fun testSpilling(x: Any?) {
     if (x != null) {
         myAssert(x is String)
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x<!UNSAFE_CALL!>.<!>length
 }
 
 fun testAssertInIf(x: Any?) {
     if (myAssert(x is String) == Unit) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 
 fun testTryCatch(x: Any?) {
     try {
         myAssert(x is String)
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     } catch (e: kotlin.IllegalArgumentException) {
 
     }
@@ -52,7 +52,7 @@ fun testTryCatch(x: Any?) {
 fun testUncertainFlow(x: Any?) {
     repeat(x.toString().length) {
         myAssert(x is String)
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
@@ -60,10 +60,10 @@ fun testUncertainFlow(x: Any?) {
 fun testAtLeastOnceFlow(x: Any?) {
     do {
         myAssert(x is String)
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
-    } while (x != null)
+        x.length
+    } while (<!SENSELESS_COMPARISON!>x != null<!>)
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.<!UNREACHABLE_CODE!>length<!>
+    x.length
 }
 
 /* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, doWhileLoop, equalityExpression, functionDeclaration,

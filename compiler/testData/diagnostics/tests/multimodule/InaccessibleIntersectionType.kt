@@ -19,8 +19,8 @@ val d = D()
 fun <T> select(vararg t: T): T = t[0]
 
 fun test() {
-    val x = select(c, d)
-    x
+    val x = <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>select<!>(c, d)
+    <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>x<!>
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,

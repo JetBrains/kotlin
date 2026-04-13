@@ -1,3 +1,0 @@
-val test: Int
-  field = 2.plus(other = 2)
-  get

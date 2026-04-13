@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.diagnostics
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -51,7 +51,7 @@ open class LowLevelFirAnalyzerFacade(
 
         return allFirFiles.values.associateWith { firFile ->
             val ktFile = firFile.psi as KtFile
-            val diagnostics = ktFile.collectDiagnosticsForFile(resolutionFacade, diagnosticCheckerFilter)
+            val diagnostics = ktFile.diagnostics(resolutionFacade, diagnosticCheckerFilter)
             @Suppress("UNCHECKED_CAST")
             diagnostics.toList() as List<KtDiagnostic>
         }

@@ -10,9 +10,9 @@ class A<T> {
 class Out<out F>
 
 fun test(a: A<out CharSequence>, y: Out<CharSequence>) {
-    a + <!TYPE_MISMATCH!>y<!>
-    a[1] = <!TYPE_MISMATCH!>y<!>
-    a[<!TYPE_MISMATCH!>y<!>]
+    a + <!ARGUMENT_TYPE_MISMATCH!>y<!>
+    a[1] = <!ARGUMENT_TYPE_MISMATCH!>y<!>
+    a[<!ARGUMENT_TYPE_MISMATCH!>y<!>]
 
     a + Out<Nothing>()
     a[1] = Out<Nothing>()

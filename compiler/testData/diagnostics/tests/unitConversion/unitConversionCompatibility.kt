@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
@@ -8,7 +9,7 @@ object Test1 {
         fun foo(f: () -> Unit) {}
 
         fun test(f: () -> Int) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!><!COMPATIBILITY_WARNING!>foo<!>(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(f)<!>
         }
     }
 }
@@ -24,7 +25,7 @@ object Test2 {
         fun foo(f: KRunnable) {}
 
         fun test(f: () -> Int) {
-            <!DEBUG_INFO_CALL("fqName: Test2.Scope1.foo; typeCall: function")!>foo(<!UNSUPPORTED_FEATURE!>f<!>)<!>
+            <!DEBUG_INFO_CALL("fqName: Test2.Scope1.foo; typeCall: function")!>foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)<!>
         }
     }
 }

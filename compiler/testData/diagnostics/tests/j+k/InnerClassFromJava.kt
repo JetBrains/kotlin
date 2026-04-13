@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: Bar.java
 public class Bar implements Foo {
 public interface I extends Boo {

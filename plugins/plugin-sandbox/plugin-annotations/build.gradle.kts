@@ -2,9 +2,13 @@ plugins {
     kotlin("multiplatform")
 }
 
+@OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 kotlin {
     jvm()
     js {
+        binaries.executable()
+    }
+    wasmJs {
         binaries.executable()
     }
     if (kotlinBuildProperties.isInIdeaSync.get()) {
@@ -45,5 +49,5 @@ sourceSets {
 }
 
 tasks.register("distAnnotations") {
-    dependsOn("jvmJar", "jsJar")
+    dependsOn("jvmJar", "jsJar", "wasmJsJar")
 }

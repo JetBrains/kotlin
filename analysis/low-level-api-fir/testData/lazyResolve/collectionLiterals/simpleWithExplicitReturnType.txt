@@ -9,7 +9,7 @@ FILE: [ResolvedTo(IMPORTS)] simpleWithExplicitReturnType.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final operator [ResolvedTo(CONTRACTS)] fun of([ResolvedTo(CONTRACTS)] vararg x: R|kotlin/IntArray|): R|MyCollection| { LAZY_BLOCK }
+            public final operator [ResolvedTo(STATUS)] fun of([ResolvedTo(STATUS)] vararg x: R|kotlin/IntArray|): R|MyCollection| { LAZY_BLOCK }
 
         }
 

@@ -20,7 +20,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedThisFromOuterClass.kt
             LAZY_super<R|C1|>
         }
 
-        public open override [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final inner [ResolvedTo(STATUS)] class Inner : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Inner] C2.constructor(): R|C2.Inner| {

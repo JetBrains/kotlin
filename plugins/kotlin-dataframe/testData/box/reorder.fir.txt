@@ -18,7 +18,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_09I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -43,13 +43,13 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_09I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Invoke_09 : R|<local>/Invoke_09I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Invoke_09|
 
@@ -76,7 +76,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_48I>|.age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
@@ -101,13 +101,13 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_48I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Invoke_48 : R|<local>/Invoke_48I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Invoke_48|
 
@@ -134,7 +134,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_32I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -159,7 +159,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Group_32I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
@@ -171,35 +171,35 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_32I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_32I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Key_32 : R|<local>/Key_32I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_32|
 
             }
 
             local abstract class Group_32 : R|<local>/Group_32I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
                 public constructor(): R|<local>/Group_32|
 
             }
 
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/groupBy|<R|<local>/Invoke_09|>(<L> = groupBy@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
-                ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.city|
+                ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.city|
             }
             )
         }
@@ -215,7 +215,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_92I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
@@ -228,7 +228,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_92I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_351>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_351>>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -249,7 +249,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_351>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -274,16 +274,16 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_351>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class Key_92 : R|<local>/Key_92I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_92|
 
@@ -303,7 +303,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_48I>|.a: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_421>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_421>|
 
@@ -316,7 +316,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_48I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -337,7 +337,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_421>|.age: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
@@ -362,16 +362,16 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_421>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class Key_48 : R|<local>/Key_48I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_48|
 
@@ -398,7 +398,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_32I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -423,7 +423,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Group_32I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
@@ -435,35 +435,35 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_32I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_32I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Key_32 : R|<local>/Key_32I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_32|
 
             }
 
             local abstract class Group_32 : R|<local>/Group_32I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
                 public constructor(): R|<local>/Group_32|
 
             }
 
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/groupBy|<R|<local>/Invoke_09|>(<L> = groupBy@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
-                ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.city|
+                ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.city|
             }
             )
         }
@@ -479,7 +479,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_92I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
@@ -492,7 +492,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_92I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_351>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_351>>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -513,7 +513,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_351>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -538,16 +538,16 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_351>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class Key_92 : R|<local>/Key_92I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_92|
 
@@ -567,7 +567,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_87I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
@@ -580,7 +580,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_87I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_461>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_461>>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -601,7 +601,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_461>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -626,16 +626,16 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_461>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class Key_87 : R|<local>/Key_87I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_87|
 
@@ -662,7 +662,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_32I>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -687,7 +687,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Group_32I>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
@@ -699,35 +699,35 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_32I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_32I>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Key_32 : R|<local>/Key_32I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_32|
 
             }
 
             local abstract class Group_32 : R|<local>/Group_32I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
                 public constructor(): R|<local>/Group_32|
 
             }
 
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/groupBy|<R|<local>/Invoke_09|>(<L> = groupBy@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/Invoke_09>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<*>| <inline=NoInline>  {
-                ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.city|
+                ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.city|
             }
             )
         }
@@ -743,7 +743,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_92I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
@@ -756,7 +756,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_92I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_351>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_351>>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -777,7 +777,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_351>|.name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -802,16 +802,16 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_351>|.weight: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class Key_92 : R|<local>/Key_92I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_92|
 
@@ -831,7 +831,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Key_96I>|.city: R|kotlin/String?|
                     public get(): R|kotlin/String?|
 
@@ -844,7 +844,7 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Key_96I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_921>>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/A_921>>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -865,7 +865,7 @@ FILE: reorder.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/A_921>|.weight: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
@@ -890,16 +890,16 @@ FILE: reorder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/A_921>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class Key_96 : R|<local>/Key_96I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Key_96|
 

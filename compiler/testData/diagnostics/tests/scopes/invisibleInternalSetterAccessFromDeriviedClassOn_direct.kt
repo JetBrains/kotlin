@@ -13,24 +13,24 @@ open class Base {
 // FILE: derived1.kt
 
 fun testBase(b: Base) {
-    <!INVISIBLE_SETTER!>b.foo<!> = "other"
+    b.<!INVISIBLE_SETTER!>foo<!> = "other"
 }
 
 open class Derived1(foo: String) : Base() {
     init {
-        <!INVISIBLE_SETTER!>this.<!DEBUG_INFO_LEAKING_THIS!>foo<!><!> = foo
+        this.<!INVISIBLE_SETTER!>foo<!> = foo
     }
 
     fun bar(param: String) {
         <!INVISIBLE_SETTER!>foo<!> = param
-        <!INVISIBLE_SETTER!>this.foo<!> = param
+        this.<!INVISIBLE_SETTER!>foo<!> = param
     }
 }
 
 open class Derived2 : Derived1("")
 
 fun testFunction(d: Derived1) {
-    <!INVISIBLE_SETTER!>d.foo<!> = "other"
+    d.<!INVISIBLE_SETTER!>foo<!> = "other"
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, primaryConstructor, propertyDeclaration,

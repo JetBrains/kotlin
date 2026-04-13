@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
@@ -111,7 +112,6 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     private fun IrTypeOperatorCall.tryShortcutToArgument(): IrType? {
         if (this.operator != IrTypeOperator.IMPLICIT_CAST) return null
         val dstClass = this.typeOperand.erasedUpperBound
-        if (dstClass.isInterface) return null
         if (!this.typeOperand.isNullable() && this.type.isNullable()) return null
         if (this.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
             return (this.argument as? IrTypeOperatorCall)?.tryShortcutToArgument() ?: this.argument.type
@@ -290,11 +290,12 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
             override fun visitTry(aTry: IrTry, data: BitSet): BitSet {
                 val prevCatchesVV = catchesVariablesValues
-                catchesVariablesValues = data.copy()
+                val catchesVV = data.copy()
+                catchesVariablesValues = catchesVV
                 val cfmpInfo = ControlFlowMergePointInfo(aTry)
                 val tryVV = aTry.tryResult.accept(this, data)
                 controlFlowMergePoint(cfmpInfo, aTry.tryResult, tryVV)
-                val catchesVV = catchesVariablesValues!!
+                prevCatchesVV?.or(catchesVV)
                 catchesVariablesValues = prevCatchesVV
                 for (aCatch in aTry.catches) {
                     variableWrites[aCatch.catchParameter] = externalWrites
@@ -469,13 +470,24 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
             override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                if (expression.operator != IrTypeOperator.IMPLICIT_CAST) return expression
-                val dstClass = expression.typeOperand.erasedUpperBound
-                if (dstClass.isInterface) return expression
-                if (!expression.typeOperand.isNullable() && expression.type.isNullable()) return expression
-                if (expression.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
-                    return expression.argument
-                return expression
+
+                when (expression.operator) {
+                    IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                        return if (expression.argument.type.isUnit())
+                            expression.argument
+                        else expression
+                    }
+
+                    IrTypeOperator.IMPLICIT_CAST -> {
+                        val dstClass = expression.typeOperand.erasedUpperBound
+                        if (!expression.typeOperand.isNullable() && expression.type.isNullable()) return expression
+                        return if (expression.argument.type.erasedUpperBound.symbol.isSubtypeOfClass(dstClass.symbol))
+                            expression.argument
+                        else expression
+                    }
+
+                    else -> return expression
+                }
             }
         })
     }

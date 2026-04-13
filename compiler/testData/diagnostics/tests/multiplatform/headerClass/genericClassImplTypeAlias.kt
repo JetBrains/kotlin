@@ -5,8 +5,8 @@
 // FILE: common.kt
 
 expect class C1
-expect interface C2<A>
-expect interface C3<B>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> interface C2<A>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> interface C3<B>
 expect interface C4<D, E>
 expect interface C5<F, G>
 expect interface C6<H>
@@ -22,8 +22,8 @@ class A<T : A<T>>
 class B<T>
 
 actual typealias C1 = String
-<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias C2<A> = List<String><!>
-<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias C3<B> = List<B><!>
+<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE!>C2<!><A> = List<String><!>
+<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_TYPE_PARAMETER_VARIANCE!>C3<!><B> = List<B><!>
 actual typealias C4<D, E> = MutableMap<D, E>
 <!ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION!>actual typealias C5<F, G> = MutableMap<G, F><!>
 <!ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION!>actual typealias C51 = MutableMap<String, String><!>

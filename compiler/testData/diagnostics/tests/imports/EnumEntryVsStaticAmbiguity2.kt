@@ -32,7 +32,7 @@ import third.SomeEnum.*
 
 fun test(arg: String): Boolean {
     return when (arg) {
-        SOME -> true
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>SOME<!> -> true
         else -> false
     }
 }

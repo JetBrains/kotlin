@@ -20,7 +20,7 @@ open class CVar {
 }
 
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class C1<!> : IVar, IVarDefault
-class C2 : CVal(), IVar
+<!VAR_IMPLEMENTED_BY_INHERITED_VAL_WARNING!>class C2<!> : CVal(), IVar
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C3<!> : CVal(), IVarDefault
 <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C4<!> : CVal(), IVar, IVarDefault
 class C5 : CVar(), IVar

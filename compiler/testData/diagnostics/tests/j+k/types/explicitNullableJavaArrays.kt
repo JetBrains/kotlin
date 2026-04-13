@@ -18,7 +18,7 @@ public class Arr {
 
 // FILE: main.kt
 fun varargExplicitNullable() {
-    V.first<String?>("a", null).length
+    V.first<String?>("a", null)<!UNSAFE_CALL!>.<!>length
 }
 
 fun varargNonNullBaseline() {
@@ -30,7 +30,7 @@ fun varargInferredNullable(x: String?) {
 }
 
 fun arrayExplicitNullable(xs: Array<String?>) {
-    Arr.head<String?>(xs).length
+    Arr.head<String?>(xs)<!UNSAFE_CALL!>.<!>length
 }
 
 fun arrayExplicitNonNullBaseline(xs: Array<String>) {

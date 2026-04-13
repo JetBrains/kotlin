@@ -5,7 +5,7 @@
 class A
 class B
 fun main() {
-    <!EQUALITY_NOT_APPLICABLE!>A() == B()<!>
+    A() == B()
     <!EQUALITY_NOT_APPLICABLE!>A() === B()<!>
 }
 

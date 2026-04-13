@@ -5,7 +5,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect annotation class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>(val foo: Int)
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>(val <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>: Int)<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

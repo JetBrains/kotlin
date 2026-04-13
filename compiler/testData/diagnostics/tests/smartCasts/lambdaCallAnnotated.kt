@@ -8,7 +8,7 @@ annotation class My
 fun bar(): Int = @My {
     var i: Int?
     i = 42
-    <!DEBUG_INFO_SMARTCAST!>i<!>
+    i
 }()
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, integerLiteral, lambdaLiteral,

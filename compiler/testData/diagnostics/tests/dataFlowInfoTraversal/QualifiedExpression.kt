@@ -8,9 +8,9 @@ class A {
 fun foo() {
     val x: Int? = null
 
-    A().bar(<!TYPE_MISMATCH!>x<!>)
+    A().bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     if (x == null) return
-    A().bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    A().bar(x)
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,

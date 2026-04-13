@@ -182,6 +182,9 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
                     override val tags: List<String>
                         // models have same tags, so either distinct() or intersect() yield same result
                         get() = testClassModels.flatMap { it.tags }.distinct()
+
+                    override val testKClass: Class<*>
+                        get() = testClassModels.first().testKClass
                 }
             }
 
@@ -239,6 +242,9 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
                     override val tags: List<String>
                         // models have same tags, so either distinct() or intersect() yield same result
                         get() = emptyList()
+
+                    override val testKClass: Class<*>
+                        get() = this@unfold.testKClass
                 }
             }
             return result

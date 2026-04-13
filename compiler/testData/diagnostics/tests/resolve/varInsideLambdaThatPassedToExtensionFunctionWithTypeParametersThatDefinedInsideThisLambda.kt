@@ -11,9 +11,9 @@ fun test(){
         val x = put("key", "value")
         if (x != null) {
             "Error: $x"
-            x.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
-        x.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
     }
 }
 

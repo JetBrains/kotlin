@@ -48,13 +48,13 @@ fun foo(
     c1: test.EnumAlias.<!UNRESOLVED_REFERENCE!>Nested<!>
 ) {
     test.ClassSample::Nested
-    test.ClassAlias::<!UNRESOLVED_REFERENCE!>Nested<!>
+    test.ClassAlias::Nested
 
     test.ClassSample::func
     test.ClassAlias::func
 
     test.ClassSample.Nested::func
-    test.ClassAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>func<!>
+    test.ClassAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::func
 
     test.ObjectSample::Nested
     test.ObjectAlias::Nested
@@ -63,16 +63,16 @@ fun foo(
     test.ObjectAlias::func
 
     test.ObjectSample.Nested::func
-    test.ObjectAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>func<!>
+    test.ObjectAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::func
 
     test.EnumSample::Nested
-    test.EnumAlias::<!UNRESOLVED_REFERENCE!>Nested<!>
+    test.EnumAlias::Nested
 
     test.EnumSample::func
     test.EnumAlias::func
 
     test.EnumSample.Nested::func
-    test.EnumAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>func<!>
+    test.EnumAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::func
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass,

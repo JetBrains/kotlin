@@ -2,7 +2,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 // In this test the following transformation of flow$1 are occuring:
 //   flow$1 -> flowWith$$inlined$flow$1

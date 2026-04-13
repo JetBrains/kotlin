@@ -9,7 +9,7 @@ fun test(x: List<Int>): Int {
 
 fun myMap(x: List<Int>): Int {
     x myMap {
-        return<!LABEL_NAME_CLASH!>@myMap<!>
+        return@myMap
     }
 
     return 0

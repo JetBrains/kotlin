@@ -6,7 +6,7 @@ class Out<out T : Any>(result: T?)
 fun main() {
     val a = Out(null)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Nothing>")!>a<!>
+    a
 
     var b: Out<Int>? = null
     b = a

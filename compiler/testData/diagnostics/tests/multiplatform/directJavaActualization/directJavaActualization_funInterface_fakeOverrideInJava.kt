@@ -5,7 +5,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect fun interface <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface Foo {
     fun foo()
 }
 

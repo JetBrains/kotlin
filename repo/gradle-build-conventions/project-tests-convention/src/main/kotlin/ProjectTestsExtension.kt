@@ -209,15 +209,15 @@ abstract class ProjectTestsExtension(val project: Project) {
     abstract val thirdPartyJsr305: DirectoryProperty
 
     fun withMockJdkRuntime() {
-        mockJdkRuntime.value { File(project.rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar") }
+        mockJdkRuntime.value { File(project.rootDir, "third-party/mockJDKs/mockJDK/jre/lib/rt.jar") }
     }
 
     fun withMockJDKModifiedRuntime() {
-        mockJDKModifiedRuntime.value { File(project.rootDir, "compiler/testData/mockJDKModified/rt.jar") }
+        mockJDKModifiedRuntime.value { File(project.rootDir, "third-party/mockJDKs/mockJDKModified/rt.jar") }
     }
 
     fun withMockJdkAnnotationsJar() {
-        mockJdkAnnotationsJar.value { File(project.rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar") }
+        mockJdkAnnotationsJar.value { File(project.rootDir, "third-party/mockJDKs/mockJDK/jre/lib/annotations.jar") }
     }
 
     fun withThirdPartyAnnotations() {

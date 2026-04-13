@@ -9,8 +9,8 @@ fun foo(a: A) {
            get() = 42
     }
 
-    <!VAL_REASSIGNMENT!>a.z<!> = 23
-    <!VAL_REASSIGNMENT!>o.y<!> = 11   //Should be an error here
+    a.<!VAL_REASSIGNMENT!>z<!> = 23
+    o.<!VAL_REASSIGNMENT!>y<!> = 11   //Should be an error here
 }
 
 class A() {

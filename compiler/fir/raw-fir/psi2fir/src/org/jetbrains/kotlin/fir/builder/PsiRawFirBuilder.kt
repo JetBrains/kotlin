@@ -1364,6 +1364,16 @@ open class PsiRawFirBuilder(
         }
 
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {
+            return buildDestructuringDeclaration(
+                destructuringDeclaration,
+                FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer,
+            )
+        }
+
+        protected fun buildDestructuringDeclaration(
+            destructuringDeclaration: KtDestructuringDeclaration,
+            origin: FirDeclarationOrigin,
+        ): FirVariable {
             val initializer = destructuringDeclaration.initializer
             val firInitializer = buildOrLazyExpression(initializer?.toFirSourceElement()) {
                 initializer.toFirExpression(
@@ -1377,7 +1387,7 @@ open class PsiRawFirBuilder(
                 source = destructuringDeclaration.toFirSourceElement(),
                 specialName = "destruct",
                 initializer = firInitializer,
-                origin = FirDeclarationOrigin.Synthetic.ScriptTopLevelDestructuringDeclarationContainer,
+                origin = origin,
                 extractAnnotationsTo = { extractAnnotationsTo(it) },
             ).apply {
                 isDestructuringDeclarationContainerVariable = true
@@ -1619,8 +1629,13 @@ open class PsiRawFirBuilder(
                 @OptIn(FirContractViolation::class)
                 when {
                     element.isLocal -> element
-                    // TODO(KT-77816): cause constants to be forbidden within REPL snippets for the time being
-                    element.isConst -> element
+                    element.isConst -> {
+                        // Constant properties are just properties
+                        buildReplDeclarationReference {
+                            source = element.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
+                            symbol = element.symbol
+                        }
+                    }
                     statementDelegate != null -> {
                         element.replaceDelegate(buildReplExpressionReference {
                             source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
@@ -1628,7 +1643,7 @@ open class PsiRawFirBuilder(
                         })
 
                         buildReplPropertyDelegate {
-                            source = statementDelegate.source
+                            source = statementDelegate.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
                             propertySymbol = element.symbol
                             delegate = statementDelegate
                         }
@@ -1640,7 +1655,7 @@ open class PsiRawFirBuilder(
                         })
 
                         buildReplPropertyInitializer {
-                            source = statementInitializer.source
+                            source = statementInitializer.source?.fakeElement(KtFakeSourceElementKind.ReplEvalFunction)
                             propertySymbol = element.symbol
                             initializer = statementInitializer
                         }
@@ -1688,16 +1703,7 @@ open class PsiRawFirBuilder(
                         add(initializer)
                     }
                     is KtDestructuringDeclaration -> {
-                        val destructuringContainerVar = generateTemporaryVariable(
-                            moduleData = baseModuleData,
-                            source = declaration.toFirSourceElement(),
-                            specialName = "destruct",
-                            initializer = declaration.initializer.toFirExpression(
-                                "Initializer required for destructuring declaration",
-                                sourceWhenInvalidExpression = declaration
-                            ),
-                            extractAnnotationsTo = { extractAnnotationsTo(it) }
-                        )
+                        val destructuringContainerVar = buildDestructuringDeclaration(declaration, origin = FirDeclarationOrigin.Source)
                         add(destructuringContainerVar)
 
                         this@PsiRawFirBuilder.addDestructuringVariables(

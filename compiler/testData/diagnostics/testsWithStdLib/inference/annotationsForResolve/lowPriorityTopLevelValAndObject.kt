@@ -6,7 +6,7 @@ package a
 
 val bar get() = ""
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 @kotlin.internal.LowPriorityInOverloadResolution
 val baz get() = ""
 
@@ -22,7 +22,7 @@ object baz {
 import a.*
 import b.*
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 class Foo {
     @kotlin.internal.LowPriorityInOverloadResolution
     val bar = 1

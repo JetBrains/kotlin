@@ -32,7 +32,7 @@ fun test_1() {
 fun test_2() {
     RootA.apply {
         impl {
-            <!UNRESOLVED_REFERENCE!>foo<!>()
+            foo()
         }
     }
 }

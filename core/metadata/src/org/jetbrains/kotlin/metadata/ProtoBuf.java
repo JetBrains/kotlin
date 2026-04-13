@@ -8792,9 +8792,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *ClassKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *ClassKind (3 bits)
      *isInner
      *isData
      *isExternal
@@ -8810,9 +8810,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *ClassKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *ClassKind (3 bits)
      *isInner
      *isData
      *isExternal
@@ -9599,9 +9599,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *ClassKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *ClassKind (3 bits)
      *isInner
      *isData
      *isExternal
@@ -9619,9 +9619,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *ClassKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *ClassKind (3 bits)
      *isInner
      *isData
      *isExternal
@@ -11134,9 +11134,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *ClassKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *ClassKind (3 bits)
        *isInner
        *isData
        *isExternal
@@ -11154,9 +11154,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *ClassKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *ClassKind (3 bits)
        *isInner
        *isData
        *isExternal
@@ -11174,9 +11174,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *ClassKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *ClassKind (3 bits)
        *isInner
        *isData
        *isExternal
@@ -11197,9 +11197,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *ClassKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *ClassKind (3 bits)
        *isInner
        *isData
        *isExternal
@@ -14962,9 +14962,10 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      *isSecondary
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
      * </pre>
      */
     boolean hasFlags();
@@ -14973,9 +14974,10 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      *isSecondary
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
      * </pre>
      */
     int getFlags();
@@ -15201,9 +15203,10 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      *isSecondary
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
      * </pre>
      */
     public boolean hasFlags() {
@@ -15214,9 +15217,10 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      *isSecondary
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
      * </pre>
      */
     public int getFlags() {
@@ -15714,9 +15718,10 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        *isSecondary
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
        * </pre>
        */
       public boolean hasFlags() {
@@ -15727,9 +15732,10 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        *isSecondary
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
        * </pre>
        */
       public int getFlags() {
@@ -15740,9 +15746,10 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        *isSecondary
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -15756,9 +15763,10 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        *isSecondary
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
        * </pre>
        */
       public Builder clearFlags() {
@@ -16258,9 +16266,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isOperator
      *isInfix
      *isInline
@@ -16269,6 +16277,8 @@ public final class ProtoBuf {
      *isSuspend
      *isExpect
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     boolean hasFlags();
@@ -16277,9 +16287,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isOperator
      *isInfix
      *isInline
@@ -16288,6 +16298,8 @@ public final class ProtoBuf {
      *isSuspend
      *isExpect
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     int getFlags();
@@ -16794,9 +16806,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isOperator
      *isInfix
      *isInline
@@ -16805,6 +16817,8 @@ public final class ProtoBuf {
      *isSuspend
      *isExpect
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     public boolean hasFlags() {
@@ -16815,9 +16829,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isOperator
      *isInfix
      *isInline
@@ -16826,6 +16840,8 @@ public final class ProtoBuf {
      *isSuspend
      *isExpect
      *hasNonStableParameterNames
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     public int getFlags() {
@@ -17985,9 +18001,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isOperator
        *isInfix
        *isInline
@@ -17996,6 +18012,8 @@ public final class ProtoBuf {
        *isSuspend
        *isExpect
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public boolean hasFlags() {
@@ -18006,9 +18024,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isOperator
        *isInfix
        *isInline
@@ -18017,6 +18035,8 @@ public final class ProtoBuf {
        *isSuspend
        *isExpect
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public int getFlags() {
@@ -18027,9 +18047,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isOperator
        *isInfix
        *isInline
@@ -18038,6 +18058,8 @@ public final class ProtoBuf {
        *isSuspend
        *isExpect
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -18051,9 +18073,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isOperator
        *isInfix
        *isInline
@@ -18062,6 +18084,8 @@ public final class ProtoBuf {
        *isSuspend
        *isExpect
        *hasNonStableParameterNames
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public Builder clearFlags() {
@@ -19495,9 +19519,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isVar
      *hasGetter
      *hasSetter
@@ -19507,6 +19531,8 @@ public final class ProtoBuf {
      *isExternal
      *isDelegated
      *isExpect
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     boolean hasFlags();
@@ -19515,9 +19541,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isVar
      *hasGetter
      *hasSetter
@@ -19527,6 +19553,8 @@ public final class ProtoBuf {
      *isExternal
      *isDelegated
      *isExpect
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     int getFlags();
@@ -19654,8 +19682,8 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
+     *Visibility (3 bits)
+     *Modality (2 bits)
      *isNotDefault
      *isExternal
      *isInline
@@ -19670,8 +19698,8 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
+     *Visibility (3 bits)
+     *Modality (2 bits)
      *isNotDefault
      *isExternal
      *isInline
@@ -20182,9 +20210,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isVar
      *hasGetter
      *hasSetter
@@ -20194,6 +20222,8 @@ public final class ProtoBuf {
      *isExternal
      *isDelegated
      *isExpect
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     public boolean hasFlags() {
@@ -20204,9 +20234,9 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
-     *MemberKind
+     *Visibility (3 bits)
+     *Modality (2 bits)
+     *MemberKind (2 bits)
      *isVar
      *hasGetter
      *hasSetter
@@ -20216,6 +20246,8 @@ public final class ProtoBuf {
      *isExternal
      *isDelegated
      *isExpect
+     *ReturnValueStatus (2 bits)
+     *isStatic
      * </pre>
      */
     public int getFlags() {
@@ -20462,8 +20494,8 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
+     *Visibility (3 bits)
+     *Modality (2 bits)
      *isNotDefault
      *isExternal
      *isInline
@@ -20480,8 +20512,8 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
-     *Modality
+     *Visibility (3 bits)
+     *Modality (2 bits)
      *isNotDefault
      *isExternal
      *isInline
@@ -21723,9 +21755,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isVar
        *hasGetter
        *hasSetter
@@ -21735,6 +21767,8 @@ public final class ProtoBuf {
        *isExternal
        *isDelegated
        *isExpect
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public boolean hasFlags() {
@@ -21745,9 +21779,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isVar
        *hasGetter
        *hasSetter
@@ -21757,6 +21791,8 @@ public final class ProtoBuf {
        *isExternal
        *isDelegated
        *isExpect
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public int getFlags() {
@@ -21767,9 +21803,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isVar
        *hasGetter
        *hasSetter
@@ -21779,6 +21815,8 @@ public final class ProtoBuf {
        *isExternal
        *isDelegated
        *isExpect
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -21792,9 +21830,9 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
-       *MemberKind
+       *Visibility (3 bits)
+       *Modality (2 bits)
+       *MemberKind (2 bits)
        *isVar
        *hasGetter
        *hasSetter
@@ -21804,6 +21842,8 @@ public final class ProtoBuf {
        *isExternal
        *isDelegated
        *isExpect
+       *ReturnValueStatus (2 bits)
+       *isStatic
        * </pre>
        */
       public Builder clearFlags() {
@@ -22568,8 +22608,8 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
+       *Visibility (3 bits)
+       *Modality (2 bits)
        *isNotDefault
        *isExternal
        *isInline
@@ -22586,8 +22626,8 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
+       *Visibility (3 bits)
+       *Modality (2 bits)
        *isNotDefault
        *isExternal
        *isInline
@@ -22604,8 +22644,8 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
+       *Visibility (3 bits)
+       *Modality (2 bits)
        *isNotDefault
        *isExternal
        *isInline
@@ -22625,8 +22665,8 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
-       *Modality
+       *Visibility (3 bits)
+       *Modality (2 bits)
        *isNotDefault
        *isExternal
        *isInline
@@ -25049,7 +25089,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      * </pre>
      */
     boolean hasFlags();
@@ -25058,7 +25098,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      * </pre>
      */
     int getFlags();
@@ -25370,7 +25410,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      * </pre>
      */
     public boolean hasFlags() {
@@ -25381,7 +25421,7 @@ public final class ProtoBuf {
      *
      * <pre>
      *hasAnnotations
-     *Visibility
+     *Visibility (2 bits)
      * </pre>
      */
     public int getFlags() {
@@ -26071,7 +26111,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        * </pre>
        */
       public boolean hasFlags() {
@@ -26082,7 +26122,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        * </pre>
        */
       public int getFlags() {
@@ -26093,7 +26133,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -26107,7 +26147,7 @@ public final class ProtoBuf {
        *
        * <pre>
        *hasAnnotations
-       *Visibility
+       *Visibility (2 bits)
        * </pre>
        */
       public Builder clearFlags() {

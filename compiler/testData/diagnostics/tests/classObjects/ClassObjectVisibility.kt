@@ -3,10 +3,10 @@ package foo
 
 fun test() {
   A.d
-  A.Companion.<!INVISIBLE_MEMBER!>f<!>
-  B.<!INVISIBLE_MEMBER!>D<!>
-  <!INVISIBLE_MEMBER!>CCC<!>
-  CCC.<!INVISIBLE_MEMBER!>classObjectVar<!>
+  A.Companion.<!INVISIBLE_REFERENCE!>f<!>
+  B.<!INVISIBLE_REFERENCE!>D<!>
+  <!INVISIBLE_REFERENCE!>CCC<!>
+  CCC.<!INVISIBLE_REFERENCE!>classObjectVar<!>
   E.F.G
 }
 

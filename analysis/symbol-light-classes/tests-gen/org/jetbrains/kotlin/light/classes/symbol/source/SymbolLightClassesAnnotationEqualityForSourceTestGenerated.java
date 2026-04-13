@@ -24,7 +24,7 @@ public class SymbolLightClassesAnnotationEqualityForSourceTestGenerated extends 
 
   @Test
   public void testAllFilesPresentInAnnotationsEquality() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/annotationsEquality"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/annotationsEquality"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
   @Test

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // ISSUE: KT-56942
 // FILE: Base.java
 public sealed abstract class Base permits A, B {

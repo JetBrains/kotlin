@@ -30,27 +30,27 @@ private object PO {}
 package a
 
 fun test() {
-    val y = makeA()
-    y.<!INVISIBLE_MEMBER("A; private; file")!>bar<!>()
-    <!INVISIBLE_MEMBER("foo; private; file")!>foo<!>()
+    val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!>
+    y.<!INVISIBLE_REFERENCE!>bar<!>()
+    <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : <!INVISIBLE_REFERENCE("A; private; file")!>A<!> = <!INVISIBLE_MEMBER("A; private; file")!>A<!>()
+    val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
 
-    val z = <!INVISIBLE_MEMBER("x; private; file")!>x<!>
-    <!INVISIBLE_MEMBER("x; private; file")!>x<!> = 30
+    val z = <!INVISIBLE_REFERENCE!>x<!>
+    <!INVISIBLE_REFERENCE!>x<!> = 30
 
-    val po = <!INVISIBLE_MEMBER("PO; private; file")!>PO<!>
+    val po = <!INVISIBLE_REFERENCE!>PO<!>
 
     val v = xx
     <!INVISIBLE_SETTER("xx; private; file")!>xx<!> = 40
 }
 
-class B : <!EXPOSED_SUPER_CLASS!><!INVISIBLE_MEMBER("A; private; file"), INVISIBLE_REFERENCE("A; private; file")!>A<!>()<!> {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {
         fun foo() {
-            val y = makeA() //assure that 'makeA' is visible
+            val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!> //assure that 'makeA' is visible
         }
     }
 }

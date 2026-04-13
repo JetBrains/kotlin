@@ -12,7 +12,7 @@ class D {
 object A
 
 fun test() {
-    A
+    <!DEPRECATION_ERROR!>A<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, stringLiteral */

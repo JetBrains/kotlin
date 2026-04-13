@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +EliminateAmbiguitiesOnInheritedSamInterfaces
 // CHECK_TYPE
 // FILE: Fn.java

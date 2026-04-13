@@ -307,12 +307,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract a: kotlin.Int declared in <root>.Java4
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java4
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-a> (): kotlin.Int declared in <root>.Java4
       FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java4
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:

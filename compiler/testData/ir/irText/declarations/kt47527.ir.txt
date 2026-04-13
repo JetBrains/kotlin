@@ -57,7 +57,8 @@ FILE fqName:<root> fileName:/kt47527.kt
               then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                 TYPE_ARG T: kotlin.Any
                 TYPE_ARG R: kotlin.Nothing
-                ARG <this>: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
+                ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                  GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
                 ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                     VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any
@@ -68,12 +69,12 @@ FILE fqName:<root> fileName:/kt47527.kt
     VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test_2 (value: kotlin.Any?): kotlin.String? declared in <root>'
-        CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run declared in kotlin' type=kotlin.Nothing? origin=null
-          TYPE_ARG R: kotlin.Nothing?
-          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing?
+        CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run declared in kotlin' type=kotlin.String? origin=null
+          TYPE_ARG R: kotlin.String?
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.String?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String?
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing? declared in <root>.test_2'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test_2'
                   BLOCK type=kotlin.Nothing? origin=SAFE_CALL
                     VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any? [val]
                       GET_VAR 'value: kotlin.Any? declared in <root>.test_2' type=kotlin.Any? origin=null
@@ -88,7 +89,8 @@ FILE fqName:<root> fileName:/kt47527.kt
                         then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
                           TYPE_ARG T: kotlin.Any
                           TYPE_ARG R: kotlin.Nothing
-                          ARG <this>: GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
+                          ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                            GET_VAR 'val tmp_3: kotlin.Any? declared in <root>.test_2.<anonymous>' type=kotlin.Any? origin=null
                           ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
                             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
                               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any

@@ -1,5 +1,0 @@
-expression: 4294967296u
-constant: error("Type cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath")
-constantValueKind: ErrorValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

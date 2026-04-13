@@ -11,7 +11,7 @@ fun <E3> foobar(
 
 fun foo() {
     generate { cont ->
-        foobar(cont as Controller<String>)
+        foobar(cont <!USELESS_CAST!>as Controller<String><!>)
         baz(cont)
     }
 }

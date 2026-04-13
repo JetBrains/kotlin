@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 interface Out1<out T1> {
     fun get1(): T1

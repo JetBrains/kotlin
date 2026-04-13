@@ -28,7 +28,7 @@ typealias T = <!OPT_IN_USAGE_ERROR!>C<!>
 
 @ClassMarker
 fun test1() {
-    <!UNRESOLVED_REFERENCE!>C<!>()
+    <!OPT_IN_USAGE_ERROR!>C<!>()
 }
 
 @ConstructorMarker

@@ -17,7 +17,7 @@ class C {
 val c = C.Self.<!UNRESOLVED_REFERENCE!>Self<!>()
 val n = C.Self.<!UNRESOLVED_REFERENCE!>Nested<!>()
 val x = C.Self.<!UNRESOLVED_REFERENCE!>X<!>
-val n2 = C.Nested.Root.<!UNRESOLVED_REFERENCE!>Nested<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>N2<!>()
+val n2 = C.Nested.Root.<!UNRESOLVED_REFERENCE!>Nested<!>.N2()
 val ic = C.Self.<!UNRESOLVED_REFERENCE!>InCompanion<!>()
 val ok = C.Self.ok
 

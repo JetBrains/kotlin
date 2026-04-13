@@ -13,13 +13,13 @@ val test2a = AnnotationClass()
 
 enum class EnumClass { VALUE1, VALUE2 }
 typealias Test3 = EnumClass
-val test3 = <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>Test3<!>()<!>
-val test3a = <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>EnumClass<!>()<!>
+val test3 = <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>Test3<!>()<!>
+val test3a = <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>EnumClass<!>()<!>
 
 sealed class SealedClass
 typealias Test4 = SealedClass
-val test4 = <!SEALED_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>Test4<!>()<!>
-val test4a = <!SEALED_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>SealedClass<!>()<!>
+val test4 = <!INVISIBLE_REFERENCE!>Test4<!>()
+val test4a = <!INVISIBLE_REFERENCE!>SealedClass<!>()
 
 class Outer {
     inner class Inner
@@ -27,9 +27,9 @@ class Outer {
 }
 typealias Test5 = Outer.Inner
 
-val test5 = <!RESOLUTION_TO_CLASSIFIER!>Test5<!>()
-val test5a = Outer.<!RESOLUTION_TO_CLASSIFIER!>Inner<!>()
-val test5b = Outer.<!RESOLUTION_TO_CLASSIFIER!>TestInner<!>()
+val test5 = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Test5<!>()
+val test5a = Outer.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
+val test5b = Outer.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>TestInner<!>()
 val test5c = Outer().<!UNRESOLVED_REFERENCE!>TestInner<!>()
 val test5d = Outer().Inner()
 val test5e = Outer().Test5()

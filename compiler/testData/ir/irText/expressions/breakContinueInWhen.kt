@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +AllowBreakAndContinueInsideWhen
 // IGNORE_BACKEND: JS_IR, WASM_JS
 // IGNORE_BACKEND: JKLIB

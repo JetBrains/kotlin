@@ -1,0 +1,12 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /produceFun(): kotlin/Function0<kotlin/String> // /produceFun|produceFun(){}[0]
+final fun /testCombinedSuspendUnit(kotlin/Function0<kotlin/Int>) // /testCombinedSuspendUnit|testCombinedSuspendUnit(kotlin.Function0<kotlin.Int>){}[0]
+final fun /testNonVal() // /testNonVal|testNonVal(){}[0]
+final fun /testSimple(kotlin/Function0<kotlin/String>) // /testSimple|testSimple(kotlin.Function0<kotlin.String>){}[0]
+final fun /useSuspendUnit(kotlin.coroutines/SuspendFunction0<kotlin/Unit>) // /useSuspendUnit|useSuspendUnit(kotlin.coroutines.SuspendFunction0<kotlin.Unit>){}[0]
+final fun /useUnit(kotlin/Function0<kotlin/Unit>) // /useUnit|useUnit(kotlin.Function0<kotlin.Unit>){}[0]

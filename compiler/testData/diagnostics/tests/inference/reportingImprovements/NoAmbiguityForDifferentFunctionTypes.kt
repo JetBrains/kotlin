@@ -9,7 +9,7 @@ fun <T: Closeable, R> T.foo(block: (T)-> R) = block
 fun <T: Closeable, R> T.foo(block: (T, T)-> R) = block
 
 fun main() {
-    C().foo { // no ambiguity here
+    C().<!CANNOT_INFER_PARAMETER_TYPE!>foo<!> { // no ambiguity here
         www ->
         <!UNRESOLVED_REFERENCE!>xs<!>
     }

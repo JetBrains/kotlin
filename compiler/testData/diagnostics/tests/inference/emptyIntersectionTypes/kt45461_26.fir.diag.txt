@@ -1,3 +1,0 @@
-/kt45461_26.fir.kt:(205,209): warning: Unchecked cast of 'Nothing?' to 'S (of fun <S : T> takeFoo)'.
-
-/kt45461_26.fir.kt:(253,261): warning: Type 'Out<Int>' is final, so the value of the type parameter is predetermined.

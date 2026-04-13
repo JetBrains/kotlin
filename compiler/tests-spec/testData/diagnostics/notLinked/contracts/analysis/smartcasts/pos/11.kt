@@ -38,8 +38,8 @@ class case_1 {
     fun case_1(value_1: Any?, value_2: Number?) {
         val o = case_1()
         funWithReturns(value_1 is Float? && value_1 != null && value_2 != null && o.prop_1 != null && this.prop_1 != null)
-        println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
-        println(<!DEBUG_INFO_SMARTCAST!>this.prop_1<!>.plus(3))
+        println(o.prop_1.plus(3))
+        println(this.prop_1.plus(3))
     }
 }
 
@@ -49,8 +49,8 @@ class case_2 {
     fun case_2(value_1: Any?, value_2: Number?) {
         val o = case_2()
         if (funWithReturnsTrue(value_1 is Float? && value_1 != null && value_2 != null && o.prop_1 != null && this.prop_1 != null)) {
-            println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
-            println(<!DEBUG_INFO_SMARTCAST!>this.prop_1<!>.plus(3))
+            println(o.prop_1.plus(3))
+            println(this.prop_1.plus(3))
         }
     }
 }
@@ -61,8 +61,8 @@ class case_3 {
     fun case_3(value_1: Any?, value_2: Number?) {
         val o = case_3()
         contracts.case_3(value_1, value_2, o.prop_1, this.prop_1)
-        println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
-        println(<!DEBUG_INFO_SMARTCAST!>this.prop_1<!>.plus(3))
+        println(o.prop_1.plus(3))
+        println(this.prop_1.plus(3))
     }
 }
 
@@ -72,8 +72,8 @@ class case_4 {
     fun case_4(value_1: Any?, value_2: Number?) {
         val o = case_4()
         if (contracts.case_4(value_1, value_2, o.prop_1, this.prop_1)) {
-            println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
-            println(<!DEBUG_INFO_SMARTCAST!>this.prop_1<!>.plus(3))
+            println(o.prop_1.plus(3))
+            println(this.prop_1.plus(3))
         }
     }
 }

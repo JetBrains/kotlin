@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.serialization.SerializerOutput
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.LoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -72,6 +74,16 @@ data class NativeKlibSerializedArtifact(
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeKlibSerializedArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
+
+data class NativeLoadedIrArtifact(
+    override val moduleInfo: IrModuleInfo,
+    override val configuration: CompilerConfiguration,
+) : LoadedIrPipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): NativeLoadedIrArtifact {
         return copy(configuration = newConfiguration)
     }
 }

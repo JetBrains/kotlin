@@ -6,21 +6,21 @@ fun test_1() {
     while (true) {
 
     }
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    val x = 1
 }
 
 fun test_2() {
-    while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>true || false<!>) {
+    while (true || false) {
 
     }
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    val x = 1
 }
 
 fun test_3() {
-    while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!>) {
+    while (1 == 1) {
 
     }
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    val x = 1
 }
 
 fun test_4() {
@@ -31,7 +31,7 @@ fun test_4() {
 }
 
 fun test_5() {
-    while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>false && true<!>) {
+    while (false && true) {
         val x = 1
     }
     val y = 2
@@ -41,21 +41,21 @@ fun test_6() {
     do {
 
     } while (true)
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    val x = 1
 }
 
 fun test_7() {
     do {
 
-    } while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>true || false<!>)
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    } while (true || false)
+    val x = 1
 }
 
 fun test_8() {
     do {
 
-    } while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!>)
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    } while (1 == 1)
+    val x = 1
 }
 
 fun test_9() {
@@ -68,7 +68,7 @@ fun test_9() {
 fun test_10() {
     do {
         val x = 1
-    } while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>false && true<!>)
+    } while (false && true)
     val y = 2
 }
 

@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^ R|/typeWithAnnotation|()
@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] impliciyTypeWithAnnotationOnProperty.kt
     }
     public? final? const [ResolvedTo(RAW_FIR)] val value: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(CONTRACTS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun typeWithAnnotation(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| { LAZY_BLOCK }
     public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /typeWithAnnotation]] var resolveMe: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String| {
             ^ R|/typeWithAnnotation|()

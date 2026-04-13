@@ -14,9 +14,9 @@ enum class E {
 
 fun test() {
     // K1 warning (false, resolve will never change here)
-    val x: KProperty0<EnumEntries<E>> = E::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>
+    val x: KProperty0<EnumEntries<E>> = E::entries
     // K1 warning (false, resolve will never change here)
-    val y: KProperty1<E, Int> = E::<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE!>entries<!>
+    val y: KProperty1<E, Int> = E::entries
     // No warning
     val xx: () -> EnumEntries<E> = E::entries
     // No warning

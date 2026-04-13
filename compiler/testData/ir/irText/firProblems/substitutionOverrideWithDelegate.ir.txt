@@ -127,5 +127,5 @@ FILE fqName:<root> fileName:/substitutionOverrideWithDelegate.kt
   FUN name:foo visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Unit declared in <root>'
-        CALL 'public open fun invoke (): kotlin.Unit declared in <root>.DelegatedB' type=kotlin.Unit origin=INVOKE
+        CALL 'public open fun invoke (): kotlin.Unit declared in <root>.DelegatedB' type=kotlin.Unit origin=null
           ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.DelegatedB' type=<root>.DelegatedB origin=null

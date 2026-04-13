@@ -13,8 +13,8 @@ private inline fun produceAndConsume() { consumeC(produceC()) }
 private inline fun consumeOnly() { consumeC(null) }
 
 internal inline fun test() {
-    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>produceOnly()<!>
-    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>produceAndCallMember()<!>
-    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>produceAndConsume()<!>
-    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>consumeOnly()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>produceOnly()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>produceAndCallMember()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>produceAndConsume()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>consumeOnly()<!>
 }

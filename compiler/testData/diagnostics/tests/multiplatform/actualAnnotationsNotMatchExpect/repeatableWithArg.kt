@@ -30,7 +30,7 @@ actual fun diffentOrder() {}
 
 @AnnWithArg(s = "1")
 @AnnWithArg(s = "3")
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArgLessOnActual<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun withDifferentArgLessOnActual() {}
 
 @AnnWithArg(s = "1")
 @AnnWithArg(s = "2")

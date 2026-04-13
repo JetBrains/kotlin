@@ -16,6 +16,7 @@ val signPublication = !version.toString().contains("-SNAPSHOT") &&
         (project.gradle.startParameter.taskNames.contains("publishPlugins") || signLibraryPublication)
 
 configureBuildToolsApiVersionForGradleCompatibility()
+applyWorkaroundForKt85412ForTestCompilations()
 configureCommonPublicationSettingsForGradle(signPublication)
 addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"

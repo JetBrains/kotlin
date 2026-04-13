@@ -3,7 +3,7 @@
 
 enum class E {
     ABC {
-        <!NESTED_CLASS_NOT_ALLOWED!>enum class F<!> {
+        <!WRONG_MODIFIER_TARGET!>enum<!> class F {
             DEF
         }
     }

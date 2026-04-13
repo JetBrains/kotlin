@@ -23,7 +23,6 @@ abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: St
 
     private val ignoredTests = setOf(
         "classFunctionsAndFields", //Invalid signature //KT-84599
-        "kotlinTest", //Eager initializer KT-83579
         "multiModuleEagerInitialization", //Eager initializer KT-83579
     )
 

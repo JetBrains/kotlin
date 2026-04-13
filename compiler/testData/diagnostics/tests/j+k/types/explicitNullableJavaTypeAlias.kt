@@ -27,13 +27,13 @@ typealias S = String
 
 fun aliasInSam() {
     Use.run<N> { it ->
-        it.length
+        it<!UNSAFE_CALL!>.<!>length
     }
 }
 
 fun aliasInGenericFunction() {
     val x = JavaUtil.id<N>("abc")
-    x.length
+    x<!UNSAFE_CALL!>.<!>length
 }
 
 fun aliasSmartCastAfterCall(x: N) {

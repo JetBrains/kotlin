@@ -37,7 +37,7 @@ fun gav() {
     class C(val s: String) {
         constructor(): this("") {
             // Error!
-            <!VAL_REASSIGNMENT!>y<!> = s
+            <!CAPTURED_VAL_INITIALIZATION!>y<!> = s
         }
     }
     <!UNINITIALIZED_VARIABLE!>y<!>.length

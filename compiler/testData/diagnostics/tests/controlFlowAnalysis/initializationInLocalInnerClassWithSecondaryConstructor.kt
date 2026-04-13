@@ -9,7 +9,7 @@ val foo = object {
             this.field = field
         }
 
-        val property get() = <!UNINITIALIZED_VARIABLE!>field<!>
+        val property get() = field
     }
 }
 

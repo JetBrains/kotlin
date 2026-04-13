@@ -1,3 +1,0 @@
-KtDeclaration: KtClass KotlinAnnotation
-kotlin/annotation/Target(allowedTargets = [])
-  psi: KtAnnotationEntry

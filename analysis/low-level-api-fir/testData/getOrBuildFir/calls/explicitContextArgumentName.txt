@@ -19,8 +19,8 @@ FILE: [ResolvedTo(IMPORTS)] explicitContextArgumentName.kt
         }
 
     }
-    context([ResolvedTo(CONTRACTS)] <unused var>: R|Implicit|, [ResolvedTo(CONTRACTS)] explicit: R|Explicit|)
-    public final [ResolvedTo(CONTRACTS)] fun unnamed([ResolvedTo(CONTRACTS)] regular: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(STATUS)] <unused var>: R|Implicit|, [ResolvedTo(STATUS)] explicit: R|Explicit|)
+    public final [ResolvedTo(STATUS)] fun unnamed([ResolvedTo(STATUS)] regular: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun [ResolvedTo(BODY_RESOLVE)] R|Implicit|.receiverUsage(): R|kotlin/Unit| {
         context(this@R|/receiverUsage|, R|/Explicit.Explicit|()) R|/unnamed|(String(str))
     }

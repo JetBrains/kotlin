@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 open class A<TA>
 
 class B<TB> : A<TB & Any>()

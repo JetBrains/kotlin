@@ -2,8 +2,8 @@
 // ISSUE: KT-62959
 
 fun bar(x: Inv<out CharSequence>) {
-    x.foo { <!TYPE_MISMATCH("Nothing; CharSequence"), TYPE_MISMATCH("Nothing; CharSequence")!>it<!> }
-    x.bar { <!TYPE_MISMATCH("Nothing; CharSequence"), TYPE_MISMATCH("Nothing; CharSequence")!>it.e()<!> }
+    x.foo { it }
+    x.bar { it.e() }
 }
 
 interface Inv<E> {

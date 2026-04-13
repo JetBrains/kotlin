@@ -13,32 +13,32 @@ class C {
 
 fun test(a: A?) {
     require(a?.b != null)
-    a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>inc()
+    a.b.inc()
 }
 
 fun test2(a: A?){
     require(a?.e?.d != null)
-    var k: C = <!TYPE_MISMATCH!>a<!UNSAFE_CALL!>.<!>e<!>
-    var k2: Int = <!TYPE_MISMATCH!>a<!UNSAFE_CALL!>.<!>e<!UNSAFE_CALL!>.<!>d<!>
-    var k3: Int? = a<!UNSAFE_CALL!>.<!>b
+    var k: C = a.e
+    var k2: Int = a.e.d
+    var k3: Int? = a.b
 }
 
 fun test3(a:A?){
     val t = (a?.b != null)
     require(t)
-    a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>inc()
+    a.b.inc()
 }
 
 fun test4(a:A?){
     require(a!!.b != null)
-    <!DEBUG_INFO_SMARTCAST!>a<!>.b<!UNSAFE_CALL!>.<!>inc()
+    a.b.inc()
 }
 
 fun test5(a:A?){
     require(a!!.e!!.d != null)
-    var k: C = <!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>.e<!>
-    var k2: Int = <!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>.e<!UNSAFE_CALL!>.<!>d<!>
-    var k3: Int? = <!DEBUG_INFO_SMARTCAST!>a<!>.b
+    var k: C = a.e
+    var k2: Int = a.e.d
+    var k3: Int? = a.b
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration, integerLiteral,

@@ -1,4 +1,4 @@
-FILE: notNullAssertionInLocalDelegated.fir.kt
+FILE: notNullAssertionInLocalDelegated.kt
     public final data class Ref<D> : R|kotlin/Any| {
         public constructor<D>(t: R|D|): R|Ref<D>| {
             super<R|kotlin/Any|>()

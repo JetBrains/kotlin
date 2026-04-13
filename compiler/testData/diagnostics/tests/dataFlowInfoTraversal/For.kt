@@ -6,19 +6,19 @@ fun foo() {
     val a = Array<Int>(3, {0})
 
     for (p in a) {
-        bar(<!TYPE_MISMATCH!>x<!>)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) continue
-        bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        bar(x)
         for (q in a) {
-            bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
-            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
+            bar(x)
+            if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x)
         }
     }
 
     for (p in a) {
-        bar(<!TYPE_MISMATCH!>x<!>)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) break
-        bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        bar(x)
     }
 }
 

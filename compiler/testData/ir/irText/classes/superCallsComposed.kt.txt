@@ -39,4 +39,3 @@ interface BaseI {
     abstract get
 
 }
-

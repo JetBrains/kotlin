@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 abstract class My {
     abstract var x: Int
-        <!REDUNDANT_MODIFIER_IN_GETTER!>public<!> get
+        public get
         <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract val y: Int

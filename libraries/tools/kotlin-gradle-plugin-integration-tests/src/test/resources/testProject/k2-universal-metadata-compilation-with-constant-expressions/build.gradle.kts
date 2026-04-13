@@ -14,7 +14,7 @@ kotlin {
 
     jvm()
 
-    js(IR)
+    js()
 
     linuxX64()
 

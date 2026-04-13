@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78800
-// LANGUAGE: +AllowEagerSupertypeAccessibilityChecks +ForbidUsingSupertypesWithInaccessibleContentInTypeArguments
+// LANGUAGE: +AllowEagerSupertypeAccessibilityChecks
 
 // MODULE: top
 // FILE: top.kt
@@ -30,10 +30,10 @@ fun main() {
     <!MISSING_DEPENDENCY_SUPERCLASS!>DependencyInheritor<!>()
     BoxedDependencyInheritor()
 
-    dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS!>foo<!>()
-    dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS, MISSING_DEPENDENCY_SUPERCLASS!>bar<!>()
+    dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS, UNRESOLVED_REFERENCE!>foo<!>()
+    dependencyInheritor.<!MISSING_DEPENDENCY_SUPERCLASS!>bar<!>()
 
-    DependencyInheritor::<!MISSING_DEPENDENCY_SUPERCLASS!>foo<!>
+    DependencyInheritor::<!MISSING_DEPENDENCY_SUPERCLASS, UNRESOLVED_REFERENCE!>foo<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeParameter */

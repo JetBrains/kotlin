@@ -10,7 +10,7 @@ class C {
 }
 
 fun test() {
-    for ((<!REDECLARATION!>x<!>, <!NAME_SHADOWING, REDECLARATION!>x<!>) in C()) {
+    for ((<!REDECLARATION!>x<!>, <!REDECLARATION!>x<!>) in C()) {
 
     }
 }

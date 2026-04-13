@@ -31,29 +31,29 @@ internal class B
 import p.*
 
 fun test() {
-    val _a = <!INVISIBLE_MEMBER!>a<!>
-    val _v = <!INVISIBLE_MEMBER!>v<!>
-    <!INVISIBLE_MEMBER!>a<!>()
-    <!INVISIBLE_MEMBER!>B<!>()
+    val _a = <!INVISIBLE_REFERENCE!>a<!>
+    val _v = <!INVISIBLE_REFERENCE!>v<!>
+    <!INVISIBLE_REFERENCE!>a<!>()
+    <!INVISIBLE_REFERENCE!>B<!>()
 
     val inst = A()
-    val ia = inst.<!INVISIBLE_MEMBER!>a<!>
-    val iv = inst.<!INVISIBLE_MEMBER!>v<!>
-    inst.<!INVISIBLE_MEMBER!>a<!>()
-    inst.<!INVISIBLE_MEMBER!>B<!>()
+    val ia = inst.<!INVISIBLE_REFERENCE!>a<!>
+    val iv = inst.<!INVISIBLE_REFERENCE!>v<!>
+    inst.<!INVISIBLE_REFERENCE!>a<!>()
+    inst.<!INVISIBLE_REFERENCE!>B<!>()
 }
 
 inline fun testInline() {
-    val _a = <!INVISIBLE_MEMBER!>a<!>
-    val _v = <!INVISIBLE_MEMBER!>v<!>
-    <!INVISIBLE_MEMBER!>a<!>()
-    <!INVISIBLE_MEMBER!>B<!>()
+    val _a = <!INVISIBLE_REFERENCE!>a<!>
+    val _v = <!INVISIBLE_REFERENCE!>v<!>
+    <!INVISIBLE_REFERENCE!>a<!>()
+    <!INVISIBLE_REFERENCE!>B<!>()
 
     val inst = A()
-    val ia = inst.<!INVISIBLE_MEMBER!>a<!>
-    val iv = inst.<!INVISIBLE_MEMBER!>v<!>
-    inst.<!INVISIBLE_MEMBER!>a<!>()
-    inst.<!INVISIBLE_MEMBER!>B<!>()
+    val ia = inst.<!INVISIBLE_REFERENCE!>a<!>
+    val iv = inst.<!INVISIBLE_REFERENCE!>v<!>
+    inst.<!INVISIBLE_REFERENCE!>a<!>()
+    inst.<!INVISIBLE_REFERENCE!>B<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, inner, localProperty, propertyDeclaration */

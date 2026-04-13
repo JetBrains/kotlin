@@ -10,7 +10,7 @@ interface B {
 }
 
 fun <T> test(x: T) where T : B, T : A {
-    x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
+    x.foo()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

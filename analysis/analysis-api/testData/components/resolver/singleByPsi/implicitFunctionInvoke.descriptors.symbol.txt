@@ -1,5 +1,0 @@
-KtNameReferenceExpression(29,30): 'a'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      a: kotlin.Function0<kotlin.Unit>
-    ]

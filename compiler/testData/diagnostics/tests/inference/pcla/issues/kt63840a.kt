@@ -6,7 +6,7 @@
 fun test() {
     val buildee = build {
         select(
-            <!TYPE_MISMATCH("DifferentType; TargetType"), TYPE_MISMATCH("DifferentType; TargetType")!>replaceTypeVariable(TargetType())<!>,
+            replaceTypeVariable(TargetType()),
             DifferentType()
         )
     }

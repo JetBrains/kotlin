@@ -24,7 +24,7 @@ interface I<P> {}
 // FILE: test.kt
 fun test() {
     val t = X.E.t
-    <!DEBUG_INFO_EXPRESSION_TYPE("(X<(I<(kotlin.Any..kotlin.Any?)>..I<(kotlin.Any..kotlin.Any?)>?), (kotlin.Any..kotlin.Any?), (I<(kotlin.Any..kotlin.Any?)>..I<(kotlin.Any..kotlin.Any?)>?)>..X<out (I<*>..I<*>?), *, out (I<*>..I<*>?)>?)")!>t<!>
+    t
     t.id // should be OK
 }
 

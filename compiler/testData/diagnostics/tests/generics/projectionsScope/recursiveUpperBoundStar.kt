@@ -5,7 +5,7 @@ interface A<T>
 interface B<T> : A<A<T>>
 
 fun foo(x : B<*>) {
-    bar1(<!TYPE_MISMATCH!>x<!>) // this should not be valid
+    bar1(<!ARGUMENT_TYPE_MISMATCH!>x<!>) // this should not be valid
     bar2(x)
     bar3(x)
 }

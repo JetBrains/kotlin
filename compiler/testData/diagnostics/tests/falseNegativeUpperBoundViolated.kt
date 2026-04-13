@@ -15,11 +15,11 @@ class Container<T : Element<K>, K : Key>
 typealias TA<A, B> = Container<A, B>
 
 fun main() {
-    Container<Alpha, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>BetaKey<!>>()
-    Container<Alpha, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>String<!>>()
+    Container<<!UPPER_BOUND_VIOLATED!>Alpha<!>, BetaKey>()
+    Container<<!UPPER_BOUND_VIOLATED!>Alpha<!>, <!UPPER_BOUND_VIOLATED!>String<!>>()
 
-    TA<Alpha, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>BetaKey<!>>()
-    TA<Alpha, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>String<!>>()
+    TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, BetaKey>()
+    TA<<!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Alpha<!>, <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>String<!>>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, sealed, typeConstraint,

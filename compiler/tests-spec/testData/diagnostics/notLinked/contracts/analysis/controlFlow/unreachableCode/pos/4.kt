@@ -17,11 +17,11 @@ fun case_1() {
             funWithExactlyOnceCallsInPlace {
                 throw Exception()
             }
-            <!UNREACHABLE_CODE!>println("1")<!>
+            println("1")
         }
-        <!UNREACHABLE_CODE!>println("2")<!>
+        println("2")
     }
-    <!UNREACHABLE_CODE!>println("3")<!>
+    println("3")
 }
 
 // TESTCASE NUMBER: 2
@@ -31,14 +31,14 @@ fun case_2() {
             funWithAtLeastOnceCallsInPlace {
                 return@label_1
             }
-            <!UNREACHABLE_CODE!>println("1")<!>
+            println("1")
         }
         println("2")
     }
     funWithAtLeastOnceCallsInPlace {
         return
     }
-    <!UNREACHABLE_CODE!>println("3")<!>
+    println("3")
 }
 
 // TESTCASE NUMBER: 3
@@ -46,7 +46,7 @@ fun case_3() {
     funWithExactlyOnceCallsInPlace {
         funWithExactlyOnceCallsInPlace {
             funWithExactlyOnceCallsInPlace {
-                return<!LABEL_NAME_CLASH!>@funWithExactlyOnceCallsInPlace<!>
+                return@funWithExactlyOnceCallsInPlace
             }
             println("1")
         }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +AnnotationsInMetadata +JvmLoadAnnotationsOnAnnotationProperties
 // ISSUE: KT-22463
 // RUN_PIPELINE_TILL: FRONTEND

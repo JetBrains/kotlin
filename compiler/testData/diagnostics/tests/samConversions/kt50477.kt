@@ -12,11 +12,11 @@ fun foo2() {}
 
 fun main() {
     val fi: suspend () -> Unit = {} // Lambda of a suspending(!!!) functional type
-    accept(<!TYPE_MISMATCH!>fi<!>) // ERROR: Type mismatch. Required: FI Found: suspend () → Unit
+    accept(fi) // ERROR: Type mismatch. Required: FI Found: suspend () → Unit
 
     accept(::foo)
     val x1 = ::foo
-    accept(<!TYPE_MISMATCH!>x1<!>) // ERROR: Type mismatch. Required: FI Found: suspend () → Unit
+    accept(x1) // ERROR: Type mismatch. Required: FI Found: suspend () → Unit
 
     accept(::foo2)
     val x2 = ::foo2

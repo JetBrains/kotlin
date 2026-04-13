@@ -1,16 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: main.kt
 interface A {
-    <!CONFLICTING_OVERLOADS!>suspend fun foo()<!>
+    suspend <!CONFLICTING_OVERLOADS!>fun foo()<!>
     <!CONFLICTING_OVERLOADS!>fun foo()<!>
 }
 
 interface B : A {
-    <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS!>suspend override fun foo()<!> {
+    suspend override <!CONFLICTING_OVERLOADS!>fun <!CONFLICTING_INHERITED_MEMBERS!>foo<!>()<!> {
 
     }
 
-    <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS!>override fun foo()<!> {
+    override <!CONFLICTING_OVERLOADS!>fun <!CONFLICTING_INHERITED_MEMBERS!>foo<!>()<!> {
 
     }
 }

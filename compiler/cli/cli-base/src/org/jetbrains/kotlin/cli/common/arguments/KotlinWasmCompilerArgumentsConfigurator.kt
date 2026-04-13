@@ -26,9 +26,10 @@ class KotlinWasmCompilerArgumentsConfigurator : CommonKlibBasedCompilerArguments
     override fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
         reporter: Reporter,
+        languageVersion: LanguageVersion,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is KotlinWasmCompilerArguments)
-        val result = super.configureLanguageFeatures(arguments, reporter)
+        val result = super.configureLanguageFeatures(arguments, reporter, languageVersion)
         result.configureWasmLanguageFeatures(this)
 //        // TODO: Should be removed (see KT-80182)
         result[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED

@@ -17,7 +17,7 @@ fun foo(p: Box<Res>) {
 
     p.foo.invoke() // OK
     // Error in K1, OK in K2
-    p.<!FUNCTION_EXPECTED!>foo<!>()
+    p.foo()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, getter, interfaceDeclaration, nullableType, operator, propertyDeclaration,

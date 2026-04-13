@@ -24,7 +24,7 @@ public enum J {
 // FILE: main.kt
 
 fun test_1(): Int {
-    return when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.getPlatform()<!>) {
+    return when (J.getPlatform()) {
         J.A -> 1
         J.B -> 2
     }
@@ -51,12 +51,12 @@ fun test_4(): Int {
         J.A -> 1
         J.B -> 2
         null -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
 
 fun test_5(): Int {
-    return when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.getNonNull()<!>) {
+    return when (J.getNonNull()) {
         J.A -> 1
         J.B -> 2
     }
@@ -83,13 +83,13 @@ fun test_8(): Int {
         J.A -> 1
         J.B -> 2
         null -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }
 
 
 fun test_9(): Int {
-    return when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.getNullable()<!>) {
+    return <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.getNullable()) {
         J.A -> 1
         J.B -> 2
     }
@@ -104,7 +104,7 @@ fun test_10(): Int {
 }
 
 fun test_11(): Int {
-    return when (J.getNullable()) {
+    return <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.getNullable()) {
         J.A -> 1
         J.B -> 2
         else -> 3
@@ -116,6 +116,6 @@ fun test_12(): Int {
         J.A -> 1
         J.B -> 2
         null -> 3
-        else -> 4
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 4
     }
 }

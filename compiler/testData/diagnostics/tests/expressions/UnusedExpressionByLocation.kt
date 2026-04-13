@@ -66,21 +66,21 @@ fun testWhen() {
 
     when {
         else -> {
-            Unit
+            <!UNUSED_EXPRESSION!>Unit<!>
         }
     }
 
     when {
         else -> when {
             else -> {
-                Unit
+                <!UNUSED_EXPRESSION!>Unit<!>
             }
         }
     }
 
     consume {
-        <!NO_ELSE_IN_WHEN!>when<!> (a) {
-            "" -> ""
+        when (a) {
+            "" -> <!UNUSED_EXPRESSION!>""<!>
         }
     }
 }
@@ -108,7 +108,7 @@ fun testWhile(
     x: Boolean,
 ) {
     while (x) {
-        Unit
+        <!UNUSED_EXPRESSION!>Unit<!>
     }
 }
 
@@ -144,7 +144,7 @@ fun testLambda() {
 
     run {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit
+        <!UNUSED_EXPRESSION!>Unit<!>
     }
 
     consume {
@@ -163,7 +163,7 @@ fun testLambda() {
 
     consume<Unit> {
         <!UNUSED_EXPRESSION!>""<!>
-        Unit
+        <!UNUSED_EXPRESSION!>Unit<!>
     }
 }
 

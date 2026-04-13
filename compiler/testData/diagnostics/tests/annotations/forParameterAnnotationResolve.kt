@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +LocalVariableTargetedAnnotationOnDestructuring
 annotation class Ann(val x: Int)
 

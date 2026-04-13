@@ -10,7 +10,7 @@ class Outer<in E> {
 
     fun bar() = Inner()
 
-    fun set(inner: Inner) {}
+    fun set(inner: <!TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {}
 }
 
 fun factoryString(): Outer<String>.Inner = null!!
@@ -33,7 +33,7 @@ fun main() {
     outer.set(outer.Inner())
 
     val x: Outer<String>.Inner = factoryString()
-    outer.set(<!TYPE_MISMATCH!>x<!>)
+    outer.set(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     val y: Outer<CharSequence>.Inner = infer<CharSequence>("")
     outer.set(y)
 

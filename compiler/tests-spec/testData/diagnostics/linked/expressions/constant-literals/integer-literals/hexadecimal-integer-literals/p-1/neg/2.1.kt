@@ -17,4 +17,4 @@ val value_2 = <!ILLEGAL_UNDERSCORE!>0X_______23456789<!>
 val value_3 = <!ILLEGAL_UNDERSCORE!>0X_2_3_4_5_6_7_8_9<!>
 
 // TESTCASE NUMBER: 4
-val value_4 = <!ILLEGAL_UNDERSCORE, INT_LITERAL_OUT_OF_RANGE!>0x_<!>
+val value_4 = <!ILLEGAL_UNDERSCORE!>0x_<!>

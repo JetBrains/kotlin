@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: ExceptionTracker.kt
 
-interface ExceptionTracker : <!CYCLIC_INHERITANCE_HIERARCHY!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
+interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
 }
 
 // FILE: StorageManager.kt

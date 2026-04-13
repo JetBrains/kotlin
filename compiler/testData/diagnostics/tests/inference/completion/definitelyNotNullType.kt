@@ -2,26 +2,26 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T : Derived?> test(derived: T) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<Base>")!>id<Out<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<T & Any>")!>makeOut(
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>makeDnn(derived)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>id<In<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>makeIn(
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>makeDnn(derived)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Base>")!>id<Inv<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Base>")!>makeInv(
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>makeDnn(derived)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<In<Base>>")!>id<In<In<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<In<T & Any>>")!>makeInIn(
-            <!DEBUG_INFO_EXPRESSION_TYPE("T & Any")!>makeDnn(derived)<!>
-        )<!>
-    )<!>
+    id<Out<Base>>(
+        makeOut(
+            makeDnn(derived)
+        )
+    )
+    id<In<Base>>(
+        makeIn(
+            makeDnn(derived)
+        )
+    )
+    id<Inv<Base>>(
+        makeInv(
+            makeDnn(derived)
+        )
+    )
+    id<In<In<Base>>>(
+        makeInIn(
+            makeDnn(derived)
+        )
+    )
 }
 
 interface Base

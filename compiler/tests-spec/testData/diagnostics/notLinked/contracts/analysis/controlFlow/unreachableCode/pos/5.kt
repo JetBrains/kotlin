@@ -15,7 +15,7 @@ fun case_1(b: Boolean?) {
     funWithExactlyOnceCallsInPlace {
         if (b == null) return
 
-        <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (<!DEBUG_INFO_SMARTCAST!>b<!>) {
+        when (b) {
             true -> {
                 println(1)
                 return
@@ -24,10 +24,10 @@ fun case_1(b: Boolean?) {
                 println(2)
                 throw Exception()
             }
-        }<!>
-        <!UNREACHABLE_CODE!>println(3)<!>
+        }
+        println(3)
     }
-    <!UNREACHABLE_CODE!>println(3)<!>
+    println(3)
 }
 
 // TESTCASE NUMBER: 2
@@ -45,16 +45,16 @@ fun case_2(b: Boolean?, c: Boolean) {
                             c == true -> throw Exception()
                             else -> funWithAtLeastOnceCallsInPlace { return }
                         }
-                        <!UNREACHABLE_CODE!>println(3)<!>
+                        println(3)
                     }
-                    <!UNREACHABLE_CODE!>println(3)<!>
+                    println(3)
                 } else {
                     throw Exception()
                 }
-                <!UNREACHABLE_CODE!>println(3)<!>
+                println(3)
             }
         }
-        <!UNREACHABLE_CODE!>println(3)<!>
+        println(3)
     }
-    <!UNREACHABLE_CODE!>println(3)<!>
+    println(3)
 }

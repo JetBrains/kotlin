@@ -8,10 +8,10 @@ abstract class A {
             fun f(other: A) {
                 other.a
                 if (other is Nested) {
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.a.length
+                    other.a.length
                 }
                 if (other is C) {
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>
+                    other.a
                 }
             }
         }

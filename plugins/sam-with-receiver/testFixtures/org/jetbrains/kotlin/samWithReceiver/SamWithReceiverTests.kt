@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.samWithReceiver.k2.FirSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
@@ -26,7 +25,6 @@ abstract class AbstractFirPsiSamWithReceiverDiagnosticTest : AbstractFirPsiDiagn
         super.configure(builder)
         with(builder) {
             configurePlugin()
-            configurationForClassicAndFirTestsAlongside()
         }
     }
 }

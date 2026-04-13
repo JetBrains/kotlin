@@ -55,7 +55,7 @@ internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
             val message = buildString {
                 appendLine("You are using CocoaPods integration with SwiftPM dependencies. Please follow the migration guide https://kotl.in/cocoapods-to-swiftpm-migration")
                 appendLine("and run the following command to switch your Xcode project to the SwiftPM integration:")
-                appendLine("${PROJECT_PATH_ENV}='${xcodeProjectPath}' ${IntegrateEmbedAndSignIntoXcodeProject.Companion.GRADLE_PROJECT_PATH_ENV}='${gradleProjectPath.get()}' '${gradlewPath}' -p '${rootProjectDir.get()}' '${gradleProjectPath.get()}:${IntegrateEmbedAndSignIntoXcodeProject.TASK_NAME}' '${gradleProjectPath.get()}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}'")
+                appendLine("${PROJECT_PATH_ENV}='${xcodeProjectPath}' ${IntegrateEmbedAndSignIntoXcodeProject.Companion.GRADLE_PROJECT_PATH_ENV}='${gradleProjectPath.get()}' '${gradlewPath}' -p '${rootProjectDir.get()}' '${gradleTaskPath(gradleProjectPath.get(), IntegrateEmbedAndSignIntoXcodeProject.TASK_NAME)}' '${gradleTaskPath(gradleProjectPath.get(), IntegrateLinkagePackageIntoXcodeProject.TASK_NAME)}'")
                 if (directSwiftPMDependencies.isNotEmpty()) {
                     appendLine("Direct SwiftPM dependencies: ${directSwiftPMDependencies.joinToString(", ") { it.packageName }}")
                 }

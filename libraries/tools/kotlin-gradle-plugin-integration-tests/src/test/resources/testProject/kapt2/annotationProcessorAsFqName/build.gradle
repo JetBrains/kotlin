@@ -10,7 +10,7 @@ repositories {
 }
 
 kapt {
-    processors = "example.ExampleAnnotationProcessor"
+    annotationProcessor("example.ExampleAnnotationProcessor")
 }
 
 dependencies {

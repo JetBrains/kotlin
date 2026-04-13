@@ -15,7 +15,8 @@ fun box() : String {
 
 // FILE: 2.kt
 
-package testing; // There is no error if both files are in default package
+// There is no error if both files are in default package
+package testing
 
 public abstract class ClassWithInternals {
    protected var some: Int = 0;

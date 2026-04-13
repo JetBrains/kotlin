@@ -10,7 +10,7 @@ package foo
 
 fun f() {
     class Local1 {
-        fun g() : <!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>X<!>? = null
+        fun g() : <!UNRESOLVED_REFERENCE!>bar<!>.X? = null
     }
     class Local2 {
         fun g() : foo.bar.X? = null

@@ -40,6 +40,6 @@ public class Derived extends Base {
 // FILE: main.kt
 
 fun bar(d: Derived) {
-    d.foo().get()?.length
-    d.foo().set(null)
+    d.foo().get()<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    d.foo().set(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }

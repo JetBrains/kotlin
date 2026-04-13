@@ -545,7 +545,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateFieldWithAnnotationClashScript.kts
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-delegateFieldWithAnnotationClashScript.kts>, ScriptTopLevelDeclaration=true] interface Base : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|second/Base| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun bar(): R|second/Base| { LAZY_BLOCK }
 
         public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/Int| = Int(0)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|

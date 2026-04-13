@@ -8,8 +8,8 @@ class Outer {
         fun foo() { }
     }
 
-    val ref = <!DEPRECATION_ERROR!>C<!>::toString
-    val wrongRef = <!DEPRECATION_ERROR!>C<!>::foo
+    val ref = C::toString
+    val wrongRef = C::<!UNRESOLVED_REFERENCE!>foo<!>
 }
 
 class C

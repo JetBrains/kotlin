@@ -3,14 +3,14 @@
 class A
 class B
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
-fun foo(){}
+context(a: A)
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(){}<!>
 
-fun foo(<!UNUSED_PARAMETER!>a<!>: A){}
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(a: A){}<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>, b: <!DEBUG_INFO_MISSING_UNRESOLVED!>B<!>)<!>
-fun bar(){}
+context(a: A, b: B)
+<!CONFLICTING_JVM_DECLARATIONS!>fun bar(){}<!>
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
-fun bar(<!UNUSED_PARAMETER!>b<!>: B){}
+context(a: A)
+<!CONFLICTING_JVM_DECLARATIONS!>fun bar(b: B){}<!>
 

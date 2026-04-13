@@ -113,7 +113,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
             KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
-            overrideArgsUsingTaskModuleNameWithWarning(args)
             requireNotNull(args.moduleName)
 
             // Copied from KotlinCompile
@@ -143,7 +142,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             args.friendPaths = friendPaths.toPathsArray()
         }
 
-        sources{ args ->
+        sources { args ->
             args.freeArgs += (scriptSources.asFileTree.files + javaSources.files + sources.asFileTree.files).map { it.absolutePath }
         }
     }

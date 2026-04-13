@@ -80,7 +80,8 @@ FILE fqName:<root> fileName:/kt46069.kt
               then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=<root>.ObjectAssert<T of <root>.assertNotNull?>? origin=null
                 TYPE_ARG T: kotlin.String
                 TYPE_ARG R: <root>.ObjectAssert<T of <root>.assertNotNull?>?
-                ARG <this>: GET_VAR 'val tmp_0: kotlin.String? declared in <root>.assertNotNull' type=kotlin.String? origin=null
+                ARG <this>: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                  GET_VAR 'val tmp_0: kotlin.String? declared in <root>.assertNotNull' type=kotlin.String? origin=null
                 ARG block: BLOCK type=kotlin.Function1<kotlin.String?, <root>.ObjectAssert<T of <root>.assertNotNull?>?> origin=ADAPTED_FUNCTION_REFERENCE
                   FUN ADAPTER_FOR_CALLABLE_REFERENCE name:describedAs visibility:local modality:FINAL returnType:<root>.ObjectAssert<T of <root>.assertNotNull?>?
                     VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:ExtensionReceiver name:receiver index:0 type:<root>.ObjectAssert<T of <root>.assertNotNull?>

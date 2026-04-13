@@ -9,8 +9,8 @@ object Instance
 
 class SomeContainerClass {
     fun testDefaultWarnings() {
-        Json(JsonTypeAlias) {}
-        Json(JsonTypeAlias, {})
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(JsonTypeAlias) {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(JsonTypeAlias, {})<!>
     }
 
     fun testDefaultNoWarnings() {

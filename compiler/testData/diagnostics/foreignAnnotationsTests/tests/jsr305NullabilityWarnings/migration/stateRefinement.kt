@@ -35,7 +35,7 @@ public class A {
 fun main(a: A) {
     a.foo("", null)?.length
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
+import org.jetbrains.kotlin.konan.config.saveLlvmIr
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.Closeable
@@ -49,7 +51,40 @@ data class LlvmPipelineConfig(
         val modulePasses: String? = null,
         val ltoPasses: String? = null,
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
-)
+        val saveIrAfterPasses: List<String> = emptyList(),
+        val saveIrDirectory: java.io.File? = null,
+) {
+    /**
+     * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
+     */
+    internal fun copyConfiguringSaveIr(context: NativeBackendPhaseContext, phase: String): LlvmPipelineConfig {
+        val passes = context.config.configuration.saveLlvmIr.mapNotNull {
+            val llvmPassPrefix = "$phase:"
+            if (it.startsWith(llvmPassPrefix)) {
+                it.removePrefix(llvmPassPrefix)
+            } else {
+                null
+            }
+        }
+        val saveIrDirectory = run {
+            if (passes.isEmpty()) {
+                null
+            } else {
+                val dir = context.config.saveLlvmIrDirectory
+                if (dir.exists()) {
+                    dir.resolve(phase) // This subdirectory does not have to exist: llvm will create it itself
+                } else {
+                    context.messageCollector.report(
+                            CompilerMessageSeverity.WARNING,
+                            "Cannot dump LLVM IR to non-existent location: ${dir.absolutePath}")
+                    null
+                }
+            }
+        }
+        val saveIrAfterPasses = if (saveIrDirectory == null) emptyList() else passes
+        return copy(saveIrAfterPasses = saveIrAfterPasses, saveIrDirectory = saveIrDirectory)
+    }
+}
 
 private fun getCpuModel(context: NativeBackendPhaseContext): String {
     val target = context.config.target
@@ -231,12 +266,17 @@ abstract class LlvmOptimizationPipeline(
         }
         if (passDescription.isEmpty()) return
         val (errorCode, profile) = withLLVMPassesProfile(performanceManager != null || config.timePasses, pipelineName) {
+            // NOTE: This call is not thread-safe in general, because it may write into global memory,
+            //       when configuring CLI-defined options.
+            //       See `LLVMKotlinRunPasses` declaration in the header file for the details.
             LLVMKotlinRunPasses(
                     llvmModule,
                     passDescription,
                     targetMachine,
                     InlinerThreshold = config.inlineThreshold ?: -1,
                     Profile = it,
+                    SaveIRAfterPasses = config.saveIrAfterPasses.joinToString(",").takeIf { it.isNotEmpty() },
+                    SaveIRDirectory = config.saveIrDirectory?.absolutePath,
             )
         }
         require(errorCode == null) {

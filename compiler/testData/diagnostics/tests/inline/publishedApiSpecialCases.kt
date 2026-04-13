@@ -15,7 +15,7 @@ class Derived : Generic<String>()
 // FILE: use.kt
 
 inline fun use(data: D, derived: Derived) {
-    val (x) = <!COMPONENT_FUNCTION_MISSING!>data<!>
+    val (<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>x<!>) = data
     val xx = data.x
     val y = derived.y
     val foo = derived.foo()

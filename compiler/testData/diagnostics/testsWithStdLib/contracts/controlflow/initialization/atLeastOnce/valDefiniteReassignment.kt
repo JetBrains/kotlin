@@ -29,7 +29,7 @@ fun valueReassignment() {
 
 fun shadowing() {
     val x: Int
-    runTwice { val <!NAME_SHADOWING!>x<!>: Int; x = 42; x.inc() }
+    runTwice { val x: Int; x = 42; x.inc() }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
@@ -62,7 +62,7 @@ fun repeatingFlow(n: Int) {
         runTwice { <!VAL_REASSIGNMENT!>x<!> = 42 }
     }
 
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun repeatingFlow2(n: Int) {

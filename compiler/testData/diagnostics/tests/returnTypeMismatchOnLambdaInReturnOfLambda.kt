@@ -6,29 +6,29 @@
 fun <T> runLike(block: () -> T): T = block()
 
 fun test() {
-    var str: String = <!TYPE_MISMATCH!>runLike {
-        <!TYPE_MISMATCH!>{ }<!>
-    }<!>
-    str = <!TYPE_MISMATCH!>runLike {
-        { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>it: String<!> -> <!TYPE_MISMATCH!>it<!> }
-    }<!>
+    var str: String = runLike {
+        <!RETURN_TYPE_MISMATCH!>{ }<!>
+    }
     str = runLike {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>it<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }<!>
+        <!RETURN_TYPE_MISMATCH!>{ it: String -> it }<!>
+    }
+    str = runLike {
+        <!RETURN_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> it }<!>
     }
     str = runLike<String> {
-        <!TYPE_MISMATCH!>{ }<!>
+        <!RETURN_TYPE_MISMATCH!>{ }<!>
     }
     str = runLike<String> {
-        <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>it: String<!> -> <!TYPE_MISMATCH!>it<!> }<!>
+        <!RETURN_TYPE_MISMATCH!>{ it: String -> it }<!>
     }
     str = runLike<String> {
-        <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>it<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }<!>
+        <!RETURN_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>it<!> -> it }<!>
     }
-    str = <!TYPE_MISMATCH!>runLike {
-        runLike { <!TYPE_MISMATCH!>{ }<!> }
-    }<!>
+    str = runLike {
+        runLike { <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>{ }<!> }
+    }
     str = runLike<String> {
-        runLike<String> { <!TYPE_MISMATCH!>{ }<!> }
+        runLike<String> { <!RETURN_TYPE_MISMATCH!>{ }<!> }
     }
 }
 

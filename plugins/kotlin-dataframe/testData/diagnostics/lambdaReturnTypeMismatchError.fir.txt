@@ -9,20 +9,20 @@ FILE: lambdaReturnTypeMismatchError.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_64I>|.a: R|kotlin/Int?|
                     public get(): R|kotlin/Int?|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_64I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int?>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class DataFrameOf_64 : R|<local>/DataFrameOf_64I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/DataFrameOf_64|
 

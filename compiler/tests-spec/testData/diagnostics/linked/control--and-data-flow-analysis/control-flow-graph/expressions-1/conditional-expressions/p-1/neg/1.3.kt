@@ -32,11 +32,11 @@ fun case3() {
  * ISSUES: KT-35510
  */
 fun case4() {
-    val x1 = if (throw Exception()) true
+    val x1 = <!INVALID_IF_AS_EXPRESSION!>if<!> (throw Exception()) true
 
-    val x2 = if (TODO()) true
+    val x2 = <!INVALID_IF_AS_EXPRESSION!>if<!> (TODO()) true
 
-    val x0 = if (false) true else if (throw Exception()) ;
+    val x0 = if (false) true else <!INVALID_IF_AS_EXPRESSION!>if<!> (throw Exception()) ;
 
 }
 
@@ -52,7 +52,7 @@ fun case5() {
  * ISSUES: KT-35510
  */
 fun case6() {
-    val k1 = if(throw Exception());
+    val k1 = <!INVALID_IF_AS_EXPRESSION!>if<!>(throw Exception());
 }
 
 /*
@@ -70,7 +70,7 @@ fun case7(nothing: Nothing) {
  * ISSUES: KT-35510
  */
 fun case8(nothing: Nothing) {
-    val x1 = if (nothing) true
+    val x1 = <!INVALID_IF_AS_EXPRESSION!>if<!> (nothing) true
 }
 
 /*

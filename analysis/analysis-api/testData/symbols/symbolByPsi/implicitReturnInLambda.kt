@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 fun foo() {
     val lam1 = { a: Int ->
         val b = 1

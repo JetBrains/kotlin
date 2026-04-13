@@ -1475,7 +1475,7 @@ public final class IrExpression extends
    * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
    * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
    * deserializing, otherwise it would fail.
-   * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+   * Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
    * </pre>
    */
   public boolean hasType() {
@@ -1491,7 +1491,7 @@ public final class IrExpression extends
    * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
    * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
    * deserializing, otherwise it would fail.
-   * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+   * Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
    * </pre>
    */
   public int getType() {
@@ -5540,7 +5540,7 @@ public final class IrExpression extends
      * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
      * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
      * deserializing, otherwise it would fail.
-     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
      * </pre>
      */
     public boolean hasType() {
@@ -5556,7 +5556,7 @@ public final class IrExpression extends
      * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
      * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
      * deserializing, otherwise it would fail.
-     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
      * </pre>
      */
     public int getType() {
@@ -5572,7 +5572,7 @@ public final class IrExpression extends
      * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
      * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
      * deserializing, otherwise it would fail.
-     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
      * </pre>
      */
     public Builder setType(int value) {
@@ -5591,7 +5591,7 @@ public final class IrExpression extends
      * and will serialize it to the wire. This is important, because it may be read by a 2.3.0 compiler, and at that version
      * this field was `required`. Protobuf in proto2 format expects `required` fields to always be present, both when serializing and
      * deserializing, otherwise it would fail.
-     * This hack can be dropped along with support of serialization to 2.3.0 ABI version.
+     * Additionally, if this optional field was ever forgotten to be set, it prevents us from accidentally defaulting to a random type.
      * </pre>
      */
     public Builder clearType() {

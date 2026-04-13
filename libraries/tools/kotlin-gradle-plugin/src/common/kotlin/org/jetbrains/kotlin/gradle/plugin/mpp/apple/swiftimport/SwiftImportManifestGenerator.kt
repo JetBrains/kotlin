@@ -21,7 +21,6 @@ internal object SwiftImportManifestGenerator {
      * @param platforms List of platform strings (e.g., ".iOS(\"15.0\")")
      * @param repoDependencies List of package dependency declarations
      * @param targetDependencies List of target dependency declarations
-     * @param linkerHackPath Optional path to linker hack, adds linkerSettings if present
      * @return The complete Package.swift manifest content
      */
     fun generateManifest(
@@ -30,7 +29,6 @@ internal object SwiftImportManifestGenerator {
         platforms: List<String>,
         repoDependencies: List<String>,
         targetDependencies: List<String>,
-        linkerHackPath: String? = null,
     ): String = buildStringBlock(defaultIndent = "  ") {
         line("// swift-tools-version: 5.9")
         line("import PackageDescription")
@@ -67,9 +65,6 @@ internal object SwiftImportManifestGenerator {
                                     block("dependencies: [", "]") {
                                         emitListItems(targetDependencies)
                                     }
-                                }
-                                if (linkerHackPath != null) {
-                                    entry { line("linkerSettings: [.unsafeFlags([\"-fuse-ld=$linkerHackPath\"])]") }
                                 }
                             }
                         }

@@ -1,8 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
-// FIR_IDENTICAL
 
 import kotlin.coroutines.*
 

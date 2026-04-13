@@ -11,7 +11,7 @@ class CacheOwner<T>(
     public fun getValue(): T = cached.updateAndGet { value ->
         when {
             value == null -> createNewCachedValue()
-            <!DEBUG_INFO_SMARTCAST!>value<!>.isUpToDate() -> value
+            value.isUpToDate() -> value
             else -> createNewCachedValue()
         }
     }!!.value

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // KT-64271
 
 open class Base {

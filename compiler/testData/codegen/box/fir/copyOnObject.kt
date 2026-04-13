@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // ISSUE: KT-60370
 
 data object A {

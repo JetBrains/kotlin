@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 class ResolutionCandidate<A>
 
 class ResolutionTask<B, C : B>(val candidate: ResolutionCandidate<B>)

@@ -51,17 +51,17 @@ class C2: C1() {
 @MustUseReturnValues
 class C3: C1() {
     override fun foo(): String = ""
-    override fun bar(): String = ""
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>bar<!>(): String = ""
 }
 
 fun testFoo(d1: D1, d2: D2, d3: D3, d4: D4, c1: C1, c2: C2, c3: C3) {
-    d1.foo()
-    d2.foo()
-    d3.foo()
-    d4.foo()
-    c1.foo()
-    c2.foo()
-    c3.foo()
+    d1.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    d2.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    d3.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    d4.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c1.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c2.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c3.<!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 fun testBar(d1: D1, d2: D2, d3: D3, d4: D4, c1: C1, c2: C2, c3: C3) {
@@ -71,7 +71,7 @@ fun testBar(d1: D1, d2: D2, d3: D3, d4: D4, c1: C1, c2: C2, c3: C3) {
     d4.bar()
     c1.bar()
     c2.bar()
-    c3.bar()
+    c3.<!RETURN_VALUE_NOT_USED!>bar<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,

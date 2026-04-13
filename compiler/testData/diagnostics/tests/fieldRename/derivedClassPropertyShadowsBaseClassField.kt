@@ -19,33 +19,33 @@ public class Base {
 // FILE: test.kt
 
 open class Derived : Base() {
-    val regular = "aa"
+    val <!PROPERTY_HIDES_JAVA_FIELD!>regular<!> = "aa"
 
-    val withGetter get() = "bb"
+    val <!PROPERTY_HIDES_JAVA_FIELD!>withGetter<!> get() = "bb"
 
-    lateinit var lateInit: String
+    lateinit var <!PROPERTY_HIDES_JAVA_FIELD!>lateInit<!>: String
 
-    val lazyProp by lazy { "dd" }
+    val <!PROPERTY_HIDES_JAVA_FIELD!>lazyProp<!> by lazy { "dd" }
 
-    var withSetter: String = "ee"
+    var <!PROPERTY_HIDES_JAVA_FIELD!>withSetter<!>: String = "ee"
         set(value) {
             println(value)
             field = value
         }
 
-    open val openProp = "ff"
+    open val <!PROPERTY_HIDES_JAVA_FIELD!>openProp<!> = "ff"
 }
 
 fun test(d: Derived) {
     d.regular
-    d.<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY("Base; Derived")!>withGetter<!>
-    d.<!BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT("Base; Derived")!>lateInit<!>
-    d.<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY("Base; Derived")!>lazyProp<!>
-    d.<!BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT("Base; Derived")!>withSetter<!> = ""
-    d.<!BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY("Base; Derived")!>openProp<!>
+    d.withGetter
+    d.lateInit
+    d.lazyProp
+    d.withSetter = ""
+    d.openProp
 
-    d::<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>withGetter<!>
-    Derived::<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>withGetter<!>
+    d::withGetter
+    Derived::withGetter
 }
 
 /* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, functionDeclaration, getter, javaType,

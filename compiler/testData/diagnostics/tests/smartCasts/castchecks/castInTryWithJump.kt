@@ -28,13 +28,13 @@ fun breakInTry_withNestedFinally() {
                 x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
             }
             x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
-            x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+            x.bbb() // should be ok
         }
-        <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>aaa<!>()<!> // should be error
-        <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>bbb<!>()<!> // should be ok
+        x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
+        x.bbb() // should be ok
     }
-    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
-    x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+    x.aaa() // should be ok
+    x.bbb() // should be ok
 }
 
 fun returnInCatch() {
@@ -48,7 +48,7 @@ fun returnInCatch() {
         x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
     }
-    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+    x.aaa() // should be ok
     x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
 }
 
@@ -67,13 +67,13 @@ fun returnInCatch_insideFinally() {
             x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
             x.<!UNRESOLVED_REFERENCE!>ccc<!>() // should be error
         }
-        x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+        x.aaa() // should be ok
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
         x.<!UNRESOLVED_REFERENCE!>ccc<!>() // should be error
     }
-    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+    x.aaa() // should be ok
     x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
-    x.<!UNRESOLVED_REFERENCE!>ccc<!>() // should be ok
+    x.ccc() // should be ok
 }
 
 fun breakInCatch() {
@@ -88,34 +88,34 @@ fun breakInCatch() {
             x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
             x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
         }
-        x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+        x.aaa() // should be ok
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
     }
     x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
-    x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+    x.bbb() // should be ok
 }
 
 fun returnInFinally_insideTry_nonLocal() {
     var x: Any? = null
-    run {
+    <!CANNOT_INFER_PARAMETER_TYPE!>run<!> {
         try {
             x as B
             try {
                 x as A
             } finally {
                 x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
-                <!DEBUG_INFO_SMARTCAST!>x<!>.bbb() // should be ok
+                x.bbb() // should be ok
                 return
             }
         } finally {
             x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
             x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
         }
-        <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>aaa<!>()<!> // should be error
-        <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>bbb<!>()<!> // should be error
+        x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
+        x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
     }
-    <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>aaa<!>()<!> // should be error
-    <!UNREACHABLE_CODE!>x.<!UNRESOLVED_REFERENCE!>bbb<!>()<!> // should be error
+    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
+    x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
 }
 
 /* GENERATED_FIR_TAGS: asExpression, break, functionDeclaration, interfaceDeclaration, intersectionType, lambdaLiteral,

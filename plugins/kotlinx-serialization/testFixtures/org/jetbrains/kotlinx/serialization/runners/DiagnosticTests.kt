@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.runners
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
@@ -23,10 +22,6 @@ abstract class AbstractSerializationFirPsiDiagnosticTest : AbstractFirPsiDiagnos
 fun TestConfigurationBuilder.configureSerializationFirPsiDiagnosticTest() {
     configureForKotlinxSerialization()
     disableOptInErrors()
-
-    forTestsMatching("*/diagnostics/*") {
-        configurationForClassicAndFirTestsAlongside()
-    }
 
     forTestsMatching("*/firMembers/*") {
         defaultDirectives {

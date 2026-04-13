@@ -1,4 +1,1 @@
-/deprecationWithComplexMessage.kt:10:5: warning: 'deprecated(): Unit' is deprecated. Hello World
-    deprecated()
-    ^^^^^^^^^^
-
+/deprecationWithComplexMessage.kt:(153,163): warning: 'fun deprecated(): Unit' is deprecated. Hello World.

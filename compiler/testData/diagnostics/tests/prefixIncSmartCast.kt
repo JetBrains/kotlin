@@ -10,7 +10,7 @@ class ST : I()
 fun main() {
     var local = I()
     val x: ST = ++local
-    val y: ST = <!TYPE_MISMATCH!>local<!>
+    val y: ST = local
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, localProperty,

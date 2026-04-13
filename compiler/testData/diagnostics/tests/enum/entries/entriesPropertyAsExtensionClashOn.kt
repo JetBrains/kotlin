@@ -14,20 +14,20 @@ enum class A {
 val A.Companion.entries: Int get() = 0
 
 fun test() {
-    A.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
-    A.Companion.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable")!>entries<!>
+    <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
+    A.Companion.entries
 
     with(A) {
         this.entries
-        <!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable")!>entries<!>
+        entries
     }
 
     with(A.Companion) {
-        <!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable")!>entries<!>
+        entries
     }
 
     val aCompanion = A.Companion
-    aCompanion.<!DEBUG_INFO_CALL("fqName: pckg.entries; typeCall: variable")!>entries<!>
+    aCompanion.entries
 }
 
 /* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, getter, integerLiteral, lambdaLiteral,

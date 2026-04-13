@@ -52,7 +52,7 @@ fun getChild(): IChild? {
     else -> child is Bar
   }
   return when {
-    isFooOrBar -> child
+    isFooOrBar -> child /*as IChild */
     else -> null
   }
 }
@@ -62,7 +62,8 @@ fun test(): String? {
     val tmp_0: IChild? = getChild()
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.b(t = "")
+      else -> tmp_0 /*as IChild */.b(t = "")
     }
   }
 }
+

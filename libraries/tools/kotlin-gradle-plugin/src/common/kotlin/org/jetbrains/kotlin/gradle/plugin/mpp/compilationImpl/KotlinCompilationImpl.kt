@@ -171,24 +171,6 @@ internal class KotlinCompilationImpl(
     override val compileAllTaskName: String
         get() = params.compilationTaskNames.compileAllTaskName
 
-    @Suppress("deprecation_error")
-    @Deprecated(
-        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.ERROR,
-    )
-    override val compileKotlinTask: KotlinCompile<KotlinCommonOptions>
-        get() = compileKotlinTaskProvider.get()
-
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.ERROR
-    )
-    override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<KotlinCommonOptions>>
-        get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
-
     override val compileTaskProvider: TaskProvider<out KotlinCompilationTask<*>>
         get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate task $compileKotlinTaskName")
 

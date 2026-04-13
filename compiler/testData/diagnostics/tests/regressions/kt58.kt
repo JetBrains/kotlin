@@ -18,7 +18,7 @@ fun <T> lock(lock : Lock, body :  () -> T) : T {
 //more tests
 fun t1() : Int {
     try {
-        <!UNREACHABLE_CODE!>return<!> 1
+        return 1
     }
     finally {
         return 2

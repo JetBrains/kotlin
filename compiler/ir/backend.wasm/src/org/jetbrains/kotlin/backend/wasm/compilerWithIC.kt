@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmIrProgramFragmentsSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
@@ -19,41 +17,15 @@ import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.wasm.config.wasmDisableCrossFileOptimisations
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WasmCompilerWithIC(
     val mainModule: IrModuleFragment,
-    irBuiltIns: IrBuiltIns,
-    configuration: CompilerConfiguration,
+    val context: WasmBackendContext,
 ) : IrCompilerICInterface {
-    val context: WasmBackendContext
-    protected val idSignatureRetriever: IdSignatureRetriever
-    protected val wasmModuleMetadataCache: WasmModuleMetadataCache
-
-    init {
-        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
-
-        //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
-        repeat(25) {
-            irBuiltIns.functionN(it)
-            irBuiltIns.suspendFunctionN(it)
-            irBuiltIns.kFunctionN(it)
-            irBuiltIns.kSuspendFunctionN(it)
-        }
-
-        context = WasmBackendContext(
-            mainModule.descriptor,
-            irBuiltIns,
-            symbolTable,
-            mainModule,
-            configuration = configuration,
-        )
-
-        idSignatureRetriever = context.irFactory as IdSignatureRetriever
-        wasmModuleMetadataCache = WasmModuleMetadataCache(context)
-    }
+    protected val idSignatureRetriever = context.irFactory as IdSignatureRetriever
+    protected val wasmModuleMetadataCache: WasmModuleMetadataCache = WasmModuleMetadataCache(context)
 
     abstract fun compileFile(irFile: IrFile): IrICProgramFragments
 
@@ -76,15 +48,13 @@ abstract class WasmCompilerWithIC(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithICMultimodule(
     mainModule: IrModuleFragment,
-    irBuiltIns: IrBuiltIns,
-    configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
+    context: WasmBackendContext,
 ) : WasmCompilerWithIC(
     mainModule = mainModule,
-    irBuiltIns = irBuiltIns,
-    configuration = configuration,
+    context = context,
 ) {
     override fun compileFile(irFile: IrFile): WasmIrProgramFragmentsMultimodule {
         val codeFileFragment = WasmCompiledCodeFileFragment()
@@ -157,15 +127,13 @@ open class WasmCompilerWithICMultimodule(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithICSingleModule(
     mainModule: IrModuleFragment,
-    irBuiltIns: IrBuiltIns,
-    configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
+    context: WasmBackendContext,
 ) : WasmCompilerWithIC(
     mainModule = mainModule,
-    irBuiltIns = irBuiltIns,
-    configuration = configuration,
+    context = context,
 ) {
     private fun compileDependencyFile(irFile: IrFile): WasmIrProgramFragmentsSingleModule {
         val dependencyFileFragment = WasmCompiledDependencyFileFragment()
@@ -272,15 +240,13 @@ open class WasmCompilerWithICSingleModule(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WasmCompilerWithICWholeWorld(
     mainModule: IrModuleFragment,
-    irBuiltIns: IrBuiltIns,
-    configuration: CompilerConfiguration,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
+    context: WasmBackendContext,
 ) : WasmCompilerWithIC(
     mainModule = mainModule,
-    irBuiltIns = irBuiltIns,
-    configuration = configuration,
+    context = context,
 ) {
     override fun compileFile(irFile: IrFile): WasmIrProgramFragments {
         val codeFileFragment = WasmCompiledCodeFileFragment()

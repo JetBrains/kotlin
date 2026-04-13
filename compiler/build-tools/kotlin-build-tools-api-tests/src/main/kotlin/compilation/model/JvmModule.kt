@@ -72,12 +72,16 @@ class JvmModule(
                 .toList(),
             outputDirectory
         ) {
+            moduleCompilationConfigAction(this) // apply module-wide configuration
+            compilationConfigAction(this) // apply any overrides for this compilation only
             this.compilerArguments[NO_REFLECT] = true
             this.compilerArguments[NO_STDLIB] = true
             this.compilerArguments[CLASSPATH] = compileClasspath
-            this.compilerArguments[MODULE_NAME] = moduleName
-            moduleCompilationConfigAction(this) // apply module-wide configuration
-            compilationConfigAction(this) // apply any overrides for this compilation only
+            when (compilerArguments[MODULE_NAME]) {
+                null -> compilerArguments[MODULE_NAME] = moduleName
+                EXPLICIT_NULL_MODULE_NAME_MARKER -> compilerArguments[MODULE_NAME] = null
+                else -> {}
+            }
         }
 
         return compilationOperation.let {

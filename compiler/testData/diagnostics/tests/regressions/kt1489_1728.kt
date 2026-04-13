@@ -19,9 +19,9 @@ class C {
     fun p() : Resource? = null
 
     fun bar() {
-        foo(<!TYPE_MISMATCH!>p()<!>) {
+        <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!ARGUMENT_TYPE_MISMATCH!>p()<!>) <!CANNOT_INFER_PARAMETER_TYPE!>{
 
-        }
+        }<!>
     }
 }
 

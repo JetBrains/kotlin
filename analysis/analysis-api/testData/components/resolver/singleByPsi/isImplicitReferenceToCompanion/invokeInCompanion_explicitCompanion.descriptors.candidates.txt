@@ -1,2 +1,0 @@
-KtNameReferenceExpression(100,109): 'Companion'
-  NO_CANDIDATES

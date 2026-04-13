@@ -23,7 +23,7 @@ _Bool __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
 
 NSArray<id> * _Nullable __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(NSArray<id> * x);
 
-_Bool __root___extension__TypesOfArguments__main_Accessor_Swift_Array_Swift_Double__Vararg___(void * receiver, NSArray<NSNumber *> * d);
+_Bool __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(void * receiver, NSArray<NSNumber *> * d);
 
 _Bool __root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(NSArray<NSString *> * a, int32_t b);
 

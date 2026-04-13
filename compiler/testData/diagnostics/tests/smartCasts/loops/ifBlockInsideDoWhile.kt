@@ -6,7 +6,7 @@ public fun foo(p: String?, y: String?): Int {
             "null"
             break
         }
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length
+        y.length
         p!!.length
     } while (true)
     return y?.length ?: -1

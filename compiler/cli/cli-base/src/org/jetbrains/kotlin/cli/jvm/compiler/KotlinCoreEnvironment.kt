@@ -664,7 +664,7 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreApplicationEnvironment {
             val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, environmentMode)
 
-            registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
+            registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler-cli-root.xml")
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)

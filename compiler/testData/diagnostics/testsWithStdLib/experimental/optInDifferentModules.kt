@@ -36,8 +36,8 @@ val x = 2
 
 class MyDto(
     val property1: Int,
-    @UnusedSince(AppVersion.<!OPT_IN_USAGE_ERROR!>V0_2_0<!>) val property2: Int,
-    @UnusedSince(AppVersion.<!OPT_IN_USAGE_ERROR!>V0_2_5<!>) val property3: Int,
+    @UnusedSince(AppVersion.<!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>V0_2_0<!>) val property2: Int,
+    @UnusedSince(AppVersion.<!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>V0_2_5<!>) val property3: Int,
 )
 
 fun bar() {

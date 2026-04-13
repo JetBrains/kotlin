@@ -1,2 +1,0 @@
-KtNameReferenceExpression(69,78): 'Cloneable'
-  null

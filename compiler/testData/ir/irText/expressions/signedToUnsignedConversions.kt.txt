@@ -36,13 +36,13 @@ fun takeUShort(@ImplicitIntegerCoercion u: UShort) {
 }
 
 fun test() {
-  takeUByte(u = toUByte(/* <this> = <get-IMPLICIT_INT>() */))
-  takeUByte(u = toUByte(/* <this> = <get-EXPLICIT_INT>() */))
-  takeUShort(u = toUShort(/* <this> = <get-IMPLICIT_INT>() */))
-  takeUShort(u = toUShort(/* <this> = <get-BIGGER_THAN_UBYTE>() */))
-  takeUInt(u = toUInt(/* <this> = <get-IMPLICIT_INT>() */))
-  takeULong(u = toULong(/* <this> = <get-IMPLICIT_INT>() */))
-  takeUBytes(u = [toUByte(/* <this> = <get-IMPLICIT_INT>() */), toUByte(/* <this> = <get-EXPLICIT_INT>() */), 42B])
+  takeUByte(u = toUByte(/* <this> = 255 */))
+  takeUByte(u = toUByte(/* <this> = 255 */))
+  takeUShort(u = toUShort(/* <this> = 255 */))
+  takeUShort(u = toUShort(/* <this> = 256 */))
+  takeUInt(u = toUInt(/* <this> = 255 */))
+  takeULong(u = toULong(/* <this> = 255 */))
+  takeUBytes(u = [toUByte(/* <this> = 255 */), toUByte(/* <this> = 255 */), 42B])
 }
 
 @ImplicitIntegerCoercion

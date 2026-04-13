@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLAnnotationArgum
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase.Companion.collectAnnotations
@@ -187,5 +187,5 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
 }
 
 abstract class AbstractLLSourceAnnotationArgumentsCalculatorTest : AbstractLLAnnotationArgumentsCalculatorTest() {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator = LLSourceLikeTestConfigurator()
 }

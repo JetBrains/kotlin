@@ -10,8 +10,8 @@ class C() {
 
 fun test(a : Any?) {
   if (a is B) {
-      if (<!USELESS_IS_CHECK!>a is C<!>) {
-          <!DEBUG_INFO_SMARTCAST!>a<!>.bar();
+      if (<!IMPOSSIBLE_IS_CHECK_WARNING!>a is C<!>) {
+          a.bar();
       }
   }
 }

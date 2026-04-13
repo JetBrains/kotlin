@@ -8,12 +8,12 @@ FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
           TYPE_ARG T: kotlin.collections.List<T of <root>.problematic>
           TYPE_ARG R: @[FlexibleNullability] T of <root>.problematic?
           ARG <this>: GET_VAR 'lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> declared in <root>.problematic' type=kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> origin=null
-          ARG transform: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<T of <root>.problematic>, @[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:@[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?>
+          ARG transform: FUN_EXPR type=kotlin.Function1<kotlin.collections.List<T of <root>.problematic>, kotlin.collections.Iterable<@[FlexibleNullability] T of <root>.problematic?>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.collections.Iterable<@[FlexibleNullability] T of <root>.problematic?>
               VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.collections.List<T of <root>.problematic>
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<T of <root>.problematic>): @[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> declared in <root>.problematic'
-                  TYPE_OP type=kotlin.collections.List<@[FlexibleNullability] T of <root>.problematic?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.List<@[FlexibleNullability] T of <root>.problematic?>
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<T of <root>.problematic>): kotlin.collections.Iterable<@[FlexibleNullability] T of <root>.problematic?> declared in <root>.problematic'
+                  TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?>
                     CALL 'public/*package*/ open fun id <T> (v: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.ListId.id?>?): @[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.ListId.id?> declared in <root>.ListId' type=@[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> origin=null
                       TYPE_ARG T: @[FlexibleNullability] T of <root>.problematic?
                       ARG v: GET_VAR 'it: kotlin.collections.List<T of <root>.problematic> declared in <root>.problematic.<anonymous>' type=kotlin.collections.List<T of <root>.problematic> origin=null

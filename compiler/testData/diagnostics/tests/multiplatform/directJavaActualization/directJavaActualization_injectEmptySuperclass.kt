@@ -4,7 +4,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 open class InjectedEmptySuperClass()
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+expect class Foo {
     fun foo()
 }
 

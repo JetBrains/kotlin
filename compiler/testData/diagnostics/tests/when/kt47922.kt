@@ -14,11 +14,11 @@ abstract class NonSealedBase {
 sealed class ToState
 
 val sealedTest: SealedBase.() -> ToState? = {
-    <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(this) {}<!>
+    <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(this) {}<!>
 }
 
 val nonSealedTest: NonSealedBase.() -> ToState? = {
-    <!TYPE_MISMATCH!>when(this) {}<!>
+    <!RETURN_TYPE_MISMATCH!>when(this) {}<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nestedClass, nullableType, objectDeclaration,

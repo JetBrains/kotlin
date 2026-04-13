@@ -1,5 +1,5 @@
 // ISSUE: KT-75316
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
 enum class MyEnum {

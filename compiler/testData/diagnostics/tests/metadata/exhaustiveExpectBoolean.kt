@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-70208
 // WITH_STDLIB
 // Notes: it will be relevant after merging stdlib K2 branch when `kotlin.Boolean` becomes `expect` class

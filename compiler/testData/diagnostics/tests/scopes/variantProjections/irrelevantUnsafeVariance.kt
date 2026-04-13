@@ -6,8 +6,8 @@ interface A<T> {
 }
 
 fun foo(a1: A<out Any?>, a2: A<*>) {
-    a1.foo("")
-    a2.foo("")
+    a1.foo(<!MEMBER_PROJECTED_OUT!>""<!>)
+    a2.foo(<!MEMBER_PROJECTED_OUT!>""<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, outProjection, starProjection,

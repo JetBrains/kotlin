@@ -11,7 +11,7 @@ expect open class Foo {
 }
 
 fun common(foo: Foo) {
-    foo.<!INVISIBLE_MEMBER!>foo<!>()
+    foo.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
 // MODULE: jvm()()(common)
@@ -25,7 +25,7 @@ public class FooImpl {
 // FILE: jvm.kt
 package pkg
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> = FooImpl
+actual typealias Foo = FooImpl
 
 fun jvm(foo: Foo) {
     foo.foo()

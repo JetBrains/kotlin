@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -137,16 +137,6 @@ fun <T, R> Collection<T>.singleOrZeroValue(
         })
     }
 }
-
-private val snapshotVersionRegex: Regex = """-2\.\d\.\d+-(\w+-\d+|SNAPSHOT|RC\d*)""".toRegex()
-
-/**
- * Removes version suffix from kotlin libraries, like stdlib or kotlin-reflect:
- * kotlin-stdlib-2.4.255-SNAPSHOT -> kotlin-stdlib
- * kotlin-stdlib-2.4.0-dev-1234 -> kotlin-stdlib
- * kotlin-stdlib-2.4.0-RC3 -> kotlin-stdlib
- */
-fun String.stripOutSnapshotVersion(): String = replace(snapshotVersionRegex, "")
 
 /**
  * Removes the given Kotlin [version] suffix from the file name.

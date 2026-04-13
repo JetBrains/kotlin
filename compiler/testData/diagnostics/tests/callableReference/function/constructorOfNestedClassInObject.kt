@@ -14,10 +14,10 @@ class Outer {
 
 fun test() {
     A::Wrapper
-    (A)::<!UNRESOLVED_REFERENCE!>Wrapper<!>
+    (A)::Wrapper
 
     Outer.Companion::Wrapper
-    (Outer.Companion)::<!UNRESOLVED_REFERENCE!>Wrapper<!>
+    (Outer.Companion)::Wrapper
     Outer::<!UNRESOLVED_REFERENCE!>Wrapper<!>
     (Outer)::<!UNRESOLVED_REFERENCE!>Wrapper<!>
 }

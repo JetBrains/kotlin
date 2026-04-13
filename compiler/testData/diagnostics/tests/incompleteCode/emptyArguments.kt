@@ -52,15 +52,15 @@ fun test() {
 
     asTypedFunc(a = A(), <!SYNTAX!><!>, c)
     asTypedFunc(c = C(), <!SYNTAX!><!>, <!NO_VALUE_FOR_PARAMETER!>b = B())<!>
-    asTypedFunc(<!SYNTAX!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>b<!>,)<!>
-    asTypedFunc(<!SYNTAX!><!>, <!TYPE_MISMATCH!>a<!>, <!ARGUMENT_PASSED_TWICE!>b<!> = B(), <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>c<!>)<!>
-    asTypedFunc(<!SYNTAX!><!>, b = B(), <!TYPE_MISMATCH!>a<!>, <!TOO_MANY_ARGUMENTS!>c<!>)
+    asTypedFunc(<!SYNTAX!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>b<!>,)<!>
+    asTypedFunc(<!SYNTAX!><!>, <!ARGUMENT_TYPE_MISMATCH!>a<!>, <!ARGUMENT_PASSED_TWICE!>b<!> = B(), <!NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>c<!>)<!>
+    asTypedFunc(<!SYNTAX!><!>, b = B(), <!ARGUMENT_TYPE_MISMATCH!>a<!>, <!TOO_MANY_ARGUMENTS!>c<!>)
     asTypedFunc(a = A(), <!SYNTAX!><!>, c)
     asTypedFunc(a = A(), <!SYNTAX!><!>, c = C(),)
     asTypedFunc(a = A(), <!SYNTAX!><!>, c,)
     asTypedFunc(a = A(), <!SYNTAX!><!>,)
     asTypedFunc(<!SYNTAX!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), b = B(), c = C())
-    asTypedFunc(<!SYNTAX!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), <!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>b<!>, <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONED_ARGUMENTS!>c<!>)<!>
+    asTypedFunc(<!SYNTAX!><!>, <!ARGUMENT_PASSED_TWICE!>a<!> = A(), <!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>b<!>, <!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!><!MIXING_NAMED_AND_POSITIONAL_ARGUMENTS!>c<!>)<!>
     asTypedFunc(<!SYNTAX!><!>, <!SYNTAX!><!>, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_PASSED_TWICE!>a<!> = A())<!>
     asTypedFunc(<!SYNTAX!><!>, <!SYNTAX!><!>, c = C())
 }

@@ -4,7 +4,7 @@
 open class Foo {
     constructor()
 
-    <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING!>open val x: String<!>
+    open <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING!>val x: String<!>
 
     init {
         x = ""

@@ -1,3 +1,0 @@
-package
-
-public val i: kotlin.Int = 10

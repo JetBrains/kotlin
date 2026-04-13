@@ -15,20 +15,20 @@ fun <T> mc(): MC<T> = null!!
 fun <T> c(): C<T> = null!!
 
 fun foo(x: MC<out Open>) {
-    x.addAll(<!TYPE_MISMATCH!>x<!>)
-    x.addAllMC(<!TYPE_MISMATCH!>x<!>)
+    x.addAll(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    x.addAllMC(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
-    x.addAll(<!TYPE_MISMATCH!>mc<Open>()<!>)
-    x.addAllMC(<!TYPE_MISMATCH!>mc<Open>()<!>)
+    x.addAll(<!ARGUMENT_TYPE_MISMATCH!>mc<Open>()<!>)
+    x.addAllMC(<!ARGUMENT_TYPE_MISMATCH!>mc<Open>()<!>)
 
-    x.addAll(<!TYPE_MISMATCH!>mc<Derived>()<!>)
-    x.addAllMC(<!TYPE_MISMATCH!>mc<Derived>()<!>)
+    x.addAll(<!ARGUMENT_TYPE_MISMATCH!>mc<Derived>()<!>)
+    x.addAllMC(<!ARGUMENT_TYPE_MISMATCH!>mc<Derived>()<!>)
 
     x.addAll(c())
     x.addAll(c<Nothing>())
 
-    x.addAllInv(<!TYPE_MISMATCH!>mc<Open>()<!>)
-    x.addAll(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    x.addAllInv(<!ARGUMENT_TYPE_MISMATCH!>mc<Open>()<!>)
+    x.addAll(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration,

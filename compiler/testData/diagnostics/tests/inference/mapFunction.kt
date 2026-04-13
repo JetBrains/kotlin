@@ -21,8 +21,8 @@ fun foo() {
     checkSubtype<List<Int>>(b)
 
     //check for non-error types
-    checkSubtype<String>(<!TYPE_MISMATCH!>u<!>)
-    checkSubtype<String>(<!TYPE_MISMATCH!>b<!>)
+    checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>u<!>)
+    checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>b<!>)
 }
 
 

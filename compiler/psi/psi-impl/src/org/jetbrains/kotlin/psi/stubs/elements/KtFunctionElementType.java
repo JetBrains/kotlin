@@ -77,7 +77,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         dataStream.writeBoolean(haveContract);
 
         if (haveContract) {
-            StubUtils.writeContract(dataStream, stub.getContract());
+            StubUtils.writeContract$org_jetbrains_kotlin_psi_impl(dataStream, stub.getContract());
         }
 
         StubUtils.serializeKdocText(dataStream, stub.getKdocText());
@@ -101,7 +101,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         boolean mayHaveContract = dataStream.readBoolean();
 
         @SuppressWarnings("rawtypes")
-        List<KtContractDescriptionElement> contract = mayHaveContract ? StubUtils.readContract(dataStream) : null;
+        List<KtContractDescriptionElement> contract = mayHaveContract ? StubUtils.readContract$org_jetbrains_kotlin_psi_impl(dataStream) : null;
 
         String kdocText = StubUtils.deserializeKdocText(dataStream);
         return new KotlinFunctionStubImpl(

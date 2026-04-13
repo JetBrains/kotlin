@@ -11,7 +11,7 @@ interface B {
 
 fun test(c: Any) {
     if (c is B && c is A) {
-        <!DEBUG_INFO_SMARTCAST!>c<!>.foo().checkType { _<String>() }
+        c.foo().checkType { _<String>() }
     }
 }
 

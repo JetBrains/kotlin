@@ -172,11 +172,8 @@
 /compiler/test-infrastructure-utils.common/ "Kotlin Frontend"
 /compiler/test-engine-sandbox/ "Kotlin Frontend" "Kotlin Common Backend"
 
-/compiler/testData/asJava/findClasses/ "Kotlin Frontend"
-/compiler/testData/asJava/lightClasses/ "Kotlin Analysis API"
 /compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/checkLocalVariablesTable/ "Kotlin JVM"
-/compiler/testData/classpathOrder/ "Kotlin JVM"
 /compiler/testData/cli/ "Kotlin Frontend"
 /compiler/testData/cli/js/ "Kotlin JS" "Kotlin Frontend"
 /compiler/testData/cli/js/js*Help.out "Kotlin JS" "Kotlin Frontend"
@@ -209,47 +206,29 @@
 /compiler/testData/compileJavaAgainstKotlin/ "Kotlin Frontend" "Kotlin JVM"
 /compiler/testData/compileKotlinAgainstCustomBinaries/ "Kotlin Frontend"
 /compiler/testData/compileKotlinAgainstJava/ "Kotlin Frontend" "Kotlin JVM"
-/compiler/testData/compiler/smoke/ "Kotlin Frontend"
 /compiler/testData/debug/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin JS" "Kotlin Wasm"
 /compiler/testData/diagnostics/ "Kotlin Frontend"
 /compiler/testData/diagnostics/klibSerializationTests/ "Kotlin Common Backend"
 /compiler/testData/diagnostics/irInliner/ "Kotlin Common Backend"
-/compiler/testData/friendPaths/ "Kotlin Frontend"
-# UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin Common Backend"
 /compiler/testData/ir/irText/ "Kotlin Compiler"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
-/compiler/testData/javaModules/ "Kotlin JVM"
 /compiler/testData/klib/ "Kotlin Common Backend"
 /compiler/testData/kotlinClassFinder/ "Kotlin Frontend"
-# UNKNOWN: /compiler/testData/launcher/
-/compiler/testData/lexer/ "Kotlin Frontend"
 /compiler/testData/loadJava/ "Kotlin Frontend"
 /compiler/testData/loadJava8/ "Kotlin Frontend"
 /compiler/testData/loadJavaPackageAnnotations/ "Kotlin Frontend"
-/compiler/testData/mockJDK/ "Kotlin Build Infrastructure"
-/compiler/testData/mockJDK9/ "Kotlin Build Infrastructure"
-/compiler/testData/mockJDKModified/ "Kotlin Build Infrastructure"
 /compiler/testData/moduleProtoBuf/ "Kotlin JVM"
 /compiler/testData/modules.xml/ "Kotlin Frontend"
-/compiler/testData/multiModule/ "Kotlin Frontend"
-# UNKNOWN: /compiler/testData/multiplatform/
-/compiler/testData/psiUtil/ "Kotlin Analysis API"
 /compiler/testData/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
-/compiler/testData/repl/ "Kotlin Frontend"
-/compiler/testData/resolveAnnotations/ "Kotlin Frontend"
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
-/compiler/testData/typeQualifierNickname/ "Kotlin Frontend"
 /compiler/testData/versionRequirement/ "Kotlin JVM"
 /compiler/testData/writeFlags/ "Kotlin JVM"
 /compiler/testData/writeSignature/ "Kotlin JVM"
-/compiler/testData/type-checker-test.kt "Kotlin Frontend"
-/compiler/testData/type-substitutor.kt "Kotlin Frontend"
 /compiler/tests/ "Kotlin Compiler"
-/compiler/tests/org/jetbrains/kotlin/psi/ "Kotlin Analysis API"
 /compiler/testFixtures/ "Kotlin Compiler"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Compiler"
@@ -263,6 +242,14 @@
 /compiler/tests-compiler-utils/ "Kotlin Compiler"
 /compiler/tests-integration/ "Kotlin Compiler"
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ "Kotlin Common Backend"
+
+/compiler/tests-integration/testData/smoke/ "Kotlin Frontend"
+/compiler/tests-integration/testData/javaModules/ "Kotlin JVM"
+/compiler/tests-integration/testData/multiModule/ "Kotlin Frontend"
+# UNKNOWN: /compiler/tests-integration/testData/integration/
+# UNKNOWN: /compiler/tests-integration/testData/launcher/
+# UNKNOWN: /compiler/tests-integration/testData/multiplatform/
+
 /compiler/tests-different-jdk/ "Kotlin JVM"
 /compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
@@ -501,6 +488,7 @@
 /tests/ "Kotlin" "Kotlin Build Infrastructure"
 
 /third-party/ "Kotlin Frontend"
+/third-party/mockJDKs/ "Kotlin Build Infrastructure"
 
 /wasm/ "Kotlin Wasm"
 /wasm/wasm.tests/klib-compatibility/ "Kotlin Common Backend"

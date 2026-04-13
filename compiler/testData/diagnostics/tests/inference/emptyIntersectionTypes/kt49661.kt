@@ -9,7 +9,7 @@ inline fun <R> f(block: ()->R?): R? {
 }
 
 fun main() {
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>f<!><Int> { g() }
+    f<Int> { <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING, TYPE_INTERSECTION_AS_REIFIED_ERROR!>g<!>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, intersectionType, lambdaLiteral,

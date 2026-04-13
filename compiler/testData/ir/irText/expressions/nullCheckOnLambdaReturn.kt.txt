@@ -1,5 +1,5 @@
 val test2: Function0<Any>
-  field = local fun <anonymous>(): @FlexibleNullability String? {
+  field = local fun <anonymous>(): Any {
     return foo() /*!! String */
   }
 

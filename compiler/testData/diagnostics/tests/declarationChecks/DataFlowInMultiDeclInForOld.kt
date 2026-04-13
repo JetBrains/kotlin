@@ -1,6 +1,5 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // KT-2667 Support multi-declarations in for-loops in control flow analysis
 package d
 

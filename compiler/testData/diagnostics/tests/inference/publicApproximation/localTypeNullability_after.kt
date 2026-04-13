@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-53982
-// FIR_IDENTICAL
 // LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
 
 interface I

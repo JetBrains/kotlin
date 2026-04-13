@@ -9,7 +9,7 @@ fun use() {
     var x: Int?
     x = 5
     // Write is AFTER
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
     // x is nullable at the second argument
     foo(bar { x = null }, x!!)
 }

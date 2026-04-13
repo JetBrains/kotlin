@@ -95,7 +95,7 @@ internal class CompilationSpecificPluginPath {
 
             kotlin {
                 jvm("desktop")
-                js("web", IR) {
+                js("web") {
                     browser()
                 }
             }

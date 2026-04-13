@@ -36,5 +36,5 @@ import kotlin.concurrent.atomics.AtomicInt
 
 class KotlinChildWithExplicitOverride: JavaClassWithExplicitOverride() {
     override <!ACCIDENTAL_OVERRIDE!>fun foo(a: AtomicInt) {}<!>
-    override <!ACCIDENTAL_OVERRIDE!>val a: AtomicInt = AtomicInt(0)<!>
+    override <!ACCIDENTAL_OVERRIDE!>val a: AtomicInt<!> = AtomicInt(0)
 }

@@ -18,7 +18,7 @@ fun isString(x: Any?): Boolean {
 
 fun implicitAlwaysFalse(x: Any?) {
     if (isString(x) && !isString(x)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -27,7 +27,7 @@ fun implicitAlwaysFalse(x: Any?) {
 
 fun implicitAlwaysFalseSpilling(x: Any?) {
     if (isString(x) && !isString(x)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }

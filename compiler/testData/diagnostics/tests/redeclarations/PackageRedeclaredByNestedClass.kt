@@ -1,9 +1,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
-package a.b
+package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
 
 // FILE: b.kt
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>a<!> {
+class a {
     class b
 }
 

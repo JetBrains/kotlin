@@ -9,7 +9,7 @@ private class Private {
 
 import <!INVISIBLE_REFERENCE!>Private<!>.Public
 
-private fun test_1(x: <!INVISIBLE_REFERENCE!>Private<!>.<!INVISIBLE_REFERENCE!>Public<!>, y: <!INVISIBLE_REFERENCE!>Public<!>) {
+private fun test_1(x: <!INVISIBLE_REFERENCE!>Private<!>.Public, y: <!INVISIBLE_REFERENCE!>Public<!>) {
 
 }
 

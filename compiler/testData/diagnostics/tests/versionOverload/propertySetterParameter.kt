@@ -5,7 +5,7 @@
 
 class B {
     var x: Int = 0
-        set(@IntroducedAt("1") value) {
+        set(<!INVALID_VERSIONING_ON_NON_OPTIONAL!>@IntroducedAt("1")<!> value) {
         field = value
     }
 }

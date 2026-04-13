@@ -21,14 +21,14 @@ fun main() {
     val nullableNumber3 = first(nullableNumbers() ?: materializeArray())
     val nullableNumber4 = first(nullableNumbersNullableArray() ?: materializeArray())
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>number1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>number2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>number3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>number4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumber1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumber2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumber3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumber4<!>
+    number1
+    number2
+    number3
+    number4
+    nullableNumber1
+    nullableNumber2
+    nullableNumber3
+    nullableNumber4
 }
 
 /* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, inline, localProperty, nullableType, outProjection,

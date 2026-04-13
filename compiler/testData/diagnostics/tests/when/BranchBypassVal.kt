@@ -18,7 +18,7 @@ fun test(a: Any): String {
         is A -> q!!
     }
     // When is not exhaustive
-    return <!TYPE_MISMATCH!>q<!>
+    return <!RETURN_TYPE_MISMATCH!>q<!>
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, isExpression, localProperty,

@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: jvm.kt
 
-actual fun <!ACTUAL_WITHOUT_EXPECT{JVM}!>foo<!>() { }
+actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>foo<!>() { }
 
 // MODULE: m1-jvm()()(m1-common)
 

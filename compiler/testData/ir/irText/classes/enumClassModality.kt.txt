@@ -3,7 +3,7 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   X1 = X1()
   private enum entry class X1 : TestAbstractEnum1 {
     private constructor() /* primary */ {
-      super/*TestAbstractEnum1*/() /*~> Unit */
+      super/*TestAbstractEnum1*/()
       /* <init>() */
 
     }
@@ -35,7 +35,7 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   X1 = X1()
   private enum entry class X1 : TestAbstractEnum2 {
     private constructor() /* primary */ {
-      super/*TestAbstractEnum2*/() /*~> Unit */
+      super/*TestAbstractEnum2*/()
       /* <init>() */
 
     }
@@ -126,7 +126,7 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   X1 = X1()
   private enum entry class X1 : TestOpenEnum1 {
     private constructor() /* primary */ {
-      super/*TestOpenEnum1*/() /*~> Unit */
+      super/*TestOpenEnum1*/()
       /* <init>() */
 
     }
@@ -157,7 +157,7 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   X1 = X1()
   private enum entry class X1 : TestOpenEnum2 {
     private constructor() /* primary */ {
-      super/*TestOpenEnum2*/() /*~> Unit */
+      super/*TestOpenEnum2*/()
       /* <init>() */
 
     }

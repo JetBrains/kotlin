@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // KT-70384
 
 // MODULE: library1

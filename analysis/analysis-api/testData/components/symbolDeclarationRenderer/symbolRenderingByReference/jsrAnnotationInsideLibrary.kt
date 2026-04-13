@@ -1,4 +1,3 @@
-// IGNORE_FE10
 
 // MODULE: anno
 // MODULE_KIND: LibraryBinary

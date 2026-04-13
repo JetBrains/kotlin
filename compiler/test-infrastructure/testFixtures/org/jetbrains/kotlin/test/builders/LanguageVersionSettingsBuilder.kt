@@ -122,6 +122,7 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(JvmAnalysisFlags.inheritMultifileParts, trueOrNull(LanguageSettingsDirectives.INHERIT_MULTIFILE_PARTS in directives)),
             analysisFlag(JvmAnalysisFlags.sanitizeParentheses, trueOrNull(LanguageSettingsDirectives.SANITIZE_PARENTHESES in directives)),
             analysisFlag(JvmAnalysisFlags.enableJvmPreview, trueOrNull(LanguageSettingsDirectives.ENABLE_JVM_PREVIEW in directives)),
+            analysisFlag(JvmAnalysisFlags.implicitJvmExposeBoxed, trueOrNull(LanguageSettingsDirectives.JVM_EXPOSE_BOXED in directives)),
 
             analysisFlag(AnalysisFlags.explicitApiVersion, trueOrNull(apiVersion != null)),
         )

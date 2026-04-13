@@ -1,8 +1,0 @@
-package
-
-public fun bar(/*0*/ x: kotlin.Int): kotlin.Int
-public fun f1(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun f2(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun f3(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun f4(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun f5(/*0*/ x: kotlin.Int?): kotlin.Unit

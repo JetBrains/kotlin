@@ -9,8 +9,8 @@ object Test1 {
         fun bar(x: Int = 0): String = ""
 
         fun test() {
-            val result = foo(<!COMPATIBILITY_WARNING!>::bar<!>)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+            val result = foo(::bar)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
         }
     }
 }
@@ -23,7 +23,7 @@ object Test2 {
         fun bar(): String = ""
 
         fun test() {
-            foo(<!COMPATIBILITY_WARNING!>::bar<!>)
+            foo(::bar)
         }
     }
 }
@@ -36,8 +36,8 @@ object Test3 {
         fun bar(vararg ints: Int): String = ""
 
         fun test() {
-            val result = foo(<!COMPATIBILITY_WARNING!>::bar<!>)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+            val result = foo(::bar)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
         }
     }
 }

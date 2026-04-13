@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // MODULE: lib
 // FILE: Lib.kt
-@<!UNRESOLVED_REFERENCE!>ExposedCopyVisibility<!>
+@ExposedCopyVisibility
 data class Foo private constructor(val x: Int) {
     companion object {
         fun new() = Foo(1)
@@ -13,7 +13,7 @@ data class Foo private constructor(val x: Int) {
 // PROGRESSIVE_MODE
 // FILE: main.kt
 fun main() {
-    <!UNRESOLVED_REFERENCE!>Foo<!>.new().copy()
+    Foo.new().<!DATA_CLASS_INVISIBLE_COPY_USAGE_ERROR!>copy<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, functionDeclaration, integerLiteral, objectDeclaration,

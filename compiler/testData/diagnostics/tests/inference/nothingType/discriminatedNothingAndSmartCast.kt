@@ -8,14 +8,14 @@ inline fun <reified M> parse(): M? = TODO()
 fun test(s: String?, silent: Boolean) {
     val result: ExpectedType =
         if (s != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ExpectedType?")!>parse()<!> ?: TODO()
-        } else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>if (silent) {
+            parse() ?: TODO()
+        } else if (silent) {
             return
         } else {
             throw Exception()
-        }<!>
+        }
 
-    <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    s.length
 }
 
 /* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, inline,

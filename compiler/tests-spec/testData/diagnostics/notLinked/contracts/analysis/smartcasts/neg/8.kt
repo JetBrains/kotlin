@@ -68,39 +68,39 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     funWithReturns(value_1 !is Number?)
-    println(value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    println(value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
     if (funWithReturnsTrue(value_1 !is Number)) {
-        println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
-        if (funWithReturnsNotNull(value_1 is Int) == null) println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        if (funWithReturnsNotNull(value_1 is Int) == null) println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
     if (!funWithReturnsFalse(value_1 !is Number?)) {
-        println(value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_1<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
         funWithReturns(value_1 !is Number)
-        println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
-        if (funWithReturnsNull(value_1 !is Int) == null) println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+        println(value_1.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        if (funWithReturnsNull(value_1 !is Int) == null) println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?, value_2: Any?) {
     if (!value_1.case_3(value_1, value_2 is Number?)) {
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
-        println(<!DEBUG_INFO_CONSTANT!>value_1<!>)
+        println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1)
     } else if (value_1.case_3(value_1, value_2 is Number?)) {
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     } else {
-        println(value_2?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+        println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     if (contracts.case_4(value_1, value_2) == true) {
-        value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
@@ -113,11 +113,11 @@ fun case_5(value_1: Number?, value_2: String?) {
     when (value_2.case_5(value_1)) {
         true -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
-            println(value_1<!UNSAFE_CALL!>.<!>toByte())
+            println(value_1.toByte())
         }
         false -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+            println(value_1.inv())
         }
         else -> {}
     }
@@ -135,7 +135,7 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
             println(value_2<!UNSAFE_CALL!>.<!>length)
         }
         null -> {
-            println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+            println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
         }
     }
 }

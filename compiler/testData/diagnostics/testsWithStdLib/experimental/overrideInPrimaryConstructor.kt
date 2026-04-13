@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
-// FIR_IDENTICAL
 
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class E

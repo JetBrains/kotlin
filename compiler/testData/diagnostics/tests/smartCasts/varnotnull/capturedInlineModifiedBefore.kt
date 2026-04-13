@@ -12,7 +12,7 @@ fun test() {
     if (label == null) {
         label = "zzz"
     }
-    <!SMARTCAST_IMPOSSIBLE!>label<!>.isBlank()
+    label.isBlank()
 }
 
 /* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,

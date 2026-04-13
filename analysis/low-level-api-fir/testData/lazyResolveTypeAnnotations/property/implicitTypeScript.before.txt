@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol lowlevel/explicitType], ScriptTopLevelDeclaration=true] var implicitType: R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
@@ -72,4 +72,3 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeScript.kts
             }
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
             }
-

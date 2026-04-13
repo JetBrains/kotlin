@@ -7,7 +7,7 @@
 annotation class Annot
 
 @Annot
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT{JVM}!>expect<!> class Foo
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

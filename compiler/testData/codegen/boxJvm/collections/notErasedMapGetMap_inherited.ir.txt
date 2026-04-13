@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/main.kt
             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
               ARG <this>: CONST String type=kotlin.String value="fail"
               ARG other: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
-                TYPE_ARG T0: kotlin.String
+                TYPE_ARG T0: @[EnhancedNullability] kotlin.String
                 ARG arg0: CALL 'public open fun get (key: @[FlexibleNullability] kotlin.String?): @[EnhancedNullability] V of <root>.MyMap? declared in <root>.MyMap' type=@[EnhancedNullability] kotlin.String? origin=null
                   ARG <this>: GET_VAR 'val test2: <root>.MyMap<kotlin.String> declared in <root>.box' type=<root>.MyMap<kotlin.String> origin=null
                   ARG key: CONST String type=kotlin.String value="test"

@@ -31,31 +31,31 @@ fun test() {
         select(materialize(), null)
     } else null
 
-    val x5: String? = select(if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null, null)
+    val x5: String? = select(if (true) materialize() else null, null)
 
-    val x6: String? = select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
+    val x6: String? = select(materialize(), null)
 
-    val x7: String? = select(null.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>idFromReceiver<!>(), null)
+    val x7: String? = select(null.idFromReceiver(), null)
 
-    val x8: String? = select(null.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>idFromReceiverWithArg<!>(""), null)
+    val x8: String? = select(null.idFromReceiverWithArg(""), null)
 
     val foo = Foo<Nothing?>()
 
-    val x9: String? = select(foo.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
-    val x10: String? = select(foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
+    val x9: String? = select(foo.materialize(), null)
+    val x10: String? = select(foo.<!CANNOT_INFER_PARAMETER_TYPE!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
     val x11: String? = select(foo.idFromClassTypeArg(), null)
 
     foo.run {
-        val x12: String? = select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
-        val x13: String? = select(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
+        val x12: String? = select(materialize(), null)
+        val x13: String? = select(<!CANNOT_INFER_PARAMETER_TYPE!>idFromClassTypeArgWithAnotherTypeArg<!>(), null)
         val x14: String? = select(idFromClassTypeArg(), null)
     }
 
     val boolean: Boolean? = true
 
     val x15: String? = when (boolean) {
-        true -> select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
-            false -> select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
+        true -> select(materialize(), null)
+            false -> select(materialize(), null)
             null -> null
     }
 
@@ -66,8 +66,8 @@ fun test() {
     }
 
     val x17: String? = when (boolean) {
-        true -> if (true) null else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>()
-        false -> if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null
+        true -> if (true) null else materialize()
+        false -> if (true) materialize() else null
             null -> if (true) null else null
     }
 
@@ -87,17 +87,17 @@ fun test() {
 
     val x23: String? = if (true) id(null) else null
 
-    foo1(if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null)
+    foo1(if (true) materialize() else null)
 
-    val x24 = id(foo1(if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null))
+    val x24 = id(foo1(if (true) materialize() else null))
 
-    val x25 = select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null).foo2()
+    val x25 = select(materialize(), null).foo2()
 
     // TODO
     val x26 = select(materialize(), null).run { foo2() }
 
     val x27: () -> String? = {
-        id(id(if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null))
+        id(id(if (true) materialize() else null))
     }
 }
 

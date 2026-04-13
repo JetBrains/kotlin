@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.services.CompilationStage
 
 object FrontendKinds {
-    object ClassicFrontend : FrontendKind<ClassicFrontendOutputArtifact>("ClassicFrontend")
     object FIR : FrontendKind<FirOutputArtifact>("FIR")
 
     fun fromString(string: String): FrontendKind<*>? {
         return when (string) {
-            "ClassicFrontend" -> ClassicFrontend
             "FIR" -> FIR
             else -> null
         }

@@ -7,7 +7,7 @@ class Cell {
 
 fun box(): String {
     val c = Cell()
-    (c<!NO_SET_METHOD!>[0]<!>)++
+    (<!UNRESOLVED_REFERENCE!>c[0]<!>)++
     return "OK"
 }
 

@@ -8,21 +8,21 @@ public interface JavaInterface {
 
 // FILE: KotlinContextAndExtensionInterface.kt
 interface KotlinContextAndExtensionInterface {
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(a: String)
     val String.foo: String
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(a: String)
     fun String.bar(b: String): String
 }
 
 // FILE: test.kt
-interface Intersection : KotlinContextAndExtensionInterface, JavaInterface
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface Intersection : KotlinContextAndExtensionInterface, JavaInterface<!>
 
 interface IntersectionWithOverride : KotlinContextAndExtensionInterface, JavaInterface {
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(a: String)
     override val String.foo: String
-        get() = ""
+        <!ACCIDENTAL_OVERRIDE!>get() = ""<!>
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
-    override fun String.bar(b: String): String
+    context(a: String)
+    override <!ACCIDENTAL_OVERRIDE!>fun String.bar(b: String): String<!>
 }

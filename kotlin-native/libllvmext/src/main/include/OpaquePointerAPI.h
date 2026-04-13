@@ -1,19 +1,17 @@
+// Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language
+// contributors. Use of this source code is governed by the Apache 2.0 license
+// that can be found in the license/LICENSE.txt file.
 
 #ifndef LIBLLVMEXT_OPAQUE_POINTER_API_H
 #define LIBLLVMEXT_OPAQUE_POINTER_API_H
 
-#include <llvm-c/Core.h>
-#include <llvm-c/Target.h>
+#include "llvm-c/ExternC.h"
+#include "llvm-c/Types.h"
 
-# ifdef __cplusplus
-extern "C" {
-# endif
+LLVM_C_EXTERN_C_BEGIN
 
-unsigned LLVMGetProgramAddressSpace(LLVMModuleRef moduleRef);
+unsigned LLVMKotlinGetProgramAddressSpace(LLVMModuleRef M);
 
-# ifdef __cplusplus
-}
-# endif
+LLVM_C_EXTERN_C_END
 
-#endif // LIBLLVMEXT_OPAQUE_POINTER_API_H
-
+#endif

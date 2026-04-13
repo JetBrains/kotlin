@@ -12,9 +12,9 @@ object O {
 
 fun main() {
     var b = O
-    (b)++
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(b)<!>++
 
-    (O[1])++
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(O[1])<!>++
     (O)[0]++
 }
 

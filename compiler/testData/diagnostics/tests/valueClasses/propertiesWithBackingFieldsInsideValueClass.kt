@@ -36,9 +36,9 @@ value class Foo(val x: Int) : A, B {
     override val goodSize: Int
         get() = 0
 
-    <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>override val badSize: Int<!> = 0
+    override <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val badSize: Int<!> = 0
 
-    <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>lateinit var lateinitProperty: String<!>
+    lateinit <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>var lateinitProperty: String<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, getter, integerLiteral, interfaceDeclaration,

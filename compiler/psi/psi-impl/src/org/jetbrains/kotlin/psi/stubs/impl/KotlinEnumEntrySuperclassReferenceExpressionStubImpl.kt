@@ -10,6 +10,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -26,4 +27,9 @@ class KotlinEnumEntrySuperclassReferenceExpressionStubImpl(
             parent = newParent,
             referencedNameRef = referencedNameRef,
         )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinEnumEntrySuperclassReferenceExpressionStubImpl &&
+                other.referencedNameRef == referencedNameRef
 }

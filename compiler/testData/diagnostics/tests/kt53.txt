@@ -1,4 +1,0 @@
-package
-
-public val </*0*/ T> T.foo: T?
-public fun test(): kotlin.Int?

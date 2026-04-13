@@ -19,7 +19,7 @@ fun main() {
 val w = <!EXPRESSION_EXPECTED!>while (true) {}<!>
 
 fun foo() {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 2
+    var z = 2
     val r = {  // type fun(): Any is inferred
         if (true) {
             2
@@ -28,7 +28,7 @@ fun foo() {
             z = 34
         }
     }
-    val f: ()-> Int = <!TYPE_MISMATCH!>r<!>
+    val f: ()-> Int <!INITIALIZER_TYPE_MISMATCH!>=<!> r
     val g: ()-> Any = r
 }
 
@@ -73,7 +73,7 @@ fun testCoercionToUnit() {
         }
     }
 
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 43
+    var x = 43
     val checkType = {
         if (true) {
             x = 4
@@ -81,7 +81,7 @@ fun testCoercionToUnit() {
             45
         }
     }
-    val f : () -> String = <!TYPE_MISMATCH!>checkType<!>
+    val f : () -> String <!INITIALIZER_TYPE_MISMATCH!>=<!> checkType
 }
 
 fun doSmth(i: Int) {}
@@ -91,22 +91,22 @@ fun testImplicitCoercion() {
     var z = 0
     var i = when(d) {
         3 -> null
-        4 -> { val <!NAME_SHADOWING!>z<!> = 23 }
+        4 -> { val z = 23 }
         else -> z = 20
     }
 
     var u = when(d) {
-        3 -> { <!IMPLICIT_CAST_TO_ANY!>z = 34<!> }
-        else -> <!IMPLICIT_CAST_TO_ANY!>z--<!>
+        3 -> { z = 34 }
+        else -> z--
     }
 
     var iff = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
         z = 34
     }
     val g = <!INVALID_IF_AS_EXPRESSION!>if<!> (true) 4
-    val h = if (false) <!IMPLICIT_CAST_TO_ANY!>4<!> else <!IMPLICIT_CAST_TO_ANY!>{}<!>
+    val h = if (false) 4 else {}
 
-    bar(<!TYPE_MISMATCH!>if (true) {
+    bar(<!ARGUMENT_TYPE_MISMATCH!>if (true) {
         4
     } else {
         z = 342
@@ -149,7 +149,7 @@ fun fooWithAnuNullableResult(s: String?, name: String, optional: Boolean): Any? 
 fun bar(a: Unit) {}
 
 fun testStatementInExpressionContext() {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 34
+    var z = 34
     val a1: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 334<!>
     val f = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
     if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = 34<!>

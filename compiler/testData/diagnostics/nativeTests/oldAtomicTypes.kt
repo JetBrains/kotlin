@@ -25,11 +25,11 @@ class Owner(l: <!NATIVE_SPECIFIC_ATOMIC!>AtomicLong<!>) {
 
 context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicIntArray<!>)
 fun withContext() {
-    val <!UNUSED_VARIABLE!>i<!>: AtomicInt? = null
+    val i: AtomicInt? = null
 
-    val <!UNUSED_VARIABLE!>f<!> = fun(arg: AtomicLong?): AtomicLong? = null
+    val f = fun(arg: AtomicLong?): AtomicLong? = null
 
-    val <!UNUSED_VARIABLE!>l<!> = { arg: <!OPT_IN_USAGE_ERROR!>AtomicIntArray<!> -> <!OPT_IN_USAGE_ERROR!>arg<!> }
+    val l = { arg: <!OPT_IN_USAGE_ERROR!>AtomicIntArray<!> -> <!OPT_IN_USAGE_ERROR!>arg<!> }
 }
 
 context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicLongArray<!>)

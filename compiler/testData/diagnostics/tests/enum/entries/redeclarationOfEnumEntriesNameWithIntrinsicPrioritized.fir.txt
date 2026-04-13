@@ -1,4 +1,4 @@
-FILE: redeclarationOfEnumEntriesNameWithIntrinsicPrioritized.fir.kt
+FILE: redeclarationOfEnumEntriesNameWithIntrinsicPrioritized.kt
     public final enum class E : R|kotlin/Enum<E>| {
         private constructor(): R|E| {
             super<R|kotlin/Enum<E>|>()

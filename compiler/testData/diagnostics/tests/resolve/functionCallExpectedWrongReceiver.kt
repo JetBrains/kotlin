@@ -10,7 +10,7 @@ class Baz
 fun Baz.qux() {}
 
 fun test(f: Foo) {
-    f.<!FUNCTION_CALL_EXPECTED, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>qux<!>
+    f.<!FUNCTION_CALL_EXPECTED, NONE_APPLICABLE!>qux<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

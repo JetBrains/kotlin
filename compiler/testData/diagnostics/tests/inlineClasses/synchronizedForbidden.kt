@@ -7,37 +7,37 @@
 
 @JvmInline
 value class A(val a: Int) {
-    <!SYNCHRONIZED_ON_VALUE_CLASS!>@get:Synchronized<!>
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val f0
         get() = Unit
 
-    <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun f1() = Unit
 
-    <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun String.f2() = Unit
 
-    <!SYNCHRONIZED_ON_VALUE_CLASS!>@get:Synchronized<!>
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val String.f3
         get() = Unit
 
-    <!SYNCHRONIZED_ON_VALUE_CLASS!>@get:Synchronized<!>
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@get:Synchronized<!>
     val A.f4
         get() = Unit
 
-    <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+    <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
     fun A.f5() = Unit
 
     val f6
-        <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 
     val A.f7
-        <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 
     val String.f8
-        <!SYNCHRONIZED_ON_VALUE_CLASS!>@Synchronized<!>
+        <!SYNCHRONIZED_ON_VALUE_CLASS_ERROR!>@Synchronized<!>
         get() = Unit
 }
 
@@ -68,24 +68,24 @@ val A.f14
 
 fun main() {
     val a = A(2)
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(a) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(0x2) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2U) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(true) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2L) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2.to(1).first) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2.toByte()) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2UL) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2F) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(2.0) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>('2') {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(block={}, lock='2')
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(block={}, lock=a)
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>0x2<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2U<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>true<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2L<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.to(1).first<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.toByte()<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2UL<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2F<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>2.0<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>'2'<!>) {}
+    synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>'2'<!>)
+    synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     for (b in listOf(a)) {
-        <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(b) {}
-        <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(b.to(1).first) {}
-        <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(block={}, lock=a)
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>b<!>) {}
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>b.to(1).first<!>) {}
+        synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     }
 }
 

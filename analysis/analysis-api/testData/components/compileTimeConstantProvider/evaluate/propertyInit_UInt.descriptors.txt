@@ -1,5 +1,0 @@
-expression: 42u
-constant: 42u
-constantValueKind: UIntValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

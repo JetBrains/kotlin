@@ -4,7 +4,7 @@ package foo
 
 private fun <T> sendCommand(errorCallback: (()->Unit)? = null) {
     if (errorCallback != null) {
-        <!DEBUG_INFO_SMARTCAST!>errorCallback<!>()
+        errorCallback()
     }
 }
 

@@ -43,7 +43,8 @@ FILE fqName:<root> fileName:/reflectGetOnNullableTypeAlias.kt
             RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
               TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
                 CALL 'public abstract fun get (receiver: T of kotlin.reflect.KProperty1): V of kotlin.reflect.KProperty1 declared in kotlin.reflect.KProperty1' type=kotlin.Any? origin=null
-                  ARG <this>: GET_VAR 'val backRefProp: kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>? declared in <root>.box' type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>? origin=null
+                  ARG <this>: TYPE_OP type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?> origin=IMPLICIT_CAST typeOperand=kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>
+                    GET_VAR 'val backRefProp: kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>? declared in <root>.box' type=kotlin.reflect.KProperty1<<root>.Foo, kotlin.Any?>? origin=null
                   ARG receiver: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo' type=<root>.Foo origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="FAIL"

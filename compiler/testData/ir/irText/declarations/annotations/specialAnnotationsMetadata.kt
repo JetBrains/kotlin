@@ -1,7 +1,5 @@
 // MODULE: lib
 // IGNORE_BACKEND: JKLIB
-// IGNORE_BACKEND_K1: NATIVE
-// REASON: ClassicFrontendFacade.performNativeModuleResolve expects DependencyKind.Source, not DependencyKind.Binary
 // FILE: lib.kt
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 

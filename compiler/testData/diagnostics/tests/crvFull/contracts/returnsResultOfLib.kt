@@ -10,7 +10,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block(this)
 }
@@ -21,7 +21,7 @@ inline fun <T, R> T.myLet(block: (T) -> R): R {
 // Check that contract 'survives' across modules:
 fun main(s: String?, sb: StringBuilder) {
     s?.myLet { sb.append(it) }
-    s?.myLet { sb.toString() + it }
+    s?.<!RETURN_VALUE_NOT_USED!>myLet<!> { sb.toString() + it }
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, contractCallsEffect, contracts, flexibleType, funWithExtensionReceiver,

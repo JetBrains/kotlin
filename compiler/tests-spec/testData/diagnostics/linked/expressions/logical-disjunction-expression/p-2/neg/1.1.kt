@@ -29,13 +29,13 @@ import checkType
 import check
 
 // TESTCASE NUMBER: 0
-fun foo() = run { false || <!TYPE_MISMATCH!>JavaClass.VALUE<!> || throw Exception() }
+fun foo() = run { false || <!CONDITION_TYPE_MISMATCH!>JavaClass.VALUE<!> || throw Exception() }
 
 // TESTCASE NUMBER: 1
 fun case1() {
     val a: Boolean? = false
     checkSubtype<Boolean?>(a)
-    val x4 = <!TYPE_MISMATCH!>a<!> || true
+    val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> || true
     x4 checkType { check<Boolean>() }
 }
 
@@ -43,7 +43,7 @@ fun case1() {
 fun case2() {
     val a: Any = false
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
-    val x4 = <!TYPE_MISMATCH!>a<!> || true
+    val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> || true
     x4 checkType { check<Boolean>() }
 }
 
@@ -53,7 +53,7 @@ fun case3() {
     val a2 = JavaClass.VALUE
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any..kotlin.Any?)")!>a2<!>
 
-    val x3 = a1 || <!TYPE_MISMATCH!>a2<!>
+    val x3 = a1 || <!CONDITION_TYPE_MISMATCH!>a2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x3<!>
 
     x3 checkType { check<Boolean>() }

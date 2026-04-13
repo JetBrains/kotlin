@@ -4,23 +4,23 @@
 
 fun string(foo: Any) {
     val string = ""
-    if ("" == foo) <!DEBUG_INFO_SMARTCAST!>foo<!>.length
-    if (string == foo) <!DEBUG_INFO_SMARTCAST!>foo<!>.length
+    if ("" == foo) foo.length
+    if (string == foo) foo.length
     if (foo == "") foo.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun int(foo: Any) {
     val int = 1
-    if (1 == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1)
-    if (int == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1)
-    if (foo == 1) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1)
+    if (1 == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1)
+    if (int == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1)
+    if (foo == 1) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1)
 }
 
 fun long(foo: Any) {
     val long = 1L
-    if (1L == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1L)
-    if (long == foo) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1L)
-    if (foo == 1L) foo.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>plus<!>(1L)
+    if (1L == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1L)
+    if (long == foo) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1L)
+    if (foo == 1L) foo.<!UNRESOLVED_REFERENCE!>plus<!>(1L)
 }
 
 fun char(foo: Any) {
@@ -37,12 +37,12 @@ open class D { fun d() = Unit }
 enum class E { ONE; fun e() = Unit }
 
 fun testA(foo: A, bar: Any) {
-    if (foo == bar) <!DEBUG_INFO_SMARTCAST!>bar<!>.a()
+    if (foo == bar) bar.a()
     if (bar == foo) bar.<!UNRESOLVED_REFERENCE!>a<!>()
 }
 
 fun testNullableA(foo: A?, bar: Any?) {
-    if (foo != null && foo == bar) <!DEBUG_INFO_SMARTCAST!>bar<!>.a()
+    if (foo != null && foo == bar) bar.a()
 }
 
 fun testB(foo: B, bar: Any) {
@@ -51,7 +51,7 @@ fun testB(foo: B, bar: Any) {
 }
 
 fun testNullableB(foo: B?, bar: B?) {
-    if (foo != null && foo == bar) <!DEBUG_INFO_SMARTCAST!>bar<!>.b()
+    if (foo != null && foo == bar) bar.b()
 }
 
 fun testC(foo: C, bar: Any) {
@@ -60,7 +60,7 @@ fun testC(foo: C, bar: Any) {
 }
 
 fun testNullableC(foo: C?, bar: C?) {
-    if (foo != null && foo == bar) <!DEBUG_INFO_SMARTCAST!>bar<!>.c()
+    if (foo != null && foo == bar) bar.c()
 }
 
 fun testD(foo: D, bar: Any) {
@@ -69,21 +69,21 @@ fun testD(foo: D, bar: Any) {
 }
 
 fun testNullableD(foo: D?, bar: D?) {
-    if (foo != null && foo == bar) <!DEBUG_INFO_SMARTCAST!>bar<!>.d()
+    if (foo != null && foo == bar) bar.d()
 }
 
 fun testE(foo: E, bar: Any) {
-    if (foo == bar) bar.<!UNRESOLVED_REFERENCE!>e<!>()
+    if (foo == bar) bar.e()
     if (bar == foo) bar.<!UNRESOLVED_REFERENCE!>e<!>()
 }
 
 fun testNullableE(foo: E?, bar: E?) {
-    if (foo != null && foo == bar) <!DEBUG_INFO_SMARTCAST!>bar<!>.e()
+    if (foo != null && foo == bar) bar.e()
 }
 
 fun testSmartcast(foo: Any, bar: Any) {
     if (foo is A && foo == bar) {
-        bar.<!UNRESOLVED_REFERENCE!>a<!>()
+        bar.a()
     }
     if (foo is B && foo == bar) {
         bar.<!UNRESOLVED_REFERENCE!>b<!>()
@@ -95,7 +95,7 @@ fun testSmartcast(foo: Any, bar: Any) {
         bar.<!UNRESOLVED_REFERENCE!>d<!>()
     }
     if (foo is E && foo == bar) {
-        bar.<!UNRESOLVED_REFERENCE!>e<!>()
+        bar.e()
     }
 }
 

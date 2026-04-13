@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
+// LANGUAGE: +ContextParameters
 @file:OptIn(ExperimentalVersionOverloading::class)
 
 class C {
@@ -17,6 +18,12 @@ class C {
 
     @JvmName("javaName")
     fun kotlinName(
+        a : Int = 1,
+        @IntroducedAt("1") b: String = "hello",
+        @IntroducedAt("2") c: Boolean = true,
+    ) = "$this/$b/$c"
+
+    context(d: Boolean) fun baz(
         a : Int = 1,
         @IntroducedAt("1") b: String = "hello",
         @IntroducedAt("2") c: Boolean = true,

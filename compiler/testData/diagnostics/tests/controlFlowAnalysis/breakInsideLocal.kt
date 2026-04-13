@@ -127,8 +127,8 @@ fun test7() {
                     0 -> <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
                     1 -> foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> }
                     2 -> foo(@SomeAnnotation { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
-                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
-                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
+                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
+                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
                     else -> 1
                 }
             }
@@ -137,8 +137,8 @@ fun test7() {
                     0 -> <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
                     1 -> foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> }
                     2 -> foo(@SomeAnnotation { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> })
-                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
-                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
+                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> })
+                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> })
                     else -> 2
                 }
             }
@@ -149,13 +149,13 @@ fun test7() {
 fun test8() {
     while (true) {
         class LocalClass(val x: Int) {
-            constructor(tag: Int, <!UNUSED_PARAMETER!>unused<!>: Boolean) : this(
+            constructor(tag: Int, unused: Boolean) : this(
                 when(tag) {
                     0 -> <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
                     1 -> foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> }
                     2 -> foo(@SomeAnnotation { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
-                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
-                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>)
+                    3 -> foo(fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
+                    4 -> foo(@SomeAnnotation fun (): Int { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!> })
                     else -> 1
                 }
             )

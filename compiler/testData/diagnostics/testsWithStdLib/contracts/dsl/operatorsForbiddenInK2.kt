@@ -8,7 +8,7 @@ import kotlin.contracts.*
 
 class A(var v: Int = 0) {
     override fun equals(other: Any?): Boolean {
-        <!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns(true) implies (other is A) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(true) implies (other is A) }
         return this.v == (other as? A)?.v
     }
 }
@@ -21,10 +21,10 @@ operator fun A.compareTo(a: A?): Int {
 fun test_equals_and_compare(a1: A?, a2: A?) {
     val a = A()
     if (a.equals(a1)) {
-        <!DEBUG_INFO_SMARTCAST!>a1<!>.v
+        a1.v
     }
     if (a < a2) {
-        a2<!UNSAFE_CALL!>.<!>v
+        a2.v
     }
 }
 

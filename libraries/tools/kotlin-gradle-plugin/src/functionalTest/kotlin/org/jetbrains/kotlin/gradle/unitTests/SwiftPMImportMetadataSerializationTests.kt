@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegister
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.serializeSwiftPMImportMetadata
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import kotlin.test.Test
@@ -23,6 +24,11 @@ class SwiftPMImportMetadataSerializationTests {
     @Test
     fun `smoke test swiftPM metadata serialization`() {
         buildProjectWithMPP {
+            kotlin {
+                iosArm64()
+                macosArm64()
+            }
+
             val extension = locateOrRegisterSwiftPMDependenciesExtension().apply {
                 iosMinimumDeploymentTarget.set("-1.0")
                 swiftPackage(
@@ -56,6 +62,7 @@ class SwiftPMImportMetadataSerializationTests {
 
             assertEquals(
                 SwiftPMImportMetadata(
+                    konanTargets = setOf("ios_arm64", "macos_arm64"),
                     "-1.0",
                     null,
                     null,

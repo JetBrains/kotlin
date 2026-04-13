@@ -10,7 +10,7 @@ val functionLiteral2 = fun() = id(1) as Any
 val functionLiteral3 = fun() = (1 + 1) as Any
 
 // TODO: this and more complex cases are not supported yet
-fun baz(b: Boolean) = if (b) 1 <!USELESS_CAST!>as Any<!> else 42 <!USELESS_CAST!>as Any?<!>
+fun baz(b: Boolean) = if (b) 1 as Any else 42 as Any?
 
 /* GENERATED_FIR_TAGS: anonymousFunction, asExpression, functionDeclaration, ifExpression, integerLiteral, nullableType,
 propertyDeclaration, typeParameter */

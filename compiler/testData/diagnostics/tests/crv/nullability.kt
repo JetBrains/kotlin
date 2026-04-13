@@ -11,21 +11,21 @@ fun String.str(): String = ""
 
 fun elvis(e: String?): String {
     val c = nsf() ?: stringF() // used
-    nsf() ?: stringF() // unused
+    <!RETURN_VALUE_NOT_USED!>nsf<!>() ?: <!RETURN_VALUE_NOT_USED!>stringF<!>() // unused
 
     return e ?: nsf() ?: stringF()
 }
 
 fun safeCalls() {
     stringF().consume() // used
-    stringF().str() // unused
+    stringF().<!RETURN_VALUE_NOT_USED!>str<!>() // unused
     nsf()?.consume() // used
-    nsf()?.str() // unused
+    nsf()?.<!RETURN_VALUE_NOT_USED!>str<!>() // unused
 }
 
 fun notNullCall(s: String?) {
     s!! // locals are discardable, we propagate
-    nsf()!!
+    <!RETURN_VALUE_NOT_USED!>nsf<!>()!!
 }
 
 fun notNullCall2(s: String?) {

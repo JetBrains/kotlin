@@ -251,7 +251,7 @@ FILE: [ResolvedTo(IMPORTS)] dependency.kt
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
         public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
 

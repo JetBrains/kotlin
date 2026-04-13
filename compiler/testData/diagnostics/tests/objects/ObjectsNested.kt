@@ -27,6 +27,6 @@ val a = A
 val b = B
 val c = A.B
 val d = A.B.A
-val e = B.<!UNRESOLVED_REFERENCE!>A<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>B<!>
+val e = B.<!UNRESOLVED_REFERENCE!>A<!>.B
 
 /* GENERATED_FIR_TAGS: nestedClass, objectDeclaration, propertyDeclaration, thisExpression */

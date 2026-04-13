@@ -3,13 +3,13 @@
 
 class Inv<T>
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes K> Inv<out K>.onlyOut(e: K) {}
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes K : Number> Inv<out K>.onlyOutUB(e: K) {}
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes K> Inv<in K>.onlyIn(e: K) {}
 
 fun test(
@@ -21,12 +21,12 @@ fun test(
     invOut.onlyOut(42)
     invOut.onlyOut(1L)
 
-    invOut.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>onlyOutUB<!>(<!TYPE_MISMATCH!>"str"<!>)
+    invOut.onlyOutUB(<!ARGUMENT_TYPE_MISMATCH("String; Number")!>"str"<!>)
     invStar.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOutUB<!>(0)
     invOut.onlyOutUB(42)
     invOut.onlyOutUB(1L)
 
-    invIn.onlyIn(<!TYPE_MISMATCH!>"str"<!>)
+    invIn.onlyIn(<!ARGUMENT_TYPE_MISMATCH!>"str"<!>)
     invIn.onlyIn(42)
     invIn.onlyIn(1L)
 }
@@ -66,7 +66,7 @@ class Test5 {
         set(value) {
             if (value != null) {
                 val a = a
-                require(a != null && <!DEBUG_INFO_SMARTCAST!>value<!> in a.children)
+                require(a != null && value in a.children)
             }
             field = value
         }

@@ -1613,43 +1613,43 @@ void * kotlin_time_Duration_Companion_ZERO_get(void * self);
 
 double kotlin_time_Duration_Companion_convert__TypesOfArguments__Swift_Double_ExportedKotlinPackages_kotlin_time_DurationUnit_ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, double value, void * sourceUnit, void * targetUnit);
 
-void * kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_days_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_days_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
 void * kotlin_time_Duration_Companion_get();
 
-void * kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_hours_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_hours_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
-void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_microseconds_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
-void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_milliseconds_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
-void * kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_minutes_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_minutes_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
-void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_nanoseconds_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
 void * kotlin_time_Duration_Companion_parse__TypesOfArguments__Swift_String__(void * self, NSString * value);
 
@@ -1659,11 +1659,11 @@ void * _Nullable kotlin_time_Duration_Companion_parseIsoStringOrNull__TypesOfArg
 
 void * _Nullable kotlin_time_Duration_Companion_parseOrNull__TypesOfArguments__Swift_String__(void * self, NSString * value);
 
-void * kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int32__(void * self, int32_t receiver);
+void * kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Int32__(void * self, int32_t receiver);
 
-void * kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Int64__(void * self, int64_t receiver);
+void * kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Int64__(void * self, int64_t receiver);
 
-void * kotlin_time_Duration_Companion_seconds_get__TypesOfArguments__Swift_Double__(void * self, double receiver);
+void * kotlin_time_Duration_Companion_seconds_get__TypesOfArgumentsE__Swift_Double__(void * self, double receiver);
 
 void * kotlin_time_Duration_absoluteValue_get(void * self);
 

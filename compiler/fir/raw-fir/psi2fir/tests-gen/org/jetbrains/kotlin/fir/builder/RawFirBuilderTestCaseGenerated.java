@@ -151,6 +151,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt");
     }
 
+    @TestMetadata("constantInRepl.repl.kts")
+    public void testConstantInRepl_repl() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constantInRepl.repl.kts");
+    }
+
     @TestMetadata("constructorInObject.kt")
     public void testConstructorInObject() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorInObject.kt");

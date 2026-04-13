@@ -48,10 +48,10 @@ fun case2() {
     val c = Case2(1) - 1
     val d = Case2(1) - Case2( 1)
 
-    <!DEBUG_INFO_CONSTANT!>a<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>b<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>c<!> checkType { check<Nothing?>() }
-    <!DEBUG_INFO_CONSTANT!>d<!> checkType { check<Nothing?>() }
+    a checkType { check<Nothing?>() }
+    b checkType { check<Nothing?>() }
+    c checkType { check<Nothing?>() }
+    d checkType { check<Nothing?>() }
 }
 
 // TESTCASE NUMBER: 3

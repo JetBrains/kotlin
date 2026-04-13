@@ -31,19 +31,19 @@ import java.util.List;
 import org.jetbrains.annotations.Unmodifiable;
 
 public class B<T extends @Unmodifiable List<String>> {
-        public T getT() { return null; }
+    public T getT() { return null; }
 }
 
 // FILE: main.kt
 fun main() {
-    takeMutable(J.foo())
-    J.foo().add("")
-    J.foo() += ""
+    takeMutable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>)
+    <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>.add("")
+    <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!> += ""
 
     J.foo().size
     for (x in J.foo()) {}
 
-    J.foo { arg -> arg.add("") }
+    J.foo { arg -> <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>arg<!>.add("") }
     J.foo { arg: MutableList<String> -> arg.add("") }
 
     J.foo().toString()
@@ -54,5 +54,5 @@ fun main() {
 fun takeMutable(l: MutableList<String>) {}
 
 fun captured(b: B<*>) {
-    b.t.add("")
+    <!RECEIVER_MUTABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.t<!>.add("")
 }

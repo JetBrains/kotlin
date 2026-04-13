@@ -1,6 +1,0 @@
-package
-
-public fun testPostfixSpecial(): kotlin.Unit
-public fun testPostfixWithCall(/*0*/ n: kotlin.Nothing): kotlin.Unit
-public fun testPrefix(): kotlin.Unit
-public fun todo(): kotlin.Nothing

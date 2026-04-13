@@ -5,8 +5,8 @@
 class Base<in T>
 class Qwe<T : Any>(val a: T?) {
     fun test1(obj: Any) {
-        obj <!UNCHECKED_CAST!>as Qwe<T><!>
-        check(<!DEBUG_INFO_SMARTCAST!>obj<!>.a)
+        obj as Qwe<T>
+        check(obj.a)
     }
 
     fun test1(obj: Qwe<*>) {
@@ -32,7 +32,7 @@ open class Bar<T: Foo>(open val a: T?, open val b: T?) {
         if (System.currentTimeMillis() > 100) {
             val b = (obj as Bar<T>).b
             if (b == null) throw IllegalArgumentException()
-            check(<!DEBUG_INFO_SMARTCAST!>obj<!>.a, <!DEBUG_INFO_SMARTCAST!>b<!>)
+            check(obj.a, b)
         }
     }
     fun check(a: T?, b: T) {

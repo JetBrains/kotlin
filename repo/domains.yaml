@@ -1,0 +1,65 @@
+$schema: domains.schema.json
+
+Compiler:
+  home: "compiler"
+  include:
+    - "compiler/**"
+    - "core/**"
+  fullyAffectedBy:
+    - Unknown
+
+Wasm:
+  home: "wasm"
+  include:
+    - "wasm/**"
+  fullyAffectedBy:
+    - Compiler
+Js:
+  home: "js"
+  include:
+    - "js/**"
+  fullyAffectedBy:
+    - Compiler
+
+Native:
+  home: "kotlin-native"
+  include:
+    - "native/**"
+    - "kotlin-native/**"
+  fullyAffectedBy:
+    - Compiler
+
+AnalysisApi:
+  home: "analysis"
+  include:
+    - "analysis/**"
+    - "compiler/psi/**"
+  exclude:
+    - "compiler/psi/parser/**"
+  fullyAffectedBy:
+    - Compiler
+
+SwiftExport:
+  home: "native/swift"
+  include:
+    - "native/swift/**"
+
+CompilerPlugins:
+  home: "plugins"
+  include:
+    - "plugins/**"
+  fullyAffectedBy:
+    - Compiler
+    - Unknown
+
+Gradle:
+  home: "libraries/tools/kotlin-gradle-plugin"
+  include:
+    - "libraries/tools/*gradle*/**"
+
+Unknown:
+  home: "."
+  include:
+    - "**/*"
+  fullyAffectedBy:
+    - Compiler

@@ -10,6 +10,6 @@ public class Foo {
 // FILE: main.kt
 fun <T> test(metric: T) {
     if (metric is String) {
-        Foo.gauge(<!DEBUG_INFO_SMARTCAST!>metric<!>)
+        Foo.gauge(metric)
     }
 }

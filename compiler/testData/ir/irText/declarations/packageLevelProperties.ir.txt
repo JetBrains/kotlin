@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): kotlin.Int declared in <root>'
-          CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out @[Exact] V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Int origin=null
+          CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Int origin=null
             TYPE_ARG V: kotlin.Int
             TYPE_ARG V1: kotlin.Int
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static] declared in <root>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null

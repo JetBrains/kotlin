@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 
 external class ClassC(val paramProp: String) {
     constructor() : this("")

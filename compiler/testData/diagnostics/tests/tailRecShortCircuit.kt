@@ -6,14 +6,14 @@ tailrec fun foo1(x: Int): Int {
 
 fun maybe(x: Int) = x.takeIf { x == 1 }
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo2(x: Int): Boolean {
-    return condition(x) || <!NON_TAIL_RECURSIVE_CALL!>foo2<!>(x - 1)
+tailrec fun foo2(x: Int): Boolean {
+    return condition(x) || foo2(x - 1)
 }
 
 fun condition(x: Int): Boolean = x == 0
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun Int.foo3a(): Int {
-    return boo()?.<!NON_TAIL_RECURSIVE_CALL!>foo3a<!>() ?: 1
+tailrec fun Int.foo3a(): Int {
+    return boo()?.foo3a() ?: 1
 }
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun Int.foo3b(): Int {

@@ -27,8 +27,8 @@ operator fun Any?.contains(other: Any): Boolean = false
 fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
     when {
         x.id() -> {}
-        <!TYPE_MISMATCH!>y?.id()<!> -> {}
-        <!TYPE_MISMATCH!>any as? Boolean<!> -> {}
+        <!CONDITION_TYPE_MISMATCH!>y?.id()<!> -> {}
+        <!CONDITION_TYPE_MISMATCH!>any as? Boolean<!> -> {}
         any as Boolean -> {}
         x * x -> {}
         x / x -> {}
@@ -36,16 +36,16 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
         x + x -> {}
         x - x -> {}
         x..x -> {}
-        <!TYPE_MISMATCH!>y<!> -> {}
+        <!CONDITION_TYPE_MISMATCH!>y<!> -> {}
         y ?: x -> {}
         x in x -> {}
         x !in x -> {}
-        x is String -> {}
-        x !is String -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>><!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!><=<!> x -> {}
-        x <!OVERLOAD_RESOLUTION_AMBIGUITY!>>=<!> x -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
+        x < x -> {}
+        x > x -> {}
+        x <= x -> {}
+        x >= x -> {}
         x == x -> {}
         x != x -> {}
         <!DEPRECATED_IDENTITY_EQUALS!>x === x<!> -> {}

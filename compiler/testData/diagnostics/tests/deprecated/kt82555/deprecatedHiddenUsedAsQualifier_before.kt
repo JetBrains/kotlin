@@ -6,7 +6,7 @@ class C {
     @Deprecated("", level = DeprecationLevel.HIDDEN)
     object Obj
 
-    val obj = Obj
+    val obj = <!DEPRECATION_ERROR!>Obj<!>
 }
 
 object Obj

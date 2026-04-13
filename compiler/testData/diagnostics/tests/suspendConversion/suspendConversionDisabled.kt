@@ -17,14 +17,14 @@ fun test(
     foo1 { "str" }
     foo1(f0)
 
-    foo1(<!UNSUPPORTED_FEATURE!>f1<!>)
-    foo2(<!UNSUPPORTED_FEATURE!>f2<!>)
-    foo3(<!UNSUPPORTED_FEATURE!>f3<!>)
+    foo1(f1)
+    foo2(f2)
+    foo3(f3)
 
     foo1(::bar)
 
-    foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f2<!>)
-    foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f3<!>)
+    foo1(<!ARGUMENT_TYPE_MISMATCH!>f2<!>)
+    foo1(<!ARGUMENT_TYPE_MISMATCH!>f3<!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, stringLiteral, suspend */

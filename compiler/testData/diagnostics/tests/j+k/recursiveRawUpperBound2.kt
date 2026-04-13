@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FIR2IR
-// FIR_IDENTICAL
 // FILE: XYZ.java
 public interface XYZ<X extends X> {
     XYZ foo() {}

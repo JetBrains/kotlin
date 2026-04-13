@@ -9,6 +9,10 @@ _Bool ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction(void * s
 
 _Bool ClassWithDeprecatedMembersFromInterface_regularFunction(void * self);
 
+_Bool FooObject_objectMethod(void * self);
+
+NSString * FooObject_objectProperty_get(void * self);
+
 _Bool InterfaceWithDeprecatedMembers_deprecatedWarningFunction(void * self);
 
 _Bool InterfaceWithDeprecatedMembers_regularFunction(void * self);
@@ -45,9 +49,25 @@ _Bool KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(void * self, NS
 
 _Bool KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(void * self, NSString * objCParamC);
 
+NSString * OptInConstructor_name_get(void * self);
+
+_Bool WithCompanion_Companion_companionMethod(void * self);
+
+void * WithCompanion_Companion_get();
+
+void * __root___Bar_init_allocate();
+
+_Bool __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___ClassWithDeprecatedMembersFromInterface_init_allocate();
 
 _Bool __root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___FooObject_get();
+
+void * __root___Foo_init_allocate();
+
+_Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___KotlinClassA_init_allocate();
 
@@ -56,6 +76,22 @@ _Bool __root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutab
 void * __root___KotlinObjectB_get();
 
 NSString * __root___MESSAGE_get();
+
+void * __root___OptInConstructor_init_allocate();
+
+_Bool __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * name);
+
+_Bool __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___WithCompanion_init_allocate();
+
+_Bool __root___WithCompanion_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___bar();
+
+void * __root___barProperty_get();
+
+_Bool __root___barProperty_set__TypesOfArguments__main_Bar__(void * newValue);
 
 void * __root___classA_get();
 
@@ -77,9 +113,19 @@ _Bool __root___deprecationInheritedImplicitlyV_get();
 
 _Bool __root___deprecationInheritedV_get();
 
+_Bool __root___expressionOptIn();
+
+void * __root___foo();
+
+void * __root___fooProperty_get();
+
+NSString * __root___fooVal_get();
+
 _Bool __root___formattedMessage() __attribute((noreturn));
 
 void * __root___interfaceC_get();
+
+_Bool __root___localDeclarations();
 
 _Bool __root___multilineFormattedMessage() __attribute((noreturn));
 

@@ -13,7 +13,7 @@ fun test(a: A?, b: B?) {
     a as B?
     val c = select(a, b)
     if (c != null) {
-        <!DEBUG_INFO_SMARTCAST!>c<!>.test()
+        c.test()
     }
 }
 

@@ -52,6 +52,6 @@ fun case_1(value_1: Any?) {
  * UNEXPECTED BEHAVIOUR
  */
 fun case_2(value_1: Number?) {
-    if (value_1?.case_2_1() != null) println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
-    if (value_1?.case_2_2() != null) println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
+    if (value_1?.case_2_1() != null) println(value_1.toByte())
+    if (value_1?.case_2_2() != null) println(value_1.toByte())
 }

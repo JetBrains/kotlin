@@ -6,7 +6,7 @@ fun noInline(x: () -> Unit) {
 }
 
 inline fun bar(s: () -> Unit) {
-    noInline(<!REDUNDANT_LABEL_WARNING!>l1@<!> s)
+    noInline(l1@ <!USAGE_IS_NOT_INLINABLE!>s<!>)
 }
 
 fun main() {

@@ -1,4 +1,0 @@
-KtNameReferenceExpression(93,94): 'i'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: i>

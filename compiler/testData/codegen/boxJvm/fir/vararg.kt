@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
-// (type mismatch)
 // WITH_STDLIB
 
 fun <A : Comparable<A>> arrayData(vararg values: A): A = values.first()

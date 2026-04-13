@@ -15,7 +15,7 @@ annotation class A(
 )
 
 // MODULE: test(lib)
-fun test(a: A): String = a.<!DEPRECATION_ERROR!>value<!>
+fun test(a: A): String = a.value
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration,
 stringLiteral */

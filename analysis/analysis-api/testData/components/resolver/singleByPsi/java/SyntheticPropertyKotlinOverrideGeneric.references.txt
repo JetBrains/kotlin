@@ -1,5 +1,5 @@
 <caret_1>:
-  KtNameReferenceExpression(309,312): 'foo'
+  KtNameReferenceExpression(306,309): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -8,7 +8,7 @@
         (in KotlinClass) override var foo: Foo<kotlin.Any>
 
 <caret_2>:
-  KtNameReferenceExpression(330,333): 'foo'
+  KtNameReferenceExpression(327,330): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -17,7 +17,7 @@
         (in KotlinClass) override var foo: Foo<kotlin.Any>
 
 <caret_3>:
-  KtNameReferenceExpression(442,445): 'foo'
+  KtNameReferenceExpression(439,442): 'foo'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false

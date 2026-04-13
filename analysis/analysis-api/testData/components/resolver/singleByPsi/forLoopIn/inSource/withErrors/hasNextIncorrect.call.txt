@@ -20,8 +20,7 @@ KtForExpression(23,37): 'for(i in f) {}'
           typeArgumentsMapping = {}
           valueArgumentMapping = {}
       ]
-      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-      fun Int.hasNext(): Boolean>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.hasNext(): Boolean' is inapplicable because of a receiver type mismatch.>
     iteratorCallAttempt = KaCallResolutionSuccess:
       call = KaSimpleFunctionCall:
         contextArgumentMapping = {}

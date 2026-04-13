@@ -35,5 +35,5 @@ FILE: [ResolvedTo(IMPORTS)] orRight.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun isValid([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Boolean| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun isValid([ResolvedTo(STATUS)] obj: R|kotlin/Any|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] obj: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }

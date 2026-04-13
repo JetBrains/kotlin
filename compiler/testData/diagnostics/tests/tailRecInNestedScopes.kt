@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo1() {

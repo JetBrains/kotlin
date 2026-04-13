@@ -14,7 +14,7 @@ public class P {
 
 fun foo(c: P): MutableList<Int> {
     // Error should be here: see KT-8168 Typechecker fails for platform collection type
-    return <!TYPE_MISMATCH!>c.getList() ?: listOf()<!>
+    return c.getList() ?: <!CANNOT_INFER_PARAMETER_TYPE!>listOf<!>()
 }
 
 /* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaFunction, javaType */

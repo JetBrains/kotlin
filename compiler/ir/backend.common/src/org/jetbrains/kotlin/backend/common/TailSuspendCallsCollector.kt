@@ -45,16 +45,8 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
         private fun isTailReturn(expression: IrReturn) =
             expression.returnTargetSymbol == irFunction.symbol || expression.returnTargetSymbol in tailReturnableBlocks
 
-        private fun IrTypeOperatorCall.canBeOptimized() =
-            operator == IrTypeOperator.IMPLICIT_CAST || operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
-
         override fun visitReturn(expression: IrReturn, data: VisitorState) {
-            val returnValue = expression.value
-            val actualExpressionValue = when {
-                returnValue is IrTypeOperatorCall && isTailReturn(expression) && returnValue.canBeOptimized() -> returnValue.argument
-                else -> returnValue
-            }
-            actualExpressionValue.accept(this, VisitorState(data.insideTryBlock, isTailReturn(expression)))
+            expression.value.accept(this, VisitorState(data.insideTryBlock, isTailReturn(expression)))
         }
 
         override fun visitExpressionBody(body: IrExpressionBody, data: VisitorState) =
@@ -91,6 +83,15 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
                 it.condition.accept(this, VisitorState(data.insideTryBlock, isTailExpression = false))
                 it.result.accept(this, data)
             }
+        }
+
+        // TODO: With KT-85589 fixed, this won't be necessary - type operators will be optimized away by ComputeTypesPass
+        //  in the general case. And remaining call to returnIfSuspended will then be considered a tail call.
+        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitorState) {
+            // For a tail call, [returnIfSuspended] can be optimized away.
+            val isTailExpression = data.isTailExpression && (expression.argument as? IrCall)?.isReturnIfSuspendedCall() == true
+                    && (expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+            expression.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression))
         }
 
         override fun visitCall(expression: IrCall, data: VisitorState) {

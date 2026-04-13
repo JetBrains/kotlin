@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit4(args) {
-        testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib") {
+        testGroup(
+            "plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen",
+            "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/jvmAndKlib"
+        ) {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
@@ -32,6 +35,17 @@ fun main(args: Array<String>) {
                 model("pureKotlin", recursive = false, pattern = "^([^_](.+))$")
             }
             testClass<AbstractIncrementalCodegenJsEs6WithPluginSandboxPerFileTest> {
+                model("pureKotlin", recursive = false, pattern = "^([^_](.+))$")
+            }
+        }
+        testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/js") {
+            testClass<AbstractIncrementalWasmWithPluginSandboxTest> {
+                model("pureKotlin", recursive = false, pattern = "^([^_](.+))$")
+            }
+            testClass<AbstractIncrementalWasmMultiModuleWithPluginSandboxTest> {
+                model("pureKotlin", recursive = false, pattern = "^([^_](.+))$")
+            }
+            testClass<AbstractIncrementalWasmSingleModuleWithPluginSandboxTest> {
                 model("pureKotlin", recursive = false, pattern = "^([^_](.+))$")
             }
         }

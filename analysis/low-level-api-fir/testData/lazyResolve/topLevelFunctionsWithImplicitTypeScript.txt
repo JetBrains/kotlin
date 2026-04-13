@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitTypeScript.kts
             R|/receive|(R|/functionWithLazyBody|())
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
@@ -187,4 +187,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunctionsWithImplicitTypeScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
-

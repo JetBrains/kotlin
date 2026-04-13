@@ -1,0 +1,5 @@
+KT element: KtDestructuringDeclarationEntry
+Resolve target: destructuringEntryScript.kts -> <script-destructuringEntryScript.kts> -> aaa
+FIR:
+  public final val aaa: <implicit> = LAZY_EXPRESSION
+      public get(): <implicit>

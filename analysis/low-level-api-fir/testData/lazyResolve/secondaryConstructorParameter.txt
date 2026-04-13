@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
         public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.myToInt(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|kotlin/String|.myToInt(): R|kotlin/Int| { LAZY_BLOCK }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorParameter.kt

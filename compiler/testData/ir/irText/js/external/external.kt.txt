@@ -148,7 +148,7 @@ external var topLevelVar2: String
 
 fun main() {
   println(message = topLevelFun(a = 42))
-  <set-topLevelVar1>(<set-?> = "a")
+  <set-topLevelVar1>(value = "a")
   println(message = <get-topLevelVar1>())
   <set-topLevelVar2>(value = "a")
   println(message = <get-topLevelVar2>())

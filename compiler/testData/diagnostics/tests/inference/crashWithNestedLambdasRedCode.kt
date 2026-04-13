@@ -4,11 +4,11 @@
 operator fun <T> String.invoke(t: T) {}
 
 fun main() {
-    <!FUNCTION_EXPECTED!>8<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>8<!> {
         {
             1
         }
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral, nullableType,

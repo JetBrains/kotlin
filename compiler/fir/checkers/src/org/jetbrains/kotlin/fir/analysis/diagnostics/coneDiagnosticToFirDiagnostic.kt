@@ -92,8 +92,30 @@ fun ConeDiagnostic.toFirDiagnostics(
         is ConeInapplicableCandidateError -> mapInapplicableCandidateError(session, source, callOrAssignmentSource)
         is ConeConstraintSystemHasContradiction -> mapSystemHasContradictionError(session, source, callOrAssignmentSource)
         is ConeAmbiguityError -> mapConeAmbiguityError(source, callOrAssignmentSource, session)
+        is ConeFunctionCallExpectedError -> mapFunctionCallExpected(source, session, callOrAssignmentSource)
         else -> listOfNotNull(mapOtherDiagnostic(source, valueParameter, callOrAssignmentSource, session))
     }
+}
+
+private fun ConeFunctionCallExpectedError.mapFunctionCallExpected(
+    source: KtSourceElement?,
+    session: FirSession,
+    callOrAssignmentSource: KtSourceElement?,
+): List<KtDiagnostic> {
+    val result = mutableListOf<KtDiagnostic>()
+
+    result.addIfNotNull(
+        FirErrors.FUNCTION_CALL_EXPECTED.createOn(
+            source,
+            name.asString(),
+            hasValueParameters,
+            session
+        )
+    )
+
+    originalDiagnostic?.toFirDiagnostics(session, source, callOrAssignmentSource)?.let(result::addAll)
+
+    return result
 }
 
 private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
@@ -534,12 +556,6 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
             }
         }
     }
-    is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(
-        source,
-        this.name.asString(),
-        this.hasValueParameters,
-        session
-    )
     is ConeFunctionExpectedError -> FirErrors.FUNCTION_EXPECTED.createOn(source, this.expression, this.type, session)
     is ConeNoConstructorError -> FirErrors.NO_CONSTRUCTOR.createOn(callOrAssignmentSource ?: source, session)
     is ConeNoImplicitDefaultConstructorOnExpectClass -> FirErrors.NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS.createOn(
@@ -571,7 +587,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeInapplicableWrongReceiver -> when (val diagnostic = primaryDiagnostic) {
         is DynamicReceiverExpectedButWasNonDynamic ->
             FirErrors.DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC.createOn(source, diagnostic.actualType, session)
-        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbols, session)
+        else -> FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER.createOn(source, this.candidateSymbol, session)
     }
     is ConeNoCompanionObject -> FirErrors.NO_COMPANION_OBJECT.createOn(source, this.candidateSymbol as FirClassLikeSymbol<*>, session)
 

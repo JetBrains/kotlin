@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 abstract class A : Function1<Any, Unit>
 
 abstract class B : (Int)->Unit

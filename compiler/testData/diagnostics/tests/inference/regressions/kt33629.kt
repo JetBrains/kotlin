@@ -17,7 +17,7 @@ fun acquireIntervals(): List<Interval> = TODO()
 
 fun main() {
     buildTree(acquireIntervals())
-        ?: <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+        ?: <!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, elvisExpression, functionDeclaration, nullableType, primaryConstructor,

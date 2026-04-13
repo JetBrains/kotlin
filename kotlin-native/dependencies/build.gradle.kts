@@ -33,3 +33,17 @@ val rmDotKonan by tasks.registering(Delete::class) {
     val dir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
     delete(dir)
 }
+
+val llvmDevBinaryData by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
+artifacts {
+    val llvmHome = nativeDependencies.hostPlatform.llvmHome!!
+    val llvmDir = file("${nativeDependencies.nativeDependenciesRoot}/$llvmHome")
+    add(llvmDevBinaryData.name, llvmDir) {
+        type = "directory"
+        builtBy(nativeDependencies.targetDependency())
+    }
+}

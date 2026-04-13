@@ -1,4 +1,4 @@
-KtNameReferenceExpression(51,60): 'JavaClass'
+KtNameReferenceExpression(50,59): 'JavaClass'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

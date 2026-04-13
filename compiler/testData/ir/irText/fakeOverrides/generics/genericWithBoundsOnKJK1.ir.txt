@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Number? [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass<kotlin.Any>
       overridden:
         public open fun bar (): kotlin.Number? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass<kotlin.Any>
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Number
       overridden:
         public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.Java1
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Number? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Number? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Number? declared in <root>.Java1
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Number? [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass<kotlin.Any>
       overridden:
         public open fun bar (): kotlin.Number? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Number? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Number? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Number? declared in <root>.Java1

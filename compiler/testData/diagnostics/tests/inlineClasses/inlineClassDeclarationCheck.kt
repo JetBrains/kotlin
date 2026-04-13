@@ -17,7 +17,7 @@ inline class A9(final val x: Int)
 class B1 {
     companion object {
         inline class C1(val x: Int)
-        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> inline class C11(val x: Int)
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> <!VALUE_CLASS_NOT_TOP_LEVEL!>inline<!> class C11(val x: Int)
     }
 
     inline class C2(val x: Int)
@@ -26,7 +26,7 @@ class B1 {
 
 object B2 {
     inline class C3(val x: Int)
-    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> inline class C31(val x: Int)
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> <!VALUE_CLASS_NOT_TOP_LEVEL!>inline<!> class C31(val x: Int)
 }
 
 fun foo() {

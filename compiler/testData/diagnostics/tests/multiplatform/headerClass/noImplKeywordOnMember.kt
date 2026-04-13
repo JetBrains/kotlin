@@ -3,9 +3,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
     fun bar(): String
-    fun bas(f: Int)
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>bas<!>(f: Int)
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -13,7 +13,7 @@ expect class Foo {
 
 actual class Foo {
     fun <!ACTUAL_MISSING!>bar<!>(): String = "bar"
-    fun <!ACTUAL_MISSING!>bas<!><!ACTUAL_WITHOUT_EXPECT!>(g: Int)<!> {}
+    fun <!ACTUAL_MISSING!>bas<!>(g: Int) {}
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral */

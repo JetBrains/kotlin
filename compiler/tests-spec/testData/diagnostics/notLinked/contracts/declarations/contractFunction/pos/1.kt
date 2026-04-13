@@ -13,21 +13,21 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 fun case_1_1(x: Any?) {
     if (case_1_2(x)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2_1(x: Number?) {
     case_2_2(x)
-    println(<!DEBUG_INFO_SMARTCAST!>x<!>.toByte())
+    println(x.toByte())
 }
 
 // TESTCASE NUMBER: 3
 class Child : Base() {
     fun case_3_1(x: Any?) {
         if (case_3_2(x)) {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.length
+            x.length
         }
     }
 }

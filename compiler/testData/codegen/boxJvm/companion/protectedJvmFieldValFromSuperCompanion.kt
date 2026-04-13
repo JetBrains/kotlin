@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
 // LANGUAGE: +AllowAccessToProtectedFieldFromSuperCompanion
 // WITH_STDLIB
 // FILE: A.kt

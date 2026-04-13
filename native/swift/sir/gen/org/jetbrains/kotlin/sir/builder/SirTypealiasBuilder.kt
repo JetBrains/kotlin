@@ -43,18 +43,3 @@ inline fun buildTypealias(init: SirTypealiasBuilder.() -> Unit): SirTypealias {
     }
     return SirTypealiasBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildTypealiasCopy(original: SirTypealias, init: SirTypealiasBuilder.() -> Unit): SirTypealias {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirTypealiasBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.name = original.name
-    copyBuilder.type = original.type
-    return copyBuilder.apply(init).build()
-}

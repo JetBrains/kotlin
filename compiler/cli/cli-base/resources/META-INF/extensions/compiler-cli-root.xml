@@ -1,0 +1,4 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <id>org.jetbrains.kotlin</id>
+    <xi:include href="/META-INF/extensions/compiler.xml"/>
+</idea-plugin>

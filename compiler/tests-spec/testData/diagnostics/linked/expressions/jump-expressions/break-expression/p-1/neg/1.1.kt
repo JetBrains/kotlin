@@ -16,7 +16,7 @@ fun case1() {
     val inputList = listOf(1, 2, 3)
     inputList.forEach {
         listOf("1.", "2.", "3.").forEach {
-            if (true) <!NOT_A_LOOP_LABEL!>break<!LABEL_NAME_CLASH!>@forEach<!><!>
+            if (true) <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@forEach<!>
         }
     }
 }

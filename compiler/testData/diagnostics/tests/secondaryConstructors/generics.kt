@@ -18,7 +18,7 @@ class A1<R> : B<R> {
 }
 
 class A2<R> {
-    constructor(t: R, i: Int) : this(<!TYPE_MISMATCH!>i<!>, 1)
+    constructor(t: R, i: Int) : this(<!ARGUMENT_TYPE_MISMATCH!>i<!>, 1)
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, integerLiteral, nullableType, primaryConstructor,

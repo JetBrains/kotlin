@@ -10,7 +10,7 @@ fun F() : MutableMap<String, String> {
     val value: String? = "xyz"
     if (value == null) throw Error()
     // Smart cast should be here
-    return hashMapOf("sss" to <!DEBUG_INFO_SMARTCAST!>value<!>)
+    return hashMapOf("sss" to value)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, funWithExtensionReceiver, functionDeclaration,

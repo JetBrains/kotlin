@@ -37,6 +37,8 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":native:native.tests")))
 
+    testFixturesImplementation(libs.kotlinx.coroutines.core)
+
     testRuntimeOnly(toolsJar())
 }
 
@@ -46,7 +48,10 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "testFixtures" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        generatedTestDir()
+    }
 }
 
 projectTests {
@@ -66,4 +71,9 @@ projectTests {
     withJsRuntime()
 
     testData(project(":compiler").isolated, "testData/codegen/box")
+    testGenerator(
+        "org.jetbrains.kotlin.test.EngineSandboxTestGeneratorKt",
+        taskName = "generateSandboxTests", // to not trigger by global `generateTests` task
+        generateTestsInBuildDirectory = false,
+    )
 }

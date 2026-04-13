@@ -9,7 +9,7 @@ import checkSubtype
 fun test() {
     val foo = arrayList("").map { it -> it.length }.fold(0, { x, y -> Math.max(x, y) })
     checkSubtype<Int>(foo)
-    checkSubtype<String>(<!TYPE_MISMATCH!>foo<!>)
+    checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>foo<!>)
 }
 
 //from library

@@ -10,7 +10,7 @@ public fun foo(pp: String?): Int {
     }
     // Smart cast is NOT possible here
     // (we could provide it but p = null makes it much harder)
-    return p<!UNSAFE_CALL!>.<!>length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, functionDeclaration, ifExpression, localProperty,

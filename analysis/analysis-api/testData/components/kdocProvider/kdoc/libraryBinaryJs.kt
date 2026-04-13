@@ -1,4 +1,3 @@
-// IGNORE_FE10
 
 // MODULE: lib
 // TARGET_PLATFORM: JS

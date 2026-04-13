@@ -2,7 +2,7 @@
 // FIR_DUMP
 
 class CompanionOnly {
-    @<!UNRESOLVED_REFERENCE!>Ann<!>
+    @Ann
     companion object {
         annotation class Ann
 
@@ -57,7 +57,7 @@ open class SuperWithCompanion {
 
 
 class TestWithSuperWithCompanionOnly : SuperWithCompanion() {
-    @<!UNRESOLVED_REFERENCE!>Ann<!>
+    @Ann
     companion object {
         annotation class Ann
 

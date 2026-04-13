@@ -12,8 +12,8 @@ fun <T : A> createObj(implementedBy: Class<T>): T {
         B::class.java -> B()
         else -> throw Exception("unsupported class")
     }
-    val castObj = <!DEBUG_INFO_SMARTCAST!>implementedBy<!>.cast(obj)
-    return <!TYPE_MISMATCH!>castObj<!> // should be OK
+    val castObj = implementedBy.cast(obj)
+    return castObj // should be OK
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, equalityExpression, flexibleType, functionDeclaration,

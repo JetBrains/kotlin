@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import org.jetbrains.kotlin.generators.dsl.TestGroup
-import org.jetbrains.kotlin.generators.dsl.TestGroupSuite
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.light.classes.symbol.base.AbstractLightClassUtilTest
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.light.classes.symbol.source.*
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        generateCompilerTestDataBasedLightClassesTests()
-
         testGroup(
             "analysis/symbol-light-classes/tests-gen",
             "analysis/symbol-light-classes/testData",
@@ -50,13 +47,13 @@ fun main(args: Array<String>) {
 
             run {
                 testClass<AbstractSymbolLightClassesAnnotationEqualityForSourceTest> {
-                    model("annotationsEquality", pattern = TestGeneratorUtil.KT)
+                    model("annotationsEquality", pattern = TestGeneratorUtil.KT_OR_KTS)
                 }
             }
 
             run {
                 testClass<AbstractLightClassUtilTest> {
-                    model("lightElements", pattern = TestGeneratorUtil.KT)
+                    model("lightElements", pattern = TestGeneratorUtil.KT_OR_KTS)
                 }
             }
 
@@ -65,17 +62,10 @@ fun main(args: Array<String>) {
                     model("libraryNestedClassesConsistency", pattern = TestGeneratorUtil.KT)
                 }
             }
-        }
-    }
-}
 
-private fun TestGroupSuite.generateCompilerTestDataBasedLightClassesTests() {
-    testGroup(
-        "analysis/symbol-light-classes/tests-gen",
-        "compiler/testData",
-    ) {
-        lightClassesByFqNameTests()
-        lightClassesByPsiTests()
+            lightClassesByFqNameTests()
+            lightClassesByPsiTests()
+        }
     }
 }
 
@@ -93,7 +83,7 @@ private fun lightClassesTestsInit(
 private fun lightClassesByPsiTestsInit(
     isLibrary: Boolean,
 ): TestGroup.TestClass.() -> Unit = lightClassesTestsInit(
-    path = "asJava/lightClasses/lightClassByPsi",
+    path = "lightClassByPsi",
     isLibrary = isLibrary,
 )
 
@@ -119,7 +109,7 @@ private fun TestGroup.lightClassesByPsiTests() {
 private fun lightClassesByFqNameTestsInit(
     isLibrary: Boolean,
 ): TestGroup.TestClass.() -> Unit = lightClassesTestsInit(
-    path = "asJava/lightClasses/lightClassByFqName",
+    path = "lightClassByFqName",
     isLibrary = isLibrary,
 )
 

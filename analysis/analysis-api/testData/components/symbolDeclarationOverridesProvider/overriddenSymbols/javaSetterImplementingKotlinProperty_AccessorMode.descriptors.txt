@@ -1,5 +1,0 @@
-ALL:
-  /A.foo.<no name>: Unit
-DIRECT:
-  /A.foo.<no name>: Unit
-INTERSECTION:

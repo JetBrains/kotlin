@@ -6,13 +6,13 @@ interface CompletionHandler {
     fun foo()
 }
 
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class CompletionHandlerBase<!>()
+expect class CompletionHandlerBase()
 
 fun invokeOnCompletion(handler: CompletionHandler) {}
 
 // MODULE: intermediate()()(common)
 // actual has an additional super type
-actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class CompletionHandlerBase<!> : CompletionHandler {
+actual class CompletionHandlerBase : CompletionHandler {
     override fun foo() {}
 }
 

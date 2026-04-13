@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/objectReference.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Z
       BLOCK_BODY
         CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=EQ
-          ARG <this>: GET_VAR '<this>: <root>.Z declared in <root>.Z.bar' type=<root>.Z origin=null
+          ARG <this>: GET_VAR '<this>: <root>.Z declared in <root>.Z.bar' type=<root>.Z origin=IMPLICIT_ARGUMENT
           ARG <set-?>: CONST Int type=kotlin.Int value=1
         CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.Z declared in <root>.Z.bar' type=<root>.Z origin=IMPLICIT_ARGUMENT
@@ -197,7 +197,7 @@ FILE fqName:<root> fileName:/objectReference.kt
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.Z
     BLOCK_BODY
       CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=EQ
-        ARG <this>: GET_VAR '<this>: <root>.Z declared in <root>.test' type=<root>.Z origin=null
+        ARG <this>: GET_VAR '<this>: <root>.Z declared in <root>.test' type=<root>.Z origin=IMPLICIT_ARGUMENT
         ARG <set-?>: CONST Int type=kotlin.Int value=1
       CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR '<this>: <root>.Z declared in <root>.test' type=<root>.Z origin=IMPLICIT_ARGUMENT

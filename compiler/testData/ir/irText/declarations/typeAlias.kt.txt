@@ -5,13 +5,9 @@ class C {
 
   }
 
-  @Suppress(names = ["TOPLEVEL_TYPEALIASES_ONLY"])
-  typealias TestNested = String
 }
 
 fun foo() {
-  { // BLOCK
-  }
 }
 
 typealias Test1 = String

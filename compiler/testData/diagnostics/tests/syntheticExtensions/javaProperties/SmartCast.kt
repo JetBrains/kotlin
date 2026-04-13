@@ -2,8 +2,8 @@
 // FILE: KotlinFile.kt
 fun foo(o: JavaInterface2): Int {
     if (o is JavaClass) {
-        <!DEBUG_INFO_SMARTCAST!>o<!>.something++
-        return <!DEBUG_INFO_SMARTCAST!>o<!>.x + o.something2
+        o.something++
+        return o.x + o.something2
     }
     return 0
 }

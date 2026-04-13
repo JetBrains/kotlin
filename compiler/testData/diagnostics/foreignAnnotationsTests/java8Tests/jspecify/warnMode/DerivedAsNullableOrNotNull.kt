@@ -15,7 +15,7 @@ public class SomeJavaClass {
 // FILE: test.kt
 
 class DerivedNullable : SomeJavaClass() {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun foo(): String? { return null }
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun foo(): String? { return null }
 
     override fun bar(): String? { return null }
 }

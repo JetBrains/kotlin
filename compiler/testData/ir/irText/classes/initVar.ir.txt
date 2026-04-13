@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/initVar.kt
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         CALL 'public final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.TestInitVarInInitBlock' type=kotlin.Unit origin=EQ
-          ARG <this>: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock' type=<root>.TestInitVarInInitBlock origin=null
+          ARG <this>: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock' type=<root>.TestInitVarInInitBlock origin=IMPLICIT_ARGUMENT
           ARG <set-?>: CONST Int type=kotlin.Int value=0
     CONSTRUCTOR visibility:public returnType:<root>.TestInitVarInInitBlock [primary]
       BLOCK_BODY
@@ -136,7 +136,7 @@ FILE fqName:<root> fileName:/initVar.kt
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
-            receiver: GET_VAR '<this>: <root>.TestInitVarWithCustomSetter declared in <root>.TestInitVarWithCustomSetter.<set-x>' type=<root>.TestInitVarWithCustomSetter origin=null
+            receiver: GET_VAR '<this>: <root>.TestInitVarWithCustomSetter declared in <root>.TestInitVarWithCustomSetter.<set-x>' type=<root>.TestInitVarWithCustomSetter origin=IMPLICIT_ARGUMENT
             value: GET_VAR 'value: kotlin.Int declared in <root>.TestInitVarWithCustomSetter.<set-x>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public returnType:<root>.TestInitVarWithCustomSetter [primary]
       BLOCK_BODY

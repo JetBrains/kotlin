@@ -686,7 +686,7 @@ object LightTreePositioningStrategies {
                 }
             }
             val nodeToStart = when (node.tokenType) {
-                in QUALIFIED_ACCESS -> tree.findLastChildByType(node, KtNodeTypes.CALL_EXPRESSION) ?: node
+                in QUALIFIED_ACCESS -> tree.selector(node) ?: node
                 KtNodeTypes.CLASS -> tree.findLastChildByType(node, KtNodeTypes.SUPER_TYPE_LIST) ?: node
                 else -> node
             }
@@ -811,6 +811,22 @@ object LightTreePositioningStrategies {
 
     val REFERENCE_BY_QUALIFIED: LightTreePositioningStrategy = FindReferencePositioningStrategy(false)
     val REFERENCED_NAME_BY_QUALIFIED: LightTreePositioningStrategy = FindReferencePositioningStrategy(true)
+
+    val RECEIVER_OF_DOT_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
+                tree.firstChildExpression(node)?.let {
+                    return markElement(it, startOffset, endOffset, tree, node)
+                }
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
 
     /**
      * @param locateReferencedName see doc on [referenceExpression]

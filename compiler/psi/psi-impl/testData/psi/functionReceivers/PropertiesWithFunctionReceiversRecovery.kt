@@ -1,5 +1,4 @@
 // COMPILATION_ERRORS
-// IGNORE_ERRORS_FROM_API: KT-85154
 
 val ((T) -> G).foo<P> { }
 val ((T) -> G).foo get{ }

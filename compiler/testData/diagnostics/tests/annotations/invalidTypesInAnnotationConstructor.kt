@@ -35,7 +35,7 @@ annotation class Ann8(val p1: Array<String>,
                       val p4: Array<Ann1>)
 
 annotation class Ann9(
-        val error: <!UNRESOLVED_REFERENCE!>Unresolved<!> = <!UNRESOLVED_REFERENCE!>Unresolved<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>VALUE<!>
+        val error: <!UNRESOLVED_REFERENCE!>Unresolved<!> = <!UNRESOLVED_REFERENCE!>Unresolved<!>.VALUE
 )
 
 
@@ -70,9 +70,9 @@ annotation class InAnn13(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p1: String,
                         <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p4: Ann1,
                         <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p5: Int)
 
-annotation class InAnn14(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val value<!SYNTAX!><!> = [1.0, 2.2]<!>)
-annotation class InAnn15(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val value<!SYNTAX!><!> = [1, 2]<!>)
-annotation class InAnn16(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> val value<!SYNTAX!><!> = ["alpha", "beta"]<!>)
+annotation class InAnn14(<!INVALID_TYPE_OF_ANNOTATION_MEMBER, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>vararg val value<!SYNTAX!><!> = [1.0, 2.2]<!>)
+annotation class InAnn15(<!INVALID_TYPE_OF_ANNOTATION_MEMBER, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>vararg val value<!SYNTAX!><!> = [1, 2]<!>)
+annotation class InAnn16(<!INVALID_TYPE_OF_ANNOTATION_MEMBER, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>vararg val value<!SYNTAX!><!> = ["alpha", "beta"]<!>)
 
 enum class MyEnum {
     A

@@ -27,11 +27,11 @@ open class A<T>(var data: T) {
 class B<T>(data: T) : A<T>(data)
 
 fun case1() {
-    val tryVal: B<String> =
-    try <!TYPE_MISMATCH!>{
+    val tryVal: B<String> <!INITIALIZER_TYPE_MISMATCH!>=<!>
+    try {
         throwExceptionA(false)
         A("")
-    }<!> catch (e: Exception) {
+    } catch (e: Exception) {
         B("")
     }
 }
@@ -54,13 +54,13 @@ class B<T>(data: T) : A<T>(data)
 
 
 fun case2() {
-    val tryVal: A<String> =
+    val tryVal: A<String> <!INITIALIZER_TYPE_MISMATCH!>=<!>
     try {
         throwExceptionA(false)
         A("")
-    } catch (e: Exception) <!TYPE_MISMATCH!>{
+    } catch (e: Exception) {
         null
-    }<!>
+    }
 }
 
 
@@ -78,15 +78,15 @@ open class A<T>(var data: T) {
 class B<T>(data: T) : A<T>(data)
 
 fun case3() {
-    val tryVal: A<Int> =
+    val tryVal: A<Int> <!INITIALIZER_TYPE_MISMATCH!>=<!>
     try {
         throwExceptionA(false)
         A(2)
-    } catch (e: ExcA) <!TYPE_MISMATCH!>{
-        A(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
-    }<!> catch (e: ExcB) <!TYPE_MISMATCH!>{
-        B(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
-    }<!>
+    } catch (e: ExcA) {
+        A(null) //diag duplication
+    } catch (e: ExcB) {
+        B(null) //diag duplication
+    }
 }
 
 class ExcA() : Exception()

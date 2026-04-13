@@ -6,7 +6,7 @@ fun test() {
     fun inner1() {
         fun inner2() {
             fun inner3() {
-                val <!UNUSED_VARIABLE!>y<!> = x
+                val y = x
             }
         }
     }

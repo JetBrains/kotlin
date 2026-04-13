@@ -6,7 +6,7 @@ class A<D : Any>  {
     }
 
     fun test(w:Ainner<*>) {
-        w.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>innerFun<!>()
+        w.innerFun()
     }
 }
 

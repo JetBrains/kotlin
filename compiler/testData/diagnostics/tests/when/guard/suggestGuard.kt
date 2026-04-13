@@ -4,20 +4,20 @@
 
 fun suggestAnd(x: String, boolExpr: Boolean) {
     when (x) {
-        <!CONFUSING_BRANCH_CONDITION_ERROR, INCOMPATIBLE_TYPES!><!TYPE_MISMATCH!>"OK"<!> && boolExpr<!> -> "hello"
+        <!INCOMPATIBLE_TYPES!><!CONDITION_TYPE_MISMATCH!>"OK"<!> <!WRONG_CONDITION_SUGGEST_GUARD!>&&<!> boolExpr<!> -> "hello"
     }
 }
 
 fun ok(x: String, boolExpr: Boolean) {
     when (x) {
-        "OK" <!UNSUPPORTED_FEATURE!>if boolExpr<!> -> "hello"
+        "OK" if boolExpr -> "hello"
         else -> "bye"
     }
 }
 
 fun booleanNoSuggestion1(x: Boolean, boolExpr: Boolean) {
     when (x) {
-        <!CONFUSING_BRANCH_CONDITION_ERROR!><!TYPE_MISMATCH!>"OK"<!> && boolExpr<!> -> "hello"
+        <!CONFUSING_BRANCH_CONDITION_ERROR!><!CONDITION_TYPE_MISMATCH!>"OK"<!> && boolExpr<!> -> "hello"
         else -> "bye"
     }
 }

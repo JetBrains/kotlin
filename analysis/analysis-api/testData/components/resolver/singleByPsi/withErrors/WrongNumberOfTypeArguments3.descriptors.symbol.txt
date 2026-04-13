@@ -1,6 +1,0 @@
-KtNameReferenceExpression(51,53): 'DD'
-  KaSymbolResolutionError:
-    candidateSymbols = [
-      <constructor>(): foo.DD<T, T2>
-    ]
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>

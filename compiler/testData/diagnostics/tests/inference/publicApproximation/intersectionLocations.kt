@@ -2,14 +2,14 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Bound1>")!>testInv()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<Bound1>")!>testIn()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<Bound1>")!>testOut()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<Bound1, Inv<*>>")!>testStarProjection()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("[Error type: Return type for function cannot be resolved]")!>testErrorType()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in Bound1>")!>testInProjection()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Bound1>")!>testOutProjection()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Inv<Inv<Bound1>>>")!>testDeeplyNested()<!>
+    testInv()
+    testIn()
+    testOut()
+    testStarProjection()
+    testErrorType()
+    testInProjection()
+    testOutProjection()
+    testDeeplyNested()
 }
 
 interface Bound1
@@ -38,7 +38,7 @@ fun testStarProjection() = BiParam(
     intersect(First, Second),
     makeStarProjection()
 )
-fun testErrorType() = BiParam(
+fun testErrorType() = <!CANNOT_INFER_PARAMETER_TYPE!>BiParam<!>(
     intersect(First, Second),
     <!UNRESOLVED_REFERENCE!>unresolved<!>
 )

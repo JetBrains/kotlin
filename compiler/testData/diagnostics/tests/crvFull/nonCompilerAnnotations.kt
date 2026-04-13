@@ -11,7 +11,7 @@ annotation class NonCompilerAnnotation
 fun foo(): String = ""
 
 fun main() {
-    foo()
+    <!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, functionDeclaration, stringLiteral */

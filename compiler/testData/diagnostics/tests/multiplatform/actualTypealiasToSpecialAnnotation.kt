@@ -17,16 +17,16 @@ expect enum class TypealiasNotToAnnotation
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual typealias TypealiasToKotlinPkg = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION!>kotlin.Deprecated<!>
+actual typealias TypealiasToKotlinPkg = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.Deprecated<!>
 
-@Suppress("INVISIBLE_REFERENCE")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 internal actual typealias TypealiasToInternalPkg = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION!>kotlin.internal.RequireKotlin<!>
 
-actual typealias TypealiasToAnnotationPkg = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION!>kotlin.annotation.Target<!>
+actual typealias TypealiasToAnnotationPkg = <!ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION, TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.annotation.Target<!>
 
 actual typealias TypealiasToPlatformPkg = kotlin.jvm.Synchronized
 
-typealias NonActualTypealias = kotlin.Deprecated
+typealias NonActualTypealias = <!TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION_WARNING!>kotlin.Deprecated<!>
 
 actual typealias TypealiasNotToAnnotation = kotlin.DeprecationLevel
 

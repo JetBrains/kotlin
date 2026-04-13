@@ -16,10 +16,10 @@ fun doStuffComparable(value: UByte) = "UByte"
 
 fun main() {
     val uByte: UByte = UByte.MIN_VALUE
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>doStuff<!>(uByte)
-    uByte.<!OVERLOAD_RESOLUTION_AMBIGUITY!>doStuffExtension<!>()
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>doStuffTa<!>(uByte)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>doStuffComparable<!>(uByte)
+    doStuff(uByte)
+    uByte.doStuffExtension()
+    doStuffTa(uByte)
+    doStuffComparable(uByte)
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, localProperty, propertyDeclaration, stringLiteral,

@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
-fun test1(i: Int) = { <!CANNOT_INFER_PARAMETER_TYPE, NAME_SHADOWING!>i<!> ->
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!>
+fun test1(i: Int) = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> ->
+    i
 }(i)
 
-fun test2() = { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }<!NO_VALUE_FOR_PARAMETER!>()<!>
+fun test2() = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> -> i }<!NO_VALUE_FOR_PARAMETER!>()<!>
 
-fun test3() = { <!CANNOT_INFER_PARAMETER_TYPE!>i<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>i<!> }(1)
+fun test3() = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>i<!> -> i }(1)
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

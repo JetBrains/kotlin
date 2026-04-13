@@ -52,6 +52,7 @@ class PsiClassRenderer private constructor(
 
     private fun PrettyPrinter.renderClass(psiClass: PsiClass) {
         val classWord = when {
+            psiClass.isRecord -> "record"
             psiClass.isAnnotationType -> "@interface"
             psiClass.isInterface -> "interface"
             psiClass.isEnum -> "enum"
@@ -62,6 +63,11 @@ class PsiClassRenderer private constructor(
         append("$classWord ")
         append("${psiClass.name} /* ${psiClass.qualifiedName}*/")
         append(psiClass.typeParameters.renderTypeParams())
+
+        if (psiClass.isRecord) {
+            append(psiClass.renderRecordHeader())
+        }
+
         append(psiClass.extendsList.renderRefList("extends"))
         append(psiClass.implementsList.renderRefList("implements"))
         appendLine(" {")
@@ -181,6 +187,13 @@ class PsiClassRenderer private constructor(
 
         return result
     }
+
+    private fun PsiClass.renderRecordHeader(): String {
+        return recordHeader?.recordComponents.orEmpty().joinToString(prefix = "(", postfix = ")") { it.renderRecordComponent() }
+    }
+
+    private fun PsiRecordComponent.renderRecordComponent(): String =
+        renderModifiers(type) + type.renderType() + " " + name
 
     private fun Array<PsiTypeParameter>.renderTypeParams() =
         if (isEmpty()) ""
@@ -338,9 +351,8 @@ class PsiClassRenderer private constructor(
 
             val renderedAnnotation = annotation.renderAnnotation()
             if (renderedAnnotation.isNotEmpty()) {
-                annotationsBuffer.add(
-                    renderedAnnotation + (if (this is PsiParameter || this is PsiTypeParameter) " " else "\n")
-                )
+                val whitespace = if (this is PsiParameter || this is PsiTypeParameter || this is PsiRecordComponent) " " else "\n"
+                annotationsBuffer.add(renderedAnnotation + whitespace)
             }
         }
         annotationsBuffer.sort()

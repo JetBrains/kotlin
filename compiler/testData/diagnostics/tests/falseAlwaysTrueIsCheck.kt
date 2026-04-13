@@ -5,7 +5,7 @@
 fun main() {
     val x: Int? = 42
 
-    if (x is <!INCOMPATIBLE_TYPES!>Byte?<!>) {}
+    if (<!IMPOSSIBLE_IS_CHECK_RELYING_ON_NULL_ERROR("true")!>x is Byte?<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, isExpression, localProperty, nullableType,

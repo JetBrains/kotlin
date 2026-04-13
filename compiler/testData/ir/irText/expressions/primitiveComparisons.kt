@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun btest1(a: Byte, b: Byte) = a > b
 fun btest2(a: Byte, b: Byte) = a < b
 fun btest3(a: Byte, b: Byte) = a >= b

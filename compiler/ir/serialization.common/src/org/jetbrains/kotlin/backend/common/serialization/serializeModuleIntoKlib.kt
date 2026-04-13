@@ -190,7 +190,7 @@ fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersio
     }
 
     val presentablePoisoningFeatures =
-        enabledFeatures.filter { it.forcesPreReleaseBinariesIfEnabled() }.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
+        enabledFeatures.filter { it.forcesPreReleaseBinariesIfEnabled(languageVersionSettings.languageVersion) }.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
     if (presentablePoisoningFeatures.isNotBlank()) {
         manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, presentablePoisoningFeatures)
     }

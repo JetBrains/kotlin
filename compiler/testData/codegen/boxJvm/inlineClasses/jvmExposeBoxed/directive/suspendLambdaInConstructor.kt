@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
-// LANGUAGE: +ImplicitJvmExposeBoxed
+// JVM_EXPOSE_BOXED
 
 // FILE: IC.kt
 import kotlin.coroutines.*

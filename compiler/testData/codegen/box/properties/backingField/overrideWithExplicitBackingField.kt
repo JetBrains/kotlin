@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // ^KT-83269
 // LANGUAGE: +ExplicitBackingFields
 

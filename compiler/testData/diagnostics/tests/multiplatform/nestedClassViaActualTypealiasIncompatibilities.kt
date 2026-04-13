@@ -2,9 +2,9 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common()()()
 // FILE: common.kt
-expect class Foo {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
     class Inner
-    class AbsentOnactual
+    class <!NO_ACTUAL_FOR_EXPECT{JVM}!>AbsentOnactual<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)

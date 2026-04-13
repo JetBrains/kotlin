@@ -294,7 +294,7 @@ fun createFunctionType(
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
     contextParameters: List<ConeKotlinType> = emptyList(),
-): ConeLookupTagBasedType {
+): ConeClassLikeType {
     val receiverAndParameterTypes =
         buildList {
             addAll(contextParameters)
@@ -798,7 +798,7 @@ fun createConeDiagnosticForCandidateWithError(
 
             ConeVisibilityError(symbol)
         }
-        CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
+        CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(candidate)
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
         else -> {
             if (TypeParameterAsExpression in candidate.diagnostics) {

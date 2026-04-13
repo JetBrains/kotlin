@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 // FILE: Lib.kt

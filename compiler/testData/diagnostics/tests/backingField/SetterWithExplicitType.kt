@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // KT-7042 Providing return type for property setter is not reported as error
 
 var x: Int = 1

@@ -37,7 +37,7 @@ fun test_2(b: B<*>) {
 
 fun <F : B<F>> test_3(b: B<F>) {
     if (b is C) {
-        <!DEBUG_INFO_SMARTCAST!>b<!>.symbol.bar()
+        b.symbol.bar()
     }
 }
 

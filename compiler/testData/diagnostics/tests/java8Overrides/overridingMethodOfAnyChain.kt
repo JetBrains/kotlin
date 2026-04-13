@@ -2,15 +2,15 @@
 interface IA
 
 interface IB : IA {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "IB"<!>
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "IB"
 }
 
 interface IC : IB {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "IC"<!>
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "IC"
 }
 
 interface ID : IC {
-    <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>override fun toString(): String = "ID"<!>
+    override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "ID"
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, stringLiteral */

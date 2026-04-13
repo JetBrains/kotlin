@@ -7,7 +7,7 @@ fun foo() {
 
     }
     // TODO: this testdata fixates undesired behavior (it should be an unsafe call)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // 'x' is unsoundly smartcasted here
+    x<!UNSAFE_CALL!>.<!>length // 'x' is unsoundly smartcasted here
 }
 
 fun bar() {
@@ -18,7 +18,7 @@ fun bar() {
 
     }
     // TODO: this testdata fixates undesired behavior (it should be an unsafe call)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.size // 'x' is unsoundly smartcasted here
+    x<!UNSAFE_CALL!>.<!>size // 'x' is unsoundly smartcasted here
 }
 
 /* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, comparisonExpression, forLoop, functionDeclaration,

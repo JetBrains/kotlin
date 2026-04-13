@@ -2,9 +2,9 @@
 fun baz(s: String?): String {
     if (s == null) return ""
     // if explicit type String is given for t, problem disappears
-    val t = when(<!DEBUG_INFO_SMARTCAST!>s<!>) {
+    val t = when(s) {
         // !! is detected as unnecessary here
-        "abc" -> <!DEBUG_INFO_SMARTCAST!>s<!>
+        "abc" -> s
         else -> "xyz"
     }
     return t
@@ -12,7 +12,7 @@ fun baz(s: String?): String {
 
 fun foo(s: String?): String {
     val t = when {
-        s != null -> <!DEBUG_INFO_SMARTCAST!>s<!>
+        s != null -> s
         else -> ""
     }
     return t

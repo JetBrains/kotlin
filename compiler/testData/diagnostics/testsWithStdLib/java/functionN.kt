@@ -38,17 +38,17 @@ public class A implements KI {
 fun <T> any(): T = null!!
 
 fun main() {
-    val a: A = <!DEPRECATION_ERROR!>A<!>(null)
+    val a: A = A(null)
 
-    a.<!DEPRECATION_ERROR!>field<!>.hashCode();
-    a.<!DEPRECATION_ERROR!>field<!> = null;
+    a.field.hashCode();
+    a.field = null;
 
-    a.<!DEPRECATION_ERROR!>foo<!>(null)
-    a.<!DEPRECATION_ERROR!>bar<!>()
-    a.<!DEPRECATION_ERROR!>baz<!>(listOf())
+    a.foo(null)
+    a.bar()
+    a.baz(listOf())
 
-    a.<!DEPRECATION_ERROR!>manyParams<!>(null)
-    a.<!DEPRECATION_ERROR!>manyParams<!>(any<kotlin.jvm.functions.FunctionN<Unit>>())
+    a.manyParams(null)
+    a.manyParams(any<kotlin.jvm.functions.FunctionN<Unit>>())
 
     // Potentially, this would have better to forbid calling manyParams, too.
     // But it might be complicated because we need to match that it is an override

@@ -9,23 +9,23 @@ fun topLevelMethod() {
     }
   }
   when {
-    true -> array.set(index = 0, value = 4)
-    else -> array.set(index = 0, value = 5)
+    true -> { // BLOCK
+      array.set(index = 0, value = 4)
+    }
+    else -> { // BLOCK
+      array.set(index = 0, value = 5)
+    }
   }
   when {
     true -> { // BLOCK
-      { // BLOCK
-        val tmp_0: IntArray = array
-        val tmp_1: Int = 0
-        tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 6))
-      }
+      val tmp_0: IntArray = array
+      val tmp_1: Int = 0
+      tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 6))
     }
     else -> { // BLOCK
-      { // BLOCK
-        val tmp_2: IntArray = array
-        val tmp_3: Int = 0
-        tmp_2.set(index = tmp_3, value = tmp_2.get(index = tmp_3).plus(other = 7))
-      }
+      val tmp_2: IntArray = array
+      val tmp_3: Int = 0
+      tmp_2.set(index = tmp_3, value = tmp_2.get(index = tmp_3).plus(other = 7))
     }
   }
   when {
@@ -54,26 +54,26 @@ fun topLevelMethod() {
   { // BLOCK
     val tmp_9: Int = array.get(index = 0)
     when {
-      EQEQ(arg0 = tmp_9, arg1 = 1) -> array.set(index = 0, value = 12)
-      else -> array.set(index = 0, value = 13)
+      EQEQ(arg0 = tmp_9, arg1 = 1) -> { // BLOCK
+        array.set(index = 0, value = 12)
+      }
+      else -> { // BLOCK
+        array.set(index = 0, value = 13)
+      }
     }
   }
   { // BLOCK
     val tmp_10: Int = array.get(index = 0)
     when {
       EQEQ(arg0 = tmp_10, arg1 = 1) -> { // BLOCK
-        { // BLOCK
-          val tmp_11: IntArray = array
-          val tmp_12: Int = 0
-          tmp_11.set(index = tmp_12, value = tmp_11.get(index = tmp_12).plus(other = 14))
-        }
+        val tmp_11: IntArray = array
+        val tmp_12: Int = 0
+        tmp_11.set(index = tmp_12, value = tmp_11.get(index = tmp_12).plus(other = 14))
       }
       else -> { // BLOCK
-        { // BLOCK
-          val tmp_13: IntArray = array
-          val tmp_14: Int = 0
-          tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).plus(other = 15))
-        }
+        val tmp_13: IntArray = array
+        val tmp_14: Int = 0
+        tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).plus(other = 15))
       }
     }
   }
@@ -93,3 +93,4 @@ fun topLevelMethod() {
     }
   }
 }
+

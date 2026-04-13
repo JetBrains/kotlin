@@ -20,7 +20,7 @@ class Outer {
         ab.bar()
         ab.<!UNRESOLVED_REFERENCE!>foo<!>()
 
-        val a = <!NO_COMPANION_OBJECT!>A<!>
+        val a = <!DEPRECATION_ERROR!>A<!>
     }
 }
 

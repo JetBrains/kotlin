@@ -28,7 +28,7 @@ abstract class My(<!WRONG_ANNOTATION_TARGET!>@Field<!> arg: Int, @Field val w: I
     fun foo() {}
 
     <!WRONG_ANNOTATION_TARGET!>@Field<!>
-    val v: Int by <!UNRESOLVED_REFERENCE!>Delegates<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>lazy<!> { 42 }
+    val v: Int by <!UNRESOLVED_REFERENCE!>Delegates<!>.lazy { 42 }
 }
 
 enum class Your {

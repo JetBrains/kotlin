@@ -56,19 +56,19 @@ fun test() {
 
     takeULong(IMPLICIT_INT)
 
-    takeUBytes(IMPLICIT_INT, EXPLICIT_INT, 42u)
+    <!OPT_IN_USAGE!>takeUBytes<!>(IMPLICIT_INT, EXPLICIT_INT, 42u)
 
-    takeLong(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
+    takeLong(<!ARGUMENT_TYPE_MISMATCH!>IMPLICIT_INT<!>)
 
     takeIntWithoutAnnotation(IMPLICIT_INT)
 
     takeUIntWithoutAnnotaion(UINT_CONST)
 
-    takeUByte(<!TYPE_MISMATCH!>LONG_CONST<!>)
-    takeUByte(<!TYPE_MISMATCH!>NON_CONST<!>)
-    takeUByte(<!TYPE_MISMATCH!>BIGGER_THAN_UBYTE<!>)
-    takeUByte(<!TYPE_MISMATCH!>UINT_CONST<!>)
-    takeUIntWithoutAnnotaion(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
+    takeUByte(LONG_CONST)
+    takeUByte(<!ARGUMENT_TYPE_MISMATCH!>NON_CONST<!>)
+    takeUByte(BIGGER_THAN_UBYTE)
+    takeUByte(UINT_CONST)
+    takeUIntWithoutAnnotaion(<!ARGUMENT_TYPE_MISMATCH!>IMPLICIT_INT<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, const, functionDeclaration, integerLiteral, propertyDeclaration,

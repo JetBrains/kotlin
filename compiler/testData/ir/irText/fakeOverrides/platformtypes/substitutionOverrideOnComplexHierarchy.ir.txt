@@ -31,12 +31,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract a: @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Int?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Int>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-a> (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Int?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Int>
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:@[FlexibleNullability] kotlin.Int?
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:

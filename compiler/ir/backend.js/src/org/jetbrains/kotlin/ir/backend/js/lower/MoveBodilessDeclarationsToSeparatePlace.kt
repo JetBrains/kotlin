@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.originalFileForExternalDeclaration
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
@@ -86,46 +87,42 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
             }
         }
 
-        if (declaration.isEffectivelyExternal() && (irFile.getJsModule() != null || irFile.getJsQualifier() != null)) {
-            externalPackageFragment.declarations += declaration
-            declaration.parent = externalPackageFragment
-
-            context.packageLevelJsModules += externalPackageFragment
-
-            return emptyList()
-        } else {
-            val d = declaration as? IrDeclarationWithName ?: return null
-
-            if (isBuiltInClass(d) || isIntrinsic(d)) {
-                context.bodilessBuiltInsPackageFragment.addChild(d)
-
-                return emptyList()
-            } else if (d.isEffectivelyExternal()) {
-                externalPackageFragment.declarations += d
-                d.parent = externalPackageFragment
-
-                return emptyList()
+        return when (declaration) {
+            is IrDeclarationWithName if (isBuiltInClass(declaration) || isIntrinsic(declaration)) -> {
+                context.bodilessBuiltInsPackageFragment.addChild(declaration)
+                emptyList()
             }
+            is IrPossiblyExternalDeclaration if declaration.isEffectivelyExternal() -> {
+                externalPackageFragment.declarations += declaration
+                declaration.parent = externalPackageFragment
 
-            return null
+                if (irFile.getJsModule() != null || irFile.getJsQualifier() != null)
+                    context.packageLevelJsModules += externalPackageFragment
+
+                emptyList()
+            }
+            else -> null
         }
     }
 }
 
-fun validateIsExternal(packageFragment: IrPackageFragment) {
-    for (declaration in packageFragment.declarations) {
-        validateNestedExternalDeclarations(declaration, (declaration as? IrPossiblyExternalDeclaration)?.isExternal ?: false)
+fun validateIsExternal(file: IrFile) {
+    for (declaration in file.declarations) {
+        validateNestedExternalDeclarations(file, declaration, (declaration as? IrPossiblyExternalDeclaration)?.isExternal ?: false)
     }
 }
 
 
-fun validateNestedExternalDeclarations(declaration: IrDeclaration, isExternalTopLevel: Boolean) {
+fun validateNestedExternalDeclarations(file: IrFile, declaration: IrDeclaration, isExternalTopLevel: Boolean) {
     fun IrPossiblyExternalDeclaration.checkExternal() {
         if (isExternal != isExternalTopLevel) {
             compilationException(
                 "isExternal validation failed for declaration",
                 declaration,
             )
+        }
+        if (isExternal) {
+            originalFileForExternalDeclaration = file
         }
     }
 
@@ -139,7 +136,7 @@ fun validateNestedExternalDeclarations(declaration: IrDeclaration, isExternalTop
     }
     if (declaration is IrClass) {
         declaration.declarations.forEach {
-            validateNestedExternalDeclarations(it, isExternalTopLevel)
+            validateNestedExternalDeclarations(file, it, isExternalTopLevel)
         }
     }
 }

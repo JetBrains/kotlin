@@ -10,6 +10,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -25,4 +26,9 @@ class KotlinAnnotationUseSiteTargetStubImpl(
         parent = newParent,
         useSiteTargetRef = useSiteTargetRef,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinAnnotationUseSiteTargetStubImpl &&
+                other.useSiteTargetRef == useSiteTargetRef
 }

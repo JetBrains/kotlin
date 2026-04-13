@@ -6,11 +6,11 @@ import kotlin.contracts.*
 
 var Int?.prop : Int?
     get() {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (this@prop != null) }
+        contract { returns() implies (this@prop != null) }
         return null
     }
     set(v: Int?) {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+        contract {
             returns() implies (v != null)
             returns() implies (this@prop != null)
         }
@@ -18,17 +18,17 @@ var Int?.prop : Int?
 
 fun test1(v: Int?) {
     val vv = v.prop
-    v <!UNSAFE_OPERATOR_CALL!>+<!> 1
+    v + 1
 }
 
 fun test2(v: Int?, newv: Int) {
     v.prop = newv
-    v <!UNSAFE_OPERATOR_CALL!>+<!> 1
+    v + 1
 }
 
 fun test3(v: Int, newv: Int?) {
     v.prop = newv
-    newv <!UNSAFE_OPERATOR_CALL!>+<!> 1
+    newv + 1
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, contractConditionalEffect, contracts, equalityExpression,

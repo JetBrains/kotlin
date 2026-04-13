@@ -10,10 +10,10 @@ fun test1() {
     var c = C()
     val x = c.x
     if (x == null) return
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
     c = C()
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
 }
 
@@ -22,10 +22,10 @@ fun test2() {
     val x = c.x
     if (x == null) return
     while (true) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+        x.length // smartcast
         c.x<!UNSAFE_CALL!>.<!>length // no smartcast
         c = C()
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+        x.length // smartcast
         c.x<!UNSAFE_CALL!>.<!>length // no smartcast
     }
 }
@@ -34,12 +34,12 @@ fun test3(p: Boolean) {
     var c = C()
     val x = c.x
     if (x == null) return
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
     if (p) {
         c = C()
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
 }
 
@@ -47,7 +47,7 @@ fun test4(p: Boolean, q: Boolean) {
     var c = C()
     val x = c.x
     if (x == null) return
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
     if (p) {
         if (q) {
@@ -62,7 +62,7 @@ fun test4(p: Boolean, q: Boolean) {
             c = C()
         }
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
 }
 
@@ -71,13 +71,13 @@ fun test5() {
     val d = c
     val x = d.x
     if (x == null) return
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
-    <!SMARTCAST_IMPOSSIBLE!>d.x<!>.length // no smartcast
+    d.x<!UNSAFE_CALL!>.<!>length // no smartcast
     c = C()
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // smartcast
+    x.length // smartcast
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
-    <!SMARTCAST_IMPOSSIBLE!>d.x<!>.length // no smartcast
+    d.x<!UNSAFE_CALL!>.<!>length // no smartcast
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, getter, ifExpression,

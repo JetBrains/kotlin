@@ -8,7 +8,7 @@ class Wrap {
 
 // FILE: test.kt
 fun test() {
-    Wrap.<!NONE_APPLICABLE!>createWrap<!>(1, <!DEBUG_INFO_MISSING_UNRESOLVED!>wrapFirstElement<!> = false)
+    Wrap.<!NONE_APPLICABLE!>createWrap<!>(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>wrapFirstElement<!> = false)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

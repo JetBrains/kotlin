@@ -18,7 +18,7 @@ actual open class AbstractMutableList : Jaba() {
         set(value) { }
 
     fun added() {
-        val x = <!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>modCount<!>
+        val x = modCount
     }
 }
 

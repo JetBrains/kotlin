@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.getFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class CInteropTaskTest : MultiplatformExtensionTest() {
 
@@ -57,5 +58,15 @@ class CInteropTaskTest : MultiplatformExtensionTest() {
         assertEquals(listOf("default-header.h", "updated-header.h"), cinteropTask.headers.files.map { it.name })
         assertEquals(listOf("default-allHeaders", "updated-allHeaders"), cinteropTask.allHeadersDirs.map { it.name })
         assertEquals(listOf("default-headerFilterOnly", "updated-headerFilterOnly"), cinteropTask.headerFilterDirs.map { it.name })
+    }
+
+    @Test
+    fun `CInteropProcess has workerExecutor injected`() {
+        kotlin.linuxX64().apply {
+            compilations.getByName("main").cinterops.create("dummy")
+        }
+        project.evaluate()
+        val task = project.tasks.getByName("cinteropDummyLinuxX64") as CInteropProcess
+        assertNotNull(task.workerExecutor)
     }
 }

@@ -1,4 +1,0 @@
-package
-
-public fun test1(/*0*/ x: kotlin.collections.List<kotlin.String>?): kotlin.Unit
-public fun test2(/*0*/ x: kotlin.collections.List<kotlin.String>?): kotlin.Unit

@@ -18,16 +18,8 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit4(args, mainClassName) {
         testGroup("compiler/tests-integration/tests-gen", "compiler/testData") {
-            testClass<AbstractMultiPlatformIntegrationTest> {
-                model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
-            }
-
             testClass<AbstractIrCustomScriptCodegenTest> {
                 model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractReplInterpreterTest> {
-                model("repl", extension = "repl")
             }
 
             testClass<AbstractCliTest> {
@@ -55,6 +47,16 @@ fun main(args: Array<String>) {
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
                 model("cli/wasm", extension = "args", testMethod = "doWasmTest", recursive = false)
                 model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
+            }
+        }
+
+        testGroup("compiler/tests-integration/tests-gen", "compiler/tests-integration/testData") {
+            testClass<AbstractMultiPlatformIntegrationTest> {
+                model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
+            }
+
+            testClass<AbstractReplInterpreterTest> {
+                model("repl", extension = "repl")
             }
         }
     }

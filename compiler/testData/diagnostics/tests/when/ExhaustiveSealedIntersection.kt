@@ -15,7 +15,7 @@ fun test(a: A): Int {
         is SubAandB -> 1
     }
     i += <!NO_ELSE_IN_WHEN!>when<!>(a) {
-        is <!INCOMPATIBLE_TYPES!>SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     i += when(a) {
@@ -26,7 +26,7 @@ fun test(a: A): Int {
         <!USELESS_IS_CHECK!>is A<!> -> 1
         is SubA -> 1
         is B -> 1
-        is <!INCOMPATIBLE_TYPES!>SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     return i
@@ -42,12 +42,12 @@ fun test(b: B): Int {
         is SubAandB -> 1
     }
     i += <!NO_ELSE_IN_WHEN!>when<!>(b) {
-        is <!INCOMPATIBLE_TYPES!>SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         is SubAandB -> 1
     }
     i += when(b) {
         is A -> 1
-        is <!INCOMPATIBLE_TYPES!>SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
         is SubB -> 1
         is SubAandB -> 1
@@ -59,22 +59,22 @@ fun testIntersection(both: A): Int {
     check(both is B)
 
     var i = 0
-    i += <!NO_ELSE_IN_WHEN!>when<!>(<!DEBUG_INFO_SMARTCAST!>both<!>) {
+    i += <!NO_ELSE_IN_WHEN!>when<!>(both) {
         is SubAandB -> 1
     }
-    i += when(<!DEBUG_INFO_SMARTCAST!>both<!>) {
-        is <!INCOMPATIBLE_TYPES!>SubB<!> -> 1
+    i += when(both) {
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
     }
-    i += <!NO_ELSE_IN_WHEN!>when<!>(<!DEBUG_INFO_SMARTCAST!>both<!>) {
-        is SubA -> 1
+    i += when(both) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubA<!> -> 1
         is SubAandB -> 1
     }
-    i += when(<!DEBUG_INFO_SMARTCAST!>both<!>) {
+    i += when(both) {
         <!USELESS_IS_CHECK!>is A<!> -> 1
-        is SubA -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
-        is <!INCOMPATIBLE_TYPES!>SubB<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     return i
@@ -84,22 +84,22 @@ fun testIntersection(both: B): Int {
     check(both is A)
 
     var i = 0
-    i += <!NO_ELSE_IN_WHEN!>when<!>(<!DEBUG_INFO_SMARTCAST!>both<!>) {
+    i += <!NO_ELSE_IN_WHEN!>when<!>(both) {
         is SubAandB -> 1
     }
-    i += <!NO_ELSE_IN_WHEN!>when<!>(<!DEBUG_INFO_SMARTCAST!>both<!>) {
-        is SubB -> 1
+    i += when(both) {
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubB<!> -> 1
         is SubAandB -> 1
     }
-    i += when(<!DEBUG_INFO_SMARTCAST!>both<!>) {
-        is <!INCOMPATIBLE_TYPES!>SubA<!> -> 1
+    i += when(both) {
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         is SubAandB -> 1
     }
-    i += when(<!DEBUG_INFO_SMARTCAST!>both<!>) {
+    i += when(both) {
         <!USELESS_IS_CHECK!>is A<!> -> 1
-        is <!INCOMPATIBLE_TYPES!>SubA<!> -> 1
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
-        is SubB -> 1
+        <!IMPOSSIBLE_IS_CHECK_WARNING!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     return i

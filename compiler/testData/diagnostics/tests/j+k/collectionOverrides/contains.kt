@@ -36,34 +36,34 @@ fun foo(
         al: java.util.ArrayList<String>
 ) {
     a.contains("")
-    a.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    a.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in a
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in a
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
     b.contains("")
-    b.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    b.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in b
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in b
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in b
 
     ic.contains("")
-    ic.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    ic.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ic
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in ic
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ic
 
     ka.contains("")
-    ka.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ka
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 
     kb.contains("")
-    kb.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    kb.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in kb
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in kb
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in kb
 
     al.contains("")
-    al.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    al.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in al
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in al
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in al
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, nullableType,

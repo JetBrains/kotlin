@@ -55,7 +55,7 @@ data class Some<T : Any?> {
 
 open class SomeList<T : Any?> : ArrayList<Some<T>>, MyList<T> {
   constructor() /* primary */ {
-    super/*ArrayList*/<@FlexibleNullability Some<T>?>()
+    super/*ArrayList*/<Some<T>>()
     /* <init>() */
 
   }

@@ -24,8 +24,8 @@ class B extends A {
 // FILE: test.kt
 
 fun test() {
-    A.<!INVISIBLE_MEMBER!>a<!>
-    A.<!INVISIBLE_MEMBER!>foo<!>()
+    A.<!INVISIBLE_REFERENCE!>a<!>
+    A.<!INVISIBLE_REFERENCE!>foo<!>()
     A.b
     A.bar()
     B.a

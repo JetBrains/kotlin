@@ -23,8 +23,8 @@ inline fun inlineFunWithInvoke2(s: (p: Int) -> Unit) {
 }
 
 inline fun propagation(s: (p: Int) -> Unit) {
-    inlineFunWithInvoke((<!REDUNDANT_LABEL_WARNING!>label@<!> s))
-    inlineFunWithInvoke((<!REDUNDANT_LABEL_WARNING!>label2@<!> <!REDUNDANT_LABEL_WARNING!>label@<!> s))
+    inlineFunWithInvoke((label@ s))
+    inlineFunWithInvoke((<!MULTIPLE_LABELS_ARE_FORBIDDEN!>label2@<!> label@ s))
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,

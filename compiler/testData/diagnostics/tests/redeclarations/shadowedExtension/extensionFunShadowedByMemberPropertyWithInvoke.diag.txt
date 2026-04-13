@@ -1,12 +1,5 @@
-/extensionFunShadowedByMemberPropertyWithInvoke.kt:16:11: warning: extension function is shadowed by a member property 'test1' with public abstract operator fun invoke(): Unit
-fun Test1.test1() {}
-          ^^^^^
-/extensionFunShadowedByMemberPropertyWithInvoke.kt:17:11: warning: extension function is shadowed by a member property 'test1' with public abstract operator fun invoke(s: String): Unit
-fun Test1.test1(s: String) {}
-          ^^^^^
-/extensionFunShadowedByMemberPropertyWithInvoke.kt:19:11: warning: extension function is shadowed by a member property 'test1' with public abstract operator fun <T> invoke(x: T, y: Int): Unit
-fun Test1.test1(x: Any, y: Int) {}
-          ^^^^^
-/extensionFunShadowedByMemberPropertyWithInvoke.kt:20:24: warning: extension function is shadowed by a member property 'test1' with public abstract operator fun <T> invoke(x: T, y: Int): Unit
-fun <T : Number> Test1.test1(x: T, y: Int) {}
-                       ^^^^^
+/extensionFunShadowedByMemberPropertyWithInvoke.kt:(306,311): warning: This extension function is shadowed by a member property 'val test1: WithInvoke' defined in 'Test1' with 'fun invoke(): Unit' defined in 'WithInvoke'.
+
+/extensionFunShadowedByMemberPropertyWithInvoke.kt:(327,332): warning: This extension function is shadowed by a member property 'val test1: WithInvoke' defined in 'Test1' with 'fun invoke(s: String): Unit' defined in 'WithInvoke'.
+
+/extensionFunShadowedByMemberPropertyWithInvoke.kt:(432,437): warning: This extension function is shadowed by a member property 'val test1: WithInvoke' defined in 'Test1' with 'fun <T> invoke(x: T, y: Int): Unit' defined in 'WithInvoke'.

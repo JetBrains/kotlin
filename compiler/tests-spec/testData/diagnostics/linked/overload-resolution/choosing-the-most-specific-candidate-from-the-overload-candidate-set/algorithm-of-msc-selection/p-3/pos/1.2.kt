@@ -19,7 +19,6 @@ class Case1 {
     fun boo(vararg x: Int): String = TODO()
     fun case() {
         this.<!DEBUG_INFO_CALL("fqName: Case1.boo; typeCall: function")!>boo(1, 1)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.boo(1, 1)<!>
+        this.boo(1, 1)
     }
 }
-

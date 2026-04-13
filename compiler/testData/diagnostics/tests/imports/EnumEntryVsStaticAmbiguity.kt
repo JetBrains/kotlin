@@ -24,7 +24,7 @@ import second.SomeEnum.*
 
 fun test(arg: String): Boolean {
     return when (arg) {
-        <!DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY!>SOME<!> -> true
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>SOME<!> -> true
         else -> false
     }
 }

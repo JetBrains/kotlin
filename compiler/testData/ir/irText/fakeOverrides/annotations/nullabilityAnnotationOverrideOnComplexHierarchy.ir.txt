@@ -32,8 +32,6 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java2
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]
@@ -69,8 +67,6 @@ FILE fqName:<root> fileName:/1.kt
         public open fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java2
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java3]
@@ -107,7 +103,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java3
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java3
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java3
   CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java3]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.D
     CONSTRUCTOR visibility:public returnType:<root>.D [primary]
@@ -142,7 +138,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
       overridden:
-        public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java3
+        public final nullableString: @[FlexibleNullability] kotlin.String? declared in <root>.Java3
   CLASS CLASS name:E modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.Java4]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.E
     CONSTRUCTOR visibility:public returnType:<root>.E [primary]
@@ -185,8 +181,6 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): kotlin.String declared in <root>.Java2
         public open fun toString (): kotlin.String declared in <root>.Java4
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.Java4]
@@ -232,8 +226,6 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (s: @[FlexibleNullability] kotlin.Any?): kotlin.Unit declared in <root>.Java4
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface]
@@ -286,8 +278,6 @@ FILE fqName:<root> fileName:/1.kt
         overridden:
           public abstract fun <get-nullableString> (): kotlin.Any declared in <root>.KotlinInterface
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java2; <root>.KotlinInterface]
@@ -349,8 +339,6 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun foo (s: kotlin.Any): kotlin.Unit declared in <root>.KotlinInterface
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java2
   CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]
@@ -386,8 +374,6 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java5
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java5
   CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
@@ -444,7 +430,7 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun bar (): kotlin.String declared in <root>.B' type=kotlin.String origin=null
           ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[EnhancedNullability] kotlin.String? visibility:public declared in <root>.Java3' type=@[EnhancedNullability] kotlin.String? superQualifierSymbol=<root>.C origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java3' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.C origin=null
           receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'public open fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
@@ -453,7 +439,7 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.C' type=@[EnhancedNullability] kotlin.String? origin=null
           ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[EnhancedNullability] kotlin.String? visibility:public declared in <root>.Java3' type=@[EnhancedNullability] kotlin.String? superQualifierSymbol=<root>.D origin=null
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[FlexibleNullability] kotlin.String? visibility:public declared in <root>.Java3' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.D origin=null
           receiver: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
       CALL 'public open fun foo (s: kotlin.String?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
@@ -495,8 +481,8 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.G' type=@[EnhancedNullability] kotlin.String? origin=null
           ARG <this>: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:nullableString type:@[EnhancedNullability] kotlin.String? visibility:public declared in <root>.Java1' type=@[EnhancedNullability] kotlin.String? superQualifierSymbol=<root>.H origin=null
-          receiver: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+        CALL 'public open fun <get-nullableString> (): kotlin.Any declared in <root>.H' type=kotlin.Any origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
       CALL 'public open fun foo (s: kotlin.Any): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
         ARG s: CONST Int type=kotlin.Int value=1

@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Any declared in <root>'
-          CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out @[Exact] V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Any origin=null
+          CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Any origin=null
             TYPE_ARG V: kotlin.Any
             TYPE_ARG V1: kotlin.Any
             ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static] declared in <root>' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
             CALL 'public final fun getValue <T> (<this>: kotlin.Lazy<T of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Int origin=null
               TYPE_ARG T: kotlin.Int
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final] declared in <root>.C' type=kotlin.Lazy<kotlin.Int> origin=null
-                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test2>' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test2>' type=<root>.C origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test2>' type=<root>.C origin=null
               ARG property: PROPERTY_REFERENCE 'public final test2: kotlin.Int declared in <root>.C' field=null getter='public final fun <get-test2> (): kotlin.Int declared in <root>.C' setter=null type=kotlin.reflect.KProperty1<<root>.C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
@@ -89,11 +89,11 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Any declared in <root>.C'
-            CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out @[Exact] V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Any origin=null
+            CALL 'public final fun getValue <V, V1> (<this>: kotlin.collections.MutableMap<in kotlin.String, out V of kotlin.collections.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Any origin=null
               TYPE_ARG V: kotlin.Any
               TYPE_ARG V1: kotlin.Any
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final] declared in <root>.C' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
-                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
               ARG property: PROPERTY_REFERENCE 'public final test3: kotlin.Any declared in <root>.C' field=null getter='public final fun <get-test3> (): kotlin.Any declared in <root>.C' setter='public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL returnType:kotlin.Unit
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
             CALL 'public final fun setValue <V> (<this>: kotlin.collections.MutableMap<in kotlin.String, in V of kotlin.collections.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
               TYPE_ARG V: kotlin.Any
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final] declared in <root>.C' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
-                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
+                receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
               ARG property: PROPERTY_REFERENCE 'public final test3: kotlin.Any declared in <root>.C' field=null getter='public final fun <get-test3> (): kotlin.Any declared in <root>.C' setter='public final fun <set-test3> (<set-?>: kotlin.Any): kotlin.Unit declared in <root>.C' type=kotlin.reflect.KMutableProperty1<<root>.C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               ARG value: GET_VAR '<set-?>: kotlin.Any declared in <root>.C.<set-test3>' type=kotlin.Any origin=null

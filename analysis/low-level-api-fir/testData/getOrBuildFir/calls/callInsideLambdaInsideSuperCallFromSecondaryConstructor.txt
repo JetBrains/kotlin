@@ -26,4 +26,4 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallFromSecondaryConstruc
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] any: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] any: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }

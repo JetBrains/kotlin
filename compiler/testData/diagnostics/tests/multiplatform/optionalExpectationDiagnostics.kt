@@ -6,24 +6,24 @@
 // MODULE: common
 // FILE: common.kt
 
-@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
+@OptionalExpectation
 expect annotation class A()
 
-fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>) = a.toString()
+fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>) = a.toString()
 
-<!WRONG_ANNOTATION_TARGET{JVM}!>@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!><!>
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>NotAnAnnotationClass<!>
+<!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class NotAnAnnotationClass
 
-<!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED{JVM}!>@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!><!>
+<!OPTIONAL_EXPECTATION_NOT_ON_EXPECTED!>@OptionalExpectation<!>
 annotation class NotAnExpectedClass
 
-annotation class InOtherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>)
+annotation class InOtherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>)
 
-@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY{JVM}!>A<!>())
+@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A()<!>)
 fun useInOtherAnnotation() {}
 
 expect class C {
-    @<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
+    @OptionalExpectation
     annotation class Nested
 }
 
@@ -33,11 +33,11 @@ expect class C {
 @<!OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE!>A<!>
 class D
 
-fun useInReturnType(): <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE!>A<!>? = null
+fun useInReturnType(): <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE!>A?<!> = null
 
 annotation class AnotherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE!>A<!>)
 
-@AnotherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE!>A<!>())
+@AnotherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE!>A()<!>)
 fun useInAnotherAnnotation() {}
 
 actual class C {

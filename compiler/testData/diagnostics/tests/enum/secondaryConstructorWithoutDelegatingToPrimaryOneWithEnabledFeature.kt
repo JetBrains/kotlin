@@ -13,17 +13,17 @@ enum class Enum2(val a: String) {
 }
 
 enum class Enum3(val a: String = "") {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>A,<!> <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>B,<!> <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>C;<!>
+    A, B, C;
     <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor()<!>
 }
 
 enum class Enum4(val a: String = "") {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>A,<!> <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>B,<!> <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>C;<!>
+    A, B, C;
     constructor(): <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>()
 }
 
 enum class Enum5(val a: String = "") {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>A,<!> <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>B,<!> <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>C;<!>
+    A, B, C;
     constructor(): this(a = "")
 }
 

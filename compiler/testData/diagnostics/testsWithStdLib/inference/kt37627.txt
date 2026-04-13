@@ -1,4 +1,0 @@
-package
-
-public fun foo1(/*0*/ x: kotlin.Int): kotlin.Unit
-public fun foo2(/*0*/ x: kotlin.Int): kotlin.Unit

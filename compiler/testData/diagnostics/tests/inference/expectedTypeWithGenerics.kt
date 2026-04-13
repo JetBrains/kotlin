@@ -12,7 +12,7 @@ fun test(x: X<Number>) {
 fun <S, D: S> g() {
     fun <T : S> foo(): T = TODO()
 
-    val y = <!TYPE_MISMATCH!>foo<!>() as Int
+    val y = <!DEBUG_INFO_EXPRESSION_TYPE("S & Any & kotlin.Int")!>foo()<!> as Int
 
     val y2 = foo() as D
 }

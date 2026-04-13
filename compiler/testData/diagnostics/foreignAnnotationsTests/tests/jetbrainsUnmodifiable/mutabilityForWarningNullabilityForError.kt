@@ -36,10 +36,10 @@ public class J {
 
 // FILE: main.kt
 fun main() {
-    takeMutable(J.notNull())
+    takeMutable(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.notNull()<!>)
     takeReadOnly(J.notNull())
-    takeMutable(<!TYPE_MISMATCH!>J.nullable()<!>)
-    takeReadOnly(<!TYPE_MISMATCH!>J.nullable()<!>)
+    takeMutable(<!ARGUMENT_TYPE_MISMATCH!>J.nullable()<!>)
+    takeReadOnly(<!ARGUMENT_TYPE_MISMATCH!>J.nullable()<!>)
 }
 
 fun takeMutable(l: MutableList<String>) {}

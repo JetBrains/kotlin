@@ -3,6 +3,11 @@
 // DUMP_IR
 // ISSUE: KT-62884
 
+// KT-85488
+// IGNORE_BACKEND: ANDROID
+
+package test
+
 import kotlin.reflect.KProperty
 import java.lang.reflect.Type
 
@@ -29,10 +34,10 @@ val <T> T.property2 by run<IDelegate<T>> {
 }
 
 fun box(): String {
-    val superInterfaces: Array<Type> = Class.forName("TypeParameterInDelegatedPropertyKt\$property\$2").getGenericInterfaces()
+    val superInterfaces: Array<Type> = Class.forName("test.TypeParameterInDelegatedPropertyKt\$property\$2").getGenericInterfaces()
     if (!superInterfaces[0].toString().contains("IDelegate<java.lang.Object>")) return "FAIL"
 
-    val superInterfaces2: Array<Type> = Class.forName("TypeParameterInDelegatedPropertyKt\$property2\$2\$1").getGenericInterfaces()
+    val superInterfaces2: Array<Type> = Class.forName("test.TypeParameterInDelegatedPropertyKt\$property2\$2\$1").getGenericInterfaces()
     if (!superInterfaces2[0].toString().contains("IDelegate<java.lang.Object>")) return "FAIL"
 
     if ("OK".property2 != "OK") return "FAIL"

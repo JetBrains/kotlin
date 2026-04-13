@@ -21,7 +21,7 @@ interface ILeft {
 abstract class AILeft : ILeft
 
 // Should be ERROR
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class AILeftImpl<!> : AILeft(), IRight
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class AILeftImpl<!> : AILeft(), IRight
 
 // Should be ERROR
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class RightLeft<!> : ILeft, IRight

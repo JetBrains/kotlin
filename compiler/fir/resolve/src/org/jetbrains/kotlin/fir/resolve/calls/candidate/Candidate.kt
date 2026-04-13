@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -129,10 +130,12 @@ class Candidate(
 
     data class FunctionConversionDescription(
         val isFromSimpleToCustom: Boolean,
+        val isForUnitCoercion: Boolean,
         val expectedType: ConeKotlinType,
+        val originalArgumentAsFunctionType: ConeClassLikeType,
     ) {
         fun toKind(): FirFunctionConversionKind.BetweenFunctionTypes =
-            FirFunctionConversionKind.BetweenFunctionTypes(isFromSimpleToCustom)
+            FirFunctionConversionKind.BetweenFunctionTypes(isFromSimpleToCustom, isForUnitCoercion, originalArgumentAsFunctionType)
     }
 
     /**

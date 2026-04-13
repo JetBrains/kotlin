@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun receive([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
@@ -226,15 +226,15 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
     }
 
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
-    public final [ResolvedTo(CONTRACTS)] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
-    public final [ResolvedTo(CONTRACTS)] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)

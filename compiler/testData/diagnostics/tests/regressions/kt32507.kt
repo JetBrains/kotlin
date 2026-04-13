@@ -2,8 +2,8 @@
 
 fun foo(bar: Any?): Int {
     bar as String?
-    <!DEBUG_INFO_SMARTCAST!>bar<!> ?: throw IllegalStateException()
-    return <!DEBUG_INFO_SMARTCAST!>bar<!>.length
+    bar ?: throw IllegalStateException()
+    return bar.length
 }
 
 /* GENERATED_FIR_TAGS: asExpression, elvisExpression, functionDeclaration, nullableType, smartcast */

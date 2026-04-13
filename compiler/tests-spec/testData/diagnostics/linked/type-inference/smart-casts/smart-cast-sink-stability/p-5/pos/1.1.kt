@@ -25,12 +25,12 @@ class Case1() {
     fun foo(e: E) {
 
         if (e.value != null) {
-            run { e.<!UNSAFE_IMPLICIT_INVOKE_CALL!>value<!>(1) }
+            run { e.value(1) }
             /*
              [UNSAFE_CALL] (nok)
              Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type Case1.Inv?
             */
-            e.<!UNSAFE_IMPLICIT_INVOKE_CALL!>value<!>(1)
+            e.value(1)
 
         }
     }

@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 // FIXME: Coroutine inlining
 import helpers.*
 import kotlin.coroutines.*

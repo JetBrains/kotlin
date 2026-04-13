@@ -23,11 +23,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val IGNORE_BACKEND_K1 by enumDirective<TargetBackend>(
-        description = "Ignore specific backend if test uses K1 frontend",
-        applicability = Global
-    )
-
     val IGNORE_BACKEND_K2 by enumDirective<TargetBackend>(
         description = "Ignore specific backend if test uses K2 frontend",
         applicability = Global
@@ -88,7 +83,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_ERRORS by directive(
         description = """
-            Ignore frontend errors in ${NoCompilationErrorsHandler::class}
             If this directive is enabled then ${JvmIrBackendFacade::class} won't produce any binaries for test
               if there are errors in it
         """.trimIndent()
@@ -154,19 +148,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val SEPARATE_SIGNATURE_DUMP_FOR_K2 by directive(
-        description = """
-            Usually the signature dump must not differ between K1 and K2.
-            There are rare cases, however, when there is legitimate difference (for example, if the set of fake overrides is different).
-            Please always document the usage of this directive and carefully verify that the difference between K1 and K2 does
-            not affect IR linkage.
-            """.trimIndent()
-    )
-
-    val MUTE_SIGNATURE_COMPARISON_K2 by enumDirective<TargetBackend>(
-        description = "Ignores failures of signature dump comparison for tests with the $DUMP_SIGNATURES directive if the test uses the K2 frontend and the specified backend."
-    )
-
     // Besides a list of phases, also supports values `ALL_BEFORE`, `ALL_AFTER` and `ALL` for dumping
     // before all lowerings, after all lowerings and both before and after all lowerings, correspondingly.
     val DUMP_IR_FOR_GIVEN_PHASES by stringDirective(
@@ -229,12 +210,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val IGNORE_FIR_METADATA_LOADING_K1 by directive(
-        description = """
-            Ignore exceptions in AbstractFirLoadK1CompiledKotlin tests
-        """.trimIndent()
-    )
-
     val IGNORE_FIR_METADATA_LOADING_K2 by directive(
         description = """
             Ignore exceptions in AbstractFirLoadK2CompiledKotlin tests
@@ -275,7 +250,6 @@ fun extractIgnoredDirectiveForTargetBackend(
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
 ): ValueDirective<TargetBackend>? =
     when (testServices.defaultsProvider.frontendKind) {
-        FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_BACKEND_K1
         FrontendKinds.FIR -> CodegenTestDirectives.IGNORE_BACKEND_K2
         else -> null
     }?.let { specificIgnoreDirective ->

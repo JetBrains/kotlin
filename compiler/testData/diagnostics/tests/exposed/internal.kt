@@ -8,7 +8,7 @@ internal open class Your: My() {
 }
 
 // error, public from internal
-open class His: <!EXPOSED_SUPER_CLASS!>Your()<!> {
+open class His: <!EXPOSED_SUPER_CLASS!>Your<!>() {
     protected open class Nested
     // error, public from internal
     val <!EXPOSED_PROPERTY_TYPE!>x<!> = My()
@@ -22,7 +22,7 @@ open class His: <!EXPOSED_SUPER_CLASS!>Your()<!> {
 
 internal class Their: His() {
     // error, effectively internal from protected
-    class InnerDerived: <!EXPOSED_SUPER_CLASS!>His.Nested()<!>
+    class InnerDerived: <!EXPOSED_SUPER_CLASS!>His.Nested<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, nullableType, propertyDeclaration */

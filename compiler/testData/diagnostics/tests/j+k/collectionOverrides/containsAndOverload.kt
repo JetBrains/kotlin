@@ -11,19 +11,19 @@ abstract public class A implements java.util.Collection<String> {
 
 // FILE: main.kt
 abstract class KA : A() {
-    override fun contains(x: String) = false
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>contains<!>(x: String) = false
 }
 
 fun foo(a: A, ka: KA) {
     a.contains("")
-    a.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    a.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in a
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in a
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
     ka.contains("")
-    ka.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ka
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, operator, override,

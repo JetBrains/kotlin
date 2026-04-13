@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirComposableSessionComponent
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -105,6 +107,39 @@ fun createSubstitutorForUpperBoundViolationCheck(
     )
 }
 
+/**
+ * Imagine
+ * ```kotlin
+ * class C<X, Y : X>
+ *
+ * typealias TA<T> = C<MutableList<T>, MutableList<Int>>
+ * ```
+ *
+ * In this case, `TA::class` has type `KClass<TA<*>>` which contains upper bound violation.
+ * Currently, we report a warning for this case. In the future, we may reconsider and start
+ * reporting a deprecation warning and eventually error.
+ */
+context(context: CheckerContext, reporter: DiagnosticReporter)
+fun checkUpperBoundViolatedInLhsOfGetClass(
+    typeParameters: List<FirTypeParameterSymbol>,
+    typeArguments: List<ConeTypeProjection>,
+    substitutor: ConeSubstitutor,
+    fallbackSource: KtSourceElement?
+) {
+    checkUpperBoundViolated(
+        typeParameters,
+        typeArguments,
+        substitutor,
+        isReportExpansionError = true,
+        isIgnoreTypeParameters = false,
+        fallbackSource,
+        isInsideTypeOperatorOrParameterBounds = false,
+        mustRelaxDueToArgumentInteractionsBug = false,
+        isTypeAliasExpansionInLHSOfGetClass = true,
+        isTypealiasExpansion = true,
+    )
+}
+
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkUpperBoundViolated(
     typeParameters: List<FirTypeParameterSymbol>,
@@ -120,6 +155,7 @@ fun checkUpperBoundViolated(
      * See [LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions].
      */
     mustRelaxDueToArgumentInteractionsBug: Boolean = false,
+    isTypeAliasExpansionInLHSOfGetClass: Boolean = false,
     isTypealiasExpansion: Boolean,
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
@@ -127,6 +163,7 @@ fun checkUpperBoundViolated(
     val additionalUpperBoundsProviders = context.session.platformUpperBoundsProviders
 
     for (index in 0 until count) {
+        val parameterSymbol = typeParameters[index]
         val argument = typeArguments[index]
         val argumentType = argument.type
         val sourceAttribute = argumentType?.attributes?.sourceAttribute
@@ -138,16 +175,19 @@ fun checkUpperBoundViolated(
                 !isExplicitTypeArgumentSource(argumentSource) && LanguageFeature.DontIgnoreUpperBoundViolatedOnImplicitArguments.isDisabled()
                         || mustRelaxDueToArgumentInteractionsBug
             val regularDiagnostic = when {
+                isInsideTypeOperatorOrParameterBounds ->
+                    FirErrors.UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS.chooseFactory()
                 mustRelax -> FirErrors.UPPER_BOUND_VIOLATED_DEPRECATION_WARNING
                 else -> FirErrors.UPPER_BOUND_VIOLATED
             }
             val typealiasDiagnostic = when {
+                isTypeAliasExpansionInLHSOfGetClass -> FirErrors.UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING
                 mustRelax -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING
                 else -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
             }
             if (!isIgnoreTypeParameters || (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType)) {
                 val intersection =
-                    typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType })
+                    typeSystemContext.intersectTypes(parameterSymbol.resolvedBounds.map { it.coneType })
                 val upperBound = substitutor.substituteOrSelf(intersection)
                 if (!AbstractTypeChecker.isSubtypeOf(
                         typeSystemContext,
@@ -158,27 +198,21 @@ fun checkUpperBoundViolated(
                 ) {
                     if (isReportExpansionError && (argumentTypeRef == null || isTypealiasExpansion)) {
                         reporter.reportOn(
-                            argumentSource ?: fallbackSource, typealiasDiagnostic, upperBound, argumentType
+                            argumentSource ?: fallbackSource, typealiasDiagnostic, upperBound, argumentType, parameterSymbol.toConeType()
                         )
                     } else {
                         val extraMessage =
                             if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
-                        when {
-                            !isInsideTypeOperatorOrParameterBounds -> reporter.reportOn(
-                                argumentSource ?: fallbackSource, regularDiagnostic,
-                                upperBound, argumentType, extraMessage
-                            )
-                            else -> reporter.reportOn(
-                                argumentSource ?: fallbackSource,
-                                FirErrors.UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS,
-                                upperBound, argumentType, extraMessage,
-                            )
-                        }
+                        reporter.reportOn(
+                            argumentSource ?: fallbackSource, regularDiagnostic,
+                            upperBound, argumentType, parameterSymbol.toConeType(), extraMessage,
+                        )
                     }
                 } else {
                     for (additionalUpperBoundsProvider in additionalUpperBoundsProviders) {
                         // Only check if the original check was successful to prevent duplicate diagnostics
                         val reported = reportUpperBoundViolationWarningIfNecessary(
+                            parameterSymbol,
                             additionalUpperBoundsProvider,
                             argumentType,
                             upperBound,
@@ -204,6 +238,7 @@ fun checkUpperBoundViolated(
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun reportUpperBoundViolationWarningIfNecessary(
+    onTypeParameter: FirTypeParameterSymbol,
     additionalUpperBoundsProvider: FirPlatformUpperBoundsProvider,
     argumentType: ConeKotlinType,
     upperBound: ConeKotlinType,
@@ -233,7 +268,7 @@ private fun reportUpperBoundViolationWarningIfNecessary(
          */
         val properArgumentType =
             argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
-        reporter.reportOn(argumentSource, factory, upperBound, properArgumentType)
+        reporter.reportOn(argumentSource, factory, upperBound, properArgumentType, onTypeParameter.toConeType())
         return true
     }
     return false
@@ -289,8 +324,10 @@ fun ConeTypeProjection.withSource(source: FirTypeRefSource?): ConeTypeProjection
 }
 
 abstract class FirPlatformUpperBoundsProvider : FirComposableSessionComponent<FirPlatformUpperBoundsProvider> {
-    abstract val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
-    abstract val diagnosticForTypeAlias: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+    protected typealias PlatformUpperBoundViolatedDiagnosticFactory = KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, ConeKotlinType>
+
+    abstract val diagnostic: PlatformUpperBoundViolatedDiagnosticFactory
+    abstract val diagnosticForTypeAlias: PlatformUpperBoundViolatedDiagnosticFactory
 
     abstract fun getAdditionalUpperBound(coneKotlinType: ConeKotlinType): ConeKotlinType?
 
@@ -300,9 +337,9 @@ abstract class FirPlatformUpperBoundsProvider : FirComposableSessionComponent<Fi
     class Composed(
         override val components: List<FirPlatformUpperBoundsProvider>
     ) : FirPlatformUpperBoundsProvider(), FirComposableSessionComponent.Composed<FirPlatformUpperBoundsProvider> {
-        override val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+        override val diagnostic: PlatformUpperBoundViolatedDiagnosticFactory
             get() = shouldNotBeCalled()
-        override val diagnosticForTypeAlias: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+        override val diagnosticForTypeAlias: PlatformUpperBoundViolatedDiagnosticFactory
             get() = shouldNotBeCalled()
 
         override fun getAdditionalUpperBound(coneKotlinType: ConeKotlinType): ConeKotlinType {

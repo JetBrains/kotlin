@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] onLabel.kt
         loop@while(Boolean(true)) {
             when () {
                 R|<local>/a|.R|/Foo.process|().R|kotlin/Boolean.not|() ->  {
-                    break@@@[Boolean(true)] 
+                    break@@@[Boolean(true)]
                 }
             }
 
@@ -45,6 +45,6 @@ FILE: [ResolvedTo(IMPORTS)] onLabel.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] fun process(): R|kotlin/Boolean|
+        public abstract [ResolvedTo(STATUS)] fun process(): R|kotlin/Boolean|
 
     }

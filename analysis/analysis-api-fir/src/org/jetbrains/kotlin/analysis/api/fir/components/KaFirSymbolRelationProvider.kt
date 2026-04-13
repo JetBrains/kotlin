@@ -13,11 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntryInitializerSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
@@ -31,7 +27,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
@@ -348,7 +343,7 @@ internal class KaFirSymbolRelationProvider(
     private fun PsiElement.getContainingPsiDeclaration(): KtDeclaration? {
         for (parent in parents) {
             if (parent is KtDeclaration && parent !is KtDestructuringDeclaration) {
-                return parent.originalDeclaration ?: parent
+                return parent
             }
         }
 

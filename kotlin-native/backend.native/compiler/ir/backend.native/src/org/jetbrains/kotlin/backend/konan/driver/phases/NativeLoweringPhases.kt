@@ -178,6 +178,12 @@ private val contractsDslRemovePhase = createFileLoweringPhase(
         name = "RemoveContractsDsl",
 )
 
+private val forLoopsPhase = createFileLoweringPhase(
+        ::NativeForLoopsLowering,
+        name = "ForLoops",
+        prerequisite = setOf(functionsWithoutBoundCheck)
+)
+
 private val flattenStringConcatenationPhase = createFileLoweringPhase(
         ::FlattenStringConcatenationLowering,
         name = "FlattenStringConcatenationLowering",
@@ -186,6 +192,7 @@ private val flattenStringConcatenationPhase = createFileLoweringPhase(
 private val stringConcatenationPhase = createFileLoweringPhase(
         ::StringConcatenationLowering,
         name = "StringConcatenation",
+        prerequisite = setOf(flattenStringConcatenationPhase, forLoopsPhase)
 )
 
 private val stringConcatenationTypeNarrowingPhase = createFileLoweringPhase(
@@ -256,12 +263,6 @@ private val innerClassPhase = createFileLoweringPhase(
 private val rangeContainsLoweringPhase = createFileLoweringPhase(
         ::RangeContainsLowering,
         name = "RangeContains",
-)
-
-private val forLoopsPhase = createFileLoweringPhase(
-        ::NativeForLoopsLowering,
-        name = "ForLoops",
-        prerequisite = setOf(functionsWithoutBoundCheck)
 )
 
 private val dataClassesPhase = createFileLoweringPhase(
@@ -497,6 +498,7 @@ private val lowerCastsPhase = createFileLoweringPhase(
 private val computeTypesPhase = createFileLoweringPhase(
         name = "ComputeTypes",
         lowering = { context: Context -> ComputeTypesPass(context) },
+        prerequisite = setOf(finallyBlocksPhase)
 )
 
 private val optimizeCastsPhase = createFileLoweringPhase(
@@ -525,7 +527,7 @@ private val exportInternalAbiPhase = createFileLoweringPhase(
         name = "ExportInternalAbi",
 )
 
-internal val ReturnsInsertionPhase = createFileLoweringPhase(
+private val returnsInsertionPhase = createFileLoweringPhase(
         name = "ReturnsInsertion",
         prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase),
         lowering = ::ReturnsInsertionLowering,
@@ -633,10 +635,6 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         contractsDslRemovePhase,
         annotationImplementationPhase,
         rangeContainsLoweringPhase,
-        forLoopsPhase,
-        flattenStringConcatenationPhase,
-        stringConcatenationPhase,
-        stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
         enumConstructorsPhase,
         initializersPhase,
         inventNamesForInteropBridgesPhase,
@@ -644,13 +642,18 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         inventNamesForLocalFunctions,
         localFunctionsPhase,
         tailrecPhase,
+        finallyBlocksPhase,
+        computeTypesPhase, // Inliner erases generics. Trying to restore some of the information and simplify IR.
+        forLoopsPhase,
+        flattenStringConcatenationPhase,
+        stringConcatenationPhase,
+        stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
         defaultParameterExtentPhase,
         innerClassPhase,
         dataClassesPhase,
         ifNullExpressionsFusionPhase,
         staticCallableReferenceOptimizationPhase,
         enumWhenPhase,
-        finallyBlocksPhase,
         enumClassPhase,
         enumUsagePhase,
         varargPhase,
@@ -662,6 +665,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         expressionBodyTransformPhase,
         objectClassesPhase,
         staticInitializersPhase,
+        // Running 2nd time not only helps the following heavy analysis but also corrects some lowerings' inaccuracies in IR types.
         computeTypesPhase,
         removeCastsFromNothing,
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
@@ -673,6 +677,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         eraseGenericCallsReturnTypesPhase,
         autoboxPhase,
         constructorsLoweringPhase,
+        returnsInsertionPhase,
         lowerCastsPhase.takeUnless { this.optimizationsEnabled },
 )
 

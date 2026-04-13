@@ -3,19 +3,19 @@ fun testStandardNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>memberFunction<!>()
+        otvOwner.provide().memberFunction()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>.extensionFunction()
+        otvOwner.provide().extensionFunction()
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(<!TYPE_MISMATCH, TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultB<!>
@@ -25,19 +25,19 @@ fun testSafeNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
-        otvOwner.provide()?.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>memberFunction<!>()
+        otvOwner.provide()?.memberFunction()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType?")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultA<!>
 
     val resultB = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner.Nullable())
         // should fix OTv := ScopeOwner? for scope navigation
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>otvOwner.provide()<!>?.extensionFunction()
+        otvOwner.provide()?.extensionFunction()
         // expected: Interloper </: ScopeOwner?
-        otvOwner.constrain(<!TYPE_MISMATCH, TYPE_MISMATCH!>Interloper<!>)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner?")!>Interloper<!>)
     }
     // expected: ScopeOwner?
     <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner?")!>resultB<!>

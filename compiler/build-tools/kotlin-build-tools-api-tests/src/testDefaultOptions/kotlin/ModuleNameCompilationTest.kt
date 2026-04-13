@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoe
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.EXPLICIT_NULL_MODULE_NAME_MARKER
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
@@ -30,7 +31,7 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     fun nonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         project(strategyConfig) {
             val module1 = module("jvm-module-1", moduleCompilationConfigAction = {
-                it.compilerArguments[MODULE_NAME] = null
+                it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
 
             module1.compile {
@@ -46,7 +47,7 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     fun incremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         scenario(strategyConfig) {
             val module1 = module("jvm-module-1", compilationConfigAction = {
-                it.compilerArguments[MODULE_NAME] = null
+                it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
 
             module1.createPredefinedFile("secret.kt", "new-file")
@@ -69,7 +70,7 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
                 it[USE_FIR_RUNNER] = true
             }, compilationConfigAction = {
                 it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true
-                it.compilerArguments[MODULE_NAME] = null
+                it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
 
             module1.createPredefinedFile("secret.kt", "new-file")

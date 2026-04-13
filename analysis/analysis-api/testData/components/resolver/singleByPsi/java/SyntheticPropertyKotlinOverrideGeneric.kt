@@ -1,4 +1,4 @@
-// IGNORE_STABILITY_K2: candidates
+// IGNORE_STABILITY: candidates
 
 // FILE: main.kt
 class KotlinClass : JavaClass<Any>() {

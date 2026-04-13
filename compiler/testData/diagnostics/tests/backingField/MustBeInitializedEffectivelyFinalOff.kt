@@ -5,7 +5,7 @@ open class Base {
 }
 
 class Foo : Base() {
-    <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT!>override var x: String<!>
+    override <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT!>var x: String<!>
 
     init {
         x = ""

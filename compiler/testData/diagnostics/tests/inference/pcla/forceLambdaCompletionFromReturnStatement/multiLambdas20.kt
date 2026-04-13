@@ -12,8 +12,8 @@ fun <B> build(
 
 fun main() {
     build(
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ container -> { <!CANNOT_INFER_PARAMETER_TYPE!>arg<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>arg<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>length<!> } }<!>,
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ container -> container.consume("") }<!>,
+        { container -> { arg -> arg.length } },
+        { container -> container.consume("") },
     )
 }
 

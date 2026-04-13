@@ -12,7 +12,7 @@ open class B1 {
 }
 
 class D1 : B1() {
-    <!CANNOT_OVERRIDE_INVISIBLE_MEMBER("public open fun foo(): Unit defined in D1; private open fun foo(): Unit defined in B1")!>override<!> fun foo() {}
+    <!NOTHING_TO_OVERRIDE("foo;  Potential signatures for overriding:fun foo(): Unit")!>override<!> fun foo() {}
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

@@ -27,7 +27,7 @@ fun J.testJ() {
 fun testJ2(j: J) {
     j.<!UNRESOLVED_REFERENCE!>C<!>()
     j.C2()
-    j.<!RESOLUTION_TO_CLASSIFIER!>I<!> {}
+    j.<!UNRESOLVED_REFERENCE!>I<!> {}
 }
 
 fun K.testK() {
@@ -39,7 +39,7 @@ fun K.testK() {
 fun testK2(k: K) {
     k.<!UNRESOLVED_REFERENCE!>C<!>()
     k.C2()
-    k.<!RESOLUTION_TO_CLASSIFIER!>I<!> {}
+    k.<!UNRESOLVED_REFERENCE!>I<!> {}
 }
 
 // FILE: testResolutionContinues.kt

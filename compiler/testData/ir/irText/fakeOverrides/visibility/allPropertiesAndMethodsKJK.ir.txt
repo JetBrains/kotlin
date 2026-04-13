@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PublicVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java1
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PublicVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java1
@@ -108,6 +108,14 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java16
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java16
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java16
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java16
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
@@ -150,6 +158,14 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java17
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java17
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java17
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java17
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
         public/*package*/ final a: kotlin.Int declared in <root>.Java17
@@ -210,6 +226,14 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public/*package*/ open fun foo (): kotlin.Unit declared in <root>.Java17
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java17
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java17
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java17
     PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
       overridden:
         public/*package*/ final a: kotlin.Int declared in <root>.Java17
@@ -273,7 +297,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         protected open a: kotlin.Int declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-a> visibility:protected modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ProtectedVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
         overridden:
           protected open fun <get-a> (): kotlin.Int declared in <root>.Java3
@@ -339,7 +363,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java4
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DefaultVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java4
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java4
@@ -389,6 +413,10 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java5
+    FUN FAKE_OVERRIDE name:foo visibility:internal modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.InternalVisibility
+      overridden:
+        internal open fun foo (): kotlin.Unit declared in <root>.Java5
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -397,6 +425,14 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java5
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java5
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java5
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java5
   CLASS CLASS name:InternalVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.InternalVisibility
     PROPERTY name:a visibility:internal modality:OPEN [val]
@@ -460,7 +496,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java6
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.PublicVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java6
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java6
@@ -525,6 +561,14 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java7
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java7
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java7
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java7
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final a: kotlin.Int declared in <root>.Java7
@@ -555,7 +599,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         protected open a: kotlin.Int declared in <root>.Java8
       FUN FAKE_OVERRIDE name:<get-a> visibility:protected modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ProtectedVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java8
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
         overridden:
           protected open fun <get-a> (): kotlin.Int declared in <root>.Java8
@@ -782,7 +826,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java10
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.DefaultVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java10
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java10
@@ -851,7 +895,7 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         protected open a: kotlin.Int declared in <root>.Java11
       FUN FAKE_OVERRIDE name:<get-a> visibility:protected modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ProtectedVisibility
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java11
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
         overridden:
           protected open fun <get-a> (): kotlin.Int declared in <root>.Java11
@@ -919,6 +963,14 @@ FILE fqName:<root> fileName:/test.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java12
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java12
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java12
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java12
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
         protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java12
@@ -946,6 +998,14 @@ FILE fqName:<root> fileName:/test.kt
       overridden:
         protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java12
       BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+      overridden:
+        internal open a: kotlin.Int declared in <root>.Java12
+      FUN FAKE_OVERRIDE name:<get-a> visibility:internal modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java12
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:internal modality:OPEN [fake_override,val]
+        overridden:
+          internal open fun <get-a> (): kotlin.Int declared in <root>.Java12
     PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
       overridden:
         protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java12
@@ -1109,8 +1169,8 @@ FILE fqName:<root> fileName:/test.kt
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java6' type=kotlin.Int superQualifierSymbol=<root>.K origin=null
-          receiver: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.K' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -1144,8 +1204,8 @@ FILE fqName:<root> fileName:/test.kt
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.Q' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'q: <root>.Q declared in <root>.test' type=<root>.Q origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java10' type=kotlin.Int superQualifierSymbol=<root>.R origin=null
-          receiver: GET_VAR 'r: <root>.R declared in <root>.test' type=<root>.R origin=null
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.R' type=kotlin.Int origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'r: <root>.R declared in <root>.test' type=<root>.R origin=null
       CALL 'public open fun foo (): kotlin.Unit declared in <root>.R' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'r: <root>.R declared in <root>.test' type=<root>.R origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

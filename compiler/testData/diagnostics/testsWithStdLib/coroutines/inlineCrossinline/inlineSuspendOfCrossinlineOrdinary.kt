@@ -22,7 +22,7 @@ suspend inline fun test(crossinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>startCoroutine<!>(EmptyContinuation)
+    <!USAGE_IS_NOT_INLINABLE!>c<!>.startCoroutine(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {

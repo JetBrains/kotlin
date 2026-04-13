@@ -6,10 +6,10 @@ fun baz(s: String?): String {
     else if (s == "") {
         val u: String? = null
         if (u == null) return ""
-        <!DEBUG_INFO_SMARTCAST!>u<!>
+        u
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>s<!>
+        s
     }
     return t
 }

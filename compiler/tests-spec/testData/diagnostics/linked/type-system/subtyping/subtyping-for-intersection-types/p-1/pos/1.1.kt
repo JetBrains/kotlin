@@ -29,12 +29,12 @@ fun case1(a: Any) {
     val x1 = if (true) EA.A else EB.B
     checkSubtype<Enum<*>>(x1)
     checkSubtype<I>(x1)
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Enum<*> & I}")!>x1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I & kotlin.Enum<*>")!>x1<!>
 
     val x2 = if (true) EB.B else EA.A
     checkSubtype<Enum<*>>(x2)
     checkSubtype<I>(x2)
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Enum<*> & I}")!>x2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I & kotlin.Enum<*>")!>x2<!>
 
     val x3 = when(a){
         is Int -> EA.A
@@ -42,7 +42,7 @@ fun case1(a: Any) {
     }
     checkSubtype<Enum<*>>(x3)
     checkSubtype<I>(x3)
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Enum<*> & I}")!>x3<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I & kotlin.Enum<*>")!>x3<!>
 
 }
 /*

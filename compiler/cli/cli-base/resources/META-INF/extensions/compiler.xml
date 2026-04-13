@@ -1,6 +1,4 @@
 <idea-plugin>
-    <id>org.jetbrains.kotlin</id>
-
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.analyzeCompleteHandlerExtension"
                         interface="org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension"

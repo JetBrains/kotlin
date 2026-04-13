@@ -19,16 +19,16 @@ class C() {
 // TESTCASE NUMBER: 1
 fun case1() {
     val b: B = B(C())
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!> 1
-    b.memberVal.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>invoke<!>(2)
-    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!>(1)
+    b <!FUNCTION_EXPECTED!>memberVal<!> 1
+    b.memberVal.<!UNRESOLVED_REFERENCE!>invoke<!>(2)
+    b.<!FUNCTION_EXPECTED!>memberVal<!>(1)
 
     b.memberVal as C
 
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!> 1
-    <!DEBUG_INFO_SMARTCAST!>b.memberVal<!>.invoke(1)
+    b memberVal 1
+    b.memberVal.invoke(1)
 
-    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>memberVal<!>(1)
-    <!DEBUG_INFO_SMARTCAST!>(b.memberVal)<!>(1)
+    b.memberVal(1)
+    (b.memberVal)(1)
 
 }

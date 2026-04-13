@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DUMP_IR
 package second
 

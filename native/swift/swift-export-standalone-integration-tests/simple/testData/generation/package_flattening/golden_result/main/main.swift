@@ -77,11 +77,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public static func getX(
         _ receiver: Swift.Int32
     ) -> Swift.String {
-        return org_kotlin_foo_x_get__TypesOfArguments__Swift_Int32__(receiver)
+        return org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__(receiver)
     }
     public static func y(
         _ receiver: Swift.String
     ) -> Swift.Int32 {
-        return org_kotlin_foo_y__TypesOfArguments__Swift_String__(receiver)
+        return org_kotlin_foo_y__TypesOfArgumentsE__Swift_String__(receiver)
     }
 }

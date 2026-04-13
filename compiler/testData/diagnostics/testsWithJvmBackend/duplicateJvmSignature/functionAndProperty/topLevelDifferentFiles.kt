@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: a.kt
 val x = 1
 

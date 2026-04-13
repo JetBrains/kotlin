@@ -61,12 +61,12 @@ fun main1() {
     foo1(fun () {},)
     foo1(if (true) 1 else 2,/**/)
 
-    <!UNREACHABLE_CODE!>foo1(<!>return,<!UNREACHABLE_CODE!>)<!>
+    foo1(return,)
 }
 
 fun main2(x: A1) {
-    <!UNREACHABLE_CODE!>val x1 =<!> x[object {}, return, ]
-    <!UNREACHABLE_CODE!>val x2 = x[fun () {}, throw Exception(), /**/]<!>
+    val x1 = x[object {}, return, ]
+    val x2 = x[fun () {}, throw Exception(), /**/]
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, anonymousObjectExpression, classDeclaration,

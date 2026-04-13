@@ -6,9 +6,9 @@ class TestDummyClass<T> {
 }
 
 fun more(t: TestDummyClass<out CustomRunnable>) {
-    t.testFun <!TYPE_MISMATCH!>{ Unit }<!>
-    t.testFun(<!TYPE_MISMATCH!>CustomRunnable { Unit }<!>)
-    t.testFun(<!TYPE_MISMATCH!>object : CustomRunnable<!> {
+    t.testFun <!MEMBER_PROJECTED_OUT!>{ Unit }<!>
+    t.testFun(<!MEMBER_PROJECTED_OUT!>CustomRunnable { Unit }<!>)
+    t.testFun(<!MEMBER_PROJECTED_OUT!>object : CustomRunnable<!> {
         override fun run() {}
     })
 }

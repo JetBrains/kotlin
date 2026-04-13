@@ -19,7 +19,7 @@ fun testRunWithReturnValue() {
 }
 
 fun testRunWithCoercionToUnit() {
-    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!>: Int
+    val x: Int
     run {
         x = 42
         "hello"

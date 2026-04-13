@@ -25,12 +25,12 @@ fun <C> context(p: Processor<in C>, exec: Exec<C>) {}
 fun <M> materialize(): Processor<M> = TODO()
 
 private fun foo(model: Model) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>apply<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>().<!CANNOT_INFER_PARAMETER_TYPE!>apply<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         context(
-            <!NO_THIS!>this<!>,
+            <!CANNOT_INFER_PARAMETER_TYPE!>this<!>,
             Exec { m, p -> p.process(m) } // Note: Builder inference
         )
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inProjection, javaType, lambdaLiteral,

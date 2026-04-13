@@ -3,7 +3,7 @@ fun foo(c : Collection<String>) = {
     c.filter{
         val s : String? = bar()
         if (s == null) false // here!
-        zoo(<!TYPE_MISMATCH!>s<!>)
+        zoo(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
     }
 }
 

@@ -1,9 +1,12 @@
-import com.github.jengelman.gradle.plugins.shadow.ShadowBasePlugin.Companion.shadow
+import GenerateKgpBuildConstantsTask.Companion.registerGenerateKgpBuildConstantsTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
 import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.isSmokeTest
 
 plugins {
     id("gradle-plugin-common-configuration")
@@ -182,7 +185,7 @@ dependencies {
         isTransitive = false
     }
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    commonCompileOnly("com.gradle:develocity-gradle-plugin:3.19.2")
+    commonCompileOnly(libs.develocity.gradlePlugin)
     commonCompileOnly(commonDependency("com.google.code.gson:gson"))
     commonCompileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json") {
         version {
@@ -196,6 +199,8 @@ dependencies {
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
     commonCompileOnly(project(":native:swift:swift-export-standalone"))
     commonCompileOnly(libs.intellij.asm) { isTransitive = false }
+
+    commonCompileOnly(libs.develocity.gradlePluginAdapter)
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
@@ -215,6 +220,7 @@ dependencies {
     embedded(project(":kotlin-gradle-statistics"))
     embedded(libs.intellij.asm) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
+    embedded(libs.develocity.gradlePluginAdapter)
     embedded("org.jetbrains.kotlinx:kotlinx-serialization-json") {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
@@ -474,6 +480,8 @@ tasks.named("validatePlugins") {
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
+        @OptIn(TemporaryTestFederationApi::class)
+        isSmokeTest = true
     }
 }
 
@@ -648,6 +656,9 @@ tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("konanProperties", rootDir.resolve("kotlin-native/konan/konan.properties"))
     useJUnitPlatform()
+
+    @OptIn(TemporaryTestFederationApi::class)
+    isSmokeTest = true
 }
 
 tasks.register<Test>("functionalUnitTest") {
@@ -752,4 +763,13 @@ kotlin {
     target.compilations.getByName("common").configurations.pluginConfiguration.dependencies.add(
         dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
     )
+}
+
+val generateKgpBuildConstants = registerGenerateKgpBuildConstantsTask {
+    defaultYarnVersion = libs.versions.yarn
+}
+
+kotlin.sourceSets.common {
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    generatedKotlin.srcDir(generateKgpBuildConstants)
 }

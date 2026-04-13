@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariableProducerFunction { TargetType() }
-        setTypeVariableConsumerFunction { it.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>consumeConcreteType<!>(ConcreteType()) }
+        setTypeVariableConsumerFunction { it.consumeConcreteType(ConcreteType()) }
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

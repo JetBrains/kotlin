@@ -70,5 +70,3 @@ fun <T : MySealed> foo(a: T) {
         else -> {}
     }
 }
-
-// IGNORE_STABILITY_K1: candidates

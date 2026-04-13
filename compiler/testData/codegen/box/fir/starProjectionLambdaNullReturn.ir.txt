@@ -61,8 +61,8 @@ FILE fqName:<root> fileName:/starProjectionLambdaNullReturn.kt
     BLOCK_BODY
       CALL 'public abstract fun foo (func: kotlin.Function0<T of <root>.I?>): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR '<this>: <root>.I<*> declared in <root>.foo' type=<root>.I<*> origin=IMPLICIT_ARGUMENT
-        ARG func: FUN_EXPR type=kotlin.Function0<kotlin.Nothing?> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing?
+        ARG func: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any?
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing? declared in <root>.foo'
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.foo'
                 CONST Null type=kotlin.Nothing? value=null

@@ -1,4 +1,0 @@
-package
-
-public fun foo(): kotlin.Unit
-public fun </*0*/ T> id(/*0*/ t: T): T

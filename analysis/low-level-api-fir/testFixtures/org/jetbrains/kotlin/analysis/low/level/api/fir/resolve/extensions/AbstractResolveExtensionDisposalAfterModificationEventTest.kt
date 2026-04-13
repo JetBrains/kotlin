@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
 import com.intellij.mock.MockProject
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.directives.publishModificationEventByDirective
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.assertions
  * A simple test which detects when resolve extension disposal after modification events/session invalidation doesn't work *at all*.
  */
 abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : AbstractAnalysisApiBasedTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()
 
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = super.additionalServiceRegistrars + listOf(ResolveExtensionDisposalTestServiceRegistrar)

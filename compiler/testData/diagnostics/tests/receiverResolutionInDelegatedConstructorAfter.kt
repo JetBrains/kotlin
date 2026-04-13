@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: +ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-48870
 

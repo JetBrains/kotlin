@@ -2,8 +2,8 @@ val key: Key<Boolean>
   field = Key<@FlexibleNullability Boolean?>()
   get
 
-val x: @EnhancedNullability Boolean /* by */
-  field = lazy<@EnhancedNullability Boolean>(initializer = local fun <anonymous>(): @EnhancedNullability Boolean {
+val x: Boolean /* by */
+  field = lazy<Boolean>(initializer = local fun <anonymous>(): Boolean {
     return { // BLOCK
       val tmp_0: @EnhancedNullability Boolean? = A().get<@FlexibleNullability Boolean?>(key = <get-key>())
       when {
@@ -13,11 +13,10 @@ val x: @EnhancedNullability Boolean /* by */
     }
   }
 )
-  get(): @EnhancedNullability Boolean {
-    return getValue<@EnhancedNullability Boolean>(/* <this> = #x$delegate, */ thisRef = null, property = ::x)
+  get(): Boolean {
+    return getValue<Boolean>(/* <this> = #x$delegate, */ thisRef = null, property = ::x)
   }
 
 fun main() {
-  println(message = <get-x>() /*!! Boolean */)
+  println(message = <get-x>())
 }
-

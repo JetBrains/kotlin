@@ -1,9 +1,9 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun foo(s: String?): Int {
     while (s!!.length > 0) {
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        s.length
     }
-    return <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    return s.length
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, comparisonExpression, functionDeclaration, integerLiteral, nullableType,

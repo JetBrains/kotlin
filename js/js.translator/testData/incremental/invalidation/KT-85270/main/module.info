@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : useStdlibDeclarationUsedInKTest.0.kt -> useStdlibDeclarationUsedInKTest.kt
+    added file: useStdlibDeclarationUsedInKTest.kt, m.kt
+STEP 1:
+    modifications:
+        U : useStdlibDeclarationUsedInKTest.1.kt -> useStdlibDeclarationUsedInKTest.kt
+    modified ir: useStdlibDeclarationUsedInKTest.kt
+STEP 2:
+    modifications:
+        U : useStdlibDeclarationUsedInKTest.2.kt -> useStdlibDeclarationUsedInKTest.kt
+    modified ir: useStdlibDeclarationUsedInKTest.kt

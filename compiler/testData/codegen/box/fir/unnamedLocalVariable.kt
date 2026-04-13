@@ -1,5 +1,5 @@
 // LANGUAGE: +UnnamedLocalVariables +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 var result = "FAIL: call() must be called"
 

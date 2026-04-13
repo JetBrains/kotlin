@@ -22,25 +22,25 @@ class B : A() {
         b.foo
         b.bar = b.bar + ""
 
-        a.<!INVISIBLE_MEMBER!>foo<!>
+        a.<!INVISIBLE_REFERENCE!>foo<!>
         a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 
         if (a is B) {
-            <!DEBUG_INFO_SMARTCAST!>a<!>.foo
-            <!DEBUG_INFO_SMARTCAST!>a<!>.bar = <!DEBUG_INFO_SMARTCAST!>a<!>.bar + ""
+            a.foo
+            a.bar = a.bar + ""
         }
 
         if (d.x is B) {
             d.x.abc // Ok
-            d.x.<!INVISIBLE_MEMBER!>foo<!>
+            d.x.<!INVISIBLE_REFERENCE!>foo<!>
             d.x.<!INVISIBLE_SETTER!>bar<!> = d.x.bar + ""
         }
     }
 }
 
 fun baz(a: A) {
-    a.<!INVISIBLE_MEMBER!>foo<!>
-    <!INVISIBLE_SETTER!>a.<!INVISIBLE_SETTER!>bar<!><!> = a.bar + ""
+    a.<!INVISIBLE_REFERENCE!>foo<!>
+    a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, flexibleType, functionDeclaration, ifExpression,

@@ -88,12 +88,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public final b: kotlin.Number declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:FINAL returnType:kotlin.Number [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
         overridden:
           public final fun <get-b> (): kotlin.Number declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:FINAL returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Number
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [lateinit,fake_override,var]
         overridden:
@@ -160,12 +160,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract a: kotlin.Int declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:
           public abstract fun <get-a> (): kotlin.Int declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinInterface
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,var]
         overridden:

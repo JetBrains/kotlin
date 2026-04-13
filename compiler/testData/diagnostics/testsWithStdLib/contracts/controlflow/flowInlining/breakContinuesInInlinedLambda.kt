@@ -30,7 +30,7 @@ fun test() {
                         }
                     }
                     break
-                } while (<!UNREACHABLE_CODE!>getBoolean()<!>)
+                } while (getBoolean())
                 // Loop executed exectly once, initializing x
                 myRun { x.inc() }
 
@@ -39,7 +39,7 @@ fun test() {
             }
             // x is ID? here because loop could've been execited
             // VAL_REASSIGNMENT isn't reported because of repeating diagnostic
-            x = 42
+            <!VAL_REASSIGNMENT!>x<!> = 42
             // x is ID now
         }
     else

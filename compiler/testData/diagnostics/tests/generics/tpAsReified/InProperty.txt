@@ -1,3 +1,0 @@
-package
-
-public val </*0*/ reified T> T.v: T

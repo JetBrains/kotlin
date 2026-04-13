@@ -12,28 +12,28 @@ fun fooShort(p: Short) = p
 
 fun test() {
     fooInt(p1)
-    fooInt(<!TYPE_MISMATCH!>p2<!>)
+    fooInt(<!ARGUMENT_TYPE_MISMATCH!>p2<!>)
     fooInt(p3)
     fooInt(p4)
     fooInt(p5)
 
-    fooLong(<!TYPE_MISMATCH!>p1<!>)
+    fooLong(<!ARGUMENT_TYPE_MISMATCH!>p1<!>)
     fooLong(p2)
-    fooLong(<!TYPE_MISMATCH!>p3<!>)
-    fooLong(<!TYPE_MISMATCH!>p4<!>)
-    fooLong(<!TYPE_MISMATCH!>p5<!>)
+    fooLong(<!ARGUMENT_TYPE_MISMATCH!>p3<!>)
+    fooLong(<!ARGUMENT_TYPE_MISMATCH!>p4<!>)
+    fooLong(<!ARGUMENT_TYPE_MISMATCH!>p5<!>)
 
-    fooShort(<!TYPE_MISMATCH!>p1<!>)
-    fooShort(<!TYPE_MISMATCH!>p2<!>)
-    fooShort(<!TYPE_MISMATCH!>p3<!>)
-    fooShort(<!TYPE_MISMATCH!>p4<!>)
-    fooShort(<!TYPE_MISMATCH!>p5<!>)
+    fooShort(<!ARGUMENT_TYPE_MISMATCH!>p1<!>)
+    fooShort(<!ARGUMENT_TYPE_MISMATCH!>p2<!>)
+    fooShort(<!ARGUMENT_TYPE_MISMATCH!>p3<!>)
+    fooShort(<!ARGUMENT_TYPE_MISMATCH!>p4<!>)
+    fooShort(<!ARGUMENT_TYPE_MISMATCH!>p5<!>)
 
-    fooByte(<!TYPE_MISMATCH!>p1<!>)
-    fooByte(<!TYPE_MISMATCH!>p2<!>)
-    fooByte(<!TYPE_MISMATCH!>p3<!>)
-    fooByte(<!TYPE_MISMATCH!>p4<!>)
-    fooByte(<!TYPE_MISMATCH!>p5<!>)
+    fooByte(<!ARGUMENT_TYPE_MISMATCH!>p1<!>)
+    fooByte(<!ARGUMENT_TYPE_MISMATCH!>p2<!>)
+    fooByte(<!ARGUMENT_TYPE_MISMATCH!>p3<!>)
+    fooByte(<!ARGUMENT_TYPE_MISMATCH!>p4<!>)
+    fooByte(<!ARGUMENT_TYPE_MISMATCH!>p5<!>)
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, propertyDeclaration */

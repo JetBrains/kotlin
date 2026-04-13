@@ -132,23 +132,33 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
             reporter.reportOn(source, FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT, typeParameter, fullyExpandedType)
         }
 
-        if (typeArgument is ConeTypeParameterType) {
-            val symbol = typeArgument.lookupTag.typeParameterSymbol
-            if (!symbol.isReified) {
-                reporter.reportOn(
-                    source,
-                    if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR else FirErrors.TYPE_PARAMETER_AS_REIFIED,
-                    symbol,
-                )
+        when {
+            typeArgument is ConeTypeParameterType -> {
+                val symbol = typeArgument.lookupTag.typeParameterSymbol
+                if (!symbol.isReified) {
+                    reporter.reportOn(
+                        source,
+                        if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY_ERROR else FirErrors.TYPE_PARAMETER_AS_REIFIED,
+                        symbol,
+                    )
+                }
             }
-        } else if (typeArgument is ConeDefinitelyNotNullType && isExplicit) {
-            // We sometimes infer type arguments to DNN types, which seems to be ok. Only report explicit DNN types written by user.
-            reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED)
-        } else if (typeArgument.cannotBeReified(context.languageVersionSettings)) {
-            reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument)
-        } else if (typeArgument is ConeIntersectionType) {
-            reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes)
+            typeArgument is ConeDefinitelyNotNullType -> {
+                checkArgumentAndReport(typeArgument.original, typeParameter, source, isExplicit, isArray, isPlaceHolder)
+                if (isExplicit) {
+                    // We sometimes infer type arguments to DNN types, which seems to be ok. Only report explicit DNN types written by user.
+                    reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED)
+                }
+            }
+            typeArgument.cannotBeReified(context.languageVersionSettings) -> {
+                reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument)
+            }
+            typeArgument is ConeIntersectionType -> {
+                reporter.reportOn(source, FirErrors.TYPE_INTERSECTION_AS_REIFIED, typeParameter, typeArgument.intersectedTypes)
+            }
+            typeArgument is ConeFlexibleType -> {
+                checkArgumentAndReport(typeArgument.lowerBound, typeParameter, source, isExplicit, isArray, isPlaceHolder)
+            }
         }
     }
-
 }

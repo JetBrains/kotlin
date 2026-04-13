@@ -10,7 +10,7 @@ class My {
             if (x == null) {
                 x = "s"
             }
-            <!DEBUG_INFO_SMARTCAST!>x<!>
+            x
         }
 }
 

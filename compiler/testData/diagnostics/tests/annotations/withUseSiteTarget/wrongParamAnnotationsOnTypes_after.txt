@@ -1,9 +1,0 @@
-package
-
-public fun test1(/*0*/ i: kotlin.Int): kotlin.Unit
-public fun test2(/*0*/ i: kotlin.Int): kotlin.Unit
-public fun test3(/*0*/ i: kotlin.Int): kotlin.Unit
-public fun test4(): kotlin.Int
-public fun test5(/*0*/ i: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public fun test7(): (kotlin.Int) -> kotlin.Unit
-public fun ((kotlin.Int) -> kotlin.Unit).test6(): kotlin.Unit

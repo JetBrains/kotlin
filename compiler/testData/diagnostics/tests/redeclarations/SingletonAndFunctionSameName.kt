@@ -9,7 +9,7 @@ object Foo {
 
 
 
-<!CONFLICTING_OVERLOADS!>fun En()<!> = 239
+fun En() = 239
 
 enum class <!CONFLICTING_OVERLOADS!>En<!> {
     ENTRY,

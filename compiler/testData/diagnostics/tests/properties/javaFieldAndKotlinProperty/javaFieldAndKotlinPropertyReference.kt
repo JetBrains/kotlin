@@ -9,12 +9,12 @@ public class BaseJava {
 
 // FILE: Derived.kt
 class Derived : BaseJava() {
-    private val a = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = "FAIL"
 }
 
 fun box(): String {
     val d = Derived()
-    return d::a.get()
+    return d::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>.get()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaCallableReference, javaType,

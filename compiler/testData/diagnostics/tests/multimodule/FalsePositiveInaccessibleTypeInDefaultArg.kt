@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74459
-// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent -ForbidUsingSupertypesWithInaccessibleContentInTypeArguments -ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
+// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent -ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
 // MODULE: base
 // FILE: base.kt
 
@@ -20,27 +20,27 @@ class Another(val s: String, val f: (Base) -> Boolean = { true })
 
 fun foo(s: String) {
     Short(s)
-    Short(s) { null }
-    Short(s) { Derived() }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s) { null }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s) { <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>() }
 
     Impl(s)
-    Impl(s, null)
-    Impl(s, Derived())
-    Impl(s, null) { null }
-    Impl(s, f = { null })
-    Impl(s, f = { Derived() })
+    <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, null)
+    <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>())
+    <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, null) { null }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Impl<!>(s, f = { null })
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Impl<!>(s, f = { <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>() })
 
     impl(s)
-    impl(s, null)
-    impl(s, Derived())
-    impl(s, null) { null }
-    impl(s, f = { null })
-    impl(s, f = { Derived() })
+    <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, null)
+    <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>())
+    <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, null) { null }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>impl<!>(s, f = { null })
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>impl<!>(s, f = { <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>() })
 
     Another(s)
-    Another(s) { false }
-    Another(s) { it == it }
-    Another(s) { it.hashCode() == 0 }
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ false }<!>
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!> == <!MISSING_DEPENDENCY_CLASS!>it<!> }<!>
+    <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>() == 0 }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, integerLiteral,

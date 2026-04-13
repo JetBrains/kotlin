@@ -27,15 +27,13 @@ fun test2(a: Any) {
 }
 
 fun test3(a: Any) {
-  { // BLOCK
-    val tmp_2: Any = a
-    val tmp_3: Function0<Unit> = local fun <anonymous>() {
-      return Unit
-    }
+  val tmp_2: Any = a
+  val tmp_3: Function0<Unit> = local fun <anonymous>() {
+    return Unit
+  }
 
-    val tmp_4: Int = get(/* <this> = tmp_2, */ index = tmp_3)
-    set(/* <this> = tmp_2, */ index = tmp_3, value = tmp_4.inc())
-    tmp_4
-  } /*~> Unit */
+  val tmp_4: Int = get(/* <this> = tmp_2, */ index = tmp_3)
+  set(/* <this> = tmp_2, */ index = tmp_3, value = tmp_4.inc())
+  tmp_4 /*~> Unit */
 }
 

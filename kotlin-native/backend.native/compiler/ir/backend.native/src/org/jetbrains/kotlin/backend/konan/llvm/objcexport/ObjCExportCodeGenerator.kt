@@ -187,7 +187,7 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
 
             call(objCExportCodegen.objcRetainAutoreleasedReturnValue, listOf(callResult)).also {
                 if (context.config.target.markARCOptimizedReturnCallsAsNoTail())
-                    LLVMSetNoTailCall(it)
+                    LLVMKotlinSetNoTailCall(it)
             }
         }
 

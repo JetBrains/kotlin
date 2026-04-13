@@ -9,17 +9,17 @@ class Delegate {
 }
 
 open class A {
-    <!INLINE_PROPERTY_WITH_BACKING_FIELD!>inline val z1<!> = 1
+    <!WRONG_MODIFIER_TARGET!>inline<!> <!INLINE_PROPERTY_WITH_BACKING_FIELD!>val z1<!> = 1
 
     <!INLINE_PROPERTY_WITH_BACKING_FIELD!>val z1_1<!> = 1
         inline get() = field + 1
 
-    <!INLINE_PROPERTY_WITH_BACKING_FIELD!>inline var z2<!> = 1
+    <!WRONG_MODIFIER_TARGET!>inline<!> <!INLINE_PROPERTY_WITH_BACKING_FIELD!>var z2<!> = 1
 
     <!INLINE_PROPERTY_WITH_BACKING_FIELD!>var z2_1<!> = 1
         inline set(p: Int) {}
 
-    <!INLINE_PROPERTY_WITH_BACKING_FIELD!>inline val z<!> by Delegate()
+    inline <!INLINE_PROPERTY_WITH_BACKING_FIELD!>val z<!> by Delegate()
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, integerLiteral, nullableType,

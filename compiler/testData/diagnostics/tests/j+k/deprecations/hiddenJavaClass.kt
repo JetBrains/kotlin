@@ -11,9 +11,9 @@ class Nested {
 }
 
 class MyClass : JavaClass() {
-    fun check(n: <!DEPRECATION_ERROR!>Nested<!>): String = n.<!UNRESOLVED_REFERENCE!>foo<!>()
+    fun check(n: Nested): String = n.foo()
 }
 
-fun box() = MyClass().check(<!TYPE_MISMATCH!>Nested()<!>)
+fun box() = MyClass().check(Nested())
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, stringLiteral */

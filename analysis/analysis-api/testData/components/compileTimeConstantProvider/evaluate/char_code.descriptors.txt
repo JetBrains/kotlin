@@ -1,5 +1,0 @@
-expression: 'c'.code
-constant: 99
-constantValueKind: IntValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -115,8 +115,10 @@ open internal class DecomposedCharSet(
             return -1
         }
 
-        if ((0 until readCodePoints).firstOrNull { decomposedCodePoint[i] != decomposedChar[i] } != null) {
-            return -1
+        for (i in 0 until readCodePoints) {
+            if (decomposedCodePoint[i] != decomposedChar[i]) {
+                return -1
+            }
         }
         return next.matches(strIndex, testString, matchResult)
     }

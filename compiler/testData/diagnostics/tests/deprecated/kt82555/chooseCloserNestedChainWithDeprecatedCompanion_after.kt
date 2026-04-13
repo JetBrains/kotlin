@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 //  ^ K1 is ignored
 // LANGUAGE: +SkipHiddenObjectsInResolution
 // RUN_PIPELINE_TILL: FRONTEND

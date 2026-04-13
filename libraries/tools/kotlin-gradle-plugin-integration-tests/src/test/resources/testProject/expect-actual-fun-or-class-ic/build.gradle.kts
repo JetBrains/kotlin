@@ -9,6 +9,6 @@ repositories {
 
 kotlin {
     jvm()
-    js(IR) { browser { } }
+    js { browser { } }
     <SingleNativeTarget>("native")
 }

@@ -8,11 +8,11 @@ interface B {
     fun foo(b1: Int, b2: Double)
 }
 
-<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES, DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface C<!> : A, B { // Warning here, this is correct, C.foo has no named parameters
+<!DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES!>interface C<!> : A, B { // Warning here, this is correct, C.foo has no named parameters
 }
 
 interface D : C {
-    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
+    override fun foo(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d1<!>: Int, <!PARAMETER_NAME_CHANGED_ON_OVERRIDE, PARAMETER_NAME_CHANGED_ON_OVERRIDE!>d2<!>: Double)
 }
 
 fun test1(d: D) {

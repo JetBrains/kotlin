@@ -23,13 +23,13 @@ fun testAny() {
 }
 
 fun testNullableAny() {
-    val result = <!NO_ELSE_IN_WHEN!>when<!> (subject()) {
+    val result = when (subject()) {
         <!USELESS_IS_CHECK!>is Any?<!> -> ""
     }
 }
 
 fun testAnyAndNull() {
-    val result = <!NO_ELSE_IN_WHEN!>when<!> (subject()) {
+    val result = when (subject()) {
         is Any -> ""
         null -> ""
     }

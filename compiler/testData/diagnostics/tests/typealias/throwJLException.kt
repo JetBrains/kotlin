@@ -4,7 +4,7 @@
 typealias Exn = java.lang.Exception
 
 fun test() {
-    throw <!NO_COMPANION_OBJECT!>Exn<!>
+    throw <!NO_COMPANION_OBJECT, TYPE_MISMATCH!>Exn<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

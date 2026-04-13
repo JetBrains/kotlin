@@ -13,25 +13,25 @@ val nonLocal: Any get() = ""
 fun consume(s: String) {}
 
 fun locals(a: Any) {
-    a
+    <!UNUSED_EXPRESSION!>a<!>
     a as String
     val b: Any = ""
-    b
+    <!UNUSED_EXPRESSION!>b<!>
     b as String
 }
 
 fun nonLocals() {
-    nonLocal
-    nonLocal as String
+    <!RETURN_VALUE_NOT_USED!>nonLocal<!>
+    <!RETURN_VALUE_NOT_USED!>nonLocal<!> as String
     val used = nonLocal as String
     consume(nonLocal as String)
     (nonLocal as String).consume()
 }
 
 fun classRefs(instance: Any) {
-    instance::class
-    String::class
-    nonLocal::class
+    <!UNUSED_EXPRESSION!>instance::class<!>
+    <!UNUSED_EXPRESSION!>String::class<!>
+    <!RETURN_VALUE_NOT_USED!>nonLocal::class<!>
     val s = String::class
     val ss = instance::class
     val sss = nonLocal::class
@@ -45,16 +45,16 @@ fun whenInstance() {
     }
 
     when (nonLocal) {
-        is String -> intF()
-        is Boolean -> getAny()
-        else -> nonLocal
+        is String -> <!RETURN_VALUE_NOT_USED!>intF<!>()
+        is Boolean -> <!RETURN_VALUE_NOT_USED!>getAny<!>()
+        else -> <!RETURN_VALUE_NOT_USED!>nonLocal<!>
     }
 }
 
 fun castsInIf() {
     val x = if (intF() > 10) getAny() as String else ""
     val y = if (intF() > 10) {
-        getAny() // unused
+        <!RETURN_VALUE_NOT_USED!>getAny<!>() // unused
         getAny() as String // used
     } else {
         ""

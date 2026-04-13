@@ -21,6 +21,7 @@ package kotlin.reflect.full
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.types.SimpleKType
@@ -44,6 +45,13 @@ fun KClassifier.createType(
     nullable: Boolean = false,
     annotations: List<Annotation> = emptyList(),
 ): KType {
+    if (!useK1Implementation) {
+        // For public calls, arguments need to be checked. For K1, it will be checked later.
+        // As these checks are heavy-weight and (usually) not needed for internal calls, please prefer calling `createTypeImpl` internally
+        val parameters = (this as? KClass<*>)?.allTypeParameters().orEmpty()
+        checkArgumentsSize(parameters.size, arguments.size)
+        // TODO: throw exception if argument does not satisfy bounds
+    }
     return createTypeImpl(arguments, nullable, annotations)
 }
 
@@ -56,11 +64,6 @@ internal fun KClassifier.createTypeImpl(
     if (useK1Implementation) {
         return createK1KType(arguments, nullable, mutableCollectionClass)
     }
-
-    val parameters = (this as? KClass<*>)?.allTypeParameters().orEmpty()
-    checkArgumentsSize(parameters.size, arguments.size)
-
-    // TODO: throw exception if argument does not satisfy bounds
 
     return SimpleKType(
         this,
@@ -91,10 +94,10 @@ internal fun checkArgumentsSize(parametersSize: Int, argumentsSize: Int) {
 val KClassifier.starProjectedType: KType
     get() {
         val descriptor = (this as? KClassImpl<*>)?.descriptor
-            ?: return createType()
+            ?: return createTypeImpl()
 
         val typeParameters = descriptor.typeConstructor.parameters
-        if (typeParameters.isEmpty()) return createType() // TODO: optimize, get defaultType from ClassDescriptor
+        if (typeParameters.isEmpty()) return createTypeImpl() // TODO: optimize, get defaultType from ClassDescriptor
 
-        return createType(typeParameters.map { KTypeProjection.STAR })
+        return createTypeImpl(typeParameters.map { KTypeProjection.STAR })
     }

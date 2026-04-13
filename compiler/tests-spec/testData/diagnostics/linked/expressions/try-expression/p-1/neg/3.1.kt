@@ -58,7 +58,7 @@ fun case5() {
     try {
         throwException()
     } catch (e: ExcA, <!SYNTAX!>e2<!><!SYNTAX!><!> <!SYNTAX!>: ExcB)<!>
-    <!UNUSED_LAMBDA_EXPRESSION!>{}<!>
+    {}
 }
 
 
@@ -72,4 +72,4 @@ fun case6() {
     } catch (e: ExcA)<!SYNTAX!><!>
     catch (e: ExcB) {
     }
-}
+}<!SYNTAX{LT}!><!>

@@ -34,7 +34,7 @@ fun test() {
     if (x != null) {
         takeNotNull(dependOn(x) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x)) <!USELESS_ELVIS!>?: ""<!>)
-        takeNotNull(dependOn(dependOn(x) as? String) ?: "")
+        takeNotNull(dependOn(dependOn(x) <!USELESS_CAST!>as? String<!>) ?: "")
     }
 
     takeNotNull(bar()!!)
@@ -49,11 +49,11 @@ fun testFrom13648() {
 fun bar() = <!UNRESOLVED_REFERENCE!>unresolved<!>
 
 fun testUselessElvisLeftIsNull(l: List<String>) {
-    val result1 = null ?: "default"
-    val result2 = null ?: 42
-    val result3 = null ?: l
+    val result1 = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> "default"
+    val result2 = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> 42
+    val result3 = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> l
 
-    takeNotNull(null ?: "value")
+    takeNotNull(<!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> "value")
 
     // Should not trigger - left is not null literal
     val x: String? = null

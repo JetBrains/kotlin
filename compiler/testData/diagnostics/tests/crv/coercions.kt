@@ -15,14 +15,14 @@ fun coerceMe(block: () -> Unit) {
 }
 
 fun test() {
-    coerceMe { stringF() }
+    coerceMe { <!RETURN_VALUE_NOT_USED_COERCION(" of 'stringF'")!>stringF<!>() }
     coerceMe { unitF() }
     coerceMe { ign() }
     coerceMe { thrower() }
 }
 
 fun testRefs() {
-    coerceMe(::stringF)
+    coerceMe(::<!RETURN_VALUE_NOT_USED_COERCION(" of 'stringF'")!>stringF<!>)
     coerceMe(::unitF)
     coerceMe(::ign)
     coerceMe(::thrower)
@@ -30,8 +30,8 @@ fun testRefs() {
 
 fun testVals() {
     val rf = ::stringF
-    val rf2: () -> Unit = <!TYPE_MISMATCH!>::<!TYPE_MISMATCH!>stringF<!><!>
-    val rf3: () -> Unit = { stringF() }
+    val rf2: () -> Unit = ::<!RETURN_VALUE_NOT_USED_COERCION!>stringF<!>
+    val rf3: () -> Unit = { <!RETURN_VALUE_NOT_USED_COERCION!>stringF<!>() }
 }
 
 class A {
@@ -40,10 +40,10 @@ class A {
 
 fun testReceivers() {
     val a = A()
-    coerceMe(a::toString)
-    val rf: (A) -> Unit = <!TYPE_MISMATCH!>A::<!TYPE_MISMATCH!>toString<!><!>
+    coerceMe(a::<!RETURN_VALUE_NOT_USED_COERCION!>toString<!>)
+    val rf: (A) -> Unit = A::<!RETURN_VALUE_NOT_USED_COERCION!>toString<!>
     coerceMe(a::ign)
-    val rf2: (A) -> Unit = <!TYPE_MISMATCH!>A::<!TYPE_MISMATCH!>ign<!><!>
+    val rf2: (A) -> Unit = A::ign
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, callableReference, functionDeclaration, functionalType,

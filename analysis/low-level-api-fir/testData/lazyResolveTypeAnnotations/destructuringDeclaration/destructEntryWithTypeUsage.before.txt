@@ -74,13 +74,12 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val pair: MyPair
             public? [ResolvedTo(RAW_FIR)] get(): MyPair
 
-        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val right: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol util/left], ScriptTopLevelDeclaration=true] val property: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
-

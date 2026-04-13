@@ -10,14 +10,14 @@ public class A {
 class Inv<T>
 
 fun test(x: Inv<Int>, y: Inv<String>) {
-    A("", <!TYPE_MISMATCH!>x<!>)
+    A("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     A("", y)
 
-    A<String>("", <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
+    A<String>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
-    A<Any>("", <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
+    A<Any>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
     A<String>("", y)
-    A<CharSequence>("", <!TYPE_MISMATCH!>y<!>)
+    A<CharSequence>("", <!ARGUMENT_TYPE_MISMATCH!>y<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType,

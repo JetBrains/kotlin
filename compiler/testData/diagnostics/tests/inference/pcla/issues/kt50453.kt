@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        consume(<!TYPE_MISMATCH("DifferentType; TargetType"), TYPE_MISMATCH("DifferentType; TargetType")!>getTypeVariable()<!>)
+        consume(getTypeVariable())
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

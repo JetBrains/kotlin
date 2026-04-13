@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import kotlin.collections.*
 
 internal class LoadedJsIr(
     loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
@@ -129,12 +130,11 @@ internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
     private val orderedLibraries: List<KotlinLibrary>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
-    private val irFactory: IrFactory,
+    private val icContext: PlatformDependentICContext,
     private val stubbedSignatures: Set<IdSignature>,
     private val loadBodiesOnlyForMainModule: Boolean,
+    private val mainLibrary: KotlinLibrary,
 ) {
-    private val mainLibrary = orderedLibraries.lastOrNull() ?: notFoundIcError("main library")
-
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private class LinkerContext(
         val symbolTable: SymbolTable,
@@ -158,7 +158,7 @@ internal class JsIrLinkerLoader(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): LinkerContext {
         val signaturer = IdSignatureDescriptor(JsManglerDesc)
-        val symbolTable = SymbolTable(signaturer, irFactory)
+        val symbolTable = SymbolTable(signaturer, icContext.createIrFactory())
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
@@ -274,6 +274,11 @@ internal class JsIrLinkerLoader(
         }
 
         val loadedIr = LoadedJsIr(irModules, linkerContext.linker, linkerContext.functionTypeInterfacePackages)
+
+        // This should be done because referenced declaration from the compiler should be loaded as well
+        val mainModuleFragment = loadedIr.orderedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
+        icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
+
         loadedIr.loadUnboundSymbols()
         return loadedIr
     }

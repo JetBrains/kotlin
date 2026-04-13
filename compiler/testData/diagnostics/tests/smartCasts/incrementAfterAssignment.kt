@@ -11,20 +11,20 @@ fun test1() {
     var a: Any
 
     a = 1
-    consume(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    consume(a)
 
     a = 1
-    consume(<!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>++<!>)
+    consume(a++)
 
     a = 1
-    consume(++<!DEBUG_INFO_SMARTCAST!>a<!>)
+    consume(++a)
 
     a = 't'
-    consume(<!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>++<!>)
+    consume(a++)
 
     a = 't'
-    consume(++<!DEBUG_INFO_SMARTCAST!>a<!>)
-    consume(<!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>a<!>++<!>)
+    consume(++a)
+    consume(a++)
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, localProperty,

@@ -2,7 +2,7 @@
 // KT-3559 Strange inference failure error message
 
 public inline fun <T:Any, R> let(subj: T?, body: (T) -> R): R? {
-    return if (subj != null) body(<!DEBUG_INFO_SMARTCAST!>subj<!>) else null
+    return if (subj != null) body(subj) else null
 }
 
 

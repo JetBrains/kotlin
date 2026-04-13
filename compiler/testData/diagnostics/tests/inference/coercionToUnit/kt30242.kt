@@ -26,7 +26,7 @@ fun test2(b: Boolean) {
 
 fun test3(b: Boolean) {
     foo {
-        <!INVALID_IF_AS_EXPRESSION!>if<!> (b) {
+        if (b) {
             return@foo A()
         }
     }
@@ -48,7 +48,7 @@ fun bar(block: () -> String) {}
 
 fun test_5(b: Boolean) {
     bar {
-        <!TYPE_MISMATCH!>if (b) {
+        <!RETURN_TYPE_MISMATCH!>if (b) {
             println("meh")
         }<!>
     }

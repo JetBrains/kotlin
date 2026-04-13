@@ -2,12 +2,12 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-expect fun <!AMBIGUOUS_ACTUALS{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>foo<!>()
+<!AMBIGUOUS_ACTUALS{JVM}!>expect<!> fun foo()
 
 // MODULE: intermediate()()(common)
-<!CONFLICTING_OVERLOADS{JVM}!>actual fun <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>foo<!>()<!> {}
+actual <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
 
 // MODULE: main()()(intermediate)
-<!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
+actual fun foo() {}
 
 /* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

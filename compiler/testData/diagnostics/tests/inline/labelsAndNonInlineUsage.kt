@@ -13,16 +13,16 @@ inline fun bar(s: () -> Unit) {
     noInline(<!USAGE_IS_NOT_INLINABLE!>s<!>)
 
     inline(l@ s)
-    noInline(l@ s)
+    noInline(l@ <!USAGE_IS_NOT_INLINABLE!>s<!>)
 
     inline(l2@ l1@ s)
-    noInline(l2@ l1@ s)
+    noInline(l2@ l1@ <!USAGE_IS_NOT_INLINABLE!>s<!>)
 
     inline(_@ s)
-    noInline(_@ s)
+    noInline(_@ <!USAGE_IS_NOT_INLINABLE!>s<!>)
 
     inline(__@ _@ s)
-    noInline(__@ _@ s)
+    noInline(__@ _@ <!USAGE_IS_NOT_INLINABLE!>s<!>)
 
     s()
     (l@ s)()

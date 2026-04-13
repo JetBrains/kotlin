@@ -2,7 +2,7 @@
 // DIAGNOSTICS: -DEPRECATION -TOPLEVEL_TYPEALIASES_ONLY
 // LANGUAGE: +UnnamedLocalVariables -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 
-<!UNDERSCORE_IS_RESERVED!>import kotlin.Deprecated as ___<!>
+import kotlin.Deprecated as <!UNDERSCORE_IS_RESERVED!>___<!>
 
 @___("") data class Pair(val x: Int, val y: Int)
 
@@ -19,15 +19,15 @@ fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: <!
     val q = fun(_: Int, <!UNDERSCORE_IS_RESERVED!>__<!>: Int) {}
     q(1, 2)
 
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = 56
+    val _ = 56
 
     fun localFun(<!UNDERSCORE_IS_RESERVED!>_<!>: String) = 1
 
-    <!REDUNDANT_LABEL_WARNING!><!UNDERSCORE_IS_RESERVED!>__<!>@<!> return if (y != null) <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!>(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>____<!>, y) else <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!>(`_`, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>______<!>)
+    <!UNDERSCORE_IS_RESERVED!>__<!>@ return if (y != null) <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!>(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>____<!>, y) else <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__<!>(`_`, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>______<!>)
 }
 
 
-class A1(val <!UNDERSCORE_IS_RESERVED, UNDERSCORE_IS_RESERVED!>_<!>: String)
+class A1(val <!UNDERSCORE_IS_RESERVED!>_<!>: String)
 class A2(<!UNDERSCORE_IS_RESERVED!>_<!>: String) {
     class B {
         typealias <!UNDERSCORE_IS_RESERVED!>_<!> = CharSequence

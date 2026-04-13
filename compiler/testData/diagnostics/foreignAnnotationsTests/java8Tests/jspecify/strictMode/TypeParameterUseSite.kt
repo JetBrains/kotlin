@@ -45,26 +45,26 @@ public class ClsMarked<T> {
 
 // FILE: main.kt
 fun test(x: ClsNonNull<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!TYPE_MISMATCH!>nullable<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nullable)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nonnull)<!>
 }
 
 fun test(x: ClsUnmarkedNonNull<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!TYPE_MISMATCH!>nullable<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nullable)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nonnull)<!>
 }
 
 fun test(x: ClsMarkedUnmarked<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!TYPE_MISMATCH!>nullable<!>)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nullable)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>x.go(nonnull)<!>
 }
 
 fun testNonnull(x: ClsMarkedNullable<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!TYPE_MISMATCH!>nullable<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("ClsMarkedNullable<kotlin.String>")!>x.self()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.self().go(<!TYPE_MISMATCH!>nullable<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.self().go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.self().go(nonnull)<!>
 }
 
@@ -78,11 +78,11 @@ fun testNullable(x: ClsMarkedNullable<String?>, nullable: String?, nonnull: Stri
 }
 
 fun testNonnull(x: ClsMarked<String>, nullable: String?, nonnull: String) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!TYPE_MISMATCH!>nullable<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.go(nonnull)<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("ClsMarked<kotlin.String>")!>x.self()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.self().go(<!TYPE_MISMATCH!>nullable<!>)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.self().go(<!ARGUMENT_TYPE_MISMATCH!>nullable<!>)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.self().go(nonnull)<!>
 }
 

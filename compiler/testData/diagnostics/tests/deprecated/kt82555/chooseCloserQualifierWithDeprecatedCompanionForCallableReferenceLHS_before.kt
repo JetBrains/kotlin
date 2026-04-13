@@ -15,7 +15,7 @@ class Outer {
     fun test() {
         val ref = A::foo
         ref(bar.Outer.A())
-        ref(<!TYPE_MISMATCH!>bar.A()<!>)
+        ref(<!ARGUMENT_TYPE_MISMATCH!>bar.A()<!>)
     }
 }
 

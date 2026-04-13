@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-58008
 
 object Retry {

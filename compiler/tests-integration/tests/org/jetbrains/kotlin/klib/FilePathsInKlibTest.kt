@@ -130,9 +130,8 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
     fun testAbsoluteNormalizedPath() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()
-            val extraArgs = listOf("-Xklib-normalize-absolute-path")
 
-            val artifact = compileJsKlib(testFiles, extraArgs, testTempDir)
+            val artifact = compileJsKlib(testFiles, emptyList(), testTempDir)
             val modulePaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
             val dirCanonicalPaths = walkKtFiles(testTempDir)
 

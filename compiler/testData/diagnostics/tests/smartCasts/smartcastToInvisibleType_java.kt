@@ -34,15 +34,15 @@ fun testSmartcast(x: Any) {
 }
 
 fun testInference(a: A, b: B) {
-    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface"), INACCESSIBLE_TYPE!>select(a, b)<!>
-    <!INACCESSIBLE_TYPE!>x<!>.<!INVISIBLE_MEMBER!>foo<!>()
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!><!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>select<!>(a, b)<!>
+    x.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
 fun <T> dnnSelect(vararg x: T & Any): T & Any = x[0]
 
 fun testDnn(a: A, b: B) {
-    val x = <!INACCESSIBLE_TYPE!>dnnSelect(a, b)<!>
-    <!INACCESSIBLE_TYPE!>x<!>.<!INVISIBLE_MEMBER!>foo<!>()
+    val x = <!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>dnnSelect<!>(a, b)
+    x.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
 // FILE: samePackage.kt
@@ -52,7 +52,7 @@ import select
 
 fun testSmartcast(x: Any) {
     if (x is A || x is B) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!>x<!>.foo()
     }
 }
 

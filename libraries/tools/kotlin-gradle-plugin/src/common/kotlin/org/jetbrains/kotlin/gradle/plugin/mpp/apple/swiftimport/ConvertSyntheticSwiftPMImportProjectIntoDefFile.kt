@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -21,15 +23,11 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
-import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.joinToString
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : DefaultTask() {
@@ -58,11 +56,10 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    protected val localPackageSources get() = filesToTrackFromLocalPackages.map { it.asFile.readLines().filter { it.isNotEmpty() }.map {
-        File(
-            it
-        )
-    } }
+    protected val localPackageSources: Provider<List<File>>
+        get() = filesToTrackFromLocalPackages.map {
+            it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
+        }
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -71,13 +68,13 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     private val layout = project.layout
 
     @get:OutputDirectory
-    protected val defFiles = xcodebuildSdk.flatMap { sdk ->
-        layout.buildDirectory.dir("kotlin/swiftImportDefs/${sdk}")
+    protected val defFiles: Provider<org.gradle.api.file.Directory> = xcodebuildSdk.flatMap { sdk ->
+        layout.buildDirectory.dir(XcodebuildDefFileUtils.defFilesRelativeDir(sdk))
     }
 
     @get:OutputDirectory
-    protected val ldDump = xcodebuildSdk.flatMap { sdk ->
-        layout.buildDirectory.dir("kotlin/swiftImportLdDump/${sdk}")
+    protected val ldDump: Provider<org.gradle.api.file.Directory> = xcodebuildSdk.flatMap { sdk ->
+        layout.buildDirectory.dir(XcodebuildDefFileUtils.ldDumpRelativeDir(sdk))
     }
 
     /**
@@ -91,7 +88,6 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
      * Passed to `xcodebuild` as:
      * -packageCachePath <dir>
      * Used in tests to avoid collisions with the global cache at `~/Library/Caches/org.swift.swiftpm/repositories`.
-     *
      */
     @get:Internal
     abstract val additionalXcodeArgs: ListProperty<String>
@@ -103,13 +99,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     abstract val syntheticImportProjectRoot: DirectoryProperty
 
     @get:Internal
-    val syntheticImportDd = layout.buildDirectory.dir("kotlin/swiftImportDd")
+    val syntheticImportDd: Provider<Directory> =
+        layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
 
     @get:Inject
-    protected abstract val execOps: ExecOperations
-
-    @get:Inject
-    protected abstract val objects: ObjectFactory
+    protected abstract val workerExecutor: WorkerExecutor
 
     private val cinteropNamespace = listOf(
         "swiftPMImport",
@@ -120,373 +114,52 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     }.joinToString(".") {
         it.replace(Regex("[^a-zA-Z0-9_.]"), ".")
     }.replace(Regex("\\.{2,}"), ".")  // Replace multiple consecutive dots with single dot
-     .trim('.')  // Remove leading/trailing dots
+        .trim('.')  // Remove leading/trailing dots
 
     @TaskAction
     fun generateDefFiles() {
-        if (!hasSwiftPMDependencies.get()) {
-            architectures.get().forEach { architecture ->
-                /**
-                 * Stub out all outputs if we have no SwiftPM dependencies
-                 */
-                defFilePath(architecture).getFile().writeText(
-                    """
-                        language = Objective-C
-                        package = $cinteropNamespace
-                    """.trimIndent()
-                )
-                ldFilePath(architecture).getFile().writeText("\n")
-                ldFileFingerprintPath(architecture).getFile().writeText("0")
-                frameworkSearchpathFilePath(architecture).getFile().writeText("\n")
-                librarySearchpathFilePath(architecture).getFile().writeText("\n")
-            }
-            return
-        }
-
-        val dumpIntermediates = xcodebuildSdk.flatMap { sdk ->
-            layout.buildDirectory.dir("kotlin/swiftImportClangDump/${sdk}")
-        }.get().asFile.also {
-            if (it.exists()) {
-                it.deleteRecursively()
-            }
-            it.mkdirs()
-        }
-
-        val clangArgsDumpScript = dumpIntermediates.resolve("clangDump.sh")
-        clangArgsDumpScript.writeText(clangArgsDumpScript())
-        clangArgsDumpScript.setExecutable(true)
-        val clangArgsDump = dumpIntermediates.resolve("clang_args_dump")
-        clangArgsDump.mkdirs()
-
-        val ldArgsDumpScript = dumpIntermediates.resolve("ldDump.sh")
-        ldArgsDumpScript.writeText(ldArgsDumpScript())
-        ldArgsDumpScript.setExecutable(true)
-        val ldArgsDump = dumpIntermediates.resolve("ld_args_dump")
-        ldArgsDump.mkdirs()
-
-        val targetArchitectures = architectures.get().map {
-            it.xcodebuildArch
-        }
-
-        val projectRoot = syntheticImportProjectRoot.get().asFile
-
-        /**
-         * For some reason reusing dd in parallel xcodebuild calls explodes something in the build system, so we need a
-         * separate dd per "-destination" platform that can run in parallel
-         */
-        val dd = syntheticImportDd.get().asFile.resolve("dd_${xcodebuildSdk.get()}")
-
-        // FIXME: KT-84809 - This is not great, but we can't remove entire DD on incremental runs
-        val forceClangToReexecute = dd.resolve("Build/Intermediates.noindex/${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.build")
-        if (forceClangToReexecute.exists()) {
-            forceClangToReexecute.deleteRecursively()
-        }
-
-        execOps.exec { exec ->
-            exec.workingDir(projectRoot)
-            val args = mutableListOf(
-                "xcodebuild", "build",
-                "-scheme", GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                "-destination", "generic/platform=${xcodebuildPlatform.get()}",
-                "-derivedDataPath", dd.path,
-                // FIXME: KT-83863 We probably want to force xcodebuild to only to resolution during the "fetch" stage and then only build here. Does this parameter help us?
-                // "-disableAutomaticPackageResolution",
-                FetchSyntheticImportProjectPackages.XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER, swiftPMDependenciesCheckout.get().asFile.path,
-                "CC=${clangArgsDumpScript.path}",
-                "LD=${ldArgsDumpScript.path}",
-                "ARCHS=${targetArchitectures.joinToString(" ")}",
-                // Avoid codesigning
-                "CODE_SIGN_IDENTITY=",
-                // Avoid emitting indexes
-                "COMPILER_INDEX_STORE_ENABLE=NO",
-                "SWIFT_INDEX_STORE_ENABLE=NO",
-                // This will force the .dylib to be created instead of the framework. Do we actually want to account for this?
-                // "-IDEPackageSupportCreateDylibsForDynamicProducts=YES"
-            )
-
-            if(additionalXcodeArgs.isPresent) {
-                args.addAll(additionalXcodeArgs.get())
-            }
-
-            exec.commandLine(args)
-
-            exec.environment(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV, clangArgsDump)
-            exec.environment(KOTLIN_LD_ARGS_DUMP_FILE_ENV, ldArgsDump)
-
-            val environmentToFilter = listOf(
-                "EMBED_PACKAGE_RESOURCE_BUNDLE_NAMES",
-            ) + AppleSdk.xcodeEnvironmentDebugDylibVars
-            environmentToFilter.forEach {
-                if (exec.environment.containsKey(it)) {
-                    exec.environment.remove(it)
-                }
-            }
-            exec.environment.keys.filter {
-                // ScanDependencies explode with duplicate modules because it reads this env for some reason
-                it.startsWith("OTHER_")
-                        // Also some asset catalogs utility explodes
-                        || it.startsWith("ASSETCATALOG_")
-            }.forEach {
-                exec.environment.remove(it)
-            }
-        }
-
-        architectures.get().forEach { architecture ->
-            val clangArchitecture = architecture.clangArch
-            val architectureSpecificProductClangCalls = mutableListOf<File>()
-
-            clangArgsDump.listFiles().filter {
-                it.isFile
-            }.forEach {
-                val clangArgs = it.readLines().single()
-                val isArchitectureSpecificProductClangCall = "-fmodule-name=${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
-                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
-                if (isArchitectureSpecificProductClangCall) {
-                    architectureSpecificProductClangCalls.add(it)
-                }
-            }
-
-            val parsedClangCall = parseClangCall(architectureSpecificProductClangCalls.single())
-
-            val clangModules = if (discoverModulesImplicitly.get()) {
-                discoverClangModules(parsedClangCall)
-            } else clangModules.get()
-
-            writeDefFile(parsedClangCall, clangModules, architecture)
-
-            val architectureSpecificProductLdCalls = ldArgsDump.listFiles().filter {
-                it.isFile
-            }.filter {
-                // This will actually be a clang call
-                val ldArgs = it.readLines().single()
-                ("@rpath/lib${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}.framework" in ldArgs)
-                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
-            }
-
-            val parsedLdCall = parseLdCall(architectureSpecificProductLdCalls.single())
-
-            ldFilePath(architecture).getFile()
-                .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
-            ldFileFingerprintPath(architecture).getFile()
-                .writeText(System.currentTimeMillis().toString())
-            frameworkSearchpathFilePath(architecture).getFile()
-                .writeText(parsedLdCall.linkTimeFrameworkSearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
-            librarySearchpathFilePath(architecture).getFile()
-                .writeText(parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+        workerExecutor.noIsolation().submit(XcodebuildDefFileWorkAction::class.java) { params ->
+            val sdk = xcodebuildSdk.get()
+            params.xcodebuildPlatform.set(xcodebuildPlatform)
+            params.xcodebuildSdk.set(xcodebuildSdk)
+            params.architectures.set(architectures)
+            params.clangModules.set(clangModules)
+            params.discoverModulesImplicitly.set(discoverModulesImplicitly)
+            params.hasSwiftPMDependencies.set(hasSwiftPMDependencies)
+            params.syntheticImportProjectRoot.set(syntheticImportProjectRoot)
+            params.swiftPMDependenciesCheckout.set(swiftPMDependenciesCheckout)
+            params.syntheticImportDd.set(syntheticImportDd)
+            params.defFilesOutputDir.set(defFiles)
+            params.ldDumpOutputDir.set(ldDump)
+            params.clangDumpIntermediatesDir.set(layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk)))
+            params.additionalXcodeArgs.set(additionalXcodeArgs)
+            params.cinteropNamespace.set(cinteropNamespace)
         }
     }
 
-    fun writeDefFile(
-        parsedClangCall: ParsedClangCall,
-        clangModules: Set<String>,
-        architecture: AppleArchitecture
-    ) {
-        val defFileSearchPaths = parsedClangCall.cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
-        val modules = clangModules.joinToString(" ") { "\"${it}\"" }
+    fun defFilePath(architecture: AppleArchitecture): Provider<RegularFile> =
+        defFiles.map { directory -> directory.file(XcodebuildDefFileUtils.defFileName(architecture)) }
 
-        val defFilePath = defFilePath(architecture)
-        defFilePath.getFile().writeText(
-            buildString {
-                appendLine("language = Objective-C")
-                appendLine("compilerOpts = -fmodules $defFileSearchPaths")
-                appendLine("package = $cinteropNamespace")
-                if (modules.isNotEmpty()) {
-                    appendLine("modules = $modules")
-                }
-                val invalidateDownstreamCinterops = System.currentTimeMillis()
-                if (discoverModulesImplicitly.get()) {
-                    appendLine("skipNonImportableModules = true")
-                }
-                appendLine("""
-                        ---
-                        // $invalidateDownstreamCinterops
-                    """.trimIndent())
-            }
-        )
-    }
+    /**
+     * The difference between these is that for dynamic framework linkage we never want -filelist as we expect it to contain .o files
+     * which are instead going to be exported through our SwiftPM dylib product.
+     */
+    fun ldFilePath(architecture: AppleArchitecture): Provider<RegularFile> =
+        ldDump.map { directory -> directory.file(XcodebuildDefFileUtils.ldFileName(architecture)) }
 
-    data class ParsedLdCall(
-        val ldArgs: List<String>,
-        val linkTimeFrameworkSearchPaths: Set<String>,
-        val librarySearchPaths: Set<String>,
-    )
+    fun ldFileForFrameworkLinkagePath(architecture: AppleArchitecture): Provider<RegularFile> =
+        ldDump.map { directory -> directory.file(XcodebuildDefFileUtils.frameworkLdFileName(architecture)) }
 
-    fun parseLdCall(architectureSpecificProductLdCall: File): ParsedLdCall {
-        val resplitLdCall = architectureSpecificProductLdCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
-        val ldArgs = mutableListOf<String>()
-        val linkTimeFrameworkSearchPaths = mutableSetOf<String>()
-        val librarySearchPaths = mutableSetOf<String>()
+    fun ldFileFingerprintPath(architecture: AppleArchitecture): Provider<RegularFile> =
+        ldDump.map { directory -> directory.file(XcodebuildDefFileUtils.ldFingerprintFileName(architecture)) }
 
-        resplitLdCall.forEachIndexed { index, arg ->
-            if (
-                // Most linkage dependencies are passed in the filelist
-                arg == "-filelist"
-                || arg == "-framework"
-                || (arg.startsWith("-") && arg.endsWith("_framework"))
-            ) {
-                ldArgs.addAll(listOf(arg, resplitLdCall[index + 1]))
-            }
-            if (arg.startsWith("-l")) {
-                ldArgs.add(arg)
-            }
-            if (arg.startsWith("-F/")) {
-                ldArgs.add(arg)
-                linkTimeFrameworkSearchPaths.add(arg.substring(2))
-            }
-            if (arg.startsWith("-L/")) {
-                ldArgs.add(arg)
-                librarySearchPaths.add(arg.substring(2))
-            }
+    fun frameworkSearchpathFilePath(architecture: AppleArchitecture): Provider<RegularFile> =
+        ldDump.map { directory -> directory.file(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture)) }
 
-            // Unpacked XCFramework slices are passed as a CLI path
-            if (arg.startsWith("/")) {
-                if (arg.endsWith(".a")) {
-                    ldArgs.add(arg)
-                }
-                if (arg.endsWith(".dylib")) {
-                    ldArgs.add(arg)
-                    librarySearchPaths.add((File(arg).parentFile.path))
-                }
-                if (".framework/" in arg) {
-                    ldArgs.add(arg)
-                    linkTimeFrameworkSearchPaths.add(
-                        File(arg).parentFile.parentFile.path
-                    )
-                }
-            }
-        }
-
-        return ParsedLdCall(
-            ldArgs = ldArgs,
-            linkTimeFrameworkSearchPaths = linkTimeFrameworkSearchPaths,
-            librarySearchPaths = librarySearchPaths,
-        )
-    }
-
-    fun discoverClangModules(parsedClangCall: ParsedClangCall): Set<String> {
-        val moduleName = Regex("\\bmodule ([A-Za-z0-9_.]+) ")
-        fun inferModuleName(modulemap: File): String? = moduleName.find(modulemap.readText())?.let {
-            it.groups[1]?.value
-        }
-
-        /**
-         * FIXME: KT-84809 Discovery logic will break on incremental runs as it will discover stale modules (same issue with Xcode)
-         */
-        val implicitlyDiscoveredModules = mutableSetOf<String>()
-        parsedClangCall.compileTimeFrameworkSearchPaths.map { File(it) }.filter { it.exists() }.forEach {
-            implicitlyDiscoveredModules.addAll(
-                it.listFiles().filter {
-                    it.extension == "framework"
-                }.filter { framework ->
-                    val hasModules = framework.listFiles().any { it.name == "Modules" }
-                    // Some libraries like GoogleAppMeasurement have a modulemap with dangling header references
-                    val hasHeaders = framework.listFiles().any { it.name == "Headers" }
-                    hasModules && hasHeaders
-                }.map { framework ->
-                    framework.nameWithoutExtension
-                }
-            )
-        }
-        parsedClangCall.includeSearchPaths.map { File(it) }.filter { it.exists() }.forEach { searchPath ->
-            searchPath.listFiles().forEach { searchPathFile ->
-                if (searchPathFile.name == "module.modulemap") {
-                    val module = inferModuleName(searchPathFile)
-                    if (module != null) {
-                        implicitlyDiscoveredModules.add(module)
-                    }
-                }
-                // Also discover modules in the form
-                // -I/search/path
-                // /search/path/ModuleName/module.modulemap
-                // E.g. GoogleMaps
-                if (searchPathFile.isDirectory) {
-                    searchPathFile.listFiles().filter {
-                        it.name == "module.modulemap"
-                    }.forEach { subsearchPathFile ->
-                        val module = inferModuleName(subsearchPathFile)
-                        // The module must be equal to the directory name, same as with frameworks
-                        if (module != null && module == searchPathFile.name) {
-                            implicitlyDiscoveredModules.add(module)
-                        }
-                    }
-                }
-            }
-        }
-        implicitlyDiscoveredModules.addAll(
-            parsedClangCall.explicitModuleMaps.mapNotNull {
-                inferModuleName(File(it))
-            }
-        )
-        return implicitlyDiscoveredModules
-    }
-
-    data class ParsedClangCall(
-        val cinteropClangArgs: List<String>,
-        val compileTimeFrameworkSearchPaths: Set<String>,
-        val includeSearchPaths: Set<String>,
-        val explicitModuleMaps: Set<String>,
-    )
-
-    fun parseClangCall(architectureSpecificProductClangCall: File): ParsedClangCall {
-        val cinteropClangArgs = mutableListOf<String>()
-        val compileTimeFrameworkSearchPaths = mutableSetOf<String>()
-        val includeSearchPaths = mutableSetOf<String>()
-        val explicitModuleMaps = mutableSetOf<String>()
-        architectureSpecificProductClangCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR).forEach { arg ->
-            val frameworkSearchPathArg = "-F"
-            if (arg.startsWith(frameworkSearchPathArg)) {
-                cinteropClangArgs.add(arg)
-                compileTimeFrameworkSearchPaths.add(arg.substring(frameworkSearchPathArg.length))
-            }
-            val includeSearchPathArg = "-I"
-            if (arg.startsWith(includeSearchPathArg)) {
-                cinteropClangArgs.add(arg)
-                includeSearchPaths.add(arg.substring(includeSearchPathArg.length))
-            }
-            val explicitModuleMapArg = "-fmodule-map-file="
-            if (arg.startsWith(explicitModuleMapArg)) {
-                cinteropClangArgs.add(arg)
-                explicitModuleMaps.add(arg.substring(explicitModuleMapArg.length))
-            }
-        }
-        return ParsedClangCall(
-            cinteropClangArgs = cinteropClangArgs,
-            compileTimeFrameworkSearchPaths = compileTimeFrameworkSearchPaths,
-            includeSearchPaths = includeSearchPaths,
-            explicitModuleMaps = explicitModuleMaps,
-        )
-    }
-
-    fun defFilePath(architecture: AppleArchitecture) = defFiles.map { it.file("${architecture.xcodebuildArch}.def") }
-    fun ldFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.ld") }
-    fun ldFileFingerprintPath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}.timestamp.ld") }
-    fun frameworkSearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_framework_search_paths") }
-    fun librarySearchpathFilePath(architecture: AppleArchitecture) = ldDump.map { it.file("${architecture.xcodebuildArch}_library_search_paths") }
-
-    private fun clangArgsDumpScript() = argsDumpScript("clang", KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
-    private fun ldArgsDumpScript() = argsDumpScript("clang", KOTLIN_LD_ARGS_DUMP_FILE_ENV)
-
-    private fun argsDumpScript(
-        targetCli: String,
-        dumpPathEnv: String,
-    ) = """
-        #!/bin/bash
-
-        DUMP_FILE="${'$'}{${dumpPathEnv}}/${'$'}(/usr/bin/uuidgen)"
-        for arg in "$@"
-        do
-           echo -n "${'$'}arg" >> "${'$'}{DUMP_FILE}"
-           echo -n "$DUMP_FILE_ARGS_SEPARATOR" >> "${'$'}{DUMP_FILE}"
-        done
-
-        ${targetCli} "$@"
-    """.trimIndent()
+    fun librarySearchpathFilePath(architecture: AppleArchitecture): Provider<RegularFile> =
+        ldDump.map { directory -> directory.file(XcodebuildDefFileUtils.librarySearchpathFileName(architecture)) }
 
     companion object {
-        const val KOTLIN_CLANG_ARGS_DUMP_FILE_ENV = "KOTLIN_CLANG_ARGS_DUMP_FILE"
-        const val KOTLIN_LD_ARGS_DUMP_FILE_ENV = "KOTLIN_LD_ARGS_DUMP_FILE"
-        const val DUMP_FILE_ARGS_SEPARATOR = ";"
         const val TASK_NAME = "convertSyntheticImportProjectIntoDefFile"
     }
-
 }

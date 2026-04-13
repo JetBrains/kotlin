@@ -1,6 +1,4 @@
 // TARGET_BACKEND: NATIVE
-// IGNORE_BACKEND_K1: NATIVE
-// ^ K1 does not support coercing assigment to Any?
 // FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
 // MODULE: cinterop
 // FILE: kt57640.def

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 
 //KT-304: Resolve supertype reference to class anyway
 

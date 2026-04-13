@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +RefinedVarargConversionRulesForCallableReferences
 // ISSUE: KT-39697
 

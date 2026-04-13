@@ -1,4 +1,4 @@
-KtNameReferenceExpression(174,180): 'stream'
+KtNameReferenceExpression(112,118): 'stream'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

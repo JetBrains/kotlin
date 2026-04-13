@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
-import org.jetbrains.kotlin.test.directives.model.ComposedDirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
-import org.jetbrains.kotlin.test.directives.model.Directive
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
@@ -217,7 +213,9 @@ class ModuleStructureExtractorImpl(
                     val kind = defaultsProvider.defaultDependencyKind
 
                     fun String.toDependencyDescription(relation: DependencyRelation): DependencyDescription {
-                        val dependantModule = modules.find { it.name == this } ?: error("Module $this not found")
+                        val dependantModuleName = escapeModuleNameIfNeeded(this)
+                        val dependantModule = modules.find { it.name == dependantModuleName }
+                            ?: error("Module $this not found. Known modules: ${modules.joinToString { it.name }}")
                         val specificKind = when (relation) {
                             DependencyRelation.DependsOnDependency -> DependencyKind.Source
                             else -> kind
@@ -242,7 +240,7 @@ class ModuleStructureExtractorImpl(
                         currentSnippetNumber++
                     }
                     currentModuleName = snippetName()
-                    currentFileName = "$currentModuleName.kts"
+                    currentFileName = "$currentModuleName.repl.kts"
                 }
                 ModuleStructureDirectives.FILE -> {
                     if (currentFileName != null) {
@@ -434,7 +432,7 @@ class ModuleStructureExtractorImpl(
             for ((module, files) in mutableFilesListPerModule) {
                 additionalSourceProviders.flatMapTo(files) { additionalSourceProvider ->
                     additionalSourceProvider.produceAdditionalFiles(
-                        globalDirectives ?: RegisteredDirectives.Empty,
+                        (globalDirectives ?: RegisteredDirectives.Empty) + testServices.defaultDirectives,
                         module,
                         testModuleStructure
                     ).also { additionalFiles ->

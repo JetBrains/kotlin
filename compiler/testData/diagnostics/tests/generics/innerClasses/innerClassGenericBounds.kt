@@ -10,7 +10,7 @@ open class SuperOuter<T> {
 }
 
 class SubOuter : SuperOuter<Unit>() {
-    inner class SubInner(database: Any?) : SuperInner<Any?>(database)
+    inner class SubInner(database: Any?) : <!INAPPLICABLE_CANDIDATE!>SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>><!>(database)
 }
 
 // FILE: nongeneric.kt
@@ -23,7 +23,7 @@ open class SuperOuter {
 }
 
 class SubOuter : SuperOuter() {
-    inner class SubInner(database: Any?) : SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>>(database)
+    inner class SubInner(database: Any?) : <!INAPPLICABLE_CANDIDATE!>SuperInner<<!UPPER_BOUND_VIOLATED!>Any?<!>><!>(database)
 }
 
 // FILE: kt35566.kt
@@ -33,7 +33,7 @@ open class Case1<K : Number> {
     open inner class Case1_1<L> : Case1<Int>() where L : CharSequence {
         var x: L? = null
 
-        inner class Case1_2<M>(m: M) : Case1<K>.Case1_1<M>() where M : Map<K, L> {
+        inner class Case1_2<M>(m: M) : Case1<K>.Case1_1<<!UPPER_BOUND_VIOLATED!>M<!>>() where M : Map<K, L> {
             init {
                 x = m
             }

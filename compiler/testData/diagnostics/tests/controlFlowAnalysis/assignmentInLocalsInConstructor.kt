@@ -8,7 +8,7 @@ class Test {
         val t = object {
             fun some() {
                 // See KT-13597
-                <!CAPTURED_MEMBER_VAL_INITIALIZATION!>a<!> = "12"
+                <!VAL_REASSIGNMENT!>a<!> = "12"
             }
         }
 

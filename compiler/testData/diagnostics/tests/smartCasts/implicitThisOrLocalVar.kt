@@ -11,7 +11,7 @@ fun Box.test() {
             other.item = null
             expectString(<!SMARTCAST_IMPOSSIBLE!>item<!>)
             this.item = null
-            expectString(<!TYPE_MISMATCH!>item<!>)
+            expectString(<!ARGUMENT_TYPE_MISMATCH!>item<!>)
         }
     }
 
@@ -19,7 +19,7 @@ fun Box.test() {
     myRun {
         if (item != null) {
             this.item = null
-            expectString(<!DEBUG_INFO_SMARTCAST!>item<!>)
+            expectString(item)
         }
     }
 }

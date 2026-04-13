@@ -3,8 +3,8 @@ FILE: IltAsExtensionReceiver.kt
         local final fun R|kotlin/Long|.foo(): R|kotlin/Unit| {
         }
 
-        Int(2).R|<local>/foo<None of the following candidates is applicable because of receiver type mismatch: [<local>/foo]>#|()
-        Int(2)?.{ $subj$.R|<local>/foo<None of the following candidates is applicable because of receiver type mismatch: [<local>/foo]>#|() }
+        Int(2).R|<local>/foo<Candidate is inapplicable because of receiver type mismatch: <local>/foo>#|()
+        Int(2)?.{ $subj$.R|<local>/foo<Candidate is inapplicable because of receiver type mismatch: <local>/foo>#|() }
     }
     public final fun test_LongResolution(): R|kotlin/Unit| {
         local final fun R|kotlin/Int|.foo(): R|kotlin/Int| {
@@ -34,6 +34,6 @@ FILE: IltAsExtensionReceiver.kt
         local final fun R|kotlin/Short|.foo(): R|kotlin/Unit| {
         }
 
-        Int(2).R|<local>/foo<None of the following candidates is applicable because of receiver type mismatch: [<local>/foo]>#|()
-        Int(2)?.{ $subj$.R|<local>/foo<None of the following candidates is applicable because of receiver type mismatch: [<local>/foo]>#|() }
+        Int(2).R|<local>/foo<Candidate is inapplicable because of receiver type mismatch: <local>/foo>#|()
+        Int(2)?.{ $subj$.R|<local>/foo<Candidate is inapplicable because of receiver type mismatch: <local>/foo>#|() }
     }

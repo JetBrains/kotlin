@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //KT-1736 AssertionError in CallResolver
 
 package kt1736

@@ -21,7 +21,7 @@ fun sideEffectBeforeAssignmentInTry(s: Any) {
 fun assignedInTryAndFinally() {
     val a: Int
     try {
-        <!UNUSED_VALUE!>a =<!> 42
+        a = 42
     } finally {
         <!VAL_REASSIGNMENT!>a<!> = 41
     }
@@ -32,7 +32,7 @@ fun sideEffectBeforeAssignmentInTryButNotFinally(s: Any) {
     val a: Int
     try {
         s as String // Potential cast exception
-        <!UNUSED_VALUE!>a =<!> 42
+        a = 42
     } finally {
         <!VAL_REASSIGNMENT!>a<!> = 41
     }

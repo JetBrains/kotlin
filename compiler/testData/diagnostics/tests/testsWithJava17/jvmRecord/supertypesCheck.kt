@@ -14,21 +14,21 @@ data class <!JVM_RECORD_EXTENDS_CLASS!>A1<!>(val x: String) : Abstract(), I
 data class <!JVM_RECORD_EXTENDS_CLASS!>A2<!>(val x: String) : Any(), I
 
 @JvmRecord
-data class A3(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record()<!>, I
+data class A3(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record<!>(), I
 
 @JvmRecord
-data class A4(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.Record()<!>, I
+data class A4(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.Record<!>(), I
 
 @JvmRecord
 data class A5(val x: String) : I
 
-data class A6(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record()<!>, I
+data class A6(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record<!>(), I
 
-data class A7(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.Record()<!>, I
+data class A7(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.Record<!>(), I
 
 typealias TA = Record
 
-data class A8(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>TA()<!>, I
+data class A8(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>TA<!>(), I
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, interfaceDeclaration, primaryConstructor, propertyDeclaration,
 typeAliasDeclaration */

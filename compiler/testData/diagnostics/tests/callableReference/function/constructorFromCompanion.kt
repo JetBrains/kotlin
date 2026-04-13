@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: A.kt
 
 open class A<T>(val x: T)

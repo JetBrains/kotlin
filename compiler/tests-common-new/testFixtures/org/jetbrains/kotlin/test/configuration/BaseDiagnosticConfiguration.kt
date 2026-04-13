@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_WITH_PARSER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DUMP_VFIR
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.TEST_ALONGSIDE_K1_TESTDATA
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirSpecificParserSuppressor
 import org.jetbrains.kotlin.test.services.fir.LatestLanguageVersionMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
@@ -86,21 +84,20 @@ fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
 }
 
 /**
- * Setups the configuration for K2 diagnostics tests which share the testdata with K1 diagnostic tests.
- * Enables duplication of testdata in `.fir.kt` files in case if diagnostics are different between K1 and K2
+ * The list of `UNUSED_*` diagnostics which are disabled by default
+ * within diagnostic tests.
  */
-fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
-    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
-) {
-    defaultDirectives {
-        +TEST_ALONGSIDE_K1_TESTDATA
-    }
-    useAfterAnalysisCheckers(
-        ::FirFailingTestSuppressor,
-        testDataConsistencyHandler,
-    )
-    useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
-}
+val DEFAULT_UNUSED_DIAGNOSTICS = listOf(
+    "UNUSED_VARIABLE",
+    "UNUSED_PARAMETER",
+    "UNUSED_ANONYMOUS_PARAMETER",
+    "UNUSED_DESTRUCTURED_PARAMETER_ENTRY",
+    "UNUSED_TYPEALIAS_PARAMETER",
+    "UNUSED_VALUE",
+    "UNUSED_CHANGED_VALUE",
+    "UNUSED_EXPRESSION",
+    "UNUSED_LAMBDA_EXPRESSION",
+)
 
 /**
  * Setups the base configuration for diagnostic tests
@@ -111,7 +108,6 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
  *
  * @param [testDataConsistencyHandler] is used to ensure consistency between `.kt` and `.xxx.kt` files if they are present.
  * Known usages:
- * - `.fir.kt` for diagnostics testdata shared between the K1 and K2
  * - `.latestLV.kt` for tests which run with latest LV instead of latest stable LV
  * - `.ll.kt` for AA tests
  * - `.reversed.fir.kt` for reversed AA tests
@@ -129,6 +125,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     defaultDirectives {
         LANGUAGE + "+EnableDfaWarningsInK2"
+        DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
     }
 
     enableMetaInfoHandler()
@@ -151,7 +148,8 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     }
 
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
-    configureCommonDiagnosticTestPaths(testDataConsistencyHandler)
+    useAfterAnalysisCheckers(::FirFailingTestSuppressor, testDataConsistencyHandler)
+    configureCommonDiagnosticTestPaths()
 }
 
 fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.setupHandlersForDiagnosticTest() {
@@ -170,17 +168,7 @@ fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, Fron
 /**
  * Setups specific directives for tests located (or not located) in some specific directories
  */
-fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
-    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
-) {
-    forTestsMatching("compiler/testData/diagnostics/*") {
-        configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
-    }
-
-    forTestsMatching("compiler/fir/analysis-tests/testData/*") {
-        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
-    }
-
+fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
     forTestsMatching("compiler/fir/analysis-tests/testData/resolve/vfir/*") {
         defaultDirectives {
             +DUMP_VFIR
@@ -209,7 +197,6 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
             +WITH_STDLIB
             +CHECK_COMPILER_OUTPUT
         }
-        configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
     }
 
     forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {
@@ -228,6 +215,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         defaultDirectives {
             RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.CHECKER
             +WITH_EXTRA_CHECKERS
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
             DIAGNOSTICS with "-UNUSED_VARIABLE"
             LANGUAGE with "+UnnamedLocalVariables"
         }
@@ -237,6 +225,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         defaultDirectives {
             RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.FULL
             +WITH_EXTRA_CHECKERS
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
             DIAGNOSTICS with "-UNUSED_VARIABLE"
             LANGUAGE with "+UnnamedLocalVariables"
         }
@@ -248,12 +237,19 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/controlFlowAnalysis/*") {
+        defaultDirectives {
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
+        }
+    }
+
     forTestsMatching(
         "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
                 "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"
     ) {
         defaultDirectives {
             +WITH_EXTRA_CHECKERS
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
         }
     }
 

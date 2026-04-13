@@ -150,6 +150,10 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
         }
+
+        if (LanguageSettingsDirectives.JVM_EXPOSE_BOXED in module.directives) {
+            add(K2JVMCompilerArguments::jvmExposeBoxed.cliArgument)
+        }
     }
 
     override fun doCompile(

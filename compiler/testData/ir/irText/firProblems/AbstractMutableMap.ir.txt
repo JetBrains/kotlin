@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
     FUN FAKE_OVERRIDE name:computeIfPresent visibility:public modality:OPEN returnType:@[EnhancedNullability] V of <root>.MyMap? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] K of <root>.MyMap
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] K of <root>.MyMap, in @[EnhancedNullability] V of <root>.MyMap, out @[EnhancedNullability] V of <root>.MyMap?>
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] K of <root>.MyMap, in @[EnhancedNullability] {V of <root>.MyMap & Any}, out @[EnhancedNullability] V of <root>.MyMap?>
       overridden:
         public open fun computeIfPresent (p0: @[EnhancedNullability] K of kotlin.collections.AbstractMutableMap, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] K of kotlin.collections.AbstractMutableMap, in @[EnhancedNullability] {V of kotlin.collections.AbstractMutableMap & Any}, out @[EnhancedNullability] V of kotlin.collections.AbstractMutableMap?>): @[EnhancedNullability] V of kotlin.collections.AbstractMutableMap? declared in kotlin.collections.AbstractMutableMap
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -80,8 +80,8 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
     FUN FAKE_OVERRIDE name:merge visibility:public modality:OPEN returnType:@[EnhancedNullability] V of <root>.MyMap? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] K of <root>.MyMap
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] V of <root>.MyMap
-      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] V of <root>.MyMap, in @[EnhancedNullability] V of <root>.MyMap, out @[EnhancedNullability] V of <root>.MyMap?>
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] {V of <root>.MyMap & Any}
+      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of <root>.MyMap & Any}, in @[EnhancedNullability] {V of <root>.MyMap & Any}, out @[EnhancedNullability] V of <root>.MyMap?>
       overridden:
         public open fun merge (p0: @[EnhancedNullability] K of kotlin.collections.AbstractMutableMap, p1: @[EnhancedNullability] {V of kotlin.collections.AbstractMutableMap & Any}, p2: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of kotlin.collections.AbstractMutableMap & Any}, in @[EnhancedNullability] {V of kotlin.collections.AbstractMutableMap & Any}, out @[EnhancedNullability] V of kotlin.collections.AbstractMutableMap?>): @[EnhancedNullability] V of kotlin.collections.AbstractMutableMap? declared in kotlin.collections.AbstractMutableMap
     FUN FAKE_OVERRIDE name:putAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
@@ -147,7 +147,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
       overridden:
         public open keys: kotlin.collections.MutableSet<K of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN returnType:kotlin.collections.MutableSet<K of <root>.MyMap> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): kotlin.collections.MutableSet<K of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
@@ -155,7 +155,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
       overridden:
         public open size: kotlin.Int declared in kotlin.collections.AbstractMutableMap
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<K of <root>.MyMap, V of <root>.MyMap>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in kotlin.collections.AbstractMutableMap
@@ -163,7 +163,7 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
       overridden:
         public open values: kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN returnType:kotlin.collections.MutableCollection<V of <root>.MyMap> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-values> (): kotlin.collections.MutableCollection<V of kotlin.collections.AbstractMutableMap> declared in kotlin.collections.AbstractMutableMap

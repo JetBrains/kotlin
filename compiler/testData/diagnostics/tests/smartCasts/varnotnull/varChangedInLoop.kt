@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 public fun foo() {
     var i: Int? = 1
     if (i != null) {

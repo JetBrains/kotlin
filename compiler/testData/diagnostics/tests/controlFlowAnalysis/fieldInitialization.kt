@@ -54,18 +54,18 @@ class Test {
             a = "allowed"
         }
         crossinlineMe {
-            <!CAPTURED_VAL_INITIALIZATION!>b<!> = "not allowed"
+            <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>b<!> = "not allowed"
         }
         noinlineMe {
-            <!CAPTURED_VAL_INITIALIZATION!>c<!> = "not allowed"
+            <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>c<!> = "not allowed"
         }
         notinline {
-            <!CAPTURED_VAL_INITIALIZATION!>d<!> = "not allowed"
+            <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>d<!> = "not allowed"
         }
 
         crossinlineMe {
             inlineMe {
-                e = "not allowed"
+                <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>e<!> = "not allowed"
             }
         }
 
@@ -73,7 +73,7 @@ class Test {
             <!CAPTURED_MEMBER_VAL_INITIALIZATION!>f<!> = "not allowed"
         }
 
-        val <!UNUSED_VARIABLE!>localLambda<!> = {
+        val localLambda = {
             <!CAPTURED_MEMBER_VAL_INITIALIZATION!>g<!> = "not allowed"
         }
 
@@ -81,7 +81,7 @@ class Test {
             val o: String
 
             init {
-                h = "not allowed"
+                <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>h<!> = "not allowed"
                 o = "allowed"
             }
         }
@@ -149,7 +149,7 @@ class Test4 {
     val d: String = ""
 
     init {
-        var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>blackhole<!>: String
+        var blackhole: String
         inlineMe {
             blackhole = a
         }
@@ -176,13 +176,13 @@ class Test5 {
         a = "OK"
     }
     val bInit = crossinlineMe {
-        <!CAPTURED_VAL_INITIALIZATION!>b<!> = "not allowed"
+        <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>b<!> = "not allowed"
     }
     val cInit = noinlineMe {
-        <!CAPTURED_VAL_INITIALIZATION!>c<!> = "not allowed"
+        <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>c<!> = "not allowed"
     }
     val dInit = notinline {
-        <!CAPTURED_VAL_INITIALIZATION!>d<!> = "not allowed"
+        <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>d<!> = "not allowed"
     }
 }
 

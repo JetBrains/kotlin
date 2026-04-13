@@ -13,8 +13,8 @@ fun isString(x: Any?): Boolean {
 }
 
 fun incorrectPartDoesntMatter(x: Any?) {
-    if (isString(x) && <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    if (isString(x) && <!CONDITION_TYPE_MISMATCH!>1<!>) {
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

@@ -16,7 +16,7 @@ fun <F> Controller<F>.baz(a: A<F>) {}
 fun <T> bar(a: A<T>, w: T) {
     generate {
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>)
+            baz(a)
         }
 
         yield(1)
@@ -24,10 +24,10 @@ fun <T> bar(a: A<T>, w: T) {
 
     generate {
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>)
+            baz(a)
         }
 
-        yield(<!TYPE_MISMATCH, TYPE_MISMATCH!>w<!>)
+        yield(w)
     }
 }
 

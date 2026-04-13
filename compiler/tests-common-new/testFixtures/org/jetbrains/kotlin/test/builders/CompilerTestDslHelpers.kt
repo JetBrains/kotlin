@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.builders
 
 import org.jetbrains.kotlin.test.TestStepBuilder
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.DESERIALIZED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
@@ -17,8 +16,6 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.LOWERED_IR_HANDLERS
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.NATIVE_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.WASM_ARTIFACTS_HANDLERS_STEP_NAME
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 
 object CompilerStepsNames {
-    const val CLASSIC_FRONTEND_HANDLERS_STEP_NAME = "classic frontend handlers"
     const val FIR_HANDLERS_STEP_NAME = "FIR frontend handlers"
 
     /** The IR that is the outcome of Psi2Ir or Fir2Ir. */
@@ -47,20 +43,7 @@ object CompilerStepsNames {
 
 }
 
-// --------------------- default compiler steps ---------------------
-
-fun TestConfigurationBuilder.classicFrontendStep() {
-    facadeStep(::ClassicFrontendFacade)
-}
-
 // --------------------- default handlers steps ---------------------
-
-// use those ones to define new step
-inline fun TestConfigurationBuilder.classicFrontendHandlersStep(
-    init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.() -> Unit = {}
-) {
-    namedHandlersStep(CLASSIC_FRONTEND_HANDLERS_STEP_NAME, FrontendKinds.ClassicFrontend, CompilationStage.FIRST, init)
-}
 
 inline fun TestConfigurationBuilder.firHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<FirOutputArtifact, FrontendKinds.FIR>.() -> Unit = {}
@@ -114,14 +97,6 @@ inline fun TestConfigurationBuilder.klibArtifactsHandlersStep(
     init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<BinaryArtifacts.KLib, ArtifactKinds.KLib>.() -> Unit = {}
 ) {
     namedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, CompilationStage.FIRST, init)
-}
-
-// and those ones to configure already defined step
-inline fun TestConfigurationBuilder.configureClassicFrontendHandlersStep(
-    skipMissingStep: Boolean = false,
-    init: TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.() -> Unit = {}
-) {
-    configureNamedHandlersStep(CLASSIC_FRONTEND_HANDLERS_STEP_NAME, FrontendKinds.ClassicFrontend, skipMissingStep, init)
 }
 
 inline fun TestConfigurationBuilder.configureFirHandlersStep(

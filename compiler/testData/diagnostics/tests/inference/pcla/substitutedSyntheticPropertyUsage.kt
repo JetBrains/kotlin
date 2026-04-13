@@ -17,7 +17,7 @@ fun <S> generate(g: suspend Controller<S>.() -> Unit) {}
 fun main() {
     generate {
         yield("")
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<(TypeVariable(S)..TypeVariable(S)?)>..kotlin.collections.List<(TypeVariable(S)..TypeVariable(S)?)>?)")!>gg().foo<!>
+        gg().foo
     }
 }
 

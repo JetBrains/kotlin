@@ -12,23 +12,35 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.plus
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.diagnostics
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 internal class KaFirDiagnosticProvider(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaDiagnosticProvider, KaFirSessionComponent {
-    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
+    @Deprecated("Use KtElement.directDiagnostics instead", replaceWith = ReplaceWith("directDiagnostics(filter)"))
+    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
+        return directDiagnostics(filter)
+    }
+
+    override fun KtElement.directDiagnostics(
+        filter: KaDiagnosticCheckerFilter,
+    ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
         getDiagnostics(resolutionFacade, filter.asLLFilter()).map { it.asKaDiagnostic() }
     }
 
     override fun KtFile.collectDiagnostics(
         filter: KaDiagnosticCheckerFilter,
     ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
-        collectDiagnosticsForFile(resolutionFacade, filter.asLLFilter()).map { it.asKaDiagnostic() }
+        diagnostics(filter).toList()
+    }
+
+    override fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
+        diagnostics(resolutionFacade, filter.asLLFilter())
+            .map { it.asKaDiagnostic() }
     }
 
     private fun KaDiagnosticCheckerFilter.asLLFilter() = when (this) {

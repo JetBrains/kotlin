@@ -34,12 +34,34 @@ class JsICContext(
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForJsIC(WholeWorldStageController())
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun createBackendContext(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration,
+    ): JsCommonBackendContext {
+        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
+
+        return JsIrBackendContext(
+            mainModule.descriptor,
+            irBuiltIns,
+            symbolTable,
+            exportedDeclarations,
+            keep = emptySet(),
+            configuration = configuration,
+            granularity = granularity,
+            incrementalCacheEnabled = true,
+            mainCallArguments = mainArguments
+        )
+    }
+
     override fun createCompiler(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        context: JsCommonBackendContext,
     ): IrCompilerICInterface =
-        JsIrCompilerWithIC(mainModule, irBuiltIns, mainArguments, configuration, granularity, exportedDeclarations)
+        JsIrCompilerWithIC(mainModule, mainArguments, context as JsIrBackendContext)
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
         JsSrcFileArtifact(srcFilePath, fragments as? JsIrProgramFragments, astArtifact)
@@ -57,29 +79,9 @@ class JsICContext(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrCompilerWithIC(
     private val mainModule: IrModuleFragment,
-    irBuiltIns: IrBuiltIns,
     private val mainArguments: List<String>?,
-    configuration: CompilerConfiguration,
-    granularity: JsGenerationGranularity,
-    exportedDeclarations: Set<FqName> = emptySet(),
+    private val context: JsIrBackendContext,
 ) : IrCompilerICInterface {
-    private val context: JsIrBackendContext
-
-    init {
-        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
-
-        context = JsIrBackendContext(
-            mainModule.descriptor,
-            irBuiltIns,
-            symbolTable,
-            exportedDeclarations,
-            keep = emptySet(),
-            configuration = configuration,
-            granularity = granularity,
-            incrementalCacheEnabled = true,
-            mainCallArguments = mainArguments
-        )
-    }
 
     override fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> IrICProgramFragments> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)

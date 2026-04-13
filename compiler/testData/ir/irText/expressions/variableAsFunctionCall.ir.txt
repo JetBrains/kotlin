@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
   FUN name:test3 visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.String declared in <root>'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=null
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
           ARG <this>: CALL 'public final fun k (<this>: kotlin.String): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
             ARG <this>: CONST String type=kotlin.String value="hello"
   FUN name:test4 visibility:public modality:FINAL returnType:kotlin.String?
@@ -45,7 +45,8 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun k (<this>: kotlin.String): kotlin.Function0<kotlin.String> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
-                    ARG <this>: GET_VAR 'val tmp_1: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null
+                    ARG <this>: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                      GET_VAR 'val tmp_1: kotlin.String? declared in <root>.test4' type=kotlin.String? origin=null
           WHEN type=kotlin.String? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -54,5 +55,6 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=null
-                ARG <this>: GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null
+              then: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+                ARG <this>: TYPE_OP type=kotlin.Function0<kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.String>
+                  GET_VAR 'val tmp_0: kotlin.Function0<kotlin.String>? declared in <root>.test4' type=kotlin.Function0<kotlin.String>? origin=null

@@ -21,7 +21,7 @@ public class A {
 
 val expectedNullableUnitEmptyReturnAndString: () -> Unit? = l@ {
     if ("0".hashCode() == 42) <!RETURN_TYPE_MISMATCH!>return@l<!>
-    <!TYPE_MISMATCH!>""<!>
+    ""
 }
 
 fun expectedFlexibleUnitEmptyReturnAndString() {
@@ -33,19 +33,19 @@ fun expectedFlexibleUnitEmptyReturnAndString() {
 
 val expectedNullableUnitEmptyReturnAndExplicitReturnNull: () -> Unit? = l@ {
     if ("0".hashCode() == 42) <!RETURN_TYPE_MISMATCH!>return@l<!>
-    return@l <!RETURN_TYPE_MISMATCH!>null<!>
+    return@l null
 }
 
 fun expectedFlexibleUnitEmptyReturnAndExplicitReturnNull() {
     A.foo = l@ {
         if ("0".hashCode() == 42) return@l
-        return@l <!RETURN_TYPE_MISMATCH!>null<!>
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
 
 val expectedNullableUnitExplicitReturnUnitAndString: () -> Unit? = l@ {
     if ("0".hashCode() == 42) return@l Unit
-    <!TYPE_MISMATCH!>""<!>
+    <!RETURN_TYPE_MISMATCH!>""<!>
 }
 
 fun expectedFlexibleUnitImplicitReturnString() {
@@ -62,12 +62,12 @@ fun expectedFlexibleUnitExplicitReturnUnitAndString() {
 }
 
 val expectedNullableUnitExplicitReturnString: () -> Unit? = l@ {
-    return@l <!TYPE_MISMATCH!>""<!>
+    return@l <!RETURN_TYPE_MISMATCH!>""<!>
 }
 
 fun expectedFlexibleUnitExplicitReturnString() {
     A.foo = l@ {
-        return@l <!TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 }
 
@@ -77,7 +77,7 @@ val expectedNullableUnitExplicitReturnNull: () -> Unit? = l@ {
 
 fun expectedFlexibleUnitExplicitReturnNull() {
     A.foo = l@ {
-        return@l null
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
 
@@ -85,7 +85,7 @@ fun nullableUnit(): Unit? = null
 
 fun expectedFlexibleUnitImplicitReturnNull() {
     A.foo = l@ {
-        return@l nullableUnit()
+        return@l <!RETURN_TYPE_MISMATCH!>nullableUnit()<!>
     }
 }
 
@@ -104,17 +104,17 @@ fun test() {
 
     run<Unit?> l@ {
         if ("0".hashCode() == 42) return@l
-        return@l <!RETURN_TYPE_MISMATCH!>null<!>
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 
     A.run l@ {
         if ("0".hashCode() == 42) return@l
-        return@l <!RETURN_TYPE_MISMATCH!>null<!>
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 
     run<Unit?> l@ {
         if ("0".hashCode() == 42) return@l Unit
-        <!TYPE_MISMATCH!>""<!>
+        <!RETURN_TYPE_MISMATCH!>""<!>
     }
 
     A.run l@ {
@@ -127,11 +127,11 @@ fun test() {
     }
 
     run<Unit?> l@ {
-        return@l <!TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH!>""<!>
     }
 
     A.run l@ {
-        return@l <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
+        return@l <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>""<!>
     }
 
     run<Unit?> l@ {
@@ -139,7 +139,7 @@ fun test() {
     }
 
     A.run l@ {
-        return@l null
+        return@l <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
 

@@ -17,21 +17,11 @@ import java.io.*
 import java.util.*
 import kotlin.metadata.KmProperty
 
-internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySignature> {
-    val classNodes = mapNotNull {
-        val node = it.use { stream ->
-            val classNode = ClassNode()
-            ClassReader(stream.readBytes()).accept(classNode, ClassReader.SKIP_CODE)
-            classNode
-        }
-        // Skip module-info.java from processing
-        if (node.name == "module-info") null else node
-    }
-
+internal fun Sequence<ClassNode>.loadApiFromJvmClasses(): List<ClassBinarySignature> {
     val packageCache = mutableMapOf<String, String>()
 
     // Note: map is sorted, so the dump will produce stable result
-    val classNodeMap = classNodes.associateByTo(TreeMap()) { it.name }
+    val classNodeMap = this.associateByTo(TreeMap()) { it.name }
     val visibilityMap = classNodeMap.readKotlinVisibilities()
     return classNodeMap
         .values
@@ -97,6 +87,16 @@ internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySign
                 )
             }
         }
+}
+
+internal fun InputStream.readClassNode(): ClassNode? {
+    val node = use { stream ->
+        val classNode = ClassNode()
+        ClassReader(stream.readBytes()).accept(classNode, ClassReader.SKIP_CODE)
+        classNode
+    }
+    // Skip module-info.java from processing
+    return if (node.name == "module-info") null else node
 }
 
 /**

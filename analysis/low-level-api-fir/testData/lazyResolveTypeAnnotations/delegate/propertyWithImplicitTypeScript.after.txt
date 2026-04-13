@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
                 ^getValue this@R|/Delegate|.R|/Delegate.explicitType|()
             }
 
-            public open override [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -98,4 +98,3 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeScript.kts
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|) [evaluated = String(set 0)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), R|/prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), R|/prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), R|/prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
-

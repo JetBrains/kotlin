@@ -477,8 +477,8 @@ FILE: [ResolvedTo(IMPORTS)] destruct.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public [ResolvedTo(STATUS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol util/pair], ScriptTopLevelDeclaration=true] lval <destruct>: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|util/pair|
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
@@ -526,8 +526,8 @@ FILE: [ResolvedTo(IMPORTS)] destruct.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+            public [ResolvedTo(STATUS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableMarkerKey=true, PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol util/pair], ScriptTopLevelDeclaration=true] lval <destruct>: R|@R|util/Anno|(LAZY_EXPRESSION)  util/MyPair<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = R|util/pair|
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
@@ -682,4 +682,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destruct.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<util/MyPair.component2: R|kotlin/Int|>|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-

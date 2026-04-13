@@ -5,7 +5,7 @@
 // Should be unmuted for JS when KT-79471 is fixed
 
 // FILE: lib.kt
-package test;
+package test
 
 import kotlin.reflect.*
 
@@ -16,7 +16,7 @@ inline fun <reified T2, T3> typeOfPair(x: T2, y: T3) = typeOfX(Pair(x, y))
 inline fun <T4, T5> typeOfPair2(x: T4, y: T5) = typeOfPair(Pair(x, y), y)
 
 // FILE: main.kt
-package test;
+package test
 
 fun box() : String {
     if (typeOfX("1").toString() != "kotlin.String") return "FAIL 1: ${typeOfX("1")}"

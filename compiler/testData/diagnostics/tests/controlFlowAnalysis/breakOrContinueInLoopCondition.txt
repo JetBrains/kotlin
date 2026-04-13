@@ -1,4 +1,0 @@
-package
-
-public fun test(): kotlin.Unit
-public fun test2(/*0*/ b: kotlin.Boolean): kotlin.Unit

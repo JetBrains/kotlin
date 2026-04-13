@@ -90,8 +90,8 @@ object FirJvmErrors : KtDiagnosticsContainer() {
 
     // Type parameters
     val UPPER_BOUND_CANNOT_BE_ARRAY: KtDiagnosticFactory0 = KtDiagnosticFactory0("UPPER_BOUND_CANNOT_BE_ARRAY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory3("UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory3("UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // annotations
     val STRICTFP_ON_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("STRICTFP_ON_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())

@@ -7,12 +7,12 @@ class A {
     fun forEach(i: Int) = this
 }
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 @kotlin.internal.HidesMembers
 fun A.forEach(i: Int) = i
 
 class B {
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
     @kotlin.internal.HidesMembers
     fun A.forEach() = this@B
 
@@ -26,20 +26,20 @@ class B {
 }
 
 fun test2(a: A) {
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
     @kotlin.internal.HidesMembers
     fun A.forEach() = ""
 
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
     @kotlin.internal.HidesMembers
     fun A.forEach(i: Int) = ""
 
-    a.forEach() checkType { _<String>() }
-    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
+    a.forEach() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+    a.forEach(1)
 
     with(a) {
-        forEach() checkType { _<String>() }
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
+        forEach() checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+        forEach(1)
     }
 }
 

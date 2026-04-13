@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
 interface In<in E>

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: JVM_IR
+
 // FILE: test.kt
 
 inline fun foo(inlined: () -> String, noinline notInlined: () -> String): String =

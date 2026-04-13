@@ -25,9 +25,9 @@ fun test_1() {
 }
 
 fun test_2() {
-    A.foo {
+    A.foo <!CANNOT_INFER_PARAMETER_TYPE!>{
         null!!
-    }
+    }<!>
 }
 
 fun test_3() {

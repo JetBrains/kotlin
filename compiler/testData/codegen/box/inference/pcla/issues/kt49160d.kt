@@ -1,7 +1,6 @@
 // ISSUE: KT-49160
 
-// IGNORE_BACKEND_K1: ANY
-// REASON: red code (see corresponding diagnostic test)
+// IGNORE_BACKEND: ANDROID
 
 fun box(): String {
     build outerBuild@ {

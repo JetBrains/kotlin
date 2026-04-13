@@ -5,7 +5,7 @@
 fun foo() {
     val x: String?
     x = materialize()!! // Should be treated as non-nullable assignment
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length // Should be allowed
+    x.length // Should be allowed
 }
 
 fun <E> materialize(): E = TODO()

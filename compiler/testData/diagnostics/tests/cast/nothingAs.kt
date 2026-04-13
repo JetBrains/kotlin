@@ -9,12 +9,12 @@ abstract class AbstractClass
 interface Interface
 
 fun test() {
-    TODO() <!USELESS_CAST!>as Any<!>
-    TODO() <!USELESS_CAST!>as Any?<!>
-    TODO() <!USELESS_CAST!>as OpenClass<!>
-    TODO() <!USELESS_CAST!>as FinalClass<!>
-    TODO() <!USELESS_CAST!>as AbstractClass<!>
-    TODO() <!USELESS_CAST!>as Interface<!>
+    TODO() as Any
+    TODO() as Any?
+    TODO() as OpenClass
+    TODO() as FinalClass
+    TODO() as AbstractClass
+    TODO() as Interface
 
     val a = TODO() as Any
     val b = TODO() as Any?

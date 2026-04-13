@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.backend.konan.util.LongArrayList
-import org.jetbrains.kotlin.backend.konan.util.LongHashMap
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement

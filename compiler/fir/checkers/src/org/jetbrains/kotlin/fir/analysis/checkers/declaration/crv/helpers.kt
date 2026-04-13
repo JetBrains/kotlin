@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsResultOfDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.fir.types.isUnit
@@ -25,8 +24,8 @@ internal fun ConeKotlinType.isIgnorable(): Boolean {
 
 @OptIn(SymbolInternals::class)
 internal fun FirCallableSymbol<*>.indicesOfPropagatingFunctionalParameters(): List<Int> {
-    val declaration = fir as? FirContractDescriptionOwner ?: return emptyList()
-    val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return emptyList()
+    if (this !is FirFunctionSymbol<*>) return emptyList()
+    val contractDescription = resolvedContractDescription ?: return emptyList()
     return buildList {
         for (effectDeclaration in contractDescription.effects) {
             val effect = effectDeclaration.effect

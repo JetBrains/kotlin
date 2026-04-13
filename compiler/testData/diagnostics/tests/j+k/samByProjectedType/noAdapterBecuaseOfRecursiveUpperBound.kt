@@ -17,17 +17,17 @@ public class A {
 
 // FILE: main.kt
 fun main() {
-    A().foo <!TYPE_MISMATCH!>{
+    A().foo {
         <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
-    }<!>
+    }
 
-    A.bar <!TYPE_MISMATCH!>{
+    A.bar {
         <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
-    }<!>
+    }
 
-    A.bar(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Function<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> "" })
+    A.bar(<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>Function<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> "" })
     A.bar(Function<CharSequence, Map<String, CharSequence>>{ x -> x[""] })
 }
 

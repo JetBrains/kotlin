@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -351,6 +351,8 @@ class BackendJsSymbols(
 
     val anyConstructorSymbol by StandardClassIds.Any.primaryConstructorSymbol()
 
+    val kFunctionImplConstructorSymbol by ClassIds.KFunctionImpl.primaryConstructorSymbol()
+
     val jsObjectConstructorSymbol by JsStandardClassIds.JsObject.primaryConstructorSymbol()
 
     val unreachable = CallableIds.unreachable.functionSymbol()
@@ -498,6 +500,8 @@ class BackendJsSymbols(
     val eagerInitialization: IrClassSymbol = ClassIds.EagerInitialization.classSymbol()
 
     val signatureIdSymbol = CallableIds.signatureIdIntrinsic.functionSymbol()
+
+    val constructCallableReferenceSymbol = CallableIds.constructCallableReference.functionSymbol()
 }
 
 private object ClassIds {
@@ -676,6 +680,7 @@ private object CallableIds {
     val getPropertyCallableRef = "getPropertyCallableRef".jsCallableId
     val getLocalDelegateReference = "getLocalDelegateReference".jsCallableId
     val signatureIdIntrinsic = "signatureId".jsCallableId
+    val constructCallableReference = "constructCallableReference".jsCallableId
 
     // JS Long functions
     private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))

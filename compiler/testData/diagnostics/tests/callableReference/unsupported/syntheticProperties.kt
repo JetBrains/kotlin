@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ReferencesToSyntheticJavaProperties
-// FIR_IDENTICAL
 
 // FILE: Customer.java
 public class Customer {

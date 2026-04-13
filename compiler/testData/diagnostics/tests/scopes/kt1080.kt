@@ -4,11 +4,11 @@
 
 package kt1080
 
-import <!UNRESOLVED_REFERENCE!>reflect<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Constructor<!>
+import <!UNRESOLVED_IMPORT!>reflect<!>.Constructor
 
 import b.*
-import <!UNRESOLVED_REFERENCE!>d<!>
-import <!UNRESOLVED_REFERENCE!>d<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>Test<!>
+import <!UNRESOLVED_IMPORT!>d<!>
+import <!UNRESOLVED_IMPORT!>d<!>.Test
 import b.<!PACKAGE_CANNOT_BE_IMPORTED!>d<!>
 
 class Some: <!UNRESOLVED_REFERENCE!>Test<!>()

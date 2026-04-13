@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.test
 
-import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
-import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
-import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
+import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeCodegenTest
+import org.jetbrains.kotlin.konan.test.configuration.setupStepsForNativeFirstStageUpToSerialization
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunnerGroupingPhase
 import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
@@ -21,19 +19,21 @@ import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
 import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
-import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
-import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeSecondStageEnvironmentConfigurator
@@ -52,22 +52,28 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
 
     override fun configure(builder: TwoPhaseTestConfigurationBuilder): Unit = with(builder) {
         commonConfiguration {
-            globalDefaults {
-                frontend = FrontendKinds.FIR
-                targetBackend = TargetBackend.NATIVE
-                targetPlatform = NativePlatforms.unspecifiedNativePlatform
-                dependencyKind = DependencyKind.Binary
+            defaultDirectives {
+                LANGUAGE with listOf(
+                    "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
+                    "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+                )
+                OPT_IN with listOf(
+                    "kotlin.native.internal.InternalForKotlinNative",
+                    "kotlin.native.internal.InternalForKotlinNativeTests",
+                    "kotlin.experimental.ExperimentalNativeApi"
+                )
             }
 
-            configureFirParser(FirParser.LightTree)
-            useAdditionalService(::LibraryProvider)
-            useDirectives(NativeEnvironmentConfigurationDirectives, TestDirectives, LanguageSettingsDirectives)
+            commonConfigurationForNativeCodegenTest()
+
             useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
             useAfterAnalysisCheckers(
                 ::FirMetaInfoDiffSuppressor,
-                ::NativeTestsSuppressor,
+                // TODO(KT-84712): Currently the native-specific test suppressor doesn't work correctly in grouping setup
+//                ::NativeTestsSuppressor,
             )
 
+            // TODO(KT-84712): should be moved into `AbstractTwoStageKotlinCompilerTest`
             useSourcePreprocessor(::BatchingPackageInserter)
 
             useAdditionalService { // Register TestRunSettings into TestServices
@@ -84,21 +90,37 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
                 ::NativeFirstStageEnvironmentConfigurator,
             )
 
-            commonConfigurationForNativeFirstStageUpToSerialization(
-                FrontendKinds.FIR,
-                ::FirCliNativeFacade,
-                ::Fir2IrCliNativeFacade,
-                ::NativePreSerializationLoweringCliFacade,
-            )
+            // Because of package escaping various dumps for grouping mode would be different from
+            // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
+            setupStepsForNativeFirstStageUpToSerialization(includeFirHandlers = false)
 
-            // 1st stage (sources -> klibs)
-            useAdditionalSourceProviders(
-                ::NativeLauncherAdditionalSourceProvider,
-            )
+            configureFirHandlersStep {
+                useHandlers(::FirDiagnosticsHandler, ::NoFirCompilationErrorsHandler)
+            }
+
+            configureIrHandlersStep {
+                useHandlers(::NoIrCompilationErrorsHandler)
+            }
+
+            configureLoweredIrHandlersStep {
+                useHandlers(::NoIrCompilationErrorsHandler)
+            }
 
             facadeStep(::KlibSerializerNativeCliFacade)
             klibArtifactsHandlersStep()
 
+            useAdditionalSourceProviders(
+                ::NativeLauncherAdditionalSourceProvider,
+            )
+
+            forTestsNotMatching(
+                "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or
+                        "compiler/testData/diagnostics/*"
+            ) {
+                defaultDirectives {
+                    DIAGNOSTICS with "-warnings"
+                }
+            }
             enableMetaInfoHandler()
         }
 

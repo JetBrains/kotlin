@@ -38,75 +38,89 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
               ARG p1: GET_VAR 'val element: T of <root>.myForEach declared in <root>.myForEach' type=T of <root>.myForEach origin=null
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_EXPR '{break}()
-    {continue}()' type=IrErrorType([Error type: Error expression type])
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun invoke <T, R> (<this>: kotlin.DeepRecursiveFunction<T of kotlin.invoke, R of kotlin.invoke>, value: T of kotlin.invoke): R of kotlin.invoke declared in kotlin' type=IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R]) origin=null
+          TYPE_ARG T: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter T])
+          TYPE_ARG R: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R])
+          ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN FUNCTION_INTERFACE_MEMBER name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
+            FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                BLOCK_BODY
+                  ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+              ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
         ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+              ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+              ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+              ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+              ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
             BLOCK_BODY
-              ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+              ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
   FUN name:test2 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=L1 origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
         body: BLOCK type=kotlin.Unit origin=null
-          ERROR_EXPR '{break@ERROR}()
-        {continue@ERROR}()' type=IrErrorType([Error type: Error expression type])
+          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            CALL 'public final fun invoke <T, R> (<this>: kotlin.DeepRecursiveFunction<T of kotlin.invoke, R of kotlin.invoke>, value: T of kotlin.invoke): R of kotlin.invoke declared in kotlin' type=IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R]) origin=null
+              TYPE_ARG T: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter T])
+              TYPE_ARG R: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R])
+              ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN FUNCTION_INTERFACE_MEMBER name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
+                FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                    BLOCK_BODY
+                      ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
             ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
+                  ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
             ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue@ERROR' type=kotlin.Nothing
+                  ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
+                  ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue@ERROR' type=kotlin.Nothing
+                  ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break@ERROR' type=kotlin.Nothing
+                  ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
           CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue@ERROR' type=kotlin.Nothing
+                  ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind label ERROR to a loop)] ' type=kotlin.Nothing
   FUN name:test3 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=L1 origin=WHILE_LOOP
@@ -116,38 +130,45 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR '{break@L1}()
-            {continue@L1}()' type=IrErrorType([Error type: Error expression type])
+                  TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                    CALL 'public final fun invoke <T, R> (<this>: kotlin.DeepRecursiveFunction<T of kotlin.invoke, R of kotlin.invoke>, value: T of kotlin.invoke): R of kotlin.invoke declared in kotlin' type=IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R]) origin=null
+                      TYPE_ARG T: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter T])
+                      TYPE_ARG R: IrErrorType([Error type: Unresolved type for Cannot infer argument for type parameter R])
+                      ARG <this>: ERROR_CALL 'Cannot bind 1 arguments to 'FUN FUNCTION_INTERFACE_MEMBER name:invoke visibility:public modality:ABSTRACT <> (<this>:kotlin.Function0<R of kotlin.Function0>) returnType:R of kotlin.Function0 [operator]' call with 0 parameters' type=kotlin.Nothing
+                        FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                            BLOCK_BODY
+                              CONTINUE label=L1 loop.label=L1
                   CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
                     ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                         BLOCK_BODY
-                          ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
+                          BREAK label=L1 loop.label=L1
                   CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
                     ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                         BLOCK_BODY
-                          ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
+                          CONTINUE label=L1 loop.label=L1
                   CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                         BLOCK_BODY
-                          ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
+                          BREAK label=L1 loop.label=L1
                   CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                         BLOCK_BODY
-                          ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
+                          CONTINUE label=L1 loop.label=L1
                   CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                         BLOCK_BODY
-                          ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
+                          BREAK label=L1 loop.label=L1
                   CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                     ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
                       FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                         BLOCK_BODY
-                          ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
+                          CONTINUE label=L1 loop.label=L1
   FUN name:test4 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
@@ -155,64 +176,56 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
           ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test4'
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
         condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Nothing origin=INVOKE
           ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test4'
-                  ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+                ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-            ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
-              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+        condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+          ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
+              BLOCK_BODY
+                ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
-            ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
-              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+        condition: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE
+          ARG <this>: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
+              BLOCK_BODY
+                ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+        condition: CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              BLOCK_BODY
+                ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+        condition: CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
+              BLOCK_BODY
+                ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
-              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+        condition: CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
+              BLOCK_BODY
+                ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
       WHILE label=null origin=WHILE_LOOP
-        condition: TYPE_OP type=kotlin.Boolean origin=IMPLICIT_CAST typeOperand=kotlin.Boolean
-          CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
-              FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
-                BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+        condition: CALL 'public final fun foo (block: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+            FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
+              BLOCK_BODY
+                ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
         body: BLOCK type=kotlin.Unit origin=null
   FUN name:test5 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
@@ -233,7 +246,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     ARG arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<anonymous>' type=kotlin.Int origin=null
                     ARG arg1: CONST Int type=kotlin.Int value=2
-                  then: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                  then: ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun forEach <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.forEach>, action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         TYPE_ARG T: kotlin.Int
         ARG <this>: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
@@ -251,7 +264,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     ARG arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<anonymous>' type=kotlin.Int origin=null
                     ARG arg1: CONST Int type=kotlin.Int value=2
-                  then: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+                  then: ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun forEach <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.forEach>, action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         TYPE_ARG T: kotlin.Int
         ARG <this>: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
@@ -269,7 +282,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     ARG arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<no name provided>' type=kotlin.Int origin=null
                     ARG arg1: CONST Int type=kotlin.Int value=2
-                  then: ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                  then: ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
       CALL 'public final fun forEach <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.forEach>, action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
         TYPE_ARG T: kotlin.Int
         ARG <this>: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
@@ -287,7 +300,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     ARG arg0: GET_VAR 'i: kotlin.Int declared in <root>.test5.<no name provided>' type=kotlin.Int origin=null
                     ARG arg1: CONST Int type=kotlin.Int value=2
-                  then: ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+                  then: ERROR_EXPR 'Unbound loop: continue@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
   FUN name:test6 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
@@ -302,7 +315,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             ARG block2: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                  BREAK label=null loop.label=null
           CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
@@ -312,7 +325,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             ARG block2: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+                  CONTINUE label=null loop.label=null
           CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
@@ -320,7 +333,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             ARG block2: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                  BREAK label=null loop.label=null
           CALL 'public final fun bar (block1: kotlin.Function0<kotlin.Unit>, block2: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             ARG block1: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
@@ -328,7 +341,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             ARG block2: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
               FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for continue expression: continue' type=kotlin.Nothing
+                  CONTINUE label=null loop.label=null
   FUN name:test7 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun myForEach <T> (<this>: kotlin.collections.Iterable<T of <root>.myForEach>, action: kotlin.Function1<T of <root>.myForEach, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -346,7 +359,7 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
                     ARG arg0: GET_VAR 'i: kotlin.Int declared in <root>.test7.<anonymous>' type=kotlin.Int origin=null
                     ARG arg1: CONST Int type=kotlin.Int value=2
                   then: BLOCK type=kotlin.Unit origin=null
-                    ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                    ERROR_EXPR 'Unbound loop: break@@@[ERROR_EXPR(Cannot bind unlabeled jump to a loop)] ' type=kotlin.Nothing
   FUN name:test8 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
@@ -356,4 +369,4 @@ FILE fqName:<root> fileName:/badInlinedBreakContinue.kt
             ARG block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 BLOCK_BODY
-                  ERROR_EXPR 'Loop not found for break expression: break' type=kotlin.Nothing
+                  BREAK label=null loop.label=null

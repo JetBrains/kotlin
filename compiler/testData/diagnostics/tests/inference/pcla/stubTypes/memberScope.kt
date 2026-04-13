@@ -21,32 +21,32 @@ fun test() {
     val ret1 = build {
         emit(1)
         emit(null)
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        get()?.test()
+        get()?.test2()
+        get().test2()
         get()?.hashCode()
         get()?.equals(1)
-        <!TYPE_MISMATCH("Any; Nothing?")!>get()<!>.equals("")
+        get()<!UNSAFE_CALL!>.<!>equals("")
     }
     val ret2 = build {
         emit(1)
         emit(null)
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        get()?.test()
+        get()?.test2()
+        get().test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
         x?.hashCode()
         x?.equals(1)
-        <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+        x<!UNSAFE_CALL!>.<!>equals("")
     }
     val ret3 = build {
         emit(1)
         emit(null)
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        get()?.test()
+        get()?.test2()
+        get().test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -62,9 +62,9 @@ fun test() {
             x.equals("")
             x.hashCode()
             x.toString()
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test()
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>test2()
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
+            x.test()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
+            x.test2()
         }
 
         ""
@@ -74,7 +74,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            x.hashCode()
         }
 
         ""
@@ -84,7 +84,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            x.equals("")
         }
 
         ""
@@ -94,7 +94,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NONE_APPLICABLE!>toString<!>("")
+            x.<!NONE_APPLICABLE, UNSAFE_CALL!>toString<!>("")
         }
 
         ""
@@ -104,7 +104,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
 
         ""
@@ -114,7 +114,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            x.hashCode()
         }
 
         ""
@@ -124,7 +124,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            x.equals("")
         }
 
         ""
@@ -134,7 +134,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            x.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NONE_APPLICABLE!>toString<!>("")
+            x.<!NONE_APPLICABLE, UNSAFE_CALL!>toString<!>("")
         }
 
         ""
@@ -144,7 +144,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
 
         ""
@@ -153,16 +153,16 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+        x<!UNSAFE_CALL!>.<!>test()
 
         ""
     }
     val ret41 = build {
         emit(1)
         emit(null)
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        get()?.test()
+        get()?.test2()
+        get().test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -173,35 +173,35 @@ fun test() {
         if (get() === null) {}
 
         if (x == null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.hashCode()
+            x?.hashCode()
         }
 
         if (x == null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.equals(1)
+            x?.equals(1)
         }
 
         if (x == null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER, DEBUG_INFO_CONSTANT!>x<!>?.test2()
+            x?.test2()
         }
 
         if (x == null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
+            x.test2()
         }
 
         if (x === null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.hashCode()
+            x?.hashCode()
         }
 
         if (x === null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.equals(1)
+            x?.equals(1)
         }
 
         if (x === null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER, DEBUG_INFO_CONSTANT!>x<!>?.test2()
+            x?.test2()
         }
 
         if (x === null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
+            x.test2()
         }
 
         ""
@@ -211,7 +211,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            x.equals("")
         }
 
         ""
@@ -221,7 +221,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            x.hashCode()
         }
         ""
     }
@@ -230,7 +230,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.toString()
+            x.toString()
         }
         ""
     }
@@ -239,7 +239,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
         ""
     }
@@ -248,7 +248,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.equals("")
+            x.equals("")
         }
 
         ""
@@ -258,7 +258,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.hashCode()
+            x.hashCode()
         }
         ""
     }
@@ -267,7 +267,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!TYPE_MISMATCH("Any; Nothing?")!>x<!>.toString()
+            x.toString()
         }
         ""
     }
@@ -276,7 +276,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x === null) {
-            <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+            x<!UNSAFE_CALL!>.<!>test()
         }
         ""
     }
@@ -284,15 +284,15 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("Any; Nothing?")!>x<!>.test()
+        x<!UNSAFE_CALL!>.<!>test()
         ""
     }
     val ret51 = build {
         emit(1)
         emit(null)
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>?.test2()
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.test2()
+        get()?.test()
+        get()?.test2()
+        get().test2()
         get()?.hashCode()
         get()?.equals(1)
         val x = get()
@@ -303,10 +303,10 @@ fun test() {
         if (get() === null) {}
 
         if (x == null) {
-            <!DEBUG_INFO_CONSTANT!>x<!>?.hashCode()
-            <!DEBUG_INFO_CONSTANT!>x<!>?.equals(1)
-            <!BUILDER_INFERENCE_STUB_RECEIVER, DEBUG_INFO_CONSTANT!>x<!>?.test2()
-            <!BUILDER_INFERENCE_STUB_RECEIVER!>x<!>.test2()
+            x?.hashCode()
+            x?.equals(1)
+            x?.test2()
+            x.test2()
         }
 
         ""

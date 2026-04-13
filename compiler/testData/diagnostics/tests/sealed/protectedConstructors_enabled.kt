@@ -23,7 +23,7 @@ sealed class Case3 private constructor(val x: Int) {
     class Inheritor2 : Case3("Hello")
 }
 
-class Case3Inheritor3 : <!INVISIBLE_MEMBER!>Case3<!>(20)
+class Case3Inheritor3 : <!INVISIBLE_REFERENCE!>Case3<!>(20)
 
 sealed class Case4 {
     protected constructor(x: Int)
@@ -36,8 +36,8 @@ sealed class Case4 {
 sealed class Case5() {
     private constructor(x: Int) : this()
     protected constructor(x: Byte) : this()
-    <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>internal<!> constructor(x: Short) : this()
-    <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>public<!> constructor(x: Long) : this()
+    <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>internal constructor(x: Short) : this()<!>
+    <!NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>public constructor(x: Long) : this()<!>
     constructor(x: Double) : this()
 }
 

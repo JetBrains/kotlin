@@ -15,11 +15,11 @@ expect fun toplvl(): String
 @IgnorableReturnValue expect fun ignToplvl(): String
 
 fun commonMain() {
-    toplvl()
-    Foo()
-    Foo().x()
+    <!RETURN_VALUE_NOT_USED!>toplvl<!>()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
-    Foo().p
+    Foo().<!RETURN_VALUE_NOT_USED!>p<!>
     ignToplvl()
 }
 
@@ -32,24 +32,24 @@ fun commonMain() {
 // ign: ExplicitlyIgnorable -> MustUse :error:
 @MustUseReturnValues
 actual class Foo actual constructor() {
-    @IgnorableReturnValue actual fun x(): String = ""
-    actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ign<!>(): String = ""
+    @IgnorableReturnValue actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; must-use; 'actual fun x(): String' defined in 'Foo'; ignorable")!>x<!>(): String = ""
+    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun ign(): String' defined in 'Foo'; ignorable; 'actual fun ign(): String' defined in 'Foo'; must-use")!>ign<!>(): String = ""
     actual val p: Int = 42
     fun notActual(): String = ""
 }
 
 // These two are Unspecified, because annotation is not on file:
 
-actual fun toplvl(): String = "" // MustUse -> Unspecified is not allowed
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ignToplvl<!>(): String = "" // Ignorable -> Unspecified is allowed
+actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun toplvl(): String'; must-use; 'actual fun toplvl(): String'; unspecified (implicitly ignorable)")!>toplvl<!>(): String = "" // MustUse -> Unspecified is not allowed
+actual fun ignToplvl(): String = "" // Ignorable -> Unspecified is allowed
 
 fun main() {
     toplvl()
-    Foo()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
     Foo().x()
-    Foo().ign()
-    Foo().p
-    Foo().notActual()
+    Foo().<!RETURN_VALUE_NOT_USED!>ign<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>p<!>
+    Foo().<!RETURN_VALUE_NOT_USED!>notActual<!>()
     ignToplvl()
 }
 

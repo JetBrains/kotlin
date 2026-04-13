@@ -1,0 +1,5 @@
+KT element: KtProperty
+Resolve target: topLevelConstRepl.repl.kts -> <snippet-topLevelConstRepl.repl.kts> -> TopLevelConstRepl_repl -> x
+FIR:
+  public? final? const val x: <implicit> = LAZY_EXPRESSION
+      public? get(): <implicit>

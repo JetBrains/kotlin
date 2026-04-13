@@ -15,7 +15,7 @@ fun <T> myRun(block: () -> T): T {
 fun foo(x: Int): Int = x + 1
 
 fun typeMismatchInLambda(y: String): Int {
-    val x = myRun { foo(<!TYPE_MISMATCH!>y<!>) }
+    val x = myRun { foo(<!ARGUMENT_TYPE_MISMATCH!>y<!>) }
     return x
 }
 

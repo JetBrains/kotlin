@@ -18,7 +18,7 @@ class Derived : Base() {
         object : BaseWithPrivate() {
             fun bar() {
                 X.length
-                <!INVISIBLE_MEMBER!>Y<!>.hashCode()
+                <!INVISIBLE_REFERENCE!>Y<!>.hashCode()
             }
         }
     }

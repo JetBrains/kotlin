@@ -17,7 +17,7 @@ public class Foo {}
 
 // MODULE: moduleB(moduleA)
 // FILE: usage.kt
-import <!UNRESOLVED_REFERENCE!>foo<!>.Foo
+import <!UNRESOLVED_IMPORT!>foo<!>.Foo
 
 fun usage() {
     <!UNRESOLVED_REFERENCE!>Foo<!>()

@@ -5,52 +5,52 @@ import kotlinx.serialization.json.*
 
 object Instance
 
-val defaultWarn = Json {}
-val receiverWarn = Json {encodeDefaults = true}.encodeToString(Instance)
+val defaultWarn = <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>
+val receiverWarn = <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.encodeToString(Instance)
 val noWarnFormat = Json {encodeDefaults = true}
 val receiverNoWarn = noWarnFormat.encodeToString(Instance)
 val defaultNoWarn = Json.encodeToString(Instance)
 
 class SomeContainerClass {
-    val memberDefaultWarn = Json {}
-    val memberReceiverWarn = Json {encodeDefaults = true}.encodeToString(Instance)
+    val memberDefaultWarn = <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>
+    val memberReceiverWarn = <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.encodeToString(Instance)
     val memberNoWarnFormat = Json {encodeDefaults = true}
     val memberReceiverNoWarn = noWarnFormat.encodeToString(Instance)
     val memberDefaultNoWarn = Json.encodeToString(Instance)
 
     fun testDefaultWarnings() {
-        Json {}
-        Json() {}
-        Json {}.encodeToString(Any())
-        Json {}.encodeToString(Instance)
-        Json { /*some comment*/ }.encodeToString(Instance)
-        val localDefaultFormat = Json {}
-        Json(Json.Default) {}
-        Json(Json) {}
-        Json(Json.Default, {})
-        Json(builderAction = {})
-        Json(builderAction = fun JsonBuilder.() {})
-        Json(builderAction = fun JsonBuilder.() = Unit)
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json() {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>.encodeToString(Any())
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json { /*some comment*/ }<!>.encodeToString(Instance)
+        val localDefaultFormat = <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(Json.Default) {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(Json) {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(Json.Default, {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(builderAction = {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(builderAction = fun JsonBuilder.() {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(builderAction = fun JsonBuilder.() = Unit)<!>
 
         "{}".let {
-            Json {}.decodeFromString<Any>(it)
+            <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>.decodeFromString<Any>(it)
         }
     }
 
     fun testReceiverWarnings() {
-        Json {encodeDefaults = true}.encodeToString(Instance)
-        val encoded = Json {encodeDefaults = true}.encodeToString(Instance)
-        Json {encodeDefaults = true}.decodeFromString<Any>("{}")
-        Json {encodeDefaults = true}.hashCode()
-        Json {encodeDefaults = true}.toString()
+        <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.encodeToString(Instance)
+        val encoded = <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.decodeFromString<Any>("{}")
+        <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.hashCode()
+        <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.toString()
 
-        Json(noWarnFormat) {encodeDefaults = true}.encodeToString(Instance)
-        Json(builderAction = {encodeDefaults = true}).encodeToString(Instance)
-        Json(noWarnFormat, {encodeDefaults = true}).encodeToString(Instance)
-        Json(builderAction = fun JsonBuilder.() {encodeDefaults = true}).encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>Json(noWarnFormat) {encodeDefaults = true}<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>Json(builderAction = {encodeDefaults = true})<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>Json(noWarnFormat, {encodeDefaults = true})<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>Json(builderAction = fun JsonBuilder.() {encodeDefaults = true})<!>.encodeToString(Instance)
 
         "{}".let {
-            Json {encodeDefaults = true}.decodeFromString<Any>(it)
+            <!JSON_FORMAT_REDUNDANT!>Json {encodeDefaults = true}<!>.decodeFromString<Any>(it)
         }
     }
 

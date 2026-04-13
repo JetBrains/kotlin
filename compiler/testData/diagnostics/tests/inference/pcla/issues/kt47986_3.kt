@@ -7,8 +7,8 @@ fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()
 fun <K: N, N> Foo<K>.bar(x: Int = 1) {}
 
 fun main() {
-    val x = <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>buildFoo<!> {
-        bar()
+    val x = <!CANNOT_INFER_PARAMETER_TYPE!>buildFoo<!> {
+        <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>bar<!>()
     }
 }
 

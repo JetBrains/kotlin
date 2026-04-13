@@ -1,6 +1,5 @@
 // KT-62889
 
-// IGNORE_FE10
 
 // MODULE: library1
 // MODULE_KIND: LibraryBinary

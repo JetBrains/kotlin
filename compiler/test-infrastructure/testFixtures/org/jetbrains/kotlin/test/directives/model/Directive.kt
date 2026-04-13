@@ -184,7 +184,7 @@ fun <T : Any> RegisteredDirectives.singleValue(directive: ValueDirective<T>): T 
 }
 
 fun <T : Any> RegisteredDirectives.singleOrZeroValue(directive: ValueDirective<T>): T? {
-    val values = this[directive]
+    val values = this[directive].distinct()
     return when (values.size) {
         0 -> null
         1 -> values.single()

@@ -5,6 +5,9 @@
 // CHECK_TAIL_CALL_OPTIMIZATION
 // LANGUAGE: +WrapContinuationForTailCallFunctions
 
+// kotlin package is being relocated in Android tests
+// IGNORE_BACKEND: ANDROID
+
 // Does not work with IR inliner: Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE:
 // IGNORE_INLINER: IR
 

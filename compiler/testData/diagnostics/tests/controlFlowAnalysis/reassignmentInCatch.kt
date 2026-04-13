@@ -10,7 +10,7 @@ fun test() {
             throw Exception("hmm")
         }
     } catch (e: Exception) {
-        a = 2
+        <!VAL_REASSIGNMENT!>a<!> = 2
         a.inc()
     }
 }

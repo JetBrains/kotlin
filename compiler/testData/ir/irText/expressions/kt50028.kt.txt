@@ -16,3 +16,4 @@ fun test_2(b: Boolean): Boolean {
     }
   }
 }
+

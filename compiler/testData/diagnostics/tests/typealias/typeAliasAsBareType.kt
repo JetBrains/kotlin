@@ -24,14 +24,14 @@ typealias Dictionary<T> = MutableMap<String, T>
 typealias WriteableMap<K, V> = MutableMap<in K, V>
 typealias ReadableList<T> = MutableList<out T>
 
-fun testWrong1(x: Map<Any, Any>) = x is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>MMTT<!>
-fun testWrong2(x: Map<Any, Any>) = x is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Dictionary<!>
-fun testWrong3(x: Map<Any, Any>) = x is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>WriteableMap<!>
-fun testWrong4(x: List<Any>) = x is <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>ReadableList<!>
+fun testWrong1(x: Map<Any, Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>MMTT<!>
+fun testWrong2(x: Map<Any, Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>Dictionary<!>
+fun testWrong3(x: Map<Any, Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>WriteableMap<!>
+fun testWrong4(x: List<Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>ReadableList<!>
 
 fun <T> testLocal(x: Any) {
     class C
-    typealias CA = C
+    typealias CA = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>C<!>
     if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
     if (x is <!CANNOT_CHECK_FOR_ERASED!>CA<!>) {}
 }

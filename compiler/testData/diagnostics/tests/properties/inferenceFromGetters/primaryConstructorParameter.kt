@@ -20,9 +20,9 @@ class C(p: Any, val v: Any) {
 
     <!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>var test5<!>
         get() { return <!UNRESOLVED_REFERENCE!>p<!> }
-        set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>let<!> {} }
+        set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>let<!> <!CANNOT_INFER_PARAMETER_TYPE!>{}<!> }
 
-    <!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>lateinit var test6<!>
+    lateinit <!LATEINIT_PROPERTY_WITHOUT_TYPE!>var test6<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, lambdaLiteral, lateinit, nullableType,

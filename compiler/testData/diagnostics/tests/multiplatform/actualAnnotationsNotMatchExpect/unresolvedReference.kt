@@ -2,7 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: m1-common
 // FILE: common.kt
-@<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE{JVM}!>NonExistingClass<!>
+@<!UNRESOLVED_REFERENCE!>NonExistingClass<!>
 expect fun foo()
 
 // MODULE: m1-jvm()()(m1-common)

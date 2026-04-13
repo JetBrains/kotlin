@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 val test1 = arrayOf<String>()
 val test2 = arrayOf("1", "2", "3")

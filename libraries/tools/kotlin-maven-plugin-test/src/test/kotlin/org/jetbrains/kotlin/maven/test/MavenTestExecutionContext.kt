@@ -25,6 +25,15 @@ class MavenTestExecutionContext(
         .getJavaHome(version)
         ?.absolutePathString()
         ?: error("Can't find JDK $version")
+
+    /** Shortcut to create a [MavenToolchainInfo] for a given JDK version. */
+    fun toolchain(version: TestVersions.Java): MavenToolchainInfo {
+        val versionString = when (version) {
+            TestVersions.Java.JDK_1_8 -> "1.8"
+            else -> version.numericVersion.toString()
+        }
+        return MavenToolchainInfo(versionString, getJavaHomeString(version))
+    }
 }
 
 private fun systemPropertyOrDefault(

@@ -1,14 +1,15 @@
 @kotlin.Metadata
 public final class A$DefaultImpls {
     // source: 'kt49715.kt'
-    public static @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.Object): java.lang.String
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: java.lang.Object): java.lang.String
     public final inner class A$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface A {
     // source: 'kt49715.kt'
-    public abstract @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
+    public synthetic static method access$toString$jd(p0: A, p1: java.lang.Object): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
     public final inner class A$DefaultImpls
 }
 
@@ -26,7 +27,6 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method hi(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public bridge @org.jetbrains.annotations.NotNull method toString(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.String
-    public final inner class A$DefaultImpls
 }
 
 @kotlin.Metadata

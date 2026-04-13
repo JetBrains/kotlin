@@ -23,7 +23,7 @@ class Case1() {
         operator fun invoke(x: String): String = TODO() // (4)
     }
     fun case() {
-        foo(::<!DEBUG_INFO_CALL("fqName: Case1.Companion.invoke; typeCall: operator function")!>invoke<!>)
+        foo(::invoke)
         foo(::invoke)
         <!DEBUG_INFO_CALL("fqName: Case1.foo; typeCall: function")!>foo(::invoke)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>foo(::invoke)<!>
@@ -41,8 +41,8 @@ class Case2() {
     }
 
     fun case() {
-        foo(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.String>")!>::invoke<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.String>")!>::invoke<!>)
-        foo(::<!DEBUG_INFO_CALL("fqName: Case2.Companion.invoke; typeCall: operator function")!>invoke<!>, ::<!DEBUG_INFO_CALL("fqName: Case2.Companion.invoke; typeCall: operator function")!>invoke<!>)
+        foo(<!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int) -> kotlin.String")!>::invoke<!>, <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Int) -> kotlin.String")!>::invoke<!>)
+        foo(::invoke, ::invoke)
         <!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: function")!>foo(::invoke, ::invoke)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>foo(::invoke, ::invoke)<!>
     }
@@ -72,11 +72,11 @@ class Case3() : I {
 
     fun case() {
         I.invoke(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty0<kotlin.String>")!>::x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>I.invoke(::x)<!>
+        I.invoke(::x)
         I.invoke(::x)
 
         I.invoke(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<kotlin.String>")!>::y<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>I.invoke(::y)<!>
+        I.invoke(::y)
         I.invoke(::y)
 
         I(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty0<kotlin.String>")!>::x<!>)
@@ -104,8 +104,8 @@ class Case4() {
         operator fun invoke(x: String): String = TODO() // (4)
     }
     fun case(case: Case4) {
-        case(::<!DEBUG_INFO_CALL("fqName: Case4.Companion.invoke; typeCall: operator function")!>invoke<!>)
-        case(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.CharSequence, kotlin.Unit>")!>::invoke<!>)
+        case(::invoke)
+        case(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@ParameterName(...) kotlin.CharSequence, kotlin.Unit>")!>::invoke<!>)
         <!DEBUG_INFO_CALL("fqName: Case4.invoke; typeCall: variable&invoke")!>case(::invoke)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case(::invoke)<!>
     }

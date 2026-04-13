@@ -27,7 +27,7 @@ public class d {
 // FILE: b.kt
 package test
 
-val x = d().<!MISSING_DEPENDENCY_CLASS!>getB<!>()
+val x = d().getB()
 
 // FILE: test/c.java
 package test;

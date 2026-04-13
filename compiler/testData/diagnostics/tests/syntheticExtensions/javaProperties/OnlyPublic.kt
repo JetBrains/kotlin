@@ -6,10 +6,10 @@ import JavaClass
 
 fun foo(javaClass: JavaClass) {
     javaClass.somethingPublic
-    javaClass.<!INVISIBLE_MEMBER!>somethingProtected<!>
-    javaClass.<!UNRESOLVED_REFERENCE!>somethingPrivate<!>
-    javaClass.<!INVISIBLE_MEMBER!>somethingPackage<!>
-    <!INVISIBLE_SETTER!>javaClass.<!INVISIBLE_SETTER!>somethingPublic<!><!> = 1
+    javaClass.<!INVISIBLE_REFERENCE!>somethingProtected<!>
+    javaClass.<!INVISIBLE_REFERENCE!>somethingPrivate<!>
+    javaClass.<!INVISIBLE_REFERENCE!>somethingPackage<!>
+    javaClass.<!INVISIBLE_SETTER!>somethingPublic<!> = 1
 }
 
 // FILE: JavaClass.java

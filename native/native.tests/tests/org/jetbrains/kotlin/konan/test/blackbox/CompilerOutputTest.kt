@@ -413,7 +413,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
     fun testReleaseCompilerAgainstPreReleaseFeature() {
         val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseFeature")
 
-        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
         val poisonedLibrary = compileLibrary(
             settings = testRunSettings,
@@ -442,7 +442,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
     fun testReleaseCompilerWithoutUsageOfPreReleaseFeature() {
         val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerWithoutUsageOfPreReleaseFeature")
 
-        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
         val poisonedLibrary = compileLibrary(
             settings = testRunSettings,

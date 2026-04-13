@@ -4,18 +4,18 @@
 // FILE: common.kt
 package a
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>b<!>
+class b
 
 // FILE: common2.kt
-package c.<!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>d<!>
+package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>c.d<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-package a.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!>
+package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
 
 // FILE: jvm2.kt
 package c
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>d<!>
+class d
 
 /* GENERATED_FIR_TAGS: classDeclaration */

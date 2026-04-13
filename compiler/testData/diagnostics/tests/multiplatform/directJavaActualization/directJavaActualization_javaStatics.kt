@@ -4,8 +4,8 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() {
-    fun foo()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}, JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> class Foo() {
+    fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)

@@ -4,7 +4,7 @@
 fun test() {
     val childrenBox = Box(arrayOf<Child?>(null))
     val parentsBox = childrenBox as Box<*> // Box<*> == Box<out Parent<out Parent<...>>>
-    parentsBox.refresh() // pollute an Array<Child?> property with an Array<out Parent<out Parent<...>>?> object
+    parentsBox.<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>refresh<!>() // pollute an Array<Child?> property with an Array<out Parent<out Parent<...>>?> object
     childrenBox.storage[0] // K/JVM: CCE (class [LParent; cannot be cast to class [LChild;)
 }
 

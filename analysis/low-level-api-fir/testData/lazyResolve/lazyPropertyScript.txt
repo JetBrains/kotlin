@@ -432,15 +432,15 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-            public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| { LAZY_BLOCK }
+            public final operator [ResolvedTo(STATUS)] fun getValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|): R|T| { LAZY_BLOCK }
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(STATUS)] T> lazy([ResolvedTo(STATUS)] block: R|() -> T|): R|LazyDelegate<T>| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun getAny(): Any? { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] Q> materialize(): R|Q| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(STATUS)] Q> materialize(): R|Q| { LAZY_BLOCK }
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-lazyPropertyScript.kts>, ScriptTopLevelDeclaration=true] class Test : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Test] constructor(): R|Test| {
@@ -504,4 +504,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyPropertyScript.kts
                 }
 
         }
-

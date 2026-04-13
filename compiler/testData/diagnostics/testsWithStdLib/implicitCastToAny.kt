@@ -15,7 +15,7 @@ fun test1(word: String) =
 fun test2(word: String) =
         run {
             if (word.length > 4) {
-                <!INVALID_IF_AS_EXPRESSION!>if<!> (word.startsWith("a")) longWords++
+                if (word.startsWith("a")) longWords++
             }
             else {
                 smallWords.add(word)

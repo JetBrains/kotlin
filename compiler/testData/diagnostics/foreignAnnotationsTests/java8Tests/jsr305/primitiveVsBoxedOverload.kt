@@ -43,5 +43,5 @@ interface TemplateRepository {
 interface SpringTemplateRepository : TemplateRepository, CrudRepository<String, Long>
 
 fun foo(r: SpringTemplateRepository) {
-    r.<!OVERLOAD_RESOLUTION_AMBIGUITY!>findById<!>(123).<!DEBUG_INFO_MISSING_UNRESOLVED!>get<!>(0)
+    r.findById(123).get(0)
 }

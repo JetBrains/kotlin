@@ -20,10 +20,6 @@ object KlibConfigurationKeys {
     @JvmField
     val KLIB_RELATIVE_PATH_BASES = CompilerConfigurationKey.create<List<String>>("KLIB_RELATIVE_PATH_BASES")
 
-    // Normalize absolute paths in klib (replace file separator with '/').
-    @JvmField
-    val KLIB_NORMALIZE_ABSOLUTE_PATH = CompilerConfigurationKey.create<Boolean>("KLIB_NORMALIZE_ABSOLUTE_PATH")
-
     // Turn on the checks on uniqueness of signatures.
     @JvmField
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS = CompilerConfigurationKey.create<Boolean>("PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS")
@@ -51,10 +47,6 @@ object KlibConfigurationKeys {
 var CompilerConfiguration.klibRelativePathBases: List<String>
     get() = getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES)
     set(value) { put(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES, value) }
-
-var CompilerConfiguration.klibNormalizeAbsolutePath: Boolean
-    get() = getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH)
-    set(value) { put(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, value) }
 
 var CompilerConfiguration.produceKlibSignaturesClashChecks: Boolean
     get() = getBoolean(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS)

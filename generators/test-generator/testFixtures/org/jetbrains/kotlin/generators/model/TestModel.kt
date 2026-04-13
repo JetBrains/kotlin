@@ -45,6 +45,7 @@ abstract class TestClassModel : TestEntityModel() {
     abstract val isEmpty: Boolean
     abstract val dataPathRoot: String?
     abstract val annotations: Collection<AnnotationModel>
+    abstract val testKClass: Class<*>
 
     val imports: Set<Class<*>>
         get() {

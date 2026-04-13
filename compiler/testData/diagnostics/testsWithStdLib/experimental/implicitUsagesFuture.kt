@@ -16,10 +16,10 @@ abstract class User {
     fun withSome(some: <!OPT_IN_USAGE_ERROR!>Some<!>? = null) {}
 
     fun use() {
-        val something = <!OPT_IN_USAGE_FUTURE_ERROR!>createSome<!>()
-        val somethingOther: <!OPT_IN_USAGE_ERROR!>Some<!> = <!OPT_IN_USAGE_FUTURE_ERROR!>createSome<!>()
-        null.<!OPT_IN_USAGE_FUTURE_ERROR!>onSome<!>()
-        <!OPT_IN_USAGE_FUTURE_ERROR!>withSome<!>()
+        val something = <!OPT_IN_USAGE_ERROR!>createSome<!>()
+        val somethingOther: <!OPT_IN_USAGE_ERROR!>Some<!> = <!OPT_IN_USAGE_ERROR!>createSome<!>()
+        null.<!OPT_IN_USAGE_ERROR!>onSome<!>()
+        <!OPT_IN_USAGE_ERROR!>withSome<!>()
     }
 }
 
@@ -33,7 +33,7 @@ fun useDataClass(d: DataClass) {
 
 typealias My = <!OPT_IN_USAGE_ERROR!>Some<!>
 
-fun my(my: <!OPT_IN_USAGE_FUTURE_ERROR!>My<!>) {}
+fun my(my: <!OPT_IN_USAGE_ERROR!>My<!>) {}
 
 fun your(my: <!OPT_IN_USAGE_ERROR!>Some<!>) {}
 
@@ -72,14 +72,14 @@ typealias AList = ArrayList<I>
 typealias YourList = ArrayList<String>
 
 fun main() {
-    val x = <!OPT_IN_USAGE_FUTURE_ERROR!>listOf<!>(A(), B())
-    val y = <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>()
-    val b = <!OPT_IN_USAGE_FUTURE_ERROR!>AList<!>()
-    val z = <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>()
-    <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>().add("")
+    val x = <!OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())
+    val y = MyList()
+    val b = <!OPT_IN_USAGE_ERROR!>AList<!>()
+    val z = <!OPT_IN_USAGE_ERROR!>YourList<!>()
+    <!OPT_IN_USAGE_ERROR!>YourList<!>().add("")
 }
 
-fun my2(my: <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>) {}
+fun my2(my: MyList) {}
 
 fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
@@ -93,7 +93,7 @@ object O {
     operator fun provideDelegate(x: Any?, y: Any?): C = C()
 }
 
-val x: String by <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_FUTURE_ERROR!>O<!>
+val x: String by <!OPT_IN_USAGE_ERROR!>O<!>
 
 @Marker
 class OperatorContainer : Comparable<OperatorContainer> {
@@ -126,10 +126,10 @@ operator fun String.minus(s: String) = OperatorContainer()
 operator fun String.invoke() = OperatorContainer()
 
 fun operatorContainerUsage(s: String, a: AnotherContainer) {
-    val res1 = s <!OPT_IN_USAGE_FUTURE_ERROR!>-<!> s
-    val res2 = <!OPT_IN_USAGE_FUTURE_ERROR!>s<!>()
-    val res3 = <!OPT_IN_USAGE_FUTURE_ERROR!>res1<!> <!OPT_IN_USAGE_FUTURE_ERROR!>><!> <!OPT_IN_USAGE_FUTURE_ERROR!>res2<!>
-    for (c in <!OPT_IN_USAGE_FUTURE_ERROR!>a<!>) {}
+    val res1 = s <!OPT_IN_USAGE_ERROR!>-<!> s
+    val res2 = <!OPT_IN_USAGE_ERROR!>s<!>()
+    val res3 = <!OPT_IN_USAGE_ERROR!>res1<!> <!OPT_IN_USAGE_ERROR!>><!> <!OPT_IN_USAGE_ERROR!>res2<!>
+    for (c in <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>a<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetProperty,

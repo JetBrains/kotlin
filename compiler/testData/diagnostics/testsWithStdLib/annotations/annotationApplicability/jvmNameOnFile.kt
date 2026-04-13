@@ -3,7 +3,7 @@
 
 // FILE: illegal.kt
 
-@file:JvmMultifileClass @file:JvmName("illegal.kt")
+@file:JvmMultifileClass <!ILLEGAL_JVM_NAME!>@file:JvmName("illegal.kt")<!>
 package p
 
 val x = 0

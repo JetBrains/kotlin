@@ -78,11 +78,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testRoot, "compiler/testData") {
-            testClass<AbstractFirLoadK1CompiledJvmKotlinTest> {
-                model("loadJava/compiledKotlin", extension = "kt")
-                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
-            }
-
             testClass<AbstractFirLoadK2CompiledJvmKotlinTest> {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")

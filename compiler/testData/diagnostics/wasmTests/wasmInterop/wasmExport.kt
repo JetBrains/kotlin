@@ -41,7 +41,7 @@ fun foo7(
 <!WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE!>p4: Boolean?<!>
 ): Unit {
     p0.toString()
-    p1.toString()
+    p1.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
     p2.toString()
     p3.toString()
     p4.toString()
@@ -71,7 +71,7 @@ fun fooUnsigned1(): UInt = 42u
 @WasmExport()
 fun fooUnsigned2(): UByte = 42u
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
+<!EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
 @WasmExport()
 fun fooWithContext() {
-}
+}<!>

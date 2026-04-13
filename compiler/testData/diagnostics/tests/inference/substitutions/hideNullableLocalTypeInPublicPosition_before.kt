@@ -5,7 +5,7 @@ interface I {
     fun foo(): String
 }
 
-<!APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE!>fun bar(condition: Boolean)<!> /*: I? */ =
+fun bar(condition: Boolean) /*: I? */ =
     if (condition)
         object : I {
             override fun foo() = "should check for null first"
@@ -15,8 +15,8 @@ interface I {
 
 fun main() {
     bar(false).<!UNRESOLVED_REFERENCE!>baz<!>()
-    bar(false).foo()
-    bar(false)<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
+    bar(false)<!UNSAFE_CALL!>.<!>foo()
+    bar(false)?.foo()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,

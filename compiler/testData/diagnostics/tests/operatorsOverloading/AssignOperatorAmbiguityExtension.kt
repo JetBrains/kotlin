@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // ISSUE: KT-62138
 class HashMap<K, V>(
     private val defaultValue: V

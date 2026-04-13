@@ -13,7 +13,7 @@ fun test() {
 
 fun lambda() {
     val funLit = lambda@ fun String.(): String {
-        return <!NO_THIS!>this<!LABEL_RESOLVE_WILL_CHANGE!>@lambda<!><!>
+        return this@lambda
     }
 }
 

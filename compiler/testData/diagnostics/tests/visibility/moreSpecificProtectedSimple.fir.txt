@@ -1,4 +1,4 @@
-FILE: moreSpecificProtectedSimple.fir.kt
+FILE: moreSpecificProtectedSimple.kt
     public abstract interface Base : R|kotlin/Any| {
     }
     public abstract interface Derived : R|Base| {

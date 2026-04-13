@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 annotation class TestAnn(val x: Int)
 
 class TestClass @TestAnn(1) constructor() {

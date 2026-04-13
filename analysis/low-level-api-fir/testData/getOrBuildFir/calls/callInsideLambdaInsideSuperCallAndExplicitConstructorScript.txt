@@ -28,4 +28,4 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallAndExplicitConstructo
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

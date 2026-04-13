@@ -4,25 +4,25 @@
 fun normal() {
     val a = arrayOf('a', 'b', 'c')
     val b = arrayOf('a', 'b', 'c')
-    a == b
+    a <!ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS!>==<!> b
 }
 
 fun chars() {
     val a = charArrayOf('a', 'b', 'c')
     val b = charArrayOf('a', 'b', 'c')
-    a == b
+    a <!ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS!>==<!> b
 }
 
 fun normalAndChar() {
     val a = arrayOf('a', 'b', 'c')
     val b = charArrayOf('a', 'b', 'c')
-    <!EQUALITY_NOT_APPLICABLE!>a == b<!>
+    a == b
 }
 
 fun charAndNormal() {
     val a = arrayOf('a', 'b', 'c')
     val b = charArrayOf('a', 'b', 'c')
-    <!EQUALITY_NOT_APPLICABLE!>a == b<!>
+    a == b
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, localProperty, propertyDeclaration */

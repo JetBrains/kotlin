@@ -4,11 +4,11 @@ fun test(loop: Boolean) {
         try {
             do {
                 run<Unit> {
-                    val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!>: String
+                    val a: String
                     if (loop) {
-                        <!UNUSED_VALUE!>a =<!> ""
+                        a = ""
                     } else {
-                        <!UNUSED_VALUE!>a =<!> ""
+                        a = ""
                     }
                 }
             } while (loop)

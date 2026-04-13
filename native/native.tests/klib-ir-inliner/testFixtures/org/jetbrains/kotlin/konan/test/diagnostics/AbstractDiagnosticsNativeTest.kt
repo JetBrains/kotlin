@@ -24,8 +24,9 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.configuration.DEFAULT_UNUSED_DIAGNOSTICS
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
@@ -61,6 +62,7 @@ abstract class AbstractDiagnosticsNativeTestBase(
         }
         defaultDirectives {
             LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
@@ -72,10 +74,6 @@ abstract class AbstractDiagnosticsNativeTestBase(
 
         baseFirNativeDiagnosticTestConfiguration()
         enableLazyResolvePhaseChecking()
-
-        forTestsMatching("compiler/testData/diagnostics/*") {
-            configurationForClassicAndFirTestsAlongside()
-        }
 
         defaultDirectives {
             LANGUAGE + "+EnableDfaWarningsInK2"

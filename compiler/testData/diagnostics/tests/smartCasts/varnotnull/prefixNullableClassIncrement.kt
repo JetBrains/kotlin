@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class MyClass
 
 // Correct at compile time but wrong at run-time

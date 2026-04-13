@@ -3,11 +3,11 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>(name: String, age: Int) {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo(name: String, age: Int) {
     constructor(name: String)
     fun foo(a: Int, b: Int): Int
     fun foo(a: Double, b: Double): Double
-    fun bar(a: Int, b: Int): Int
+    fun <!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>bar<!>(a: Int, b: Int): Int
     fun bar(a: Double, b: Double): Double
 }
 

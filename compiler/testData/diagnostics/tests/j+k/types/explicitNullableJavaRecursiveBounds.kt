@@ -19,12 +19,12 @@ public class B {
 // FILE: main.kt
 fun oneHopNullable() {
     val x = A.id<String?>("abc")
-    x.length
+    x<!UNSAFE_CALL!>.<!>length
 }
 
 fun twoHopNullable() {
     val x = B.id<String?, String?>("abc")
-    x.length
+    x<!UNSAFE_CALL!>.<!>length
 }
 
 fun twoHopNonNullBaseline() {

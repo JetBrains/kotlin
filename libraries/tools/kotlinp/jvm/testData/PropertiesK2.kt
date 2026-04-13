@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR
 
 annotation class Ann
 

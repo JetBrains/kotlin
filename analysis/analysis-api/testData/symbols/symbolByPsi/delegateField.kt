@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // WITH_STDLIB
 
 class MyColor(val x: Int, val y: Int, val z: Int)

@@ -1,0 +1,4 @@
+example.SpellBookProcessor
+example.Jdk9CodeGeneratingProcessor
+example.Jdk9RuntimeProcessor
+example.Jdk21RuntimeProcessor

@@ -24,7 +24,7 @@ public class ContentAndResolutionScopesProvidersTestGenerated extends AbstractCo
 
   @Test
   public void testAllFilesPresentInContentAndResolutionScopesProviders() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders"), Pattern.compile("^([^.]+)\\.kt$"), null, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contentAndResolutionScopesProviders"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, false);
   }
 
   @Test

@@ -24,14 +24,14 @@ fun bar(aList: List<A>) {
     }
 
     aList.foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>a: String<!>, b) ->
-        a checkType { _<Int>() }
+        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         b checkType { _<String>() }
     }
 
-    aList.foo { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(a, b): B<!> ->
+    aList.foo <!ARGUMENT_TYPE_MISMATCH!>{ (a, b): B ->
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
-    }
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

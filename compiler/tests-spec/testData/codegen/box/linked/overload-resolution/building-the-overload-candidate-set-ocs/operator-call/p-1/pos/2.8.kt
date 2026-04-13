@@ -1,6 +1,6 @@
 // LANGUAGE: -SafeCallsAreAlwaysNullable
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 // ^ KT-71813
 
 /*

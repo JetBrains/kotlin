@@ -5,11 +5,11 @@ interface Iterator<out T> {
 
  fun <R> map(transform: (element: T) -> R) : Iterator<R> =
     object : Iterator<R> {
-      override fun next() : R = transform(<!NO_THIS!>this@map<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>next<!>())
+      override fun next() : R = transform(this<!UNRESOLVED_LABEL!>@map<!>.next())
 
       override val hasNext : Boolean
         // There's no 'this' associated with the map() function, only this of the Iterator class
-        get() = <!NO_THIS!>this@map<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hasNext<!>
+        get() = this<!UNRESOLVED_LABEL!>@map<!>.hasNext
     }
 }
 

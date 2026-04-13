@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 import kotlin.reflect.KClass
 
 abstract class Base<T : Any>(val klass: KClass<out T>)

@@ -1,22 +1,21 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.js
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.backend.js.LoweredIr
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
-import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.ir.backend.js.compileIr
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 
@@ -54,11 +53,19 @@ class Ir2JsTransformer private constructor(
 
     private val performanceManager = module.compilerConfiguration.perfManager
 
-    private fun lowerIr(): LoweredIr {
-        return compile(
-            mainCallArguments,
-            module,
-            IrFactoryImplForJsIC(WholeWorldStageController()),
+    private fun lowerIr(loadedIr: WebLoadedIrPipelineArtifact): LoweredIr {
+        val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, deserializer) =
+            loadedIr.moduleInfo
+        return compileIr(
+            moduleFragment = moduleFragment,
+            mainModule = module.mainModule,
+            mainCallArguments = mainCallArguments,
+            configuration = module.compilerConfiguration,
+            moduleDependencies = moduleDependencies,
+            irBuiltIns = irBuiltIns,
+            symbolTable = symbolTable,
+            irLinker = deserializer,
+            exportedDeclarations = emptySet(),
             keep = keep,
             dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                 dceRuntimeDiagnostic,
@@ -73,8 +80,8 @@ class Ir2JsTransformer private constructor(
         )
     }
 
-    private fun makeJsCodeGenerator(): JsCodeGenerator {
-        val ir = lowerIr()
+    private fun makeJsCodeGenerator(loadedIr: WebLoadedIrPipelineArtifact): JsCodeGenerator {
+        val ir = lowerIr(loadedIr)
         val transformer = IrModuleToJsTransformer(ir.context, ir.moduleFragmentToUniqueName, mainCallArguments != null)
 
         val mode = TranslationMode.fromFlags(dce, granularity, minimizedMemberNames)
@@ -83,8 +90,8 @@ class Ir2JsTransformer private constructor(
             .makeJsCodeGenerator(ir.allModules, mode)
     }
 
-    fun compileAndTransformIrNew(): CompilationOutputsBuilt {
-        return makeJsCodeGenerator()
+    fun compileAndTransformIrNew(loadedIr: WebLoadedIrPipelineArtifact): CompilationOutputsBuilt {
+        return makeJsCodeGenerator(loadedIr)
             .generateJsCode(relativeRequirePath = true, outJsProgram = false)
             .also {
                 performanceManager?.notifyPhaseFinished(PhaseType.Backend)

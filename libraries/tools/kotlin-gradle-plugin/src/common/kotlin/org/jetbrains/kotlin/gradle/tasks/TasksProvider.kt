@@ -26,17 +26,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.utils.named
 
-/**
- * Registers the task with [name] and [type] and initialization script [body]
- */
-@JvmName("registerTaskOld")
-@Deprecated(
-    "please use Project.registerTask. Scheduled for removal in Kotlin 2.3.",
-    ReplaceWith("project.registerTask(name, type, emptyList(), body)"),
-    level = DeprecationLevel.ERROR,
-)
-internal fun <T : Task> registerTask(project: Project, name: String, type: Class<T>, body: (T) -> (Unit)): TaskProvider<T> =
-    project.registerTask(name, type, emptyList(), body)
 
 internal inline fun <reified T : Task> Project.registerTask(
     name: String,

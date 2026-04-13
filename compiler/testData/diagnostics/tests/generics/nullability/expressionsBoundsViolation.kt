@@ -7,14 +7,14 @@ fun <E : CharSequence> foo1(x: E) {}
 fun <E : CharSequence> E.foo2() {}
 
 fun <F : String?> bar(x: F) {
-    A(<!TYPE_MISMATCH!>x<!>)
-    A<<!UPPER_BOUND_VIOLATED!>F<!>>(x)
+    <!CANNOT_INFER_PARAMETER_TYPE!>A<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    <!INAPPLICABLE_CANDIDATE!>A<!><<!UPPER_BOUND_VIOLATED!>F<!>>(x)
 
-    foo1(<!TYPE_MISMATCH!>x<!>)
-    foo1<<!UPPER_BOUND_VIOLATED!>F<!>>(x)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo1<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    <!INAPPLICABLE_CANDIDATE!>foo1<!><<!UPPER_BOUND_VIOLATED!>F<!>>(x)
 
     x<!UNSAFE_CALL!>.<!>foo2()
-    x.foo2<<!UPPER_BOUND_VIOLATED!>F<!>>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo2<!><F>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, nullableType,

@@ -1,5 +1,0 @@
-package
-
-public fun a(): kotlin.Unit
-public fun b(): kotlin.Unit
-public fun </*0*/ T : kotlin.Number> materializeNumber(): T

@@ -8,7 +8,7 @@ class Some() {
     val y: Int = error()
 
     init {
-        x = 1;
+        <!UNREACHABLE_CODE!>x = 1<!>;
     }
 }
 

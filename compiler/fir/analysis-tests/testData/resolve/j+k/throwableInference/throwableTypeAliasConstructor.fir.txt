@@ -1,0 +1,45 @@
+FILE: test.kt
+    public final typealias AliasedRunner<W, F> = R|JavaRunner<W, F>|
+    public final typealias SimpleRunner<U> = R|JavaRunner<U, {kotlin/RuntimeException=} java/lang/RuntimeException>|
+    public final fun test(): R|kotlin/Unit| {
+        lval r1: R|JavaRunner<kotlin/String!, ERROR CLASS: Cannot infer argument for type parameter E>| = R|/JavaRunner.JavaRunner<CS errors: /JavaRunner.JavaRunner>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(<L> = SAM(JavaRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r1|
+        lval r2: R|{AliasedRunner<kotlin/String!, ERROR CLASS: Cannot infer argument for type parameter F>=} JavaRunner<kotlin/String!, ERROR CLASS: Cannot infer argument for type parameter F>| = R|/JavaRunner.JavaRunner<CS errors: /JavaRunner.JavaRunner>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter F>>(<L> = SAM(AliasedRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r2|
+        lval r3: R|{SimpleRunner<kotlin/String!>=} JavaRunner<kotlin/String!, {kotlin/RuntimeException=} java/lang/RuntimeException>| = R|/JavaRunner.JavaRunner|<R|kotlin/String!|>(<L> = SAM(SimpleRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r3|
+        lval r4: R|JavaRunner<kotlin/String, {kotlin/RuntimeException=} java/lang/RuntimeException>| = R|/JavaRunner.JavaRunner|<R|kotlin/String!|, R|{kotlin/RuntimeException=} java/lang/RuntimeException!|>(<L> = SAM(JavaRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r4|
+        lval r5: R|{AliasedRunner<kotlin/String, {kotlin/RuntimeException=} java/lang/RuntimeException>=} JavaRunner<kotlin/String, {kotlin/RuntimeException=} java/lang/RuntimeException>| = R|/JavaRunner.JavaRunner|<R|kotlin/String|, R|{kotlin/RuntimeException=} java/lang/RuntimeException|>(<L> = SAM(AliasedRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r5|
+        lval r6: R|{SimpleRunner<kotlin/String>=} JavaRunner<kotlin/String, {kotlin/RuntimeException=} java/lang/RuntimeException>| = R|/JavaRunner.JavaRunner|<R|kotlin/String|>(<L> = SAM(SimpleRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r6|
+        lval r7: R|JavaRunner<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter E>| = R|/JavaRunner.JavaRunner<CS errors: /JavaRunner.JavaRunner>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(<L> = SAM(JavaRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r7|
+        lval r8: R|{AliasedRunner<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter F>=} JavaRunner<kotlin/String, ERROR CLASS: Cannot infer argument for type parameter F>| = R|/JavaRunner.JavaRunner<CS errors: /JavaRunner.JavaRunner>#|<R|kotlin/String|, <ERROR TYPE REF: Cannot infer argument for type parameter F>>(<L> = SAM(AliasedRunner@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        R|<local>/r8|
+    }

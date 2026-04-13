@@ -5,12 +5,12 @@ fun foo(arg: Int?) {
     if (x == null) return
     run {
         // Stable because `run` is in-place
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+        x.hashCode()
         x = null
     }
     if (x != null) x = 42
     // Unsafe because of lambda
-    <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+    x<!UNSAFE_CALL!>.<!>hashCode()
 }
 
 /* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,

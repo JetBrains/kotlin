@@ -8,7 +8,7 @@ package kotlin
 fun foo() {}
 
 fun test() {
-    <!DEPRECATION("foo(): Unit; foo test")!>foo<!>()
+    <!DEPRECATION!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

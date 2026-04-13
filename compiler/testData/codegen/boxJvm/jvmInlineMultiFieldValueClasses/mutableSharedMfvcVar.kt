@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 // WITH_STDLIB
-// FIR_IDENTICAL
 
 @JvmInline
 value class DPoint(val x: Double, val y: Double)

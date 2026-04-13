@@ -17,7 +17,6 @@
           <option value=":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:generateTests" />
           <option value=":analysis:analysis-api-standalone:generateTests" />
           <option value=":analysis:analysis-api-fir:generateTests" />
-          <option value=":analysis:analysis-api-fe10:generateTests" />
           <option value=":compiler:psi:psi-impl:generateTests" />
         </list>
       </option>

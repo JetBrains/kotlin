@@ -57,8 +57,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x in x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x !in x<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_ERROR!>x is String<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_ERROR!>x !is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x < x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x > x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_ERROR!>x <= x<!> -> {}
@@ -72,8 +72,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         (x in x) -> {}
         (x !in x) -> {}
-        (x is String) -> {}
-        (x !is String) -> {}
+        (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) -> {}
+        (<!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!>) -> {}
         (x < x) -> {}
         (x > x) -> {}
         (x <= x) -> {}
@@ -105,7 +105,7 @@ fun testWithSubject_bad_3(a: Array<Any>) {
     }
     // also bad
     when (a) {
-        (<!DEBUG_INFO_MISSING_UNRESOLVED!><!SYNTAX!><!>*<!>a<!SYNTAX!>)<!><!SYNTAX!><!> <!SYNTAX!><!>-> {}
+        (<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>*<!>a<!SYNTAX!>)<!><!SYNTAX!><!> <!SYNTAX!><!>-> {}
     }
 }
 
@@ -161,8 +161,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x in x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !in x<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x is String<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_ERROR!>x !is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_ERROR, IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x < x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x > x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_ERROR!>x <= x<!> -> {}
@@ -176,8 +176,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in (x in x) -> {}
         in (x !in x) -> {}
-        in (x is String) -> {}
-        in (x !is String) -> {}
+        in (<!IMPOSSIBLE_IS_CHECK_ERROR!>x is String<!>) -> {}
+        in (<!IMPOSSIBLE_IS_CHECK_ERROR!>x !is String<!>) -> {}
         in (x < x) -> {}
         in (x > x) -> {}
         in (x <= x) -> {}
@@ -209,7 +209,7 @@ fun testWithRange_bad_3(a: Array<Any>) {
     }
     // also bad
     when (a) {
-        in (<!DEBUG_INFO_MISSING_UNRESOLVED!><!SYNTAX!><!>*<!>a<!SYNTAX!>)<!><!SYNTAX!><!> <!SYNTAX!><!>-> {}
+        in (<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>*<!>a<!SYNTAX!>)<!><!SYNTAX!><!> <!SYNTAX!><!>-> {}
     }
 }
 

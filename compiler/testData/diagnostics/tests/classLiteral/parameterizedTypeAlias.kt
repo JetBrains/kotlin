@@ -27,36 +27,36 @@ class UpperBoundOutIn<out A, in T : A>
 typealias UpperBoundOutInTypealias<A, T> = UpperBoundOutIn<A, T>
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Mixed<!>::class
+    Mixed::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Mixed<String>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Mixed<in String>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Mixed<out String>::class<!>
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Mixed2<!>::class
+    Mixed2::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Mixed2<String>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Mixed2<in String>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Mixed2<out String>::class<!>
 
     UpperBound::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<Int, <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<in Int, out <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<out Int, out <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<in Int, in <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<Int, Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<in Int, out Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<out Int, out Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBound<in Int, in Long>::class<!>
 
     UpperBoundTypeAlias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<Int, <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<in Int, out <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<out Int, in <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<out Int, out <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<Int, Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<in Int, out Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<out Int, in Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAlias<out Int, out Long>::class<!>
 
 
     UpperBoundOutInTypealias::class
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundOutInTypealias<Int, <!UPPER_BOUND_VIOLATED!>Long<!>>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!><!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION, CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>UpperBoundOutInTypealias<in Int, out <!UPPER_BOUND_VIOLATED!>Long<!>><!>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!><!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>UpperBoundOutInTypealias<in Int, in <!UPPER_BOUND_VIOLATED!>Long<!>><!>::class<!>
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!><!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>UpperBoundOutInTypealias<out Int, out <!UPPER_BOUND_VIOLATED!>Long<!>><!>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundOutInTypealias<Int, Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundOutInTypealias<in Int, out Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundOutInTypealias<in Int, in Long>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundOutInTypealias<out Int, out Long>::class<!>
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>UpperBoundTypeAliasUnused<!>::class
+    <!UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING!>UpperBoundTypeAliasUnused<!>::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAliasUnused<String, String>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>UpperBoundTypeAliasUnused<in String, out String>::class<!>
 
@@ -66,17 +66,17 @@ fun test() {
     InvAlias::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>InvAlias<String>::class<!>
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnused<!>::class
+    InvUnused::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>InvUnused<String>::class<!>
 
     Some::class
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>SomeAlias<!>::class
-    SomeAlias<String>::class
+    SomeAlias::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>SomeAlias<String>::class<!>
 
     MyPair::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>MyPair<Int, Int>::class<!>
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>PairAliasSingle<!>::class
+    PairAliasSingle::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>PairAliasSingle<Int>::class<!>
 
     PairAliasReversed::class
@@ -85,9 +85,9 @@ fun test() {
     PairAliasUsual::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>PairAliasUsual<Int, Int>::class<!>
 
-    <!CLASS_LITERAL_LHS_NOT_A_CLASS!>PairAliasSpecific::class<!>
+    PairAliasSpecific::class
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>PairAliasTwoWithUnused<!>::class
+    PairAliasTwoWithUnused::class
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>PairAliasTwoWithUnused<Int, Int>::class<!>
 
     Array::class
@@ -95,14 +95,14 @@ fun test() {
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<*>::class<!>
 
     SimpleArrayAlias::class
-    SimpleArrayAlias<Int>::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>SimpleArrayAlias<Int>::class<!>
     <!CLASS_LITERAL_LHS_NOT_A_CLASS!>SimpleArrayAlias<*>::class<!>
 
     SpecificArrayAlias::class
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>UnusedArrayAlias<!>::class
-    UnusedArrayAlias<Int>::class
-    UnusedArrayAlias<*>::class
+    UnusedArrayAlias::class
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>UnusedArrayAlias<Int>::class<!>
+    <!CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING!>UnusedArrayAlias<*>::class<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, in, nullableType, out,

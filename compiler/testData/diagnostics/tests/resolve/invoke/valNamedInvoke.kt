@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 interface A
 
 fun foo(invoke: A.()->Unit, a: A) {

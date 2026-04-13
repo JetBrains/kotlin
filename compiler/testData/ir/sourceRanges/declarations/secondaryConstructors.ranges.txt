@@ -6,9 +6,9 @@
         @1:4..27 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @4:4..32 CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.C1
       @4:16..22 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
-      @3:4..4:32 BLOCK_BODY
+      @4:4..32 BLOCK_BODY
         @4:25..32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @3:4..4:32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        @4:4..32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @9:4..36 CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.C1
       @9:16..25 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.String
       @9:4..36 BLOCK_BODY
@@ -20,9 +20,9 @@
           @11:14..31 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
             @11:14..31 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @12:16..22 VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any
-      @11:4..12:32 BLOCK_BODY
+      @12:4..32 BLOCK_BODY
         @12:25..32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        @11:4..12:32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        @12:4..32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @0:0..13:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @0:0..13:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       @0:0..13:1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -44,7 +44,7 @@
       @19:16..30 VALUE_PARAMETER kind:Regular name:p index:0 type:kotlin.String
         @19:28..30 EXPRESSION_BODY
           @19:28..30 CONST String type=kotlin.String value=""
-      @18:4..19:40 BLOCK_BODY
+      @19:4..40 BLOCK_BODY
         @19:34..40 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C2'
     @15:0..20:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       @15:0..20:1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

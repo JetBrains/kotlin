@@ -12,8 +12,8 @@ fun <T : Number> numberBoxHandler(box: Box<T>, t: T) {}
 fun <T : Number> outNumberBoxHandler(box: Box<out T>, t: T) {}
 
 fun main() {
-    numberBoxHandler(<!TYPE_MISMATCH!>inNumberBox<!>, <!TYPE_MISMATCH!>number<!>)
-    outNumberBoxHandler(<!TYPE_MISMATCH!>inNumberBox<!>, <!TYPE_MISMATCH!>number<!>)
+    numberBoxHandler(<!ARGUMENT_TYPE_MISMATCH!>inNumberBox<!>, number)
+    outNumberBoxHandler(<!ARGUMENT_TYPE_MISMATCH!>inNumberBox<!>, number)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, nullableType, outProjection,

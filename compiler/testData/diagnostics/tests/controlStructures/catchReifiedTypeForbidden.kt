@@ -5,7 +5,7 @@
 inline fun <reified E : Exception, R> tryCatch(lazy: () -> R, failure: (E) -> R): R =
     try {
         lazy()
-    } catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE!>e: E<!>) {
+    } catch (<!UNSUPPORTED_FEATURE!>e: E<!>) {
         failure(e)
     }
 

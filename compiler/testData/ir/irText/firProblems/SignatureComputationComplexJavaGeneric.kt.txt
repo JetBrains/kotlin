@@ -44,4 +44,3 @@ class Test_2<TT : Any?> : JavaClass2<TT, Inv<TT>> {
 fun <R : Any?> test_3(jb: B<R>, r: R) {
   jb.output(x = r)
 }
-

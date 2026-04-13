@@ -35,46 +35,46 @@ fun test() {
     // All the following usages of X must resolve to the local class because it's used
     // as receiver.
     X.<!UNRESOLVED_REFERENCE!>get<!>("")
-    X[""]
+    X<!NO_GET_METHOD!>[""]<!>
 
     X.<!UNRESOLVED_REFERENCE!>set<!>("", "")
-    X[""] = ""
-    X[""] <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> ""
+    X<!NO_SET_METHOD!>[""]<!> = ""
+    X<!NO_GET_METHOD!>[""]<!> += ""
 
     X.<!UNRESOLVED_REFERENCE!>unaryPlus<!>()
-    +X
+    <!UNRESOLVED_REFERENCE!>+<!>X
 
     X.<!UNRESOLVED_REFERENCE!>not<!>()
-    !X
+    <!UNRESOLVED_REFERENCE!>!<!>X
 
     X.<!UNRESOLVED_REFERENCE!>plus<!>("")
-    X + ""
+    X <!UNRESOLVED_REFERENCE!>+<!> ""
 
     X.<!UNRESOLVED_REFERENCE!>rangeTo<!>("")
-    X..""
+    X<!UNRESOLVED_REFERENCE!>..<!>""
 
     X.<!UNRESOLVED_REFERENCE!>contains<!>("")
-    "" in X
+    "" <!UNRESOLVED_REFERENCE!>in<!> X
 
     X.<!UNRESOLVED_REFERENCE!>invoke<!>()
     X()
 
     X.<!UNRESOLVED_REFERENCE!>plusAssign<!>("")
-    X += ""
-    <!NONE_APPLICABLE!>X<!NO_GET_METHOD!>[X]<!><!> <!UNRESOLVED_REFERENCE!>+=<!> ""
+    X <!UNRESOLVED_REFERENCE!>+=<!> ""
+    X<!NO_GET_METHOD!>[X]<!> += ""
 
     // Must resolve to property
     Y = ""
     Y += ""
 
     X.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
-    X > ""
+    X <!UNRESOLVED_REFERENCE!>><!> ""
 
     X.<!UNRESOLVED_REFERENCE!>foo<!>("")
-    X foo ""
+    X <!UNRESOLVED_REFERENCE!>foo<!> ""
 
     X.<!UNRESOLVED_REFERENCE!>interator<!>()
-    for (x in X) {}
+    for (x in <!ITERATOR_MISSING!>X<!>) {}
 
     // It seems it's okay to resolve to outer X because we assign `X` to delegate field where it's not used as receiver
     val delegated by X

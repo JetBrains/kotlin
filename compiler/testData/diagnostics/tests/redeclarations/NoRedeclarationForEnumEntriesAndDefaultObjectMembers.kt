@@ -7,7 +7,7 @@ enum class E {
     companion object {
         class FIRST
 
-        val SECOND = <!DEBUG_INFO_LEAKING_THIS!>this<!>
+        val SECOND = this
     }
 }
 

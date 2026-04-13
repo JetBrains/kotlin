@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER

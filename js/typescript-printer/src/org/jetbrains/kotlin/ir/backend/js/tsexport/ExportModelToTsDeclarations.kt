@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
@@ -268,17 +269,20 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     private fun ExportedObject.generateTypeScriptString(indent: String, prefix: String): String {
         val shouldGenerateObjectWithGetInstance = isEsModules && !isExternal && isTopLevel
         val constructorTypeReference =
-            if (shouldGenerateObjectWithGetInstance) MetadataConstructor else "$name.$Metadata.$MetadataConstructor"
+            if (shouldGenerateObjectWithGetInstance)
+                FqName(MetadataConstructor)
+            else
+                FqName.fromSegments(listOf(name, Metadata, MetadataConstructor))
 
         val substitutionOfObjectTypeToItsShapeClass = mapOf<ExportedType, ExportedType>(
             ExportedType.TypeOf(
                 ExportedType.ClassType(
-                    name,
+                    FqName(name),
                     emptyList(),
                     classId = originalClassId,
                 )
             )
-                    to ExportedType.ClassType(MetadataConstructor, emptyList())
+                    to ExportedType.ClassType(FqName(MetadataConstructor), emptyList())
         )
 
         val classContainingShape = ExportedRegularClass(
@@ -325,7 +329,9 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                         name = ExportedMemberName.Identifier(getInstance),
                         type = ExportedType.Function(
                             emptyList(),
-                            ExportedType.TypeOf(ExportedType.ClassType("$name.$Metadata.$MetadataType", emptyList()))
+                            ExportedType.TypeOf(
+                                ExportedType.ClassType(FqName.fromSegments(listOf(name, Metadata, MetadataType)), emptyList())
+                            )
                         ),
                         isMember = true,
                         mutable = false,
@@ -387,7 +393,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 type = ExportedType.ConstructorType(
                     typeParameters,
                     ExportedType.ClassType(
-                        name,
+                        FqName(name),
                         typeParameters.map(ExportedType::TypeParameterRef),
                         originalClassId,
                     )
@@ -426,7 +432,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             val originallyDefinedSuperClass = implicitlyExportedClassesString.takeIf { it.isNotEmpty() }?.let { "/* $it */ " }.orEmpty()
             val transitivelyDefinedSuperClass = when (val parentType = single { it !is ExportedType.ImplicitlyExportedType }) {
                 is ExportedType.ClassType -> ExportedType.ClassType(
-                    "${parentType.name}.$Metadata.$MetadataConstructor",
+                    FqName.fromSegments(listOf(parentType.name.asString(), Metadata, MetadataConstructor)),
                     parentType.arguments,
                     parentType.classId,
                 )
@@ -487,7 +493,25 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             "abstract new " + renderTypeParameters(typeParameters, includeVariance = false) + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
 
         is ExportedType.ClassType -> {
-            name + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>" else ""
+            val className = buildString {
+                name.pathSegments().forEachIndexed { index, segment ->
+                    segment.asString().let {
+                        when {
+                            it.isValidES5Identifier() -> {
+                                if (index > 0) append(".")
+                                append(it)
+                            }
+                            index > 0 -> append("[", it.asEscapedIdentifier(), "]")
+                            else -> append(it.asEscapedIdentifier())
+                        }
+                    }
+                }
+            }
+            val typeArguments =
+                if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>"
+                else ""
+
+            className + typeArguments
         }
 
 

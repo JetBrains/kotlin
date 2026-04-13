@@ -28,9 +28,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
         public open fun foo (): kotlin.Unit declared in <root>.IRight
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.ILeft' superQualifier='CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=null
+          ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=IMPLICIT_ARGUMENT
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.IRight' superQualifier='CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=null
+          ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.foo' type=<root>.CBoth origin=IMPLICIT_ARGUMENT
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
         public open bar: kotlin.Int declared in <root>.ILeft
@@ -45,9 +45,9 @@ FILE fqName:<root> fileName:/qualifiedSuperCalls.kt
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.Int declared in <root>.CBoth'
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
               ARG <this>: CALL 'public open fun <get-bar> (): kotlin.Int declared in <root>.ILeft' superQualifier='CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Int origin=GET_PROPERTY
-                ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.<get-bar>' type=<root>.CBoth origin=null
+                ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.<get-bar>' type=<root>.CBoth origin=IMPLICIT_ARGUMENT
               ARG other: CALL 'public open fun <get-bar> (): kotlin.Int declared in <root>.IRight' superQualifier='CLASS INTERFACE name:IRight modality:ABSTRACT visibility:public superTypes:[kotlin.Any]' type=kotlin.Int origin=GET_PROPERTY
-                ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.<get-bar>' type=<root>.CBoth origin=null
+                ARG <this>: GET_VAR '<this>: <root>.CBoth declared in <root>.CBoth.<get-bar>' type=<root>.CBoth origin=IMPLICIT_ARGUMENT
   CLASS INTERFACE name:ILeft modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ILeft
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

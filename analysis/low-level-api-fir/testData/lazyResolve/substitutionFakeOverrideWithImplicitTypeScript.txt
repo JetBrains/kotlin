@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-            public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
         }
 
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
             public final [ResolvedTo(CONSTANT_EVALUATION)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
                 public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-            public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
         }
 
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
             public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-            public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
         }
 
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeScript.kts
             public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
                 public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-            public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
         }
 
@@ -225,4 +225,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverrideWithImplicitTypeScript.
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|T|
 
         }
-

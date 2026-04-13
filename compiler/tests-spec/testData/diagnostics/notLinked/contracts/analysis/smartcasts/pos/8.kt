@@ -68,43 +68,43 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     funWithReturns(value_1 is Number?)
-    println(<!DEBUG_INFO_SMARTCAST!>value_1<!>?.toByte())
+    println(value_1?.toByte())
     if (funWithReturnsTrue(value_1 is Number)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
-        if (funWithReturnsNotNull(value_1 is Int) != null) println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
+        println(value_1.toByte())
+        if (funWithReturnsNotNull(value_1 is Int) != null) println(value_1.inv())
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
     if (!funWithReturnsFalse(value_1 is Number?)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>?.toByte())
+        println(value_1?.toByte())
         funWithReturns(value_1 is Number)
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
-        if (funWithReturnsNull(value_1 is Int) == null) println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
+        println(value_1.toByte())
+        if (funWithReturnsNull(value_1 is Int) == null) println(value_1.inv())
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?, value_2: Any?) {
     if (!value_1.case_3(value_1, value_2 is Number?)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>?.toByte())
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
-    } else if (value_1.case_3(<!DEBUG_INFO_CONSTANT!>value_1<!>, value_2 is Number?)) {
-        println(<!DEBUG_INFO_CONSTANT!>value_1<!>)
+        println(value_2?.toByte())
+        println(value_1.inv())
+    } else if (value_1.case_3(value_1, value_2 is Number?)) {
+        println(value_1)
     } else {
-        <!UNREACHABLE_CODE!>println(<!><!DEBUG_INFO_SMARTCAST!>value_1<!><!UNREACHABLE_CODE!>.inv())<!>
+        println(value_1.inv())
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     if (contracts.case_4(value_1, value_2) == true) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+        value_1.inv()
     } else if (contracts.case_4(value_1, value_2) == false) {
-        println(<!DEBUG_INFO_CONSTANT!>value_2<!>)
+        println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>()
+        value_2()
     }
 }
 
@@ -116,12 +116,12 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
 fun case_5(value_1: Number?, value_2: String?) {
     when (value_2.case_5(value_1)) {
         true -> {
-            println(value_2<!UNSAFE_CALL!>.<!>length)
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
+            println(value_2.length)
+            println(value_1.toByte())
         }
         false -> {
-            println(value_2<!UNSAFE_CALL!>.<!>length)
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
+            println(value_2.length)
+            println(value_1.inv())
         }
         else -> {}
     }
@@ -135,15 +135,15 @@ fun case_5(value_1: Number?, value_2: String?) {
 fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
     when (value_3.case_6(value_1, value_2)) {
         true -> {
-            println(<!DEBUG_INFO_SMARTCAST!>value_3<!>.equals(""))
-            println(value_2<!UNSAFE_CALL!>.<!>length)
+            println(value_3.equals(""))
+            println(value_2.length)
         }
         false -> {
-            println(<!DEBUG_INFO_SMARTCAST!>value_3<!>.length)
-            println(value_2<!UNSAFE_CALL!>.<!>length)
+            println(value_3.length)
+            println(value_2.length)
         }
         null -> {
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
+            println(value_1.inv())
         }
     }
 }

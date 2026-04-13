@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects, +JvmInlineMultiFieldValueClasses
-// IGNORE_BACKEND_K1: ANY
-// ^^^ kotlin.jvm.JvmInline is not accessible in common sources
+// IGNORE_BACKEND: ANDROID
 // ISSUE: KT-71656
 // WITH_STDLIB
 

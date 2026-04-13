@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class A {
     companion object {
         enum class E { ENTRY }  // OK

@@ -14,10 +14,10 @@ fun test(){
 
 fun test2() {
     throwException()
-    class LocalClass {
-        <!UNREACHABLE_CODE!>val a = 0<!>
-        <!UNREACHABLE_CODE!>val b = 0<!>
-    }
+    <!UNREACHABLE_CODE!>class LocalClass {
+        val a = 0
+        val b = 0
+    }<!>
 }
 
 fun test3() {
@@ -30,7 +30,7 @@ fun test3() {
 
 fun test4() {
     throwException()
-    <!UNREACHABLE_CODE!>fun() {
+    <!UNREACHABLE_CODE, UNUSED_EXPRESSION!>fun() {
         val a = 0
         val b = 0
     }<!>
@@ -43,38 +43,38 @@ fun test5() {
 
 fun test6() {
     throwException()
-    <!UNREACHABLE_CODE!>val a: String by lazy {
+    <!UNREACHABLE_CODE!>val a: String by <!UNREACHABLE_CODE!>lazy {
         val a = "0"
         val b = "0"
         a
-    }<!>
+    }<!><!>
 }
 
 fun test7(){
     throwException()
-    class Local {
-        init <!UNREACHABLE_CODE!>{
+    <!UNREACHABLE_CODE!>class Local {
+        init {
             val a = 0
             val b = 0
-        }<!>
-        <!UNREACHABLE_CODE!>val a = fun() {
+        }
+        val a = fun() {
             val a = 0
             val b = 0
-        }<!>
-        <!UNREACHABLE_CODE!>val b: Int by lazy {
+        }
+        val b: Int by <!UNREACHABLE_CODE!>lazy {
             val a = 0
             val b = 0
             b
         }<!>
-        <!UNREACHABLE_CODE!>val c = {
+        val c = {
             val a = 0
             val b = 0
-        }<!>
-        <!UNREACHABLE_CODE!>val d = object {
+        }
+        val d = object {
             val a = 0
             val b = 0
-        }<!>
-    }
+        }
+    }<!>
 }
 
 fun test8() {
@@ -84,11 +84,11 @@ fun test8() {
             val e = 0
             val f = 0
         }
-        val b: Int by lazy {
+        val b: Int by <!UNREACHABLE_CODE!>lazy {
             val e = 0
             val f = 0
             e
-        }
+        }<!>
         val c = {
             val e = 0
             val f = 0
@@ -111,11 +111,11 @@ fun test9() {
             val a = 0
             val b = 0
         }
-        val b: Int by lazy {
+        val b: Int by <!UNREACHABLE_CODE!>lazy {
             val a = 0
             val b = 0
             b
-        }
+        }<!>
         val c = {
             val a = 0
             val b = 0

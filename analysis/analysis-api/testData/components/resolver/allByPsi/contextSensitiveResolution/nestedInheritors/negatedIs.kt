@@ -11,5 +11,3 @@ fun testWithSubject(s: Simple) = when(s) {
     <!USELESS_IS_CHECK!>!is Right<!> -> "not a right"
     <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
-
-// IGNORE_STABILITY_K1: candidates

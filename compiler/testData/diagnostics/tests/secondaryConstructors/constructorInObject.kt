@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 object A {
     <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
     init {}

@@ -11,7 +11,7 @@ class E : B1() {
 
         x<!UNSAFE_CALL!>.<!>foo(x)
         x<!UNSAFE_CALL!>.<!>foo("")
-        x.bar(<!TYPE_MISMATCH!>x<!>)
+        x.bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         x.bar("")
     }
 

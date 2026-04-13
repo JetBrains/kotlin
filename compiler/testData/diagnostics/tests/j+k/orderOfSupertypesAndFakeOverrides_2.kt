@@ -18,7 +18,7 @@ fun test_1(x: InterfaceThenClass, s: String?) {
 }
 
 fun test_2(x: ClassThenInterface, s: String?) {
-    x.delete(<!TYPE_MISMATCH!>s<!>)
+    x.delete(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType */

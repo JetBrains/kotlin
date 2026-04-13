@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -ForbidUsingSupertypesWithInaccessibleContentInTypeArguments
 
 // MODULE: start
 // FILE: start.kt

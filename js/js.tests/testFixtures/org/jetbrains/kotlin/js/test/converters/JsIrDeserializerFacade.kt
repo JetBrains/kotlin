@@ -5,23 +5,21 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.js.JsIrLoadingPipelinePhase
+import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
-import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDeserializerCliFacade
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
-open class JsIrDeserializerFacade(
+class JsIrDeserializerFacade(
     testServices: TestServices,
-    private val firstTimeCompilation: Boolean = true,
-) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
+) : IrDeserializerCliFacade<JsIrLoadingPipelinePhase, WebLoadedIrPipelineArtifact>(testServices, JsIrLoadingPipelinePhase) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(
             service(::ModuleDescriptorProvider),
@@ -29,50 +27,27 @@ open class JsIrDeserializerFacade(
             service(::LibraryProvider)
         )
 
-    override fun shouldTransform(module: TestModule): Boolean {
-        return testServices.defaultsProvider.backendKind == outputKind
-    }
+    override fun transform(
+        module: TestModule,
+        inputArtifact: BinaryArtifacts.KLib,
+    ): IrBackendInput.DeserializedFromKlibBackendInput<WebLoadedIrPipelineArtifact>? =
+        super.transform(module, inputArtifact)?.also { output ->
+            val modulesStructure = output.cliArtifact.moduleStructure
+            val mainModule = modulesStructure.mainModule as MainModule.Klib
+            val klibs = modulesStructure.klibs
+            val mainModuleLib = klibs.included ?: error("No module with ${mainModule.libPath} found")
 
-    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.ERROR))
-
-        val mainModule = MainModule.Klib(inputArtifact.outputFile.absolutePath)
-
-        val klibs = loadWebKlibs(
-            configuration = configuration,
-            platformChecker = KlibPlatformChecker.JS,
-        )
-
-        val modulesStructure = ModulesStructure(
-            project = testServices.compilerConfigurationProvider.getProject(module),
-            mainModule = mainModule,
-            compilerConfiguration = configuration,
-            klibs = klibs,
-        )
-
-        val filesToLoad = module.files.takeIf { !firstTimeCompilation }?.map { "/${it.relativePath}" }?.toSet()
-        val mainModuleLib = klibs.included ?: error("No module with ${mainModule.libPath} found")
-
-        val moduleInfo = loadIr(
-            modulesStructure,
-            IrFactoryImplForJsIC(WholeWorldStageController()),
-            filesToLoad,
-            loadFunctionInterfacesIntoStdlib = true,
-        )
-
-        // Some test downstream handlers like JsSourceMapPathRewriter expect a module descriptor to be present.
-        testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(module, modulesStructure.getModuleDescriptor(mainModuleLib))
-        for (library in klibs.all) {
-            testServices.libraryProvider.setDescriptorAndLibraryByName(
-                library.libraryFile.canonicalPath,
-                modulesStructure.getModuleDescriptor(library),
-                library
+            // Some test downstream handlers like JsSourceMapPathRewriter expect a module descriptor to be present.
+            testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(
+                module,
+                modulesStructure.getModuleDescriptor(mainModuleLib)
             )
+            for (library in klibs.all) {
+                testServices.libraryProvider.setDescriptorAndLibraryByName(
+                    library.libraryFile.canonicalPath,
+                    modulesStructure.getModuleDescriptor(library),
+                    library
+                )
+            }
         }
-
-        return IrBackendInput.JsIrDeserializedFromKlibBackendInput(moduleInfo, klib = inputArtifact.outputFile)
-    }
 }

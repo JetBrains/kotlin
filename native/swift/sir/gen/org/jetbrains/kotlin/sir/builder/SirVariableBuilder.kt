@@ -55,24 +55,3 @@ inline fun buildVariable(init: SirVariableBuilder.() -> Unit): SirVariable {
     }
     return SirVariableBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() -> Unit): SirVariable {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirVariableBuilder()
-    copyBuilder.origin = original.origin
-    copyBuilder.visibility = original.visibility
-    copyBuilder.documentation = original.documentation
-    copyBuilder.attributes.addAll(original.attributes)
-    copyBuilder.isOverride = original.isOverride
-    copyBuilder.isInstance = original.isInstance
-    copyBuilder.modality = original.modality
-    copyBuilder.bridges.addAll(original.bridges)
-    copyBuilder.name = original.name
-    copyBuilder.type = original.type
-    copyBuilder.getter = original.getter
-    copyBuilder.setter = original.setter
-    return copyBuilder.apply(init).build()
-}

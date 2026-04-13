@@ -19,7 +19,7 @@ object O1 : A, B
 object O2 : A, B
 
 fun test() {
-    val a: Int = <!TYPE_MISMATCH!>Flexier.<!TYPE_MISMATCH!>flexify(if (true) O1 else O2)<!><!>
+    val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> Flexier.flexify(if (true) O1 else O2)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,

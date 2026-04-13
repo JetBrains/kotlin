@@ -15,7 +15,7 @@ object Scope {
     fun foo(x: Int, y: Int = 0): Int = 0 // (2)
 
     fun test() {
-        bar(<!COMPATIBILITY_WARNING!>::foo<!>)
+        bar(::foo)
         bar(<!ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE!>Scope::foo<!>)
     }
 }

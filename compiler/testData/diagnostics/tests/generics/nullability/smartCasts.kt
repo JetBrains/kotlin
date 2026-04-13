@@ -12,13 +12,13 @@ fun <T : CharSequence?> foo(x: T) {
     if (x != null) {
         if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
         x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        x.bar1()
         x.bar2()
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar4()
+        x.bar3()
+        x.bar4()
 
 
         x<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
@@ -27,21 +27,21 @@ fun <T : CharSequence?> foo(x: T) {
     x<!UNSAFE_CALL!>.<!>length
 
     if (x is String) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
         x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        x.bar1()
         x.bar2()
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
+        x.bar3()
     }
 
     if (x is CharSequence) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
         x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
+        x.bar1()
         x.bar2()
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
+        x.bar3()
     }
 }
 

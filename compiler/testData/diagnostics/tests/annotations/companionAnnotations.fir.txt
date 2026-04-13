@@ -1,4 +1,4 @@
-FILE: companionAnnotations.fir.kt
+FILE: companionAnnotations.kt
     public final class CompanionOnly : R|kotlin/Any| {
         public constructor(): R|CompanionOnly| {
             super<R|kotlin/Any|>()

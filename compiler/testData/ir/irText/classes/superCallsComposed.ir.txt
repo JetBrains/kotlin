@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/superCallsComposed.kt
         public abstract fun foo (): kotlin.Unit declared in <root>.BaseI
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' superQualifier='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
+          ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=IMPLICIT_ARGUMENT
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
         public open bar: kotlin.String declared in <root>.Base
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/superCallsComposed.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.Derived'
             CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' superQualifier='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.String origin=GET_PROPERTY
-              ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-bar>' type=<root>.Derived origin=null
+              ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-bar>' type=<root>.Derived origin=IMPLICIT_ARGUMENT
   CLASS INTERFACE name:BaseI modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.BaseI
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

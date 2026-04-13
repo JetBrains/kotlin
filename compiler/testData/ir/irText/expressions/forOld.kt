@@ -1,5 +1,4 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
-// FIR_IDENTICAL
 // WITH_STDLIB
 // IGNORE_BACKEND: JS_IR, WASM_JS
 

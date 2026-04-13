@@ -46,21 +46,21 @@ class ED: ErrorDeprecated() {
 }
 
 class GD: GetterDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class SD: SetterDeprecated() {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
 }
 
 class SDH: SetterDeprecated(), HiddenDeprecated {
-    override var p: Int
+    override var <!OVERRIDE_DEPRECATION!>p<!>: Int
         get() = 3
         set(value) {
         }
@@ -132,8 +132,8 @@ fun use(
     ned.p
     ned.p = 1
 
-    diff.<!DEPRECATION!>p<!>
-    diff.<!DEPRECATION, DEPRECATION_ERROR!>p<!> = 1
+    diff.<!DEPRECATION_ERROR!>p<!>
+    diff.<!UNRESOLVED_REFERENCE!>p<!> = 1
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,

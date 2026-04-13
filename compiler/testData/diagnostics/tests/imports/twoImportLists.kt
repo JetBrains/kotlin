@@ -9,16 +9,16 @@ import b.ext      //extension function
 import b.value    //property
 import b.C.Companion.bar    //function from companion object
 import b.C.Companion.cValue //property from companion object
-import b.<!UNRESOLVED_REFERENCE!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>fff<!>     //function from val
-import b.<!UNRESOLVED_REFERENCE!>constant<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>dValue<!>  //property from val
-import <!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
-import b.C.<!UNRESOLVED_REFERENCE!>smth<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>illegal<!>
+import b.<!UNRESOLVED_IMPORT!>constant<!>.fff     //function from val
+import b.<!UNRESOLVED_IMPORT!>constant<!>.dValue  //property from val
+import <!UNRESOLVED_IMPORT!>smth<!>.illegal
+import b.C.<!UNRESOLVED_IMPORT!>smth<!>.illegal
 
 <!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!>HEAD<!><!SYNTAX!><!>
-import b.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>smth<!>
-import b.<!UNRESOLVED_REFERENCE!>bar<!>.*
-import b.<!UNRESOLVED_REFERENCE!>unr<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unr<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unr<!>
-import <!UNRESOLVED_REFERENCE!>unr<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unr<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>unr<!>
+import b.<!UNRESOLVED_IMPORT!>bar<!>.smth
+import b.<!UNRESOLVED_IMPORT!>bar<!>.*
+import b.<!UNRESOLVED_IMPORT!>unr<!>.unr.unr
+import <!UNRESOLVED_IMPORT!>unr<!>.unr.unr
 import b.constant
 import b.E.Companion.f      //val from companion object
 
@@ -85,7 +85,7 @@ object C {
 }
 
 fun foo() {
-    if (<!UNRESOLVED_REFERENCE!>i<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> 3) <!UNRESOLVED_REFERENCE!>f<!>()
+    if (i == 3) f()
 }
 
 //FILE:d.kt

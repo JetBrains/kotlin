@@ -4,12 +4,12 @@
 
 // MODULE: common
 // FILE: common.kt
-expect abstract class Memory
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> abstract class Memory
 
 // MODULE: jvm()()(common)
 // FILE: kotlin.kt
 
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>Memory<!> = J
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>Memory<!> = J
 
 // FILE: J.java
 public abstract sealed class J permits J1 {

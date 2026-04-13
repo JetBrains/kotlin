@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -26,5 +31,20 @@ abstract class ReturnTypeCalculator {
 
     fun tryCalculateReturnType(symbol: FirCallableSymbol<*>): FirResolvedTypeRef {
         return tryCalculateReturnType(symbol.fir)
+    }
+
+    @FirIdeOnly
+    object AlreadyComputedOrError : ReturnTypeCalculator() {
+        override val callableCopyTypeCalculator: CallableCopyTypeCalculator
+            get() = CallableCopyTypeCalculator.DoNothing
+
+        override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
+            val returnTypeRef = declaration.returnTypeRef
+            if (returnTypeRef is FirResolvedTypeRef) return returnTypeRef
+
+            return buildErrorTypeRef {
+                diagnostic = ConeSimpleDiagnostic("Not Computed Yet: ${declaration.render()}", DiagnosticKind.RecursionInImplicitTypes)
+            }
+        }
     }
 }

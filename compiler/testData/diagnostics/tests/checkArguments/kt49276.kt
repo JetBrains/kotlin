@@ -25,10 +25,10 @@ fun <T> takes(range: T) {}
 fun <T> takes(range: T) where T : Collection<*>, T: ClosedRange<*> {}
 
 fun main() {
-    SmartList(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..2<!>) // warning
+    SmartList(1..2) // warning
     SmartList<IntRange>(1..10) // no warning
 
-    append(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
+    append(1..10)    // warning
     append((1..10) as Any) // no warning
     append((1..10) as Iterable<Int>) // no warning
     append("a".."z") // no warning, the range is not iterable
@@ -38,11 +38,11 @@ fun main() {
 
     append3(In(1..10))    // no warning
 
-    append4(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
+    append4(1..10)    // warning
 
     append4<IntRange>(1..10)    // warning
 
-    takes(<!PROGRESSIONS_CHANGING_RESOLVE_WARNING!>1..10<!>)    // warning
+    takes(1..10)    // warning
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, in, integerLiteral, nullableType,

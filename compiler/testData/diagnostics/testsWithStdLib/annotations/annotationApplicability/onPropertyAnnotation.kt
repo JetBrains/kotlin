@@ -11,7 +11,7 @@ annotation class PropertyAnnotation
 annotation class ParameterAnnotation
 
 annotation class A(
-    @FieldAnnotation
+    <!WRONG_ANNOTATION_TARGET!>@FieldAnnotation<!>
     @PropertyAnnotation
     @ParameterAnnotation
     val x: Int

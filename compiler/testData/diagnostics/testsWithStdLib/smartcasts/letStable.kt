@@ -6,7 +6,7 @@ fun foo(y: String?) {
     if (x != null) {
         y?.let { x != y }
         // x is not changed, smart cast is possible
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 

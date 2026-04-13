@@ -38,7 +38,6 @@ public final class GenericFakeOverride {
     public synthetic bridge method setP(p0: java.lang.Object): void
     public bridge method setP1(@org.jetbrains.annotations.NotNull p0: XPoint): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
@@ -73,7 +72,6 @@ public final class GenericFakeOverrideMFVC {
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
     public synthetic final method unbox-impl-field2(): java.lang.Object
-    public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
@@ -104,7 +102,6 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
     public synthetic final method unbox-impl-field2(): java.lang.Object
-    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -115,7 +112,6 @@ public final class GenericFakeOverrideWithMFVCUpperBound {
     public bridge @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public bridge method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public bridge method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -130,20 +126,24 @@ public interface GenericMFVCHolder {
 @kotlin.Metadata
 public final class GenericMFVCHolderWithImpls$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
-    public static method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
-    public static method setP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
-    public static method setP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public deprecated static @java.lang.Deprecated method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public deprecated static @java.lang.Deprecated method setP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
     public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface GenericMFVCHolderWithImpls {
     // source: 'overrides_typeParameters.kt'
-    public abstract method getP(): java.lang.Object
-    public abstract method getP1(): java.lang.Object
-    public abstract method setP(p0: java.lang.Object): void
-    public abstract method setP1(p0: java.lang.Object): void
+    public synthetic static method access$getP$jd(p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP1$jd(p0: GenericMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$setP$jd(p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public synthetic static method access$setP1$jd(p0: GenericMFVCHolderWithImpls, p1: java.lang.Object): void
+    public method getP(): java.lang.Object
+    public method getP1(): java.lang.Object
+    public method setP(p0: java.lang.Object): void
+    public method setP1(p0: java.lang.Object): void
     public final inner class GenericMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -163,53 +163,37 @@ public interface GenericMFVCHolderWithMFVCUpperBound {
 @kotlin.Metadata
 public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
     public synthetic static method getP-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
     public synthetic static method getP-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
-    public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
     public synthetic static method getP1-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
     public synthetic static method getP1-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
-    public static method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
-    public static method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
     // source: 'overrides_typeParameters.kt'
-    public abstract @org.jetbrains.annotations.NotNull method getP(): XPoint
-    public synthetic abstract method getP-x(): java.lang.Object
-    public synthetic abstract method getP-y(): java.lang.Object
-    public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
-    public synthetic abstract method getP1-x(): java.lang.Object
-    public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public synthetic static method access$getP$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public synthetic static method access$getP-x$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$getP-y$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$getP1$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
+    public synthetic static method access$getP1-x$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$getP1-y$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
+    public synthetic static method access$setP-E-wHi0Q$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public synthetic static method access$setP1-E-wHi0Q$jd(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public @org.jetbrains.annotations.NotNull method getP(): XPoint
+    public synthetic method getP-x(): java.lang.Object
+    public synthetic method getP-y(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getP1(): XPoint
+    public synthetic method getP1-x(): java.lang.Object
+    public synthetic method getP1-y(): java.lang.Object
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$1
-    inner (anonymous) class Overrides_typeParametersKt$box$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.String
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$10 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$10
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -249,18 +233,6 @@ final class Overrides_typeParametersKt$box$102 {
 }
 
 @kotlin.Metadata
-final class Overrides_typeParametersKt$box$103 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$103
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Integer
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
 final class Overrides_typeParametersKt$box$104 {
     // source: 'overrides_typeParameters.kt'
     enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
@@ -270,138 +242,6 @@ final class Overrides_typeParametersKt$box$104 {
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
     public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$105 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$105
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$106 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$106
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$107 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$107
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$108 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$108
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$109 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$109
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$11 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$11
-    inner (anonymous) class Overrides_typeParametersKt$box$11
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$110 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$110
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$111 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$111
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$112 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$112
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$113 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$113
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -425,214 +265,6 @@ final class Overrides_typeParametersKt$box$115 {
     inner (anonymous) class Overrides_typeParametersKt$box$115
     method <init>(p0: java.lang.Object, p1: java.lang.Object): void
     public final method invoke(): XPoint
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$116 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$116
-    inner (anonymous) class Overrides_typeParametersKt$box$116
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$117 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$117
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$118 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$118
-    inner (anonymous) class Overrides_typeParametersKt$box$118
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$119 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p1-x: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$119
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$12 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$12
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$120 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$120
-    inner (anonymous) class Overrides_typeParametersKt$box$120
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$121 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $otherXPoint-x: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$121
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$122 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$122
-    inner (anonymous) class Overrides_typeParametersKt$box$122
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$123 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p2-x: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$123
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$124 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$124
-    inner (anonymous) class Overrides_typeParametersKt$box$124
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$125 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$125
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$126 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$126
-    inner (anonymous) class Overrides_typeParametersKt$box$126
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$127 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p1-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$127
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$128 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$128
-    inner (anonymous) class Overrides_typeParametersKt$box$128
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$129 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $otherXPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$129
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$13 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$13
-    inner (anonymous) class Overrides_typeParametersKt$box$13
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$130 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$130
-    inner (anonymous) class Overrides_typeParametersKt$box$130
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$131 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p2-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$131
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -661,344 +293,6 @@ final class Overrides_typeParametersKt$box$133 {
     inner (anonymous) class Overrides_typeParametersKt$box$133
     method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public final method invoke(): XPoint
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$134 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$134
-    inner (anonymous) class Overrides_typeParametersKt$box$134
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$135 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p1-x: java.lang.Object
-    synthetic final field $xSegment-p1-y: java.lang.Object
-    synthetic final field $xSegment-p2-x: java.lang.Object
-    synthetic final field $xSegment-p2-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$135
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$136 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$136
-    inner (anonymous) class Overrides_typeParametersKt$box$136
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$137 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p1-x: java.lang.Object
-    synthetic final field $xSegment-p1-y: java.lang.Object
-    synthetic final field $xSegment-p2-x: java.lang.Object
-    synthetic final field $xSegment-p2-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$137
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$138 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$138
-    inner (anonymous) class Overrides_typeParametersKt$box$138
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$139 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p1-x: java.lang.Object
-    synthetic final field $xSegment-p1-y: java.lang.Object
-    synthetic final field $xSegment-p2-x: java.lang.Object
-    synthetic final field $xSegment-p2-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$139
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$14 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $otherXPoint-x: java.lang.Object
-    synthetic final field $otherXPoint-y: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$14
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$140 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$140
-    inner (anonymous) class Overrides_typeParametersKt$box$140
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$141 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xSegment-p1-x: java.lang.Object
-    synthetic final field $xSegment-p1-y: java.lang.Object
-    synthetic final field $xSegment-p2-x: java.lang.Object
-    synthetic final field $xSegment-p2-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$141
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$15 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$15
-    inner (anonymous) class Overrides_typeParametersKt$box$15
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$16 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $otherXPoint-x: java.lang.Object
-    synthetic final field $otherXPoint-y: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$16
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$17 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$17
-    inner (anonymous) class Overrides_typeParametersKt$box$17
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$18 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $otherXPoint-x: java.lang.Object
-    synthetic final field $otherXPoint-y: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$18
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$19 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$19
-    inner (anonymous) class Overrides_typeParametersKt$box$19
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$2 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$2
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.String
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$20 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $otherXPoint-x: java.lang.Object
-    synthetic final field $otherXPoint-y: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$20
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$21 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$21
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Integer
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$22 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$22
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Integer
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$23 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$23
-    inner (anonymous) class Overrides_typeParametersKt$box$23
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$24 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$24
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$25 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$25
-    inner (anonymous) class Overrides_typeParametersKt$box$25
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$26 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$26
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$27 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$27
-    inner (anonymous) class Overrides_typeParametersKt$box$27
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$28 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$28
-    method <init>(p0: java.lang.Object): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$29 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$29
-    inner (anonymous) class Overrides_typeParametersKt$box$29
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Double
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$3 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$3
-    inner (anonymous) class Overrides_typeParametersKt$box$3
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.String
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$30 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$30
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Double
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1102,122 +396,6 @@ final class Overrides_typeParametersKt$box$39 {
 }
 
 @kotlin.Metadata
-final class Overrides_typeParametersKt$box$4 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$4
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.String
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$40 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$40
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$41 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$41
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$42 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$42
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$43 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$43
-    method <init>(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$44 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$44
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$45 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$45
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$46 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$46
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$47 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $realOverride: RealOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$47
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 final class Overrides_typeParametersKt$box$48 {
     // source: 'overrides_typeParameters.kt'
     enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
@@ -1236,18 +414,6 @@ final class Overrides_typeParametersKt$box$49 {
     inner (anonymous) class Overrides_typeParametersKt$box$49
     method <init>(p0: GenericFakeOverride): void
     public final method invoke(): XPoint
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$5 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$5
-    inner (anonymous) class Overrides_typeParametersKt$box$5
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -1362,186 +528,6 @@ final class Overrides_typeParametersKt$box$59 {
 }
 
 @kotlin.Metadata
-final class Overrides_typeParametersKt$box$6 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$6
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$60 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$60
-    method <init>(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$61 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$61
-    method <init>(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$62 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$62
-    method <init>(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$63 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverride: GenericFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$63
-    method <init>(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$64 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$64
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$65 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$65
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$66 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$66
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$67 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverride: ReifiedFakeOverride
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$67
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$68 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$68
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$69 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$69
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$7 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$7
-    inner (anonymous) class Overrides_typeParametersKt$box$7
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$70 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$70
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$71 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideWithMFVCUpperBound: GenericFakeOverrideWithMFVCUpperBound
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$71
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 final class Overrides_typeParametersKt$box$72 {
     // source: 'overrides_typeParameters.kt'
     enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
@@ -1638,18 +624,6 @@ final class Overrides_typeParametersKt$box$79 {
 }
 
 @kotlin.Metadata
-final class Overrides_typeParametersKt$box$8 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$8
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
 final class Overrides_typeParametersKt$box$80 {
     // source: 'overrides_typeParameters.kt'
     enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
@@ -1698,186 +672,6 @@ final class Overrides_typeParametersKt$box$83 {
 }
 
 @kotlin.Metadata
-final class Overrides_typeParametersKt$box$84 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$84
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$85 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$85
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$86 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$86
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$87 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$87
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$88 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$88
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$89 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$89
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$9 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$9
-    inner (anonymous) class Overrides_typeParametersKt$box$9
-    static method <clinit>(): void
-    method <init>(): void
-    public final method invoke(): java.lang.Boolean
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$90 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$90
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$91 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $reifiedFakeOverrideMFVC-field1: java.lang.Object
-    synthetic final field $reifiedFakeOverrideMFVC-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$91
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$92 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$92
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$93 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$93
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$94 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$94
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$95 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field1: java.lang.Object
-    synthetic final field $genericFakeOverrideMFVCWithMFVCUpperBound-field2: java.lang.Object
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$95
-    method <init>(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 final class Overrides_typeParametersKt$box$96 {
     // source: 'overrides_typeParameters.kt'
     enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
@@ -1902,42 +696,6 @@ final class Overrides_typeParametersKt$box$97 {
 }
 
 @kotlin.Metadata
-final class Overrides_typeParametersKt$box$98 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$98
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Integer
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$99 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPointWithInterface-x: java.lang.Object
-    synthetic final field $xPointWithInterface-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$99
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public final method invoke(): java.lang.Integer
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$emptyLam$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$emptyLam$1
-    inner (anonymous) class Overrides_typeParametersKt$box$emptyLam$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 final class Overrides_typeParametersKt$box$lam1$1 {
     // source: 'overrides_typeParameters.kt'
     enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
@@ -1945,20 +703,8 @@ final class Overrides_typeParametersKt$box$lam1$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam1$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam10$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam10$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -1969,20 +715,8 @@ final class Overrides_typeParametersKt$box$lam11$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam11$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam12$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam12$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -1993,20 +727,8 @@ final class Overrides_typeParametersKt$box$lam13$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam13$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam14$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam14$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -2017,20 +739,8 @@ final class Overrides_typeParametersKt$box$lam15$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam15$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam16$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam16$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -2041,56 +751,8 @@ final class Overrides_typeParametersKt$box$lam17$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam17$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam18$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam18$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam19$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$lam19$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam19$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam2$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam2$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam20$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$lam20$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam20$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -2101,20 +763,8 @@ final class Overrides_typeParametersKt$box$lam3$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam3$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam4$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam4$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -2125,20 +775,8 @@ final class Overrides_typeParametersKt$box$lam5$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam5$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam6$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam6$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -2149,20 +787,8 @@ final class Overrides_typeParametersKt$box$lam7$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam7$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam8$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    synthetic final field $xPoint-x: java.lang.Object
-    synthetic final field $xPoint-y: java.lang.Object
-    inner (anonymous) class Overrides_typeParametersKt$box$lam8$1
-    method <init>(p0: java.lang.Object, p1: java.lang.Object): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
 }
 
 @kotlin.Metadata
@@ -2173,8 +799,8 @@ final class Overrides_typeParametersKt$box$lam9$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam9$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -2204,72 +830,14 @@ final class Overrides_typeParametersKt$box$xPointLam$1 {
 @kotlin.Metadata
 public final class Overrides_typeParametersKt {
     // source: 'overrides_typeParameters.kt'
-    inner (anonymous) class Overrides_typeParametersKt$box$1
-    inner (anonymous) class Overrides_typeParametersKt$box$10
     inner (anonymous) class Overrides_typeParametersKt$box$100
     inner (anonymous) class Overrides_typeParametersKt$box$101
     inner (anonymous) class Overrides_typeParametersKt$box$102
-    inner (anonymous) class Overrides_typeParametersKt$box$103
     inner (anonymous) class Overrides_typeParametersKt$box$104
-    inner (anonymous) class Overrides_typeParametersKt$box$105
-    inner (anonymous) class Overrides_typeParametersKt$box$106
-    inner (anonymous) class Overrides_typeParametersKt$box$107
-    inner (anonymous) class Overrides_typeParametersKt$box$108
-    inner (anonymous) class Overrides_typeParametersKt$box$109
-    inner (anonymous) class Overrides_typeParametersKt$box$11
-    inner (anonymous) class Overrides_typeParametersKt$box$110
-    inner (anonymous) class Overrides_typeParametersKt$box$111
-    inner (anonymous) class Overrides_typeParametersKt$box$112
-    inner (anonymous) class Overrides_typeParametersKt$box$113
     inner (anonymous) class Overrides_typeParametersKt$box$114
     inner (anonymous) class Overrides_typeParametersKt$box$115
-    inner (anonymous) class Overrides_typeParametersKt$box$116
-    inner (anonymous) class Overrides_typeParametersKt$box$117
-    inner (anonymous) class Overrides_typeParametersKt$box$118
-    inner (anonymous) class Overrides_typeParametersKt$box$119
-    inner (anonymous) class Overrides_typeParametersKt$box$12
-    inner (anonymous) class Overrides_typeParametersKt$box$120
-    inner (anonymous) class Overrides_typeParametersKt$box$121
-    inner (anonymous) class Overrides_typeParametersKt$box$122
-    inner (anonymous) class Overrides_typeParametersKt$box$123
-    inner (anonymous) class Overrides_typeParametersKt$box$124
-    inner (anonymous) class Overrides_typeParametersKt$box$125
-    inner (anonymous) class Overrides_typeParametersKt$box$126
-    inner (anonymous) class Overrides_typeParametersKt$box$127
-    inner (anonymous) class Overrides_typeParametersKt$box$128
-    inner (anonymous) class Overrides_typeParametersKt$box$129
-    inner (anonymous) class Overrides_typeParametersKt$box$13
-    inner (anonymous) class Overrides_typeParametersKt$box$130
-    inner (anonymous) class Overrides_typeParametersKt$box$131
     inner (anonymous) class Overrides_typeParametersKt$box$132
     inner (anonymous) class Overrides_typeParametersKt$box$133
-    inner (anonymous) class Overrides_typeParametersKt$box$134
-    inner (anonymous) class Overrides_typeParametersKt$box$135
-    inner (anonymous) class Overrides_typeParametersKt$box$136
-    inner (anonymous) class Overrides_typeParametersKt$box$137
-    inner (anonymous) class Overrides_typeParametersKt$box$138
-    inner (anonymous) class Overrides_typeParametersKt$box$139
-    inner (anonymous) class Overrides_typeParametersKt$box$14
-    inner (anonymous) class Overrides_typeParametersKt$box$140
-    inner (anonymous) class Overrides_typeParametersKt$box$141
-    inner (anonymous) class Overrides_typeParametersKt$box$15
-    inner (anonymous) class Overrides_typeParametersKt$box$16
-    inner (anonymous) class Overrides_typeParametersKt$box$17
-    inner (anonymous) class Overrides_typeParametersKt$box$18
-    inner (anonymous) class Overrides_typeParametersKt$box$19
-    inner (anonymous) class Overrides_typeParametersKt$box$2
-    inner (anonymous) class Overrides_typeParametersKt$box$20
-    inner (anonymous) class Overrides_typeParametersKt$box$21
-    inner (anonymous) class Overrides_typeParametersKt$box$22
-    inner (anonymous) class Overrides_typeParametersKt$box$23
-    inner (anonymous) class Overrides_typeParametersKt$box$24
-    inner (anonymous) class Overrides_typeParametersKt$box$25
-    inner (anonymous) class Overrides_typeParametersKt$box$26
-    inner (anonymous) class Overrides_typeParametersKt$box$27
-    inner (anonymous) class Overrides_typeParametersKt$box$28
-    inner (anonymous) class Overrides_typeParametersKt$box$29
-    inner (anonymous) class Overrides_typeParametersKt$box$3
-    inner (anonymous) class Overrides_typeParametersKt$box$30
     inner (anonymous) class Overrides_typeParametersKt$box$31
     inner (anonymous) class Overrides_typeParametersKt$box$32
     inner (anonymous) class Overrides_typeParametersKt$box$33
@@ -2279,18 +847,8 @@ public final class Overrides_typeParametersKt {
     inner (anonymous) class Overrides_typeParametersKt$box$37
     inner (anonymous) class Overrides_typeParametersKt$box$38
     inner (anonymous) class Overrides_typeParametersKt$box$39
-    inner (anonymous) class Overrides_typeParametersKt$box$4
-    inner (anonymous) class Overrides_typeParametersKt$box$40
-    inner (anonymous) class Overrides_typeParametersKt$box$41
-    inner (anonymous) class Overrides_typeParametersKt$box$42
-    inner (anonymous) class Overrides_typeParametersKt$box$43
-    inner (anonymous) class Overrides_typeParametersKt$box$44
-    inner (anonymous) class Overrides_typeParametersKt$box$45
-    inner (anonymous) class Overrides_typeParametersKt$box$46
-    inner (anonymous) class Overrides_typeParametersKt$box$47
     inner (anonymous) class Overrides_typeParametersKt$box$48
     inner (anonymous) class Overrides_typeParametersKt$box$49
-    inner (anonymous) class Overrides_typeParametersKt$box$5
     inner (anonymous) class Overrides_typeParametersKt$box$50
     inner (anonymous) class Overrides_typeParametersKt$box$51
     inner (anonymous) class Overrides_typeParametersKt$box$52
@@ -2301,20 +859,6 @@ public final class Overrides_typeParametersKt {
     inner (anonymous) class Overrides_typeParametersKt$box$57
     inner (anonymous) class Overrides_typeParametersKt$box$58
     inner (anonymous) class Overrides_typeParametersKt$box$59
-    inner (anonymous) class Overrides_typeParametersKt$box$6
-    inner (anonymous) class Overrides_typeParametersKt$box$60
-    inner (anonymous) class Overrides_typeParametersKt$box$61
-    inner (anonymous) class Overrides_typeParametersKt$box$62
-    inner (anonymous) class Overrides_typeParametersKt$box$63
-    inner (anonymous) class Overrides_typeParametersKt$box$64
-    inner (anonymous) class Overrides_typeParametersKt$box$65
-    inner (anonymous) class Overrides_typeParametersKt$box$66
-    inner (anonymous) class Overrides_typeParametersKt$box$67
-    inner (anonymous) class Overrides_typeParametersKt$box$68
-    inner (anonymous) class Overrides_typeParametersKt$box$69
-    inner (anonymous) class Overrides_typeParametersKt$box$7
-    inner (anonymous) class Overrides_typeParametersKt$box$70
-    inner (anonymous) class Overrides_typeParametersKt$box$71
     inner (anonymous) class Overrides_typeParametersKt$box$72
     inner (anonymous) class Overrides_typeParametersKt$box$73
     inner (anonymous) class Overrides_typeParametersKt$box$74
@@ -2323,51 +867,133 @@ public final class Overrides_typeParametersKt {
     inner (anonymous) class Overrides_typeParametersKt$box$77
     inner (anonymous) class Overrides_typeParametersKt$box$78
     inner (anonymous) class Overrides_typeParametersKt$box$79
-    inner (anonymous) class Overrides_typeParametersKt$box$8
     inner (anonymous) class Overrides_typeParametersKt$box$80
     inner (anonymous) class Overrides_typeParametersKt$box$81
     inner (anonymous) class Overrides_typeParametersKt$box$82
     inner (anonymous) class Overrides_typeParametersKt$box$83
-    inner (anonymous) class Overrides_typeParametersKt$box$84
-    inner (anonymous) class Overrides_typeParametersKt$box$85
-    inner (anonymous) class Overrides_typeParametersKt$box$86
-    inner (anonymous) class Overrides_typeParametersKt$box$87
-    inner (anonymous) class Overrides_typeParametersKt$box$88
-    inner (anonymous) class Overrides_typeParametersKt$box$89
-    inner (anonymous) class Overrides_typeParametersKt$box$9
-    inner (anonymous) class Overrides_typeParametersKt$box$90
-    inner (anonymous) class Overrides_typeParametersKt$box$91
-    inner (anonymous) class Overrides_typeParametersKt$box$92
-    inner (anonymous) class Overrides_typeParametersKt$box$93
-    inner (anonymous) class Overrides_typeParametersKt$box$94
-    inner (anonymous) class Overrides_typeParametersKt$box$95
     inner (anonymous) class Overrides_typeParametersKt$box$96
     inner (anonymous) class Overrides_typeParametersKt$box$97
-    inner (anonymous) class Overrides_typeParametersKt$box$98
-    inner (anonymous) class Overrides_typeParametersKt$box$99
-    inner (anonymous) class Overrides_typeParametersKt$box$emptyLam$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam1$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam10$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam11$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam12$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam13$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam14$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam15$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam16$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam17$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam18$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam19$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam2$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam20$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam3$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam4$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam5$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam6$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam7$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam8$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam9$1
     inner (anonymous) class Overrides_typeParametersKt$box$otherXPointLam$1
     inner (anonymous) class Overrides_typeParametersKt$box$xPointLam$1
+    private final static method box$lambda$0(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$1(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$10(): kotlin.Unit
+    private final static method box$lambda$100(): double
+    private final static method box$lambda$101(p0: java.lang.Object): double
+    private final static method box$lambda$102(): double
+    private final static method box$lambda$103(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$104(): double
+    private final static method box$lambda$105(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$106(): double
+    private final static method box$lambda$107(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$108(): double
+    private final static method box$lambda$109(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$11(): kotlin.Unit
+    private final static method box$lambda$12(): java.lang.String
+    private final static method box$lambda$13(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
+    private final static method box$lambda$14(): java.lang.String
+    private final static method box$lambda$15(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
+    private final static method box$lambda$16(): boolean
+    private final static method box$lambda$17(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$18(): boolean
+    private final static method box$lambda$19(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$2(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$20(): boolean
+    private final static method box$lambda$21(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$22(): boolean
+    private final static method box$lambda$23(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$24(): boolean
+    private final static method box$lambda$25(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    private final static method box$lambda$26(): boolean
+    private final static method box$lambda$27(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    private final static method box$lambda$28(): boolean
+    private final static method box$lambda$29(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    private final static method box$lambda$3(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$30(): boolean
+    private final static method box$lambda$31(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    private final static method box$lambda$32(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$33(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$34(): double
+    private final static method box$lambda$35(p0: java.lang.Object): double
+    private final static method box$lambda$36(): double
+    private final static method box$lambda$37(p0: java.lang.Object, p1: java.lang.Object): double
+    private final static method box$lambda$38(): double
+    private final static method box$lambda$39(p0: java.lang.Object): double
+    private final static method box$lambda$4(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$40(): double
+    private final static method box$lambda$41(p0: java.lang.Object, p1: java.lang.Object): double
+    private final static method box$lambda$42(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$43(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$44(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$45(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$46(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$47(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$48(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$49(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$5(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$50(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$51(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$52(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$53(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$54(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
+    private final static method box$lambda$55(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
+    private final static method box$lambda$56(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
+    private final static method box$lambda$57(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
+    private final static method box$lambda$58(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
+    private final static method box$lambda$59(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
+    private final static method box$lambda$6(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$60(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
+    private final static method box$lambda$61(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
+    private final static method box$lambda$62(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$63(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$64(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$65(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$66(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$67(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$68(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$69(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$7(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$70(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$71(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$72(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$73(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$74(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$75(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$76(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$77(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$78(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$79(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$8(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$80(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$81(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$82(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$83(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$84(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$85(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$86(): double
+    private final static method box$lambda$87(p0: java.lang.Object): double
+    private final static method box$lambda$88(): double
+    private final static method box$lambda$89(p0: java.lang.Object): double
+    private final static method box$lambda$9(): int
+    private final static method box$lambda$90(): double
+    private final static method box$lambda$91(p0: java.lang.Object): double
+    private final static method box$lambda$92(): double
+    private final static method box$lambda$93(p0: java.lang.Object): double
+    private final static method box$lambda$94(): double
+    private final static method box$lambda$95(p0: java.lang.Object): double
+    private final static method box$lambda$96(): double
+    private final static method box$lambda$97(p0: java.lang.Object): double
+    private final static method box$lambda$98(): double
+    private final static method box$lambda$99(p0: java.lang.Object): double
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method equal(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
     public final static method genericFunctionIC-lld4ICU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
@@ -2403,7 +1029,6 @@ public final class ReifiedFakeOverride {
     public bridge @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public bridge method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public bridge method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.jvm.JvmInline
@@ -2434,7 +1059,6 @@ public final class ReifiedFakeOverrideMFVC {
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
     public synthetic final method unbox-impl-field2(): java.lang.Object
-    public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -2453,44 +1077,54 @@ public interface ReifiedMFVCHolder {
 @kotlin.Metadata
 public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
     public synthetic static method getP-x(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
     public synthetic static method getP-y(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
-    public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
     public synthetic static method getP1-x(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
     public synthetic static method getP1-y(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
-    public static method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
-    public static method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface ReifiedMFVCHolderWithImpls {
     // source: 'overrides_typeParameters.kt'
-    public abstract @org.jetbrains.annotations.NotNull method getP(): XPoint
-    public synthetic abstract method getP-x(): java.lang.Object
-    public synthetic abstract method getP-y(): java.lang.Object
-    public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
-    public synthetic abstract method getP1-x(): java.lang.Object
-    public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public synthetic static method access$getP$jd(p0: ReifiedMFVCHolderWithImpls): XPoint
+    public synthetic static method access$getP-x$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP-y$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP1$jd(p0: ReifiedMFVCHolderWithImpls): XPoint
+    public synthetic static method access$getP1-x$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$getP1-y$jd(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
+    public synthetic static method access$setP-E-wHi0Q$jd(p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public synthetic static method access$setP1-E-wHi0Q$jd(p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public @org.jetbrains.annotations.NotNull method getP(): XPoint
+    public synthetic method getP-x(): java.lang.Object
+    public synthetic method getP-y(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getP1(): XPoint
+    public synthetic method getP1-x(): java.lang.Object
+    public synthetic method getP1-y(): java.lang.Object
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class SomeInterface$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
-    public static method someFunction1(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public static method someFunction2-bw8FDaY(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method someFunction1(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method someFunction2-bw8FDaY(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
     public final inner class SomeInterface$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface SomeInterface {
     // source: 'overrides_typeParameters.kt'
-    public abstract method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
-    public abstract method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
+    public synthetic static method access$someFunction1$jd(p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public synthetic static method access$someFunction2-bw8FDaY$jd(p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
+    public method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
+    public method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
     public final inner class SomeInterface$DefaultImpls
 }
 

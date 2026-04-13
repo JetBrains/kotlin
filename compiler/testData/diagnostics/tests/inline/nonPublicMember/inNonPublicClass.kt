@@ -12,8 +12,8 @@ public inline fun test() {
 }
 
 internal inline fun testInternal() {
-    Z().publicProperty
-    Z().publicFun()
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>Z<!>().<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>publicProperty<!>
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>Z<!>().<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>publicFun<!>()
 }
 
 internal class Z2 {

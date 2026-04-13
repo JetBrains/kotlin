@@ -14,7 +14,7 @@ class Cls {
 
 fun test() {
     val v = Cls().property
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>v<!>
+    v
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,

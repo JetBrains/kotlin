@@ -11,7 +11,7 @@ public class A {
 
 // FILE: main.kt
 fun test() {
-    <!NONE_APPLICABLE!>A<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>b<!> = "", <!DEBUG_INFO_MISSING_UNRESOLVED!>c<!> = "")
+    A(<!NAMED_ARGUMENTS_NOT_ALLOWED!>b<!> = "", <!NAMED_ARGUMENTS_NOT_ALLOWED!>c<!> = "")
     A(<!NAMED_ARGUMENTS_NOT_ALLOWED!>b<!> = "", "")
 }
 

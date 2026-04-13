@@ -8,7 +8,7 @@ public class MyClass
         if (str != null)
             callback {
                 // Nodoby writes str, smart cast is possible
-                method1(<!DEBUG_INFO_SMARTCAST!>str<!>)
+                method1(str)
             }
     }
 

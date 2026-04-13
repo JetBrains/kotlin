@@ -7,6 +7,6 @@ public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: D
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] ktij24730.kt
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T : R|kotlin/Any|, [ResolvedTo(CONTRACTS)] Z> createTuple([ResolvedTo(CONTRACTS)] a: R|T|, [ResolvedTo(CONTRACTS)] b: R|Z & Any|): <ERROR TYPE REF: Symbol not found for Pair> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T : R|kotlin/Any|, [ResolvedTo(STATUS)] Z> createTuple([ResolvedTo(STATUS)] a: R|T|, [ResolvedTo(STATUS)] b: R|Z & Any|): <ERROR TYPE REF: Symbol not found for Pair> { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] fun main(): R|kotlin/Unit|
     public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/createTuple|<R|kotlin/String|, R|kotlin/Int?|>(String(a), Int(1))

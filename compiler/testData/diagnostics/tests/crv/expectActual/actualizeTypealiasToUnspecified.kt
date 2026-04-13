@@ -12,8 +12,8 @@ expect class Foo() {
 }
 
 fun commonMain() {
-    Foo()
-    Foo().x()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
 }
 
@@ -29,7 +29,7 @@ open class BaseFoo {
 // FILE: jvm.kt
 
 // Since BaseFoo is completely Unspecified, we allow actualization without warnings
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> = BaseFoo
+actual typealias Foo = BaseFoo
 
 fun main() {
     Foo()

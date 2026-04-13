@@ -16,11 +16,11 @@ expect fun nonMatching()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>MyEnum.FOO.name<!>)
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>matching<!>() {}
+@Ann(MyEnum.FOO.name)
+actual fun matching() {}
 
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>MyEnum.FOO.name<!>)
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>nonMatching<!>() {}
+@Ann(MyEnum.FOO.name)
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun nonMatching() {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, enumEntry, expect, functionDeclaration,
 primaryConstructor, propertyDeclaration, stringLiteral */

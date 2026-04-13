@@ -1,4 +1,0 @@
-package
-
-public fun ff(/*0*/ a: kotlin.String): kotlin.Int
-public fun gg(): kotlin.Unit

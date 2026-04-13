@@ -20,7 +20,7 @@ public class J {
 // FILE: k.kt
 
 var A by J.staticNN
-var B by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>J.staticN<!>
+var B <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> J.staticN
 var C by J.staticJ
 
 /* GENERATED_FIR_TAGS: flexibleType, javaFunction, javaProperty, javaType, nullableType, propertyDeclaration,

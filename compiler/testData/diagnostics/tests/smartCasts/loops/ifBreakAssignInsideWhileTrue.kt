@@ -2,7 +2,7 @@
 public fun foo(x: String?): Int {
     var y: Any
     while (true) {
-        y = if (x == null) break else <!DEBUG_INFO_SMARTCAST!>x<!>
+        y = if (x == null) break else x
     }
     // In future we can infer this initialization
     <!UNINITIALIZED_VARIABLE!>y<!>.hashCode()

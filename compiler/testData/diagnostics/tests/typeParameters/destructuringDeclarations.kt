@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 data class A<T>(val i: T)
 
 fun <T> foo(block: (A<T>) -> Unit) {}

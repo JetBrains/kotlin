@@ -9,29 +9,22 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.JS_IC_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.IcCachesConfigurationData
-import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.js.prepareIcCaches
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.ic.IncrementalCacheGuard
 import org.jetbrains.kotlin.ir.backend.js.ic.acquireAndRelease
 import org.jetbrains.kotlin.ir.backend.js.ic.tryAcquireAndRelease
-import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import java.io.File
 
 abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, IntermediateOutput>(
     name: String
@@ -58,7 +51,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
                 backendIr?.let { compileIntermediate(it, configuration) }
             }
         } else {
-            val backendIr = compileToBackendIrNonIncrementally(input, configuration, mainCallArguments)
+            val backendIr = compileToBackendIrNonIncrementally(input, mainCallArguments)
             return backendIr?.let { compileIntermediate(it, configuration) }
         }
     }
@@ -117,37 +110,15 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
         }
     }
 
-
     private fun compileToBackendIrNonIncrementally(
         input: ConfigurationPipelineArtifact,
-        configuration: CompilerConfiguration,
         mainCallArguments: List<String>?,
     ): IntermediateOutput? {
-        val includes = configuration.includes!!
-        val includesPath = File(includes).canonicalPath
-        val mainLibPath = configuration.libraries.find { File(it).canonicalPath == includesPath }
-            ?: error("No library with name $includes ($includesPath) found")
-        val kLib = MainModule.Klib(mainLibPath)
-        val environment = KotlinCoreEnvironment.createForProduction(
-            input.rootDisposable,
-            configuration,
-            configFiles
-        )
-
-        val klibs = loadWebKlibs(configuration, configuration.platformChecker)
-
-        val module = ModulesStructure(
-            project = environment.project,
-            mainModule = kLib,
-            compilerConfiguration = configuration,
-            klibs = klibs,
-        )
-
-        configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-        return compileNonIncrementally(configuration, module, mainCallArguments)
+        val loadedKlibArtifact = klibLoadingPhase.executePhase(input)
+        return compileNonIncrementally(loadedKlibArtifact, mainCallArguments)
     }
 
-    protected abstract val configFiles: EnvironmentConfigFiles
+    protected abstract val klibLoadingPhase: WebIrLoadingPipelinePhase
 
     abstract fun compileIncrementally(
         icCaches: IcCachesArtifacts,
@@ -155,8 +126,7 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
     ): IntermediateOutput?
 
     abstract fun compileNonIncrementally(
-        configuration: CompilerConfiguration,
-        module: ModulesStructure,
+        loadedIrArtifact: WebLoadedIrPipelineArtifact,
         mainCallArguments: List<String>?,
     ): IntermediateOutput?
 

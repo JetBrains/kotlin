@@ -3,21 +3,21 @@
 
 import kotlin.annotations.jvm.KotlinActual
 
-@KotlinActual
+@<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>
 fun foo() {
-    val a: KotlinActual = null!!
-    val b: (KotlinActual) -> Unit = { x -> }
-    val c: ((KotlinActual) -> Unit, (KotlinActual) -> Unit) -> ((KotlinActual) -> Unit) = { x, y -> { } }
-    val d: (() -> KotlinActual, () -> KotlinActual) -> (() -> KotlinActual) = { x, y -> { null!! } }
+    val a: <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!> = null!!
+    val b: (<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>) -> Unit = { x -> }
+    val c: ((<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>) -> Unit, (<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>) -> Unit) -> ((<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>) -> Unit) = { x, y -> { } }
+    val d: (() -> <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>, () -> <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>) -> (() -> <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>) = { x, y -> { null!! } }
 
-    val e = KotlinActual::class
-    val f = ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>KotlinActual<!>
-    val g = KotlinActual()
+    val e = <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>::class
+    val f = <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>KotlinActual<!><!>
+    val g = <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual()<!>
 }
 
-typealias Duh = KotlinActual
+typealias Duh = <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>
 
-@[KotlinActual]
+@[<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>]
 fun bar() {}
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classReference, functionDeclaration, functionalType, javaCallableReference,

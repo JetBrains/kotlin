@@ -16,12 +16,12 @@ class J {
 fun bar() {
     var v: String?
     v = J.foo()
-    <!DEBUG_INFO_SMARTCAST!>v<!>.length
-    gav(<!DEBUG_INFO_SMARTCAST!>v<!>)
+    v.length
+    gav(v)
 
     var l: List<String>?
     l = J.bar()
-    <!DEBUG_INFO_SMARTCAST!>l<!>.isEmpty()
+    l.isEmpty()
 }
 
 fun gav(v: String) = v

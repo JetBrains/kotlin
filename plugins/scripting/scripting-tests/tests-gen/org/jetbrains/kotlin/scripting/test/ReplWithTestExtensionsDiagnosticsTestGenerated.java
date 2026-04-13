@@ -24,13 +24,13 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
 
   @Test
   public void testAllFilesPresentInRepl() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/scripting/scripting-tests/testData/diagnostics/repl"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)(\\.repl)?\\.kts?$"), true);
   }
 
   @Test
-  @TestMetadata("cast_assignment.kts")
-  public void testCast_assignment() {
-    run("cast_assignment.kts");
+  @TestMetadata("cast_assignment.repl.kts")
+  public void testCast_assignment_repl() {
+    run("cast_assignment.repl.kts");
   }
 
   @Test
@@ -40,15 +40,15 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
-  @TestMetadata("delegated_self_reference.kts")
-  public void testDelegated_self_reference() {
-    run("delegated_self_reference.kts");
+  @TestMetadata("delegated_self_reference.repl.kts")
+  public void testDelegated_self_reference_repl() {
+    run("delegated_self_reference.repl.kts");
   }
 
   @Test
-  @TestMetadata("delegated_with_type_parameters.kts")
-  public void testDelegated_with_type_parameters() {
-    run("delegated_with_type_parameters.kts");
+  @TestMetadata("delegated_with_type_parameters.repl.kts")
+  public void testDelegated_with_type_parameters_repl() {
+    run("delegated_with_type_parameters.repl.kts");
   }
 
   @Test
@@ -70,27 +70,27 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
-  @TestMetadata("package_declaration.kts")
-  public void testPackage_declaration() {
-    run("package_declaration.kts");
+  @TestMetadata("package_declaration.repl.kts")
+  public void testPackage_declaration_repl() {
+    run("package_declaration.repl.kts");
   }
 
   @Test
-  @TestMetadata("property_constant_initializer.kts")
-  public void testProperty_constant_initializer() {
-    run("property_constant_initializer.kts");
+  @TestMetadata("property_constant_initializer.repl.kts")
+  public void testProperty_constant_initializer_repl() {
+    run("property_constant_initializer.repl.kts");
   }
 
   @Test
-  @TestMetadata("property_type_anonymous_object.kts")
-  public void testProperty_type_anonymous_object() {
-    run("property_type_anonymous_object.kts");
+  @TestMetadata("property_type_anonymous_object.repl.kts")
+  public void testProperty_type_anonymous_object_repl() {
+    run("property_type_anonymous_object.repl.kts");
   }
 
   @Test
-  @TestMetadata("property_visibility.kts")
-  public void testProperty_visibility() {
-    run("property_visibility.kts");
+  @TestMetadata("property_visibility.repl.kts")
+  public void testProperty_visibility_repl() {
+    run("property_visibility.repl.kts");
   }
 
   @Test
@@ -130,32 +130,32 @@ public class ReplWithTestExtensionsDiagnosticsTestGenerated extends AbstractRepl
   }
 
   @Test
-  @TestMetadata("unsafe_cast_assignment_within_class.kts")
-  public void testUnsafe_cast_assignment_within_class() {
-    run("unsafe_cast_assignment_within_class.kts");
+  @TestMetadata("unsafe_cast_assignment_within_class.repl.kts")
+  public void testUnsafe_cast_assignment_within_class_repl() {
+    run("unsafe_cast_assignment_within_class.repl.kts");
   }
 
   @Test
-  @TestMetadata("unsafe_cast_assignment_within_function.kts")
-  public void testUnsafe_cast_assignment_within_function() {
-    run("unsafe_cast_assignment_within_function.kts");
+  @TestMetadata("unsafe_cast_assignment_within_function.repl.kts")
+  public void testUnsafe_cast_assignment_within_function_repl() {
+    run("unsafe_cast_assignment_within_function.repl.kts");
   }
 
   @Test
-  @TestMetadata("unsafe_cast_assignment_within_property_getter.kts")
-  public void testUnsafe_cast_assignment_within_property_getter() {
-    run("unsafe_cast_assignment_within_property_getter.kts");
+  @TestMetadata("unsafe_cast_assignment_within_property_getter.repl.kts")
+  public void testUnsafe_cast_assignment_within_property_getter_repl() {
+    run("unsafe_cast_assignment_within_property_getter.repl.kts");
   }
 
   @Test
-  @TestMetadata("unsafe_cast_assignment_within_property_setter.kts")
-  public void testUnsafe_cast_assignment_within_property_setter() {
-    run("unsafe_cast_assignment_within_property_setter.kts");
+  @TestMetadata("unsafe_cast_assignment_within_property_setter.repl.kts")
+  public void testUnsafe_cast_assignment_within_property_setter_repl() {
+    run("unsafe_cast_assignment_within_property_setter.repl.kts");
   }
 
   @Test
-  @TestMetadata("unsafe_cast_in_loop.kts")
-  public void testUnsafe_cast_in_loop() {
-    run("unsafe_cast_in_loop.kts");
+  @TestMetadata("unsafe_cast_in_loop.repl.kts")
+  public void testUnsafe_cast_in_loop_repl() {
+    run("unsafe_cast_in_loop.repl.kts");
   }
 }

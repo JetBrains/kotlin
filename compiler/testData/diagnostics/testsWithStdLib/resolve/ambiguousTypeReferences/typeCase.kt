@@ -19,12 +19,12 @@ fun foo(): Any? = null
 // K1: misses both some.HashMap and java.util.HashMap due to ambiguous classifiers, takes kotlin.collections.HashMap from the next scope
 // K2: properly reports ambiguity
 @Suppress("UNCHECKED_CAST")
-fun test() = foo() as HashMap<String, String> // Case 1
+fun test() = foo() as <!OVERLOAD_RESOLUTION_AMBIGUITY!>HashMap<String, String><!> // Case 1
 
 // Similar behavior to test() above
-val bar: HashMap<String, String>? = null      // Case 5
+val bar: <!OVERLOAD_RESOLUTION_AMBIGUITY!>HashMap<String, String><!>? = null      // Case 5
 
 // Similar behavior to test() above
-val baz = foo() is HashMap<*, *>              // Case 6
+val baz = foo() is <!OVERLOAD_RESOLUTION_AMBIGUITY!>HashMap<*, *><!>              // Case 6
 
 /* GENERATED_FIR_TAGS: asExpression, functionDeclaration, isExpression, nullableType, propertyDeclaration, stringLiteral */

@@ -6,31 +6,31 @@ fun foobar(block: (Double) -> Unit) { }
 
 fun bar() {
     foo { _, b ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { a, _ ->
         a checkType { _<Int>() }
-        <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { _, _ ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { _: Int, b: String ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { a: Int, _: String ->
         a checkType { _<Int>() }
-        <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { _: Int, _: String ->
-        <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>hashCode<!>()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { `_`, _ ->
@@ -41,7 +41,7 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { <!REDECLARATION, REDECLARATION!>`_`<!>, <!REDECLARATION, REDECLARATION!>`_`<!> ->
+    foo { <!REDECLARATION!>`_`<!>, <!REDECLARATION!>`_`<!> ->
         _ checkType { _<String>() }
     }
 

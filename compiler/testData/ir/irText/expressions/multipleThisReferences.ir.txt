@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
               CONSTRUCTOR visibility:public returnType:<root>.Host.test.<no name provided> [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.Outer.Inner'
-                    ARG <this>: GET_VAR '<this>(index:1): <root>.Outer declared in <root>.Host.test' type=<root>.Outer origin=null
+                    ARG <this>: GET_VAR '<this>(index:1): <root>.Outer declared in <root>.Host.test' type=<root>.Outer origin=IMPLICIT_ARGUMENT
                     ARG x: CONST Int type=kotlin.Int value=42
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

@@ -23,16 +23,16 @@ class Generic<T1> {
     open inner class Generic<T2>
 
     inner class Test1 : GI<T1>()
-    inner class Test2 : <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GIInt<!>()
-    inner class Test3 : GIStar()
-    inner class Test3a : test.Generic<*>.Inner()
+    inner class Test2 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>GIInt<!>()
+    inner class Test3 : <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!>GIStar<!>()
+    inner class Test3a : test.Generic<<!PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE!>*<!>>.Inner()
 
     inner class Test4<T2> : GG<T1, T2>()
     inner class Test5 : GG<T1, Int>()
-    inner class Test6 : <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GG<!><Int, T1>()
-    inner class Test7 : <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GG<!><Int, Int>()
-    inner class Test8 : <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GIntG<!><Int>()
-    inner class Test9 : <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GGInt<!><Int>()
+    inner class Test6 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>GG<Int, T1><!>()
+    inner class Test7 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>GG<Int, Int><!>()
+    inner class Test8 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>GIntG<Int><!>()
+    inner class Test9 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>GGInt<Int><!>()
     inner class Test10 : GGInt<T1>()
 
     inner class Test11 : GG<T1, Int> {

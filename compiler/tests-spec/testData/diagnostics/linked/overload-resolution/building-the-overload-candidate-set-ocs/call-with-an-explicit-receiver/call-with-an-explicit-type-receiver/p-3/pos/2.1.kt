@@ -18,7 +18,7 @@
 fun case1() {
     C1.<!UNRESOLVED_REFERENCE!>V<!>()
 
-    C1.Companion.<!DEBUG_INFO_CALL("fqName: C1.Companion.V.<init>; typeCall: function")!>V()<!>
+    C1.Companion.<!DEBUG_INFO_CALL("fqName: C1.Companion.V.V; typeCall: function")!>V()<!>
 
 }
 
@@ -36,8 +36,8 @@ class C1(){
  * ISSUES: KT-39129
  */
 fun case2() {
-    C2.<!DEBUG_INFO_CALL("fqName: C2.V.invoke; typeCall: variable&invoke")!>V()<!> // to (2)
-    C2.Companion.<!DEBUG_INFO_CALL("fqName: C2.Companion.V.<init>; typeCall: function")!>V()<!> // to (1)
+    C2.<!DEBUG_INFO_CALL("fqName: L.invoke; typeCall: variable&invoke")!>V()<!> // to (2)
+    C2.Companion.<!DEBUG_INFO_CALL("fqName: C2.Companion.V.V; typeCall: function")!>V()<!> // to (1)
 }
 
 open class C2(){
@@ -59,8 +59,8 @@ open class L {
  * ISSUES: KT-39129
  */
 fun case3() {
-    C3.<!DEBUG_INFO_CALL("fqName: C3.V.invoke; typeCall: variable&invoke")!>V()<!> // to (2)
-    C3.Companion.<!DEBUG_INFO_CALL("fqName: C3.Companion.V.<init>; typeCall: function")!>V()<!> // to (1)
+    C3.<!DEBUG_INFO_CALL("fqName: L3.invoke; typeCall: variable&invoke")!>V()<!> // to (2)
+    C3.Companion.<!DEBUG_INFO_CALL("fqName: C3.Companion.V.V; typeCall: function")!>V()<!> // to (1)
 }
 
 open class C3(){

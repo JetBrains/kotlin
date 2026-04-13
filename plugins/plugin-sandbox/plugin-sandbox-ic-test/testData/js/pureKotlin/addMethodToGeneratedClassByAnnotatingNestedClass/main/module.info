@@ -5,6 +5,7 @@ STEP 0:
     added file: usage.kt
 STEP 1:
     dependencies: lib
+    updated imports <wasm>: usage.kt
 STEP 2:
     dependencies: lib
     modifications:

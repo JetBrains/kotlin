@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.pipeline
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
@@ -70,6 +71,11 @@ abstract class FrontendPipelineArtifact : PipelineArtifact() {
 
 abstract class Fir2IrPipelineArtifact : PipelineArtifact() {
     abstract val result: Fir2IrActualizedResult
+    abstract override val configuration: CompilerConfiguration
+}
+
+abstract class LoadedIrPipelineArtifact : PipelineArtifact() {
+    abstract val moduleInfo: IrModuleInfo
     abstract override val configuration: CompilerConfiguration
 }
 

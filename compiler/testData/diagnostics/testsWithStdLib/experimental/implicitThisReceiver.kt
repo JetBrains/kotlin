@@ -7,7 +7,7 @@ open class C {
     fun member() {}
 }
 
-fun foo(f: <!OPT_IN_USAGE_ERROR!>C<!>.() -> Unit) {}
+fun foo(f: <!OPT_IN_USAGE_ERROR!><!OPT_IN_USAGE_ERROR!>C<!>.() -> Unit<!>) {}
 
 
 fun test() {

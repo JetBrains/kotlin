@@ -69,3 +69,43 @@ suspend fun throwNonException(message: String): Int {
     class NonExceptionThrowable(message: String) : Throwable(message)
     throw NonExceptionThrowable(message)
 }
+
+suspend fun neverCompletes(): Int = coroutineScope {
+    suspendCancellableCoroutine { cont ->
+        cont.invokeOnCancellation {}
+    }
+}
+
+suspend fun finallyDelayInt(delay: Long, onFinally: (() -> Unit)?): Int {
+    var result = 0
+    try {
+        delay(delay)
+        return 67
+    } finally {
+        onFinally?.invoke()
+    }
+    return result
+}
+
+suspend fun testOnAnotherThread(): Int = withContext(Dispatchers.Default) {
+    delay(10L)
+    42
+}
+
+suspend fun throwInFinally(message: String): Int {
+    try {
+        delay(10L)
+        return 42
+    } finally {
+        error(message)
+    }
+}
+
+suspend fun cancelledWithThrowInFinally(delay: Long, message: String): Int {
+    try {
+        delay(delay)
+        return 42
+    } finally {
+        error(message)
+    }
+}

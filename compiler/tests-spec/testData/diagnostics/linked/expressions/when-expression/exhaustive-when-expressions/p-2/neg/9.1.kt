@@ -42,13 +42,13 @@ fun case_5(value_1: SealedClassMixed): String = <!NO_ELSE_IN_WHEN!>when<!>(value
 }
 
 // TESTCASE NUMBER: 6
-fun case_6(value_1: SealedClassMixed): Int = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(value_1) { }<!>
+fun case_6(value_1: SealedClassMixed): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) { }
 
 // TESTCASE NUMBER: 7
-fun case_7(value_1: SealedClassSingleWithObject): Int = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(value_1) { }<!>
+fun case_7(value_1: SealedClassSingleWithObject): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) { }
 
 // TESTCASE NUMBER: 8
-fun case_8(value_1: SealedClassEmpty): String = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> (value_1) { }<!>
+fun case_8(value_1: SealedClassEmpty): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) { }
 
 // TESTCASE NUMBER: 9
 fun case_9(value_1: Number): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
@@ -64,7 +64,7 @@ fun case_9(value_1: Number): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
  * TESTCASE NUMBER: 10
  * DISCUSSION: maybe make exhaustive without else?
  */
-fun case_10(value_1: Any): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
+fun case_10(value_1: Any): String = when (value_1) {
     <!USELESS_IS_CHECK!>is Any<!> -> ""
 }
 

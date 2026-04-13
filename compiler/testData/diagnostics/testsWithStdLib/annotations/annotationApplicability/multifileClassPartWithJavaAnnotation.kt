@@ -2,8 +2,8 @@
 // FILE: test.kt
 @file:JvmName("MultifileClass")
 @file:JvmMultifileClass
-<!ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES!>@file:JavaAnn<!>
-<!ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES!>@file:JavaClassAnn<!>
+@file:JavaAnn
+@file:JavaClassAnn
 @file:JavaSourceAnn
 
 // FILE: JavaAnn.java

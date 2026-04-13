@@ -7,7 +7,7 @@
 //     -> this is ImageIconUIResource -> description ?: "ImageIconUIResource(?)"
 
 fun Any.test() = when {
-    this is sun.swing.<!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>ImageIconUIResource<!> -> description
+    this is <!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>sun.swing.ImageIconUIResource<!> -> description
     else -> "emptyness"
 }
 

@@ -148,7 +148,7 @@ private fun Project.registerDsymArchiveTask(
     dsymPath: Provider<File>?,
     dwarfDsymFolderPath: String?,
     action: XcodeEnvironment.Action?,
-    isStatic: Provider<Boolean>,
+    isStatic: Boolean,
 ): TaskProvider<*> {
     return locateOrRegisterTask<CopyDsymDuringArchiving>(
         lowerCamelCaseName(
@@ -156,7 +156,7 @@ private fun Project.registerDsymArchiveTask(
             frameworkCopyTaskName
         )
     ) { task ->
-        task.onlyIf { action == XcodeEnvironment.Action.install && !isStatic.get() }
+        task.onlyIf { action == XcodeEnvironment.Action.install && !isStatic }
         task.dwarfDsymFolderPath.set(dwarfDsymFolderPath)
         dsymPath?.let { task.dsymPath.set(it) }
     }
@@ -261,6 +261,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     )
     val sandBoxTask = checkSandboxAndWriteProtectionTask(environment, environment.userScriptSandboxingEnabled)
     val assembleTask = registerAssembleAppleFrameworkTask(framework, environment) ?: return
+    val matchesRequestedBinary = isRequestedBinary(framework, environment)
 
     val builtProductsDir = builtProductsDir(frameworkTaskName, environment)
     val createBuildSystemDirectory = registerCreateBuildSystemDirectory(builtProductsDir)
@@ -271,17 +272,15 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     )
     symbolicLinkTask.dependsOn(createBuildSystemDirectory)
     symbolicLinkTask.configure { task ->
-        task.onlyIf("Binary ${framework.name} does not match Xcode-requested build type or architecture") { isRequestedBinary(framework, environment) }
+        task.onlyIf("Binary ${framework.name} does not match Xcode-requested build type or architecture") { matchesRequestedBinary }
         assembleTask.frameworkPath?.let { task.frameworkPath.set(it) }
         assembleTask.dsymPath?.let { task.dsymPath.set(it) }
         task.shouldDsymLinkExist.set(
-            provider {
-                when (environment.action) {
-                    // Don't create symbolic link for dSYM when archiving: KT-71423
-                    XcodeEnvironment.Action.install -> false
-                    XcodeEnvironment.Action.other,
-                    null -> !framework.isStatic
-                }
+            when (environment.action) {
+                // Don't create symbolic link for dSYM when archiving: KT-71423
+                XcodeEnvironment.Action.install -> false
+                XcodeEnvironment.Action.other,
+                null -> !framework.isStatic
             }
         )
     }
@@ -297,7 +296,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         regenerateSyntheticLinkageProject.configure {
             it.doFirst {
                 if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
-                    error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
+                    error("Please make sure $PROJECT_FILE_PATH_ENV environment variable is present")
                 }
             }
             it.syntheticImportProjectRoot.set(
@@ -309,9 +308,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             )
         }
 
-        val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated(
-            expectLinkagePackageProductInCopyingPhase = provider { !framework.isStatic }
-        )
+        val syntheticLinkageImportProjectCheck = checkSyntheticImportProjectIsCorrectlyIntegrated()
         regenerateSyntheticLinkageProject.dependsOn(syntheticLinkageImportProjectCheck)
         assembleTask.taskProvider.dependsOn(regenerateSyntheticLinkageProject)
         framework.linkTaskProvider.dependsOn(regenerateSyntheticLinkageProject)
@@ -326,17 +323,14 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     embedAndSignTask.dependsOn(assembleTask.taskProvider)
     embedAndSignTask.dependsOn(symbolicLinkTask)
 
-    if (kotlinPropertiesProvider.appleCopyDsymDuringArchiving) {
+    if (kotlinPropertiesProvider.appleCopyDsymDuringArchiving && matchesRequestedBinary) {
         val dsymCopyTask = registerDsymArchiveTask(
             frameworkCopyTaskName = frameworkTaskName,
             dsymPath = assembleTask.dsymPath,
             dwarfDsymFolderPath = environment.dwarfDsymFolderPath,
             action = environment.action,
-            isStatic = provider { framework.isStatic },
+            isStatic = framework.isStatic,
         )
-        dsymCopyTask.configure { task ->
-            task.onlyIf("Binary ${framework.name} does not match Xcode-requested build type or architecture") { isRequestedBinary(framework, environment) }
-        }
         // FIXME: KT-71720
         // Dsym copy task must execute after symbolic link task because symbolic link task does clean up for KT-68257 and dSYM is copied to the same location
         dsymCopyTask.dependsOn(symbolicLinkTask)
@@ -428,7 +422,6 @@ internal fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     gradleProjectPath: String,
     xcodeProjectThatCalledEmbedAndSign: File,
     rootProjectDir: File,
-    expectLinkagePackageProductInCopyingPhase: Boolean,
 ) {
     val xcodeProject = deserializeXcodeProject(xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj"), execOperations)
     val linkageProducts = linkageProductsReferencedInPBXObjects(xcodeProject)
@@ -438,52 +431,19 @@ internal fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
             ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
         } else "${gradleProjectPath}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
 
-        val gradlew = searchForGradlew(xcodeProjectThatCalledEmbedAndSign)
+        val gradleCommand = searchForGradlew(xcodeProjectThatCalledEmbedAndSign)?.path
+            ?: rootProjectDir.resolve("gradlew").takeIf { it.exists() }?.path
+            ?: "gradle"
         val messageLines = listOf(
             "You have SwiftPM dependencies with embedAndSign integration.",
             "Please integrate with synthetic import linkage project by",
             "running the following command:",
-            "${PROJECT_PATH_ENV}='${xcodeProjectThatCalledEmbedAndSign.path}' '${gradlew?.path}' -p '${rootProjectDir}' '${taskCall}' -i"
+            "${PROJECT_PATH_ENV}='${xcodeProjectThatCalledEmbedAndSign.path}' '${gradleCommand}' -p '${rootProjectDir}' '${taskCall}' -i"
         )
         messageLines.forEach {
             println("error: $it")
         }
         error(messageLines.joinToString("\n"))
-    }
-
-    val productReferencesToPackageProducts = xcodeProject.objects.entries
-        .filter { (_, pbxObject) ->
-            if (pbxObject !is PbxBuildFile) return@filter false
-            pbxObject.productRef?.let { it in linkageProducts } ?: false
-        }.map { it.key }.toSet()
-
-    val hasCopyPhaseReferencingSyntheticProject = xcodeProject.objects.values.any {
-        (it is PbxCopyFilesBuildPhase) && (it.files?.any { it in productReferencesToPackageProducts } ?: false)
-    }
-
-    if (expectLinkagePackageProductInCopyingPhase && !hasCopyPhaseReferencingSyntheticProject) {
-        val messageLines = listOf(
-            "Please specify \"Embed & Sign\" under \"Embed\"",
-            "for library named \"${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}\"",
-            "in the \"General -> Framework, Libraries, and Embedded Content\" tab",
-        )
-        messageLines.forEach {
-            println("error: $it")
-        }
-        error(messageLines.joinToString(" "))
-    }
-
-    if (!expectLinkagePackageProductInCopyingPhase && hasCopyPhaseReferencingSyntheticProject) {
-        val messageLines = listOf(
-            "Please specify \"Do Not Embed\" under \"Embed\"",
-            "for library named \"${SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}\"",
-            "in the \"General -> Framework, Libraries, and Embedded Content\" tab",
-            "and make sure the library is not present in \"Build Phases -> Embed Frameworks\" "
-        )
-        messageLines.forEach {
-            println("error: $it")
-        }
-        error(messageLines.joinToString(" "))
     }
 }
 
@@ -520,9 +480,7 @@ private fun Project.checkSandboxAndWriteProtectionTask(
         task.userScriptSandboxingEnabled.set(userScriptSandboxingEnabled)
     }
 
-private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
-    expectLinkagePackageProductInCopyingPhase: Provider<Boolean>,
-): TaskProvider<*> {
+private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(): TaskProvider<*> {
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
 
     val xcodeProjectPathForKmpIJPlugin = locateOrRegisterSwiftPMDependenciesExtension().xcodeProjectPathForKmpIJPlugin
@@ -540,7 +498,7 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
         task.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
         task.doFirst {
             if (!envProjectPath.isPresent && !xcodeProjectPathForKmpIJPlugin.isPresent) {
-                error("Please specify Xcode project path in \"swiftPMDependencies { xcodeProjectPathForKmpIJPlugin.set(...) }\"")
+                error("Please make sure $PROJECT_FILE_PATH_ENV environment variable is present")
             }
 
             checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
@@ -548,7 +506,6 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
                 gradleProjectPath,
                 File(projectPath.get()),
                 rootProjectDir,
-                expectLinkagePackageProductInCopyingPhase = expectLinkagePackageProductInCopyingPhase.get()
             )
         }
     }
@@ -601,8 +558,14 @@ private fun Project.appleFrameworkDir(frameworkTaskName: String, environment: Xc
     }
 }
 
-private fun Project.builtProductsDir(frameworkTaskName: String, environment: XcodeEnvironment) = project.provider {
-    environment.builtProductsDir ?: fireEnvException(frameworkTaskName, environment)
+private fun Project.builtProductsDir(frameworkTaskName: String, environment: XcodeEnvironment): Provider<File> {
+    val builtProductsDir = environment.builtProductsDir
+    val envBuildType = environment.buildType
+    val envRepresentation = environment.toString()
+
+    return project.provider {
+        builtProductsDir ?: fireEnvException(frameworkTaskName, envBuildType, envRepresentation)
+    }
 }
 
 

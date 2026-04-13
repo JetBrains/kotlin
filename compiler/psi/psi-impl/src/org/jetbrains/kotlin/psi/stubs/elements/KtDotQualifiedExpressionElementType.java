@@ -26,7 +26,7 @@ public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElemen
         if (parentElementType == KtStubElementTypes.IMPORT_DIRECTIVE ||
             parentElementType == KtStubElementTypes.PACKAGE_DIRECTIVE ||
             parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION ||
-            StubUtils.isDeclaredInsideValueArgument(node)
+            StubUtils.isDeclaredInsideValueArgument$org_jetbrains_kotlin_psi_impl(node)
         ) {
             return super.shouldCreateStub(node);
         }

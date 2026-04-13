@@ -39,7 +39,7 @@ class DataFrameCumSum0 : AbstractSchemaModificationInterpreter() {
 internal val Arguments.cumSumDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         colsAtAnyDepth().valueCols().cols {
-            (it.single() as ColumnType).coneType.isPrimitiveOrMixedNumber(session)
+            (it.single() as ColumnType).coneType.isPrimitiveOrMixedNumber()
         }
     }
 

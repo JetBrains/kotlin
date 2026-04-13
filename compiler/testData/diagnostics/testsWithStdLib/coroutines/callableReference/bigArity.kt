@@ -13,9 +13,9 @@ class A {
     }
 }
 
-suspend fun expectsLambdaWithBigArity(c: suspend <!UNSUPPORTED_FEATURE!>(Long, Long, Long, Long, Long, Long, Long, Long, Long, Long,
+suspend fun expectsLambdaWithBigArity(c: suspend (Long, Long, Long, Long, Long, Long, Long, Long, Long, Long,
                                                   Long, Long, Long, Long, Long, Long, Long, Long, Long, Long,
-                                                  Long, Long, Long, Long, Long, Long, Long, Long, Long, String) -> String<!>): String {
+                                                  Long, Long, Long, Long, Long, Long, Long, Long, Long, String) -> String): String {
     return c.invoke(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, "OK")
 }
 

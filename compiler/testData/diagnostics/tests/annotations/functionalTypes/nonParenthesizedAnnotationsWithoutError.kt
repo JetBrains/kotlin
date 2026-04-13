@@ -16,7 +16,7 @@ fun foo1(x: @Foo () -> Unit) = x as Iterable<@Foo () -> Unit>?
 fun foo2() = null as @Foo () -> Unit
 
 fun foo3(x: Any?) {
-    if (x is (@<!DEBUG_INFO_MISSING_UNRESOLVED!>Foo<!> () -> Unit)?) {
+    if (x is (@Foo () -> Unit)?) {
 
     }
 }

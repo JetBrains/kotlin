@@ -21,7 +21,7 @@ class Inv<T>() {
 fun testInOut() {
     In<String>().f("1");
     (null <!CAST_NEVER_SUCCEEDS!>as<!> In<<!REDUNDANT_PROJECTION!>in<!> String>).f("1")
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<*>).f(<!TYPE_MISMATCH!>"1"<!>) // Wrong Arg
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<*>).<!NONE_APPLICABLE!>f<!>("1") // Wrong Arg
 
     In<String>().f(1);
     (null <!CAST_NEVER_SUCCEEDS!>as<!> In<<!REDUNDANT_PROJECTION!>in<!> String>).f(1)
@@ -37,16 +37,16 @@ fun testInOut() {
 
     Inv<Int>().f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).inf(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!MEMBER_PROJECTED_OUT!>1<!>) // !!
 
     Inv<Int>().outf()
-    checkSubtype<Int>(<!TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).outf()
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).outf()
 

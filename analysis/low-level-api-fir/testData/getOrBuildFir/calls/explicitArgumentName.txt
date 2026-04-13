@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] explicitArgumentName.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun named([ResolvedTo(CONTRACTS)] regular: R|Regular|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun named([ResolvedTo(STATUS)] regular: R|Regular|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
         R|/named|(R|/Regular.Regular|())
     }

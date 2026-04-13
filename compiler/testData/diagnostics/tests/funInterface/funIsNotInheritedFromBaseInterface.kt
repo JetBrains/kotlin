@@ -15,7 +15,7 @@ fun takeWithFun(a: WithFun) {}
 
 fun test() {
     takeBase {}
-    takeWithoutFun(<!TYPE_MISMATCH!>{}<!>)
+    takeWithoutFun(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
     takeWithFun {}
 }
 

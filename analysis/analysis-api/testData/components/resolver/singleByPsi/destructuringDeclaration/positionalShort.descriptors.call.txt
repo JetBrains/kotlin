@@ -1,2 +1,0 @@
-KtDestructuringDeclarationEntry(139,144): 'prop2'
-  null

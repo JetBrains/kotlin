@@ -47,13 +47,13 @@ fun case1() {
 // TESTCASE NUMBER: 2
 class Case2() {
     fun test() {
-        fun Marker.foo(x:Int) = TODO()
+        fun Marker.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>foo<!>(x:Int) = TODO()
         Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo(y=1)<!>
         Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.invoke; typeCall: variable&invoke")!>foo(x=1)<!>
     }
 }
 
-fun Marker.foo(x:Int) = TODO()
+fun Marker.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>foo<!>(x:Int) = TODO()
 
 fun case2() {
     Marker().<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo(y=1)<!>
@@ -74,7 +74,7 @@ fun case3() {
  */
 fun case4(marker : Marker?) {
     marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo(y=1)<!>
-    marker?.<!DEBUG_INFO_CALL("fqName: tests.foo; typeCall: extension function")!>foo(x=1)<!><!OPERATOR_MODIFIER_REQUIRED!>><!><!SYNTAX!><!>
+    marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.invoke; typeCall: variable&invoke")!>foo(x=1)<!><!OPERATOR_MODIFIER_REQUIRED!>><!><!SYNTAX!><!>
 }
 
 
@@ -87,8 +87,8 @@ fun case5(marker : Marker?) {
     fun bar(){
         fun Marker.foo(y:Int) = TODO()
         marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo(y=1)<!>
-        marker?.<!DEBUG_INFO_CALL("fqName: tests.foo; typeCall: extension function")!>foo(x=1)<!>
+        marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.invoke; typeCall: variable&invoke")!>foo(x=1)<!>
     }
     marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo(y=1)<!>
-    marker?.<!DEBUG_INFO_CALL("fqName: tests.foo; typeCall: extension function")!>foo(x=1)<!>
+    marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.invoke; typeCall: variable&invoke")!>foo(x=1)<!>
 }

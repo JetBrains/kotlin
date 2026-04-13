@@ -3,23 +3,23 @@
 data class Tuple(val first: String, val second: Int)
 
 fun declaration(x: Tuple) {
-    if (true) { <!UNSUPPORTED!>(val first, var second,) = x<!> }
-    if (true) { <!UNSUPPORTED!>[val first, var second,] = x<!> }
-    if (true) { <!UNSUPPORTED!>val [first, second,] = x<!> }
+    if (true) { (<!UNSUPPORTED_FEATURE!>val<!> first, <!UNSUPPORTED_FEATURE!>var<!> second,) = x }
+    if (true) { <!UNSUPPORTED_FEATURE!>[<!>val first, var second,] = x }
+    if (true) { val <!UNSUPPORTED_FEATURE!>[<!>first, second,] = x }
 }
 
 fun loop(x: List<Tuple>) {
-    for (<!UNSUPPORTED!>(val first, val second,)<!> in x) {}
-    for (<!UNSUPPORTED!>[val first]<!> in x) {}
-    for (<!UNSUPPORTED!>[first: String]<!> in x) {}
+    for ((<!UNSUPPORTED_FEATURE!>val<!> first, <!UNSUPPORTED_FEATURE!>val<!> second,) in x) {}
+    for (<!UNSUPPORTED_FEATURE!>[<!>val first] in x) {}
+    for (<!UNSUPPORTED_FEATURE!>[<!>first: String] in x) {}
 }
 
 fun lambda() {
     fun foo(f: (Tuple) -> Unit) {}
 
-    foo { <!UNSUPPORTED!>(val first, val second,)<!> -> }
-    foo { <!UNSUPPORTED!>[val first]<!> -> }
-    foo { <!UNSUPPORTED!>[first: String]<!> -> }
+    foo { (<!UNSUPPORTED_FEATURE!>val<!> first, <!UNSUPPORTED_FEATURE!>val<!> second,) -> }
+    foo { <!UNSUPPORTED_FEATURE!>[<!>val first] -> }
+    foo { <!UNSUPPORTED_FEATURE!>[<!>first: String] -> }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration, functionalType,

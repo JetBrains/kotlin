@@ -32,10 +32,10 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                   BLOCK_BODY
                     CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ
-                      ARG <this>: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                      ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
                       ARG <set-?>: CONST Int type=kotlin.Int value=1
                     CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                      ARG <this>: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                      ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL returnType:kotlin.Function0<kotlin.Unit>
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyEnum.Z
             correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val]
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:private [final]' type=kotlin.Function0<kotlin.Unit> origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-aLambda>' type=<root>.MyEnum.Z origin=null
         PROPERTY name:anObject visibility:public modality:FINAL [val]
-          FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:private [final]
+          FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.MyEnum.Z.anObject.<no name provided> visibility:private [final]
             EXPRESSION_BODY
               BLOCK type=<root>.MyEnum.Z.anObject.<no name provided> origin=OBJECT_LITERAL
                 CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
@@ -52,10 +52,10 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                   ANONYMOUS_INITIALIZER isStatic=false
                     BLOCK_BODY
                       CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ
-                        ARG <this>: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                        ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
                         ARG <set-?>: CONST Int type=kotlin.Int value=1
                       CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                        ARG <this>: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                        ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
                   CONSTRUCTOR visibility:public returnType:<root>.MyEnum.Z.anObject.<no name provided> [primary]
                     BLOCK_BODY
                       DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
@@ -77,22 +77,21 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                     VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyEnum.Z.anObject.<no name provided>
                     BLOCK_BODY
                       CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ
-                        ARG <this>: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                        ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
                         ARG <set-?>: CONST Int type=kotlin.Int value=1
                       CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                        ARG <this>: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                        ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
                 CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.MyEnum.Z.anObject.<no name provided>' type=<root>.MyEnum.Z.anObject.<no name provided> origin=OBJECT_LITERAL
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL returnType:kotlin.Any
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL returnType:<root>.MyEnum.Z.anObject.<no name provided>
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyEnum.Z
             correspondingProperty: PROPERTY name:anObject visibility:public modality:FINAL [val]
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): kotlin.Any declared in <root>.MyEnum.Z'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
+              RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <root>.MyEnum.Z.anObject.<no name provided> declared in <root>.MyEnum.Z'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<root>.MyEnum.Z.anObject.<no name provided> visibility:private [final]' type=<root>.MyEnum.Z.anObject.<no name provided> origin=null
                   receiver: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.<get-anObject>' type=<root>.MyEnum.Z origin=null
         CONSTRUCTOR visibility:private returnType:<root>.MyEnum.Z [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.MyEnum'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Z modality:FINAL visibility:private superTypes:[<root>.MyEnum]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.MyEnum>
@@ -116,7 +115,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MyEnum.Z
           BLOCK_BODY
             CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ
-              ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.bar' type=<root>.MyEnum.Z origin=null
+              ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.bar' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT
               ARG <set-?>: CONST Int type=kotlin.Int value=1
             CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
               ARG <this>: GET_VAR '<this>: <root>.MyEnum.Z declared in <root>.MyEnum.Z.bar' type=<root>.MyEnum.Z origin=IMPLICIT_ARGUMENT

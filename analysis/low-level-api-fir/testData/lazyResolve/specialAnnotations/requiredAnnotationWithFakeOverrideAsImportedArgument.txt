@@ -221,8 +221,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument.kt
     public abstract [ResolvedTo(STATUS)] interface MyInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] val foo: R|T?|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyInterface] get(): R|T?| { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] val foo: R|T?|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyInterface] get(): R|T?| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(STATUS)] object MyObject : R|myPack/MyInterface<kotlin/Int>| {
@@ -241,8 +241,8 @@ FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] requiredAnnotationWithFakeOverrideAsImportedArgument.kt
     public abstract [ResolvedTo(STATUS)] interface MyInterface<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-        public open [ResolvedTo(CONTRACTS)] val foo: R|T?|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyInterface] get(): R|T?| { LAZY_BLOCK }
+        public open [ResolvedTo(STATUS)] val foo: R|T?|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=MyInterface] get(): R|T?| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(STATUS)] object MyObject : R|myPack/MyInterface<kotlin/Int>| {

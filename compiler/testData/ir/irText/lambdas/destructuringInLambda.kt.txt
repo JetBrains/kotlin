@@ -1,6 +1,6 @@
 var fn: Function1<A, Int>
-  field = local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
-    val y: Int = <name for destructuring parameter 0>.component2()
+  field = local fun <anonymous>(<destruct>: A): Int {
+    val y: Int = <destruct>.component2()
     return 42.plus(other = y)
   }
 

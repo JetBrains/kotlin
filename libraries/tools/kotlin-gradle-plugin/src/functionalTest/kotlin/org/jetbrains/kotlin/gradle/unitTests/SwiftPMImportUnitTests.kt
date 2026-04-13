@@ -16,22 +16,29 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPackageDependencyInputFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesForLockFilesResolvableMetadataConfiguration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import java.nio.file.Files
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
+import java.io.FileNotFoundException
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNotSame
 
 class SwiftPMImportUnitTests {
 
@@ -390,9 +397,12 @@ class SwiftPMImportUnitTests {
     }
 
     @Test
-    fun `test fetchSyntheticImportProjectPackages depends on syncPackageSwiftLockFileToSyntheticSwiftPMPackage`() {
+    fun `test fetchSyntheticImportProjectPackages depends on syncPackageSwiftLockFileToSyntheticSwiftPMPackage when noSynchronization is set`() {
         val project = swiftPMImportProject(
             swiftPMDependencies = { layout ->
+
+                packageResolvedSynchronization = noSynchronization()
+
                 localSwiftPackage(
                     directory = layout.projectDirectory.dir("my-custom-pkg"),
                     products = listOf("ManifestPackage"),
@@ -402,10 +412,14 @@ class SwiftPMImportUnitTests {
         project.evaluate()
 
         val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
-        val syncLockFileToPSyntheticSwiftPMPackageTask = project.tasks.findByName(SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME)
+        val syncLockFileToPSyntheticSwiftPMPackageTask =
+            project.tasks.findByName(SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME)
 
         assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
-        assertNotNull(syncLockFileToPSyntheticSwiftPMPackageTask, "${SyncPackageResolvedTask.SYNC_PROJECT_DIRECTORY_TO_SYNTHETIC_TASK_NAME} should be registered")
+        assertNotNull(
+            syncLockFileToPSyntheticSwiftPMPackageTask,
+            "${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME} should be registered"
+        )
 
         fetchTask.assertDependsOn(
             syncLockFileToPSyntheticSwiftPMPackageTask
@@ -413,8 +427,178 @@ class SwiftPMImportUnitTests {
     }
 
     @Test
-    fun `test syncPackageSwiftLockFileToProjectDirectory depends on fetchSyntheticImportProjectPackages`() {
+    fun `test syncPackageSwiftLockFileToProjectDirectory depends on fetchSyntheticImportProjectPackages when noSynchronization is set`() {
         val project = swiftPMImportProject(
+            swiftPMDependencies = { layout ->
+
+                packageResolvedSynchronization = noSynchronization()
+
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        )
+
+        project.evaluate()
+
+        val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
+        val syncLockFileToProjectDirectoryTask =
+            project.tasks.findByName(SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME)
+
+        assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
+        assertNotNull(
+            syncLockFileToProjectDirectoryTask,
+            "${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME} should be registered"
+        )
+
+        syncLockFileToProjectDirectoryTask.assertDependsOn(
+            fetchTask
+        )
+    }
+
+    @Test
+    fun `ios cinterop depends on ios def task but not macos def task`() {
+        val project = swiftPMImportProject(
+            preApplyCode = {
+                val localPackageDir = project.projectDir.resolve("packageOne")
+                localPackageDir.mkdirs()
+                localPackageDir.resolve("Package.swift").writeText(
+                    """
+                    // swift-tools-version: 5.9
+                    import PackageDescription
+                    let package = Package(name: "packageOne")
+                    """.trimIndent()
+                )
+            },
+            multiplatform = {
+                iosArm64()
+                macosArm64()
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("packageOne"),
+                    products = listOf(
+                        SwiftPMDependency.Product(
+                            name = "packageOne",
+                            platformConstraints = setOf(SwiftPMDependency.Platform.iOS),
+                        )
+                    ),
+                )
+            }
+        )
+        project.evaluate()
+
+        val iosDefTask = project.assertContainsTaskInstance<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
+            "convertSyntheticImportProjectIntoDefFileIphoneos"
+        )
+        val macosDefTask = project.assertContainsTaskInstance<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
+            "convertSyntheticImportProjectIntoDefFileMacosx"
+        )
+        val iosCinteropTask = project.assertContainsTaskWithName("cinteropSwiftPMImportIosArm64")
+        val macosCinteropTask = project.assertContainsTaskWithName("cinteropSwiftPMImportMacosArm64")
+
+        iosCinteropTask.assertDependsOn(iosDefTask)
+        iosCinteropTask.assertNotDependsOn(macosDefTask)
+        macosCinteropTask.assertDependsOn(macosDefTask)
+        macosCinteropTask.assertNotDependsOn(iosDefTask)
+    }
+
+    @Test
+    fun `test - only dynamic frameworks depend on SwiftPM import pipeline`() {
+        val linkTaskName = "linkDebugFrameworkIosSimulatorArm64"
+        val staticFramework = swiftPMImportProject(
+            multiplatform = {
+                iosSimulatorArm64().binaries.framework {
+                    isStatic = true
+                }
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+        val staticFrameworkTaskDependencies = staticFramework.tasks.getByName(linkTaskName)
+            .taskDependencies.getDependencies(null)
+            .map { it.name }.toSet()
+
+        val dynamicFramework = swiftPMImportProject(
+            multiplatform = {
+                iosSimulatorArm64().binaries.framework {
+                    isStatic = false
+                }
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+        val dynamicFrameworkTaskDependencies = dynamicFramework.tasks.getByName(linkTaskName)
+            .taskDependencies.getDependencies(null)
+            .map { it.name }.toSet()
+
+        assertEquals(
+            setOf("convertSyntheticImportProjectIntoDefFileIphonesimulator"),
+            dynamicFrameworkTaskDependencies - staticFrameworkTaskDependencies,
+        )
+        assertEquals(
+            setOf(),
+            staticFrameworkTaskDependencies - dynamicFrameworkTaskDependencies,
+        )
+    }
+
+    @Test
+    fun `KT-85517 - swiftPM metadata resolution doesn't fail on accidentally resolve outgoing variants without Usage`() {
+        val rootProject = buildProject {
+            plugins.apply("java-library")
+            project.configurations.create("consumable") {
+                it.outgoing.artifact(file("foo"))
+                it.attributes.attribute(org.gradle.api.attributes.Attribute.of("foo", String::class.java), "bar")
+            }
+        }.evaluate()
+
+        val swiftPMConsumer = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+            },
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    implementation(project(":"))
+                }
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+        assertDoesNotThrow {
+            swiftPMConsumer.transitiveSwiftPMDependenciesProvider().get()
+        }
+    }
+
+    @Test
+    fun `KT-85561 - umbrella task is only registered for Apple SwiftPM projects and not for non-Apple consumers`() {
+        val identifier = "default"
+
+        val rootProject = buildProject {
+            configureRepositoriesForTests()
+        }
+
+        val shared = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("shared")
+            },
             swiftPMDependencies = { layout ->
                 localSwiftPackage(
                     directory = layout.projectDirectory.dir("my-custom-pkg"),
@@ -422,21 +606,36 @@ class SwiftPMImportUnitTests {
                 )
             }
         )
-        project.evaluate()
 
-        val fetchTask = project.tasks.findByName(FetchSyntheticImportProjectPackages.TASK_NAME)
-        val syncLockFileToProjectDirectoryTask =
-            project.tasks.findByName(SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME)
+        val composeApp = buildProjectWithMPP(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("composeApp")
+            },
+            preApplyCode = {
+                configureRepositoriesForTests()
+            },
+            code = {
+                kotlin {
+                    jvm()
 
-        assertNotNull(fetchTask, "${FetchSyntheticImportProjectPackages.TASK_NAME} should be registered")
-        assertNotNull(
-            syncLockFileToProjectDirectoryTask,
-            "${SyncPackageResolvedTask.SYNC_SYNTHETIC_TO_PROJECT_DIRECTORY_TASK_NAME} should be registered"
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":shared"))
+                    }
+                }
+            }
         )
 
-        syncLockFileToProjectDirectoryTask.assertDependsOn(
-            fetchTask
+        shared.evaluate()
+        composeApp.evaluate()
+
+        val umbrellaTask = shared.assertContainsTaskInstance<GenerateSyntheticLinkageImportProject>(
+            GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)
         )
+
+        assertDoesNotThrow {
+            umbrellaTask.taskDependencies.getDependencies(umbrellaTask)
+        }
     }
 }
 

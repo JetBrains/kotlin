@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 
+// INDY lambdas are not singletons on Android
+// IGNORE_BACKEND: ANDROID
+
 var capturedLambda: ((Int) -> Int)? = null
 
 fun captureLambda(): Boolean {

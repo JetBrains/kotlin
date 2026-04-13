@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 import kotlin.reflect.*
 
 fun <T> checkSubtype(t: T) = t

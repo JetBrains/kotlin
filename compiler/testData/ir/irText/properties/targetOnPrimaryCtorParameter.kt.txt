@@ -48,6 +48,8 @@ open annotation class PropertyOnly2 : Annotation {
 }
 
 class Foo {
+  @NoTarget
+  @PropValueField
   @PropertyOnly
   @PropertyOnly2
   var param: Int

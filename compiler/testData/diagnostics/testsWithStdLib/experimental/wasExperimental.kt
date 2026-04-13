@@ -33,9 +33,9 @@ fun use1(
     t1: <!OPT_IN_USAGE_ERROR!>TypeAliasToNewClass<!>
 ) {
     <!UNRESOLVED_REFERENCE!>newPublishedFun<!>()
-    <!UNRESOLVED_REFERENCE!>newFunExperimentalInThePast<!>()
-    <!UNRESOLVED_REFERENCE!>newValExperimentalInThePast<!>
-    <!UNRESOLVED_REFERENCE!>NewClassExperimentalInThePast<!>()
+    <!OPT_IN_USAGE_ERROR!>newFunExperimentalInThePast<!>()
+    <!OPT_IN_USAGE_ERROR!>newValExperimentalInThePast<!>
+    <!OPT_IN_USAGE_ERROR!>NewClassExperimentalInThePast<!>()
 }
 
 @OptIn(Marker::class)

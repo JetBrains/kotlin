@@ -25,9 +25,9 @@ class Case1 {
     fun x() = 1
 
     fun case() {
-        this.boo(::<!DEBUG_INFO_CALL("fqName: Case1.x; typeCall: function")!>x<!>, ::x)
+        this.boo(::x, ::x)
         this.<!DEBUG_INFO_CALL("fqName: Case1.boo; typeCall: function")!>boo(::x, ::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.boo(::x, ::x)<!>
+        this.boo(::x, ::x)
     }
 }
 
@@ -40,8 +40,8 @@ class Case2 {
     fun x() = 1.0
 
     fun case() {
-        this.boo(::<!DEBUG_INFO_CALL("fqName: Case2.x; typeCall: variable")!>x<!>, ::x)
+        this.boo(::x, ::x)
         this.<!DEBUG_INFO_CALL("fqName: Case2.boo; typeCall: function")!>boo(::x, ::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.boo(::x, ::x)<!>
+        this.boo(::x, ::x)
     }
 }

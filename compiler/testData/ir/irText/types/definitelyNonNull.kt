@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +DefinitelyNonNullableTypes
 
 fun <T> elvisLike(x: T, y: T & Any): T & Any = x ?: y

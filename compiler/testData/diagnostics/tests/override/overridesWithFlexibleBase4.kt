@@ -15,7 +15,7 @@ public interface CustomSubscriber<T> {
 }
 
 // FILE: LoggingObserver.kt
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class LoggingObserver<!><T> : CustomObserver<T>, CustomSubscriber<T> {
+class LoggingObserver<T> : CustomObserver<T>, CustomSubscriber<T> {
     override fun onNext(value: T & Any) {}
 }
 

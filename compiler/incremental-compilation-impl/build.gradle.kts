@@ -3,6 +3,7 @@ plugins {
     id("d8-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -53,14 +54,10 @@ sourceSets {
 }
 projectTests {
     testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 
     testTask("testJvmICWithJdk11", parallel = true, jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = false) {
-        dependsOn(":dist")
-        workingDir = rootDir
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         filter {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
@@ -69,11 +66,24 @@ projectTests {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 
+    tasks.withType<Test> {
+        workingDir(tasks.processTestResources.map { it.destinationDir }) // to let JUnit Foundation find the empty junit.properties and stop scanning
+        extensions.configure<TestInputsCheckExtension> {
+            with(extraPermissions) {
+                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
+                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
+            }
+        }
+    }
+
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
-    testData(isolated, "testData")
+    testData(project.isolated, "testData")
     testData(project(":jps:jps-plugin").isolated, "testData")
     withJsRuntime()
     withJvmStdlibAndReflect()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+    withMockJdkAnnotationsJar()
 }
 
 testsJar()

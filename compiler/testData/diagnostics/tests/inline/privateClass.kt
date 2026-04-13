@@ -8,11 +8,11 @@ private class S public constructor() {
     }
 }
 
-internal inline fun x(s: S, z: () -> Unit) {
+internal inline fun x(s: <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>S<!>, z: () -> Unit) {
     z()
-    <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>S<!>()
-    s.<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>a<!>()
-    test()
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>S<!>()
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>s<!>.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>a<!>()
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>test<!>()
 }
 
 private inline fun x2(s: S, z: () -> Unit) {

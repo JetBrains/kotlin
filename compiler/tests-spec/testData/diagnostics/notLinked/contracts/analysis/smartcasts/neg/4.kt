@@ -153,7 +153,7 @@ fun case_1(value_1: Any?) {
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number) {
     value_1.case_2()
-    println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
+    println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -182,10 +182,10 @@ fun case_5(value_1: Any?) {
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Number) {
-    when { value_1.case_6_1() -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
-    when { !value_1.case_6_2() -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
-    when { value_1.case_6_3() != null -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
-    when { value_1.case_6_4() != null -> println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()) }
+    when { value_1.case_6_1() -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { !value_1.case_6_2() -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_6_3() != null -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_6_4() != null -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
 }
 
 // TESTCASE NUMBER: 7
@@ -214,7 +214,7 @@ fun case_10(value_1: Number?) {
     if (value_1?.case_10() == null) {
         println(value_1<!UNSAFE_CALL!>.<!>toByte())
     } else {
-        <!UNREACHABLE_CODE!>println(<!><!DEBUG_INFO_SMARTCAST!>value_1<!><!UNREACHABLE_CODE!>.toByte())<!>
+        println(value_1.toByte())
     }
 }
 
@@ -226,10 +226,10 @@ fun case_11(value_1: Number?, value_2: Number?) {
     if (value_1?.case_11_1() == null) {
         println(value_1<!UNSAFE_CALL!>.<!>toByte())
     } else {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
+        println(value_1.toByte())
     }
     if (value_2?.case_11_2() != null) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+        println(value_2.toByte())
     } else {
         println(value_2<!UNSAFE_CALL!>.<!>toByte())
     }

@@ -9,9 +9,9 @@ expect annotation class Foo3
 expect annotation class Foo4
 expect annotation class Foo5()
 expect annotation class Foo6()
-expect annotation class Foo7()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> annotation class Foo7<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>()<!>
 
-@<!NO_CONSTRUCTOR!>Foo1<!>
+<!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>@Foo1<!>
 fun foo() {}
 
 @Foo5

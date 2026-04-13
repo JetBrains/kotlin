@@ -7,46 +7,46 @@ fun test(short: Short, long: Long, float: Float,
          int: Int, byte: Byte, enumType: MyEnum){
     val x : MethodHandles.Lookup = null!!
 
-    short.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
+    short.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
 
-    long.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
-    long.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>resolveConstantDesc<!>(x)
+    long.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
+    long.<!UNRESOLVED_REFERENCE!>resolveConstantDesc<!>(x)
 
-    float.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
-    float.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>resolveConstantDesc<!>(x)
+    float.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
+    float.<!UNRESOLVED_REFERENCE!>resolveConstantDesc<!>(x)
 
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>resolveConstantDesc<!>(x)
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>indexOf<!>(1,1,1)
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>indexOf<!>("", 1,2)
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>splitWithDelimiters<!>("", 1)
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>strip<!>()
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>stripLeading<!>()
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>stripTrailing<!>()
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>indent<!>(1)
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>stripIndent<!>()
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>translateEscapes<!>()
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>transform<!>({})
-    string.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>formatted<!>()
+    string.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
+    string.<!UNRESOLVED_REFERENCE!>resolveConstantDesc<!>(x)
+    string.indexOf(<!ARGUMENT_TYPE_MISMATCH!>1<!>,1,<!NO_VALUE_FOR_PARAMETER!>1)<!>
+    string.indexOf("", 1,<!NO_VALUE_FOR_PARAMETER!>2)<!>
+    string.<!UNRESOLVED_REFERENCE!>splitWithDelimiters<!>("", 1)
+    string.<!UNRESOLVED_REFERENCE!>strip<!>()
+    string.<!UNRESOLVED_REFERENCE!>stripLeading<!>()
+    string.<!UNRESOLVED_REFERENCE!>stripTrailing<!>()
+    string.<!UNRESOLVED_REFERENCE!>indent<!>(1)
+    string.<!UNRESOLVED_REFERENCE!>stripIndent<!>()
+    string.<!UNRESOLVED_REFERENCE!>translateEscapes<!>()
+    string.<!UNRESOLVED_REFERENCE!>transform<!>({})
+    string.<!UNRESOLVED_REFERENCE!>formatted<!>()
 
-    char.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
+    char.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
 
-    collection.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>toArray<!> {_: Int -> arrayOf(1)}
+    collection.<!UNRESOLVED_REFERENCE!>toArray<!> {_: Int -> arrayOf(1)}
 
-    double.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
-    double.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>resolveConstantDesc<!>(x)
+    double.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
+    double.<!UNRESOLVED_REFERENCE!>resolveConstantDesc<!>(x)
 
-    boolean.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
+    boolean.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
 
     list.<!UNRESOLVED_REFERENCE!>getFirst<!>()
     list.<!UNRESOLVED_REFERENCE!>getLast<!>()
 
-    int.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
-    int.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>resolveConstantDesc<!>(x)
+    int.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
+    int.<!UNRESOLVED_REFERENCE!>resolveConstantDesc<!>(x)
 
-    byte.<!DEPRECATION, JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>describeConstable<!>()
+    byte.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
 
-    enumType.<!DEPRECATION!>describeConstable<!>()
+    enumType.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
 }
 
 enum class MyEnum

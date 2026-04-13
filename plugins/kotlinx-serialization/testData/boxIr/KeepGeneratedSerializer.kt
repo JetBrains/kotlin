@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// FIR_IDENTICAL
 
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
 // ^ Some functions, calls to which are emitted by the serialization plugin into user code, have internal visibility.

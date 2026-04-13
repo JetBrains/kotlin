@@ -267,54 +267,50 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:<root>.C [val]
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:kotlin.Int [val]
-              CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_INCR
-                ARG <this>: GET_VAR 'val tmp_20: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:kotlin.Int [val]
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_INCR
               ARG <this>: GET_VAR 'val tmp_20: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                ARG <this>: GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_20: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_21: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_22 type:<root>.C [val]
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
-          BLOCK type=kotlin.Int origin=POSTFIX_DECR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Int [val]
-              CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_DECR
-                ARG <this>: GET_VAR 'val tmp_22: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_DECR
+          VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:kotlin.Int [val]
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=POSTFIX_DECR
               ARG <this>: GET_VAR 'val tmp_22: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
-              ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-                ARG <this>: GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=POSTFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_22: <root>.C declared in <root>.testClassPropPostfix' type=<root>.C origin=null
+            ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_23: kotlin.Int declared in <root>.testClassPropPostfix' type=kotlin.Int origin=null
   FUN name:testClassPropPrefix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:<root>.C [val]
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
-          BLOCK type=kotlin.Int origin=PREFIX_INCR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
+                ARG <this>: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_24: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
           VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:<root>.C [val]
             CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
-          BLOCK type=kotlin.Int origin=PREFIX_DECR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_DECR
-              ARG <this>: GET_VAR 'val tmp_25: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
-              ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-                ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
-                  ARG <this>: GET_VAR 'val tmp_25: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
-              ARG <this>: GET_VAR 'val tmp_25: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=PREFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_25: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+            ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
+                ARG <this>: GET_VAR 'val tmp_25: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=PREFIX_DECR
+            ARG <this>: GET_VAR 'val tmp_25: <root>.C declared in <root>.testClassPropPrefix' type=<root>.C origin=null
   FUN name:testObjectOperatorPostfix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a1 type:kotlin.Int [val]
@@ -387,112 +383,96 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_36 type:<root>.O [val]
-            GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_37 type:kotlin.Int [val]
-              CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_INCR
-                ARG <this>: GET_VAR 'val tmp_36: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_36: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                ARG <this>: GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_36 type:kotlin.Int [val]
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_INCR
+            ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_36: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_36: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_38 type:<root>.O [val]
-            GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
-          BLOCK type=kotlin.Int origin=POSTFIX_DECR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_39 type:kotlin.Int [val]
-              CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_DECR
-                ARG <this>: GET_VAR 'val tmp_38: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_DECR
-              ARG <this>: GET_VAR 'val tmp_38: <root>.O declared in <root>.testObjectPropPostfix' type=<root>.O origin=null
-              ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-                ARG <this>: GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_37 type:kotlin.Int [val]
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=POSTFIX_DECR
+            ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+            ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_37: kotlin.Int declared in <root>.testObjectPropPostfix' type=kotlin.Int origin=null
   FUN name:testObjectPropPrefix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_40 type:<root>.O [val]
-            GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
-          BLOCK type=kotlin.Int origin=PREFIX_INCR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_40: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_40: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_40: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_INCR
+            ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
+                ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_INCR
+            ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_41 type:<root>.O [val]
-            GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
-          BLOCK type=kotlin.Int origin=PREFIX_DECR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_DECR
-              ARG <this>: GET_VAR 'val tmp_41: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
-              ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-                ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
-                  ARG <this>: GET_VAR 'val tmp_41: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
-              ARG <this>: GET_VAR 'val tmp_41: <root>.O declared in <root>.testObjectPropPrefix' type=<root>.O origin=null
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=PREFIX_DECR
+            ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+            ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
+                ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>.O' type=kotlin.Int origin=PREFIX_DECR
+            ARG <this>: GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
   FUN name:testPropPostfix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_42 type:kotlin.Int [val]
-              CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                ARG <this>: GET_VAR 'val tmp_42: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_42: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_38 type:kotlin.Int [val]
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_38: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_38: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
-          BLOCK type=kotlin.Int origin=POSTFIX_DECR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_43 type:kotlin.Int [val]
-              CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_DECR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_DECR
-              ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-                ARG <this>: GET_VAR 'val tmp_43: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_43: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_39 type:kotlin.Int [val]
+            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_DECR
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_DECR
+            ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
+              ARG <this>: GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_39: kotlin.Int declared in <root>.testPropPostfix' type=kotlin.Int origin=null
   FUN name:testPropPrefix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:p1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_INCR
-          BLOCK type=kotlin.Int origin=PREFIX_INCR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_INCR
+              ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_INCR
       VAR name:p2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=PREFIX_DECR
-          BLOCK type=kotlin.Int origin=PREFIX_DECR
-            CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_DECR
-              ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
-                ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
-            CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
+          CALL 'public final fun <set-p> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_DECR
+            ARG <set-?>: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PREFIX_DECR
+              ARG <this>: CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
+          CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=PREFIX_DECR
   FUN name:testVarPostfix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
       VAR name:x1 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_44 type:kotlin.Int [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_40 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_INCR
           SET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_INCR
             CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_44: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_44: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'val tmp_40: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_40: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
       VAR name:x2 type:kotlin.Int [val]
         BLOCK type=kotlin.Int origin=POSTFIX_DECR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_45 type:kotlin.Int [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_41 type:kotlin.Int [val]
             GET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=POSTFIX_DECR
           SET_VAR 'var x: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Unit origin=POSTFIX_DECR
             CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_DECR
-              ARG <this>: GET_VAR 'val tmp_45: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_45: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+              ARG <this>: GET_VAR 'val tmp_41: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_41: kotlin.Int declared in <root>.testVarPostfix' type=kotlin.Int origin=null
   FUN name:testVarPrefix visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:x type:kotlin.Int [var]

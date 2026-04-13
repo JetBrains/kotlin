@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SortedSet<kotlin.Any>
       overridden:
         public abstract fun last (): @[FlexibleNullability] E of java.util.SortedSet? declared in java.util.SortedSet
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SortedSet?>): kotlin.Boolean declared in java.util.SortedSet
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Any?>
       overridden:
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?>): kotlin.Boolean declared in java.util.SortedSet
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SortedSet<kotlin.Any>
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract size: kotlin.Int declared in java.util.SortedSet
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SortedSet<kotlin.Any>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in java.util.SortedSet
@@ -214,13 +214,13 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Any?>
       overridden:
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?>): kotlin.Boolean declared in java.util.SortedSet
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
@@ -234,7 +234,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SortedSet<kotlin.Any>
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Any?> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
       overridden:
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SortedSet?> declared in java.util.SortedSet

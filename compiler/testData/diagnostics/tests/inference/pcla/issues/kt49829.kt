@@ -8,7 +8,7 @@ fun main() {
         add("two")
 
         val secondParameter = get(1)
-        println(secondParameter as String)
+        println(secondParameter <!USELESS_CAST!>as String<!>)
     }
 }
 

@@ -30,8 +30,8 @@ fun test1(x: Any) {
     runWithoutContract {
         y = 10
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
     }
 }
 
@@ -41,8 +41,8 @@ fun test2(x: Any) {
     exactlyOnce {
         y = 10
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     }
 }
 
@@ -52,8 +52,8 @@ fun test3(x: Any) {
     atLeastOnce {
         y = 10
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     }
 }
 
@@ -75,7 +75,7 @@ fun test5(x: Any) {
         y = 10
         y = x
         x.length
-        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
+        y.length
     }
 }
 
@@ -86,7 +86,7 @@ fun test6(x: Any) {
         y = 10
         y = x
         x.length
-        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
+        y.length
     }
 }
 
@@ -96,8 +96,8 @@ fun test7(x: Any) {
     if (b) {
         y = x
         exactlyOnce {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
-            y.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
+            y.length
         }
     }
 }
@@ -108,8 +108,8 @@ fun test8(x: Any) {
     if (b) {
         y = x
         atLeastOnce {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
-            y.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
+            y.length
         }
     }
 }
@@ -120,8 +120,8 @@ fun test9(x: Any) {
     if (b) {
         y = x
         runWithoutContract {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
-            y.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
+            y.length
         }
     }
 }
@@ -130,7 +130,7 @@ fun test10(x: Any) {
     var y = x
     runWithoutContract {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y.length
     }
 }
@@ -139,7 +139,7 @@ fun test11(x: Any) {
     var y = x
     atLeastOnce {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y.length
     }
 }
@@ -148,7 +148,7 @@ fun test12(x: Any) {
     var y = x
     exactlyOnce {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y.length
     }
 }
@@ -161,7 +161,7 @@ fun test13() {
         x = 10
         y = x
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.inc()
     }
 }
 
@@ -173,7 +173,7 @@ fun test14() {
         x = 10
         y = x
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.inc()
     }
 }
 
@@ -185,7 +185,7 @@ fun test15() {
         x = 10
         y = x
         y.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        y.inc()
     }
 }
 
@@ -194,7 +194,7 @@ fun test16(x: Any) {
     runWithoutContract {
         require(x is String)
         y = x
-        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
+        y.length
     }
 }
 
@@ -203,7 +203,7 @@ fun test17(x: Any) {
     exactlyOnce {
         require(x is String)
         y = x
-        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
+        y.length
     }
 }
 
@@ -212,7 +212,7 @@ fun test18(x: Any) {
     atLeastOnce {
         require(x is String)
         y = x
-        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
+        y.length
     }
 }
 
@@ -222,10 +222,10 @@ fun test19(x: Any?) {
         if (x != null) {
             y = x
         } else {
-            y = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>
+            y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
         }
         require(x is String)
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        y.length
     }
 }
 
@@ -235,10 +235,10 @@ fun test20(x: Any?) {
         if (x != null) {
             y = x
         } else {
-            y = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>
+            y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
         }
         require(x is String)
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        y.length
     }
 }
 
@@ -248,10 +248,10 @@ fun test21(x: Any?) {
         if (x != null) {
             y = x
         } else {
-            y = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>
+            y <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
         }
         require(x is String)
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        <!SMARTCAST_IMPOSSIBLE!>y<!>.length
     }
 }
 
@@ -286,7 +286,7 @@ fun test25(x: Any) {
     var y = x
     exactlyOnce {
         while (x is String) {
-            y.<!UNRESOLVED_REFERENCE!>length<!>
+            y.length
         }
     }
 }
@@ -295,7 +295,7 @@ fun test26(x: Any) {
     var y = x
     atLeastOnce {
         while (x is String) {
-            y.<!UNRESOLVED_REFERENCE!>length<!>
+            y.length
         }
     }
 }
@@ -304,7 +304,7 @@ fun test27(x: Any) {
     var y = x
     runWithoutContract {
         while (x is String) {
-            y.<!UNRESOLVED_REFERENCE!>length<!>
+            y.length
         }
     }
 }
@@ -347,8 +347,8 @@ fun test31() {
     var y = x
     exactlyOnce {
         while (x is String) {
-            y.<!UNRESOLVED_REFERENCE!>length<!>
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            y.length
+            x.length
         }
         x = 10
     }
@@ -360,7 +360,7 @@ fun test32() {
     atLeastOnce {
         while (x is String) {
             y.<!UNRESOLVED_REFERENCE!>length<!>
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
         x = 10
     }

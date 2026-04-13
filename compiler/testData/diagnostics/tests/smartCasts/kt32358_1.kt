@@ -13,7 +13,7 @@ fun myFun() {
     val myParent = MyParent()
     myParent.child?.nullableString ?: run { return }
 
-    <!DEBUG_INFO_SMARTCAST!>myParent.child<!>.notNull   // <- No smart cast in plugin
+    myParent.child.notNull   // <- No smart cast in plugin
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, lambdaLiteral, localProperty,

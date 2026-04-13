@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/kt37570.kt
                 VALUE_PARAMETER kind:ExtensionReceiver name:$this$apply index:0 type:kotlin.String
                 BLOCK_BODY
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
-                    receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+                    receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
                     value: GET_VAR '$this$apply: kotlin.String declared in <root>.A.<anonymous>' type=kotlin.String origin=null
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY

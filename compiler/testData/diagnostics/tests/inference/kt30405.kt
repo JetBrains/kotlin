@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +ExpectedTypeFromCast
 // CHECK_TYPE
 // Issue: KT-30405

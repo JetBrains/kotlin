@@ -3,7 +3,7 @@ fun foo() {
     outer@while (true) {
         try {
             while (true) {
-                <!UNREACHABLE_CODE!>continue@outer<!>
+                continue@outer
             }
         } finally {
             break
@@ -16,7 +16,7 @@ fun bar(): String {
     outer@while (true) {
         try {
             while (true) {
-                <!UNREACHABLE_CODE!>continue@outer<!>
+                continue@outer
             }
         } finally {
             return "OK"

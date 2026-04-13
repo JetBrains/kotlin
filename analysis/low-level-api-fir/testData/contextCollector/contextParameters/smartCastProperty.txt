@@ -32,7 +32,7 @@ Smart Casts:
 FILE: [ResolvedTo(IMPORTS)] smartCastProperty.kt
     context([ResolvedTo(STATUS)] <unused var>: R|kotlin/Int|)
     public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
     context([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Any|)
     public final [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Unit|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit| {

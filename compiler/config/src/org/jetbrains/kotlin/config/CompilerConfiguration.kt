@@ -56,6 +56,10 @@ class CompilerConfiguration {
         return get(key, defaultValue = emptyMap())
     }
 
+    fun <T> getSet(key: CompilerConfigurationKey<Set<T>>): Set<T> {
+        return get(key, defaultValue = emptySet())
+    }
+
     fun <T : Any> put(key: CompilerConfigurationKey<T>, value: T) {
         checkReadOnly()
         map[key.ideaKey] = value

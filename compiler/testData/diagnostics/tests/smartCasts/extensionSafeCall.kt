@@ -4,7 +4,7 @@ class Your
 fun Your.foo() = Any()
 
 fun <T> T?.let(f: (T) -> Unit) {
-    if (this != null) f(<!DEBUG_INFO_SMARTCAST!>this<!>)
+    if (this != null) f(this)
 }
 
 fun test(your: Your?) {

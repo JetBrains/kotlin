@@ -7,7 +7,7 @@ fun foo(list: MutableList<Any?>, condition: Boolean): Unit = when {
     else -> Unit
 }
 
-fun bar(list: MutableList<Any?>, condition: Boolean): Unit = <!TYPE_MISMATCH!>when {
+fun bar(list: MutableList<Any?>, condition: Boolean): Unit = <!RETURN_TYPE_MISMATCH!>when {
     condition -> list.set(0, "")
     else -> Unit
 }<!>

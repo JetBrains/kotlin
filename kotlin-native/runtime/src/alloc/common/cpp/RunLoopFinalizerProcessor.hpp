@@ -5,17 +5,19 @@
 
 #pragma once
 
-#include <cinttypes>
 #include <deque>
 #include <mutex>
 
 #include "Clock.hpp"
 #include "Logging.hpp"
+#include "Memory.h"
 #include "Utils.hpp"
 #include "objc_support/RunLoopSource.hpp"
 #include "objc_support/RunLoopTimer.hpp"
 #include "objc_support/AutoreleasePool.hpp"
 #include "SafePoint.hpp"
+
+class RunLoopFinalizerProcessorTest;
 
 namespace kotlin::alloc {
 
@@ -68,7 +70,7 @@ public:
 
     // The constructed processor is not attached to any run loop, and so will not be processing
     // tasks. Call `attachToCurrentRunLoop` to attach it to the current thread's run loop.
-    RunLoopFinalizerProcessor() noexcept = default;
+    RunLoopFinalizerProcessor() noexcept : RunLoopFinalizerProcessor(std::chrono::hours(100 * 365 * 24), {}) {}
 
     // Schedule `tasks` from epoch `epoch` to be processed on this finalizer processor.
     //
@@ -96,6 +98,40 @@ public:
     Subscription attachToCurrentRunLoop() noexcept { return Subscription(*this); }
 
 private:
+    friend class ::RunLoopFinalizerProcessorTest;
+
+    enum class OnProcessFinishedReason {
+        kCooldown,
+        kDeadline,
+        kDone,
+    };
+
+    template <typename Duration>
+    RunLoopFinalizerProcessor(Duration distantFuture, std::function<void(OnProcessFinishedReason)> onProcessFinished) noexcept
+        // `timer_` is triggered manually with `setNextFiring`, so `interval` and `initialFiring` are set very high.
+        // This follows https://developer.apple.com/documentation/corefoundation/1542501-cfrunlooptimersetnextfiredate#discussion
+        :
+        onProcessFinished_(std::move(onProcessFinished)),
+        timer_([this]() noexcept { source_.signal(); }, distantFuture, objc_support::cf_clock::now() + distantFuture) {}
+
+    uint64_t processSingleBatch(FinalizerQueue& queue, uint64_t batchCount) noexcept {
+        uint64_t processedCount = 0;
+        objc_support::AutoreleasePool autoreleasePool;
+        // Finalizers require K/N runtime. And extra objects destructions require "runnable" state.
+        // Both have to synchronize with the GC. Using `CalledFromNativeGuard` to ensure the correct environment.
+        CalledFromNativeGuard guard;
+        for (uint64_t i = 0; i < batchCount; ++i) {
+            // There's no point checking `deadline` here since the majority of the time will probably
+            // be spent in `AutoreleasePool` destructor.
+            if (!FinalizerQueueTraits::processSingle(currentQueue_.queue)) {
+                break;
+            }
+            ++processedCount;
+            mm::safePoint();
+        }
+        return processedCount;
+    }
+
     void process() noexcept {
         auto startTime = steady_clock::now();
         {
@@ -108,6 +144,7 @@ private:
                 using Unsaturated = std::chrono::duration<decltype(interval)::rep::value_type, decltype(interval)::period>;
                 auto unsaturatedInterval = Unsaturated(interval);
                 timer_.setNextFiring(unsaturatedInterval);
+                if (onProcessFinished_) onProcessFinished_(OnProcessFinishedReason::kCooldown);
                 return;
             }
         }
@@ -133,22 +170,15 @@ private:
                         std::chrono::duration_cast<std::chrono::milliseconds>(config_.minTimeBetweenTasks).count());
                 timer_.setNextFiring(config_.minTimeBetweenTasks);
                 lastProcessTimestamp_ = now;
+                if (onProcessFinished_) onProcessFinished_(OnProcessFinishedReason::kDeadline);
                 return;
             }
-            {
-                objc_support::AutoreleasePool autoreleasePool;
-                ThreadStateGuard guard(ThreadState::kRunnable); // ensure extra objects destruction doesn't happen during GC
-                for (uint64_t i = 0; i < batchCount; ++i) {
-                    // There's no point checking `deadline` here since the majority of the time will probably
-                    // be spent in `AutoreleasePool` destructor.
-                    if (!FinalizerQueueTraits::processSingle(currentQueue_.queue)) {
-                        break;
-                    }
-                    ++processedCount;
-                    mm::safePoint();
-                }
+            // Only process the batch (incl. Native runtime initialization) if there is something to process.
+            if (!FinalizerQueueTraits::isEmpty(currentQueue_.queue)) {
+                processedCount += processSingleBatch(currentQueue_.queue, batchCount);
             }
             if (!FinalizerQueueTraits::isEmpty(currentQueue_.queue)) {
+                // Current queue was longer than the batch size, try again.
                 continue;
             }
             RuntimeLogDebug({kTagGC}, "Epoch #%" PRIu64 ": finished processing finalizers on a run loop", currentQueue_.epoch);
@@ -161,6 +191,7 @@ private:
                 RuntimeLogDebug(
                         {kTagGC}, "Processing %" PRIu64 " finalizers on a run loop has finished in %" PRId64 "ms.", processedCount,
                         std::chrono::duration_cast<milliseconds>(lastProcessTimestamp_ - startTime).count().value);
+                if (onProcessFinished_) onProcessFinished_(OnProcessFinishedReason::kDone);
                 return;
             }
             currentQueue_ = std::move(queue_.front());
@@ -188,11 +219,11 @@ private:
     steady_clock::time_point lastProcessTimestamp_ =
             steady_clock::time_point::min(); // Only accessed by the process() function called only by the `CFRunLoop`.
 
+    // Only set during unit tests.
+    std::function<void(OnProcessFinishedReason)> onProcessFinished_;
+
     objc_support::RunLoopSource source_{[this]() noexcept { process(); }};
-    // `timer_` is triggered manually with `setNextFiring`, so `interval` and `initialFiring` are set very high.
-    // This follows https://developer.apple.com/documentation/corefoundation/1542501-cfrunlooptimersetnextfiredate#discussion
-    objc_support::RunLoopTimer timer_{
-            [this]() noexcept { source_.signal(); }, std::chrono::hours(100), objc_support::cf_clock::now() + std::chrono::hours(100)};
+    objc_support::RunLoopTimer timer_;
 };
 
 #endif

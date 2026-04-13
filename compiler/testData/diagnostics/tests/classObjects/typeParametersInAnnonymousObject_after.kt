@@ -12,16 +12,16 @@ fun case_2() {
 }
 
 fun case_3() {
-    val x = object<!TYPE_PARAMETERS_IN_OBJECT!><T><!> <!SYNTAX!>where <!DEBUG_INFO_MISSING_UNRESOLVED!>T<!> : <!DEBUG_INFO_MISSING_UNRESOLVED!>Comparable<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>T<!>><!> { } // ERROR: Where clause is not allowed for objects
+    val x = object<!TYPE_PARAMETERS_IN_OBJECT!><T><!> <!SYNTAX!>where T : Comparable<T><!> { } // ERROR: Where clause is not allowed for objects
 }
 
 val x = object<!TYPE_PARAMETERS_IN_OBJECT!><T, K: Comparable<K>><!> {
-    fun test() = 10 <!UNCHECKED_CAST!>as T<!> // OK
+    fun test() = 10 as <!UNRESOLVED_REFERENCE!>T<!> // OK
 }
 
 fun case_4() {
     val x = object<!TYPE_PARAMETERS_IN_OBJECT!><T><!> {
-        fun test() = 10 <!UNCHECKED_CAST!>as T<!>
+        fun test() = 10 as <!UNRESOLVED_REFERENCE!>T<!>
     }
 
     val y = x.test() // type y is T
@@ -29,18 +29,18 @@ fun case_4() {
 
 inline fun <reified T> case_5() {
     val x = object<!TYPE_PARAMETERS_IN_OBJECT!><T><!> {
-        fun test() = 10 <!UNCHECKED_CAST!>as T<!>
+        fun test() = 10 as T
     }
 
     val z = x.test()
 
-    if (z is T) {
+    if (<!USELESS_IS_CHECK!>z is T<!>) {
         // z is {T!! & T!!} (smart cast from T)
         <!UNRESOLVED_REFERENCE!>println<!>(z)
     }
 
     val a = object<!TYPE_PARAMETERS_IN_OBJECT!><A><!> {
-        fun test() = 42 <!UNCHECKED_CAST!>as A<!>
+        fun test() = 42 as <!UNRESOLVED_REFERENCE!>A<!>
     }
 
     val b = a.test()

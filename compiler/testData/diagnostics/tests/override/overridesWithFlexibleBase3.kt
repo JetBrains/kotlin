@@ -26,13 +26,13 @@ public interface Foo<T> extends Base<T> {
 class FooImpl<E>(val e: E) : Foo<E> {
     override val x: Inv<E> get() = Inv(e)
 
-    override val y: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Inv<E & Any><!> get() = Inv(e!!)
+    override val y: Inv<E & Any> get() = Inv(e!!)
 }
 
 class FooImpl2<E>(val e: E) : Foo<E> {
-    override val x: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Inv<E & Any><!> get() = Inv(e!!)
+    override val x: Inv<E & Any> get() = Inv(e!!)
 
-    override val y: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Inv<E & Any><!> get() = Inv(e!!)
+    override val y: Inv<E & Any> get() = Inv(e!!)
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, dnnType, getter, interfaceDeclaration, javaFunction, javaType,

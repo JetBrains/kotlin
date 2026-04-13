@@ -18,12 +18,12 @@ class Outer {
     private class TestPrivate
 }
 
-fun Outer.<!EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR!>Test1<!>() {}
-fun Outer.<!EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR!>Test2<!>(x: Int) {}
-fun Outer.<!EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR!>Test3<!>(x: String) {}
+fun Outer.Test1() {}
+fun Outer.Test2(x: Int) {}
+fun Outer.Test3(x: String) {}
 fun <T> Outer.Test3(x: T) {}
-fun <T : Number> Outer.<!EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR!>Test4<!>(x: T) {}
-fun Outer.<!EXTENSION_FUNCTION_SHADOWED_BY_INNER_CLASS_CONSTRUCTOR!>Test5<!>() {}
+fun <T : Number> Outer.Test4(x: T) {}
+fun Outer.Test5() {}
 fun Outer.Test5(z: String) {}
 
 fun Outer.TestNested() {}

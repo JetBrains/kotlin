@@ -15,7 +15,7 @@ fun foo(w: Int): String {
     var x: String? = nullableStr()
 
     if (x != null) {
-        return <!DEBUG_INFO_SMARTCAST!>x<!>
+        return x
     }
 
     // Smartcast should work because when's entries' results are non-flexible
@@ -24,7 +24,7 @@ fun foo(w: Int): String {
         else -> JavaClass.Y
     }
 
-    return <!DEBUG_INFO_SMARTCAST!>x<!>
+    return x
 }
 
 /* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, functionDeclaration, ifExpression,

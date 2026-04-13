@@ -26,11 +26,11 @@ Smart Casts:
 
 FILE: [ResolvedTo(IMPORTS)] afterLoop.kt
     public abstract [ResolvedTo(STATUS)] interface Node : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] val shouldProcess: R|kotlin/Boolean|
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Boolean|
+        public abstract [ResolvedTo(STATUS)] val shouldProcess: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Boolean|
 
-        public abstract [ResolvedTo(CONTRACTS)] val parent: R|Node?|
-            public [ResolvedTo(CONTRACTS)] get(): R|Node?|
+        public abstract [ResolvedTo(STATUS)] val parent: R|Node?|
+            public [ResolvedTo(STATUS)] get(): R|Node?|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] initial: R|Node?|): R|kotlin/Unit| {
@@ -42,4 +42,4 @@ FILE: [ResolvedTo(IMPORTS)] afterLoop.kt
 
         R|/consume|(R|<local>/current|)
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] node: R|Node|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] node: R|Node|): R|kotlin/Unit| { LAZY_BLOCK }

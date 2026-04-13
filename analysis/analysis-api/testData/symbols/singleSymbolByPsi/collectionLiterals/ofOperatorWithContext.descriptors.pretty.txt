@@ -1,1 +1,0 @@
-operator fun <T1> of(vararg vals: T1): MyList<T1>

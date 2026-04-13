@@ -5,7 +5,7 @@ inline fun <T> tryLambdas(lamb : () -> T) : T{
 }
 fun main() {
     tryLambdas<String> {
-        <!TYPE_MISMATCH!>return@tryLambdas<!>
+        <!RETURN_TYPE_MISMATCH!>return@tryLambdas<!>
     }
 }
 

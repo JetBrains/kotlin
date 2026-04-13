@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun main() {
-    Clazz.<!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>InnerEnum<!>()<!>
+    Clazz.<!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>InnerEnum<!>()<!>
 }
 
 class Clazz {

@@ -19,4 +19,4 @@ FILE: [ResolvedTo(IMPORTS)] second.kt
         public? [ResolvedTo(RAW_FIR)] get(): ( () -> @Nls[Unresolved]() String )
         public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: ( () -> @Nls[Unresolved]() String )): R|kotlin/Unit|
     public? final? [ResolvedTo(RAW_FIR)] fun unrelated([ResolvedTo(RAW_FIR)] block: ( (String, @Nls[Unresolved]() String) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun called(): R|() -> @R|org/jetbrains/annotations/Nls|()  kotlin/String| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun called(): R|() -> @R|org/jetbrains/annotations/Nls|()  kotlin/String| { LAZY_BLOCK }

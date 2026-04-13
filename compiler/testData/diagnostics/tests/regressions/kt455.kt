@@ -6,7 +6,7 @@ package kt455
 fun foo() {
     val a: Int
     doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)   //error
-    doSmth(a)   //no repeat error
+    doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)   //no repeat error
 }
 fun doSmth(i: Int) {}
 

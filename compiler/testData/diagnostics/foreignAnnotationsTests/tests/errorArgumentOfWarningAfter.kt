@@ -39,33 +39,33 @@ public class A1 {
 fun main1() {
     val list = A1.warningError()
     val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>list<!>.get(0)
-    element.length
+    element<!UNSAFE_CALL!>.<!>length
 }
 
 fun main2() {
     val list = A1.warningErrorError()
     val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>list<!>.get(0)
-    element.get(0)
-    element!!.get(0).length
+    element<!UNSAFE_CALL!>.<!>get(0)
+    element!!.get(0)<!UNSAFE_CALL!>.<!>length
 }
 
 fun main3() {
     val list = A1.warningWarningError()
     val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>list<!>.get(0)
-    element.get(0)
-    element!!.get(0).length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>element<!>.get(0)
+    element!!.get(0)<!UNSAFE_CALL!>.<!>length
 }
 
 fun main4() {
     val list = A1.warningErrorWarning()
     val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>list<!>.get(0)
-    element.get(0)
-    element!!.get(0).length
+    element<!UNSAFE_CALL!>.<!>get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>element!!.get(0)<!>.length
 }
 
 fun main5() {
     val list = A1.warningPlatformError()
     val element = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>list<!>.get(0)
     element.get(0)
-    element!!.get(0).length
+    element!!.get(0)<!UNSAFE_CALL!>.<!>length
 }

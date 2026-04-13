@@ -18,10 +18,10 @@ interface B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
 }
 
 fun testB(b: B<*, *>) {
-    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>r<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any?>() }
-    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>t<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><B<List<*>, *>>() }
+    b.r().checkType { _<Any?>() }
+    b.t().checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><B<List<*>, *>>() }
 
-    b.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>t<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>r<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>size<!>
+    b.t().r().size
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

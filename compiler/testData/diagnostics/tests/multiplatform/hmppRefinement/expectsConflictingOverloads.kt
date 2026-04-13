@@ -3,10 +3,10 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common
-<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
-<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
+expect <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{METADATA}!>fun foo()<!>
+expect <!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{METADATA}!>fun foo()<!>
 
 // MODULE: main()()(common)
-actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
+<!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
 
 /* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

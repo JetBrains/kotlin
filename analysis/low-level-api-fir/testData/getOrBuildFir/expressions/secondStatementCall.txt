@@ -19,4 +19,4 @@ FILE: [ResolvedTo(IMPORTS)] secondStatementCall.kts
             R|/bar|()
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

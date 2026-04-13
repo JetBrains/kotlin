@@ -3,7 +3,7 @@ class My {
     val x: String
 
     init {
-        x = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+        x = foo()
     }
 
     fun foo(): String = x

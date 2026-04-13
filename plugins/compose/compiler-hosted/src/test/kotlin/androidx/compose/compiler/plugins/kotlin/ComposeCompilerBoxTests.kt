@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,15 +8,20 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.services.ComposeExtensionRegistrarConfigurator
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJsClasspathProvider
 import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathConfigurator
-import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory.createConfigurator
+import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathProvider
+import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.js.test.runners.AbstractJsTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.configureModernJavaTest
 import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
@@ -24,18 +29,27 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
+import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 import java.io.File
 
+abstract class AbstractComposeWithSerializationBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.composeCompilerPluginConfiguration()
+        builder.useConfigurators(::ComposeJvmClasspathConfigurator)
+        builder.useCustomRuntimeClasspathProviders(::ComposeJvmClasspathProvider)
+        // Compose runtime has class file version 55.0:
+        builder.configureModernJavaTest(TestJdkKind.FULL_JDK_11, JvmTarget.JVM_11)
+
+        builder.configureForKotlinxSerialization()
+    }
+}
+
 abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCompilerFacilityTest() {
-    override val configurator: AnalysisApiTestConfigurator
-        get() = createConfigurator(
-            AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        )
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirTestConfiguratorFactory.createConfigurator(
+        AnalysisApiTestConfiguratorFactoryData()
+    )
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)

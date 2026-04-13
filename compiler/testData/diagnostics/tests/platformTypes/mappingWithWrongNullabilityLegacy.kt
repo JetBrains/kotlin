@@ -33,7 +33,7 @@ class Handler<H>(val reader: (s: InputStream) -> H) {
         }
 
         return Subscribers.mapping(subscriber) {
-            reader(it)
+            reader(<!NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA("InputStream?; InputStream;  This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-284.")!>it<!>)
         }
     }
 }

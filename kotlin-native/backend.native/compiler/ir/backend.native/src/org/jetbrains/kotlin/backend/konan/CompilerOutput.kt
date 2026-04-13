@@ -233,7 +233,7 @@ internal fun insertAliasToEntryPoint(context: NativeBackendPhaseContext, module:
     val entryPointName = config.entryPointName
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
             ?: error("Module doesn't contain `$entryPointName`")
-    val programAddressSpace = LLVMGetProgramAddressSpace(module)
+    val programAddressSpace = LLVMKotlinGetProgramAddressSpace(module)
     LLVMAddAlias2(module, getGlobalFunctionType(entryPoint), programAddressSpace, entryPoint, "main")
 }
 

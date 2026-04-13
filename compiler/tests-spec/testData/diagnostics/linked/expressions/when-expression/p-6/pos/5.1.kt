@@ -33,7 +33,7 @@ fun case_2(value_1: Number, value_2: Int) {
 }
 
 // TESTCASE NUMBER: 3
-fun case_3(value_1: Boolean, value_2: Boolean, <!UNUSED_PARAMETER!>value_3<!>: Long) {
+fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
     when (value_1) {
         value_2 -> {}
         !value_2 -> {}
@@ -135,8 +135,8 @@ fun case_12(value_1: Int, value_2: Int, value_3: Int, value_4: Int?) {
     var mutableValue2 = value_3
 
     when (value_1) {
-        <!UNUSED_CHANGED_VALUE!>mutableValue1++<!> -> {}
-        <!UNUSED_CHANGED_VALUE!>mutableValue2--<!> -> {}
+        mutableValue1++ -> {}
+        mutableValue2-- -> {}
         value_4!! -> {}
     }
 }
@@ -237,8 +237,8 @@ class A {
 // TESTCASE NUMBER: 20
 fun case_20(value_1: Nothing) {
     when (value_1) {
-        <!UNREACHABLE_CODE!>throw Exception() -> {}<!>
-        <!UNREACHABLE_CODE!>throw throw throw Exception() -> {}<!>
+        throw Exception() -> {}
+        throw throw throw Exception() -> {}
     }
 }
 
@@ -246,15 +246,15 @@ fun case_20(value_1: Nothing) {
 fun case_21(value_1: Nothing) {
     fun f1() {
         when (value_1) {
-            <!UNREACHABLE_CODE!>return -> 1<!>
-            <!UNREACHABLE_CODE!>return return return -> 2<!>
+            return -> 1
+            return return return -> 2
         }
     }
 
     fun f2(): List<Int>? {
         when (value_1) {
-            <!UNREACHABLE_CODE!>return listOf(0, 1, 2) -> 1<!>
-            <!UNREACHABLE_CODE!>return null -> 2<!>
+            return listOf(0, 1, 2) -> 1
+            return null -> 2
         }
     }
 }
@@ -264,8 +264,8 @@ fun case_22(value_1: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
             when (value_1) {
-                <!UNREACHABLE_CODE!>continue@loop1 -> 1<!>
-                <!UNREACHABLE_CODE!>continue@loop2 -> 2<!>
+                continue@loop1 -> 1
+                continue@loop2 -> 2
             }
         }
     }
@@ -276,8 +276,8 @@ fun case_23(value_1: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
             when (value_1) {
-                <!UNREACHABLE_CODE!>break@loop1 -> 1<!>
-                <!UNREACHABLE_CODE!>break@loop2 -> 2<!>
+                break@loop1 -> 1
+                break@loop2 -> 2
             }
         }
     }

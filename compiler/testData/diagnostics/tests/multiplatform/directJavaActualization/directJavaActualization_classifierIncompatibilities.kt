@@ -5,19 +5,19 @@
 // FILE: common.kt
 interface I
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>A<!>
-expect value class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>B<!>(val x: Int)
-expect fun interface <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>C1<!> { fun foo() }
-expect fun interface <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>C2<!> { fun foo() }
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>D1<!> : I
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>D2<!> : I
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>E1<!> { ONE, TWO }
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>E2<!> { ONE, TWO }
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Outer<!> {
-    class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>F1<!>
-    inner class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>F2<!>
-    inner class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>F3<!>
-    class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>F4<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class A
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> value class B<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>(val <!NO_ACTUAL_FOR_EXPECT{JVM}!>x<!>: Int)<!>
+expect fun interface C1 { fun foo() }
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface C2 { fun foo() }
+expect class D1 : I
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class D2 : I
+expect enum class E1 { ONE, TWO }
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> enum class E2 { ONE, <!NO_ACTUAL_FOR_EXPECT{JVM}!>TWO<!> }
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Outer {
+    class F1
+    inner class F2
+    inner class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>F3<!>
+    class <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>F4<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)

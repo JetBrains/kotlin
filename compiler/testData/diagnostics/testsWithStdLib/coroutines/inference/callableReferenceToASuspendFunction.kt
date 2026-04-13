@@ -15,9 +15,9 @@ suspend fun bar(x: Int) {}
 
 fun test() {
     test0(::foo)
-    test1(<!TYPE_MISMATCH!>::foo<!>)
+    test1(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
 
-    test0(<!TYPE_MISMATCH!>::bar<!>)
+    test0(::<!INAPPLICABLE_CANDIDATE!>bar<!>)
     test1(::bar)
 }
 

@@ -1,7 +1,10 @@
 KaDestructuringDeclarationSymbol:
   annotations: []
   compilerVisibility: Local
-  entries: []
+  entries: [
+    KaLocalVariableSymbol(<local>/<error property>)
+    KaLocalVariableSymbol(<local>/<error property>)
+  ]
   isActual: false
   isExpect: false
   isExternal: false

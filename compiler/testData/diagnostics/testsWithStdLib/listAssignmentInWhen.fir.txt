@@ -1,4 +1,4 @@
-FILE: listAssignmentInWhen.fir.kt
+FILE: listAssignmentInWhen.kt
     public final fun foo(list: R|kotlin/collections/MutableList<kotlin/Any?>|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
         ^foo when () {
             R|<local>/condition| ->  {

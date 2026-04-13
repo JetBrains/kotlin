@@ -53,30 +53,30 @@ import <!PACKAGE_CANNOT_BE_IMPORTED!>a<!>
 import a.<!PACKAGE_CANNOT_BE_IMPORTED!>b<!>
 
 import a.foo
-import a.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
+import a.<!UNRESOLVED_IMPORT!>foo<!>.bar
 import a.bar
-import a.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+import a.<!UNRESOLVED_IMPORT!>bar<!>.foo
 
 import a.B.<!CANNOT_BE_IMPORTED!>foo<!>
-import a.B.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
+import a.B.<!UNRESOLVED_IMPORT!>foo<!>.bar
 import a.B.<!CANNOT_BE_IMPORTED!>bar<!>
-import a.B.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+import a.B.<!UNRESOLVED_IMPORT!>bar<!>.foo
 
 import a.C.foo
-import a.C.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
+import a.C.<!UNRESOLVED_IMPORT!>foo<!>.bar
 import a.C.bar
-import a.C.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+import a.C.<!UNRESOLVED_IMPORT!>bar<!>.foo
 import a.C.Nested
 
-import a.D.<!UNRESOLVED_REFERENCE!>foo<!>
-import a.D.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
-import a.D.<!UNRESOLVED_REFERENCE!>bar<!>
-import a.D.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+import a.D.<!UNRESOLVED_IMPORT!>foo<!>
+import a.D.<!UNRESOLVED_IMPORT!>foo<!>.bar
+import a.D.<!UNRESOLVED_IMPORT!>bar<!>
+import a.D.<!UNRESOLVED_IMPORT!>bar<!>.foo
 
 import a.D.Companion.foo
-import a.D.Companion.<!UNRESOLVED_REFERENCE!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
+import a.D.Companion.<!UNRESOLVED_IMPORT!>foo<!>.bar
 import a.D.Companion.bar
-import a.D.Companion.<!UNRESOLVED_REFERENCE!>bar<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+import a.D.Companion.<!UNRESOLVED_IMPORT!>bar<!>.foo
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, integerLiteral,
 nestedClass, objectDeclaration, propertyDeclaration */

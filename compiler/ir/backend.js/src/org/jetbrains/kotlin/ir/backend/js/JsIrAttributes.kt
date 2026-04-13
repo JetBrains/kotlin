@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 
 var IrClass.localClassName: String? by irAttribute(copyByDefault = true)
 
@@ -92,3 +96,18 @@ var IrClass.hasPureInitialization: Boolean? by irAttribute(copyByDefault = false
  * We perform it on the JS AST optimization phase in [org.jetbrains.kotlin.js.inline.clean.MoveTemporaryVariableDeclarationToAssignment]
  */
 internal var IrVariable.wasMovedFromItsDeclarationPlace: Boolean by irFlag(copyByDefault = false)
+
+/**
+ * If the bodiless declaration has been moved to an externalPackageFragment, contains it's original parent.
+ */
+var IrPossiblyExternalDeclaration.originalFileForExternalDeclaration: IrFile? by irAttribute(copyByDefault = false)
+
+/**
+ * For callable references factories contain it's preceding anonymous class reference implementation.
+ */
+var IrSimpleFunction.originalCallableReferenceClass: IrClass? by irAttribute(copyByDefault = false)
+
+/**
+ * For anonymous classes representing callable references contains it's preceding [IrRichFunctionReference] node.
+ */
+var IrClass.originalCallableReference: IrRichFunctionReference? by irAttribute(copyByDefault = false)

@@ -6,10 +6,10 @@ class C<T, G>
 class D<T>
 
 fun test1(
-    a: <!UNSUPPORTED!>Array<Nothing><!>,
+    a: <!UNSUPPORTED("'Array<Nothing>' is an invalid array type.")!>Array<Nothing><!>,
     // Note: in K2, it's JVM-only diagnostic. Other platforms support Array<Nothing?> properly.
     // See also BB tests: reifiedNullableNothing3.kt, reifiedNullableNothing4.kt
-    b: <!UNSUPPORTED!>Array<Nothing?><!>,
+    b: <!UNSUPPORTED("'Array<Nothing?>' is not supported on the JVM.")!>Array<Nothing?><!>,
     c: <!UNSUPPORTED!>Array<in Nothing><!>,
     d: <!UNSUPPORTED!>Array<in Nothing?><!>,
     e: <!UNSUPPORTED!>Array<out Nothing><!>,
@@ -21,12 +21,12 @@ fun test1(
 }
 
 fun test2(
-    a: <!UNSUPPORTED!>Array<Nothing><!>?,
-    b: <!UNSUPPORTED!>Array<Nothing?><!>?,
-    c: <!UNSUPPORTED!>Array<in Nothing><!>?,
-    d: <!UNSUPPORTED!>Array<in Nothing?><!>?,
-    e: <!UNSUPPORTED!>Array<out Nothing><!>?,
-    f: <!UNSUPPORTED!>Array<out Nothing?><!>?
+    a: <!UNSUPPORTED!>Array<Nothing>?<!>,
+    b: <!UNSUPPORTED!>Array<Nothing?>?<!>,
+    c: <!UNSUPPORTED!>Array<in Nothing>?<!>,
+    d: <!UNSUPPORTED!>Array<in Nothing?>?<!>,
+    e: <!UNSUPPORTED!>Array<out Nothing>?<!>,
+    f: <!UNSUPPORTED!>Array<out Nothing?>?<!>
 ) {}
 
 fun test3(

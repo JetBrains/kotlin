@@ -7,7 +7,7 @@ fun foo() {
             abstract inner class Inner
         }
 
-        abstract inner class C : <!CYCLIC_INHERITANCE_HIERARCHY!>A.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>Inner<!><!>() // INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
+        abstract inner class C : <!CYCLIC_INHERITANCE_HIERARCHY, INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>A.Inner<!>() // INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
     }
 }
 

@@ -8,14 +8,14 @@ fun baz(s: String?): String {
         val u: String? = null
         if (u == null) return ""
         // !! is detected as unnecessary here
-        <!DEBUG_INFO_SMARTCAST!>u<!>
+        u
     }
     return t
 }
 
 fun foo(s: String?): String {
     if (s == null) return ""
-    val t = if (s == "abc") <!DEBUG_INFO_SMARTCAST!>s<!> else "xyz"
+    val t = if (s == "abc") s else "xyz"
     return t
 }
 

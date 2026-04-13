@@ -27,8 +27,8 @@ fun bar2(x: Function1<*, *>) {} // Regular function type with star projections
 
 fun test() {
     A.<!NONE_APPLICABLE!>foo<!> { i: Int -> i } // A.foo((Integer i) -> ""); // works in Java
-    bar1 <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!> -> i }<!>
-    bar2 { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>i: Int<!> -> i }
+    bar1 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int -> i }<!>
+    bar2 { i: Int -> i }
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, lambdaLiteral, nullableType, samConversion, starProjection */

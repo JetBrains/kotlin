@@ -5,4 +5,3 @@ fun Int.foo(block: context(String) Int.(Boolean) -> Unit) {
 }
 
 // LANGUAGE: +ContextParameters
-// IGNORE_STABILITY_K1: candidates

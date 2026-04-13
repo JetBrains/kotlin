@@ -10,24 +10,24 @@
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(<!UNUSED_PARAMETER!>value_1<!>: Int): String = when {
+fun case_1(value_1: Int): String = when {
     <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
-    <!UNREACHABLE_CODE!>value_1 == 1 -> ""<!>
+    value_1 == 1 -> ""
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int): String = when {
     value_1 == 1 -> ""
     <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
-    <!UNREACHABLE_CODE!>value_1 == 2 -> ""<!>
+    value_1 == 2 -> ""
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(): String {
     when {
         <!ELSE_MISPLACED_IN_WHEN!>else<!> -> return ""
-        <!UNREACHABLE_CODE!>else -> return ""<!>
+        else -> return ""
     }
 
-    <!UNREACHABLE_CODE!>return ""<!>
+    return ""
 }

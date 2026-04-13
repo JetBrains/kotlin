@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T?|
@@ -209,7 +209,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T?|
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|) [evaluated = String(property str)]) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|) [evaluated = String(field str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|) [evaluated = String(get str)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitSubstitutionOverridePropertyScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|T?| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|T?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|) [evaluated = String(property str)]) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|) [evaluated = String(field str)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|T?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
                 @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|) [evaluated = String(get str)]) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T?|
@@ -346,4 +346,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitSubstitutionOverridePropertyScript.kts
                 @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|) [evaluated = String(set str)]) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|) [evaluated = String(set str)]) value: R|T?|): R|kotlin/Unit|
 
         }
-

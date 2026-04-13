@@ -10,37 +10,37 @@ inline fun <reified T> reifiedTypes(vararg values: T) {}
 
 fun <T> testTypeParamter(value: T) {
     when (value) {
-        is InterfaceA -> reifiedType(<!DEBUG_INFO_SMARTCAST!>value<!>)
-        is InterfaceB -> reifiedType(<!DEBUG_INFO_SMARTCAST!>value<!>)
-        is String -> reifiedType(<!DEBUG_INFO_SMARTCAST!>value<!>)
-        is Int -> reifiedType(<!DEBUG_INFO_SMARTCAST!>value<!>)
-        is List<*> -> reifiedType(<!DEBUG_INFO_SMARTCAST!>value<!>)
+        is InterfaceA -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        is InterfaceB -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        is String -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        is Int -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        is List<*> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
         else -> <!TYPE_PARAMETER_AS_REIFIED!>reifiedType<!>(value)
     }
 }
 
 fun testInterfaces(value: InterfaceA) {
     when (value) {
-        is InterfaceB -> reifiedType(value)
-        is <!INCOMPATIBLE_TYPES!>String<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>reifiedType<!>(value)
-        is <!INCOMPATIBLE_TYPES!>Int<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>reifiedType<!>(value)
-        is List<*> -> reifiedType(value)
+        is InterfaceB -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Int<!> -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
+        is List<*> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedType<!>(value)
         else -> reifiedType(value)
     }
 }
 
 fun testArray(value: InterfaceA) {
-    <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>when (value) {
-        is InterfaceB -> Array(1) { _ -> value }
-        is <!INCOMPATIBLE_TYPES!>String<!> -> Array(1) { _ -> value }
-        is <!INCOMPATIBLE_TYPES!>Int<!> -> Array(1) { _ -> value }
-        is List<*> -> Array(1) { _ -> value }
+    when (value) {
+        is InterfaceB -> <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION, TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is Int<!> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
+        is List<*> -> <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>Array<!>(1) { _ -> value }
         else -> Array(1) { _ -> value }
-    }<!>
+    }
 }
 
 fun testParameters() {
-    reifiedTypes(1, "2", false)
+    <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>reifiedTypes<!>(1, "2", false)
     reifiedTypes<Any>(1, "2", false)
 }
 

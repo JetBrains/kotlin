@@ -21,15 +21,15 @@ fun case_1(x: Boolean?, y: Boolean?) {
         x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(x: Boolean?, <!UNUSED_PARAMETER!>y<!>: Int?) {
+fun case_2(x: Boolean?, y: Int?) {
     while (true) {
-        break <!UNREACHABLE_CODE!>|| y == null<!>
-        <!UNREACHABLE_CODE!>x!!<!>
+        break || y == null
+        x!!
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
@@ -60,8 +60,8 @@ fun case_4(x: Boolean?, y: Boolean?) {
         x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 // TESTCASE NUMBER: 5
@@ -93,12 +93,12 @@ fun case_6(x: Boolean?, y: Boolean?) {
 // TESTCASE NUMBER: 7
 fun case_7(x: Boolean?, y: Boolean?) {
     loop@ while (true) {
-        <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (y) {
+        when (y) {
             true -> break@loop
             false -> break@loop
             null -> break@loop
-        }<!>
-        <!UNREACHABLE_CODE!>x!!<!>
+        }
+        x!!
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>

@@ -1,8 +1,0 @@
-/test1.kt:(192,193): error: One type argument expected. Use 'A.B<*>' if you do not intend to pass type arguments.
-/test2.kt:(105,106): error: One type argument expected. Use 'A<*>.B' if you do not intend to pass type arguments.
-/test3.kt:(167,168): error: One type argument expected. Use 'A.B.C<*>.D' if you do not intend to pass type arguments.
-/test4.kt:(182,183): error: 2 type arguments expected. Use 'A.B<*>.C<*>.D' if you do not intend to pass type arguments.
-/test5.kt:(202,207): error: 2 type arguments expected. Use 'A.B<*>.C<*>.D' if you do not intend to pass type arguments.
-/test6.kt:(217,222): error: 3 type arguments expected. Use 'A.B<*>.C<*>.D<*>' if you do not intend to pass type arguments.
-/test7.kt:(220,225): error: One type argument expected. Use 'A.B.C<*>.D' if you do not intend to pass type arguments.
-/test8.kt:(216,217): error: 6 type arguments expected. Use 'A<*, *>.B<*, *>.C<*, *>' if you do not intend to pass type arguments.

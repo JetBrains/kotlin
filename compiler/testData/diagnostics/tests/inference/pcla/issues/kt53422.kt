@@ -5,7 +5,7 @@
 fun test() {
     foo(
         flow { emit(0) }
-    ) <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ <!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>.collect <!TOO_MANY_ARGUMENTS!>{}<!> }<!>
+    ) { <!ARGUMENT_TYPE_MISMATCH!>it<!>.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>collect<!> {} }
 
     // 0. Initial
     // W <: Any / declared upper bound

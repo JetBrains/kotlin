@@ -26,7 +26,7 @@ fun test() {
     var c1 = C1()
     c1[0] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ""
     var c2 = C2()
-    c2<!NO_SET_METHOD!>[0]<!> += ""
+    c2[0] += ""
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,

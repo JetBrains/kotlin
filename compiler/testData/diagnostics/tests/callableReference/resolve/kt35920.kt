@@ -10,7 +10,7 @@ public class JavaClass<R> {
 fun foo(x: (Int) -> String) {}
 
 fun main() {
-    foo(JavaClass<*>::<!UNRESOLVED_REFERENCE!>baz<!>)
+    foo(JavaClass<*>::baz)
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaCallableReference */

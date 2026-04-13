@@ -40,7 +40,7 @@ fun case_2(value_1: Any?) {
         }
         <!UNINITIALIZED_VARIABLE!>value_2<!>.dec()
     }
-    value_2.dec()
+    <!UNINITIALIZED_VARIABLE!>value_2<!>.dec()
 }
 
 // TESTCASE NUMBER: 3
@@ -78,7 +78,7 @@ fun case_4(value_1: EnumClassSingle?) {
         }
         <!UNINITIALIZED_VARIABLE!>value_2<!>.minus(5)
     }
-    value_2.minus(5)
+    <!UNINITIALIZED_VARIABLE!>value_2<!>.minus(5)
 }
 
 // TESTCASE NUMBER: 5

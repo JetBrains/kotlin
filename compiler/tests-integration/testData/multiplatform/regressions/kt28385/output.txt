@@ -1,0 +1,22 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/tests-integration/testData/multiplatform/regressions/kt28385/jvm.kt:3:1: error: property must be initialized.
+val dasda
+^^^^^^^^^
+compiler/tests-integration/testData/multiplatform/regressions/kt28385/jvm.kt:5:1: error: syntax error: Expecting a top level declaration.
+sdax = {
+^^^^
+compiler/tests-integration/testData/multiplatform/regressions/kt28385/jvm.kt:5:6: error: syntax error: Expecting a top level declaration.
+sdax = {
+     ^
+compiler/tests-integration/testData/multiplatform/regressions/kt28385/jvm.kt:5:8: error: syntax error: Expecting a top level declaration.
+sdax = {
+       ^
+compiler/tests-integration/testData/multiplatform/regressions/kt28385/jvm.kt:5:8: error: function declaration must have a name.
+sdax = {
+       ^

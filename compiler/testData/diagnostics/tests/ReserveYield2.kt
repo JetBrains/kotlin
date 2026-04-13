@@ -7,10 +7,10 @@
 annotation class yield
 
 fun bar(p: Int) {
-    <!REDUNDANT_LABEL_WARNING!><!YIELD_IS_RESERVED!>yield<!>@<!> p
-    <!REDUNDANT_LABEL_WARNING!>`yield`@<!> p
+    yield@ p
+    `yield`@ p
 
-    @<!YIELD_IS_RESERVED!>yield<!>() p
+    @yield() p
     @`yield`() p
 
     for (yield in 1..5) {
@@ -32,9 +32,9 @@ enum class yield {
     yield
 }
 
-fun f1(yield: Int, foo: Int = <!YIELD_IS_RESERVED!>yield<!>) {}
+fun f1(yield: Int, foo: Int = yield) {}
 
-fun f2(foo: <!YIELD_IS_RESERVED!>yield<!>) {}
+fun f2(foo: yield) {}
 
 // FILE: 3.kt
 package p4
@@ -42,16 +42,16 @@ package p4
 typealias yield = Number
 
 fun <yield: Number> f1() {}
-fun <y: <!YIELD_IS_RESERVED!>yield<!>> f2() {}
+fun <y: yield> f2() {}
 
 // FILE: 4.kt
 object X {
     fun yield() {}
 
     fun test3(yield: Int) {
-        X::<!YIELD_IS_RESERVED!>yield<!>
+        X::yield
 
-        <!YIELD_IS_RESERVED!>yield<!>::toInt
+        yield::toInt
     }
 }
 

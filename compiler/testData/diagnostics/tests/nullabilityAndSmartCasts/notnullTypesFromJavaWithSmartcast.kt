@@ -17,7 +17,7 @@ fun <T : Any> test() {
         value = JClass.getNotNullT()
     }
 
-    <!DEBUG_INFO_SMARTCAST!>value<!>.hashCode() // unsafe call error
+    value.hashCode() // unsafe call error
 }
 
 /* GENERATED_FIR_TAGS: assignment, dnnType, equalityExpression, functionDeclaration, ifExpression, javaFunction,

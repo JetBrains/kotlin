@@ -15,13 +15,13 @@ fun consume(x: Any?) {}
 class A {
     init {
         consume(<!UNINITIALIZED_VARIABLE!>x<!>)
-        <!VAL_REASSIGNMENT!>x<!> = 10
+        <!INITIALIZATION_BEFORE_DECLARATION!>x<!> = 10
     }
 
     val x: Int by delegate()
 
     init {
-        x = 10
+        <!VAL_REASSIGNMENT!>x<!> = 10
         consume(x)
     }
 }

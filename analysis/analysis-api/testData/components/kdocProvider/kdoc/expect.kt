@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_FE10
 
 // MODULE: common
 // TARGET_PLATFORM: Common

@@ -7,8 +7,8 @@ class DTO {
 
 fun foo(intDTO: DTO?, p: <!UNRESOLVED_REFERENCE!>KProperty1<!><*, Int>) {
     if (intDTO != null) {
-        <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO::q]
-        <!DEBUG_INFO_SMARTCAST!>intDTO<!>.q
+        intDTO[DTO::q]
+        intDTO.q
     }
 }
 

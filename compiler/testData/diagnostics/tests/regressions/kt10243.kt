@@ -4,9 +4,9 @@ private fun doUpdateRegularTasks() {
     try {
         while (f) {
             val xmlText = <!UNRESOLVED_REFERENCE!>getText<!>()
-            if (<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>xmlText<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> null) {}
+            if (xmlText == null) {}
             else {
-                <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>xmlText<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, VARIABLE_EXPECTED!>value<!> = 0 // !!!
+                xmlText.<!UNRESOLVED_REFERENCE!>value<!> = 0 // !!!
             }
         }
 

@@ -17,7 +17,7 @@ fun smartcastOnReceiver(x: Int?) {
         x<!UNSAFE_CALL!>.<!>inc()
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.dec()
+        x.dec()
     }
 }
 

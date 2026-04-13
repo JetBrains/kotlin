@@ -10,7 +10,6 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
-import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.slf4j.Logger
 
@@ -42,12 +41,12 @@ internal class NativeAppleSimulatorTCServiceMessagesClient(
     log: Logger,
     private val standaloneMode: Provider<Boolean>,
 ) : TCServiceMessagesClient(results, settings, log) {
-    override fun testFailedMessage(execHandle: ExecAsyncHandle, exitValue: Int) = when {
+    override fun testFailedMessage(displayName: String, exitValue: Int) = when {
         !standaloneMode.get() && exitValue == 149 -> """
                 You have standalone simulator tests run mode disabled and tests have failed to run.
                 The problem can be that you have not booted the required device or have configured the task to a different simulator. Please check the task output and its device configuration.
                 If you are sure that your setup is correct, please file an issue: https://kotl.in/issue
             """.trimIndent()
-        else -> super.testFailedMessage(execHandle, exitValue)
+        else -> super.testFailedMessage(displayName, exitValue)
     }
 }

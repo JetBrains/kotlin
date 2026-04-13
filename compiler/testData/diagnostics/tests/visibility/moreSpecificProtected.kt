@@ -57,40 +57,40 @@ open class B : A() {
         when (a) {
             is C -> {
                 // Make sure smart cast works
-                <!DEBUG_INFO_SMARTCAST!>a<!>.fromC
+                a.fromC
                 // The same logic as for `c.foo`
-                <!DEBUG_INFO_SMARTCAST!>a<!>.foo(d, d) checkType { _<M2Sub>() }
+                a.foo(d, d) checkType { _<M2Sub>() }
 
                 // The same logic as for `c.baz`
-                <!DEBUG_INFO_SMARTCAST!>a<!>.baz(d, d) checkType { _<M6>() }
+                a.baz(d, d) checkType { _<M6>() }
             }
             is B -> {
                 // Make sure smart cast works
-                <!DEBUG_INFO_SMARTCAST!>a<!>.fromB
+                a.fromB
                 // The same logic as `b.foo`
-                <!DEBUG_INFO_SMARTCAST!>a<!>.foo(d, d) checkType { _<M3>() }
+                a.foo(d, d) checkType { _<M3>() }
 
                 // The same logic as for `b.baz`
-                <!DEBUG_INFO_SMARTCAST!>a<!>.baz(d, d) checkType { _<M5Sub>() }
+                a.baz(d, d) checkType { _<M5Sub>() }
             }
         }
 
         when (b) {
             is C -> {
-                <!DEBUG_INFO_SMARTCAST!>b<!>.fromC
+                b.fromC
                 // In K1, it works just as `c.foo`
-                b.foo(d, d) checkType { _<M2Sub>() }
+                b.foo(d, d) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><M2Sub>() }
                 // In K2, M3Sub is invisible, but we have candidate M3 from original receiver and we choose it
                 // Unlike the case of `c.foo` when we choose M2Sub because we don't have more special M3 there in the scope of C
                 // (in the meaning of overload comparison by the value parameter types)
-                b.foo(d, d) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><M3>() }
+                b.foo(d, d) checkType { _<M3>() }
 
                 // In K1, it works just as `c.foo`
-                <!DEBUG_INFO_SMARTCAST!>b<!>.baz(d, d) checkType { _<M6>() }
+                b.baz(d, d) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><M6>() }
                 // In K2, M5SubSub is invisible, but we have candidate M5Sub from original receiver and we choose it
                 // Unlike the case of `c.baz` when we choose M6 because we don't have more special M5Sub there in the scope of C
                 // (in the meaning of overload comparison by the value parameter types)
-                <!DEBUG_INFO_SMARTCAST!>b<!>.baz(d, d) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><M5Sub>() }
+                b.baz(d, d) checkType { _<M5Sub>() }
             }
         }
     }

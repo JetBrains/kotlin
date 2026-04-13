@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 // ------------------------------ diagnostics ------------------------------
 
@@ -109,8 +111,12 @@ private const val CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS = true
 
 private fun KtPsiDiagnostic.checkPsiTypeConsistency() {
     if (CHECK_PSI_CONSISTENCY_IN_DIAGNOSTICS) {
-        require(factory.psiType.isInstance(element.psi)) {
-            "${element.psi::class} is not a subtype of ${factory.psiType} for factory $factory"
+        requireWithAttachment(
+            factory.psiType.isInstance(psiElement),
+            { "${psiElement::class} is not a subtype of ${factory.psiType} for factory $factory" }
+        ) {
+            withPsiEntry("psi", psiElement)
+            withPsiEntry("file", psiFile)
         }
     }
 }

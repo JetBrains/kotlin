@@ -1710,6 +1710,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     public void testPropertyDuplicatedContextParameter2() {
       run("propertyDuplicatedContextParameter2.kt");
     }
+
+    @Test
+    @TestMetadata("recursiveContract.kt")
+    public void testRecursiveContract() {
+      run("recursiveContract.kt");
+    }
+
+    @Test
+    @TestMetadata("recursiveContract2.kt")
+    public void testRecursiveContract2() {
+      run("recursiveContract2.kt");
+    }
   }
 
   @Nested

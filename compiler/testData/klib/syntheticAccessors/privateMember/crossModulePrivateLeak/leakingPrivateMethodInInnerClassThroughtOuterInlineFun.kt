@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // MODULE: lib
 // FILE: A.kt
 class A {

@@ -7,9 +7,9 @@ public class Test {
 // FILE: test.kt
 fun ff() {
     val a = Test.FOO
-    val b = <!NO_COMPANION_OBJECT!>Test<!><!UNEXPECTED_SAFE_CALL!>?.<!>FOO
+    val b = <!NO_COMPANION_OBJECT!>Test<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>FOO<!>
     System.out.println(a + b)
-    <!NO_COMPANION_OBJECT!>System<!><!UNEXPECTED_SAFE_CALL!>?.<!>out<!UNSAFE_CALL!>.<!>println(a + b)
+    <!NO_COMPANION_OBJECT!>System<!><!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>out<!>.println(a + b)
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty,

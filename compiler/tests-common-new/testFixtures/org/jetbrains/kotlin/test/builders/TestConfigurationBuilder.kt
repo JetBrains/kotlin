@@ -441,20 +441,20 @@ class GroupingPhaseTestConfigurationBuilder :
 @DefaultsDsl
 @OptIn(TestInfrastructureInternals::class, PrivateForInline::class)
 class TwoPhaseTestConfigurationBuilder {
-    val firstPhaseBuilder = NonGroupingPhaseTestConfigurationBuilder()
-    val secondPhaseBuilder = GroupingPhaseTestConfigurationBuilder()
+    val nonGroupingPhaseBuilder = NonGroupingPhaseTestConfigurationBuilder()
+    val groupingPhaseBuilder = GroupingPhaseTestConfigurationBuilder()
 
     fun commonConfiguration(init: TestConfigurationBuilderBase<*, *>.() -> Unit) {
-        firstPhaseBuilder.apply(init)
-        secondPhaseBuilder.apply(init)
+        nonGroupingPhaseBuilder.apply(init)
+        groupingPhaseBuilder.apply(init)
     }
 
     fun nonGroupingPhase(init: NonGroupingPhaseTestConfigurationBuilder.() -> Unit) {
-        firstPhaseBuilder.apply(init)
+        nonGroupingPhaseBuilder.apply(init)
     }
 
     fun groupingPhase(init: GroupingPhaseTestConfigurationBuilder.() -> Unit) {
-        secondPhaseBuilder.apply(init)
+        groupingPhaseBuilder.apply(init)
     }
 }
 

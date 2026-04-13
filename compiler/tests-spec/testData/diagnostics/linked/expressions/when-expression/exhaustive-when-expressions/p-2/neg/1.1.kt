@@ -22,4 +22,4 @@ fun case_2(value_1: Int): String = <!NO_ELSE_IN_WHEN!>when<!> {
 }
 
 // TESTCASE NUMBER: 3
-fun case_3(): Int = <!TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!> {}<!>
+fun case_3(): Int = <!NO_ELSE_IN_WHEN!>when<!> {}

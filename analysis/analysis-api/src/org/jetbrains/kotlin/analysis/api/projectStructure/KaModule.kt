@@ -417,10 +417,18 @@ public interface KaDanglingFileModule : KaModule {
 /**
  * Whether the dangling file module supports partial invalidation on PSI modifications. The sessions for such modules can be cached for a
  * longer time.
+ *
+ * For a dangling file module to be stable, its context module must also be stable. Otherwise, cache inconsistencies may occur.
+ *
+ * In more detail, caches for unstable dangling file modules are invalidated after any PSI modification, while stable dangling file modules
+ * react to modification events. A stable module with an unstable context risks cache inconsistencies, as the context module's invalidation
+ * scope is much broader.
  */
 @OptIn(KaPlatformInterface::class)
 public val KaDanglingFileModule.isStable: Boolean
-    get() = files.all { it.isPhysical && it.viewProvider.isEventSystemEnabled }
+    get() =
+        files.all { it.isPhysical && it.viewProvider.isEventSystemEnabled } &&
+                (contextModule as? KaDanglingFileModule)?.isStable != false
 
 /**
  * A module which represents a source file living outside the project's content root. For example, test data files, or the source files of

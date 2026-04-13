@@ -45,6 +45,6 @@ package p
 
 fun <T : Any> test(t: T) {
     val s = Sub<T>(t)
-    <!DEBUG_INFO_EXPRESSION_TYPE("p.Sub<(T..T?)>")!>s.self()<!>.set(null)
+    <!DEBUG_INFO_EXPRESSION_TYPE("p.Sub<T>")!>s.self()<!>.set(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("T")!>s.get()<!>
 }

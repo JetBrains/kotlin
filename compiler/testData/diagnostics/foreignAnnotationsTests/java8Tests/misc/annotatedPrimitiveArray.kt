@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // SKIP_TXT
 // ISSUE: KT-54521
 // LANGUAGE: +EnhanceNullabilityOfPrimitiveArrays

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DUMP_EXTERNAL_CLASS: Outer
 
 // FILE: external.kt

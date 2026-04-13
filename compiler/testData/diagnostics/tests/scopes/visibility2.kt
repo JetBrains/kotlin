@@ -21,35 +21,35 @@ private object PO {}
 //+JDK
 package b
 
-import a.<!INVISIBLE_REFERENCE("A; private; file")!>A<!>
-import a.<!INVISIBLE_REFERENCE("foo; private; file")!>foo<!>
+import a.<!INVISIBLE_REFERENCE!>A<!>
+import a.<!INVISIBLE_REFERENCE!>foo<!>
 import a.makeA
-import a.<!INVISIBLE_REFERENCE("PO; private; file")!>PO<!>
+import a.<!INVISIBLE_REFERENCE!>PO<!>
 
 fun test() {
-    val y = makeA()
-    y.<!INVISIBLE_MEMBER("A; private; file")!>bar<!>()
-    <!INVISIBLE_MEMBER("foo; private; file")!>foo<!>()
+    val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!>
+    y.<!INVISIBLE_REFERENCE!>bar<!>()
+    <!INVISIBLE_REFERENCE!>foo<!>()
 
-    val u : <!INVISIBLE_REFERENCE("A; private; file")!>A<!> = <!INVISIBLE_MEMBER("A; private; file")!>A<!>()
-    val a : java.util.Arrays.<!INVISIBLE_REFERENCE("ArrayList; private; 'Arrays'")!>ArrayList<!><Int>;
+    val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE!>ArrayList<!><Int>;
 
-    val po = <!INVISIBLE_MEMBER("PO; private; file")!>PO<!>
+    val po = <!INVISIBLE_REFERENCE!>PO<!>
 }
 
-class B : <!EXPOSED_SUPER_CLASS!><!INVISIBLE_MEMBER("A; private; file"), INVISIBLE_REFERENCE("A; private; file")!>A<!>()<!> {}
+class B : <!EXPOSED_SUPER_CLASS, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>A<!>() {}
 
 class Q {
     class W {
         fun foo() {
-            val y = makeA() //assure that 'makeA' is visible
+            val y = <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>makeA()<!> //assure that 'makeA' is visible
         }
     }
 }
 
 //check that 'toString' can be invoked without specifying return type
 class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
-    public override fun toString() = "a"
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun toString() = "a"
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, objectDeclaration, override,

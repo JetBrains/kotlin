@@ -14,8 +14,8 @@ fun <K> produce(producer: () -> K): K = null!!
 fun <O> test(t: A<O>) {
     @Suppress("UNCHECKED_CAST")
     t as A<Inv<*>>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>")!>id(get(<!DEBUG_INFO_SMARTCAST!>t<!>))<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>")!>produce { get(<!DEBUG_INFO_SMARTCAST!>t<!>) }<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>")!>id(get(t))<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<*>")!>produce { get(t) }<!>
 }
 
 /* GENERATED_FIR_TAGS: asExpression, capturedType, checkNotNullCall, classDeclaration, functionDeclaration,

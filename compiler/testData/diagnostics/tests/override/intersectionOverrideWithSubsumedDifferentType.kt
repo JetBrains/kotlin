@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 interface UAnnotationEx : UAnnotation, UAnchorOwner
 interface UAnchorOwner : UElement

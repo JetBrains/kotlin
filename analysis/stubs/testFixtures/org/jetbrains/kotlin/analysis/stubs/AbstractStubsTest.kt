@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.deepCopy
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -48,7 +51,18 @@ abstract class AbstractStubsTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertEqualsToTestOutputFile(actual, extension = outputFileExtension)
 
         for ((file, stub) in filesAndStubs) {
+            assertEquality(stub)
             stubsTestEngine.validate(testServices, file, stub)
+        }
+    }
+
+    @OptIn(KtImplementationDetail::class)
+    private fun assertEquality(fileStub: KotlinFileStubImpl) {
+        val deepCopy = fileStub.deepCopy()
+        fileStub.stubList.zip(deepCopy.stubList).forEach { (stub1, stub2) ->
+            stub1 as KotlinStubElement<*>
+            stub2 as KotlinStubElement<*>
+            assert(stub1.isEquivalentTo(stub2)) { "Stub is not equal to it's copy: $stub1" }
         }
     }
 

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: Anno.java
 
 import java.lang.*;

@@ -42,11 +42,7 @@ open class KaptExtension : KaptExtensionConfig {
 
     override var includeCompileClasspath: Boolean? = null
 
-    @Deprecated(
-        "Use `annotationProcessor()` and `annotationProcessors()` instead. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    open var processors: String = ""
+    internal var processors: String = ""
 
     override var keepJavacAnnotationProcessors: Boolean = false
 
@@ -58,7 +54,6 @@ open class KaptExtension : KaptExtensionConfig {
     private val javacOptionsActions =
         mutableListOf<(KaptJavacOption) -> Unit>()
 
-    @Suppress("DEPRECATION_ERROR")
     override fun annotationProcessor(fqName: String) {
         val oldProcessors = this.processors
         this.processors = if (oldProcessors.isEmpty()) fqName else "$oldProcessors,$fqName"

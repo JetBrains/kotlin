@@ -64,9 +64,9 @@ package b
 import a.C1.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>O<!>.*
 
 fun testErroneusAllUnderImportFromObject() {
-    <!UNRESOLVED_REFERENCE!>A<!>()
-    <!UNRESOLVED_REFERENCE!>B<!>
-    <!UNRESOLVED_REFERENCE!>bar<!>()
+    A()
+    B
+    bar()
 }
 
 // FILE: c.kt
@@ -133,7 +133,7 @@ fun testMembersFromSupertypes() {
     fromI()
 
     genericFromI(3)
-    genericFromI(<!TYPE_MISMATCH!>"a"<!>)
+    genericFromI(<!ARGUMENT_TYPE_MISMATCH!>"a"<!>)
 
     own
 }

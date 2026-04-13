@@ -1,3 +1,0 @@
-/main.kt:(104,125): error: Cannot access class 'BaseWithTypeParam<String>'. Check your module classpath for missing or conflicting dependencies.
-
-/main.kt:(274,293): warning: Cannot access 'BaseNoTypeParam' which typealias 'TAtoBaseNoTypeParam' expands to. Check your module classpath for missing or conflicting dependencies. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KT-79781.

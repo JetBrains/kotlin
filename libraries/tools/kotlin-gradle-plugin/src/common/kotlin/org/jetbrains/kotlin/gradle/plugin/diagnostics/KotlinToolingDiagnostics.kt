@@ -1407,6 +1407,22 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftPMImportLockFileSync : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() = build {
+            title("Invalid SwiftPM package lock synchronization configuration")
+
+                .description {
+                    "The 'packageResolvedSynchronization' property for SwiftPM import was modified after the project was evaluated. " +
+                            "This property must be configured during the configuration phase."
+                }
+
+                .solution {
+                    "Move the configuration of 'packageResolvedSynchronization' to the project configuration phase (e.g., directly in the build script), " +
+                            "and avoid changing it after evaluation (e.g., inside 'afterEvaluate')."
+                }
+        }
+    }
+
     data class CompilationDependenciesPair(
         val compilation: KotlinCompilation<*>,
         val dependencyCoords: List<String>,
@@ -1972,6 +1988,30 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object AbiValidationNoPublishPlugin : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Experimental) {
+        operator fun invoke(): ToolingDiagnostic = build {
+            title("ABI Validation: no Maven publishing plugin")
+                .description {
+                    "Source of binaries is set to Maven publications, but maven publishing plugin is not applied."
+                }
+                .solution {
+                    "Apply `maven-publish` plugin and create Maven publication, or specify `kotlin.abiValidation { binariesSource = MAIN_COMPILATION }` to use output of the main compilation tasks"
+                }
+        }
+    }
+
+    object AbiValidationAndroidPublicationNotSupported : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Experimental) {
+        operator fun invoke(): ToolingDiagnostic = build {
+            title("ABI Validation: Android target unsupported with Maven binary sources mode")
+                .description {
+                    "Android targets are not supported by ABI validation when Maven binary sources mode is enabled"
+                }
+                .solution {
+                    "Specify `kotlin.abiValidation { binariesSource = MAIN_COMPILATION }` to use output of the main compilation tasks"
+                }
+        }
+    }
+
     object PublishAllAndroidLibraryVariantsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("publishAllLibraryVariants() is deprecated")
@@ -2247,6 +2287,18 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution { "Use source set alternative provided by Android Gradle Plugin: https://kotl.in/b2vftz" }
                 .documentationLink(URI("https://youtrack.jetbrains.com/issue/KT-74451"))
+        }
+    }
+
+    internal object DeprecatedKotlinJsPlugin : ToolingDiagnosticFactory(
+        FATAL,
+        DiagnosticGroup.Kgp.Deprecation,
+    ) {
+        operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
+            title { "'kotlin-js' Gradle plugin is deprecated" }
+                .description { "'kotlin-js' Gradle plugin is deprecated and will be removed in the future" }
+                .solution { "Please use 'kotlin(\"multiplatform\")' plugin with a 'js()' target instead" }
+                .documentationLink(URI("https://kotl.in/t6m3vu"))
         }
     }
 }

@@ -14,11 +14,11 @@
 fun foo(x: Int) = x
 
 fun test0(flag: Boolean) {
-    foo(<!TYPE_MISMATCH!>if (flag) true else ""<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>if (flag) true else ""<!>)
 }
 
 fun test1(flag: Boolean) {
-    foo(<!TYPE_MISMATCH!>when (flag) {
+    foo(<!ARGUMENT_TYPE_MISMATCH!>when (flag) {
         true -> true
         else -> ""
     }<!>)

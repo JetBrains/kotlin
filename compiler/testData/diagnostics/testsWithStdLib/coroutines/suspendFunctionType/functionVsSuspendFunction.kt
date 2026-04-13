@@ -8,8 +8,8 @@ fun useFn(fn: () -> Unit) = fn
 fun ambiguous(sfn: suspend () -> Unit) = sfn
 fun ambiguous(fn: () -> Unit) = fn
 
-fun test1(sfn: suspend () -> Unit) = useFn(<!TYPE_MISMATCH!>sfn<!>)
-fun test2(fn: () -> Unit) = useSuspendFn(<!UNSUPPORTED_FEATURE!>fn<!>)
+fun test1(sfn: suspend () -> Unit) = useFn(<!ARGUMENT_TYPE_MISMATCH!>sfn<!>)
+fun test2(fn: () -> Unit) = useSuspendFn(fn)
 
 fun test3(sfn: suspend () -> Unit) = useSuspendFn(sfn)
 fun test4(): suspend () -> Unit = useSuspendFn {}

@@ -76,7 +76,7 @@ fun DependencyHandler.implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project
 }
 
 private fun Project.jdkVariantsOfBootstrapStdlib(variant: Int): Any {
-    require(variant == 7 || variant == 8) { "There are only jdk7 and jdk8 stdlib, but jdk$variant passed"}
+    require(variant == 7 || variant == 8) { "There are only jdk7 and jdk8 stdlib, but jdk$variant passed" }
     return kotlinDep(listOfNotNull("stdlib", "jdk$variant").joinToString("-"), bootstrapKotlinVersion)
 }
 
@@ -205,26 +205,6 @@ val Project.nodejsVersion: String get() = property("versions.nodejs") as String
 val Project.nodejsLtsVersion: String get() = property("versions.nodejs.lts") as String
 val Project.nodejsVersionForBuildingWasmDebugBrowsers: String get() = property("versions.nodejs.for.building.wasm.debug.browsers") as String
 
-fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
-
-private val wildcardsRe = """[^*?]+|(\*)|(\?)""".toRegex()
-
-private fun String.wildcardsToEscapedRegexString(): String = buildString {
-    wildcardsRe.findAll(this@wildcardsToEscapedRegexString).forEach {
-        when {
-            it.groups[1] != null -> append(".*")
-            it.groups[2] != null -> append(".")
-            else -> append("\\Q${it.groups[0]!!.value}\\E")
-        }
-    }
-}
-
-private fun String.toMaybeVersionedJarRegex(): Regex {
-    val hasJarExtension = endsWith(".jar")
-    val escaped = this.wildcardsToEscapedRegexString()
-    return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
-}
-
 fun Project.firstFromJavaHomeThatExists(
     vararg paths: String,
     jdkHome: File = File((this.property("JDK_1_8") ?: this.property("JDK_18") ?: error("Can't find JDK_1_8 property")) as String)
@@ -246,10 +226,6 @@ fun Project.toolsJar(): FileCollection = files(
 val compilerManifestClassPath
     get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar kotlinx-coroutines-core-jvm.jar"
 
-object EmbeddedComponents {
-    const val CONFIGURATION_NAME = "embedded"
-}
-
 fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
     exclusiveContent {
         forRepository {
@@ -267,6 +243,7 @@ fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: St
         }
     }
 }
+
 fun RepositoryHandler.githubRelease(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
     exclusiveContent {
         forRepository {
@@ -284,6 +261,7 @@ fun RepositoryHandler.githubRelease(ghUser: String, repo: String, revisionPrefix
         }
     }
 }
+
 fun RepositoryHandler.githubCommit(ghUser: String, repo: String, groupAlias: String? = null) {
     exclusiveContent {
         forRepository {

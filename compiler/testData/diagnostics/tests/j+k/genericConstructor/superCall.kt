@@ -10,11 +10,11 @@ public class A<E> {
 // FILE: main.kt
 
 class B1(x: List<String>) : A<CharSequence>("", x)
-class B2(x: List<Int>) : A<CharSequence>("", x)
+class B2(x: List<Int>) : A<CharSequence>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
 class C : A<CharSequence> {
     constructor(x: List<String>) : super("", x)
-    constructor(x: List<Int>, y: Int) : super("", x)
+    constructor(x: List<Int>, y: Int) : super("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,

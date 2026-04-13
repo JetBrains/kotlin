@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -120,7 +120,7 @@ internal val percentile = Aggregators.percentile(percentileArg, skipNaN)
 internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as ColumnType).coneType.isPrimitiveOrMixedNumber(session)
+            (it.single() as ColumnType).coneType.isPrimitiveOrMixedNumber()
         }
     }
 
@@ -128,12 +128,13 @@ internal val Arguments.numericStatisticsDefaultColumns: ColumnsResolver
 internal val Arguments.comparableStatisticsDefaultColumns: ColumnsResolver
     get() = columnsResolver {
         cols {
-            (it.single() as ColumnType).coneType.isSelfComparable(session)
+            (it.single() as ColumnType).coneType.isSelfComparable()
         }
     }
 
 /** Returns `true` if this column is of type `DataColumn<T>` where `T : Comparable<T & Any>` */
-internal fun SimpleDataColumn.isIntraComparable(session: FirSession): Boolean = type.coneType.isSelfComparable(session)
+context(sessionHolder: SessionHolder)
+internal fun SimpleDataColumn.isIntraComparable(): Boolean = type.coneType.isSelfComparable()
 
 /** Adds to the schema only numerical columns. */
 abstract class Aggregator0(val aggregator: Aggregator<*, *>) : AbstractSchemaModificationInterpreter() {

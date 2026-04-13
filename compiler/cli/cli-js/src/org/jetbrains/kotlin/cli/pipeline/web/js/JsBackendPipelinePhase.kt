@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,14 +10,14 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_EXCEPTION
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
 import org.jetbrains.kotlin.cli.js.Ir2JsTransformer
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.JsBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebIrLoadingPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.js.config.artifactConfiguration
 import org.jetbrains.kotlin.js.config.outputDir
 import java.io.File
 
-object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>("JsBackendPipelinePhase") {
-    override val configFiles: EnvironmentConfigFiles
-        get() = EnvironmentConfigFiles.JS_CONFIG_FILES
+object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifact, JsBackendPipelineArtifact>(
+    name = "JsBackendPipelinePhase",
+) {
+    override val klibLoadingPhase: WebIrLoadingPipelinePhase
+        get() = JsIrLoadingPipelinePhase
 
     override fun compileIncrementally(
         icCaches: IcCachesArtifacts,
@@ -73,13 +75,14 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     }
 
     override fun compileNonIncrementally(
-        configuration: CompilerConfiguration,
-        module: ModulesStructure,
-        mainCallArguments: List<String>?,
+        loadedIrArtifact: WebLoadedIrPipelineArtifact,
+        mainCallArguments: List<String>?
     ): JsBackendPipelineArtifact? {
+        val configuration = loadedIrArtifact.configuration
+        val module = loadedIrArtifact.moduleStructure
         val ir2JsTransformer = Ir2JsTransformer(configuration, module, configuration.messageCollector, mainCallArguments)
         val outputs = compileNonIncrementally(
-            configuration,
+            loadedIrArtifact,
             ir2JsTransformer,
             configuration.artifactConfiguration!!,
         ) ?: return null
@@ -92,13 +95,14 @@ object JsBackendPipelinePhase : WebBackendPipelinePhase<JsBackendPipelineArtifac
     ): JsBackendPipelineArtifact = intermediateResult
 
     private fun compileNonIncrementally(
-        configuration: CompilerConfiguration,
+        loadedIr: WebLoadedIrPipelineArtifact,
         ir2JsTransformer: Ir2JsTransformer,
         artifactConfiguration: WebArtifactConfiguration,
     ): CompilationOutputs? {
+        val configuration = loadedIr.configuration
         val start = System.currentTimeMillis()
         try {
-            val outputs = ir2JsTransformer.compileAndTransformIrNew()
+            val outputs = ir2JsTransformer.compileAndTransformIrNew(loadedIr)
             configuration.reportLog("Executable production duration: ${System.currentTimeMillis() - start}ms")
             outputs.writeAll(artifactConfiguration)
             return outputs

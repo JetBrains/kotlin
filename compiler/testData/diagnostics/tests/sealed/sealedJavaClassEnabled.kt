@@ -41,7 +41,7 @@ fun testWhen1(sealed: Sealed, sealedAbstract: SealedAbstract) {
 
 fun testWhen2(sealed: Sealed, sealedAbstract: SealedAbstract) {
     when (sealed) {
-        is Sealed -> {}
+        <!USELESS_IS_CHECK!>is Sealed<!> -> {}
     }
 
     when (sealed) {
@@ -56,7 +56,7 @@ fun testWhen2(sealed: Sealed, sealedAbstract: SealedAbstract) {
     }
 
     when (sealedAbstract) {
-        is SealedAbstract -> {}
+        <!USELESS_IS_CHECK!>is SealedAbstract<!> -> {}
     }
 
     when (sealedAbstract) {

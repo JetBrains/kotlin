@@ -127,6 +127,7 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swi
 }
 
 @ExportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache")
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 public fun kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlinx.coroutines.flow.MutableSharedFlow<kotlin.Any?>
     val _result = run { __self.resetReplayCache() }

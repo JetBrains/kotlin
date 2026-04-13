@@ -6,12 +6,12 @@
 // JDK_KIND: FULL_JDK_21
 
 fun test(ld: java.time.LocalDate?, ld2: java.time.LocalDate) {
-    ld === ld2
-    ld !== ld2
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld2<!>
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> !== <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld2<!>
     ld === null
     ld as Any === ld2 as Any
-    ld === Any()
-    Any() === ld
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!> === Any()
+    Any() === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>ld<!>
 }
 
 fun getVersion(): Runtime.Version {
@@ -19,18 +19,18 @@ fun getVersion(): Runtime.Version {
 }
 
 fun testReturnVal() {
-    getVersion() === getVersion()
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!>
 }
 
 fun testLambda() {
     val version = getVersion()
     val lambda = {
-        version === getVersion()
+        <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>version<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>getVersion()<!>
     }
 }
 
 fun testMultiple(x: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Integer<!>) {
-    x === x && x === x
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> && <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>
 }
 
 /* GENERATED_FIR_TAGS: andExpression, asExpression, equalityExpression, flexibleType, functionDeclaration, javaFunction,

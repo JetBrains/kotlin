@@ -25,16 +25,16 @@ class X<T>(t: T?) {
 
     init {
         val a = A<T>()
-        a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>t<!>)
+        a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>t<!>)
 
-        val x: T = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bam()<!>
-        val y: T = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz<T>()<!>
+        val x: T = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bam()<!>
+        val y: T = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz<T>()<!>
     }
 }
 
 fun test() {
     val a = A<String?>()
-    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
-    val b: String = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bar()<!>
+    val b: String = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bar()<!>
 }

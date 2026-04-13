@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: A.java
 abstract public class A implements CharSequence {
     public char charAt(int x) { }

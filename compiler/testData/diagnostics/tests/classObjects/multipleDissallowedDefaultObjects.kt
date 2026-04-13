@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 class A {
     inner class I {
-        companion <!NESTED_CLASS_NOT_ALLOWED("Companion object")!>object A<!>
+        companion <!NESTED_CLASS_NOT_ALLOWED!>object A<!>
 
-        <!MANY_COMPANION_OBJECTS!>companion<!> <!NESTED_CLASS_NOT_ALLOWED("Companion object")!>object B<!>
+        <!MANY_COMPANION_OBJECTS!>companion<!> <!NESTED_CLASS_NOT_ALLOWED!>object B<!>
 
-        <!MANY_COMPANION_OBJECTS!>companion<!> <!NESTED_CLASS_NOT_ALLOWED("Companion object")!>object C<!>
+        <!MANY_COMPANION_OBJECTS!>companion<!> <!NESTED_CLASS_NOT_ALLOWED!>object C<!>
     }
 }
 

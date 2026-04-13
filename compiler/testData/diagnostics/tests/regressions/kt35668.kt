@@ -16,7 +16,7 @@ fun main() {
         return
     }
 
-    <!DEBUG_INFO_SMARTCAST!>networkParameters<!>.length // unsafe call
+    networkParameters.length // unsafe call
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,

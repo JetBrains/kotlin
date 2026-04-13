@@ -3,7 +3,7 @@
 
 fun test(): () -> Byte {
     throw Exception("")
-    <!UNREACHABLE_CODE!>return B(A(fun (): Byte = 0, fun(): Byte = 1)).f.first<!>
+    return B(A(fun (): Byte = 0, fun(): Byte = 1)).f.first
 }
 
 open class B(var f: A<() -> Byte>)

@@ -1,0 +1,15 @@
+FILE: test.kt
+    public final fun <T> materialize(): R|T| {
+        ^materialize R|kotlin/TODO|()
+    }
+    public final fun test(x: R|ThrowableComputable<*, *>|): R|kotlin/Unit| {
+        lval result1: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.compute*s<CS errors: /JavaHelper.compute>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(Null(null))
+        lval result2: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.compute*s<CS errors: /JavaHelper.compute>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(R|/materialize|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        lval result3: R|kotlin/Any| = Q|JavaHelper|.R|/JavaHelper.compute*s|<R|CapturedType(*)!|, R|CapturedType(*)!|>(R|<local>/x|)
+        lval result4: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.compute*s|<R|kotlin/String!|, R|kotlin/Throwable!|>(Null(null))
+        lval result5: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.compute*s|<R|kotlin/String!|, R|kotlin/Throwable!|>(R|/materialize|<R|ThrowableComputable<kotlin/String!, kotlin/Throwable!>!|>())
+        lval result6: R|kotlin/Any| = Q|JavaHelper|.R|/JavaHelper.compute*s<Inapplicable(INAPPLICABLE): /JavaHelper.compute>#|<R|kotlin/String!|, R|kotlin/Throwable!|>(R|<local>/x|)
+        lval result7: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.compute*s<CS errors: /JavaHelper.compute>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(Null(null))
+        lval result8: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.compute*s<CS errors: /JavaHelper.compute>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(R|/materialize|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>())
+        lval result9: R|kotlin/Any| = Q|JavaHelper|.R|/JavaHelper.compute*s<Inapplicable(INAPPLICABLE): /JavaHelper.compute>#|<R|kotlin/String!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(R|<local>/x|)
+    }

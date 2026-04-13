@@ -131,6 +131,7 @@ public interface SirSession :
         explicitParameters: List<SirParameter>,
         returnType: SirType,
         kotlinFqName: FqName,
+        kotlinOptIns: List<ClassId>,
         selfParameter: SirParameter?,
         contextParameters: List<SirParameter>,
         extensionReceiverParameter: SirParameter?,
@@ -142,6 +143,7 @@ public interface SirSession :
             explicitParameters,
             returnType,
             kotlinFqName,
+            kotlinOptIns,
             selfParameter,
             contextParameters,
             extensionReceiverParameter,
@@ -152,10 +154,11 @@ public interface SirSession :
 
     override fun generateTypeBridge(
         kotlinFqName: FqName?,
+        kotlinOptIns: List<ClassId>,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? = with(bridgeProvider) {
-        generateTypeBridge(kotlinFqName, swiftFqName, swiftSymbolName)
+        generateTypeBridge(kotlinFqName, kotlinOptIns, swiftFqName, swiftSymbolName)
     }
 }
 
@@ -424,6 +427,7 @@ public interface SirBridgeProvider {
         explicitParameters: List<SirParameter>,
         returnType: SirType,
         kotlinFqName: FqName,
+        kotlinOptIns: List<ClassId>,
         selfParameter: SirParameter?,
         contextParameters: List<SirParameter>,
         extensionReceiverParameter: SirParameter?,
@@ -433,6 +437,7 @@ public interface SirBridgeProvider {
 
     public fun generateTypeBridge(
         kotlinFqName: FqName?,
+        kotlinOptIns: List<ClassId>,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge?
@@ -444,6 +449,7 @@ public fun generateFunctionBridge(
     explicitParameters: List<SirParameter>,
     returnType: SirType,
     kotlinFqName: FqName,
+    kotlinOptIns: List<ClassId>,
     selfParameter: SirParameter?,
     contextParameters: List<SirParameter>,
     extensionReceiverParameter: SirParameter?,
@@ -455,6 +461,7 @@ public fun generateFunctionBridge(
         explicitParameters,
         returnType,
         kotlinFqName,
+        kotlinOptIns,
         selfParameter,
         contextParameters,
         extensionReceiverParameter,

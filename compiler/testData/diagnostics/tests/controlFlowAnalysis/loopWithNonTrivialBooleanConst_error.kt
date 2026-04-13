@@ -6,7 +6,7 @@ fun test_1() {
     while (true) {
 
     }
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    val x = 1
 }
 
 fun test_2() {
@@ -41,7 +41,7 @@ fun test_6() {
     do {
 
     } while (true)
-    <!UNREACHABLE_CODE!>val x = 1<!>
+    val x = 1
 }
 
 fun test_7() {

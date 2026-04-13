@@ -4,9 +4,9 @@
 
 object Obj {
     @Deprecated("", level = DeprecationLevel.HIDDEN)
-    object <!REDECLARATION!>Nested<!>
+    object Nested
 
-    val String.<!REDECLARATION!>Nested<!> get() = 42
+    val String.Nested get() = 42
 }
 
 @Deprecated("", level = DeprecationLevel.HIDDEN)

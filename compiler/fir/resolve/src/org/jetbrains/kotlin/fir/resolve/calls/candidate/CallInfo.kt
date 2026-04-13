@@ -55,6 +55,7 @@ open class CallInfo(
     val implicitInvokeMode: ImplicitInvokeMode,
 
     val containingCandidateForCollectionLiteral: Candidate? = null,
+    val isImplicitInvokeReceiver: Boolean = false,
 ) : AbstractCallInfo() {
     val isCollectionLiteralCall: Boolean
         get() = containingCandidateForCollectionLiteral != null
@@ -77,8 +78,13 @@ open class CallInfo(
         get() = (argumentList as? FirResolvedArgumentList)?.originalArgumentList?.arguments ?: argumentList.arguments
     val argumentAtoms: List<ConeResolutionAtom> = arguments.map { createRawAtom(it) }
 
-    fun replaceWithVariableAccess(): CallInfo =
-        copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)
+    fun asImplicitInvokeReceiver(): CallInfo =
+        copy(
+            callKind = CallKind.VariableAccess,
+            typeArguments = emptyList(),
+            argumentList = FirEmptyArgumentList,
+            isImplicitInvokeReceiver = true
+        )
 
     fun replaceExplicitReceiver(explicitReceiver: FirExpression?): CallInfo =
         copy(explicitReceiver = explicitReceiver)
@@ -101,12 +107,14 @@ open class CallInfo(
         implicitInvokeMode: ImplicitInvokeMode = this.implicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate? = this.candidateForCommonInvokeReceiver,
         containingCandidateForCollectionLiteral: Candidate? = this.containingCandidateForCollectionLiteral,
+        isImplicitInvokeReceiver: Boolean = this.isImplicitInvokeReceiver,
     ): CallInfo = CallInfo(
         callSite, callKind, name, explicitReceiver, argumentList,
         isUsedAsGetClassReceiver, typeArguments,
         session, containingFile, containingDeclarations,
         candidateForCommonInvokeReceiver, resolutionMode, origin, implicitInvokeMode,
         containingCandidateForCollectionLiteral,
+        isImplicitInvokeReceiver,
     )
 }
 
@@ -141,9 +149,14 @@ class CallableReferenceInfo(
         implicitInvokeMode: ImplicitInvokeMode,
         candidateForCommonInvokeReceiver: Candidate?,
         containingCandidateForCollectionLiteral: Candidate?,
-    ): CallableReferenceInfo = CallableReferenceInfo(
-        callSite, name, explicitReceiver,
-        session, containingFile, containingDeclarations,
-        expectedType, lhs, hasSyntheticOuterCall, origin, callKind
-    )
+        isImplicitInvokeReceiver: Boolean,
+    ): CallableReferenceInfo {
+        require(!isImplicitInvokeReceiver) { "CallableReferenceInfo cannot be an implicit invoke receiver" }
+
+        return CallableReferenceInfo(
+            callSite, name, explicitReceiver,
+            session, containingFile, containingDeclarations,
+            expectedType, lhs, hasSyntheticOuterCall, origin, callKind
+        )
+    }
 }

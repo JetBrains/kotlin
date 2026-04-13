@@ -1,0 +1,121 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? [ResolvedTo(RAW_FIR)] fun case_2(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? [ResolvedTo(RAW_FIR)] fun case_2(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun case_2(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun case_2(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? [ResolvedTo(SUPER_TYPES)] fun case_2(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? [ResolvedTo(TYPES)] fun case_2(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(STATUS)] fun case_2(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun case_2(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_3(): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(CONTRACTS)] fun case_2(): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun case_3(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun case_2(): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun case_3(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun case_2(): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun case_3(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun case_2(): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun case_3(): R|kotlin/Boolean|
+        [L|Contract description] { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public final [ResolvedTo(BODY_RESOLVE)] fun case_2(): R|kotlin/Boolean| {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: implies> <inline=Unknown>  {
+            ^ <Unresolved name: returns>#(Null(null)).<Unresolved name: implies>#(R|/case_3|())
+        }
+        )
+        ^case_2 Boolean(true)
+    }
+    public final [ResolvedTo(CONTRACTS)] fun case_3(): R|kotlin/Boolean| { LAZY_BLOCK }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] recursiveContract.kt
+    @FILE:R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: ExperimentalContracts>#)) [evaluated = vararg(<getClass>(Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: ExperimentalContracts>#))])
+    public final [ResolvedTo(BODY_RESOLVE)] fun case_2(): R|kotlin/Boolean| {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: implies> <inline=Unknown>  {
+            ^ <Unresolved name: returns>#(Null(null)).<Unresolved name: implies>#(R|/case_3|())
+        }
+        )
+        ^case_2 Boolean(true)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun case_3(): R|kotlin/Boolean| {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: implies> <inline=Unknown>  {
+            ^ <Unresolved name: returns>#(Null(null)).<Unresolved name: implies>#(R|/case_2|())
+        }
+        )
+        ^case_3 Boolean(true)
+    }

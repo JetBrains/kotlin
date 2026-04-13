@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG T: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Int>
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG T: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -177,7 +177,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun bar <U> (): @[FlexibleNullability] U of <root>.Java3.bar? declared in <root>.Java3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar <U> (): U of <root>.F.bar declared in <root>.F'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={U of <root>.F.bar & Any} origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit

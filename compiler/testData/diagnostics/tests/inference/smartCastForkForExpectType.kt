@@ -17,7 +17,7 @@ fun <X> foo(s: Slice<X>): X? {
     }
 
     if (s === SL0) {
-        return <!TYPE_MISMATCH, TYPE_MISMATCH!>bar(<!DEBUG_INFO_SMARTCAST!>s<!>)<!>
+        return bar(s)
     }
 
     if (s === SL1 || s === SL2) {

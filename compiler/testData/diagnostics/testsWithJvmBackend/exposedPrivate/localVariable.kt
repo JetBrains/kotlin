@@ -12,6 +12,6 @@ private inline fun generic() {
 }
 
 internal inline fun test() {
-    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_WARNING!>simple()<!>
+    <!PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>simple()<!>
     generic()
 }

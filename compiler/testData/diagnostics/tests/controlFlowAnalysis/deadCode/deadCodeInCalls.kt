@@ -8,7 +8,7 @@ fun testArgumentInCall() {
 }
 
 fun testArgumentInVariableAsFunctionCall(f: (Any) -> Unit) {
-    f<!UNREACHABLE_CODE!>(<!>todo()<!UNREACHABLE_CODE!>)<!>
+    <!UNREACHABLE_CODE!>f(<!>todo()<!UNREACHABLE_CODE!>)<!>
 }
 
 fun todo(): Nothing = throw Exception()

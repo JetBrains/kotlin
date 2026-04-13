@@ -6,7 +6,7 @@ fun <T : Number> printGenericNumber(t: T) = println("Number is $t")
 fun main() {
     buildList { // inferred into MutableList<String>
         add("Boom")
-        printGenericNumber(this[0])
+        <!CANNOT_INFER_PARAMETER_TYPE!>printGenericNumber<!>(<!ARGUMENT_TYPE_MISMATCH!>this[0]<!>)
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.isGeneratorFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
@@ -730,9 +730,7 @@ private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: Ir
     // Account for lambda expressions as well.
     val currentFunctionsIncludingParents = currentFunction.parentDeclarationsWithSelf.filterIsInstance<IrFunction>().toList()
 
-    if (currentFunctionsIncludingParents.size > 1 &&
-        !context.staticContext.backendContext.configuration.getBoolean(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS)
-    ) {
+    if (currentFunctionsIncludingParents.size > 1 && !context.staticContext.backendContext.configuration.compileLambdasAsEs6ArrowFunctions) {
         // super is not allowed inside anonymous functions that are not arrows.
         return false
     }
@@ -740,5 +738,5 @@ private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: Ir
     fun IrFunction.isCoroutine(): Boolean =
         parentClassOrNull?.superClass?.symbol == context.staticContext.backendContext.symbols.coroutineImpl
 
-    return currentFunctionsIncludingParents.none { it.isEs6ConstructorReplacement || it.isCoroutine() }
+    return currentFunctionsIncludingParents.none { it.isEs6ConstructorReplacement || it.shouldBeCompiledAsGenerator || it.isCoroutine() }
 }

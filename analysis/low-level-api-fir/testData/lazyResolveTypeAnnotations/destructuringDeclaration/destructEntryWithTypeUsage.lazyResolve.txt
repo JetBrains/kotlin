@@ -507,9 +507,9 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val pair: MyPair
             public? [ResolvedTo(RAW_FIR)] get(): MyPair
 
-        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val right: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -559,9 +559,9 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val pair: MyPair
             public? [ResolvedTo(RAW_FIR)] get(): MyPair
 
-        [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
+        [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val right: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -608,8 +608,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = LAZY_EXPRESSION
@@ -660,8 +660,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = LAZY_EXPRESSION
@@ -724,4 +724,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructEntryWithTypeUsage.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
-

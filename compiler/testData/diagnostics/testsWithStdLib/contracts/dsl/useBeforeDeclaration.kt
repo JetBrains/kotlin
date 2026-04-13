@@ -7,7 +7,7 @@ import kotlin.contracts.*
 
 fun test(x: Any?) {
     if (isString(x)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 

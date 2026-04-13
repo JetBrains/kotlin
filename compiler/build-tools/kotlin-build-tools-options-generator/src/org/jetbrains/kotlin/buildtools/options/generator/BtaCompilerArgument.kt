@@ -26,6 +26,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
     val name: String,
     val description: String,
     val valueType: T,
+    val delimiter: String?,
     val introducedSinceVersion: KotlinReleaseVersion,
     val deprecatedSinceVersion: KotlinReleaseVersion?,
     val removedSinceVersion: KotlinReleaseVersion?,
@@ -40,6 +41,7 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         name = origin.name,
         description = origin.description.current,
         valueType = BtaCompilerArgumentValueType.SSoTCompilerArgumentValueType(origin.argumentType),
+        delimiter = origin.delimiter?.toDelimiterString(),
         introducedSinceVersion = origin.releaseVersionsMetadata.introducedVersion,
         deprecatedSinceVersion = origin.releaseVersionsMetadata.deprecatedVersion,
         removedSinceVersion = origin.releaseVersionsMetadata.removedVersion,
@@ -58,10 +60,12 @@ sealed class BtaCompilerArgument<T : BtaCompilerArgumentValueType>(
         val applierSimpleName: String,
         val defaultValue: CodeBlock,
         affectsCompilationOutcome: Boolean = true,
+        delimiter: String? = null,
     ) : BtaCompilerArgument<BtaCompilerArgumentValueType.CustomArgumentValueType>(
         name = name,
         description = description,
         valueType = valueType,
+        delimiter = delimiter,
         introducedSinceVersion = introducedSinceVersion,
         deprecatedSinceVersion = deprecatedSinceVersion,
         removedSinceVersion = removedSinceVersion,
@@ -176,3 +180,12 @@ class CustomCompilerArgumentFactory(
     fun create(origin: KotlinCompilerArgument): BtaCompilerArgument.CustomCompilerArgument =
         BtaCompilerArgument.CustomCompilerArgument(origin, valueType, defaultValue)
 }
+
+private fun KotlinCompilerArgument.Delimiter.toDelimiterString(): String? =
+    when (this) {
+        KotlinCompilerArgument.Delimiter.Default -> ","
+        KotlinCompilerArgument.Delimiter.None -> null
+        KotlinCompilerArgument.Delimiter.PathSeparator -> $$"${File.pathSeparator}"
+        KotlinCompilerArgument.Delimiter.Space -> " "
+        KotlinCompilerArgument.Delimiter.Semicolon -> ";"
+    }

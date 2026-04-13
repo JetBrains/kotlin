@@ -98,7 +98,7 @@ constructor(
         throw GradleException(
             """
             Library can be produced only for IR compiler.
-            Use `kotlin.js.compiler=ir` Gradle property or `js(IR)` target declaration.
+            Use a `js {}` target declaration.
             """
         )
     }

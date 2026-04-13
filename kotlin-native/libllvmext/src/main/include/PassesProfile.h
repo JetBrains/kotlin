@@ -1,5 +1,6 @@
-// Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
-// Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+// Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language
+// contributors. Use of this source code is governed by the Apache 2.0 license
+// that can be found in the license/LICENSE.txt file.
 
 #ifndef LIBLLVMEXT_PASSES_PROFILE_H
 #define LIBLLVMEXT_PASSES_PROFILE_H
@@ -15,11 +16,11 @@ typedef struct LLVMKotlinOpaquePasesProfile *LLVMKotlinPassesProfileRef;
 /// - name of the pass
 /// - pass wall time duration in nanoseconds
 /// The returned string is alive until `LLVMKotlinDisposePassesProfile`.
-const char* LLVMKotlinPassesProfileAsString(LLVMKotlinPassesProfileRef P);
+const char *LLVMKotlinPassesProfileAsString(LLVMKotlinPassesProfileRef P);
 
 /// Destroys passes profile.
 void LLVMKotlinDisposePassesProfile(LLVMKotlinPassesProfileRef P);
 
 LLVM_C_EXTERN_C_END
 
-#endif // LIBLLVMEXT_PASSES_PROFILE_H
+#endif

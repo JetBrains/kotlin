@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
 package a.b

@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
 import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.String
 import kotlin.collections.List
 import kotlin.jvm.JvmField
@@ -20,14 +21,6 @@ public interface CommonToolArguments {
   public fun toArgumentStrings(): List<String>
 
   /**
-   * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
-   *
-   * @param arguments a list of arguments for the Kotlin CLI compiler
-   */
-  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-  public fun applyArgumentStrings(arguments: List<String>)
-
-  /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
    *
    * @return the previously set value for an option
@@ -36,18 +29,16 @@ public interface CommonToolArguments {
   public operator fun <V> `get`(key: CommonToolArgument<V>): V
 
   /**
-   * Set the [value] for option specified by [key], overriding any previous value for that option.
-   */
-  @Deprecated(message = "Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V)
-
-  /**
    * Check if an option specified by [key] has a value set.
    *
    * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
    *
    * @return true if the option has a value set, false otherwise
    */
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   public operator fun contains(key: CommonToolArgument<*>): Boolean
 
   /**
@@ -87,10 +78,16 @@ public interface CommonToolArguments {
      *
      * @return true if the option has a value set, false otherwise
      */
+    @Deprecated(
+      message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+      level = DeprecationLevel.WARNING,
+    )
     public operator fun contains(key: CommonToolArgument<*>): Boolean
 
     /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+     *
+     * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
      *
      * @param arguments a list of arguments for the Kotlin CLI compiler
      */

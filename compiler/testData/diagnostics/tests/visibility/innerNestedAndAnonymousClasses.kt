@@ -14,17 +14,17 @@ open class A {
     open class Nested : A() {
         private val y: String? = null
 
-        fun test1(): String? = <!INVISIBLE_MEMBER!>x<!>
-        fun test2(): String? = this.<!INVISIBLE_MEMBER!>x<!>
+        fun test1(): String? = <!INVISIBLE_REFERENCE!>x<!>
+        fun test2(): String? = this.<!INVISIBLE_REFERENCE!>x<!>
 
         class NestedInNested : Nested() {
-            fun test20(): String? = <!INVISIBLE_MEMBER!>y<!>
-            fun test21(): String? = this.<!INVISIBLE_MEMBER!>y<!>
+            fun test20(): String? = <!INVISIBLE_REFERENCE!>y<!>
+            fun test21(): String? = this.<!INVISIBLE_REFERENCE!>y<!>
         }
 
         inner class InnerInNested : Nested() {
             fun test23(): String? = y
-            fun test24(): String? = this.<!INVISIBLE_MEMBER!>y<!>
+            fun test24(): String? = this.<!INVISIBLE_REFERENCE!>y<!>
         }
     }
 
@@ -36,7 +36,7 @@ open class A {
         private val y: String? = null
 
         fun test3(): String? = x
-        fun test4(): String? = this.<!INVISIBLE_MEMBER!>x<!>
+        fun test4(): String? = this.<!INVISIBLE_REFERENCE!>x<!>
 
         inner class InnerInInner : Inner() {
             fun test40(): String? = x
@@ -55,7 +55,7 @@ open class A {
         object : A() {
             fun local() {
                 x
-                this.<!INVISIBLE_MEMBER!>x<!>
+                this.<!INVISIBLE_REFERENCE!>x<!>
             }
 
             inner class NestedInAnonymous() {
@@ -65,7 +65,7 @@ open class A {
     }
 }
 
-fun A.extensionFun(): String? = this.<!INVISIBLE_MEMBER!>x<!>
+fun A.extensionFun(): String? = this.<!INVISIBLE_REFERENCE!>x<!>
 
 abstract class B<T: B<T>> {
     protected abstract val thisBuilder: T

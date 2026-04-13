@@ -22,7 +22,7 @@ class Case1() {
     fun foo(x: () -> Any): Unit = TODO() // (1.2)
 
     fun case1() {
-        foo(::<!DEBUG_INFO_CALL("fqName: x; typeCall: variable")!>x<!>)
+        foo(::x)
         <!DEBUG_INFO_CALL("fqName: Case1.foo; typeCall: function")!>foo(::x)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>foo(::x)<!>
     }
@@ -34,7 +34,7 @@ fun x() = 1.0
 fun case1(case: Case1) {
     case.foo(::x)
     case.<!DEBUG_INFO_CALL("fqName: Case1.foo; typeCall: function")!>foo(::x)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(::x)<!>
+    case.foo(::x)
 }
 
 // TESTCASE NUMBER: 2
@@ -49,22 +49,22 @@ class Case2() {
     fun y(): Short = 1
 
     fun case2(case: Case2) {
-        case.foo(::<!DEBUG_INFO_CALL("fqName: Case2.x; typeCall: variable")!>x<!>, ::x)
+        case.foo(::x, ::x)
         case.<!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: function")!>foo(::x, ::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(::x, ::x)<!>
+        case.foo(::x, ::x)
 
-        this.foo(::<!DEBUG_INFO_CALL("fqName: Case2.x; typeCall: variable")!>x<!>, ::x)
+        this.foo(::x, ::x)
         this.<!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: function")!>foo(::x, ::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.foo(::x, ::x)<!>
+        this.foo(::x, ::x)
 
         //for y
-        case.foo(::<!DEBUG_INFO_CALL("fqName: Case2.y; typeCall: function")!>y<!>, ::y)
+        case.foo(::y, ::y)
         case.<!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: function")!>foo(::y, ::y)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(::y, ::y)<!>
+        case.foo(::y, ::y)
 
-        this.foo(::<!DEBUG_INFO_CALL("fqName: Case2.x; typeCall: variable")!>x<!>, ::<!DEBUG_INFO_CALL("fqName: Case2.y; typeCall: function")!>y<!>)
+        this.foo(::x, ::y)
         this.<!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: function")!>foo(::x, ::y)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.foo(::x, ::y)<!>
+        this.foo(::x, ::y)
     }
 
 }
@@ -82,22 +82,22 @@ class Case3() {
     fun y(): Short = 1
 
     fun case3(case: Case3) {
-        case.foo(::<!DEBUG_INFO_CALL("fqName: Case3.x; typeCall: variable")!>x<!>)
+        case.foo(::x)
         case.<!DEBUG_INFO_CALL("fqName: Case3.foo; typeCall: function")!>foo(::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(::x)<!>
+        case.foo(::x)
 
-        this.foo(::<!DEBUG_INFO_CALL("fqName: Case3.x; typeCall: variable")!>x<!>)
+        this.foo(::x)
         this.<!DEBUG_INFO_CALL("fqName: Case3.foo; typeCall: function")!>foo(::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.foo(::x)<!>
+        this.foo(::x)
 
         //for y
-        case.foo(::<!DEBUG_INFO_CALL("fqName: Case3.y; typeCall: function")!>y<!>)
+        case.foo(::y)
         case.<!DEBUG_INFO_CALL("fqName: Case3.foo; typeCall: function")!>foo(::y)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(::y)<!>
+        case.foo(::y)
 
-        this.foo(::<!DEBUG_INFO_CALL("fqName: Case3.x; typeCall: variable")!>x<!>, ::<!DEBUG_INFO_CALL("fqName: Case3.y; typeCall: function")!>y<!>)
+        this.foo(::x, ::y)
         this.<!DEBUG_INFO_CALL("fqName: Case3.foo; typeCall: function")!>foo(::x, ::y)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.foo(::x, ::y)<!>
+        this.foo(::x, ::y)
     }
 }
 
@@ -117,7 +117,7 @@ class Case4() {
         <!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>foo(::x)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>foo(::x)<!>
         this.<!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>foo(::x)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.foo(::x)<!>
+        this.foo(::x)
     }
 }
 
@@ -125,5 +125,5 @@ fun case4(case: Case4) {
     <!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>case foo ::x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case foo ::x<!>
     case.<!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>foo(::x)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(::x)<!>
+    case.foo(::x)
 }

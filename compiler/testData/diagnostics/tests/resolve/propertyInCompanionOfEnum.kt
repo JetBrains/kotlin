@@ -20,8 +20,8 @@ import test.E as U
 import test.E
 
 fun foo() {
-    E.<!DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY!>Entry<!> checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><E>() }
-    E.<!DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY!>Entry<!> checkType { _<String>() }
+    E.Entry checkType { _<E>() }
+    E.Entry checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     E.Companion.Entry checkType { _<String>() }
     E.NotEntry checkType { _<String>() }
     Entry checkType { _<E>() }
@@ -34,8 +34,8 @@ fun foo() {
 import test.E as U
 
 fun bar() {
-    U.<!DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY!>Entry<!> checkType { _<<!UNRESOLVED_REFERENCE!>E<!>>() }
-    U.<!DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY!>Entry<!> checkType { _<String>() }
+    U.Entry checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!UNRESOLVED_REFERENCE!>E<!>>() }
+    U.Entry checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     U.Companion.Entry checkType { _<String>() }
     U.NotEntry checkType { _<String>() }
 }

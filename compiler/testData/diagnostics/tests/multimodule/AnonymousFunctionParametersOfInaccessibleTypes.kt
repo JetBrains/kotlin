@@ -15,11 +15,11 @@ fun withGenericParameter(arg: (InaccessibleGenericType<*>) -> Unit) {}
 // FILE: end.kt
 
 fun test() {
-    withConcreteParameter(fun(arg) {})
-    withGenericParameter(fun(arg) {})
+    <!MISSING_DEPENDENCY_CLASS!>withConcreteParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withGenericParameter<!>(fun(<!MISSING_DEPENDENCY_CLASS!>arg<!>) {})
 
-    withConcreteParameter(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
-    withGenericParameter(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withConcreteParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
+    <!MISSING_DEPENDENCY_CLASS!>withGenericParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, interfaceDeclaration, nullableType,

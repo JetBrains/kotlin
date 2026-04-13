@@ -3,10 +3,13 @@ import Foundation
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_spi(kotlinx$cinterop$ExperimentalForeignApi)
 public var store_cgReck: Swift.Never {
+    @_spi(kotlinx$cinterop$ExperimentalForeignApi)
     get {
         fatalError()
     }
+    @_spi(kotlinx$cinterop$ExperimentalForeignApi)
     set {
         fatalError()
     }

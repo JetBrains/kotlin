@@ -1,5 +1,0 @@
-KtNameReferenceExpression(107,111): 'Ann0'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      <constructor>(): Ann0
-    ]

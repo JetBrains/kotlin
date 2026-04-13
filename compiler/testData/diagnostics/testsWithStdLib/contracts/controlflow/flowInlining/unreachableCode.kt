@@ -13,8 +13,8 @@ inline fun <T> myRun(block: () -> T): T {
 }
 
 fun throwInLambda(): Int {
-    <!UNREACHABLE_CODE!>val x =<!> myRun { throw java.lang.IllegalArgumentException(); <!UNREACHABLE_CODE!>42<!> }
-    <!UNREACHABLE_CODE!>return x<!>
+    val x = myRun { throw java.lang.IllegalArgumentException(); 42 }
+    return x
 }
 
 /* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, integerLiteral,

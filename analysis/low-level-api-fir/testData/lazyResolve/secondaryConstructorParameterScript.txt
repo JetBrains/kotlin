@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun [ResolvedTo(CONTRACTS)] R|kotlin/String|.myToInt(): R|kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun [ResolvedTo(STATUS)] R|kotlin/String|.myToInt(): R|kotlin/Int| { LAZY_BLOCK }
 
 
 FILE RAW TO BODY:
@@ -350,4 +350,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorParameterScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun [ResolvedTo(BODY_RESOLVE)] R|kotlin/String|.myToInt(): R|kotlin/Int| {
             ^myToInt Int(42)
         }
-

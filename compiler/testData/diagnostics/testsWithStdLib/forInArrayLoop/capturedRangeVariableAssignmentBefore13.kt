@@ -75,7 +75,7 @@ fun testCapturedInLambdaAfterLoop() {
     var xs = intArrayOf(1, 2, 3)
     for (x in xs) {
         println(x)
-        <!ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE!>xs<!> = intArrayOf(4, 5, 6)
+        xs = intArrayOf(4, 5, 6)
     }
     val lambda = { xs = intArrayOf() }
     lambda()
@@ -86,7 +86,7 @@ fun testCapturedInLambdaInLoopAfterAssignment() {
     var xs = intArrayOf(1, 2, 3)
     for (x in xs) {
         println(x)
-        <!ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE!>xs<!> = intArrayOf(4, 5, 6)
+        xs = intArrayOf(4, 5, 6)
         val lambda = { xs = intArrayOf() }
         lambda()
     }
@@ -98,7 +98,7 @@ fun testCapturedInNonChangingClosure() {
     val lambda = { println(xs) }
     for (x in xs) {
         println(x)
-        <!ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE!>xs<!> = intArrayOf(4, 5, 6)
+        xs = intArrayOf(4, 5, 6)
         lambda()
     }
 }

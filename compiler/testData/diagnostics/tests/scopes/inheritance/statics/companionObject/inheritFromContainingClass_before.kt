@@ -10,16 +10,16 @@ public class J {
 // FILE: test.kt
 open class A<T> : J() {
     init {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+        foo()
         bar()
-        val a: Int = <!TYPE_MISMATCH!><!DEBUG_INFO_LEAKING_THIS!>baz<!>()<!>
-        val b: T = <!DEBUG_INFO_LEAKING_THIS!>baz<!>()
+        val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> baz()
+        val b: T = baz()
     }
 
     fun test1() {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+        foo()
         bar()
-        val a: Int = <!TYPE_MISMATCH!>baz()<!>
+        val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> baz()
         val b: T = baz()
     }
 
@@ -27,7 +27,7 @@ open class A<T> : J() {
 
     object O {
         fun test() {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            foo()
             bar()
             val a: Int = baz()
             val b: <!UNRESOLVED_REFERENCE!>T<!> = baz()
@@ -36,14 +36,14 @@ open class A<T> : J() {
 
     companion object : A<Int>() {
         init {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            foo()
             bar()
             val a: Int = baz()
             val b: <!UNRESOLVED_REFERENCE!>T<!> = baz()
         }
 
         fun test() {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            foo()
             bar()
             val a: Int = baz()
             val b: <!UNRESOLVED_REFERENCE!>T<!> = baz()

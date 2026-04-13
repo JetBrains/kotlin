@@ -6,6 +6,6 @@ annotation class MyInternal
 
 abstract class BaseClass @MyInternal constructor()
 
-class Subclass @MyInternal constructor(): <!OPT_IN_USAGE_ERROR!>BaseClass<!>()
+class Subclass @MyInternal constructor(): BaseClass()
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor */

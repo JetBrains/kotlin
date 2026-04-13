@@ -5,7 +5,7 @@
 expect class Foo {
     // AMBIGUOUS_ACTUALS in K1, green code in K2.
     // Reason: expect-actual matcher doesn't match fields in K2 KT-63667
-    var <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>: Int
+    var foo: Int
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -14,7 +14,7 @@ interface I {
     val foo: Int
 }
 
-actual typealias Foo = JavaFoo
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> = JavaFoo
 
 // FILE: JavaFoo.java
 public class JavaFoo implements I {

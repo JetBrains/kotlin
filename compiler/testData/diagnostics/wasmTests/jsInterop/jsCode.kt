@@ -13,19 +13,19 @@ fun funBlockBody(x: Int): Int {
 }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>returnTypeNotSepcified<!>() = js("1")
-<!WRONG_JS_INTEROP_TYPE!>val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>valTypeNotSepcified<!><!> = js("1")
+val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>valTypeNotSepcified<!> = <!WRONG_JS_INTEROP_TYPE!>js("1")<!>
 
 val a = "1"
 fun nonConst(): String = "1"
 
-val p0: Int = js(a)
+val p0: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!>)
 val p1: Int = js(("1"))
-val p2: Int = js("$a")
+val p2: Int = js("$<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!>")
 val p3: Int = js("${1}")
-val p4: Int = js("${a}${a}")
-val p5: Int = js(a + a)
+val p4: Int = js("${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!>}${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!>}")
+val p5: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!> + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!>)
 val p6: Int = js("1" + "1")
-val p7: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>nonConst()<!>)
+val p7: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>nonConst()<!>)
 
 val propWithGetter: String
     get() = "1"
@@ -45,16 +45,16 @@ const val constProp = "1"
 
 val delegatedVal: String by lazy { "1" }
 
-val p8: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>propWithGetter<!>)
+val p8: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>propWithGetter<!>)
 
 // TODO: This should be an error as property getters are no different to functions
-val p9: Int = js(propWithSimpleGetterAndInitializer)
-val p10: Int = js(propWithComplexGetterAndInitializer)
+val p9: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>propWithSimpleGetterAndInitializer<!>)
+val p10: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>propWithComplexGetterAndInitializer<!>)
 
-val p11: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>varProp<!>)
-val p12: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>varPropWithSetter<!>)
+val p11: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>varProp<!>)
+val p12: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>varPropWithSetter<!>)
 val p13: Int = js(constProp)
-val p14: Int = js(<!JSCODE_ARGUMENT_SHOULD_BE_CONSTANT!>delegatedVal<!>)
+val p14: Int = js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>delegatedVal<!>)
 
 
 fun foo0(b: Boolean): Int =

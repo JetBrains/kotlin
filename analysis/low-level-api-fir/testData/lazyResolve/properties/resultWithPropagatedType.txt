@@ -242,7 +242,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/explicitType]] val $$result: R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>|
@@ -267,7 +267,7 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedType.kts
         public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun explicitType(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| { LAZY_BLOCK }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/explicitType]] val $$result: R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>|
@@ -348,4 +348,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resultWithPropagatedType.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|) [evaluated = String(return type: 0)])  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|) [evaluated = String(nested return type: 0)])  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|) [evaluated = String(nested nested return type: 0)])  kotlin/String>>| = R|foo/explicitType|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|) [evaluated = String(return type: 0)])  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|) [evaluated = String(nested return type: 0)])  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|) [evaluated = String(nested nested return type: 0)])  kotlin/String>>|
-

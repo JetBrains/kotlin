@@ -1,9 +1,0 @@
-package
-
-package example {
-    public val x: kotlin.Int
-
-    package example.ns {
-        public val y: kotlin.Any? = 2
-    }
-}

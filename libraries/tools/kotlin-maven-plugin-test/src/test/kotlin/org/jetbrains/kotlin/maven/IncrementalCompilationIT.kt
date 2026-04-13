@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.maven
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.DisplayName
 
+@DisplayName("Incremental compilation")
 class IncrementalCompilationIT : KotlinMavenTestBase() {
 
     @MavenTest

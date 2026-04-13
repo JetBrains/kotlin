@@ -1,13 +1,13 @@
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Foo<!>() {
+expect class Foo() {
     fun foo()
 }
 
 // MODULE: intermediate()()(common)
 expect open class Base() {}
 
-actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class Foo<!> : Base() {
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{METADATA}!>Foo<!> : Base() {
 }
 
 // MODULE: main()()(intermediate)

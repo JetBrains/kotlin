@@ -22,8 +22,8 @@ import A.<!INVISIBLE_REFERENCE!>Nested<!>.*
 import B.<!INVISIBLE_REFERENCE!>JC<!>.JC1
 
 fun test() {
-    <!INVISIBLE_MEMBER!>O1<!>
-    <!INACCESSIBLE_TYPE!><!INVISIBLE_MEMBER!>JC1<!>()<!>
+    <!INVISIBLE_REFERENCE!>O1<!>
+    <!INVISIBLE_REFERENCE!>JC1<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nestedClass, objectDeclaration */

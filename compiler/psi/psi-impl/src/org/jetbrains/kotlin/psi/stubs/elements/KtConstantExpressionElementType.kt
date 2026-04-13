@@ -12,7 +12,6 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtConstantExpression
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils
@@ -28,7 +27,6 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
     ) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
-        @OptIn(KtImplementationDetail::class)
         if (!StubUtils.isDeclaredInsideValueArgument(node)) {
             return false
         }

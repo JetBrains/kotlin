@@ -1,4 +1,4 @@
-FILE: suspendCallFromAnonymousSuspend.fir.kt
+FILE: suspendCallFromAnonymousSuspend.kt
     public final fun foo(): R|kotlin/Unit| {
         suspend fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|/bar|()

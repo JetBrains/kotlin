@@ -36,7 +36,7 @@ fun test(x: String?) {
     val c: String? = a
     val d: String = b
 
-    val bad: String = a
+    val bad: String <!INITIALIZER_TYPE_MISMATCH!>=<!> a
 }
 
 /* GENERATED_FIR_TAGS: equalityOperator, flexibleType, ifExpression, javaFunction, javaType,

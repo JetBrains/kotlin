@@ -12,7 +12,7 @@ fun <K> select(x: K, y: K): K = TODO()
 
 fun test() {
     val a = select(::foo, ::bar)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction0<Parent>")!>a<!>
+    a
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, localProperty, nullableType,

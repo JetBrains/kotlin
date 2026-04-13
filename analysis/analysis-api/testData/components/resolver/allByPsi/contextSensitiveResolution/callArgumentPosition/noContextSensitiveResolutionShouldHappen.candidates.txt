@@ -518,8 +518,7 @@ KtCallExpression(350,356): 'foo(X)'
         callableId = /foo
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun A.foo(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun A.foo(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -594,8 +593,7 @@ KtNameReferenceExpression(350,353): 'foo'
         callableId = /foo
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    fun A.foo(): Unit>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun A.foo(): Unit' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidate:
@@ -676,6 +674,5 @@ KtNameReferenceExpression(354,355): 'X'
         contextParameters = []
         callableId = /X
       typeArgumentsMapping = {}
-    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
-    val A.X: String>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'val A.X: String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = true

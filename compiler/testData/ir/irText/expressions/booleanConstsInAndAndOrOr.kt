@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun test1(b: Boolean) {
     b && return
 }

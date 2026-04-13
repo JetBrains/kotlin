@@ -172,19 +172,19 @@ private fun reportSchema(
 context(sessionHolder: SessionHolder)
 private fun schemaIfDataFrameStructuralType(type: ConeKotlinType): String? {
     return when {
-        type.isDataFrame(sessionHolder.session) -> {
+        type.isDataFrame() -> {
             type.typeArguments.getOrNull(0)?.let { schemaArg ->
                 pluginDataFrameSchema(schemaArg)
             }
         }
 
-        type.isDataRow(sessionHolder.session) -> {
+        type.isDataRow() -> {
             type.typeArguments.getOrNull(0)?.let { schemaArg ->
                 pluginDataFrameSchema(schemaArg)
             }
         }
 
-        type.isGroupBy(sessionHolder.session) -> {
+        type.isGroupBy() -> {
             val keys = type.typeArguments.getOrNull(0)
             val grouped = type.typeArguments.getOrNull(1)
             if (keys == null || grouped == null) return null
@@ -204,7 +204,7 @@ private fun schemaIfDataFrameStructuralType(type: ConeKotlinType): String? {
 
 context(sessionHolder: SessionHolder)
 private fun schemaIfPairType(expandedType: ConeKotlinType): String? {
-    if (!expandedType.isPair(sessionHolder.session)) return null
+    if (!expandedType.isPair()) return null
     val firstArg = expandedType.typeArguments.getOrNull(0)?.type
     val secondArg = expandedType.typeArguments.getOrNull(1)?.type
     if (firstArg == null && secondArg == null) return null

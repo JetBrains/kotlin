@@ -18,7 +18,7 @@ public class A {
 package bar
 
 fun main() {
-    foo.A.<!INVISIBLE_MEMBER!>f<!> {}
+    foo.A.<!INVISIBLE_REFERENCE!>f<!> {}
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

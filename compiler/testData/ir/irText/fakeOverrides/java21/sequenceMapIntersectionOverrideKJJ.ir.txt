@@ -39,21 +39,21 @@ FILE fqName:<root> fileName:/1.kt
         public open fun computeIfPresent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, in @[EnhancedNullability] {V of java.util.SequencedMap & Any}, out @[EnhancedNullability] V of java.util.SequencedMap?>): @[EnhancedNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun containsKey (key: @[EnhancedNullability] K of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
+        public open fun containsKey (p0: @[EnhancedNullability] K of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
         public abstract fun containsKey (key: @[FlexibleNullability] K of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:containsValue visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:value index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun containsValue (value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
+        public open fun containsValue (p0: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
         public abstract fun containsValue (value: @[FlexibleNullability] V of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractMap<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:other index:1 type:@[EnhancedNullability] kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
+        public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:firstEntry visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedMap<kotlin.Int, kotlin.Int>
@@ -67,16 +67,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, in @[EnhancedNullability] @[FlexibleNullability] V of java.util.SequencedMap?>): kotlin.Unit declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun get (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
+        public open fun get (p0: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public abstract fun get (key: @[FlexibleNullability] K of java.util.SequencedMap?): V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
-      VALUE_PARAMETER kind:Regular name:defaultValue index:2 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun getOrDefault (key: @[EnhancedNullability] K of java.util.HashMap, defaultValue: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap declared in java.util.HashMap
+        public open fun getOrDefault (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap declared in java.util.HashMap
         public open fun getOrDefault (key: @[FlexibleNullability] K of java.util.SequencedMap?, defaultValue: @[FlexibleNullability] V of java.util.SequencedMap?): @[FlexibleNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractMap<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>
@@ -116,16 +116,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun pollLastEntry (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:put visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
-      VALUE_PARAMETER kind:Regular name:value index:2 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun put (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
+        public open fun put (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public abstract fun put (key: @[FlexibleNullability] K of java.util.SequencedMap?, value: @[FlexibleNullability] V of java.util.SequencedMap?): V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:putAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:from index:1 type:@[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] kotlin.Int, @[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] kotlin.Int, out @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun putAll (from: @[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] K of java.util.HashMap, @[EnhancedNullability] V of java.util.HashMap>): kotlin.Unit declared in java.util.HashMap
+        public open fun putAll (p0: @[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] K of java.util.HashMap, out @[EnhancedNullability] V of java.util.HashMap>): kotlin.Unit declared in java.util.HashMap
         public abstract fun putAll (from: kotlin.collections.Map<out @[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>): kotlin.Unit declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:putFirst visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedMap<kotlin.Int, kotlin.Int>
@@ -148,16 +148,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun putLast (p0: @[FlexibleNullability] K of java.util.SequencedMap?, p1: @[FlexibleNullability] V of java.util.SequencedMap?): @[FlexibleNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
+        public open fun remove (p0: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public abstract fun remove (key: @[FlexibleNullability] K of java.util.SequencedMap?): V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
-      VALUE_PARAMETER kind:Regular name:value index:2 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
+        public open fun remove (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
         public open fun remove (key: @[FlexibleNullability] K of java.util.SequencedMap?, value: @[FlexibleNullability] V of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
@@ -281,21 +281,21 @@ FILE fqName:<root> fileName:/1.kt
         public open fun computeIfPresent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, in @[EnhancedNullability] {V of java.util.SequencedMap & Any}, out @[EnhancedNullability] V of java.util.SequencedMap?>): @[EnhancedNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun containsKey (key: @[EnhancedNullability] K of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
+        public open fun containsKey (p0: @[EnhancedNullability] K of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
         public abstract fun containsKey (key: @[FlexibleNullability] K of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:containsValue visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:value index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun containsValue (value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
+        public open fun containsValue (p0: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
         public abstract fun containsValue (value: @[FlexibleNullability] V of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractMap<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:other index:1 type:@[EnhancedNullability] kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
+        public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashMap
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:firstEntry visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedMap<kotlin.Int, kotlin.Int>
@@ -309,16 +309,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, in @[EnhancedNullability] @[FlexibleNullability] V of java.util.SequencedMap?>): kotlin.Unit declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun get (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
+        public open fun get (p0: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public abstract fun get (key: @[FlexibleNullability] K of java.util.SequencedMap?): V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:getOrDefault visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
-      VALUE_PARAMETER kind:Regular name:defaultValue index:2 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun getOrDefault (key: @[EnhancedNullability] K of java.util.HashMap, defaultValue: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap declared in java.util.HashMap
+        public open fun getOrDefault (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap declared in java.util.HashMap
         public open fun getOrDefault (key: @[FlexibleNullability] K of java.util.SequencedMap?, defaultValue: @[FlexibleNullability] V of java.util.SequencedMap?): @[FlexibleNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractMap<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?>
@@ -358,16 +358,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun pollLastEntry (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:put visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
-      VALUE_PARAMETER kind:Regular name:value index:2 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun put (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
+        public open fun put (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public abstract fun put (key: @[FlexibleNullability] K of java.util.SequencedMap?, value: @[FlexibleNullability] V of java.util.SequencedMap?): V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:putAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:from index:1 type:@[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] kotlin.Int, @[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] kotlin.Int, out @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun putAll (from: @[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] K of java.util.HashMap, @[EnhancedNullability] V of java.util.HashMap>): kotlin.Unit declared in java.util.HashMap
+        public open fun putAll (p0: @[EnhancedNullability] kotlin.collections.Map<out @[EnhancedNullability] K of java.util.HashMap, out @[EnhancedNullability] V of java.util.HashMap>): kotlin.Unit declared in java.util.HashMap
         public abstract fun putAll (from: kotlin.collections.Map<out @[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>): kotlin.Unit declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:putFirst visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedMap<kotlin.Int, kotlin.Int>
@@ -390,16 +390,16 @@ FILE fqName:<root> fileName:/1.kt
         public open fun putLast (p0: @[FlexibleNullability] K of java.util.SequencedMap?, p1: @[FlexibleNullability] V of java.util.SequencedMap?): @[FlexibleNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
+        public open fun remove (p0: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public abstract fun remove (key: @[FlexibleNullability] K of java.util.SequencedMap?): V of java.util.SequencedMap? declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:key index:1 type:@[EnhancedNullability] kotlin.Int
-      VALUE_PARAMETER kind:Regular name:value index:2 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun remove (key: @[EnhancedNullability] K of java.util.HashMap, value: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
+        public open fun remove (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): kotlin.Boolean declared in java.util.HashMap
         public open fun remove (key: @[FlexibleNullability] K of java.util.SequencedMap?, value: @[FlexibleNullability] V of java.util.SequencedMap?): kotlin.Boolean declared in java.util.SequencedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashMap<kotlin.Int, kotlin.Int>
@@ -445,7 +445,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedMap<@[FlexibleNullability] K of java.util.SequencedMap?, @[FlexibleNullability] V of java.util.SequencedMap?>? declared in java.util.SequencedMap
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun reversed (): java.util.SequencedMap<kotlin.Int, kotlin.Int> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.SequencedMap<kotlin.Int, kotlin.Int> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:OPEN [fake_override,val]

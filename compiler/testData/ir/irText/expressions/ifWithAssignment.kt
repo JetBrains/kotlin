@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun topLevelMethod() {
     var z = 1
     if(true) { z = 2 } else { z = 3 }

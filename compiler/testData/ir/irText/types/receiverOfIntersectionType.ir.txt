@@ -102,8 +102,8 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
   FUN name:testFlexible1 visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:v type:@[FlexibleNullability] <root>.K? [val]
-        WHEN type=@[FlexibleNullability] <root>.K? origin=IF
+      VAR name:v type:<root>.K? [val]
+        WHEN type=<root>.K? origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun a (): @[FlexibleNullability] <root>.A? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
@@ -112,14 +112,13 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
             then: CALL 'public open fun b (): @[FlexibleNullability] <root>.B? declared in <root>.Java' type=@[FlexibleNullability] <root>.B? origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         ARG <this>: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
-          TYPE_OP type=<root>.K origin=IMPLICIT_NOTNULL typeOperand=<root>.K
-            GET_VAR 'val v: @[FlexibleNullability] <root>.K? declared in <root>.testFlexible1' type=@[FlexibleNullability] <root>.K? origin=null
+          GET_VAR 'val v: <root>.K? declared in <root>.testFlexible1' type=<root>.K? origin=null
   FUN name:testFlexible2 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
     VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.B
     BLOCK_BODY
-      VAR name:v type:@[FlexibleNullability] <root>.K? [val]
-        WHEN type=@[FlexibleNullability] <root>.K? origin=IF
+      VAR name:v type:<root>.K? [val]
+        WHEN type=<root>.K? origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.Java.id?): @[FlexibleNullability] T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
@@ -132,8 +131,7 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
               ARG x: GET_VAR 'b: <root>.B declared in <root>.testFlexible2' type=<root>.B origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
         ARG <this>: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
-          TYPE_OP type=<root>.K origin=IMPLICIT_NOTNULL typeOperand=<root>.K
-            GET_VAR 'val v: @[FlexibleNullability] <root>.K? declared in <root>.testFlexible2' type=@[FlexibleNullability] <root>.K? origin=null
+          GET_VAR 'val v: <root>.K? declared in <root>.testFlexible2' type=<root>.K? origin=null
   FUN name:testIntersection visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:<root>.A
     VALUE_PARAMETER kind:Regular name:b index:1 type:<root>.B

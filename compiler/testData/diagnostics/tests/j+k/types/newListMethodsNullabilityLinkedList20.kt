@@ -13,31 +13,31 @@ import java.util.LinkedList
 
 fun <E1> addFirstLast(sl: LinkedList<String>, el: LinkedList<E1>, ev: E1) {
 
-    sl.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    sl.addFirst(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     sl.addFirst("")
-    sl.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    sl.addLast(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     sl.addLast("")
 
-    el.addFirst(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    el.addFirst(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     el.addFirst(ev)
-    el.addLast(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    el.addLast(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
     el.addLast(ev)
 }
 
 fun removeFirstLastLinkedListString(s: LinkedList<String>) {
     var x1 = s.removeFirst()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     var x2 = s.removeLast()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
 
 fun <E> removeFirstLastArrayListE(s: LinkedList<E>) {
     var x1 = s.removeFirst()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 
     var x2 = s.removeLast()
-    x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
+    x1 = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
 
 /* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, localProperty, nullableType, propertyDeclaration,

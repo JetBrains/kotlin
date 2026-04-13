@@ -4,7 +4,7 @@
 fun foo(l: () -> Unit) {}
 fun bar(l: () -> String) {}
 
-val a = foo { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, UNSUPPORTED!>[]<!> }
-val b = bar { <!TYPE_MISMATCH, TYPE_MISMATCH, UNSUPPORTED!>[]<!> }
+val a = foo { <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!> }
+val b = bar { <!RETURN_TYPE_MISMATCH, UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!> }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration */

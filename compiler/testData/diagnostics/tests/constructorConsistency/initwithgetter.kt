@@ -13,7 +13,7 @@ class My {
         x = 0
         this.y = 0
         // Unsafe
-        w = this.<!DEBUG_INFO_LEAKING_THIS!>x<!> + <!DEBUG_INFO_LEAKING_THIS!>y<!>
+        w = this.x + y
     }
 
     val z = "1"

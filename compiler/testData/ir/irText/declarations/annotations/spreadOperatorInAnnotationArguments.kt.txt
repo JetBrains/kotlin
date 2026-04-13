@@ -11,7 +11,7 @@ open annotation class A : Annotation {
 
 }
 
-@A(xs = [["a"], ["b"]])
+@A(xs = ["a", "b"])
 fun test() {
 }
 

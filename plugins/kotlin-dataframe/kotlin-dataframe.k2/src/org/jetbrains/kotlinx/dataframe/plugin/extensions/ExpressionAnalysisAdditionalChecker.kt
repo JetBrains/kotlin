@@ -11,21 +11,20 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
+import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -42,11 +41,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -56,12 +52,14 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_ERROR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.CAST_TARGET_WARNING
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_EXTENSION_PROPERTY_SHADOWED
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_IS_DISABLED
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_DECLARATION_VISIBILITY
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.ERROR
-import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATAFRAME_EXTENSION_PROPERTY_SHADOWED
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.DATA_SCHEMA_LOCAL_DECLARATION
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.flatten
@@ -91,11 +89,13 @@ object FirDataFrameErrors : KtDiagnosticsContainer() {
     val CAST_ERROR by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val CAST_TARGET_WARNING by warning1<KtElement, String>(SourceElementPositioningStrategies.CALL_ELEMENT_WITH_DOT)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE by warning1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATA_SCHEMA_DECLARATION_VISIBILITY by error1<KtElement, String>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR by error1<KtElement, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATAFRAME_EXTENSION_PROPERTY_SHADOWED by warning1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val DATA_SCHEMA_LOCAL_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val DATAFRAME_PLUGIN_IS_DISABLED by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = DataFrameDiagnosticMessages
 }
@@ -106,11 +106,13 @@ object DataFrameDiagnosticMessages : BaseDiagnosticRendererFactory() {
         map.put(CAST_ERROR, "{0}", TO_STRING)
         map.put(CAST_TARGET_WARNING, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE, "{0}", TO_STRING)
+        map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC, "{0}", TO_STRING)
         map.put(DATA_SCHEMA_DECLARATION_VISIBILITY, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR, "{0}", TO_STRING)
         map.put(DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_RETURN_TYPE, "{0}", TO_STRING)
         map.put(DATAFRAME_EXTENSION_PROPERTY_SHADOWED, "{0}", TO_STRING)
         map.put(DATA_SCHEMA_LOCAL_DECLARATION, "{0}", TO_STRING)
+        map.put(DATAFRAME_PLUGIN_IS_DISABLED, "{0}", TO_STRING)
     }
 }
 
@@ -232,24 +234,59 @@ private data object DataFrameFunctionCallTransformationContextChecker : FirFunct
     override fun check(expression: FirFunctionCall) {
         expression.toResolvedCallableReference()?.toResolvedNamedFunctionSymbol()?.let { symbol ->
             val shouldRefine = FunctionCallTransformer.shouldRefine(expression.annotations, symbol, context.session)
-            if (shouldRefine && context.containingDeclarations.any { it is FirNamedFunctionSymbol && it.isInline }) {
-                reporter.reportOn(
-                    expression.source,
-                    DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
-                    "DataFrame compiler plugin is not yet supported in inline functions"
-                )
+            if (!shouldRefine) return
+            val disabled =
+                context.containingDeclarations
+                    .firstOrNull { it.hasAnnotation(Names.DISABLE_INTERPRETATION_ANNOTATION, context.session) }
+
+            if (context.containingDeclarations.any { it is FirNamedFunctionSymbol && it.isInline }) {
+                if (disabled == null) {
+                    reporter.reportOn(
+                        expression.source,
+                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_INLINE,
+                        "DataFrame compiler plugin is not yet supported in inline functions"
+                    )
+                }
             }
 
-            if (shouldRefine && context.containingDeclarations.lastOrNull() is FirPropertyAccessorSymbol) {
+            if (context.containingDeclarations.any { it.typeParameterSymbols?.isNotEmpty() == true }) {
+                if (disabled == null) {
+                    reporter.reportOn(
+                        expression.source,
+                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_GENERIC,
+                        "DataFrame compiler plugin is not yet supported in generic context. Annotate containing declaration with @DisableInterpretation"
+                    )
+                }
+            }
+
+            if (context.containingDeclarations.lastOrNull() is FirPropertyAccessorSymbol) {
+                if (disabled == null) {
+                    reporter.reportOn(
+                        expression.source,
+                        DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR,
+                        "DataFrame compiler plugin is not yet supported in property accessors bodies. Use property with initializer, a function, or annotate containing declaration with @DisableInterpretation"
+                    )
+                }
+            }
+
+            if (disabled != null) {
                 reporter.reportOn(
                     expression.source,
-                    DATAFRAME_PLUGIN_NOT_YET_SUPPORTED_IN_PROPERTY_ACCESSOR,
-                    "DataFrame compiler plugin is not yet supported in property accessors bodies. Use property with initializer or a function instead"
+                    DATAFRAME_PLUGIN_IS_DISABLED,
+                    "DataFrame compiler plugin is disabled by @DisableInterpretation on ${disabled.name}"
                 )
             }
         }
     }
 }
+
+private val FirBasedSymbol<*>.name
+    get() = when (this) {
+        is FirClassLikeSymbol<*> -> name
+        is FirCallableSymbol<*> -> name
+        is FirFileSymbol -> sourceFile?.name ?: toString()
+        else -> toString()
+    }
 
 private data object DataFramePropertyChecker : FirPropertyChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)

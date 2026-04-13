@@ -13,6 +13,6 @@ object TestCase {
 }
 
 // FILE: 2.kt
-import simpleObject.SimpleObject.propertyLikeClbl
+import simpleObject.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR("SimpleObject; TestCase")!>SimpleObject<!>.propertyLikeClbl
 
 /* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, operator, propertyDeclaration, typeAliasDeclaration */

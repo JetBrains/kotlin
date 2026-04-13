@@ -16,8 +16,8 @@ expect open class Foo3 {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo1<!> : Base() {
-    override fun <!PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING!>foo<!>(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>paramNameChanged<!>: Int) {}
+actual open class Foo1 : Base() {
+    override fun <!EXPECT_ACTUAL_INCOMPATIBLE_PARAMETER_NAMES!>foo<!>(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>paramNameChanged<!>: Int) {}
 }
 
 actual typealias Foo2 = Foo2Java

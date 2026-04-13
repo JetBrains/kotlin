@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
@@ -71,9 +70,6 @@ abstract class AbstractLibraryAbiReaderTest(
         useAdditionalService(::LibraryProvider)
 
         facadeStep(frontendFacade)
-        classicFrontendHandlersStep {
-            useHandlers(::NoCompilationErrorsHandler)
-        }
         firHandlersStep {
             useHandlers(::NoFirCompilationErrorsHandler)
         }

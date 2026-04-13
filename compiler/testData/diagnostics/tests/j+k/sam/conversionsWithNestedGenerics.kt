@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 // FILE: Listener.java
 public interface Listener<T> {

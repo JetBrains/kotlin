@@ -29,7 +29,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         get() = KtTestUtil.getJdk11Home()
 
     override val testDataPath: String
-        get() = "compiler/testData/javaModules/"
+        get() = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/javaModules/").absolutePath
 
     private fun module(
         name: String,
@@ -267,7 +267,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         // the "'-d' option is ignored" warning in this test is an artifact of the test infrastructure and is not a part of the test.
         val buildFile = AbstractCliTest.replacePathsInBuildXml(
             "-Xbuild-file=${File(testDataDirectory, "build.xml").path}",
-            testDataDirectory.absolutePath,
+            testDataDirectory,
             tmpdir.absolutePath
         )
         module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))

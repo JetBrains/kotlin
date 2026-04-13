@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/smartCastInValInitialization.kt
           TYPE_OP type=<root>.RootBus origin=CAST typeOperand=<root>.RootBus
             GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl' type=<root>.MessageBusImpl origin=null
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentBus type:kotlin.Any? visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl' type=<root>.MessageBusImpl origin=null
+          receiver: GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl' type=<root>.MessageBusImpl origin=IMPLICIT_ARGUMENT
           value: CONST Null type=kotlin.Nothing? value=null
     CONSTRUCTOR visibility:public returnType:<root>.MessageBusImpl [primary]
       BLOCK_BODY

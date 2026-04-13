@@ -33,8 +33,10 @@ internal class TCServiceMessageOutputStreamHandler(
     private val buffer = ByteArrayOutputStream()
     private var overflowInsideMessage: Boolean = false
 
+    @Synchronized
     @Throws(IOException::class)
     override fun close() {
+        if (closed) return
         closed = true
         flushLine()
     }

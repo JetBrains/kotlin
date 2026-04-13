@@ -1,8 +1,8 @@
-CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB INTERFACE name:JavaInterface modality:ABSTRACT visibility:public superTypes:[<root>.B; <root>.C; <root>.D]
-  thisReceiver: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB kind:DispatchReceiver name:<this> type:<root>.JavaInterface
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB INTERFACE name:JavaInterface modality:ABSTRACT visibility:public [fun] superTypes:[<root>.B; <root>.C; <root>.D]
+  thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.JavaInterface
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:other index:1 type:kotlin.Any?
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.B
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.C

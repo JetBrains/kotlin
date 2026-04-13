@@ -23,5 +23,5 @@ public abstract class A implements CharSequence {
 
 // FILE: B.kt
 class B : A() {
-    <!OVERRIDING_FINAL_MEMBER!>override<!> <!ACCIDENTAL_OVERRIDE!>fun get(index: Int) = 'A'<!>
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>get<!>(index: Int) = 'A'
 }

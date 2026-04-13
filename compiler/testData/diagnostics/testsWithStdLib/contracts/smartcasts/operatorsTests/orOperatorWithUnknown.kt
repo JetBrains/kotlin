@@ -38,7 +38,7 @@ fun annotatedFalse(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 
@@ -56,7 +56,7 @@ fun annotatedFalseWithVariable(x: Any?, b: Boolean) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 

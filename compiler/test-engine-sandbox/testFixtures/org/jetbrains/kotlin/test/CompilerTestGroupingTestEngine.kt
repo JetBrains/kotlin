@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.test
 
+import com.intellij.util.containers.orNull
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.engine.config.CachingJupiterConfiguration
 import org.junit.jupiter.engine.config.DefaultJupiterConfiguration
@@ -16,45 +21,179 @@ import org.junit.jupiter.engine.discovery.DiscoverySelectorResolver
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory.createThrowableCollector
 import org.junit.platform.engine.*
+import org.junit.platform.engine.reporting.ReportEntry
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor
 import org.junit.platform.engine.support.hierarchical.Node
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector
+import java.io.Closeable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 class CompilerTestGroupingTestEngine : TestEngine {
     companion object {
         const val ID = "kotlin-compiler-grouping-engine"
+
+        private const val GROUPING_ENGINE_POOL_SIZE_PROP = "kotlin.test.grouping.engine.pool.size"
+
+        private const val SIMULTANEOUS_METHODS_GROUPS_PROP = "kotlin.test.grouping.engine.simultaneous.methods.groups"
+        private const val DEFAULT_SIMULTANEOUS_METHODS_GROUPS = 2
+
+        private const val SIMULTANEOUS_METHODS_GROUP_SIZE_PROP = "kotlin.test.grouping.engine.simultaneous.methods.group.size"
+        private const val DEFAULT_SIMULTANEOUS_METHODS_GROUP_SIZE = 50
     }
 
     override fun getId(): String = ID
 
-    override fun execute(request: ExecutionRequest) {
-        val baseContext = JupiterEngineExecutionContext(request.engineExecutionListener, getJupiterConfiguration(request))
-        request.rootTestDescriptor.traverseClasses(baseContext) { context, classDescriptor ->
-            val methods = classDescriptor.children.filterIsInstance<TestMethodTestDescriptor>()
-            val testInfos = methods.map { method ->
-                val methodContext = method.prepare(context)
-                methodContext.executionListener.executionStarted(method)
-                methodContext.throwableCollector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
-                val testInstance = methodContext.extensionContext
-                    .requiredTestInstances
-                    .findInstance(AbstractTwoStageKotlinCompilerTest::class.java)
-                    .get()
-                TestMethodInfo(method, methodContext, testInstance)
-            }
+    private class ExecutionContext(params: ConfigurationParameters) : Closeable {
+        private val workerPool: ExecutorService
+        val dispatcher: ExecutorCoroutineDispatcher
+        val activeClasses: Semaphore
+        val methodsChunkSize: Int
 
-            testInfos.forEach { it.runNonGroupingPhase() }
-            runGroupingPhase(context, classDescriptor, testInfos)
+        init {
+            val parallelism = DynamicWithMaxThresholdParallelExecutionConfigurationStrategy.computeParallelism(
+                params,
+                GROUPING_ENGINE_POOL_SIZE_PROP,
+                DynamicWithMaxThresholdParallelExecutionConfigurationStrategy.FIXED_THRESHOLD_PROP
+            )
+            workerPool = Executors.newFixedThreadPool(parallelism)
+            dispatcher = workerPool.asCoroutineDispatcher()
+
+            val numberOfActiveClasses = params.get(SIMULTANEOUS_METHODS_GROUPS_PROP).orNull()?.toInt()?.also {
+                require(it > 0) { "Number of simultaneous method groups must be positive, but was $it" }
+            } ?: DEFAULT_SIMULTANEOUS_METHODS_GROUPS
+
+            activeClasses = Semaphore(permits = numberOfActiveClasses)
+
+            methodsChunkSize = params.get(SIMULTANEOUS_METHODS_GROUP_SIZE_PROP).orNull()?.toInt()?.also {
+                require(it > 0) { "Number of methods in a group must be positive, but was $it" }
+            } ?: DEFAULT_SIMULTANEOUS_METHODS_GROUP_SIZE
+        }
+
+        override fun close() {
+            workerPool.shutdown()
+            workerPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)
         }
     }
 
-    private fun runGroupingPhase(context: JupiterEngineExecutionContext, classDescriptor: TestDescriptor, tests: List<TestMethodInfo>) {
-        val successfulTests = tests.filterNot { it.failed }
+    override fun execute(request: ExecutionRequest) {
+        ExecutionContext(request.configurationParameters).use { ctx ->
+            val synchronizedListener = SynchronizedEngineExecutionListener(request.engineExecutionListener)
+            val baseContext = JupiterEngineExecutionContext(synchronizedListener, getJupiterConfiguration(request))
+            runBlocking(ctx.dispatcher) {
+                traverseClasses(request.rootTestDescriptor, baseContext) { context, classDescriptor ->
+                    launch {
+                        context(ctx) { processClass(context, classDescriptor) }
+                    }
+                }?.join()
+            }
+        }
+    }
+
+    private fun CoroutineScope.traverseClasses(
+        descriptor: TestDescriptor,
+        baseContext: JupiterEngineExecutionContext,
+        block: (JupiterEngineExecutionContext, TestDescriptor) -> Job,
+    ): Job? {
+        if (!descriptor.isContainer) return null
+        @Suppress("UNCHECKED_CAST")
+        val context = (descriptor as? Node<JupiterEngineExecutionContext>)?.prepare(baseContext) ?: baseContext
+        val needReport = descriptor !is JupiterEngineDescriptor
+        if (needReport) context.executionListener.executionStarted(descriptor)
+        val testClassJob = runIf(descriptor.children.any { it.isTest }) {
+            block(context, descriptor)
+        }
+        val childJobs = descriptor.children.mapNotNull { child ->
+            runIf(child.isContainer) {
+                traverseClasses(child, context, block)
+            }
+        }
+        return runIf(needReport) {
+            launch {
+                testClassJob?.join()
+                childJobs.joinAll()
+                context.executionListener.executionFinished(descriptor, context.throwableCollector.toTestExecutionResult())
+            }
+        }
+    }
+
+    context(ctx: ExecutionContext)
+    private suspend fun CoroutineScope.processClass(
+        context: JupiterEngineExecutionContext,
+        classDescriptor: TestDescriptor,
+    ) {
+        val methods = classDescriptor.children.filterIsInstance<TestMethodTestDescriptor>()
+        val groupCounter = AtomicInteger(1)
+        val groupJobs = methods.chunked(ctx.methodsChunkSize).map { methodsChunk ->
+            launch {
+                ctx.activeClasses.withPermit {
+                    val testInfosFutures = methodsChunk.map { method ->
+                        async {
+                            runNonGroupingPhase(method, context)
+                        }
+                    }
+                    val testInfos = testInfosFutures.awaitAll().filterNotNull()
+                    runGroupingPhase(context, classDescriptor, testInfos, groupCounter)
+                }
+            }
+        }
+        groupJobs.joinAll()
+    }
+
+    private fun runNonGroupingPhase(
+        method: TestMethodTestDescriptor,
+        context: JupiterEngineExecutionContext,
+    ): TestMethodInfo? {
+        val methodContext = method.prepare(context)
+        methodContext.executionListener.executionStarted(method)
+        methodContext.throwableCollector.execute { method.execute(methodContext, DynamicTestExecutorStub) }
+        val testInstance = methodContext.extensionContext
+            .requiredTestInstances
+            .findInstance(AbstractTwoStageKotlinCompilerTest::class.java)
+            .get()
+
+        // If there is no `@TestMetadata` annotation, then this is some utility test (like `testAllFilesPresentIn`)
+        // and so it should be excluded in grouping processing.
+        if (method.testMethod.annotations.none { it is TestMetadata }) {
+            methodContext.executionListener.executionFinished(
+                method,
+                methodContext.throwableCollector.toTestExecutionResult()
+            )
+            return null
+        }
+        val info = TestMethodInfo(method, methodContext, testInstance).apply {
+            if (finishIfFailed()) return@apply
+            nonGroupingPhaseThrowableCollector.execute {
+                val testRunner = testInstance.nonGroupingRunner
+                testRunner.runTestPreprocessing()
+                testRunner.runSteps()
+                hadIgnoredFailuresOnNonGroupingPhase = testRunner.reportFailures()
+            }
+            finishIfFailed()
+        }
+        return info
+    }
+
+    private suspend fun CoroutineScope.runGroupingPhase(
+        context: JupiterEngineExecutionContext,
+        classDescriptor: TestDescriptor,
+        tests: List<TestMethodInfo>,
+        groupCounter: AtomicInteger,
+    ) {
+        val successfulTests = tests.filterNot { it.failed || it.hadIgnoredFailuresOnNonGroupingPhase }
         if (successfulTests.isEmpty()) return
         val batches = groupTestsInBatches(successfulTests)
-        batches.forEachIndexed { index, batch ->
-            runGroupingPhaseOnBatch(context, classDescriptor, batch, index)
+
+        val batchFutures = batches.map { batch ->
+            launch {
+                runGroupingPhaseOnBatch(context, classDescriptor, batch, index = groupCounter.getAndIncrement())
+            }
         }
+
+        batchFutures.joinAll()
     }
 
     private fun groupTestsInBatches(infos: List<TestMethodInfo>): List<List<TestMethodInfo>> {
@@ -68,8 +207,8 @@ class CompilerTestGroupingTestEngine : TestEngine {
         index: Int,
     ) {
         val testDescriptor = GroupingPhaseTestDescriptor(
-            uniqueId = batch.first().descriptor.uniqueId.removeLastSegment().append("dynamic-test", "batch"),
-            displayName = "Grouped batch #${index + 1}"
+            uniqueId = batch.first().descriptor.uniqueId.removeLastSegment().append("dynamic-test", "batch$index"),
+            displayName = "Grouped batch #$index"
         )
         classDescriptor.addChild(testDescriptor)
         val throwableCollector = createThrowableCollector()
@@ -94,7 +233,6 @@ class CompilerTestGroupingTestEngine : TestEngine {
         executionListener.executionFinished(testDescriptor, throwableCollector.toTestExecutionResult())
         batch.forEach {
             it.finalizeNonGroupingPhase()
-            it.updateFailed()
             val collector = if (it.failed) it.nonGroupingPhaseThrowableCollector else throwableCollector
             it.reportFinished(collector)
         }
@@ -148,25 +286,33 @@ class CompilerTestGroupingTestEngine : TestEngine {
         val engineDescriptor = request.rootTestDescriptor as JupiterEngineDescriptor
         return engineDescriptor.configuration
     }
+}
 
-    private fun TestDescriptor.traverseClasses(
-        baseContext: JupiterEngineExecutionContext,
-        block: (JupiterEngineExecutionContext, TestDescriptor) -> Unit,
-    ) {
-        if (!this.isContainer) return
-        @Suppress("UNCHECKED_CAST")
-        val context = (this as? Node<JupiterEngineExecutionContext>)?.prepare(baseContext) ?: baseContext
-        val needReport = this !is JupiterEngineDescriptor
-        if (needReport) context.executionListener.executionStarted(this)
-        if (children.any { it.isTest }) {
-            block(context, this)
-        }
-        for (child in children) {
-            if (child.isContainer) {
-                child.traverseClasses(context, block)
-            }
-        }
-        if (needReport) context.executionListener.executionFinished(this, context.throwableCollector.toTestExecutionResult())
+/**
+ * Thread-safe wrapper around EngineExecutionListener.
+ * Gradle's execution listener is not thread-safe, so all calls must be synchronized.
+ */
+private class SynchronizedEngineExecutionListener(
+    private val delegate: EngineExecutionListener,
+) : EngineExecutionListener {
+    override fun dynamicTestRegistered(testDescriptor: TestDescriptor?) = synchronized(this) {
+        delegate.dynamicTestRegistered(testDescriptor)
+    }
+
+    override fun executionStarted(testDescriptor: TestDescriptor?) = synchronized(this) {
+        delegate.executionStarted(testDescriptor)
+    }
+
+    override fun executionSkipped(testDescriptor: TestDescriptor?, reason: String?) = synchronized(this) {
+        delegate.executionSkipped(testDescriptor, reason)
+    }
+
+    override fun executionFinished(testDescriptor: TestDescriptor?, testExecutionResult: TestExecutionResult?) = synchronized(this) {
+        delegate.executionFinished(testDescriptor, testExecutionResult)
+    }
+
+    override fun reportingEntryPublished(testDescriptor: TestDescriptor?, entry: ReportEntry?) = synchronized(this) {
+        delegate.reportingEntryPublished(testDescriptor, entry)
     }
 }
 
@@ -199,18 +345,16 @@ private data class TestMethodInfo(
     val context: JupiterEngineExecutionContext,
     val testInstance: AbstractTwoStageKotlinCompilerTest,
 ) {
-    var failed: Boolean = false
-        private set
+    val failed: Boolean
+        get() = nonGroupingPhaseThrowableCollector.isNotEmpty
+
+    var hadIgnoredFailuresOnNonGroupingPhase: Boolean = false
 
     var finalized: Boolean = false
         private set
 
     val nonGroupingPhaseThrowableCollector: ThrowableCollector
         get() = context.throwableCollector
-
-    fun updateFailed() {
-        failed = failed || nonGroupingPhaseThrowableCollector.isNotEmpty
-    }
 
     fun finalizeNonGroupingPhase() {
         if (finalized) return
@@ -223,17 +367,15 @@ private data class TestMethodInfo(
     }
 }
 
-private fun TestMethodInfo.runNonGroupingPhase() {
-    nonGroupingPhaseThrowableCollector.execute {
-        val testRunner = testInstance.nonGroupingRunner
-        testRunner.runTestPreprocessing()
-        testRunner.runSteps()
-        testRunner.reportFailures()
-    }
-    updateFailed()
-    if (failed) {
-        finalizeNonGroupingPhase()
-        reportFinished(nonGroupingPhaseThrowableCollector)
+/**
+ * @returns true if the test failed
+ */
+private fun TestMethodInfo.finishIfFailed(): Boolean {
+    return (failed || hadIgnoredFailuresOnNonGroupingPhase).also {
+        if (it) {
+            finalizeNonGroupingPhase()
+            reportFinished(nonGroupingPhaseThrowableCollector)
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
 // Field VS property: case "reference", protected field, visible property
 
 // FILE: BaseJava.java

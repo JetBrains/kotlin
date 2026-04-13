@@ -10,7 +10,7 @@ fun myExit(): Nothing = TODO()
 fun test(x: String?): Inv<String> {
     return foo {
         if (x == null) myExit()
-        <!DEBUG_INFO_SMARTCAST!>x<!>
+        x
     }
 }
 

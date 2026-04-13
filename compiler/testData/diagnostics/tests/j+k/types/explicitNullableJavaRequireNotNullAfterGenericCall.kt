@@ -11,7 +11,7 @@ public class JavaUtil {
 // FILE: Test.kt
 fun test(x: String?) {
     val y = JavaUtil.id<String?>(x)
-    y.length
+    y<!UNSAFE_CALL!>.<!>length
 
     requireNotNull(y)
     val ok: Int = y.length
@@ -20,7 +20,7 @@ fun test(x: String?) {
     z<!UNSAFE_CALL!>.<!>length
 
     requireNotNull(z)
-    val ok2: Int = <!DEBUG_INFO_SMARTCAST!>z<!>.length
+    val ok2: Int = z.length
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, javaFunction, javaType, localProperty, nullableType,

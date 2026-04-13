@@ -69,11 +69,11 @@ fun <T : Any> AsyncStatus<T>.isTerminal(): Boolean {
 fun main() {
     val foo = AsyncStatus.Pending<String>()
     if (!foo.isPending()) {
-        if (<!DEBUG_INFO_SMARTCAST!>foo<!>.isSuccess()) {
-            nonNullPrint(<!TYPE_MISMATCH!>foo.value<!>)
+        if (foo.isSuccess()) {
+            nonNullPrint(foo.value)
         }
-        if (<!DEBUG_INFO_SMARTCAST!>foo<!>.isError()) {
-            foo.<!UNRESOLVED_REFERENCE!>error<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>printStackTrace<!>()
+        if (foo.isError()) {
+            foo.error.printStackTrace()
         }
     }
 }

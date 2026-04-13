@@ -16,6 +16,6 @@ class C {
 
 <!CONFLICTING_JVM_DECLARATIONS!>class D {
     companion object A {
-        <!CONFLICTING_JVM_DECLARATIONS!>lateinit var A: A<!>
+        lateinit <!CONFLICTING_JVM_DECLARATIONS!>var A: A<!>
     }
 }<!>

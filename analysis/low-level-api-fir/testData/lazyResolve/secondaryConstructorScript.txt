@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
             R|/receive|(R|/A.A|(Int(42)))
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(CONTRACTS)] value: R|A|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(STATUS)] value: R|A|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-secondaryConstructorScript.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| { LAZY_BLOCK }
@@ -228,4 +228,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorScript.kts
             }
 
         }
-

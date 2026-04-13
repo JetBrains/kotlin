@@ -7,23 +7,30 @@ package org.jetbrains.kotlin.sir
 
 class SirImport(
     val moduleName: String,
-    val mode: Mode? = null,
+    val mode: Mode = Mode.Default,
+    val spi: List<SirAttribute.SPI> = emptyList(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other !is SirImport) return false
 
-        other as SirImport
+        if (moduleName != other.moduleName) return false
+        if (mode != other.mode) return false
+        if (spi != other.spi) return false
 
-        return moduleName == other.moduleName
+        return true
     }
 
     override fun hashCode(): Int {
-        return moduleName.hashCode()
+        var result = moduleName.hashCode()
+        result = 31 * result + mode.hashCode()
+        result = 31 * result + spi.hashCode()
+        return result
     }
 
     enum class Mode {
         ImplementationOnly,
+        Default,
         Exported,
     }
 }

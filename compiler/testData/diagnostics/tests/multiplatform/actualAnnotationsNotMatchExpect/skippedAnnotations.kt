@@ -6,8 +6,8 @@
 // FILE: common.kt
 package kotlin
 
-<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
-@<!UNRESOLVED_REFERENCE!>OptionalExpectation<!>
+@OptIn(ExperimentalMultiplatform::class)
+@OptionalExpectation
 expect annotation class OptionalExpectationOnExpectOnly
 
 @RequiresOptIn
@@ -16,15 +16,15 @@ annotation class MyOptIn
 @SinceKotlin("1.8")
 @Deprecated(message = "Some text")
 @DeprecatedSinceKotlin("1.8")
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 @MyOptIn
 @WasExperimental(MyOptIn::class)
-@kotlin.internal.<!UNRESOLVED_REFERENCE!>RequireKotlin<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>version<!> = "1.8")
+@kotlin.internal.RequireKotlin(version = "1.8")
 @OptIn(MyOptIn::class)
 expect fun skippedAnnotationsOnExpectOnly()
 
-<!OPT_IN_WITHOUT_ARGUMENTS!>@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>ExperimentalMultiplatform<!>::class<!>)<!>
-@kotlin.<!UNRESOLVED_REFERENCE!>jvm<!>.<!DEBUG_INFO_MISSING_UNRESOLVED, DEPRECATION_ERROR{JVM}!>ImplicitlyActualizedByJvmDeclaration<!>
+@OptIn(ExperimentalMultiplatform::class)
+@kotlin.jvm.<!DEPRECATION_ERROR!>ImplicitlyActualizedByJvmDeclaration<!>
 expect class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
 
 @SubclassOptInRequired(MyOptIn::class)

@@ -124,9 +124,8 @@ FILE fqName:<root> fileName:/dynamicInDataClass.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                  ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Any
-                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:dynamic visibility:private [final]' type=dynamic origin=null
-                      receiver: GET_VAR '<this>: <root>.Some declared in <root>.Some.hashCode' type=<root>.Some origin=null
+                  ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:dynamic visibility:private [final]' type=dynamic origin=null
+                    receiver: GET_VAR '<this>: <root>.Some declared in <root>.Some.hashCode' type=<root>.Some origin=null
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Some'
           GET_VAR 'var result: kotlin.Int declared in <root>.Some.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN returnType:kotlin.String

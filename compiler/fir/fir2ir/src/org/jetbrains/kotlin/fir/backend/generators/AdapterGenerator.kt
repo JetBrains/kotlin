@@ -431,7 +431,7 @@ class AdapterGenerator(
                 )
             )
 
-        return if (this is IrBlock && (origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)) {
+        return if (this is IrBlock && (origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION)) {
             // The IR for adapted callable references should be
             // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
             // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
@@ -551,34 +551,41 @@ class AdapterGenerator(
         kind: FirFunctionConversionKind.BetweenFunctionTypes,
     ): IrExpression {
         val expectedType = argument.resolvedType
+        check(expectedType is ConeClassLikeType && expectedType.functionTypeKind(session) != null)
 
-        val convertedArgumentType = argument.expression.resolvedType.fullyExpandedType()
+        val originalArgumentType = argument.expression.resolvedType.fullyExpandedType()
         // No conversion should happen if an argument already satisfies the expected type requirements
-        check(!convertedArgumentType.isSubtypeOf(expectedType, session))
+        check(!originalArgumentType.isSubtypeOf(expectedType, session))
 
-        // Currently, only conversion from simple to custom function types is supported
-        check(kind.isFromSimpleToCustom)
-        val expectedFunctionalType = expectedType.customFunctionTypeToSimpleFunctionType(session)
+        check(kind.isFromSimpleToCustom || kind.isForUnitCoercion)
+        val isSuspendFunctionTypeExpected = expectedType.isSuspendOrKSuspendFunctionType(session)
+        val needSuspendConversion = kind.isFromSimpleToCustom && isSuspendFunctionTypeExpected
 
-        // For all other conversions beside suspend ones, we leave it to plugins to work with them
-        if (!expectedType.isSuspendOrKSuspendFunctionType(session)) return this
+        // This case is only applied when custom function types from a plugin are involved.
+        // For that case plugins themselves should handle the conversion.
+        // On the other hand, currently, there are no known plugins that do it (Compose dropped the conversion).
+        if (!needSuspendConversion && !kind.isForUnitCoercion) return this
 
-        val invokeSymbol = findInvokeSymbol(expectedFunctionalType, convertedArgumentType) ?: return this
-        val suspendConvertedType = expectedType.toIrType() as IrSimpleType
+        val functionTypeBeforeConversion = kind.originalArgumentAsFunctionType
+        check(functionTypeBeforeConversion.functionTypeKind(session) != null)
+
+        val invokeSymbol = findInvokeSymbol(functionTypeBeforeConversion, originalArgumentType) ?: return this
+        val expectedIrType = expectedType.toIrType() as IrSimpleType
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
                 startOffset,
                 endOffset,
-                suspendConvertedType,
-                expectedFunctionalType.toIrType(),
-                convertedArgumentType.isMarkedNullable,
-                invokeSymbol
+                expectedIrType,
+                adapteeParameterType = functionTypeBeforeConversion.toIrType(),
+                originalArgumentType.isMarkedNullable,
+                invokeSymbol,
+                isSuspendFunctionTypeExpected,
             )
             val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, suspendConvertedType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
-                null, IrStatementOrigin.SUSPEND_CONVERSION
+                startOffset, endOffset, expectedIrType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
+                null, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION
             )
-            IrBlockImpl(startOffset, endOffset, suspendConvertedType, IrStatementOrigin.SUSPEND_CONVERSION).apply {
+            IrBlockImpl(startOffset, endOffset, expectedIrType, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION).apply {
                 statements.add(irAdapterFunction)
                 statements.add(irAdapterRef.apply { arguments[0] = this@applyConversionBetweenFunctionTypes })
             }
@@ -611,9 +618,10 @@ class AdapterGenerator(
         startOffset: Int,
         endOffset: Int,
         type: IrSimpleType,
-        adapterParameterType: IrType,
+        adapteeParameterType: IrType,
         argumentIsNullable: Boolean,
-        invokeSymbol: IrSimpleFunctionSymbol
+        invokeSymbol: IrSimpleFunctionSymbol,
+        isSuspend: Boolean,
     ): IrSimpleFunction {
         val returnType = type.arguments.last().typeOrFail
         val parameterTypes = type.arguments.dropLast(1).map { it.typeOrFail }
@@ -629,7 +637,7 @@ class AdapterGenerator(
             modality = Modality.FINAL,
             symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
-            isSuspend = true,
+            isSuspend = isSuspend,
             isOperator = false,
             isInfix = false,
             isExternal = false,
@@ -638,7 +646,7 @@ class AdapterGenerator(
                 this += createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier($$"$callee"),
-                    adapterParameterType,
+                    adapteeParameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
                     IrParameterKind.ExtensionReceiver,
                 )

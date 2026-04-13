@@ -9,7 +9,7 @@ open class Base {
 
 class Derived : Base() {
 
-    @<!DEPRECATED_ACCESS_BY_SHORT_NAME!>Foo<!>
+    @<!UNRESOLVED_REFERENCE!>Foo<!>
     fun foo() = 42
 }
 

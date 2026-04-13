@@ -12,22 +12,22 @@ class Data(var x: A)
 
 class B : A() {
     fun baz(a: A, b: B, d: Data) {
-        a.<!INVISIBLE_MEMBER!>foo<!> { }
+        a.<!INVISIBLE_REFERENCE!>foo<!> { }
 
         b.foo { }
 
         if (a is B) {
-            <!DEBUG_INFO_SMARTCAST!>a<!>.foo {}
+            a.foo {}
         }
 
         if (d.x is B) {
-            d.x.<!INVISIBLE_MEMBER!>foo<!> {}
+            d.x.<!INVISIBLE_REFERENCE!>foo<!> {}
         }
     }
 }
 
 fun baz(a: A) {
-    a.<!INVISIBLE_MEMBER!>foo<!> { }
+    a.<!INVISIBLE_REFERENCE!>foo<!> { }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, javaFunction, javaType,

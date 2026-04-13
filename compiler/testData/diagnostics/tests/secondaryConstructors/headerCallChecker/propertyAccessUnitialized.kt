@@ -3,8 +3,8 @@
 open class B(x: Int)
 class A : B {
     val prop = 1
-    constructor(x: Int, y: Int = x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, UNINITIALIZED_VARIABLE!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNINITIALIZED_VARIABLE!>prop<!>) :
-        super(x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, UNINITIALIZED_VARIABLE!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNINITIALIZED_VARIABLE!>prop<!>)
+    constructor(x: Int, y: Int = x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop) :
+        super(x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop)
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,

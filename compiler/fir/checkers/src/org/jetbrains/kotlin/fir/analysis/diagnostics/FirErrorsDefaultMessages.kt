@@ -266,6 +266,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_SMARTC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_OF_OUTER_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS
@@ -540,7 +541,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_STDLIB_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
@@ -679,6 +679,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_IGNORA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE_IMPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CONFLICTS_WITH_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARAMETER_NAME_CHANGED_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
@@ -810,6 +811,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS
@@ -838,6 +840,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_DELEGATED_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_VAR_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_NOT_NULL_ASSERTION
@@ -869,6 +872,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_DEPRECATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS
@@ -1022,6 +1026,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Wrapping the left-hand side of assignments in parentheses, labels or annotations is not allowed."
         )
         map.put(
+            PARENTHESIZED_PACKAGE_QUALIFIER,
+            "Wrapping package qualifiers in parentheses is not allowed.",
+        )
+        map.put(
             UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION,
             "Array literals outside of annotations are unsupported."
         )
@@ -1035,8 +1043,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNRESOLVED_REFERENCE_WRONG_RECEIVER,
-            "Unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:{0}",
-            SYMBOLS_ON_NEXT_LINES,
+            "Candidate ''{0}'' is inapplicable because of a receiver type mismatch.",
+            SYMBOL,
         )
         map.put(
             INACCESSIBLE_OUTER_CLASS_RECEIVER,
@@ -1098,20 +1106,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MISSING_DEPENDENCY_SUPERCLASS,
             "Cannot access ''{0}'' which is a supertype of ''{1}''. Check your module classpath for missing or conflicting dependencies.",
-            RENDER_TYPE,
-            RENDER_TYPE,
+            TO_STRING,
+            TO_STRING,
         )
         map.put(
             MISSING_DEPENDENCY_SUPERCLASS_WARNING,
             "Cannot access ''{0}'' which is a supertype of ''{1}''. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
-            RENDER_TYPE,
-            RENDER_TYPE,
-        )
-        map.put(
-            MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT,
-            "Cannot access ''{0}'' which is a supertype of ''{1}'' or one of its arguments. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
-            RENDER_TYPE,
-            RENDER_TYPE,
+            TO_STRING,
+            TO_STRING,
         )
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER,
@@ -1365,6 +1367,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(DEPRECATION_ERROR, "''{0}'' is deprecated.{1}", SYMBOL, OPTIONAL_SENTENCE)
         map.put(DEPRECATION, "''{0}'' is deprecated.{1}", SYMBOL, OPTIONAL_SENTENCE)
+        map.put(
+            DEPRECATION_OF_OUTER_CLASS,
+            "''{0}'' is deprecated.{1}".toDeprecationWarningMessage(LanguageFeature.ReportDeprecationsOfOuterImportedClasses),
+            SYMBOL,
+            OPTIONAL_SENTENCE
+        )
         map.put(
             OVERRIDE_DEPRECATION,
             "This declaration overrides a deprecated member but is not marked as deprecated itself. Add the ''@Deprecated'' annotation or suppress the diagnostic.",
@@ -2012,34 +2020,49 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions calls.")
         map.put(
             UPPER_BOUND_VIOLATED,
-            "Type argument is not within its bounds: must be subtype of ''{0}''.{2}",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''.{3}",
+            RENDER_TYPE,
             RENDER_TYPE,
             RENDER_TYPE,
             OPTIONAL_SENTENCE,
         )
         map.put(
             UPPER_BOUND_VIOLATED_DEPRECATION_WARNING,
-            "Type argument is not within its bounds: must be subtype of ''{0}''. This will become an error in future releases.{2}",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''. " +
+                    "This will become an error in future releases.{3}",
+            RENDER_TYPE,
             RENDER_TYPE,
             RENDER_TYPE,
             OPTIONAL_SENTENCE,
         )
         map.put(
             UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS,
-            "Type argument is not within its bounds: must be subtype of ''{0}''.{2}",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''.{3}",
+            RENDER_TYPE,
             RENDER_TYPE,
             RENDER_TYPE,
             OPTIONAL_SENTENCE,
         )
         map.put(
             UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
-            "Type argument is not within its bounds: must be subtype of ''{0}''.",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''.",
+            RENDER_TYPE,
             RENDER_TYPE,
             RENDER_TYPE,
         )
         map.put(
             UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING,
-            "Type argument is not within its bounds: must be subtype of ''{0}''. This will become an error in future releases.",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''. " +
+                    "This will become an error in future releases.",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            RENDER_TYPE,
+        )
+        map.put(
+            UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING,
+            "Star projected type alias leads to incompatible upper bound: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''. " +
+                    "Consider using the expanded class instead.",
+            RENDER_TYPE,
             RENDER_TYPE,
             RENDER_TYPE,
         )
@@ -2048,6 +2071,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TYPE_ARGUMENTS_NOT_ALLOWED_WARNING,
             "Type arguments are not allowed {0}.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn25),
             STRING,
+        )
+        map.put(
+            TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING,
+            "Type arguments are not allowed for packages.".toDeprecationWarningMessage(LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier),
         )
         map.put(TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, "Type arguments for outer class are redundant when nested class is referenced.")
         val wrongNumberOfTypeArguments = "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected"
@@ -3007,6 +3034,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(UNNAMED_VAR_PROPERTY, "'var' properties require a name.")
         map.put(UNNAMED_DELEGATED_PROPERTY, "Delegated properties require a name.")
+        map.put(UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE, "Type of underscore property is inferred to 'Unit'.")
 
         map.put(
             DESTRUCTURING_SHORT_FORM_NAME_MISMATCH,

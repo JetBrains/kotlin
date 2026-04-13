@@ -18,7 +18,7 @@ fun test(a: Any) {
         is A -> q = "1"
     }
     // When is not exhaustive
-    return <!TYPE_MISMATCH!>q<!>
+    return <!RETURN_TYPE_MISMATCH!>q<!>
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, isExpression, localProperty, nullableType,

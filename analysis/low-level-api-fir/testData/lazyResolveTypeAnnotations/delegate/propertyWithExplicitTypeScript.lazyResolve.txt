@@ -337,9 +337,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun getValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -376,9 +376,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun getValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -417,7 +417,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
             public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getValue([ResolvedTo(ANNOTATION_ARGUMENTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|) [evaluated = String(getValue type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|) [evaluated = String(getValue nested type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|) [evaluated = String(getValue nested nested type ref 0)])  kotlin/Int>>| { LAZY_BLOCK }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -456,7 +456,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
 
             public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getValue([ResolvedTo(ANNOTATION_ARGUMENTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|) [evaluated = String(getValue type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|) [evaluated = String(getValue nested type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|) [evaluated = String(getValue nested nested type ref 0)])  kotlin/Int>>| { LAZY_BLOCK }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -509,4 +509,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeScript.kts
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|) [evaluated = String(set 0)]) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|) [evaluated = String(setparam 0)]) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|) [evaluated = String(getValue type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|) [evaluated = String(getValue nested type ref 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|) [evaluated = String(getValue nested nested type ref 0)])  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
-

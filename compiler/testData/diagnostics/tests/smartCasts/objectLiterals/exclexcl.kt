@@ -14,9 +14,9 @@ fun foo(): Int {
             override fun run() = Unit
         }
         k.run()
-        val d: Int = <!DEBUG_INFO_SMARTCAST!>c<!>
+        val d: Int = c
         // a is not null because of k constructor, but we do not know it
-        return a <!UNSAFE_OPERATOR_CALL!>+<!> d
+        return a + d
     }
     else return -1
 }

@@ -23,24 +23,24 @@ import j.JavaProtected
 import j.JavaPackageLocal
 
 class A {
-    val p1 = JavaPackageLocal.<!INVISIBLE_MEMBER("javaPPackage; package-private; 'JavaPackageLocal'")!>javaPPackage<!>
-    val p2 = JavaProtected.<!INVISIBLE_MEMBER("javaPProtectedStatic; protected; 'JavaProtected'")!>javaPProtectedStatic<!>
-    val p3 = JavaProtected().<!INVISIBLE_MEMBER("javaPProtectedPackage; protected; 'JavaProtected'")!>javaPProtectedPackage<!>
+    val p1 = JavaPackageLocal.<!INVISIBLE_REFERENCE!>javaPPackage<!>
+    val p2 = JavaProtected.<!INVISIBLE_REFERENCE!>javaPProtectedStatic<!>
+    val p3 = JavaProtected().<!INVISIBLE_REFERENCE!>javaPProtectedPackage<!>
 
     fun test() {
-        JavaProtected.<!INVISIBLE_MEMBER("javaMProtectedStatic; protected; 'JavaProtected'")!>javaMProtectedStatic<!>()
-        JavaPackageLocal.<!INVISIBLE_MEMBER("javaMPackage; package-private; 'JavaPackageLocal'")!>javaMPackage<!>()
+        JavaProtected.<!INVISIBLE_REFERENCE!>javaMProtectedStatic<!>()
+        JavaPackageLocal.<!INVISIBLE_REFERENCE!>javaMPackage<!>()
     }
 }
 
 class B : JavaProtected() {
-    val p1 = JavaPackageLocal.<!INVISIBLE_MEMBER("javaPPackage; package-private; 'JavaPackageLocal'")!>javaPPackage<!>
+    val p1 = JavaPackageLocal.<!INVISIBLE_REFERENCE!>javaPPackage<!>
     val p2 = JavaProtected.javaPProtectedStatic
     val p3 = javaPProtectedPackage
 
     fun test() {
         JavaProtected.javaMProtectedStatic()
-        JavaPackageLocal.<!INVISIBLE_MEMBER("javaMPackage; package-private; 'JavaPackageLocal'")!>javaMPackage<!>()
+        JavaPackageLocal.<!INVISIBLE_REFERENCE!>javaMPackage<!>()
     }
 }
 

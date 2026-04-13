@@ -99,7 +99,7 @@ internal abstract class KotlinAbiDumpTaskImpl : AbiToolsTask(), UsesKotlinToolin
             val classfiles = jvmTarget.classfilesDirs.asFileTree
                 .asSequence()
                 .filter {
-                    !it.isDirectory && it.name.endsWith(".class") && !it.name.startsWith("META-INF/")
+                    !it.isDirectory && (it.name.endsWith(".class") || it.name.endsWith(".jar")) && !it.name.startsWith("META-INF/")
                 }.map { it.toPath() }.asIterable()
 
 

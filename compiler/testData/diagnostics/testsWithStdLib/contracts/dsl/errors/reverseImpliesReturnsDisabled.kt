@@ -9,7 +9,7 @@ fun decode(encoded: String?): String? {
         <!ERROR_IN_CONTRACT_DESCRIPTION!>(encoded != null) implies (returnsNotNull())<!>
     }
     if (encoded == null) return null
-    return <!DEBUG_INFO_SMARTCAST!>encoded<!> + "a"
+    return encoded + "a"
 }
 
 fun test() {

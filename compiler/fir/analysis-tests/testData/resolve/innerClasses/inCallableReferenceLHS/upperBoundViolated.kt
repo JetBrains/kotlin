@@ -33,13 +33,13 @@ class ImplBeta : Container<BetaKey>() {
 
 fun foo() {
     Container<AlphaKey>.Inner<Alpha>::toString
-    Container<BetaKey>.Inner<<!UPPER_BOUND_VIOLATED("Element<BetaKey>; Alpha")!>Alpha<!>>::toString
-    Container<<!UPPER_BOUND_VIOLATED("Key; String")!>String<!>>.Inner<<!UPPER_BOUND_VIOLATED("Element<String>; Alpha")!>Alpha<!>>::toString
+    Container<BetaKey>.Inner<<!UPPER_BOUND_VIOLATED("Element<BetaKey>; Alpha; T (of class Inner<T : Element<K>, Outer(K) : Key>)")!>Alpha<!>>::toString
+    Container<<!UPPER_BOUND_VIOLATED("Key; String; K (of class Container<K : Key>)")!>String<!>>.Inner<<!UPPER_BOUND_VIOLATED("Element<String>; Alpha; T (of class Inner<T : Element<K>, Outer(K) : Key>)")!>Alpha<!>>::toString
 }
 
 fun <K: Key> local() {
     class Local<T: Element<K>>
-    Local<<!UPPER_BOUND_VIOLATED("Element<K (of fun <K : Key> local)>; Alpha")!>Alpha<!>>::toString
+    Local<<!UPPER_BOUND_VIOLATED("Element<K (of fun <K : Key> local)>; Alpha; T (of class Local<T : Element<K>, Outer(K) : Key>)")!>Alpha<!>>::toString
     Local<Element<K>>::toString
 }
 

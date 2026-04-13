@@ -30,29 +30,29 @@ class C {
 
 fun test1(a: A?) {
     if (!a?.b.valueIsNull()) {
-        a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>length
+        a.b.length
     }
 }
 
 fun test2(a: A?) {
     require(!a?.b.valueIsNull())
-    a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>length
+    a.b.length
 }
 
 fun test3(a: A?) {
     if(a?.b.valueIsNotNull()){
-        a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>length
+        a.b.length
     }
 }
 
 fun test4(a :A?) {
     require(a?.b.valueIsNotNull())
-    a<!UNSAFE_CALL!>.<!>b<!UNSAFE_CALL!>.<!>length
+    a.b.length
 }
 
 fun test5(a :A?) {
     require(a?.e?.d.valueIsNotNull())
-    a<!UNSAFE_CALL!>.<!>e<!UNSAFE_CALL!>.<!>d<!UNSAFE_CALL!>.<!>length
+    a.e.d.length
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, contractConditionalEffect, contracts, equalityExpression,

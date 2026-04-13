@@ -1,51 +1,53 @@
-// Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
-// Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+// Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language
+// contributors. Use of this source code is governed by the Apache 2.0 license
+// that can be found in the license/LICENSE.txt file.
 
 #pragma once
+
+#include "PassesProfile.h"
+
+#include "llvm/ADT/StringMap.h"
+#include "llvm/ADT/StringMapEntry.h"
+#include "llvm/ADT/StringRef.h"
+#include "llvm/IR/PassInstrumentation.h"
+#include "llvm/Support/CBindingWrapping.h"
 
 #include <string>
 #include <vector>
 
-#include <PassesProfile.h>
-#include <llvm/IR/PassInstrumentation.h>
-#include <llvm/ADT/StringMap.h>
-#include <llvm/ADT/StringMapEntry.h>
-#include <llvm/ADT/StringRef.h>
-#include <llvm/Support/CBindingWrapping.h>
-
-namespace llvm {
+namespace llvm::kotlin {
 
 struct PassesProfile {
-    std::string SerializedProfile;
+  std::string SerializedProfile;
 };
 
 DEFINE_SIMPLE_CONVERSION_FUNCTIONS(PassesProfile, LLVMKotlinPassesProfileRef)
 
 class PassesProfileHandler {
 public:
-    struct Event;
+  struct Event;
 
-    explicit PassesProfileHandler(bool enabled);
-    ~PassesProfileHandler();
+  explicit PassesProfileHandler(bool Enabled);
+  ~PassesProfileHandler();
 
-    PassesProfileHandler(const PassesProfileHandler&) = delete;
-    PassesProfileHandler(PassesProfileHandler&&) = delete;
-    PassesProfileHandler& operator=(const PassesProfileHandler&) = delete;
-    PassesProfileHandler& operator=(PassesProfileHandler&&) = delete;
+  PassesProfileHandler(const PassesProfileHandler &) = delete;
+  PassesProfileHandler(PassesProfileHandler &&) = delete;
+  PassesProfileHandler &operator=(const PassesProfileHandler &) = delete;
+  PassesProfileHandler &operator=(PassesProfileHandler &&) = delete;
 
-    bool enabled() const { return enabled_; }
+  bool isEnabled() const { return Enabled; }
 
-    PassesProfile serialize() const;
+  PassesProfile serialize() const;
 
-    void registerCallbacks(PassInstrumentationCallbacks &PIC);
+  void registerCallbacks(PassInstrumentationCallbacks &PIC);
 
 private:
-    void runBeforePass(StringRef P);
-    void runAfterPass(StringRef P);
+  void runBeforePass(StringRef P);
+  void runAfterPass(StringRef P);
 
-    bool enabled_ = false;
-    StringMap<Event> roots_;
-    std::vector<StringMapEntry<Event>*> pending_events_stack_;
+  bool Enabled = false;
+  StringMap<Event> Roots;
+  std::vector<StringMapEntry<Event> *> PendingEventsStack;
 };
 
-} // namespace llvm
+} // namespace llvm::kotlin

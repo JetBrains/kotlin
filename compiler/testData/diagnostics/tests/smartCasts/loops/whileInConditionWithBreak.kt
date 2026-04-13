@@ -3,10 +3,10 @@ fun bar(): Boolean { return true }
 
 fun foo(s: String?): Int {
     while (s!!.length > 0) {
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        s.length
         if (bar()) break
     }
-    return <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    return s.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, comparisonExpression, functionDeclaration, ifExpression, integerLiteral,

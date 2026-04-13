@@ -1,13 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun test() {
-    <!INVISIBLE_MEMBER!>Double<!>()
-    <!INVISIBLE_MEMBER!>Float<!>()
-    <!INVISIBLE_MEMBER!>Long<!>()
-    <!INVISIBLE_MEMBER!>Int<!>()
-    <!INVISIBLE_MEMBER!>Short<!>()
-    <!INVISIBLE_MEMBER!>Byte<!>()
-    <!INVISIBLE_MEMBER!>Char<!>()
-    <!INVISIBLE_MEMBER!>Boolean<!>()
+    <!INVISIBLE_REFERENCE!>Double<!>()
+    <!INVISIBLE_REFERENCE!>Float<!>()
+    <!INVISIBLE_REFERENCE!>Long<!>()
+    <!INVISIBLE_REFERENCE!>Int<!>()
+    <!INVISIBLE_REFERENCE!>Short<!>()
+    <!INVISIBLE_REFERENCE!>Byte<!>()
+    <!INVISIBLE_REFERENCE!>Char<!>()
+    <!INVISIBLE_REFERENCE!>Boolean<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration */

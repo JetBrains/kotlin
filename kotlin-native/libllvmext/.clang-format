@@ -1,0 +1,2 @@
+# These are extensions for LLVM, so they should follow LLVM formatting rules.
+BasedOnStyle: LLVM

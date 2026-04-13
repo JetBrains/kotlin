@@ -1,3 +1,0 @@
-package
-
-public fun illegalWhenBlock(/*0*/ a: kotlin.Any): kotlin.Int

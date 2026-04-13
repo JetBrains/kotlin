@@ -2,8 +2,8 @@
 // WITH_STDLIB
 
 fun main() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(get(0))
+    <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
+        println(get(0))
     }
 }
 

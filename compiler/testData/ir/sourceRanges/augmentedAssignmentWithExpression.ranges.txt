@@ -5,7 +5,7 @@
         @2:0..8:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @2:0..8:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     @3:13..38 FUN name:plusAssign visibility:public modality:FINAL <> (<this>:test.Host, x:kotlin.Int) returnType:kotlin.Unit [operator]
-      @3:4..38 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Host
+      @3:13..38 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Host
       @3:28..34 VALUE_PARAMETER kind:Regular name:x index:1 type:kotlin.Int
       @3:36..38 BLOCK_BODY
     @5:4..7:5 FUN name:test1 visibility:public modality:FINAL <> (<this>:test.Host) returnType:kotlin.Unit
@@ -35,7 +35,7 @@
   @16:0..18:1 FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @16:12..18:1 BLOCK_BODY
       @17:4..14 CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit [operator] declared in test.Host' type=kotlin.Unit origin=PLUSEQ
-        @17:4..9 CALL 'public final fun foo (): test.Host declared in test' type=test.Host origin=null
+        @17:4..9 CALL 'public final fun foo (): test.Host declared in test' type=test.Host origin=PLUSEQ
         @17:13..14 CONST Int type=kotlin.Int value=1
   @20:0..22:1 FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<test.Host>) returnType:kotlin.Unit
     @20:10..23 VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Function0<test.Host>

@@ -292,9 +292,9 @@ FILE: [ResolvedTo(IMPORTS)] classMembersScript.kts
             public final [ResolvedTo(STATUS)] val x: R|kotlin/Int| = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-            public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun receive([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public final [ResolvedTo(CONTRACTS)] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -327,4 +327,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] classMembersScript.kts
             }
 
         }
-

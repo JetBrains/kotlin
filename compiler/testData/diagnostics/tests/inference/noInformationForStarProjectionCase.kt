@@ -8,7 +8,7 @@ class X {
 
 fun main() {
     val x = X().foo(
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>mutableListOf<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE!>mutableListOf<!>()
     )
 }
 

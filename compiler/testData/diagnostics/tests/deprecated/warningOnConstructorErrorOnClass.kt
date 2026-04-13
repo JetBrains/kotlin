@@ -4,8 +4,8 @@
 @Deprecated("error", level = DeprecationLevel.ERROR)
 class Foo @Deprecated("warning", level = DeprecationLevel.WARNING) constructor()
 
-fun test1() = <!DEPRECATION, DEPRECATION_ERROR!>Foo<!>()
+fun test1() = <!DEPRECATION_ERROR!>Foo<!>()
 
-fun test2(): <!DEPRECATION_ERROR!>Foo<!> = <!DEPRECATION, DEPRECATION_ERROR!>Foo<!>()
+fun test2(): <!DEPRECATION_ERROR!>Foo<!> = <!DEPRECATION_ERROR!>Foo<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, stringLiteral */

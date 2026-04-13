@@ -14,8 +14,8 @@ class Foo<T>
 fun <T> id(x: T) = null as T
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("(Foo<out (kotlin.Number..kotlin.Number?)>..Foo<out (kotlin.Number..kotlin.Number?)>?)")!>Test.getFoo()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(Foo<out (kotlin.Number..kotlin.Number?)>..Foo<out (kotlin.Number..kotlin.Number?)>?)")!>id(Test.getFoo())<!>
+    Test.getFoo()
+    id(Test.getFoo())
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, javaFunction, nullableType,

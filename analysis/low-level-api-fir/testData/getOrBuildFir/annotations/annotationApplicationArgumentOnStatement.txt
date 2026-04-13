@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentOnStatement.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|Annotation|[Types](name = String(y) [evaluated = String(y)]) R|/x|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|

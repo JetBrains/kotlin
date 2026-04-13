@@ -1,2 +1,0 @@
-KtNameReferenceExpression(72,74): 'AA'
-  null

@@ -3,5 +3,4 @@ class C {
     field: MutableList<String> = <expr>mutableListOf()</expr>
 }
 
-// IGNORE_FE10
 // RHS of initializer is deemed unused by FE1.0

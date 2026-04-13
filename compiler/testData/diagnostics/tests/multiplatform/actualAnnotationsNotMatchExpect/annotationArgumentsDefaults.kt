@@ -9,7 +9,7 @@ expect fun explicitDefaultArgument()
 // FILE: jvm.kt
 // No special handling for this case
 @Ann
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>explicitDefaultArgument<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun explicitDefaultArgument() {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
 propertyDeclaration, stringLiteral */

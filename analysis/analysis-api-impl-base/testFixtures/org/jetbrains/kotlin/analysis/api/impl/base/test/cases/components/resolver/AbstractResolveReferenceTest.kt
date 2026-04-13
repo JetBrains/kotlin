@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.FileMarker
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.toCaretMarker
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -60,7 +59,6 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
             forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
                 defaultDirectives {
                     +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
-                    +AnalysisApiTestDirectives.IGNORE_FE10
                 }
             }
             forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/stdlib/*") {
@@ -284,9 +282,7 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
                     val name = resolvedSymbol.name
                     when (resolvedSymbol) {
                         // Special handling for unused local variables. It is the case for destructuring declaration entries
-                        is KaLocalVariableSymbol
-                            // <underscore local var> is a special name for K1
-                            if (name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR || name.asString() == "<underscore local var>") -> "_"
+                        is KaLocalVariableSymbol if (name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) -> "_"
 
                         else -> name.asString()
                     }
@@ -298,18 +294,6 @@ abstract class AbstractResolveReferenceTest : AbstractResolveTest<KtReference?>(
 
                 // Package symbol is not considered as a named one (at least yet)
                 is KaPackageSymbol -> resolvedSymbol.fqName.shortName().asString()
-
-                // Property accessors don't have names, but we might check the containing property name since it is expected
-                // to be inside the provided list
-                // Currently, only K1 cases are known to be present in the resolution result
-                is KaPropertyAccessorSymbol ->
-                    if (configurator.frontendKind == FrontendKind.Fe10) {
-                        resolvedSymbol.containingDeclaration!!.name!!.asString()
-                    } else {
-                        // Most likely, this branch will need to be dropped once K2 has a use case for it
-                        error("Unexpected symbol $resolvedSymbol. Most likely the KDoc of ${KtReference::resolvesByNames.name} should be updated to cover this case")
-                    }
-
                 else -> error("Unexpected symbol $resolvedSymbol")
             }
         }

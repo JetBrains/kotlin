@@ -12,22 +12,22 @@ fun <I> id(e: I): I = e
 
 fun test(f: (Int) -> String, g: () -> String) {
     val a0 = foo1(f)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a0<!>
+    a0
 
     val a1 = foo2(g)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>a1<!>
+    a1
 
     val a2 = foo3(f)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv2<kotlin.Int, kotlin.String>")!>a2<!>
+    a2
 
     val a3 = foo1(id(f))
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a3<!>
+    a3
 
     val a4 = foo2(id(g))
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>a4<!>
+    a4
 
     val a5 = foo3(id(f))
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv2<kotlin.Int, kotlin.String>")!>a5<!>
+    a5
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, localProperty, nullableType,

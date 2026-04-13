@@ -9,8 +9,8 @@ fun list(start: SomeObject) {
     var e: SomeObject? = start
     while (e != null) {
         // While condition makes both smart casts possible
-        <!DEBUG_INFO_SMARTCAST!>e<!>.doSomething()
-        e = <!DEBUG_INFO_SMARTCAST!>e<!>.next()
+        e.doSomething()
+        e = e.next()
     }
 }
 

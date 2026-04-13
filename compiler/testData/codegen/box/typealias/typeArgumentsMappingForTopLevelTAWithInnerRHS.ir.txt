@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt
             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               ARG arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
                 ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=<root>.Foo.Inner<kotlin.String> origin=null
-                  ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=IMPLICIT_ARGUMENT
+                  ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
                   ARG p: CONST String type=kotlin.String value="OK"
               ARG arg1: CONST String type=kotlin.String value="OK"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -91,20 +91,20 @@ FILE fqName:<root> fileName:/typeArgumentsMappingForTopLevelTAWithInnerRHS.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo.Inner2' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String> origin=null
           TYPE_ARG (of class) T2: kotlin.Int
-          ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Foo.Inner2' type=<root>.Foo.Inner2<kotlin.Int, kotlin.String> origin=null
           TYPE_ARG (of class) T2: kotlin.Int
-          ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=IMPLICIT_ARGUMENT
-      VAR name:aliasedInner type:kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> [val]
-        FUNCTION_REFERENCE 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=null reflectionTarget=<same>
+          ARG <this>: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
+      VAR name:aliasedInner type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> [val]
+        FUNCTION_REFERENCE 'public constructor <init> (p: kotlin.String) declared in <root>.Foo.Inner' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=null reflectionTarget=<same>
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               ARG arg0: CALL 'public final fun <get-p> (): kotlin.String declared in <root>.Foo.Inner' type=kotlin.String origin=GET_PROPERTY
                 ARG <this>: CALL 'public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2' type=<root>.Foo.Inner<kotlin.String> origin=INVOKE
-                  ARG <this>: GET_VAR 'val aliasedInner: kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> declared in <root>.box' type=kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=VARIABLE_AS_FUNCTION
+                  ARG <this>: GET_VAR 'val aliasedInner: @[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> declared in <root>.box' type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.Foo<kotlin.String>, @[ParameterName(name = "p")] kotlin.String, <root>.Foo.Inner<kotlin.String>> origin=VARIABLE_AS_FUNCTION
                   ARG p1: GET_VAR 'val foo: <root>.Foo<kotlin.String> declared in <root>.box' type=<root>.Foo<kotlin.String> origin=null
                   ARG p2: CONST String type=kotlin.String value="OK"
               ARG arg1: CONST String type=kotlin.String value="OK"

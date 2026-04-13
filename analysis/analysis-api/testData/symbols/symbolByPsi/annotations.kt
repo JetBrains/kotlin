@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 annotation class Anno(val param1: String, val param2: Int)
 
 @Anno(param1 = "param", 2)

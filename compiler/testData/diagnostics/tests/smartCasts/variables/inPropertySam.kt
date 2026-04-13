@@ -12,7 +12,7 @@ class Your {
         arg: String? ->
         var y = arg
         val z: String
-        if (y != null) z = <!DEBUG_INFO_SMARTCAST!>y<!>
+        if (y != null) z = y
         else z = "42"
         z
     }

@@ -4,7 +4,7 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-<!INLINE_PROPERTY_WITH_BACKING_FIELD, INLINE_PROPERTY_WITH_BACKING_FIELD{JVM}!>expect inline val <T> T.x: Int<!>
+expect inline val <T> T.x: Int
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

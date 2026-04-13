@@ -6,15 +6,15 @@ class ExcA : Exception()
 class ExcB : Exception()
 
 fun test2() {
-    val s: String? = try {
+    val s: String? <!INITIALIZER_TYPE_MISMATCH!>=<!> try {
         ""
     }
     catch (e: ExcA) {
         null
     }
-    catch (e: ExcB) <!TYPE_MISMATCH!>{
+    catch (e: ExcB) {
         10
-    }<!>
+    }
     s<!UNSAFE_CALL!>.<!>length
 }
 
@@ -45,7 +45,7 @@ fun test4() {
 }
 
 fun test5() {
-    <!UNREACHABLE_CODE!>val s: String? =<!> try {
+    val s: String? = try {
         ""
     }
     catch (e: ExcA) {
@@ -54,7 +54,7 @@ fun test5() {
     finally {
         return
     }
-    <!UNREACHABLE_CODE!>s<!UNSAFE_CALL!>.<!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test6() {

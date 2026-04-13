@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -52,4 +53,19 @@ class KotlinFunctionStubImpl(
         contract = contract,
         origin = origin,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinFunctionStubImpl &&
+                other.nameRef == nameRef &&
+                other.fqName == fqName &&
+                other.isTopLevel == isTopLevel &&
+                other.isExtension == isExtension &&
+                other.hasBody == hasBody &&
+                other.hasNoExpressionBody == hasNoExpressionBody &&
+                other.mayHaveContract == mayHaveContract &&
+                other.hasTypeParameterListBeforeFunctionName == hasTypeParameterListBeforeFunctionName &&
+                other.origin == origin &&
+                other.kdocText == kdocText &&
+                other.contract == contract
 }

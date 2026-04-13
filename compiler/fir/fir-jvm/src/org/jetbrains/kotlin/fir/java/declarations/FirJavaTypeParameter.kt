@@ -281,7 +281,6 @@ class FirJavaTypeParameterBuilder {
     lateinit var name: Name
     lateinit var symbol: FirTypeParameterSymbol
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
-    lateinit var annotationBuilder: () -> List<FirAnnotation>
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     lateinit var javaTypeParameter: JavaTypeParameter
 

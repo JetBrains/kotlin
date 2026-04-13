@@ -23,9 +23,9 @@ public class J {
 }
 
 // FILE: test.kt
-import my.<!DEPRECATION!>C<!>.Companion.a
-import my.<!DEPRECATION!>O<!>.b
-import my.<!DEPRECATION!>J<!>.c
+import <!DEPRECATION!>my.C.Companion.a<!>
+import <!DEPRECATION!>my.O.b<!>
+import <!DEPRECATION!>my.J.c<!>
 
 fun test() {
     a

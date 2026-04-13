@@ -18,8 +18,8 @@ typealias TAtoBaseNoTypeParam = BaseNoTypeParam
 // FILE: main.kt
 
 interface MainInterface {
-    fun f(): TAtoBaseWithTypeParam // Error (BaseWithTypeParam is not in library dependencies)
-    fun g(): TAtoBaseNoTypeParam // Error (BaseWithTypeParam is not in library dependencies)
+    fun f(): <!MISSING_DEPENDENCY_CLASS!>TAtoBaseWithTypeParam<!> // Error (BaseWithTypeParam is not in library dependencies)
+    fun g(): <!MISSING_DEPENDENCY_CLASS!>TAtoBaseNoTypeParam<!> // Error (BaseWithTypeParam is not in library dependencies)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeAliasDeclaration, typeParameter */

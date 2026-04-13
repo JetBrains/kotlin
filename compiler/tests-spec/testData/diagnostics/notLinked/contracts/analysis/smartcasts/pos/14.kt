@@ -59,27 +59,27 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     if (contracts.case_1(value_1)!!) {
-        value_1<!UNSAFE_CALL!>.<!>inv()
+        value_1.inv()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     if (!contracts.case_2(value_1)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
-        value_1<!UNSAFE_CALL!>.<!>inv()
+        value_1.inv()
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     if (contracts.case_3(value_1)!!) {
-        value_1<!UNSAFE_CALL!>.<!>inv()
+        value_1.inv()
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     if (<!SENSELESS_COMPARISON!>contracts.case_4(value_1) != null<!>) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte()
+        value_1.toByte()
     }
 }

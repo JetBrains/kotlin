@@ -14,13 +14,13 @@ abstract class Base<T> {
 
     @OptIn(ExperimentalContracts::class)
     fun checkIsT(s: Any?): Boolean {
-        contract { returns(true) implies (s is <!CANNOT_CHECK_FOR_ERASED, ERROR_IN_CONTRACT_DESCRIPTION!>T<!>) }
+        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (s is <!CANNOT_CHECK_FOR_ERASED!>T<!>)<!> }
         return false
     }
 
     @OptIn(ExperimentalContracts::class)
     fun <R> checkIsOwnerR(s: Any?): Boolean {
-        contract { returns(true) implies (s is <!CANNOT_CHECK_FOR_ERASED, ERROR_IN_CONTRACT_DESCRIPTION!>R<!>) }
+        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (s is <!CANNOT_CHECK_FOR_ERASED!>R<!>)<!> }
         return false
     }
 
@@ -32,14 +32,14 @@ abstract class Base<T> {
 
     open fun foo(s: String?) {
         checkNotNull(s)
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        s.length
     }
 }
 
 class Derived: Base<String>() {
     override fun foo(s: String?) {
         checkNotNull(s)
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        s.length
     }
 
     fun test_1(s: Any) {
@@ -56,14 +56,14 @@ class Derived: Base<String>() {
 
     fun test_3(s: Any) {
         if (checkIsReifiedR<String>(s)) {
-            s.<!UNRESOLVED_REFERENCE!>length<!>
+            s.length
         }
     }
 }
 
 fun test_1(d: Derived, s: String?) {
     d.checkNotNull(s)
-    <!DEBUG_INFO_SMARTCAST!>s<!>.length
+    s.length
 }
 
 fun test_2(d: Derived, s: Any?) {
@@ -80,7 +80,7 @@ fun test_3(d: Derived, s: Any?) {
 
 fun test_4(d: Derived, s: Any?) {
     if (d.checkIsReifiedR<String>(s)) {
-        s.<!UNRESOLVED_REFERENCE!>length<!>
+        s.length
     }
 }
 

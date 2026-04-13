@@ -74,4 +74,3 @@ class SettingType<out V : Any> {
   }
 
 }
-

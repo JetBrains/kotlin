@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAnyOptionsDeprecated
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -21,15 +20,6 @@ interface KotlinMetadataCompilation<T : KotlinAnyOptionsDeprecated> : KotlinComp
 open class KotlinCommonCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) :
     @Suppress("DEPRECATION_ERROR") AbstractKotlinCompilation<KotlinAnyOptionsDeprecated>(compilation),
     KotlinMetadataCompilation<KotlinAnyOptionsDeprecated> {
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.ERROR,
-    )
-    override val compileKotlinTask: KotlinCompileCommon
-        get() = compilation.compileKotlinTask as KotlinCompileCommon
-
     @Suppress("UNCHECKED_CAST")
     override val compileTaskProvider: TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>
         get() = compilation.compileTaskProvider as TaskProvider<KotlinCompilationTask<KotlinMultiplatformCommonCompilerOptions>>

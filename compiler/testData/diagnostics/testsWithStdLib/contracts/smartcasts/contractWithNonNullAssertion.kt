@@ -28,25 +28,25 @@ fun returnsNotNullIfValueNotNull(value: Int?): Boolean? {
 
 fun case_1(value: Int?) {
     if (returnsTrueIfNotNullNullable(value)!!) {
-        value<!UNSAFE_CALL!>.<!>inv()
+        value.inv()
     }
 }
 
 fun case_2(value: Int?) {
     if (returnsTrueIfNotNull(value)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
-        value<!UNSAFE_CALL!>.<!>inv()
+        value.inv()
     }
 }
 
 fun case_3(value: Int?) {
     if (returnsNotNullIfValueNotNull(value)!!) {
-        value<!UNSAFE_CALL!>.<!>inv()
+        value.inv()
     }
 }
 
 fun case_4(value: Int?) {
     returnsNotNullIfValueNotNull(value)!!
-    value<!UNSAFE_CALL!>.<!>inv()
+    value.inv()
 }
 
 /* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, checkNotNullCall, functionDeclaration,

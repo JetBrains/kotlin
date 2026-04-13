@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCan
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
@@ -109,7 +110,10 @@ fun FirQualifierWithContextSensitiveAlternative.appendCSRAlternativeDiagnosticIf
         "All inheritors of sealed FirQualifierWithContextSensitiveAlternative should be expressions, but ${this::class.simpleName} found"
     }
 
-    if (obtainSymbol() != resolvedSimpleNameVersion?.obtainSymbol()) return false
+    val symbol = obtainSymbol()
+    if (symbol != resolvedSimpleNameVersion?.obtainSymbol()) return false
+
+    if (symbol is FirCallableSymbol<*> && symbol.hadImplicitTypeInSource()) return false
 
     when (this) {
         is FirPropertyAccessExpression -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
@@ -117,6 +121,11 @@ fun FirQualifierWithContextSensitiveAlternative.appendCSRAlternativeDiagnosticIf
     }
 
     return true
+}
+
+private fun FirCallableSymbol<*>.hadImplicitTypeInSource(): Boolean {
+    val returnSource = fir.returnTypeRef.source ?: return true
+    return returnSource.kind == KtFakeSourceElementKind.ImplicitTypeRef
 }
 
 private fun FirExpression.obtainSymbol(): FirBasedSymbol<*>? = when (this) {

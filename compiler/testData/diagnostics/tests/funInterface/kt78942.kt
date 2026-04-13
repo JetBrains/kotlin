@@ -22,36 +22,36 @@ fun interface Different<A, B> {
 fun test() {
 
     NoTypeParams {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String = ""<!>
+        <!RETURN_TYPE_MISMATCH!>fun(): String = ""<!>
     }
 
     OnlyReturn<String> {
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>""<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
     }
 
     val onlyReturn: OnlyReturn<String> = OnlyReturn lbl@{
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>""<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
     }
 
     val savedToLocal: OnlyReturn<String> = OnlyReturn {
         val res: () -> String = { "" }
-        <!TYPE_MISMATCH!>res<!>
+        <!RETURN_TYPE_MISMATCH!>res<!>
     }
 
     val toSame: ToSame<String> = ToSame { it ->
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun() = it<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it<!>
     }
 
     ToSame { it: String ->
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>it<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it<!>
     }
 
     Different<Int, String> {
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>it.toString()<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it.toString()<!>
     }
 
     val different: Different<Int, String> = Different {
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>it.toString()<!><!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it.toString()<!>
     }
 }
 

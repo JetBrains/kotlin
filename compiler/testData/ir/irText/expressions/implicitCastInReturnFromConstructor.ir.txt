@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/implicitCastInReturnFromConstructor.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Unit
               GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public constructor <init> (x: kotlin.Any?) declared in <root>.C'
-              TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              TYPE_OP type=kotlin.Unit origin=IMPLICIT_CAST typeOperand=kotlin.Unit
                 GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

@@ -21,7 +21,7 @@ public class J {
 
 // FILE: main.kt
 fun main() {
-    takeMutable(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.foo()<!>)
+    takeMutable(<!ARGUMENT_TYPE_MISMATCH!>J.foo()<!>)
 }
 
 fun takeMutable(l: MutableList<String>) {}

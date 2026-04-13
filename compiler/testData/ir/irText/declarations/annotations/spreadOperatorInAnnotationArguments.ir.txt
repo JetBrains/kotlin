@@ -32,5 +32,5 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
         public open fun toString (): kotlin.String declared in kotlin.Annotation
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     annotations:
-      A(xs = [["a"] type=kotlin.String varargElementType=kotlin.String, ["b"] type=kotlin.String varargElementType=kotlin.String] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      A(xs = ["a", "b"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
     BLOCK_BODY

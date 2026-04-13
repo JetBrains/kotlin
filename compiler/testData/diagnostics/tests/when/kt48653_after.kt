@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +ProhibitNonExhaustiveWhenOnAlgebraicTypes
 // ISSUE: KT-48653
 

@@ -17,7 +17,7 @@ fun case1() {
     var flag = false
     try {
         throw Exception()
-        <!UNREACHABLE_CODE!>flag = true<!>
+        flag = true
     } catch (e: Exception) {
         assert(!flag)
     }

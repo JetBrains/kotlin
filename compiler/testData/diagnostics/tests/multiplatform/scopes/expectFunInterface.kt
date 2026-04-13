@@ -5,21 +5,21 @@
 
 // MODULE: common
 // FILE: common.kt
-expect fun interface F1 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F1 {
     fun foo()
 }
 
-expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{JVM}!>fun<!> interface F2
+expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F2
 
-expect fun interface F3 {
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F3 {
     fun foo()
 }
 
-expect fun interface F4 {
-    fun foo()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun interface F4 {
+    fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()
 }
 
-expect <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS{JVM}!>fun<!> interface F5
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F5
 
 // MODULE: jvm()()(common)
 // FILE: main.kt
@@ -27,7 +27,7 @@ interface I {
     fun bar()
 }
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F1 {
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F1<!> {
     actual fun foo()
     fun bar()
 }
@@ -36,12 +36,12 @@ actual fun interface F2 {
     fun bar()
 }
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F3 : I {
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F3<!> : I {
     actual fun foo()
 }
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>F4<!> {}
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>F4<!> {}
 
-actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface F5 {}
+actual <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface <!EXPECT_ACTUAL_INCOMPATIBLE_FUN_INTERFACE_MODIFIER!>F5<!> {}
 
 /* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, interfaceDeclaration */

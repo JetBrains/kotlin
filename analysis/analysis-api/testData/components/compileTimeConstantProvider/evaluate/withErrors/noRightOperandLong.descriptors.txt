@@ -1,5 +1,0 @@
-expression: 2147483648
-constant: 2147483648
-constantValueKind: LongValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

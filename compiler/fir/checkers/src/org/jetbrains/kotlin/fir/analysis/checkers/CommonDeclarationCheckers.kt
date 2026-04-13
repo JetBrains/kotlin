@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueAnnotationsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirReturnValueOverrideChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.crv.FirUnusedReturnValueChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirUnusedExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -36,6 +37,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirOptionalExpectationDeclarationChecker,
         FirMissingDependencySupertypeInDeclarationsChecker,
         FirContextParametersDeclarationChecker,
+        FirUnusedExpressionChecker,
         FirUnusedReturnValueChecker,
         FirReturnValueAnnotationsChecker,
         FirIllegalCompanionBlockMemberChecker,

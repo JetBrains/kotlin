@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // CHECK_TYPE
 open class Outer<E> {
     inner open class Inner<F> {

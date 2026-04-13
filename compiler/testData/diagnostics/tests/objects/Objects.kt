@@ -5,9 +5,9 @@ open class Foo(y: Int) {
     open fun foo(): Int = 1
 }
 
-class T : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
+class T : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
 
-object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
+object A : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
     val x: Int = 2
 
     fun test(): Int {
@@ -17,7 +17,7 @@ object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
 
 object B : <!SINGLETON_IN_SUPERTYPE!>A<!> {}
 
-val c = object : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
+val c = object : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
 
 val x = A.foo()
 

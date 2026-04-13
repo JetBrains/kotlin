@@ -22,6 +22,6 @@ public class Some {
 import some.*
 import some3.*
 
-fun test() = <!UNRESOLVED_REFERENCE!>Some<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+fun test() = <!NONE_APPLICABLE!>Some<!>.<!UNRESOLVED_REFERENCE!>foo<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration */

@@ -152,8 +152,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
             <Unresolved name: receive>#(R|/property|)
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val property: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val property: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
 
 
 FILE RAW TO BODY:
@@ -168,4 +168,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithInitializerScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val property: R|kotlin/Int| = Int(10)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-

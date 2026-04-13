@@ -36,7 +36,8 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                  ARG <this>: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.En' type=kotlin.Any? origin=null
+                  ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
+                    GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.En' type=kotlin.Any? origin=null
     CONSTRUCTOR visibility:private returnType:<root>.En [primary]
       VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.String?
       BLOCK_BODY

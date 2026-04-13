@@ -41,6 +41,11 @@ abstract class AbstractPsiParsingTestBase : AbstractPsiBasedTest() {
                     checkPsiGetters(testServices, element)
                     super.visitKtElement(element)
                 }
+
+                override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
+                    checkDestructuringDeclarationEntry(testServices, multiDeclarationEntry)
+                    super.visitDestructuringDeclarationEntry(multiDeclarationEntry)
+                }
             })
         }
     }
@@ -65,6 +70,15 @@ abstract class AbstractPsiParsingTestBase : AbstractPsiBasedTest() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun checkDestructuringDeclarationEntry(testServices: TestServices, entry: KtDestructuringDeclarationEntry) {
+        val parent = PsiTreeUtil.getParentOfType(entry, KtDestructuringDeclaration::class.java)
+        if (parent != null) {
+            testServices.assertions.assertTrue(entry in parent.entries) {
+                "KtDestructuringDeclarationEntry '${entry.name}' is not found in parent's getEntries()"
             }
         }
     }

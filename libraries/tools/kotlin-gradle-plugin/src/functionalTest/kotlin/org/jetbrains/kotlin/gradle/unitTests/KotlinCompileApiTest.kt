@@ -104,13 +104,6 @@ class KotlinCompileApiTest {
         assertEquals(setOf(pluginDependency, anotherCompilerPlugin), taskImpl.pluginClasspath.files)
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @Test
-    fun testModuleName() {
-        taskApi.moduleName.set("foo")
-        assertEquals("foo", taskImpl.moduleName.get())
-    }
-
     @Test
     fun testSourceSetName() {
         taskApi.sourceSetName.set("sourceSetFoo")
@@ -198,7 +191,7 @@ class KotlinCompileApiTest {
         val jvmTask = plugin.registerKotlinJvmCompileTask(
             "jvmTask",
             jvmExtension.compilerOptions,
-            plugin.providerFactory.provider {  jvmExtension.explicitApi }
+            plugin.providerFactory.provider { jvmExtension.explicitApi }
         )
 
         jvmExtension.compilerOptions.jvmTarget.set(JvmTarget.JVM_21)

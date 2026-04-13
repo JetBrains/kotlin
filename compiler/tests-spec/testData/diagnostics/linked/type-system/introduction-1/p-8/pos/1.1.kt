@@ -30,20 +30,20 @@ class Case4(val x: String, val y: Any? = checkSubtype<Any?>(throw Exception()))
 
 // TESTCASE NUMBER: 5
 fun case_5() {
-    <!UNREACHABLE_CODE!>checkSubtype<Any?>(<!>return<!UNREACHABLE_CODE!>)<!>
+    checkSubtype<Any?>(return)
 }
 
 // TESTCASE NUMBER: 6
 fun case_6() {
     while (true) {
-        <!UNREACHABLE_CODE!>checkSubtype<Any?>(<!>break<!UNREACHABLE_CODE!>)<!>
+        checkSubtype<Any?>(break)
     }
 }
 
 // TESTCASE NUMBER: 7
 fun case_7(x: Boolean) {
     while (x) {
-        <!UNREACHABLE_CODE!>checkSubtype<Any?>(<!>continue<!UNREACHABLE_CODE!>)<!>
+        checkSubtype<Any?>(continue)
     }
 }
 

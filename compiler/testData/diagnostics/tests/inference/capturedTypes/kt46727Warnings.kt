@@ -26,8 +26,8 @@ public class Foo3<T> {
 // --- from Java --- //
 
 fun takeStarFoo(x: Foo<*>) {
-    <!TYPE_MISMATCH_WARNING("Nothing!; String")!>x.value = "test"<!>
-    <!TYPE_MISMATCH_WARNING("Nothing!; String")!><!SMARTCAST_IMPOSSIBLE!>x.value<!> += "test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main1() {
@@ -44,8 +44,8 @@ public class Bar<T> {
 }
 
 fun takeStarBar(x: Bar<*>) {
-    <!SETTER_PROJECTED_OUT!>x.value<!> = "test"
-    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main2() {
@@ -58,8 +58,8 @@ fun main2() {
 // --- from Java (nullable) --- //
 
 fun takeStarFoo2(x: Foo2<*>) {
-    <!TYPE_MISMATCH_WARNING("Nothing?; String")!>x.value = "test"<!>
-    <!TYPE_MISMATCH_WARNING("Nothing?; String")!><!SMARTCAST_IMPOSSIBLE!>x.value<!> += "test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main3() {
@@ -75,8 +75,8 @@ public class Bar2<T> {
 }
 
 fun takeStarBar2(x: Bar2<*>) {
-    x.value = <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS("Nothing?; String; Bar2<CapturedType(*)>; public final var value: T? defined in Bar2")!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main4() {
@@ -89,8 +89,8 @@ fun main4() {
 // --- from Java (not-null) --- //
 
 fun takeStarFoo3(x: Foo3<*>) {
-    <!TYPE_MISMATCH_WARNING("Nothing; String")!>x.value = "test"<!>
-    <!TYPE_MISMATCH_WARNING("Nothing; String")!><!SMARTCAST_IMPOSSIBLE!>x.value<!> += "test"<!>
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main5() {
@@ -107,8 +107,8 @@ class Bar3<T> {
 }
 
 fun takeStarBar3(x: Bar3<*>) {
-    x.value = <!TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS("Nothing?; String; Bar3<CapturedType(*)>; public final var value: T? defined in Bar3")!>"test"<!>
-    x.value <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> "test"
+    x.value <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "test"
+    x.value <!NONE_APPLICABLE!>+=<!> "test"
 }
 
 fun main6() {

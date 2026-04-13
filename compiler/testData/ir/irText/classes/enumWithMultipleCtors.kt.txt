@@ -4,7 +4,7 @@ open enum class A : Enum<A> {
   Y = Y()
   private enum entry class Y : A {
     private constructor() /* primary */ {
-      super/*A*/() /*~> Unit */
+      super/*A*/()
       /* <init>() */
 
     }

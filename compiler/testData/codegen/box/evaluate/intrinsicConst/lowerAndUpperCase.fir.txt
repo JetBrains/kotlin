@@ -1,0 +1,71 @@
+FILE: lowerAndUpperCase.kt
+    public final fun <T> R|T|.id(): R|T| {
+        ^id this@R|/id|
+    }
+    public final const [EvaluatedValue=String(lowercase)] val lowercase1: R|kotlin/String| = String(lowercase).R|kotlin/text/lowercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(lowercase)] val lowercase2: R|kotlin/String| = String(Lowercase).R|kotlin/text/lowercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(lowercase)] val lowercase3: R|kotlin/String| = String(lowercasE).R|kotlin/text/lowercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(UPPERCASE)] val uppercase1: R|kotlin/String| = String(uppercase).R|kotlin/text/uppercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(UPPERCASE)] val uppercase2: R|kotlin/String| = String(Uppercase).R|kotlin/text/uppercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(UPPERCASE)] val uppercase3: R|kotlin/String| = String(uppercasE).R|kotlin/text/uppercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(CHAINED)] val lowerUpperCaseChained1: R|kotlin/String| = String(cHaInEd).R|kotlin/text/lowercase|().R|kotlin/text/uppercase|()
+        public get(): R|kotlin/String|
+    public final const [EvaluatedValue=String(chained)] val lowerUpperCaseChained2: R|kotlin/String| = String(cHaInEd).R|kotlin/text/uppercase|().R|kotlin/text/lowercase|()
+        public get(): R|kotlin/String|
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|/lowercase1|.R|/id|<R|kotlin/String|>(), String(lowercase)) ->  {
+                ^box String(Fail lowercase1)
+            }
+        }
+
+        when () {
+            !=(R|/lowercase2|.R|/id|<R|kotlin/String|>(), String(lowercase)) ->  {
+                ^box String(Fail lowercase2)
+            }
+        }
+
+        when () {
+            !=(R|/lowercase3|.R|/id|<R|kotlin/String|>(), String(lowercase)) ->  {
+                ^box String(Fail lowercase3)
+            }
+        }
+
+        when () {
+            !=(R|/uppercase1|.R|/id|<R|kotlin/String|>(), String(UPPERCASE)) ->  {
+                ^box String(Fail uppercase1)
+            }
+        }
+
+        when () {
+            !=(R|/uppercase2|.R|/id|<R|kotlin/String|>(), String(UPPERCASE)) ->  {
+                ^box String(Fail uppercase2)
+            }
+        }
+
+        when () {
+            !=(R|/uppercase3|.R|/id|<R|kotlin/String|>(), String(UPPERCASE)) ->  {
+                ^box String(Fail uppercase3)
+            }
+        }
+
+        when () {
+            !=(R|/lowerUpperCaseChained1|.R|/id|<R|kotlin/String|>(), String(CHAINED)) ->  {
+                ^box String(Fail lowerUpperCaseChained1)
+            }
+        }
+
+        when () {
+            !=(R|/lowerUpperCaseChained2|.R|/id|<R|kotlin/String|>(), String(chained)) ->  {
+                ^box String(Fail lowerUpperCaseChained2)
+            }
+        }
+
+        ^box String(OK)
+    }

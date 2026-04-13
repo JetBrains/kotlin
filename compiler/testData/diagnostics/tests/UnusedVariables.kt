@@ -5,15 +5,15 @@
 package unused_variables
 
 fun testSimpleCases() {
-    var i = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>2<!>
-    <!UNUSED_VALUE!>i =<!> 34
+    var i = 2
+    i = 34
     i = 34
     doSmth(i)
-    <!UNUSED_VALUE!>i =<!> 5
+    i = 5
 
     var j = 2
-    j = <!UNUSED_CHANGED_VALUE!>j++<!>
-    <!UNUSED_VALUE!>j =<!> <!UNUSED_CHANGED_VALUE!>j--<!>
+    j = j++
+    j = j--
 }
 
 class IncDec() {
@@ -28,17 +28,17 @@ class MyTest() {
       ++x
       x--
       --x
-      x = <!UNUSED_CHANGED_VALUE!>x++<!>
-      x = <!UNUSED_CHANGED_VALUE!>x--<!>
+      x = x++
+      x = x--
       x = ++x
-      <!UNUSED_VALUE!>x =<!> --x
+      x = --x
     }
 
     var a: String = "s"
         set(v: String) {
             var i: Int = 23
             doSmth(i)
-            <!UNUSED_VALUE!>i =<!> 34
+            i = 34
             field = v
         }
 
@@ -49,9 +49,9 @@ class MyTest() {
     fun testSimple() {
         a = "rro"
 
-        var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = 1;
-        <!UNUSED_VALUE!>i =<!> 34;
-        <!UNUSED_VALUE!>i =<!> 456;
+        var i = 1;
+        i = 34;
+        i = 456;
     }
 
     fun testWhile() {
@@ -61,7 +61,7 @@ class MyTest() {
             a = null
         }
         while (b != null) {
-            <!UNUSED_VALUE!>a =<!> null
+            a = null
         }
     }
 
@@ -72,15 +72,15 @@ class MyTest() {
         }
         else {
             a = "ss"
-            doSmth(<!DEBUG_INFO_SMARTCAST!>a<!>)
+            doSmth(a)
         }
         doSmth(a)
 
         if (1 < 2) {
-            <!UNUSED_VALUE!>a =<!> 23
+            a = 23
         }
         else {
-            <!UNUSED_VALUE!>a =<!> "ss"
+            a = "ss"
         }
     }
 
@@ -90,12 +90,12 @@ class MyTest() {
         }
     }
 
-    fun doSmth(<!UNUSED_PARAMETER!>s<!>: String) {}
-    fun doSmth(<!UNUSED_PARAMETER!>a<!>: Any) {}
+    fun doSmth(s: String) {}
+    fun doSmth(a: Any) {}
 }
 
 fun testInnerFunctions() {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>y<!> = 1
+    var y = 1
     fun foo() {
         y = 1
     }
@@ -107,11 +107,11 @@ fun testInnerFunctions() {
 
 fun testFunctionLiterals() {
     var x = 1
-    var <!UNUSED_VARIABLE!>fl<!> = {
+    var fl = {
         x
     }
     var y = 2
-    var <!UNUSED_VARIABLE!>fl1<!> = {
+    var fl1 = {
         doSmth(y)
     }
 }
@@ -134,7 +134,7 @@ fun testObject() : Trait {
     return o
 }
 
-fun doSmth(<!UNUSED_PARAMETER!>i<!> : Int) {}
+fun doSmth(i : Int) {}
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, comparisonExpression, equalityExpression,
 forLoop, functionDeclaration, getter, ifExpression, incrementDecrementExpression, init, integerLiteral,

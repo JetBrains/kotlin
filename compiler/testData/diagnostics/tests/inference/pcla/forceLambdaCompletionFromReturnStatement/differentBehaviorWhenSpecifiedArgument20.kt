@@ -20,7 +20,7 @@ fun main() {
         // PCLA mode: analysis of lambdas in return positions is performed immediately
         return@func { containerB/*: Container<Bv> */ ->
             // ok
-            consume<Child>(<!TYPE_MISMATCH!>containerB.produce()<!>) // Bv <: Child
+            consume<Child>(<!ARGUMENT_TYPE_MISMATCH!>containerB.produce()<!>) // Bv <: Child
         }
         // resulting system of constraints:
         // Bv <: Av <: Parent
@@ -37,7 +37,7 @@ fun main() {
         // resulting type arguments: Bv = Parent
         return@func { containerB/*: Container<Parent> */ ->
             // ARGUMENT_TYPE_MISMATCH: Parent </: Child
-            consume<Child>(<!TYPE_MISMATCH!>containerB.produce()<!>)
+            consume<Child>(<!ARGUMENT_TYPE_MISMATCH!>containerB.produce()<!>)
         }
     }
     // resulting expression type: TypePair<Parent, Parent>

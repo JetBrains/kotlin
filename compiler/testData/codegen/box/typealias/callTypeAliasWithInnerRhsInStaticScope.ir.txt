@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/callTypeAliasWithInnerRhsInStaticScope.kt
             ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
         VAR name:callable type:kotlin.reflect.KFunction0<<root>.C.Inner> [val]
           FUNCTION_REFERENCE 'public constructor <init> () declared in <root>.C.Inner' type=kotlin.reflect.KFunction0<<root>.C.Inner> origin=null reflectionTarget=<same>
-            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=null
+            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.f' type=<root>.C origin=IMPLICIT_ARGUMENT
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0' type=<root>.C.Inner origin=INVOKE
             ARG <this>: GET_VAR 'val callable: kotlin.reflect.KFunction0<<root>.C.Inner> declared in <root>.C.f' type=kotlin.reflect.KFunction0<<root>.C.Inner> origin=VARIABLE_AS_FUNCTION
@@ -81,18 +81,18 @@ FILE fqName:<root> fileName:/callTypeAliasWithInnerRhsInStaticScope.kt
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner' type=<root>.C.Inner origin=null
-          ARG <this>: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C.Inner2' type=<root>.C.Inner2<kotlin.String> origin=null
           TYPE_ARG (of class) K: kotlin.String
-          ARG <this>: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
       CALL 'public final fun f (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
-      VAR name:callable type:kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> [val]
-        FUNCTION_REFERENCE 'public constructor <init> () declared in <root>.C.Inner' type=kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> origin=null reflectionTarget=<same>
+      VAR name:callable type:@[ExtensionFunctionType] kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> [val]
+        FUNCTION_REFERENCE 'public constructor <init> () declared in <root>.C.Inner' type=@[ExtensionFunctionType] kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> origin=null reflectionTarget=<same>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction1): R of kotlin.reflect.KFunction1 declared in kotlin.reflect.KFunction1' type=<root>.C.Inner origin=INVOKE
-          ARG <this>: GET_VAR 'val callable: kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> declared in <root>.box' type=kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> origin=VARIABLE_AS_FUNCTION
+          ARG <this>: GET_VAR 'val callable: @[ExtensionFunctionType] kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> declared in <root>.box' type=@[ExtensionFunctionType] kotlin.reflect.KFunction1<<root>.C, <root>.C.Inner> origin=VARIABLE_AS_FUNCTION
           ARG p1: GET_VAR 'val c: <root>.C declared in <root>.box' type=<root>.C origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun with <T, R> (receiver: T of kotlin.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.with, R of kotlin.with>): R of kotlin.with declared in kotlin' type=<root>.C.Inner2<kotlin.Int> origin=null

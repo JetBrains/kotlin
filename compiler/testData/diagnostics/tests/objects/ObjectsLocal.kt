@@ -23,7 +23,7 @@ fun test() {
     B.foo()
 }
 
-val bb = <!UNRESOLVED_REFERENCE!>B<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
+val bb = <!UNRESOLVED_REFERENCE!>B<!>.foo()
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
 localProperty, objectDeclaration, propertyDeclaration */

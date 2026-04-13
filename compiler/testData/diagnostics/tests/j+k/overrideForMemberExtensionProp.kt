@@ -24,10 +24,10 @@ public class Derived extends Base {
 
 // FILE: main.kt
 fun test(x: Derived) {
-    Derived::getA
+    Derived::<!UNRESOLVED_REFERENCE!>getA<!>
     Derived::<!UNRESOLVED_REFERENCE!>a<!>
-    x::getA
-    x.getA("")
+    x::<!UNRESOLVED_REFERENCE!>getA<!>
+    x.<!UNRESOLVED_REFERENCE!>getA<!>("")
     with(x) {
         "".a
     }

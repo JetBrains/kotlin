@@ -26,9 +26,9 @@ fun case_1() {
     val result_2 = select(A(B()), A(x), A(if (true) B() else null))
     val result_3 = select(A(x), A(if (true) B() else null))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(B..B?)>")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(B..B?)>")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(B..B?)>")!>result_3<!>
+    result_1
+    result_2
+    result_3
 }
 
 fun case_2() {
@@ -37,7 +37,7 @@ fun case_2() {
 
     val result = select(A(Any()), A(y), A(x))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.Any..kotlin.Any?)>")!>result<!>
+    result
 }
 
 fun <T> case_3() {
@@ -45,7 +45,7 @@ fun <T> case_3() {
     val y: T? = null
     val result = select(A(y), A(x), A(null as T))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result<!>
+    result
 }
 
 fun case_4() {
@@ -54,7 +54,7 @@ fun case_4() {
 
     val result = select(A(x), A(y), A(return))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.Nothing..kotlin.Nothing?)>")!>result<!>
+    result
 }
 
 class C<T, K, L>(x: T, y: K, z: L)
@@ -66,8 +66,8 @@ fun case_5() {
     val result_1 = select(C(x, B(), 10), C(B(), x, 10))
     val result_2 = select(C(B(), x, y), C(x, B(), y), C(y, x, B()), C(x, y, B()), C(y, B(), x), C(B(), y, x))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<(B..B?), B, kotlin.Int>")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<(B..B?), (B..B?), (B..B?)>")!>result_2<!>
+    result_1
+    result_2
 }
 
 fun case_6() {
@@ -85,20 +85,20 @@ fun case_6() {
     val result_2 = select(x9, x8, x7, x6, x5, x4, x3, x2, x1)
     val result_3 = select(x5, x7, x9, x3, x1, x2, x8, x4, x6)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<out C<out A<(kotlin.Float..kotlin.Float?)>?, (B..B?), (kotlin.Int..kotlin.Int?)>?, (B..B?), (B..B?)>?")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<out C<out A<(kotlin.Float..kotlin.Float?)>?, (B..B?), (kotlin.Int..kotlin.Int?)>?, (B..B?), (B..B?)>?")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<out C<out A<(kotlin.Float..kotlin.Float?)>?, (B..B?), (kotlin.Int..kotlin.Int?)>?, (B..B?), (B..B?)>?")!>result_3<!>
+    result_1
+    result_2
+    result_3
 }
 
 fun case_7() {
     val x0: Int = 1
     val x1 = C(A(Test.id(x0)), B(), B())
     val x2 = C(Test.id(A(1)), B(), B())
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<A<(kotlin.Int..kotlin.Int?)>, B, B>")!>x1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<(A<kotlin.Int>..A<kotlin.Int>?), B, B>")!>x2<!>
+    x1
+    x2
 
     val result_5 = select(x1, x2)
-    <!DEBUG_INFO_EXPRESSION_TYPE("C<A<(kotlin.Int..kotlin.Int?)>, B, B>")!>result_5<!>
+    result_5
 }
 
 fun case_8() {
@@ -107,7 +107,7 @@ fun case_8() {
     val x3 = Test.id(A(null))
 
     val result_1 = select(x1, x2, x3)
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out {Comparable<*>? & java.io.Serializable?}>?")!>result_1<!>
+    result_1
 }
 
 fun case_9() {
@@ -116,7 +116,7 @@ fun case_9() {
     val x3 = A(Test.id(A('s')))
 
     val result_1 = select(x1, x2, x3)
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out A<out {Comparable<*> & java.io.Serializable}>?>")!>result_1<!>
+    result_1
 }
 
 fun case_10() {
@@ -131,12 +131,12 @@ fun case_10() {
     val result_5 = select(x3, x2, x1)
     val result_6 = select(x3, x1, x2)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>result_3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>result_4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>result_5<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>result_6<!>
+    result_1
+    result_2
+    result_3
+    result_4
+    result_5
+    result_6
 }
 
 fun <T> case_11(y: T) {
@@ -164,30 +164,30 @@ fun <T> case_11(y: T) {
         val result_17 = select(y as T, x3)
         val result_18 = select(x3, y as T)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>x1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T & Any..T?)")!>x3<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T & Any")!>y<!>
+        x1
+        x2
+        x3
+        y
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<out (T..T?)>")!>result_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<out T?>")!>result_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_3<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_5<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_6<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_7<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_9<!>
+        result_1
+        result_2
+        result_3
+        result_4
+        result_5
+        result_6
+        result_7
+        result_8
+        result_9
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_10<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>result_11<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>result_12<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_13<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>result_14<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>result_15<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_16<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_17<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_18<!>
+        result_10
+        result_11
+        result_12
+        result_13
+        result_14
+        result_15
+        result_16
+        result_17
+        result_18
     }
 }
 
@@ -205,14 +205,14 @@ fun case_12() {
     val result_7 = select(A(x3), A(x1), A(x2))
     val result_8 = select(A(x1), A(x3))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<kotlin.Int>..kotlin.collections.List<kotlin.Int>?)")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?")!>result_3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Int>?")!>result_4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_5<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<kotlin.collections.MutableList<kotlin.Int>>")!>result_6<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_7<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_8<!>
+    result_1
+    result_2
+    result_3
+    result_4
+    result_5
+    result_6
+    result_7
+    result_8
 }
 
 fun case_13() {
@@ -234,18 +234,18 @@ fun case_13() {
     val result_11 = select(A(x4), A(x2))
     val result_12 = select(A(x4), A(x3), A(x2))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_5<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_6<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_7<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_8<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_9<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<kotlin.collections.MutableList<kotlin.Int>>")!>result_10<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<kotlin.collections.List<kotlin.Int>?>")!>result_11<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_12<!>
+    result_1
+    result_2
+    result_3
+    result_4
+    result_5
+    result_6
+    result_7
+    result_8
+    result_9
+    result_10
+    result_11
+    result_12
 }
 
 fun case_14() {
@@ -262,14 +262,14 @@ fun case_14() {
     val result_7 = select(A(x3), A(x1), A(x2))
     val result_8 = select(A(x1), A(x3))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)")!>result_1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)")!>result_2<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.List<kotlin.Any?>?..kotlin.collections.List<*>?)")!>result_3<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.collections.MutableList<out kotlin.Any?>?..kotlin.collections.List<*>?)")!>result_4<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)>")!>result_5<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>..kotlin.collections.List<*>?)>")!>result_6<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.List<kotlin.Any?>?..kotlin.collections.List<*>?)>")!>result_7<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<out (kotlin.collections.MutableList<out kotlin.Any?>?..kotlin.collections.List<*>?)>")!>result_8<!>
+    result_1
+    result_2
+    result_3
+    result_4
+    result_5
+    result_6
+    result_7
+    result_8
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, equalityExpression, flexibleType, functionDeclaration,

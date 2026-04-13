@@ -15,15 +15,15 @@ expect class ViaTypealias<@Ann A>
 
 expect class TypealiasParamNotAccepted<@Ann A>
 
-expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!><@Ann A, @Ann B><!> withIncompatibility()
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun <@Ann A, @Ann B> withIncompatibility()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual fun <A> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inMethod<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun <A> inMethod() {}
 
-actual fun <@Ann A, B> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inMethodTwoParams<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun <@Ann A, B> inMethodTwoParams() {}
 
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>InClass<!><A>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class InClass<A>
 
 class ViaTypealiasImpl<@Ann A>
 
@@ -31,9 +31,9 @@ actual typealias ViaTypealias<A> = ViaTypealiasImpl<A>
 
 class TypealiasParamNotAcceptedImpl<A>
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>TypealiasParamNotAccepted<!><@Ann A> = TypealiasParamNotAcceptedImpl<A>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias TypealiasParamNotAccepted<@Ann A> = TypealiasParamNotAcceptedImpl<A>
 
-actual fun <!ACTUAL_WITHOUT_EXPECT!><A><!> withIncompatibility() {}
+actual fun <A> <!ACTUAL_WITHOUT_EXPECT!>withIncompatibility<!>() {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nullableType,
 typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

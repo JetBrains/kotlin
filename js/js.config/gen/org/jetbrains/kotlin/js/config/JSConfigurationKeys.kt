@@ -205,6 +205,9 @@ object JSConfigurationKeys {
     @JvmField
     val PRESERVE_IC_ORDER = CompilerConfigurationKey.create<Boolean>("PRESERVE_IC_ORDER")
 
+    @JvmField
+    val IC_FILES_TO_LOAD = CompilerConfigurationKey.create<Set<String>>("IC_FILES_TO_LOAD")
+
 }
 
 var CompilerConfiguration.wasmCompilation: Boolean
@@ -414,4 +417,8 @@ var CompilerConfiguration.icCacheReadOnly: Boolean
 var CompilerConfiguration.preserveIcOrder: Boolean
     get() = getBoolean(JSConfigurationKeys.PRESERVE_IC_ORDER)
     set(value) { put(JSConfigurationKeys.PRESERVE_IC_ORDER, value) }
+
+var CompilerConfiguration.icFilesToLoad: Set<String>
+    get() = getSet(JSConfigurationKeys.IC_FILES_TO_LOAD)
+    set(value) { put(JSConfigurationKeys.IC_FILES_TO_LOAD, value) }
 

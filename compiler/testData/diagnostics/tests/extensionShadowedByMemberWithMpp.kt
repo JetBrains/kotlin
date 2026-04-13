@@ -4,7 +4,7 @@
 
 expect class Test
 
-expect val Test.<!EXTENSION_SHADOWED_BY_MEMBER{JVM}!>number<!>: Int
+expect val Test.number: Int
 
 // MODULE: jvm()()(common)
 
@@ -12,7 +12,7 @@ actual class Test {
   val number = 10
 }
 
-actual val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>number<!> get() = this.number
+actual val Test.number get() = this.number
 
 // MODULE: js()()(common)
 

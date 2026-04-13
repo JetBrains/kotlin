@@ -8,7 +8,7 @@ open class M() {
 class N() : M() {
     val a : Int
         get() {
-            <!VAL_REASSIGNMENT!>super.b<!> = super.b + 1
+            super.<!VAL_REASSIGNMENT!>b<!> = super.b + 1
             return super.b + 1
         }
     override val b: Int = a + 1

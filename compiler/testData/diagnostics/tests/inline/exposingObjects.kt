@@ -5,36 +5,36 @@
 class C {
     private companion object Companion
     private object Obj
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion<!>
+    typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion
 
     inline fun foo() {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Obj<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>TA<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Obj<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>TA<!>
     }
 
     internal inline fun foo2() {
-        Companion
-        Obj
-        TA
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Obj<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>TA<!>
     }
 }
 
 class C2 {
     protected companion object Companion
     protected object Obj
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion<!>
+    typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>TA<!> = Companion
 
     inline fun foo() {
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>Companion<!>
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>Obj<!>
-        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>TA<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Obj<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>TA<!>
     }
 
     internal inline fun foo2() {
-        Companion
-        Obj
-        TA
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Obj<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>TA<!>
     }
 }
 

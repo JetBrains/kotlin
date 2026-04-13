@@ -18,9 +18,9 @@ fun <T> bar(a: A<T>, w: T) {
         baz(a, w)
 
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, 1)
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>w<!>)
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>""<!>)
+            baz(a, 1)
+            baz(a, w)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
         }
 
         if (a is B || a is C) {

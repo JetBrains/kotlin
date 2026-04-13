@@ -2,17 +2,17 @@
 // LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 // see https://youtrack.jetbrains.com/issue/KT-21515
 
-abstract class <!CYCLIC_SCOPES_WITH_COMPANION!>DerivedAbstract<!> : C.Base() {
+abstract class DerivedAbstract : C.Base() {
     open class Data
 }
 
 public class C {
 
-    open class <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!> ()
+    open class Base ()
 
-    class Foo : <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Data<!>()
+    class Foo : <!UNRESOLVED_REFERENCE!>Data<!>()
 
-    companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
+    companion object : DerivedAbstract()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, primaryConstructor */

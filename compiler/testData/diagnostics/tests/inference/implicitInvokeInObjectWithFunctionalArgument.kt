@@ -10,8 +10,8 @@ fun test(s: String): String {
     val a = TestClass { TestClass { TestClass } }
     a checkType { _<TestClass>() }
 
-    <!UNREACHABLE_CODE!>val b =<!> TestClass { return s }
-    <!UNREACHABLE_CODE!>b checkType { _<Nothing>() }<!>
+    val b = TestClass { return s }
+    b checkType { _<Nothing>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,

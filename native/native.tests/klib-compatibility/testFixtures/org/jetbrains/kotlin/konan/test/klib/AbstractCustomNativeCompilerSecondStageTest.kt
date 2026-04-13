@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.konan.test.Fir2IrCliNativeFacade
-import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
-import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.configuration.commonConfigurationForNativeFirstStageUpToSerialization
@@ -28,7 +25,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TargetBackendTestSkipper
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
@@ -46,7 +42,6 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
             ::TargetBackendTestSkipper,
         )
         defaultDirectives {
-            FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             +DISABLE_FIR_DUMP_HANDLER
             if (customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
                 // We need to set the custom LV to let `UnsupportedFeaturesTestConfigurator` skip tests with
@@ -65,12 +60,7 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
         useAdditionalSourceProviders(
             ::NativeLauncherAdditionalSourceProvider,
         )
-        commonConfigurationForNativeFirstStageUpToSerialization(
-            FrontendKinds.FIR,
-            ::FirCliNativeFacade,
-            ::Fir2IrCliNativeFacade,
-            ::NativePreSerializationLoweringCliFacade,
-        )
+        commonConfigurationForNativeFirstStageUpToSerialization()
         facadeStep(::KlibSerializerNativeCliFacade)
         klibArtifactsHandlersStep {
             useHandlers(::KlibAbiDumpHandler)

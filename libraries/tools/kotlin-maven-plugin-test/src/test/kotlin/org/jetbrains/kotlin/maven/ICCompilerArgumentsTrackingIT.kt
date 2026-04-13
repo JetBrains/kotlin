@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.maven
 
 import org.jetbrains.kotlin.maven.test.*
+import org.jetbrains.kotlin.maven.test.TestVersions.Java.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
+@DisplayName("Incremental compilation compiler arguments tracking")
 class ICCompilerArgumentsTrackingIT : KotlinMavenTestBase() {
     @MavenTest
     @DisplayName("Adding compiler language version triggers full rebuild")
@@ -342,6 +344,40 @@ class ICCompilerArgumentsTrackingIT : KotlinMavenTestBase() {
             build("package", "-X") {
                 assertBuildLogDoesNotContain("Expected performance impact from inlining is insignificant")
                 assertCompiledKotlin("src/main/kotlin/Dummy.kt")
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("Changing toolchain JDK triggers full rebuild")
+    fun rebuildOnToolchainChange(mavenVersion: TestVersions.Maven) {
+        testProject("kotlinWithTests", mavenVersion) {
+            addMavenToolchainsPlugin("21")
+
+            build(
+                "test-compile", "-X",
+                buildOptions = buildOptions.copy(toolchains = listOf(JDK_17, JDK_21)),
+            ) {
+                assertBuildLogContains(UNKNOWN_INPUTS_CHANGES_MESSAGE)
+                assertToolchainAppliedToGoal("compile", jdk21)
+                assertToolchainAppliedToGoal("test-compile", jdk21)
+                assertGoalCompilerArgsContain("compile", "-jdk-home", jdk21)
+                assertGoalCompilerArgsContain("test-compile", "-jdk-home", jdk21)
+            }
+
+            // Switch toolchain from JDK 21 to JDK 17 - IC must detect the jdk-home argument change
+            modifyMavenToolchainsPluginJdkVersion("17")
+
+            build(
+                "test-compile", "-X",
+                buildOptions = buildOptions.copy(toolchains = listOf(JDK_17, JDK_21)),
+            ) {
+                assertBuildLogContains(COMPILER_ARGUMENTS_CHANGED_MESSAGE)
+                assertToolchainAppliedToGoal("compile", jdk17)
+                assertToolchainAppliedToGoal("test-compile", jdk17)
+                assertGoalCompilerArgsContain("compile", "-jdk-home", jdk17)
+                assertGoalCompilerArgsContain("test-compile", "-jdk-home", jdk17)
+                assertCompiledKotlin("src/main/kotlin/SomeMain.kt", "src/test/kotlin/BaseTests.kt", "src/test/kotlin/SomeTests.kt")
             }
         }
     }

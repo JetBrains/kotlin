@@ -25,9 +25,10 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
         public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.Test'
-          CALL 'public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
-            ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
-              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNotNull' type=<root>.Test origin=null
+          TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+            CALL 'public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
+              ARG <this>: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
+                receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNotNull' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:returnNullable visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.String?
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Test
       annotations:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,8 +13,9 @@ private const val LATEST_LV_PREFIX = ".latestLV"
 private const val LL_FIR_PREFIX = ".ll"
 private const val REVERSED_PREFIX = ".reversed"
 private const val PARTIAL_BODY_PREFIX = ".partialBody"
+private const val REPL_SUFFIX = ".repl.kts"
 
-const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?\$"
+const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|fir|ll|latestLV)(\\.repl)?\\.kts?\$"
 
 val File.isFirTestData: Boolean
     get() = isCustomTestDataWithPrefix(FIR_PREFIX)
@@ -89,4 +90,9 @@ private fun File.getOriginalTestDataFileNameFromPrefix(prefix: String): String {
     return "${name.removeSuffix("$prefix$extension")}$extension"
 }
 
-private val File.extensionWithDot: String get() = ".$extension"
+private val File.extensionWithDot: String
+    get() = if (name.endsWith(REPL_SUFFIX)) {
+        REPL_SUFFIX
+    } else {
+        ".$extension"
+    }

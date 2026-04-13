@@ -1,4 +1,4 @@
-FILE: whenWithGuardEnabled.fir.kt
+FILE: whenWithGuardEnabled.kt
     public sealed class BooleanHolder : R|kotlin/Any| {
         protected constructor(value: R|kotlin/Boolean|): R|BooleanHolder| {
             super<R|kotlin/Any|>()

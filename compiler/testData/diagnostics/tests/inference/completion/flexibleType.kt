@@ -4,31 +4,31 @@
 // FILE: Test.kt
 
 fun test(arg: Derived) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<Base>")!>id<Out<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<(Derived..Derived?)>")!>createOut(
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Derived..Derived?)")!>JavaCls.makeFlexible(arg)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>id<In<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<(Base..Base?)>")!>createIn(
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Derived..Derived?)")!>JavaCls.makeFlexible(arg)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Base>")!>id<Inv<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Base>")!>createInv(
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Derived..Derived?)")!>JavaCls.makeFlexible(arg)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("JavaInv<Out<Base>>")!>id<JavaInv<Out<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("JavaInv<Out<Base>>")!>createJavaInv(
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Derived..Derived?)")!>JavaCls.makeFlexible(arg)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<In<Base>>")!>id<In<In<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<In<(Derived..Derived?)>>")!>createInIn(
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Derived..Derived?)")!>JavaCls.makeFlexible(arg)<!>
-        )<!>
-    )<!>
+    id<Out<Base>>(
+        createOut(
+            JavaCls.makeFlexible(arg)
+        )
+    )
+    id<In<Base>>(
+        createIn(
+            JavaCls.makeFlexible(arg)
+        )
+    )
+    id<Inv<Base>>(
+        createInv(
+            JavaCls.makeFlexible(arg)
+        )
+    )
+    id<JavaInv<Out<Base>>>(
+        createJavaInv(
+            JavaCls.makeFlexible(arg)
+        )
+    )
+    id<In<In<Base>>>(
+        createInIn(
+            JavaCls.makeFlexible(arg)
+        )
+    )
 }
 
 interface Base

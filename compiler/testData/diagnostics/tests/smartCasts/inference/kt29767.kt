@@ -5,7 +5,7 @@ fun test(a: MutableList<out Int?>?) {
     if (a != null) {
         val b = a[0] // no SMARTCAST diagnostic
         if (b != null) {
-            <!DEBUG_INFO_SMARTCAST!>b<!>.inc()
+            b.inc()
         }
     }
 }

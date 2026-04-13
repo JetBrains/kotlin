@@ -18,7 +18,7 @@ class Foo<T> {
         fun foo(arg1: T, arg2: R) {}
 
         <!NESTED_CLASS_NOT_ALLOWED!>class InnerNested<!> {
-            fun foo(arg1: <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>T<!>, arg2: <!UNRESOLVED_REFERENCE!>R<!>) {}
+            fun foo(arg1: <!UNRESOLVED_REFERENCE!>T<!>, arg2: <!UNRESOLVED_REFERENCE!>R<!>) {}
         }
     }
 

@@ -8,7 +8,7 @@ class Outer {
         fun foo() { }
     }
 
-    val ref = <!DEPRECATION_ERROR!>C<!>::class
+    val ref = C::class
 }
 
 class C

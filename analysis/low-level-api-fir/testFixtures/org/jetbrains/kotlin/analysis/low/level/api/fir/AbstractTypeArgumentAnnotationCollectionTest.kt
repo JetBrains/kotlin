@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLSubstitutionScopeKeyFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -62,5 +62,5 @@ abstract class AbstractTypeArgumentAnnotationCollectionTest : AbstractAnalysisAp
 }
 
 abstract class AbstractSourceTypeArgumentAnnotationCollectionTest : AbstractTypeArgumentAnnotationCollectionTest() {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator = LLSourceLikeTestConfigurator()
 }

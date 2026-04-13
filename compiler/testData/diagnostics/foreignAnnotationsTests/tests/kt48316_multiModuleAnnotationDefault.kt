@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: lib/NonNullApi.java
 
 package lib;

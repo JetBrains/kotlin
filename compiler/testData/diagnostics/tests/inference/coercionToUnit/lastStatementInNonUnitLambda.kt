@@ -3,9 +3,9 @@
 
 fun foo(x: () -> String) {}
 fun main(a: Array<String>) {
-    foo <!TYPE_MISMATCH!>{
-        <!EXPECTED_TYPE_MISMATCH!>a[0] = ""<!>
-    }<!>
+    foo {
+        <!RETURN_TYPE_MISMATCH!>a[0] = ""<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

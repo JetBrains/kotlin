@@ -23,21 +23,6 @@ open class Base<T : Any?> {
 
 }
 
-open class BaseXY<X : Any?, Y : Any?> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun foo(x: X, y: String) {
-  }
-
-  fun foo(x: String, y: Y) {
-  }
-
-}
-
 open class Derived : Base<String> {
   constructor() /* primary */ {
     super/*Base*/<String>()
@@ -56,51 +41,33 @@ class Derived2 : Derived {
 
 }
 
-class DerivedXY : BaseXY<String, String> {
-  constructor() /* primary */ {
-    super/*BaseXY*/<String, String>()
-    /* <init>() */
-
-  }
-
+fun test(b: Base<String>, d: Derived, d2: Derived2) {
+  b.foo(x = "")
+  b.foo(y = "")
+  d.foo(x = "")
+  d.foo(x = "")
+  d2.foo(x = "")
+  d2.foo(x = "")
 }
 
-open class Outer<T : Any?> {
-  open inner class Inner {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    fun foo(x: T) {
-    }
-
-    fun foo(y: String) {
-    }
-
-  }
-
+open class BaseXY<X : Any?, Y : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-}
-
-class OuterDerived : Outer<String> {
-  inner class InnerDerived : Inner<String> {
-    constructor() /* primary */ {
-      <this>.super/*Inner*/()
-      /* <init>() */
-
-    }
-
+  fun foo(x: X, y: String) {
   }
 
+  fun foo(x: String, y: Y) {
+  }
+
+}
+
+class DerivedXY : BaseXY<String, String> {
   constructor() /* primary */ {
-    super/*Outer*/<String>()
+    super/*BaseXY*/<String, String>()
     /* <init>() */
 
   }
@@ -162,12 +129,44 @@ fun outerFun() {
 
 }
 
-fun test(b: Base<String>, d: Derived, d2: Derived2) {
-  b.foo(x = "")
-  b.foo(y = "")
-  d.foo(x = "")
-  d.foo(y = "")
-  d2.foo(x = "")
-  d2.foo(y = "")
+open class Outer<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open inner class Inner {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun foo(x: T) {
+    }
+
+    fun foo(y: String) {
+    }
+
+  }
+
 }
 
+class OuterDerived : Outer<String> {
+  constructor() /* primary */ {
+    super/*Outer*/<String>()
+    /* <init>() */
+
+  }
+
+  inner class InnerDerived : Inner<String> {
+    constructor() /* primary */ {
+      <this>.super/*Inner*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}

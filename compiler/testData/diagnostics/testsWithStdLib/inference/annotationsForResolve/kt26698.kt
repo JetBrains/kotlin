@@ -5,13 +5,13 @@ open class Base()
 class CX : Base()
 class CY : Base()
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes T> foo(a: T, b: T) {}
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes T : Any> fooA(a: T, b: T) {}
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 fun <@kotlin.internal.OnlyInputTypes T : Base> fooB(a: T, b: T) {}
 
 

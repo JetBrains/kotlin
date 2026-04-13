@@ -6,11 +6,11 @@ interface I
 
 val condition = false
 
-<!APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE!>fun foo4()<!>  = if (condition) object : I {} else null
+fun foo4()  = if (condition) object : I {} else null
 
 fun bar1() = foo4().toString()
 
-fun bar2() = foo4()<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
+fun bar2() = foo4()?.toString()
 
 object J {
     fun <T> id(x: T): T? {
@@ -18,9 +18,9 @@ object J {
     }
 }
 
-<!APPROXIMATED_LOCAL_TYPE_WILL_BECOME_NULLABLE!>fun foo5()<!> = J.id(object : I {})
+fun foo5() = J.id(object : I {})
 
-fun bar3() = foo5()<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
+fun bar3() = foo5()?.toString()
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
 objectDeclaration, propertyDeclaration, safeCall, typeParameter */

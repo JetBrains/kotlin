@@ -1,5 +1,5 @@
 // LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_K2: JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // FIR_STATUS: `x ?: x!!` assumed to throw if x is null, so only 2 unboxings
 
 // FILE: utils.kt

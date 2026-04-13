@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -24,4 +25,9 @@ class KotlinCollectionLiteralExpressionStubImpl(
         parent = newParent,
         innerExpressionCount = innerExpressionCount,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinCollectionLiteralExpressionStubImpl &&
+                other.innerExpressionCount == innerExpressionCount
 }

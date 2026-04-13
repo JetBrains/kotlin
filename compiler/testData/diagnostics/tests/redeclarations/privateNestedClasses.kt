@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // ISSUE: KT-79017
 class Clazz {
     private class <!REDECLARATION!>Private1<!>

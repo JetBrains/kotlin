@@ -21,9 +21,9 @@ fun testX() {
 
 fun testY() {
     val yy = ::y
-    checkSubtype<KMutableProperty0<String>>(<!TYPE_MISMATCH!>yy<!>)
+    checkSubtype<KMutableProperty0<String>>(<!ARGUMENT_TYPE_MISMATCH!>yy<!>)
     checkSubtype<KProperty0<String>>(yy)
-    checkSubtype<KMutableProperty<String>>(<!TYPE_MISMATCH!>yy<!>)
+    checkSubtype<KMutableProperty<String>>(<!ARGUMENT_TYPE_MISMATCH!>yy<!>)
     checkSubtype<KProperty<String>>(yy)
     checkSubtype<KCallable<String>>(yy)
 

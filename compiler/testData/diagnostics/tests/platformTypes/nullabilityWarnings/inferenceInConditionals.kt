@@ -23,7 +23,7 @@ fun ifelse(c: J): Any? {
 }
 
 fun elvis(c: J): Any? {
-    return null ?: c.nn()
+    return <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> c.nn()
 }
 
 /* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, javaFunction, javaType, nullableType,

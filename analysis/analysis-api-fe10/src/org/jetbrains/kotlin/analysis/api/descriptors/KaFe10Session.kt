@@ -38,7 +38,6 @@ internal class KaFe10Session(
     referenceShortener = KaFe10ReferenceShortener(analysisSessionProvider),
     renderer = KaRendererImpl(analysisSessionProvider),
     visibilityChecker = KaFe10VisibilityChecker(analysisSessionProvider),
-    originalPsiProvider = KaFe10OriginalPsiProvider(analysisSessionProvider),
     typeCreator = KaFe10TypeCreator(analysisSessionProvider),
     typeCreatorProvider = KaFe10TypeCreatorProvider(analysisSessionProvider),
     analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, resolutionScope),

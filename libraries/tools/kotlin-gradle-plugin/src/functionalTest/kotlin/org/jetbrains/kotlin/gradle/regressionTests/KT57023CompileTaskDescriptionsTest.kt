@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,7 +20,7 @@ class KT57023CompileTaskDescriptionsTest {
         kotlin.linuxX64()
         kotlin.linuxArm64()
         kotlin.jvm()
-        kotlin.js(KotlinJsCompilerType.IR)
+        kotlin.js()
         kotlin.applyDefaultHierarchyTemplate()
 
         project.evaluate()

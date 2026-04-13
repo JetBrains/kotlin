@@ -7,24 +7,24 @@ fun takeInt(b: Int) {}
 fun takeLong(b: Long) {}
 
 fun testByteBinaryOperators() {
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 + 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 - 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 * 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 / 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 % 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 + 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 - 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 * 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 / 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 % 1<!>)
 
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.plus(1)<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.minus(1)<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.times(1)<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.div(1)<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.rem(1)<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 shl 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 shr 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 ushr 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.plus(1)<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.minus(1)<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.times(1)<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.div(1)<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.rem(1)<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 shl 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 shr 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 ushr 1<!>)
 
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 and 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 or 1<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2 xor 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 and 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 or 1<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2 xor 1<!>)
 }
 
 fun testByteUnaryOperators() {
@@ -33,11 +33,11 @@ fun testByteUnaryOperators() {
     takeByte(-1)
 
     // Will change
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.unaryPlus()<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.unaryMinus()<!>)
-    takeByte(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>2.inv()<!>)
-    takeByte(<!TYPE_MISMATCH!>1.inc()<!>)
-    takeByte(<!TYPE_MISMATCH!>1.dec()<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.unaryPlus()<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.unaryMinus()<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>2.inv()<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1.inc()<!>)
+    takeByte(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
 }
 
 // all positive
@@ -73,8 +73,8 @@ fun testLongUnaryOperators() {
     takeLong(2.inv())
 
     // Will change
-    takeLong(<!TYPE_MISMATCH!>1.inc()<!>)
-    takeLong(<!TYPE_MISMATCH!>1.dec()<!>)
+    takeLong(<!ARGUMENT_TYPE_MISMATCH!>1.inc()<!>)
+    takeLong(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
 }
 
 fun testIntBinaryOperators() {

@@ -100,6 +100,10 @@ gradlePlugin {
             id = "platform-manager"
             implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
         }
+        create("gitClangFormat") {
+            id = "git-clang-format"
+            implementationClass = "org.jetbrains.kotlin.cpp.GitClangFormatPlugin"
+        }
     }
 }
 

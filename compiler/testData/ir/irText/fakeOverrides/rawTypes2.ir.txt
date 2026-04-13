@@ -109,12 +109,12 @@ FILE fqName:<root> fileName:/main.kt
   CLASS INTERFACE name:C2 modality:ABSTRACT visibility:public superTypes:[<root>.B<kotlin.Int>]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C2
     FUN FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
       overridden:
         public abstract fun bar (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
     FUN FAKE_OVERRIDE name:baz visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
       overridden:
         public abstract fun baz (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B
@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Number?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Number?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv2<kotlin.Any?, kotlin.Any?>?
       overridden:
         public abstract fun foo (t: @[FlexibleNullability] @[RawType] <root>.Inv2<kotlin.Any?, kotlin.Any?>?): kotlin.Unit declared in <root>.B

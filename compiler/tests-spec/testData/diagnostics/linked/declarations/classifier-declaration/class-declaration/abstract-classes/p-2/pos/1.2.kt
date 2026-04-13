@@ -15,7 +15,7 @@
 // TESTCASE NUMBER: 1
 
 fun case1(){
-    <!DEBUG_INFO_EXPRESSION_TYPE("OtherClass.ImplBase2")!>OtherClass().zoooo()<!>
+    OtherClass().zoooo()
     checkSubtype<MainClass.Base2>(OtherClass().zoooo())
 }
 

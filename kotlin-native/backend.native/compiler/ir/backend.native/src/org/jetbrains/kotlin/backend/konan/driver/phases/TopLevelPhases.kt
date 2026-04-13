@@ -191,7 +191,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             }
             try {
                 fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
-                backendEngine.useContext(generationState) { generationStateEngine ->
+                backendEngine.useContext(generationState, copyState = true) { generationStateEngine ->
                     val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
@@ -511,7 +511,6 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
     val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {
-        runAndMeasurePhase(ReturnsInsertionPhase, it)
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
         // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
         runAndMeasurePhase(PropertyAccessorInlinePhase, it, disable = !optimize)

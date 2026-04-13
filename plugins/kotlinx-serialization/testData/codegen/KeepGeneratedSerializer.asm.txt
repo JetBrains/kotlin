@@ -1,21 +1,21 @@
 public final class Data$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
     public final static Data$$serializer INSTANCE
 
-    private final static kotlinx.serialization.internal.PluginGeneratedSerialDescriptor descriptor
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
 
     static void <clinit>()
 
     private void <init>()
 
-    public kotlinx.serialization.KSerializer[] childSerializers()
+    public final kotlinx.serialization.KSerializer[] childSerializers()
 
-    public Data deserialize(kotlinx.serialization.encoding.Decoder decoder)
+    public final Data deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
-    public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
-    public void serialize(kotlinx.serialization.encoding.Encoder encoder, Data value)
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Data value)
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
 
@@ -27,7 +27,7 @@ public final class Data$Companion : java/lang/Object {
 
     public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
-    public final kotlinx.serialization.KSerializer generatedSerializer() {
+    public final kotlinx.serialization.KSerializer generatedSerializer$main() {
         LABEL (L0)
         LINENUMBER (28)
           GETSTATIC (Data$$serializer, INSTANCE, LData$$serializer;)
@@ -55,7 +55,7 @@ public final class Data : java/lang/Object {
 
     public void <init>(int i)
 
-    public void <init>(int seen1, int i, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+    public void <init>(int seen0, int i, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
 
     public final int component1()
 

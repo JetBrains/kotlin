@@ -1,134 +1,85 @@
+import kotlinx.benchmark.gradle.JmhBytecodeGeneratorTask
 import kotlinx.benchmark.gradle.benchmark
 
 plugins {
-    java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.4.6-1"
-}
-
-val benchmarks_version = "0.4.6-1"
-
-repositories {
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
-        content {
-            includeModuleByRegex("org\\.jetbrains\\.kotlinx", "kotlinx-benchmark-runtime.*")
-        }
-    }
+    alias(libs.plugins.kotlinx.benchmark)
+    id("project-tests-convention")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    api(kotlinStdlib())
-    api(project(":compiler:frontend"))
-    api(testFixtures(project(":compiler:tests-common")))
-    api(project(":compiler:cli"))
-    api(intellijCore())
-    api(jpsModel())
-    api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
+    testImplementation(kotlinStdlib())
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(intellijCore())
+    testImplementation(libs.kotlinx.benchmark.runtime)
+
+    testFixturesApi(libs.junit4)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesApi(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" { none() }
+    "test" { projectDefault() }
 }
 
 optInToK1Deprecation()
 
+val warmupsParam = project.findProperty("warmups")?.toString()
+val iterationsParam = project.findProperty("iterations")?.toString()
+val includePattern = project.findProperty("include")?.toString()
+val sizeParam = project.findProperty("size")?.toString()
+
 benchmark {
     configurations {
         named("main") {
-            warmups = 10
-            iterations = 10
-            iterationTime = 1
-            iterationTimeUnit = "sec"
-            param("size", 1000)
-        }
+            iterationTime = 1 // Required param
+            iterationTimeUnit = "sec" // Required param
 
-        register("fir") {
-            warmups = 10
-            iterations = 10
-            iterationTime = 1
-            iterationTimeUnit = "sec"
-            param("isIR", true)
-            param("size", 1000)
+            warmups = warmupsParam?.toInt() ?: 5 // `5` is currently default in JMH
+            iterations = iterationsParam?.toInt() ?: 5 // `5` is currently default in JMH
 
-            include("CommonCallsBenchmark")
-            include("ControlFlowAnalysisBenchmark")
-            //include("InferenceBaselineCallsBenchmark")
-        }
+            include(includePattern ?: "*") // Benchmark everything if the pattern isn't specified
 
-        register("ni") {
-            warmups = 10
-            iterations = 10
-            iterationTime = 1
-            iterationTimeUnit = "sec"
-            param("useNI", true)
-            param("isIR", false)
-            param("size", 1000)
-            include("InferenceBaselineCallsBenchmark")
-            include("InferenceExplicitArgumentsCallsBenchmark")
-            include("InferenceForInApplicableCandidate")
-            include("InferenceFromArgumentCallsBenchmark")
-            include("InferenceFromReturnTypeCallsBenchmark")
+            if (sizeParam != null) {
+                // Use size from annotation arguments if the param isn't specified
+                // CAUTION: large size might cause long execution time
+                param("size", sizeParam.toInt())
+            }
         }
     }
     targets {
-        register("main")
+        register("test")
     }
 }
 
-tasks.withType<Zip>().matching { it.name == "mainBenchmarkJar" }.configureEach {
-    isZip64 = true
-    archiveFileName.set("benchmarks.jar")
-}
-
-val benchmarkTasks = listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark")
-tasks.withType<JavaExec>().matching { it.name in benchmarkTasks }.configureEach {
+tasks.withType<JavaExec>().matching { it.name == "testBenchmark" }.configureEach {
     dependsOn(":createIdeaHomeForTests")
     systemProperty("idea.home.path", ideaHomePathForTests().get().asFile.canonicalPath)
     systemProperty("idea.use.native.fs.for.win", false)
 }
 
-tasks.register<JavaExec>("runBenchmark") {
-    dependsOn(":createIdeaHomeForTests")
-
-    // jmhArgs example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
-    val jmhArgs = project.providers.gradleProperty("jvmArgs")
-    val resultFilePath = project.layout.buildDirectory.file("benchmarks/jmh-result.json")
-    val ideaHome = ideaHomePathForTests()
-
-    val benchmarkJarPath = project.layout.buildDirectory.file("benchmarks/main/jars/benchmarks.jar")
-    argumentProviders.add {
-        listOf(
-            "-Didea.home.path=${ideaHome.get().asFile.canonicalPath}",
-            benchmarkJarPath.get().asFile.toString(),
-            "-rf",
-            "json",
-            "-rff",
-            resultFilePath.get().asFile.toString(),
-        ) + jmhArgs.map { it.split("\\s".toRegex()) }.orElse(emptyList()).get()
+tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
+    outputs.cacheIf("Disabled because of https://github.com/Kotlin/kotlinx-benchmark/issues/364 (remove after version upgrading)") {
+        false
     }
-    mainClass.set("-jar")
+}
 
-    doLast {
-        if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
-            val jsonArray = com.google.gson.JsonParser.parseString(resultFilePath.get().asFile.readText()).asJsonArray
-            jsonArray.forEach {
-                val benchmark = it.asJsonObject
-                // remove unnecessary name parts from string like this "org.jetbrains.kotlin.benchmarks.CommonCallsBenchmark.benchmark"
-                val name = benchmark["benchmark"].asString.removeSuffix(".benchmark").let {
-                    val indexOfLastDot = it.indexOfLast { it == '.' }
-                    it.removeRange(0..indexOfLastDot)
-                }
-                val params = benchmark["params"].asJsonObject
-                val isIR = if (params.has("isIR")) params["isIR"].asString else "false"
-                val useNI = if (params.has("useNI")) params["useNI"].asString else "false"
-                val size = params["size"].asString
-                val score = "%.3f".format(benchmark["primaryMetric"].asJsonObject["score"].asString.toFloat())
-
-                val irPostfix = if (isIR.toBoolean()) " isIR=true" else ""
-                val niPostfix = if (useNI.toBoolean() && !isIR.toBoolean()) " isNI=true" else ""
-
-                println("""##teamcity[buildStatisticValue key='$name size=$size${irPostfix}$niPostfix' value='$score']""")
-            }
-        }
+projectTests {
+    testTask(
+        parallel = false, // Disable parallelization to get more robust performance measurements
+        jUnitMode = JUnitMode.JUnit4
+    ) {
+        workingDir = rootDir
+        useJUnitPlatform()
     }
+
+    withJvmStdlibAndReflect()
 }

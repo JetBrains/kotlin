@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 
 package javapackage;

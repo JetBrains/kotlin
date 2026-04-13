@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: -AllowAccessToProtectedFieldFromSuperCompanion
 // WITH_STDLIB
 // FILE: A.kt

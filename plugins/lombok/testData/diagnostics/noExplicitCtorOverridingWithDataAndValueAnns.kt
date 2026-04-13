@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-83120
 
 // FILE: DataExplicitCtor.java

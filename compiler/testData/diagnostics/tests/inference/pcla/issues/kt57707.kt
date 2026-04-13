@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        <!RECEIVER_TYPE_MISMATCH("DifferentType; TargetType")!>extensionSetOutProjectedTypeVariable<!>(DifferentType())
+        extensionSetOutProjectedTypeVariable(DifferentType())
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

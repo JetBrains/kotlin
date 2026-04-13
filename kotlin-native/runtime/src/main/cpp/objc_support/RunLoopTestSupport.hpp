@@ -12,7 +12,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "concurrent/ScopedThread.hpp"
-#include "Runtime.h"
 #include "Utils.hpp"
 #include "objc_support/ObjectPtr.hpp"
 
@@ -23,7 +22,6 @@ public:
     template <typename Init>
     explicit RunLoopInScopedThread(Init init) noexcept :
         thread_([&]() noexcept {
-            Kotlin_initRuntimeIfNeeded();
             [[maybe_unused]] auto state = init();
             {
                 std::unique_lock guard{stateMutex_};

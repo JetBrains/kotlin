@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> select(x: T, y: T): T = x

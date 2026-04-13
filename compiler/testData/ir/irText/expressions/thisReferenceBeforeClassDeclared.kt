@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun WithCompanion.test() {
     val test1 = object : WithCompanion(this) {}

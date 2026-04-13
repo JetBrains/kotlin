@@ -23,6 +23,6 @@ class Case5 {
 
     fun case(list: List<Int>) {
         list.<!DEBUG_INFO_CALL("fqName: Case5.foo; typeCall: extension function")!>foo(1)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(1)<!>
+        list.foo(1)
     }
 }

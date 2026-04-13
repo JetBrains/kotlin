@@ -88,7 +88,7 @@ class List1: JavaList() {
 class List2: JavaList() {
     override fun get(index: Int): String = ""
     // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype
-    override fun add(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>s<!>: String?): Boolean = true
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>add<!>(s: String?): Boolean = true
 
     @IgnorableReturnValue
     override fun set(index: Int, element: String?): String {
@@ -107,7 +107,7 @@ class List3: UnannotatedList() {
 class List4: UnannotatedList() {
     override fun get(index: Int): String = ""
     // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype
-    override fun add(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>s<!>: String?): Boolean = true
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>add<!>(s: String?): Boolean = true
 
     @IgnorableReturnValue
     override fun set(index: Int, element: String?): String {
@@ -116,35 +116,35 @@ class List4: UnannotatedList() {
 }
 
 fun test1(l: List1) {
-    l.get(0)
-    l.notAListMember()
-    l.size
+    l.<!RETURN_VALUE_NOT_USED!>get<!>(0)
+    l.<!RETURN_VALUE_NOT_USED!>notAListMember<!>()
+    l.<!RETURN_VALUE_NOT_USED!>size<!>
     l.set(0, "")
     l.add("")
 }
 
 fun test2(l: List2) {
-    l.get(0)
-    l.notAListMember()
-    l.size
+    l.<!RETURN_VALUE_NOT_USED!>get<!>(0)
+    l.<!RETURN_VALUE_NOT_USED!>notAListMember<!>()
+    l.<!RETURN_VALUE_NOT_USED!>size<!>
     l.set(0, "")
-    l.add("")
+    l.<!RETURN_VALUE_NOT_USED!>add<!>("")
 }
 
 fun test3(l: List3) {
-    l.get(0)
+    l.<!RETURN_VALUE_NOT_USED!>get<!>(0)
     l.notAListMember()
-    l.size
+    l.<!RETURN_VALUE_NOT_USED!>size<!>
     l.set(0, "")
     l.add("")
 }
 
 fun test4(l: List4) {
-    l.get(0)
+    l.<!RETURN_VALUE_NOT_USED!>get<!>(0)
     l.notAListMember()
-    l.size
+    l.<!RETURN_VALUE_NOT_USED!>size<!>
     l.set(0, "")
-    l.add("")
+    l.<!RETURN_VALUE_NOT_USED!>add<!>("")
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty,

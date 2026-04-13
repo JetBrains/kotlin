@@ -5,8 +5,8 @@ open class A {
 
     fun bar(x: B) {
         x.foo() // OK, foo declared in A
-        x.<!INVISIBLE_MEMBER!>baz<!>() // Declared in B
-        x.<!INVISIBLE_MEMBER!>foobaz<!>() // Declared in B
+        x.<!INVISIBLE_REFERENCE!>baz<!>() // Declared in B
+        x.<!INVISIBLE_REFERENCE!>foobaz<!>() // Declared in B
     }
 }
 

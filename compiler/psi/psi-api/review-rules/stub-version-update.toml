@@ -1,0 +1,19 @@
+# Changes to the stub format
+watch = [
+    "analysis/decompiled/decompiler-js/src/",
+    "analysis/decompiled/decompiler-native/src/",
+    "analysis/decompiled/decompiler-to-file-stubs/src/",
+    "analysis/decompiled/decompiler-to-psi/src/",
+    "analysis/decompiled/decompiler-to-stubs/src/",
+    "compiler/psi/parser/src/",
+    "compiler/psi/psi-api/src/org/jetbrains/kotlin/KotlinElementTypeProvider.kt",
+    "compiler/psi/psi-api/src/org/jetbrains/kotlin/KtStubBasedElementTypes.kt",
+    "compiler/psi/psi-api/src/org/jetbrains/kotlin/lexer/",
+    "compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/stubs",
+    "compiler/psi/psi-impl/src/",
+]
+
+# Most likely require changes in the stub version
+requires = [
+    "compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/stubs/KotlinStubVersions.kt",
+]

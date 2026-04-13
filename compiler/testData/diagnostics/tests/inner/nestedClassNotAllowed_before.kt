@@ -22,7 +22,7 @@ fun foo() {
 
 enum class E {
     E1 {
-        <!NESTED_CLASS_DEPRECATED!>class D<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class D<!>
     }
 }
 

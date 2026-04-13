@@ -4,7 +4,7 @@
 
 fun testCheckSmartcast(x: Any?) {
     check(x is String)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun testCheckUnreachableCode() {
@@ -15,22 +15,22 @@ fun testCheckUnreachableCode() {
 
 fun testCheckWithMessage(x: Any?) {
     check(x is String) { "x is not String!" }
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun testCheckWithFailingMessage(x: Any?) {
     check(x is String) { throw kotlin.IllegalStateException("What a strange idea") }
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun testCheckNotNullWithMessage(x: Int?) {
     checkNotNull(x) { "x is null!" }
-    <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+    x.inc()
 }
 
 fun testCheckNotNull(x: Int?) {
     checkNotNull(x)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+    x.inc()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, stringLiteral */

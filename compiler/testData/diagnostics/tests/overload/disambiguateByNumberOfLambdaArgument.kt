@@ -12,7 +12,7 @@ fun <V, R> Iterable<V>.map(transform: (V, Int) -> R): List<R> {
 fun main() {
     val list = listOf(1, 2, 3)
     println(list.map { v -> v })
-    println(list.<!OVERLOAD_RESOLUTION_AMBIGUITY!>map<!> { <!UNRESOLVED_REFERENCE!>it<!> })
+    println(list.map { it })
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,

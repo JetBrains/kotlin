@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 open class Final {
     fun foo() {}
     val bar: Int = 0

@@ -2,7 +2,7 @@
 // ISSUE: KT-63063
 
 class Test {
-    @<!UNRESOLVED_REFERENCE!>ClassObjectAnnotation<!>
+    @ClassObjectAnnotation
     @NestedAnnotation
     companion object {
         annotation class ClassObjectAnnotation

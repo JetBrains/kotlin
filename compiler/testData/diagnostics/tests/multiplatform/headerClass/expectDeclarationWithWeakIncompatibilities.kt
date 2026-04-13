@@ -4,29 +4,29 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class Foo1
-expect class Foo2
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo1
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo2
 
 expect fun foo2(): Int
 
-expect val s: String
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> val s: String
 
-expect open class <!AMBIGUOUS_ACTUALS{JVM}, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo3<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class Foo3
 
 // MODULE: m2-jvm()()(m1-common)
 
 // FILE: jvm.kt
 
 interface <!ACTUAL_MISSING!>Foo1<!>
-actual <!ACTUAL_WITHOUT_EXPECT!>interface<!> Foo2
+actual interface <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND!>Foo2<!>
 
-actual <!ACTUAL_WITHOUT_EXPECT!>var<!> s: String = "value"
+actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_KIND!>s<!>: String = "value"
 
 fun <!ACTUAL_MISSING!>foo2<!>(): Int = 0
 
-actual class <!ACTUAL_WITHOUT_EXPECT, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
+actual class <!CLASSIFIER_REDECLARATION, EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>Foo3<!>
 
-class <!ACTUAL_MISSING, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>
+class <!ACTUAL_MISSING, CLASSIFIER_REDECLARATION!>Foo3<!>
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
 propertyDeclaration, stringLiteral */

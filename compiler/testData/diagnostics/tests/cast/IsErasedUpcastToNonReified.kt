@@ -12,7 +12,7 @@ fun <T, S : T> test(x: T?, y: S, z: T) {
     <!USELESS_IS_CHECK!>z is T?<!>
 
     null <!UNCHECKED_CAST!>as T<!>
-    null <!USELESS_CAST!>as T?<!>
+    null as T?
     null <!UNCHECKED_CAST!>as S<!>
 }
 
@@ -21,7 +21,7 @@ class Box<T>
 inline fun <reified T> test(x: T?, a: Any) {
     x is T
     null as T
-    null <!USELESS_CAST!>as T?<!>
+    null as T?
 
     a is T
     a as T
@@ -29,7 +29,7 @@ inline fun <reified T> test(x: T?, a: Any) {
     a is <!CANNOT_CHECK_FOR_ERASED!>Box<T><!>
     a is <!CANNOT_CHECK_FOR_ERASED!>Array<T><!>
     a <!UNCHECKED_CAST!>as Box<T><!>
-    a <!UNCHECKED_CAST!>as Array<T><!>
+    a <!CAST_NEVER_SUCCEEDS!>as<!> Array<T>
 
     a is <!CANNOT_CHECK_FOR_ERASED!>Box<List<T>><!>
     a is <!CANNOT_CHECK_FOR_ERASED!>Array<List<T>><!>

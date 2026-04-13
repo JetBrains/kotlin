@@ -21,10 +21,10 @@ class A {
     val a = capture { consume(x) }
 
     val b = inPlace {
-        consume(x) // error
+        consume(<!UNINITIALIZED_VARIABLE!>x<!>) // error
         capture { consume(x) } // ok
         inPlace {
-            consume(x) // error
+            consume(<!UNINITIALIZED_VARIABLE!>x<!>) // error
             capture { consume(x) } // ok
         }
     }
@@ -43,16 +43,16 @@ class A {
             consume(<!UNINITIALIZED_VARIABLE!>x<!>) // error
             capture { consume(x) } // ok
             inPlace {
-                consume(x) // error
+                consume(<!UNINITIALIZED_VARIABLE!>x<!>) // error
                 capture { consume(x) } // ok
             }
         }
 
         val objectProp = inPlace {
-            consume(x) // error
+            consume(<!UNINITIALIZED_VARIABLE!>x<!>) // error
             capture { consume(x) } // ok
             inPlace {
-                consume(x) // error
+                consume(<!UNINITIALIZED_VARIABLE!>x<!>) // error
                 capture { consume(x) } // ok
             }
         }

@@ -10,7 +10,7 @@ fun foo() {
     var y: My? = My(42)
     if (y!!.x != null) {
         y = My(null)
-        (<!DEBUG_INFO_SMARTCAST!>y<!> + My(0)).x<!UNSAFE_CALL!>.<!>hashCode()
+        (y + My(0)).x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 

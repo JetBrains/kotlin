@@ -1,11 +1,11 @@
-// -- Module: <a> --
+/c.kt:(91,110): error: Cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies.
 
-// -- Module: <b> --
+/c.kt:(115,117): warning: Expression is unused.
 
-// -- Module: <c> --
-/c.kt:23:14: error: cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies
-    val x1 = onlyClassReferences
-             ^^^^^^^^^^^^^^^^^^^
-/c.kt:26:14: error: cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies
-    val x2 = allHierarchy
-             ^^^^^^^^^^^^
+/c.kt:(132,144): error: Cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies.
+
+/c.kt:(132,144): warning: Cannot access 'MissedInterface' which is a supertype of 'Intermediate'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+
+/c.kt:(132,144): error: Cannot access class 'MissedInterface'. Check your module classpath for missing or conflicting dependencies.
+
+/c.kt:(149,151): warning: Expression is unused.

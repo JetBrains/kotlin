@@ -11,7 +11,7 @@ public class J {
 
 // FILE: main.kt
 fun explicitNullableReceiver() {
-    J.id<String?>("abc").length
+    J.id<String?>("abc")<!UNSAFE_CALL!>.<!>length
 }
 
 fun inferredNullableReceiver(x: String?) {

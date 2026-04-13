@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.exe
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.io.OutputStream
+import kotlin.concurrent.thread
 
 open class TCServiceMessagesTestExecutionSpec(
     internal val processLaunchOptions: ProcessLaunchOptions,
@@ -47,6 +49,9 @@ class TCServiceMessagesTestExecutor(
 
     private lateinit var execHandle: ExecAsyncHandle
 
+    @Volatile
+    private var process: Process? = null
+
     override fun execute(
         spec: TCServiceMessagesTestExecutionSpec,
         testResultProcessor: TestResultProcessor,
@@ -66,37 +71,79 @@ class TCServiceMessagesTestExecutor(
 
                 val exitValue = execHandle.start().waitForResult()?.exitValue ?: -1
                 if (exitValue != 0) {
-                    error(client.testFailedMessage(execHandle, exitValue))
+                    error(client.testFailedMessage(execHandle.displayName, exitValue))
                 }
             }
 
             try {
-                execHandle = execOps.execAsync(description) { exec ->
-                    exec.workingDir = spec.processLaunchOptions.workingDir.orNull?.asFile
-                    exec.environment(spec.processLaunchOptions.environment.orNull.orEmpty())
-                    exec.executable = spec.processLaunchOptions.executable.get()
-                    exec.args = spec.processArgs
-                    exec.standardOutput = TCServiceMessageOutputStreamHandler(
-                        client,
-                        { spec.showSuppressedOutput() },
-                        log,
-                        ignoreTcsmOverflow,
-                    )
-                    exec.errorOutput = TCServiceMessageOutputStreamHandler(
-                        client,
-                        { spec.showSuppressedOutput() },
-                        log,
-                        ignoreTcsmOverflow,
-                    )
+                val handler = TCServiceMessageOutputStreamHandler(
+                    client,
+                    { spec.showSuppressedOutput() },
+                    log,
+                    ignoreTcsmOverflow,
+                )
+
+                // Use ProcessBuilder with redirectErrorStream(true) to merge stderr into stdout
+                // at the OS pipe level. This eliminates the race condition where TC service messages
+                // on stdout (e.g. testFinished) arrive before stderr output (e.g. stack traces)
+                // has been fully read, which caused stderr to leak into the Gradle build log.
+                // See KT-69896.
+                val processBuilder = ProcessBuilder(
+                    buildList {
+                        add(spec.processLaunchOptions.executable.get())
+                        addAll(spec.processArgs)
+                    }
+                ).apply {
+                    redirectErrorStream(true)
+                    spec.processLaunchOptions.workingDir.orNull?.asFile?.let { directory(it) }
+                    spec.processLaunchOptions.environment.orNull?.let { env ->
+                        environment().putAll(env)
+                    }
                 }
 
-                val exitValue =
-                    client.root {
-                        execHandle.start().waitForResult()?.exitValue ?: -1
+                // Log in the same format and logger as ExecAsyncHandle for compatibility
+                // with tests that parse this log (e.g. JsBrowserTestsIT).
+                LoggerFactory.getLogger(ExecAsyncHandle::class.java).debug(
+                    "[ExecAsyncHandle {}] created ExecSpec. Command: {}, Environment: {}, WorkingDir: {}",
+                    description,
+                    processBuilder.command().joinToString(),
+                    processBuilder.environment(),
+                    processBuilder.directory()
+                )
+
+                val exitValue = client.root {
+                    val proc = processBuilder.start()
+                    process = proc
+
+                    // Test processes don't read from stdin.
+                    proc.outputStream.close()
+
+                    val readerThread = thread(name = "$description-stdout-reader", isDaemon = true) {
+                        try {
+                            proc.inputStream.use { input ->
+                                // Wrap in BufferedInputStream to reduce native read syscalls and help
+                                // drain the OS pipe buffer promptly. Per Process docs, limited pipe
+                                // buffer sizes on some platforms can cause the child process to block
+                                // or deadlock if the stream is not read promptly.
+                                // The default 8KB BufferedInputStream buffer is sufficient — copyTo
+                                // also uses an 8KB internal buffer, so reads are already batched.
+                                input.buffered().use { buffered ->
+                                    buffered.copyTo(handler)
+                                }
+                            }
+                        } catch (_: IOException) {
+                            // Process was destroyed, stream closed — expected during stopNow()
+                        } finally {
+                            handler.close()
+                        }
                     }
 
+                    readerThread.join()
+                    proc.waitFor()
+                }
+
                 if (spec.checkExitCode && exitValue != 0) {
-                    error(client.testFailedMessage(execHandle, exitValue))
+                    error(client.testFailedMessage(description, exitValue))
                 }
             } catch (e: Throwable) {
                 spec.showSuppressedOutput()
@@ -112,8 +159,23 @@ class TCServiceMessagesTestExecutor(
                 } else {
                     throw e
                 }
+            } finally {
+                // When Gradle times out a task, it interrupts the task thread rather than
+                // calling stopNow(). With ProcessBuilder (unlike ExecAsyncHandle), thread
+                // interruption does not automatically kill the child process.
+                destroyProcessIfNeeded()
             }
         }
+    }
+
+    private fun destroyProcessIfNeeded() {
+        process?.let { proc ->
+            if (proc.isAlive) {
+                log.info("[$description] destroying test process")
+                proc.destroyForcibly()
+            }
+        }
+        process = null
     }
 
     /**
@@ -127,6 +189,7 @@ class TCServiceMessagesTestExecutor(
         if (::execHandle.isInitialized) {
             execHandle.abort()
         }
+        destroyProcessIfNeeded()
     }
 }
 

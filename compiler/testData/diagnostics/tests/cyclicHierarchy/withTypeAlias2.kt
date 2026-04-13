@@ -9,8 +9,8 @@
 //       ^-----|
 typealias T = A.() -> Unit
 
-class A() : <!CYCLIC_INHERITANCE_HIERARCHY, FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>S<!> {}
+class A() : <!CYCLIC_INHERITANCE_HIERARCHY!>S<!> {}
 
-typealias S = A
+typealias S = <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionalType, primaryConstructor, typeAliasDeclaration, typeWithExtension */

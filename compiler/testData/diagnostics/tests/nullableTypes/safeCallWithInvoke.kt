@@ -9,7 +9,7 @@ fun foo(i: Int) = i
 
 fun test(a: A?) {
     a?.b(1) //should be no warning
-    foo(<!TYPE_MISMATCH!>a?.b(1)<!>) //no warning, only error
+    foo(<!ARGUMENT_TYPE_MISMATCH!>a?.b(1)<!>) //no warning, only error
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,

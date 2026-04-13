@@ -25,7 +25,7 @@ fun test() {
     val b = B()
     val c = C()
 
-    AsTypedConstructor(<!SYNTAX!><!>, <!TYPE_MISMATCH!>a<!>, <!TYPE_MISMATCH!>b<!>, <!TOO_MANY_ARGUMENTS!>c<!>)
+    AsTypedConstructor(<!SYNTAX!><!>, <!ARGUMENT_TYPE_MISMATCH!>a<!>, <!ARGUMENT_TYPE_MISMATCH!>b<!>, <!TOO_MANY_ARGUMENTS!>c<!>)
     AsTypedConstructor(a, <!SYNTAX!><!>, c)
     AsTypedConstructor(a, <!SYNTAX!><!>,)
     AsTypedConstructor(a = A(), <!SYNTAX!><!>,)

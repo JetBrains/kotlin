@@ -12,3 +12,16 @@ open annotation class Ann : Annotation {
   }
 
 }
+
+@Ann(s = ["foo", "bar"])
+class C {
+}
+
+@Ann(s = ["foo", "bar"])
+fun foo() {
+}
+
+// FILE: platform.kt
+
+fun main() {
+}

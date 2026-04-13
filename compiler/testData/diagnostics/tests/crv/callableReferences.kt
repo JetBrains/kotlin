@@ -7,17 +7,17 @@ fun testFun(): Int = 1
 @IgnorableReturnValue fun ignorable(): Int = 2
 
 fun test() {
-    testFun()
-    (::testFun)()
+    <!RETURN_VALUE_NOT_USED!>testFun<!>()
+    <!RETURN_VALUE_NOT_USED!>(::testFun)<!>()
     val ref = ::testFun
-    ref()
+    <!RETURN_VALUE_NOT_USED!>ref<!>()
 }
 
 fun testIgnorable() {
     ignorable()
-    (::ignorable)() // as designed
+    <!RETURN_VALUE_NOT_USED!>(::ignorable)<!>() // as designed
     val ref = ::ignorable
-    ref() // as designed
+    <!RETURN_VALUE_NOT_USED!>ref<!>() // as designed
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, callableReference, functionDeclaration, integerLiteral,

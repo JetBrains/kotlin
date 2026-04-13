@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -259,14 +258,17 @@ open class ReturnTypeCalculatorWithJump(
     }
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
-        val canHaveContracts = when (declaration) {
-            is FirProperty if declaration.symbol is FirRegularPropertySymbol -> true
-            is FirNamedFunction if declaration.status.visibility != Visibilities.Local -> true
-            else -> false
-        }
+        when (declaration) {
+            is FirProperty if declaration.symbol is FirRegularPropertySymbol -> {
+                declaration.getter?.symbol?.calculateContractDescription()
+                declaration.setter?.symbol?.calculateContractDescription()
+            }
 
-        if (canHaveContracts) {
-            declaration.lazyResolveToPhase(FirResolvePhase.CONTRACTS)
+            is FirNamedFunction if declaration.status.visibility != Visibilities.Local -> {
+                declaration.symbol.calculateContractDescription()
+            }
+
+            else -> {}
         }
     }
 
@@ -284,6 +286,11 @@ open class ReturnTypeCalculatorWithJump(
             if (this !is FirRegularPropertySymbol || isReplSnippetDeclaration != true) return false
             val initializer = fir.initializer as? FirReplExpressionReference
             val delegate = fir.delegate as? FirReplExpressionReference
+            // Some properties like constants are not moved to the eval, so they should be treated as regular ones
+            if (initializer == null && delegate == null) {
+                return false
+            }
+
             return initializer?.hasResolvedType != true && delegate?.hasResolvedType != true
         }
 

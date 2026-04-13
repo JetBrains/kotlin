@@ -19,9 +19,9 @@ public typealias KAnn = Ann
 // MODULE: app(alias)
 // FILE: test.kt
 
-import wrapper.KAnn
+import wrapper.<!UNRESOLVED_IMPORT!>KAnn<!>
 
-@KAnn
+@<!MISSING_DEPENDENCY_CLASS, NOT_AN_ANNOTATION_CLASS!>KAnn<!>
 fun foo() {}
 
 /* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

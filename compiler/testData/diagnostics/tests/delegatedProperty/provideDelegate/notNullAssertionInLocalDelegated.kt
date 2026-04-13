@@ -16,7 +16,7 @@ operator fun <W> GenericDelegate<W>.getValue(a: Any?, p: KProperty<*>): W = this
 fun <E> List<Ref<*>>.getElement(i: Int): Ref<E> = this[i] <!UNCHECKED_CAST!>as Ref<E><!>
 
 fun test(list: List<Ref<*>>) {
-    val data: String by <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>list.getElement(0)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
+    val data: String by list.getElement(0)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 
     val data2: String by list.getElement(0)
 }

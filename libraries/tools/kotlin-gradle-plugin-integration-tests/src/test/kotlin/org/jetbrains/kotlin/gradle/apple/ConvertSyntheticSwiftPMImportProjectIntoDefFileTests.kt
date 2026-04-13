@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftP
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.NativeGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
@@ -79,8 +78,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     dependsOn(packageGeneration)
                     xcodebuildPlatform.set(KonanTarget.IOS_SIMULATOR_ARM64.applePlatform)
                     xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
-                    architectures.set(setOf(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture))
-                    clangModules.set(emptySet())
+                    architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
                     discoverModulesImplicitly.set(true)
                     hasSwiftPMDependencies.set(true)
                     filesToTrackFromLocalPackages.set(stubTrackedFiles)
@@ -95,12 +93,14 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
             assertFileExists(generatedDefFile)
             val compilerOpts = generatedDefFile.readLines().single { it.startsWith("compilerOpts") }
 
-            val packageDependencyModule = projectPath.resolve("build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/packageOne.modulemap")
+            val packageDependencyModule =
+                projectPath.resolve("build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Intermediates.noindex/GeneratedModuleMaps-iphonesimulator/packageOne.modulemap")
             assertFileExists(packageDependencyModule)
             // We must have discovered the modulmap file reference to be able to index it with cinterops
             assertContains(compilerOpts, "-fmodule-map-file=${packageDependencyModule.pathString}")
 
-            val sharedDerivedDataSearchPath = projectPath.resolve("build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Products/Debug-iphonesimulator")
+            val sharedDerivedDataSearchPath =
+                projectPath.resolve("build/kotlin/swiftImportDd/dd_iphonesimulator/Build/Products/Debug-iphonesimulator")
             assertDirectoryExists(sharedDerivedDataSearchPath)
             // This is the general -I/-F search path, we expect to always be to discover it from the dump
             assertContains(compilerOpts, "-I${sharedDerivedDataSearchPath.pathString}")
@@ -116,6 +116,40 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
             val linkerArguments = ldDumpPath.readLines().single().split(';')
             val fileList = linkerArguments[linkerArguments.indices.single { linkerArguments[it] == "-filelist" } + 1]
             assertFileExists(File(fileList))
+        }
+    }
+
+    @GradleTest
+    fun `sdk without relevant SwiftPM dependencies writes stub outputs without xcodebuild`(version: GradleVersion) {
+        project("empty", version) {
+            val stubTrackedFiles = projectPath.resolve("trackedFilesStub").also { it.createFile() }.toFile()
+
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.createKotlinExtension(KotlinMultiplatformExtension::class)
+                project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
+                    xcodebuildPlatform.set(KonanTarget.MACOS_ARM64.applePlatform)
+                    xcodebuildSdk.set(KonanTarget.MACOS_ARM64.appleTarget.sdk)
+                    architectures.add(KonanTarget.MACOS_ARM64.appleArchitecture)
+                    discoverModulesImplicitly.set(true)
+                    hasSwiftPMDependencies.set(false)
+                    filesToTrackFromLocalPackages.set(stubTrackedFiles)
+                    swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
+                    syntheticImportProjectRoot.set(project.layout.buildDirectory.dir("unusedSyntheticProject"))
+                }
+            }
+
+            build("packageDump")
+
+            val generatedDefFile = projectPath.resolve("build/kotlin/swiftImportDefs/macosx/arm64.def").toFile()
+            assertFileExists(generatedDefFile)
+            assertEquals(
+                listOf("language = Objective-C", "package = swiftPMImport.empty"),
+                generatedDefFile.readLines(),
+            )
+            assertFileExists(projectPath.resolve("build/kotlin/swiftImportLdDump/macosx/arm64.ld"))
         }
     }
 

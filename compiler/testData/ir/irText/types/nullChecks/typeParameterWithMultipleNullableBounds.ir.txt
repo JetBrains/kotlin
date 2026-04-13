@@ -16,8 +16,10 @@ FILE fqName:<root> fileName:/typeParameterWithMultipleNullableBounds.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int declared in kotlin.Comparable' type=kotlin.Int origin=null
-                ARG <this>: GET_VAR 'val tmp_0: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
-                ARG other: GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
+                ARG <this>: TYPE_OP type={T of <root>.f & Any} origin=IMPLICIT_CAST typeOperand={T of <root>.f & Any}
+                  GET_VAR 'val tmp_0: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
+                ARG other: TYPE_OP type={T of <root>.f & Any} origin=IMPLICIT_CAST typeOperand={T of <root>.f & Any}
+                  GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit

@@ -23,7 +23,7 @@ fun branchingIndetermineFlow(a: Any?) {
     val x: Int
 
     if (a is String) {
-        myRepeat(<!DEBUG_INFO_SMARTCAST!>a<!>.length) {
+        myRepeat(a.length) {
             // Val reassignment because we know that repeat's lambda called in-place
             myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
         }

@@ -33,8 +33,8 @@ class B: A() {
         X().A_X()
         X().<!UNRESOLVED_REFERENCE!>T_X<!>()
 
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Y()<!>.A_C_Y()
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Y()<!>.<!UNRESOLVED_REFERENCE!>T_Y<!>()
+        Y().<!UNRESOLVED_REFERENCE!>A_C_Y<!>()
+        Y().T_Y()
     }
 }
 

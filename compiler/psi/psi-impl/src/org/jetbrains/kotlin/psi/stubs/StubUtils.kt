@@ -87,9 +87,8 @@ object StubUtils {
         }
     }
 
-    @KtImplementationDetail
     @JvmStatic
-    tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
+    internal tailrec fun isDeclaredInsideValueArgument(node: ASTNode?): Boolean {
         val parent = node?.treeParent
         return when (parent?.elementType) {
             // Constants are allowed only in the argument position
@@ -99,9 +98,8 @@ object StubUtils {
         }
     }
 
-    @KtImplementationDetail
     @JvmStatic
-    fun StubOutputStream.writeNullableBoolean(value: Boolean?) {
+    internal fun StubOutputStream.writeNullableBoolean(value: Boolean?) {
         val byte = when (value) {
             true -> 0
             false -> 1
@@ -111,9 +109,8 @@ object StubUtils {
         writeByte(byte)
     }
 
-    @KtImplementationDetail
     @JvmStatic
-    fun StubInputStream.readNullableBoolean(): Boolean? = when (readByte().toInt()) {
+    internal fun StubInputStream.readNullableBoolean(): Boolean? = when (readByte().toInt()) {
         0 -> true
         1 -> false
         else -> null
@@ -183,17 +180,15 @@ object StubUtils {
         }
     }
 
-    @KtImplementationDetail
     @JvmStatic
-    fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
+    internal fun StubOutputStream.writeContract(contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?) {
         writeNullableCollection(contract) { effect ->
             effect.accept(KotlinContractSerializationVisitor(this), null)
         }
     }
 
-    @KtImplementationDetail
     @JvmStatic
-    fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
+    internal fun StubInputStream.readContract(): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = readNullableCollection {
         val effectType: KotlinContractEffectType = KotlinContractEffectType.entries[readVarInt()]
         effectType.deserialize(this@readContract)
     }

@@ -17,7 +17,7 @@ sealed class Sealed2
 object O2 : Sealed2()
 
 fun test() {
-    when (J.identity(C1() as Sealed1)) {
+    <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.identity(C1() as Sealed1)) {
         is C1 -> {}
     }
 
@@ -30,7 +30,7 @@ fun test() {
         is C1? -> {}
     }
 
-    when (J.identity(O2 as Sealed2)) {
+    <!UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS!>when<!> (J.identity(O2 as Sealed2)) {
         O2 -> {}
     }
 

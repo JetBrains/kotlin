@@ -4,19 +4,19 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashSet'
-          TYPE_ARG E: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG E: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[java.util.HashSet<kotlin.Int>; java.util.SequencedSet<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun add (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public open fun add (p0: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
         public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun addAll (p0: @[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:addFirst visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
@@ -39,24 +39,24 @@ FILE fqName:<root> fileName:/1.kt
         public open fun clone (): @[EnhancedNullability] kotlin.Any declared in java.util.HashSet
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun contains (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public open fun contains (p0: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
         public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun containsAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:other index:1 type:@[EnhancedNullability] kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashSet
+        public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashSet
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Int?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Int?>?
       overridden:
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.HashSet?>?): kotlin.Unit declared in java.util.HashSet
@@ -89,32 +89,32 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
       overridden:
         public open fun newHashSet <T> (p0: kotlin.Int): @[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of java.util.HashSet.newHashSet?>? declared in java.util.HashSet
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun remove (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public open fun remove (p0: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
         public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeFirst visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
       overridden:
         public open fun removeFirst (): @[FlexibleNullability] E of java.util.SequencedSet? declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?>): kotlin.Boolean declared in java.util.HashSet
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
@@ -122,38 +122,36 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeLast (): @[FlexibleNullability] E of java.util.SequencedSet? declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun retainAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:reversed visibility:public modality:ABSTRACT returnType:@[FlexibleNullability] java.util.SequencedSet<@[FlexibleNullability] kotlin.Int?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedSet<kotlin.Int>
       overridden:
         public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedSet<@[FlexibleNullability] E of java.util.SequencedSet?>? declared in java.util.SequencedSet
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.HashSet
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.HashSet
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?>?
-      annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = DeprecationLevel.WARNING)
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
-        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet
+        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
+        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       overridden:
@@ -166,7 +164,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun spliterator (): java.util.Spliterator<kotlin.Int> declared in <root>.A'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.Spliterator<kotlin.Int> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
@@ -184,19 +182,19 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.HashSet'
-          TYPE_ARG E: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG E: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[java.util.HashSet<kotlin.Int>; java.util.SequencedSet<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun add (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public open fun add (p0: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
         public abstract fun add (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun addAll (p0: @[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:addFirst visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
@@ -219,24 +217,24 @@ FILE fqName:<root> fileName:/1.kt
         public open fun clone (): @[EnhancedNullability] kotlin.Any declared in java.util.HashSet
     FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun contains (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public open fun contains (p0: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
         public abstract fun contains (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun containsAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:other index:1 type:@[EnhancedNullability] kotlin.Any?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Any?
       overridden:
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashSet
+        public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.HashSet
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Int?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Int?>?
       overridden:
         public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of java.util.HashSet?>?): kotlin.Unit declared in java.util.HashSet
@@ -269,32 +267,32 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
       overridden:
         public open fun newHashSet <T> (p0: kotlin.Int): @[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of java.util.HashSet.newHashSet?>? declared in java.util.HashSet
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.Int
       overridden:
-        public open fun remove (element: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
+        public open fun remove (p0: @[EnhancedNullability] E of java.util.HashSet): kotlin.Boolean declared in java.util.HashSet
         public abstract fun remove (element: @[FlexibleNullability] E of java.util.SequencedSet?): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractSet<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeFirst visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
       overridden:
         public open fun removeFirst (): @[FlexibleNullability] E of java.util.SequencedSet? declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?>): kotlin.Boolean declared in java.util.HashSet
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SequencedCollection<@[FlexibleNullability] kotlin.Int?>
@@ -302,34 +300,32 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeLast (): @[FlexibleNullability] E of java.util.SequencedSet? declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
+        public open fun retainAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.HashSet>): kotlin.Boolean declared in java.util.HashSet
         public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] E of java.util.SequencedSet?>): kotlin.Boolean declared in java.util.SequencedSet
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.HashSet> declared in java.util.HashSet
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.HashSet?> declared in java.util.HashSet
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.HashSet
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.HashSet
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Int?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?>?
-      annotations:
-        Deprecated(message = "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version", replaceWith = ReplaceWith(expression = "", imports = [] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String), level = DeprecationLevel.WARNING)
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
-        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet
+        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.HashSet.toArray?>? declared in java.util.HashSet
+        public open fun toArray <T> (p0: @[FlexibleNullability] java.util.function.IntFunction<@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.SequencedSet.toArray?>? declared in java.util.SequencedSet
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
       overridden:
@@ -341,7 +337,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun reversed (): @[FlexibleNullability] java.util.SequencedSet<@[FlexibleNullability] E of java.util.SequencedSet?>? declared in java.util.SequencedSet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun reversed (): java.util.SequencedSet<kotlin.Int> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.SequencedSet<kotlin.Int> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:spliterator visibility:public modality:OPEN returnType:java.util.Spliterator<kotlin.Int>
@@ -351,7 +347,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.SequencedSet?> declared in java.util.SequencedSet
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun spliterator (): java.util.Spliterator<kotlin.Int> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.Spliterator<kotlin.Int> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]

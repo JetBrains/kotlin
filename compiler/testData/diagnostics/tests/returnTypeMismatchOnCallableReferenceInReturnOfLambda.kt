@@ -10,23 +10,23 @@ fun callable(): String = ""
 fun <T> genericCallable(): T = null!!
 
 fun test() {
-    var str: String = <!TYPE_MISMATCH!>runLike {
-        <!TYPE_MISMATCH!>::callable<!>
-    }<!>
+    var str: String = runLike {
+        ::<!INAPPLICABLE_CANDIDATE!>callable<!>
+    }
     str = runLike {
-        <!TYPE_MISMATCH!>::genericCallable<!>
+        ::<!INAPPLICABLE_CANDIDATE!>genericCallable<!>
     }
     str = runLike<String> {
-        <!TYPE_MISMATCH!>::callable<!>
+        ::<!INAPPLICABLE_CANDIDATE!>callable<!>
     }
     str = runLike<String> {
-        <!TYPE_MISMATCH!>::genericCallable<!>
+        ::<!INAPPLICABLE_CANDIDATE!>genericCallable<!>
     }
     runLike<String> {
-        <!TYPE_MISMATCH!>::callable<!>
+        ::<!INAPPLICABLE_CANDIDATE!>callable<!>
     }
     runLike<String> {
-        <!TYPE_MISMATCH!>::genericCallable<!>
+        ::<!INAPPLICABLE_CANDIDATE!>genericCallable<!>
     }
 }
 

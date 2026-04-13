@@ -83,14 +83,14 @@ fun evlis() {
 
 fun ifChecksAndSmartCasts() {
     // JSR
-    val r1 = if (<!SENSELESS_COMPARISON, SENSELESS_COMPARISON!>a == null<!>) 42 else a.length
-    val r2 = if (b == null) 42 else <!DEBUG_INFO_SMARTCAST!>b<!>.length
+    val r1 = if (a == null) 42 else a.length
+    val r2 = if (b == null) 42 else b.length
 
     // JB
     val r3 = if (<!SENSELESS_COMPARISON!>c == null<!>) 42 else c.length
-    val r4 = if (d == null) 42 else <!DEBUG_INFO_SMARTCAST!>d<!>.length
+    val r4 = if (d == null) 42 else d.length
 
     // Platform
     val r5 = if (e == null) 42 else e.length
-    val r6 = if (f == null) 42 else <!DEBUG_INFO_SMARTCAST!>f<!>.length
+    val r6 = if (f == null) 42 else f.length
 }

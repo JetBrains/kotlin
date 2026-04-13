@@ -190,7 +190,7 @@ fun test20(i: Int) {
     var y = x
     do {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y += ""
     } while (i < 10)
 }
@@ -200,7 +200,7 @@ fun test21(i: Int) {
     var y = x
     do {
         require(y is Int)
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
         y++
     } while (i < 10)
 }
@@ -233,7 +233,7 @@ fun test24(i: Int) {
     do {
         require(y is String)
         y += ""
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     } while (i < 10)
 }
 
@@ -243,7 +243,7 @@ fun test25(i: Int) {
     do {
         require(y is Int)
         y++
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
     } while (i < 10)
 }
 
@@ -256,8 +256,8 @@ fun test26(i: Int) {
     do {
         y = 10
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     } while (i < 10)
 }
 
@@ -268,8 +268,8 @@ fun test27(i: Int) {
     do {
         y = ""
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     } while (i < 10)
 }
 
@@ -278,10 +278,10 @@ fun test28(i: Int) {
     var y = x
     require(y is String)
     do {
-        y <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!> ""
+        y <!UNRESOLVED_REFERENCE!>+=<!> ""
         y = x
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        y.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
+        y.length
     } while (i < 10)
 }
 
@@ -290,10 +290,10 @@ fun test29(i: Int) {
     var y = x
     require(y is Int)
     do {
-        y<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>++<!>
+        y<!UNRESOLVED_REFERENCE!>++<!>
         y = x
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
-        y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
+        y.inc()
     } while (i < 10)
 }
 
@@ -354,7 +354,7 @@ fun test34(i: Int) {
     val state: Boolean = x is String
     do {
         if (state) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     } while (i < 10)
 }

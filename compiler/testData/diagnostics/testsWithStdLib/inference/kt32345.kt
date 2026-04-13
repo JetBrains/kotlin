@@ -31,7 +31,7 @@ class CleanupTestExample {
         fun addCleanupBlock(value: T?) {
             if (value != null) {
                 @Suppress("UNCHECKED_CAST")
-                cleanupBlocks.add((<!DEBUG_INFO_SMARTCAST!>value<!> to block) as Pair<Any, (Any) -> Unit>)
+                cleanupBlocks.add((value to block) as Pair<Any, (Any) -> Unit>)
             }
 
         }

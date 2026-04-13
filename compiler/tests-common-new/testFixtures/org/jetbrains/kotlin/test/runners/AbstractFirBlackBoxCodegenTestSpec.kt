@@ -13,34 +13,29 @@ import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.FULL_JDK
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirBlackBoxCodegenTestBase
+import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.test.services.PackageNamePreprocessor
 import org.jetbrains.kotlin.test.services.sourceProviders.SpecHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
-abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : AbstractFirBlackBoxCodegenTestBase(parser) {
+abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : AbstractJvmBlackBoxCodegenTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            baseFirSpecBlackBoxCodegenTestConfiguration()
+            defaultDirectives {
+                +SPEC_HELPERS
+                +WITH_STDLIB
+                +WITH_REFLECT
+                +FULL_JDK
+            }
+            useSourcePreprocessor(::PackageNamePreprocessor)
+            useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
+            useAfterAnalysisCheckers(
+                ::FirFailingTestSuppressor,
+                ::BlackBoxCodegenSuppressor,
+            )
         }
     }
 }
 
 open class AbstractFirBlackBoxCodegenTestSpec : AbstractFirBlackBoxCodegenTestSpecBase(FirParser.LightTree)
-
-private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration() {
-    defaultDirectives {
-        +SPEC_HELPERS
-        +WITH_STDLIB
-        +WITH_REFLECT
-        +FULL_JDK
-    }
-    useSourcePreprocessor(::PackageNamePreprocessor)
-    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
-
-    useAfterAnalysisCheckers(
-        ::FirFailingTestSuppressor,
-        ::BlackBoxCodegenSuppressor,
-    )
-}

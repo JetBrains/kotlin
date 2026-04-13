@@ -12,12 +12,12 @@ class C {
 
 annotation class Anno(val x: Int)
 
-@Anno(C.A)
+@Anno(<!ARGUMENT_TYPE_MISMATCH!>C.<!DEPRECATION_ERROR!>A<!><!>)
 fun test() {
-    C.A
+    C.<!DEPRECATION_ERROR!>A<!>
     C.<!DEPRECATION_ERROR!>A<!>.<!UNRESOLVED_REFERENCE!>toLong<!>()
-    C.A::toLong
-    C.A::class
+    C.<!DEPRECATION_ERROR!>A<!>::<!UNRESOLVED_REFERENCE!>toLong<!>
+    C.<!DEPRECATION_ERROR!>A<!>::class
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, companionObject, const,

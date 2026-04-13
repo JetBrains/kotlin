@@ -102,28 +102,50 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     // introduce performance regression in the old code (compiled by Kotlin < 2.3.20) if it has the new kotlin-reflect in classpath.
     // So, effectively this test checks that `Reflection.property0/1/2` are still fast enough to be called from the old code.
     fun testLazyInitializationForDelegatedProperty() {
+        checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataPathBase() + "/reflection/lazyInitializationForDelegatedProperty")
+    }
+
+    // This test checks that we don't initialize full reflection (and specifically never read any metadata or parse protobuf) for
+    // calls of `typeOf<T>()`.
+    // Before the fix, such calls caused unexpected application slowdown when full kotlin-reflect added to the classpath.
+    fun testLightweightTypeOf() {
+        checkFullReflectionIsNotLoaded(KtTestUtil.getTestDataPathBase() + "/reflection/lightweightTypeOf")
+    }
+
+    private fun checkFullReflectionIsNotLoaded(root: String) {
         // Run the program and print all classes loaded by the JVM.
-        val (stdout, stderr) = compileAndRunProgram(
-            KtTestUtil.getTestDataPathBase() + "/reflection/lazyInitializationForDelegatedProperty",
-            listOf("-verbose:class"),
-        )
+        val (stdout, stderr) = compileAndRunProgram(root, listOf("-verbose:class"))
+
+        // Protobuf is loaded via an entrypoint in the `JvmProtoBuf` class. If that class is not loaded by the JVM, metadata has not been
+        // loaded, and full reflection is not initialized.
         if ("JvmProtoBuf" in stdout || "JvmProtoBuf" in stderr) {
-            fail("Full reflection should not be loaded for delegated properties:\n\n$stdout\n\n$stderr\n\n")
+            fail("Full reflection should not be loaded:\n\n$stdout\n\n$stderr\n\n")
         }
     }
 
-    private fun compileAndRunProgram(root: String, jvmArgs: List<String> = emptyList()): TestOutput {
-        val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
+    private fun compileAndRunProgram(
+        root: String,
+        jvmArgs: List<String> = emptyList(),
+    ): TestOutput {
+        val javaSources = File(root).walkTopDown().filter { it.extension == "java" }.toList()
+        val extraClasspath = if (javaSources.isNotEmpty()) {
+            KotlinTestUtils.tmpDirForTest(this).also { output ->
+                compileJavaFiles(javaSources, listOf("-d", output.absolutePath)).assertSuccessful()
+            }
+        } else null
+
+        val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"), extraClasspath = listOfNotNull(extraClasspath))
 
         return runJava(
             *jvmArgs.toTypedArray(),
             "-ea",
             "-classpath",
-            listOf(
-                ForTestCompileRuntime.runtimeJarForTests().absolutePath,
-                ForTestCompileRuntime.reflectJarForTests().absolutePath,
-                lib.absolutePath,
-            ).joinToString(File.pathSeparator),
+            listOfNotNull(
+                ForTestCompileRuntime.runtimeJarForTests(),
+                ForTestCompileRuntime.reflectJarForTests(),
+                extraClasspath,
+                lib,
+            ).joinToString(File.pathSeparator) { it.absolutePath },
             "TestKt",
         )
     }

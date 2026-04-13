@@ -15,21 +15,21 @@ interface B : A {
 }
 
 fun testCommon(b: B) {
-    b.foo()
-    b.bar()
+    b.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    b.<!RETURN_VALUE_NOT_USED!>bar<!>()
 }
 
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual interface <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>A<!> {
-    actual fun foo(): String
-    actual fun bar(): String
+actual interface A {
+    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT!>foo<!>(): String
+    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT!>bar<!>(): String
 }
 
 fun testPlatform(b: B) {
-    b.foo()
+    b.<!RETURN_VALUE_NOT_USED!>foo<!>()
     b.bar()
 }
 

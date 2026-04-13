@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toSir
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -105,6 +106,7 @@ internal open class SirFunctionFromKtSymbol(
             explicitParameters = listOfNotNull(extensionReceiverParameter) + parameters,
             returnType = returnType,
             kotlinFqName = fqName,
+            kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = (parent !is SirModule && isInstance).ifTrue {
                 SirParameter("", "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
             },

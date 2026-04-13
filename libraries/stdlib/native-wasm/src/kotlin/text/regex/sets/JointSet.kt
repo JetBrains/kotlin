@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -30,7 +30,10 @@ import kotlin.experimental.ExperimentalNativeApi
  */
 open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : AbstractSet() {
 
-    protected var children: MutableList<AbstractSet> = mutableListOf<AbstractSet>().apply { addAll(children) }
+    private var children = children.toTypedArray()
+
+    protected val childrenSize: Int
+        get() = children.size
 
     var fSet: FSet = fSet
         protected set
@@ -65,6 +68,7 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
 
     override val name: String
             get() = "JointSet"
+
     override fun first(set: AbstractSet): Boolean = children.any { it.first(set) }
 
     override fun hasConsumed(matchResult: MatchResultImpl): Boolean {
@@ -79,15 +83,35 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
             assert(newFSet == fSet)
         }
 
-        @OptIn(ExperimentalNativeApi::class)
-        children.replaceAll { child -> if (!child.secondPassVisited) child.processSecondPass() else child }
+        forEachChildIndexed { index, child ->
+            if (!child.secondPassVisited) {
+                children[index] = child.processSecondPass()
+            }
+        }
+
         return super.processSecondPassInternal()
     }
 
     override fun reportOwnProperties(properties: SetProperties) {
         children.forEach { it.collectProperties(properties, fSet) }
-        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || childrenSize > 1
         properties.capturesGroups = true
         fSet.reportOwnProperties(properties)
+    }
+
+    protected inline fun forEachChildIndexed(action: (index: Int, child: AbstractSet) -> Unit) {
+        for (index in children.indices) {
+            action(index, children[index])
+        }
+    }
+
+    /**
+     * If [this] set contains a single child, returns it. Otherwise, returns `null`.
+     */
+    internal fun getSingleChildOrNull(): AbstractSet? {
+        if (childrenSize == 1) {
+            return children[0]
+        }
+        return null
     }
 }

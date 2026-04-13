@@ -1,4 +1,4 @@
-FILE: chainedFunSuspendUnitConversion.fir.kt
+FILE: chainedFunSuspendUnitConversion.kt
     public abstract fun interface SuspendRunnable : R|kotlin/Any| {
         public abstract suspend fun run(): R|kotlin/Unit|
 
@@ -15,7 +15,7 @@ FILE: chainedFunSuspendUnitConversion.fir.kt
 
     }
     public final fun test(f: R|() -> kotlin/String|, s: R|SubInt|): R|kotlin/Unit| {
-        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(SAM(FConversion(R|<local>/f|)))
-        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(SAM(FConversion(R|<local>/s|)))
+        R|/foo|(SAM(FConversion(R|<local>/f|)))
+        R|/foo|(SAM(FConversion(R|<local>/s|)))
         R|/foo|(SAM(::R|/bar|))
     }

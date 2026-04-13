@@ -22,7 +22,7 @@ public class JavaClass {
 
 fun main() {
     JavaClass.ofJetbrains(<!NULL_FOR_NONNULL_TYPE!>null<!>) // this is also red, because ENABLE_FOREIGN_ANNOTATIONS is used
-    JavaClass.ofJspecify(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>) // this is red
+    JavaClass.ofJspecify(<!NULL_FOR_NONNULL_TYPE!>null<!>) // this is red
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

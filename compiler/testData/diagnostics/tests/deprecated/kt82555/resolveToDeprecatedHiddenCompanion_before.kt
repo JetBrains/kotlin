@@ -8,7 +8,7 @@ class C {
 }
 
 fun test() {
-    <!NO_COMPANION_OBJECT!>C<!>
+    <!DEPRECATION_ERROR!>C<!>
     <!DEPRECATION_ERROR!>C<!>.toString()
 }
 

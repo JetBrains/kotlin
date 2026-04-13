@@ -4,13 +4,13 @@
 @file:OptIn(ExperimentalVersionOverloading::class)
 
 val x = object {
-    fun f(a: Int = 1, @IntroducedAt("1") b: String = "x") = "$a/$b"
+    fun <!INVALID_VERSIONING_ON_LOCAL_FUNCTION!>f<!>(a: Int = 1, @IntroducedAt("1") b: String = "x") = "$a/$b"
 }
 
 
 fun outer() {
     @OptIn(ExperimentalVersionOverloading::class)
-    fun local(a: Int = 0, @IntroducedAt("1") b: Int = 1) {
+    fun <!INVALID_VERSIONING_ON_LOCAL_FUNCTION!>local<!>(a: Int = 0, @IntroducedAt("1") b: Int = 1) {
     }
 }
 

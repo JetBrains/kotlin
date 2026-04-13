@@ -1,5 +1,0 @@
-KtNameReferenceExpression(49,56): 'JvmName'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      <constructor>(name: kotlin.String): kotlin.jvm.JvmName
-    ]

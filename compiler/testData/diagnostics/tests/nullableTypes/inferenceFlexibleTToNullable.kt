@@ -32,12 +32,12 @@ public class Foo<T>  {
 
 // FILE: main.kt
 fun <T> bar(n: Number?, d: T, e: T) {
-    val a: Number = <!TYPE_MISMATCH!>Foo.simpleId(n)<!>
+    val a: Number <!INITIALIZER_TYPE_MISMATCH!>=<!> Foo.simpleId(n)
     val b: Number? = Foo.simpleId(n)
     val c = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>Foo.simpleId(n)<!>
 
     val x4 = Foo(if (true) 10 else null)
-    val x5: Number = <!TYPE_MISMATCH!>x4.produceT()<!>
+    val x5: Number <!INITIALIZER_TYPE_MISMATCH!>=<!> x4.produceT()
     val x6: Number? = x4.produceT()
     val x7 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x4.produceT()<!>
     val x8 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x4.produceNotNullT()<!>

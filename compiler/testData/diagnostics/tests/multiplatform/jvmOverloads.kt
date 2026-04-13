@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 // MODULE: m1-common

@@ -110,13 +110,13 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.A
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
         overridden:
           public open fun <get-a> (<this>: <root>.A): kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<set-a> visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.A
         VALUE_PARAMETER kind:Regular name:value index:2 type:kotlin.Int
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,var]
@@ -126,13 +126,13 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open b: kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.Java2
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
           public open fun <get-b> (<this>: <root>.Java2): kotlin.String declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:<root>.Java2
         VALUE_PARAMETER kind:Regular name:value index:2 type:kotlin.String
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]

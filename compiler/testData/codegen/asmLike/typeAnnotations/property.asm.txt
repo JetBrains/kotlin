@@ -79,8 +79,6 @@ public final class foo/Kotlin : java/lang/Object {
     public final static void access$setJvmStatic$cp(java.lang.String <set-?>)
 
     public final int getAnnotatedGetter()
-      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
-      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final java.lang.String getCustomSetter()
       @Lorg/jetbrains/annotations/NotNull;([]) // invisible
@@ -98,6 +96,8 @@ public final class foo/Kotlin : java/lang/Object {
       @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final int getUnannotatedGetter()
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_RETURN, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
 
     public final java.lang.String getValProp()
       @Lorg/jetbrains/annotations/NotNull;([]) // invisible

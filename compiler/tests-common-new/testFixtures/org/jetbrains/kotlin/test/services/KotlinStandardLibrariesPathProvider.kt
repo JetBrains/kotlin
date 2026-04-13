@@ -88,7 +88,7 @@ interface KotlinStandardLibrariesPathProvider : TestService {
     fun jvmAnnotationsForTests(): File
 
     /**
-     * compiler/testData/mockJDK/jre/lib/annotations.jar
+     * third-party/mockJDKs/mockJDK/jre/lib/annotations.jar
      */
     fun getAnnotationsJar(): File
 

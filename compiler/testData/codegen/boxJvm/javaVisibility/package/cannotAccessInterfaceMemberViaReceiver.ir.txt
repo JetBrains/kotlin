@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/Child.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Child
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.String declared in <root>.Child'
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:publicStaticField type:kotlin.String visibility:public [final,static] declared in javapackage.PackagePrivateGrandparentInterface' type=kotlin.String superQualifierSymbol=javapackage.PublicParentClass origin=null
+          CONST String type=kotlin.String value="OK"
 FILE fqName:<root> fileName:/test.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY

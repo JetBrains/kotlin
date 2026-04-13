@@ -7,34 +7,34 @@ fun foo(x: Int): Int = x + 1
 fun main() {
     val x: Int? = null
 
-    foo(<!TYPE_MISMATCH!>x<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
     if (x != null) {
-        foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        foo(x)
         foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-        foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        foo(x)
     }
 
-    foo(<!TYPE_MISMATCH!>x<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
     if (x != null) {
-        foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        foo(x)
         foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-        foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        foo(x)
     } else {
-        foo(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>)
-        <!UNREACHABLE_CODE!>foo(<!><!ALWAYS_NULL!>x<!>!!<!UNREACHABLE_CODE!>)<!>
-        <!UNREACHABLE_CODE!>foo(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
+        foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        foo(x!!)
+        foo(x)
     }
 
-    foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    foo(x)
     foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
-    foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    foo(x)
 
     val y: Int? = null
     y!!
     y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-    foo(<!DEBUG_INFO_SMARTCAST!>y<!>)
+    foo(y)
     foo(y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }
 

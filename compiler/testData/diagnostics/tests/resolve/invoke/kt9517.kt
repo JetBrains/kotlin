@@ -11,7 +11,7 @@ class B: A() {
 
 fun test(a: A) {
     if (a is B) {
-        val foo: Int = <!DEBUG_INFO_SMARTCAST!>a<!>.foo() // B::foo + invoke()
+        val foo: Int = a.foo() // B::foo + invoke()
     }
 }
 

@@ -71,13 +71,13 @@ typealias AList = ArrayList<I>
 @Marker
 typealias YourList = ArrayList<String>
 
-fun my2(my: <!OPT_IN_USAGE_ERROR!>MyList<!>) {}
+fun my2(my: MyList) {}
 
 fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
 fun main() {
     val x = <!OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())
-    val y = <!OPT_IN_USAGE_ERROR!>MyList<!>()
+    val y = MyList()
     val b = <!OPT_IN_USAGE_ERROR!>AList<!>()
     val z = <!OPT_IN_USAGE_ERROR!>YourList<!>()
     <!OPT_IN_USAGE_ERROR!>YourList<!>().add("")
@@ -129,7 +129,7 @@ fun operatorContainerUsage(s: String, a: AnotherContainer) {
     val res1 = s <!OPT_IN_USAGE_ERROR!>-<!> s
     val res2 = <!OPT_IN_USAGE_ERROR!>s<!>()
     val res3 = <!OPT_IN_USAGE_ERROR!>res1<!> <!OPT_IN_USAGE_ERROR!>><!> <!OPT_IN_USAGE_ERROR!>res2<!>
-    for (c in <!OPT_IN_USAGE_ERROR!>a<!>) {}
+    for (c in <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>a<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetProperty,

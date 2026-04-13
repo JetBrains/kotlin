@@ -1,0 +1,19 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval x1: R|ThrowableComputable<kotlin/Int!, ERROR CLASS: Cannot infer argument for type parameter E1!>!| = Q|JavaHelper|.R|/JavaHelper.wrapAsComputable*s<CS errors: /JavaHelper.wrapAsComputable>#|<R|kotlin/Int!|, <ERROR TYPE REF: Cannot infer argument for type parameter E1>>(<L> = SAM(wrapAsComputable@fun <anonymous>(): R|kotlin/Int!| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        ))
+        lval x2: R|ThrowableComputable<kotlin/Int!, ERROR CLASS: Cannot infer argument for type parameter E>| = R|/ThrowableComputable<CS errors: /ThrowableComputable>#|<R|kotlin/Int!|, <ERROR TYPE REF: Cannot infer argument for type parameter E>>(<L> = ThrowableComputable@fun <anonymous>(): R|kotlin/Int!| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        )
+        Q|JavaHelper|.R|/JavaHelper.consumeComputable*s|<R|kotlin/Int!|, R|kotlin/Throwable!|>(Q|JavaHelper|.R|/JavaHelper.wrapAsComputable*s|<R|kotlin/Int!|, R|kotlin/Throwable!|>(<L> = SAM(wrapAsComputable@fun <anonymous>(): R|kotlin/Int!| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        )))
+        Q|JavaHelper|.R|/JavaHelper.consumeComputable*s|<R|kotlin/Int!|, R|kotlin/Throwable!|>(R|/ThrowableComputable|<R|kotlin/Int!|, R|kotlin/Throwable!|>(<L> = ThrowableComputable@fun <anonymous>(): R|kotlin/Int!| <inline=NoInline>  {
+            ^ Int(42)
+        }
+        ))
+    }

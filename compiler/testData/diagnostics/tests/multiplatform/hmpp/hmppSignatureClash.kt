@@ -1,15 +1,15 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // MODULE: common
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class A<!> {
+expect class A {
     fun foo(x: String): String
 }
 
 // MODULE: intermediate()()(common)
 expect class B
 
-actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class A<!> {
-    actual fun foo(x: B) = "a"
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{METADATA}!>A<!> {
+    actual fun <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT{METADATA}!>foo<!>(x: B) = "a"
 }
 
 // MODULE: main()()(intermediate)

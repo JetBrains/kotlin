@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
-// IGNORE_BACKEND_K2: NATIVE
+// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR JVM_IR_SERIALIZE
 // NO_CHECK_LAMBDA_INLINING
 // TODO: replace all references on expected declarations and their members to actuals,

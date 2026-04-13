@@ -81,6 +81,12 @@ internal constructor(
     final override val targets: NamedDomainObjectCollection<KotlinTarget>
         get() = targetsContainer.targets
 
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        "Kotlin/JS IR is the only supported compiler type. Use js(name, configure) instead. Scheduled for removal in Kotlin 2.6.",
+        replaceWith = ReplaceWith("js(name, configure)"),
+        level = DeprecationLevel.WARNING,
+    )
     override fun js(
         name: String,
         compiler: KotlinJsCompilerType,
@@ -241,10 +247,6 @@ internal constructor(
     override fun applyHierarchyTemplate(template: KotlinHierarchyBuilder.Root.() -> Unit) {
         hierarchy.applyHierarchyTemplate(template)
     }
-
-    @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl
-        get() = @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl(this)
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>

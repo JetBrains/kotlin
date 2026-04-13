@@ -25,7 +25,7 @@ actual annotation class ExpectIsSubsetOfActual
 actual annotation class ExpectIsSubsetOfActualDifferentOrder
 
 @Target(AnnotationTarget.FUNCTION)
-actual annotation class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MoreTargetsOnExpect<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> annotation class MoreTargetsOnExpect
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.TYPEALIAS)
 actual annotation class RepeatedTargetsInExpect

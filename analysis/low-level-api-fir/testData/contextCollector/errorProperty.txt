@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] errorProperty.kt
         )
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> transformation([ResolvedTo(CONTRACTS)] body: R|() -> T|): R|T| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> transformation([ResolvedTo(STATUS)] body: R|() -> T|): R|T| { LAZY_BLOCK }
     public final data [ResolvedTo(STATUS)] class MyPair : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] l: R|kotlin/Int|, [ResolvedTo(STATUS)] r: R|kotlin/String|): R|MyPair| {
             LAZY_super<R|kotlin/Any|>

@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        <!UPPER_BOUND_VIOLATION_IN_CONSTRAINT!>consumeDifferentTypeSubtype(getTypeVariable())<!>
+        <!CANNOT_INFER_PARAMETER_TYPE!>consumeDifferentTypeSubtype<!>(<!ARGUMENT_TYPE_MISMATCH!>getTypeVariable()<!>)
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

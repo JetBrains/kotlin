@@ -275,8 +275,8 @@ internal class KaFirCompilerFacility(
                 // Do not check dependency files – even though there might be errors, it's OK as long as they don't affect the main file.
                 // This is important for the code evaluation scenario, as people may modify code while debugging.
                 // The downside is that we can get unexpected exceptions from the backend (that we wrap into KaCompilationResult.Failure).
-                val diagnostics = mainFile.collectDiagnosticsForFile(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
-                val errors = computeErrors(diagnostics.filterIsInstance<KtDiagnostic>(), allowedErrorFilter)
+                val diagnostics = mainFile.diagnostics(resolutionFacade, DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS)
+                val errors = computeErrors(diagnostics.filterIsInstance<KtDiagnostic>().toList(), allowedErrorFilter)
                 if (errors.isNotEmpty()) {
                     return KaCompilationResult.Failure(errors)
                 }

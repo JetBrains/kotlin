@@ -7,7 +7,7 @@ fun foo(i: Long) {}
 fun bar(f: (Boolean) -> Unit) {}
 
 fun test() {
-    bar(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
+    bar(::<!NONE_APPLICABLE!>foo<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType */

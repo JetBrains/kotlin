@@ -39,15 +39,3 @@ inline fun buildModule(init: SirModuleBuilder.() -> Unit): SirModule {
     }
     return SirModuleBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildModuleCopy(original: SirModule, init: SirModuleBuilder.() -> Unit): SirModule {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = SirModuleBuilder()
-    copyBuilder.declarations.addAll(original.declarations)
-    copyBuilder.name = original.name
-    copyBuilder.imports.addAll(original.imports)
-    return copyBuilder.apply(init).build()
-}

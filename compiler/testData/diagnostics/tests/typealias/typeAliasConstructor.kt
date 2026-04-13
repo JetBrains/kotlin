@@ -18,11 +18,11 @@ typealias TI = Interface
 object AnObject
 typealias TO = AnObject
 
-val test6 = <!RESOLUTION_TO_CLASSIFIER!>TI<!>()
-val test6a = <!RESOLUTION_TO_CLASSIFIER!>Interface<!>()
+val test6 = <!INTERFACE_AS_FUNCTION!>TI<!>()
+val test6a = <!INTERFACE_AS_FUNCTION!>Interface<!>()
 
-val test7 = <!FUNCTION_EXPECTED!>TO<!>()
-val test7a = <!FUNCTION_EXPECTED!>AnObject<!>()
+val test7 = <!UNRESOLVED_REFERENCE!>TO<!>()
+val test7a = <!UNRESOLVED_REFERENCE!>AnObject<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, objectDeclaration, primaryConstructor,
 propertyDeclaration, secondaryConstructor, stringLiteral, typeAliasDeclaration */

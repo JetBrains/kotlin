@@ -6,7 +6,7 @@ class C {
     @SinceKotlin("2.4")
     object Obj
 
-    val obj = Obj
+    val obj = <!API_NOT_AVAILABLE!>Obj<!>
 }
 
 object Obj

@@ -3,14 +3,14 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = build {
+    val buildee = <!CANNOT_INFER_PARAMETER_TYPE!>build<!> {
         this as DerivedBuildee<*, *>
         getTypeVariableA()
-        <!RECEIVER_TYPE_MISMATCH("CapturedType(*); CapturedType(*)"), RECEIVER_TYPE_MISMATCH("CapturedType(*); CapturedType(*)"), RECEIVER_TYPE_MISMATCH("CapturedType(*); CapturedType(*)"), RECEIVER_TYPE_MISMATCH("CapturedType(*); CapturedType(*)")!>getTypeVariableB<!>()
+        getTypeVariableB()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<*, *>>(<!TYPE_MISMATCH("Buildee<Any?, Any?>; Buildee<*, *>")!>buildee<!>)
+    checkExactType<Buildee<*, *>>(<!ARGUMENT_TYPE_MISMATCH!>buildee<!>)
 }
 
 

@@ -9,10 +9,10 @@ typealias CIn = C<in Int>
 typealias COut = C<out Int>
 typealias CT<T> = C<T>
 
-val test1 = CStar()
-val test2 = CIn()
-val test3 = COut()
-val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>CT<!><<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
+val test1 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!>CStar()<!>
+val test2 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!>CIn()<!>
+val test3 = <!CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION_ERROR!>COut()<!>
+val test4 = CT<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
 val test5 = CT<CT<*>>()
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, inProjection, nullableType, outProjection, propertyDeclaration,

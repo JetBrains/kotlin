@@ -13,8 +13,8 @@ class C
 operator fun C.invoke() {}
 
 fun test(a: A?) {
-    a?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>lambda<!>()
-    a?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>memberInvoke<!>()
+    a?.lambda()
+    a?.memberInvoke()
     a?.extensionInvoke()
 }
 

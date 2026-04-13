@@ -36,7 +36,7 @@ fun test(a: A) {
 
     M1().a.m1()
 
-    M2().a.m2()
+    M2().a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration */

@@ -5,8 +5,8 @@
 open class Super {
     fun ThisInSubject() {
         return when (this) {
-            is Sub1 <!UNSUPPORTED_FEATURE!>if this.prop1.length > 0<!> -> Unit
-            is Sub2 <!UNSUPPORTED_FEATURE!>if this.prop2 > 0<!> -> Unit
+            is Sub1 if this.prop1.length > 0 -> Unit
+            is Sub2 if this.prop2 > 0 -> Unit
             else -> Unit
         }
     }

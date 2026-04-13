@@ -4,7 +4,6 @@
 // The diagnostic is implemented as a klib check over IR.
 // IGNORE_FIR_DIAGNOSTICS
 
-// IGNORE_BACKEND_K1: JS_IR
 val a = "1"
 
 fun nonConst(): String = "1"

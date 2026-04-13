@@ -39,12 +39,19 @@ import kotlin.time.Instant
  *   - Converting UUIDs to and from arrays of bytes.
  *   - Comparing UUIDs to establish ordering or equality.
  *
+ * Note that [Uuid] has value semantics, and it may become a value class in the future
+ * (see (KEEP-0454)[https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md]
+ * for more details about multi-field value classes). It is not recommended
+ * to rely on [Uuid] identity (i.e., abstain from comparing two [Uuid]s using `===`
+ * or having an [kotlin.concurrent.atomics.AtomicReference] to it). Identity-based operations on [Uuid]
+ * may be reported as warnings in future versions of Kotlin.
+ *
  * @sample samples.uuid.Uuids.parse
  * @sample samples.uuid.Uuids.fromByteArray
  * @sample samples.uuid.Uuids.random
  */
-@SinceKotlin("2.0")
-@ExperimentalUuidApi
+@SinceKotlin("2.4")
+@WasExperimental(ExperimentalUuidApi::class)
 public class Uuid private constructor(
     @PublishedApi internal val mostSignificantBits: Long,
     @PublishedApi internal val leastSignificantBits: Long,
@@ -157,7 +164,6 @@ public class Uuid private constructor(
      * @see Uuid.parseHexDash
      * @sample samples.uuid.Uuids.toHexDashString
      */
-    @SinceKotlin("2.1")
     public fun toHexDashString(): String {
         val bytes = ByteArray(UUID_HEX_DASH_LENGTH)
         mostSignificantBits.formatBytesInto(bytes, 0, startIndex = 0, endIndex = 4)
@@ -221,7 +227,6 @@ public class Uuid private constructor(
      * @see Uuid.fromUByteArray
      * @sample samples.uuid.Uuids.toUByteArray
      */
-    @SinceKotlin("2.1")
     @ExperimentalUnsignedTypes
     public fun toUByteArray(): UByteArray {
         return UByteArray(storage = toByteArray())
@@ -264,7 +269,6 @@ public class Uuid private constructor(
      *
      * @sample samples.uuid.Uuids.compareTo
      */
-    @SinceKotlin("2.1")
     override fun compareTo(other: Uuid): Int {
         return if (mostSignificantBits != other.mostSignificantBits)
             mostSignificantBits.toULong().compareTo(other.mostSignificantBits.toULong())
@@ -365,7 +369,6 @@ public class Uuid private constructor(
          * @see Uuid.toUByteArray
          * @sample samples.uuid.Uuids.fromUByteArray
          */
-        @SinceKotlin("2.1")
         @ExperimentalUnsignedTypes
         public fun fromUByteArray(ubyteArray: UByteArray): Uuid {
             return fromByteArray(ubyteArray.storage)
@@ -427,7 +430,6 @@ public class Uuid private constructor(
          * @see Uuid.parse
          * @sample samples.uuid.Uuids.parseOrNull
          */
-        @SinceKotlin("2.3")
         public fun parseOrNull(uuidString: String): Uuid? {
             return when (uuidString.length) {
                 UUID_HEX_DASH_LENGTH -> parseHexDashOrNull(uuidString)
@@ -458,7 +460,6 @@ public class Uuid private constructor(
          * @see Uuid.parseHexDashOrNull
          * @sample samples.uuid.Uuids.parseHexDash
          */
-        @SinceKotlin("2.1")
         public fun parseHexDash(hexDashString: String): Uuid {
             require(hexDashString.length == UUID_HEX_DASH_LENGTH) {
                 "Expected a 36-char string in the standard hex-and-dash UUID format, " +
@@ -488,7 +489,6 @@ public class Uuid private constructor(
          * @see Uuid.parseHexDash
          * @sample samples.uuid.Uuids.parseHexDashOrNull
          */
-        @SinceKotlin("2.3")
         public fun parseHexDashOrNull(hexDashString: String): Uuid? {
             if (hexDashString.length != UUID_HEX_DASH_LENGTH) return null
             return uuidParseHexDashOrNull(hexDashString)
@@ -536,7 +536,6 @@ public class Uuid private constructor(
          * @see Uuid.parseHex
          * @sample samples.uuid.Uuids.parseHexOrNull
          */
-        @SinceKotlin("2.3")
         public fun parseHexOrNull(hexString: String): Uuid? {
             if (hexString.length != UUID_HEX_LENGTH) return null
             return uuidParseHexOrNull(hexString)
@@ -579,7 +578,7 @@ public class Uuid private constructor(
          * @see Uuid.generateV4
          * @sample samples.uuid.Uuids.random
          */
-        public fun random(): Uuid = generateV4()
+        public fun random(): Uuid = @OptIn(ExperimentalUuidApi::class) generateV4()
 
         /**
          * Generates a new random [Uuid] instance.
@@ -616,6 +615,7 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.v4
          */
         @SinceKotlin("2.3")
+        @ExperimentalUuidApi
         public fun generateV4(): Uuid = secureRandomUuid()
 
         /**
@@ -666,6 +666,7 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.v7
          */
         @SinceKotlin("2.3")
+        @ExperimentalUuidApi
         public fun generateV7(): Uuid = generateV7(Clock.System)
 
         /**
@@ -720,6 +721,7 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.v7ForTimestampSorted
          */
         @SinceKotlin("2.3")
+        @ExperimentalUuidApi
         public fun generateV7NonMonotonicAt(timestamp: Instant): Uuid {
             val randomBytes = ByteArray(10).also {
                 secureRandomBytes(it)
@@ -761,11 +763,10 @@ public class Uuid private constructor(
          * ```kotlin
          * a.toString().compareTo(b.toString())
          * ```
-         *
-         * @sample samples.uuid.Uuids.lexicalOrder
          */
+        @ExperimentalUuidApi
         @Deprecated("Use naturalOrder<Uuid>() instead", ReplaceWith("naturalOrder<Uuid>()", imports = ["kotlin.comparisons.naturalOrder"]))
-        @DeprecatedSinceKotlin(warningSince = "2.1")
+        @DeprecatedSinceKotlin(warningSince = "2.1", errorSince = "2.4")
         public val LEXICAL_ORDER: Comparator<Uuid>
             get() = naturalOrder()
     }
@@ -774,10 +775,8 @@ public class Uuid private constructor(
 private const val UUID_HEX_LENGTH = 32
 private const val UUID_HEX_DASH_LENGTH = 36
 
-@ExperimentalUuidApi
 internal expect fun serializedUuid(uuid: Uuid): Any
 
-@ExperimentalUuidApi
 internal fun secureRandomUuid(): Uuid {
     return uuidFromRandomBytes(ByteArray(Uuid.SIZE_BYTES).also {
         secureRandomBytes(it)
@@ -786,7 +785,6 @@ internal fun secureRandomUuid(): Uuid {
 
 internal expect fun secureRandomBytes(destination: ByteArray): Unit
 
-@ExperimentalUuidApi
 internal fun uuidFromRandomBytes(randomBytes: ByteArray): Uuid {
     randomBytes[6] = (randomBytes[6].toInt() and 0x0f).toByte() /* clear version        */
     randomBytes[6] = (randomBytes[6].toInt() or 0x40).toByte()  /* set to version 4     */
@@ -802,7 +800,6 @@ internal fun uuidFromRandomBytes(randomBytes: ByteArray): Uuid {
  * and the byte at `index + 7` becomes the lowest byte.
  */
 // Implement differently in JS to avoid bitwise operations with Longs
-@ExperimentalUuidApi
 internal expect fun ByteArray.getLongAt(index: Int): Long
 
 internal fun ByteArray.getLongAtCommonImpl(index: Int): Long {
@@ -823,10 +820,8 @@ internal fun ByteArray.getLongAtCommonImpl(index: Int): Long {
  * The index of the highest byte in this Long is `0`, and the index of the lowest byte is `7`.
  */
 // Implement differently in JS to avoid bitwise operations with Longs
-@ExperimentalUuidApi
 internal expect fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int)
 
-@ExperimentalUuidApi
 internal fun Long.formatBytesIntoCommonImpl(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) {
     var dstIndex = dstOffset
     for (reversedIndex in 7 - startIndex downTo 8 - endIndex) {
@@ -845,7 +840,6 @@ internal fun Long.formatBytesIntoCommonImpl(dst: ByteArray, dstOffset: Int, star
  * and the lowest byte is stored at `index + 7`.
  */
 // Implement differently in JS to avoid bitwise operations with Longs
-@ExperimentalUuidApi
 internal expect fun ByteArray.setLongAt(index: Int, value: Long)
 
 internal fun ByteArray.setLongAtCommonImpl(index: Int, value: Long) {
@@ -857,21 +851,17 @@ internal fun ByteArray.setLongAtCommonImpl(index: Int, value: Long) {
 }
 
 // Implement differently in JS to avoid bitwise operations with Longs
-@ExperimentalUuidApi
 internal expect fun uuidParseHexDash(hexDashString: String): Uuid
 
 // Implement differently in JS to avoid bitwise operations with Longs
-@ExperimentalUuidApi
 internal expect fun uuidParseHexDashOrNull(hexDashString: String): Uuid?
 
-@ExperimentalUuidApi
 internal fun uuidParseHexDashCommonImpl(hexDashString: String): Uuid {
     return uuidParseHexDashCommonImpl(hexDashString) { inputString, errorDescription, errorPosition ->
         uuidThrowUnexpectedCharacterException(inputString, errorDescription, errorPosition)
     }
 }
 
-@ExperimentalUuidApi
 internal fun uuidParseHexDashOrNullCommonImpl(hexDashString: String): Uuid? {
     return uuidParseHexDashCommonImpl(hexDashString) { _, _, _ ->
         return null
@@ -885,7 +875,6 @@ internal inline fun String.uuidCheckHyphenAt(
     if (this[index] != '-') onError(this, "'-' (hyphen)", index)
 }
 
-@ExperimentalUuidApi
 internal inline fun uuidParseHexDashCommonImpl(
     hexDashString: String,
     onError: (inputString: String, errorDescription: String, errorPosition: Int) -> Nothing
@@ -910,27 +899,22 @@ internal inline fun uuidParseHexDashCommonImpl(
 }
 
 // Implement differently in JS to avoid bitwise operations with Longs
-@ExperimentalUuidApi
 internal expect fun uuidParseHex(hexString: String): Uuid
 
-@ExperimentalUuidApi
 internal expect fun uuidParseHexOrNull(hexString: String): Uuid?
 
-@ExperimentalUuidApi
 internal fun uuidParseHexCommonImpl(hexString: String): Uuid {
     return uuidParseHexCommonImpl(hexString) { inputString, errorDescription, errorIndex ->
         uuidThrowUnexpectedCharacterException(inputString, errorDescription, errorIndex)
     }
 }
 
-@ExperimentalUuidApi
 internal fun uuidParseHexOrNullCommonImpl(hexString: String): Uuid? {
     return uuidParseHexCommonImpl(hexString) { _, _, _ ->
         return null
     }
 }
 
-@ExperimentalUuidApi
 internal inline fun uuidParseHexCommonImpl(
     hexString: String,
     onError: (inputString: String, errorDescription: String, errorIndex: Int) -> Nothing
@@ -987,7 +971,6 @@ private object UuidV7Generator {
      *
      * This implementation is thread safe.
      */
-    @ExperimentalUuidApi
     fun generate(clock: Clock): Uuid {
         // we need random values for:
         // - 62 bit random rand_b, which will be placed in the first 8 bytes

@@ -26,31 +26,61 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.Functions.unitGetIns
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.HeapTypes.anyBuiltInType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.Synthetics.HeapTypes.throwableBuiltInType
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import java.io.File
+
+abstract class WasmICContextBase : PlatformDependentICContext {
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun createBackendContext(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration,
+    ): JsCommonBackendContext {
+        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
+
+        //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
+        repeat(25) {
+            irBuiltIns.functionN(it)
+            irBuiltIns.suspendFunctionN(it)
+            irBuiltIns.kFunctionN(it)
+            irBuiltIns.kSuspendFunctionN(it)
+        }
+
+        return WasmBackendContext(
+            mainModule.descriptor,
+            irBuiltIns,
+            symbolTable,
+            mainModule,
+            configuration = configuration,
+        )
+    }
+}
 
 open class WasmICContextMultimodule(
     protected val allowIncompleteImplementations: Boolean,
     protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
-) : PlatformDependentICContext {
+) : WasmICContextBase() {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
     override fun createCompiler(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        context: JsCommonBackendContext,
     ): IrCompilerICInterface =
         WasmCompilerWithICMultimodule(
             mainModule = mainModule,
-            irBuiltIns = irBuiltIns,
-            configuration = configuration,
             allowIncompleteImplementations = allowIncompleteImplementations,
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
+            context = context as WasmBackendContext,
         )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
@@ -72,22 +102,22 @@ open class WasmICContextSingleModule(
     protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
-) : PlatformDependentICContext {
+) : WasmICContextBase() {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
     override fun createCompiler(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        context: JsCommonBackendContext,
     ): IrCompilerICInterface =
         WasmCompilerWithICSingleModule(
             mainModule = mainModule,
-            irBuiltIns = irBuiltIns,
-            configuration = configuration,
             allowIncompleteImplementations = allowIncompleteImplementations,
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
+            context = context as WasmBackendContext,
         )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =
@@ -108,22 +138,22 @@ open class WasmICContextWholeWorld(
     protected val skipLocalNames: Boolean,
     private val skipCommentInstructions: Boolean,
     private val skipLocations: Boolean,
-) : PlatformDependentICContext {
+) : WasmICContextBase() {
     override fun createIrFactory(): IrFactory =
         IrFactoryImplForWasmIC(WholeWorldStageController())
 
     override fun createCompiler(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        context: JsCommonBackendContext,
     ): IrCompilerICInterface =
         WasmCompilerWithICWholeWorld(
             mainModule = mainModule,
-            irBuiltIns = irBuiltIns,
-            configuration = configuration,
             allowIncompleteImplementations = allowIncompleteImplementations,
             skipCommentInstructions = skipCommentInstructions,
             skipLocations = skipLocations,
+            context = context as WasmBackendContext,
         )
 
     override fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File?): SrcFileArtifact =

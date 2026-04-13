@@ -1,5 +1,4 @@
 // LANGUAGE: +AnnotationAllUseSiteTarget
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 
 annotation class MyClass(
     @all:Param

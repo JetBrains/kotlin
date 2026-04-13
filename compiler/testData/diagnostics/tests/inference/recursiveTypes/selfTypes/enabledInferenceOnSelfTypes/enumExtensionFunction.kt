@@ -11,8 +11,8 @@ fun <G : Enum<G>> enumTest(a: Enum<G>) {
 }
 
 fun enumStarTest(a: Enum<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>()<!>
-    <!UNREACHABLE_CODE!>a.bar()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*) & kotlin.Enum<CapturedType(*)>")!>a.foo()<!>
+    a.bar()
 }
 
 /* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, localProperty, propertyDeclaration,

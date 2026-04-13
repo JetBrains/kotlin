@@ -6,5 +6,5 @@ interface B {
 }
 
 class C : B {
-    <!NOTHING_TO_OVERRIDE!>override<!> <!ACCIDENTAL_OVERRIDE!>val x = 1<!>
+    <!NOTHING_TO_OVERRIDE!>override<!> <!ACCIDENTAL_OVERRIDE!>val x<!> = 1
 }

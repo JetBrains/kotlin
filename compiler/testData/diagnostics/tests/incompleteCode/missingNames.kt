@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
-<!CONFLICTING_OVERLOADS, FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {
 
 }
 
@@ -8,11 +8,11 @@
 
 }
 
-<!REDECLARATION!>val<!SYNTAX!><!> : Int = 1<!>
+val<!SYNTAX!><!> : Int = 1
 
-<!REDECLARATION!>class<!SYNTAX!><!> {
+class<!SYNTAX!><!> {
 
-}<!>
+}
 
 object<!SYNTAX!><!> {
 
@@ -35,27 +35,27 @@ class Outer {
 
     }
 
-    <!REDECLARATION!>val<!SYNTAX!><!> : Int = 1<!>
+    val<!SYNTAX!><!> : Int = 1
 
-    <!REDECLARATION!>class<!SYNTAX!><!> {
-
-    }<!>
-
-    <!REDECLARATION!>object<!><!SYNTAX!><!> {
+    class<!SYNTAX!><!> {
 
     }
 
-    <!REDECLARATION!>interface<!SYNTAX!><!> {
+    object<!SYNTAX!><!> {
 
-    }<!>
+    }
 
-    <!REDECLARATION!>enum class<!SYNTAX!><!> {
+    interface<!SYNTAX!><!> {
 
-    }<!>
+    }
 
-    <!REDECLARATION!>annotation class<!SYNTAX!><!> {
+    enum class<!SYNTAX!><!> {
 
-    }<!>
+    }
+
+    annotation class<!SYNTAX!><!> {
+
+    }
 }
 
 fun outerFun() {

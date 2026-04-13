@@ -11,7 +11,7 @@ fun foo() = ""
 
 open class B: A() {
     init {
-        val a: Int = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+        val a: Int = foo()
     }
 }
 
@@ -20,7 +20,7 @@ fun test() {
 
     class B: A() {
         init {
-            val a: Int = <!TYPE_MISMATCH!>foo()<!> // todo
+            val a: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> foo() // todo
         }
     }
 }

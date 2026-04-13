@@ -1,5 +1,4 @@
 // ISSUE: KT-81432
-// FIR_IDENTICAL
 class Foo {
     protected fun protectedFun() = Unit
     internal fun internalFun() = Unit

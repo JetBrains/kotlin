@@ -17,16 +17,16 @@ fun bar(x: () -> Unit) {}
 fun baz(x: (MyObject) -> Unit) {}
 
 fun main() {
-    baz(<!TYPE_MISMATCH!>TypeAliasToObject::compute<!>)
+    baz(TypeAliasToObject::<!INAPPLICABLE_CANDIDATE!>compute<!>)
     bar(TypeAliasToObject::compute)
 
-    baz(<!TYPE_MISMATCH!>MyObject::compute<!>)
+    baz(MyObject::<!INAPPLICABLE_CANDIDATE!>compute<!>)
     bar(MyObject::compute)
 
-    baz(<!TYPE_MISMATCH!>id(TypeAliasToObject::compute)<!>)
+    baz(<!ARGUMENT_TYPE_MISMATCH!>id(TypeAliasToObject::compute)<!>)
     bar(id(TypeAliasToObject::compute))
 
-    baz(<!TYPE_MISMATCH!>id(MyObject::compute)<!>)
+    baz(<!ARGUMENT_TYPE_MISMATCH!>id(MyObject::compute)<!>)
     bar(id(MyObject::compute))
 }
 

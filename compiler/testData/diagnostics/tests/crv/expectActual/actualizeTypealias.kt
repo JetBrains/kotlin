@@ -12,8 +12,8 @@ expect class Foo() {
 }
 
 fun commonMain() {
-    Foo()
-    Foo().x()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
 }
 
@@ -29,12 +29,12 @@ open class BaseFoo {
 
 // FILE: jvm.kt
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> = BaseFoo
+actual typealias <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; must-use; 'fun x(): String' defined in 'BaseFoo'; ignorable"), ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun ign(): String' defined in 'Foo'; ignorable; 'fun ign(): String' defined in 'BaseFoo'; must-use")!>Foo<!> = BaseFoo
 
 fun main() {
-    Foo()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
     Foo().x()
-    Foo().ign()
+    Foo().<!RETURN_VALUE_NOT_USED!>ign<!>()
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, secondaryConstructor */

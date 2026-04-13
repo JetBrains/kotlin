@@ -165,8 +165,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test2.ZERO
         CONSTRUCTOR visibility:private returnType:<root>.Test2.ZERO [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test2'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:private superTypes:[<root>.Test2]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Test2>
@@ -226,9 +225,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Test2.ONE
         CONSTRUCTOR visibility:private returnType:<root>.Test2.ONE [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.Test2'
-                ARG x: CONST Int type=kotlin.Int value=1
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.Test2'
+              ARG x: CONST Int type=kotlin.Int value=1
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:private superTypes:[<root>.Test2]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Test2>

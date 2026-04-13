@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.E [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.String?
+          TYPE_ARG T: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Number? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3<kotlin.String>
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun foo (t: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass<kotlin.Any>
       VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Number
       overridden:
         public open fun foo (t: kotlin.Number): kotlin.Unit declared in <root>.Java3
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Number? declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Number? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3<kotlin.String>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Number? declared in <root>.Java3
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.F [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.String?
+          TYPE_ARG T: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3<kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Number? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3<kotlin.String>
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Number? declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Number? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.KotlinClass<kotlin.Number>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3<kotlin.String>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Number? declared in <root>.Java3

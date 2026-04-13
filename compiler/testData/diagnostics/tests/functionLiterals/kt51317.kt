@@ -3,7 +3,7 @@ val f: (String.() -> String)? = null
 
 fun box(): String {
     val g = when {
-        f != null -> <!DEBUG_INFO_SMARTCAST!>f<!>
+        f != null -> f
         else -> {
             { this + "K" }
         }

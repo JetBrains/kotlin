@@ -12,7 +12,7 @@
 
 // TESTCASE NUMBER: 1
 fun case_1() {
-    var x: Any? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+    var x: Any? = null
 
     if (true) {
         x = 42
@@ -20,8 +20,8 @@ fun case_1() {
         x = 42
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>.inv()
 }
 
 // TESTCASE NUMBER: 2
@@ -34,13 +34,13 @@ fun case_2() {
         x = 42.0
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Double>")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Double>")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 3
 fun case_3() {
-    var x: Any? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+    var x: Any? = null
 
     if (true) {
         x = ClassLevel2()
@@ -48,8 +48,8 @@ fun case_3() {
         x = ClassLevel3()
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -62,8 +62,8 @@ fun case_4() {
         x = 42.0
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Double")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double"), DEBUG_INFO_SMARTCAST!>x<!>.minus(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>x<!>.minus(10.0)
 }
 
 // TESTCASE NUMBER: 5
@@ -76,8 +76,8 @@ fun case_5() {
         x = 42.0
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Double")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double"), DEBUG_INFO_SMARTCAST!>x<!>.minus(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>x<!>.minus(10.0)
 }
 
 /*
@@ -93,6 +93,6 @@ fun case_6() {
         null!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Double")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Double"), DEBUG_INFO_SMARTCAST!>x<!>.minus(10.0)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>x<!>.minus(10.0)
 }

@@ -1,18 +1,18 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: a.kt
 package redeclarations
-  object <!PACKAGE_OR_CLASSIFIER_REDECLARATION, REDECLARATION!>A<!> {
+  object <!CLASSIFIER_REDECLARATION!>A<!> {
     val x : Int = 0
 
     val A = 1
   }
 
-  class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {}
+  class <!CLASSIFIER_REDECLARATION!>A<!> {}
 
-  val <!PACKAGE_OR_CLASSIFIER_REDECLARATION, REDECLARATION!>A<!> = 1
+  val <!REDECLARATION!>A<!> = 1
 
 // FILE: b.kt
-  package redeclarations.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+  package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>redeclarations.A<!>
     class A {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, objectDeclaration, propertyDeclaration */

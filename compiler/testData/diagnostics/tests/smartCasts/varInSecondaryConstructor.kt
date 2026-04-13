@@ -5,7 +5,7 @@ class My(val z: Int) {
         var y: Int?
         y = arg
         if (y != null) {
-            x = <!DEBUG_INFO_SMARTCAST!>y<!>
+            x = y
         }
     }
 }

@@ -11,14 +11,13 @@ interface IC2 {
 fun test(x: Any) {
   when {
     when {
-      x is IC1 -> x is IC2
+      x is IC1 -> x /*as IC1 */ is IC2
       else -> false
     } -> { // BLOCK
-      // COMPOSITE {
       val tmp_0: Any = x
       val x1: Int = tmp_0 /*as IC1 */.component1()
       val x2: String = tmp_0 /*as IC2 */.component2()
-      // }
     }
   }
 }
+

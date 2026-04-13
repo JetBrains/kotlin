@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 open class GenericBaseClass<T> {
     open fun foo(x: T): T = x

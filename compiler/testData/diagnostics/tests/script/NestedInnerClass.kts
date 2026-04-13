@@ -7,16 +7,16 @@ fun function() = 42
 val property = ""
 
 class Nested {
-    fun f() = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION{OI}!>function()<!>
-    fun g() = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION{OI}!>property<!>
+    fun f() = function()
+    fun g() = property
 }
 
 
-inner class Inner {
+<!INNER_ON_TOP_LEVEL_SCRIPT_CLASS_WARNING!>inner<!> class Inner {
     fun innerFun() = function()
     val innerProp = property
-    fun innerThisFun() = this@NestedInnerClass.function()
-    val innerThisProp = this@NestedInnerClass.property
+    fun innerThisFun() = this<!UNRESOLVED_LABEL!>@NestedInnerClass<!>.function()
+    val innerThisProp = this<!UNRESOLVED_LABEL!>@NestedInnerClass<!>.property
 
     inner class InnerInner {
         fun f() = innerFun()

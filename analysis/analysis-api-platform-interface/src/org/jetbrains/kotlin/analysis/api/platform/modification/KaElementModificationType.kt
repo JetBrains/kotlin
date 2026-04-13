@@ -29,6 +29,15 @@ public sealed interface KaElementModificationType {
     public class ElementRemoved(public val removedElement: PsiElement) : KaElementModificationType
 
     /**
+     * The element passed is the replacement element. The replaced element itself is represented by [replacedElement].
+     * The replaced element itself cannot be the modification "anchor" because it has already been replaced
+     * and is not part of the [KtFile][org.jetbrains.kotlin.psi.KtFile] anymore,
+     * but it might still be used to determine the modification's change type.
+     */
+    @KaPlatformInterface
+    public class ElementReplaced(public val replacedElement: PsiElement) : KaElementModificationType
+
+    /**
      * Which kind of modification was applied to the element is unknown.
      */
     @KaPlatformInterface

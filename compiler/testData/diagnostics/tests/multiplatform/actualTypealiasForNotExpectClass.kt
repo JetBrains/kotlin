@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>A<!> {
+open class <!CLASSIFIER_REDECLARATION!>A<!> {
     open fun foo(): String = "Fail"
 }
 expect class C1() : A
@@ -24,11 +24,11 @@ public class C2_J extends B_J {
 }
 
 // FILE: main.kt
-actual typealias <!ACTUAL_WITHOUT_EXPECT, PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> = A_J
+actual typealias <!ACTUAL_WITHOUT_EXPECT!>A<!> = A_J
 
 // Indirect subtyping is allowed in K2 KT-59356
-actual class C1 : <!ACTUAL_WITHOUT_EXPECT!>B_J()<!>
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>C2<!> = C2_J
+actual class C1 : B_J()
+actual typealias C2 = C2_J
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, primaryConstructor,
 stringLiteral, typeAliasDeclaration */

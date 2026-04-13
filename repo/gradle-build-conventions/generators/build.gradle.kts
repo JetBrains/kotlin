@@ -42,3 +42,5 @@ project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH
         }
     }
 }
+
+kotlin.compilerOptions.moduleName.value(project.name)

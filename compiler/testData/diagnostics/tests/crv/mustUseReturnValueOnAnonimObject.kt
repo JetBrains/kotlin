@@ -4,11 +4,11 @@
 fun test() {
     (@MustUseReturnValues object {
         val number: Int = 42
-    }).number
+    }).<!RETURN_VALUE_NOT_USED!>number<!>
 
     (@MustUseReturnValues object {
         fun compute(): Int = 24
-    }).compute()
+    }).<!RETURN_VALUE_NOT_USED!>compute<!>()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, propertyDeclaration */

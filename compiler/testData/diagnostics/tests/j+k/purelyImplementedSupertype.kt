@@ -14,7 +14,7 @@ fun testWithMap(map: ConcurrentHashMap<Int, String>): Int {
     if (string == null) {
         string = map.computeIfAbsent(1) { "hello" }
     }
-    return <!DEBUG_INFO_SMARTCAST!>string<!>.length
+    return string.length
 }
 
 fun testWithUtil(map: ConcurrentHashMap<Int, String>): Int {
@@ -22,7 +22,7 @@ fun testWithUtil(map: ConcurrentHashMap<Int, String>): Int {
     if (string == null) {
         string = Util.getString()
     }
-    return string<!UNSAFE_CALL!>.<!>length
+    return string.length
 }
 
 fun test(list: java.util.ArrayList<String?>) {

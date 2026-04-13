@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package a
 
 fun <R> foo (f: ()->R, r: MutableList<R>) = r.add(f())

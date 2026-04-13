@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // TARGET_BACKEND: JVM
 // LANGUAGE: +ContextParameters
 // WITH_STDLIB

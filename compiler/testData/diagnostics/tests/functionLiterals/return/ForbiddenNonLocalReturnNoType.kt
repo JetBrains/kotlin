@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun test() {
     run {<!RETURN_NOT_ALLOWED!>return<!>}
     run {}

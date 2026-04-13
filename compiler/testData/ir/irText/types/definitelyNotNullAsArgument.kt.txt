@@ -13,7 +13,7 @@ class C<TT : Any?> : I<(TT & Any)> {
   }
 
   override fun output(): (TT & Any) {
-    return CHECK_NOT_NULL<TT>(arg0 = <this>.<get-t>())
+    return CHECK_NOT_NULL<(TT & Any)>(arg0 = <this>.<get-t>())
   }
 
 }
@@ -34,10 +34,10 @@ fun <T : Any?> foo(i: I<(T & Any)>) {
 }
 
 fun <T1 : Any?, T2 : I<(T1 & Any)>> foo2(p1: T1, p2: T2) {
-  p2 /*as I<(T1 & Any)> */.input(t = CHECK_NOT_NULL<T1>(arg0 = p1))
+  p2.input(t = CHECK_NOT_NULL<(T1 & Any)>(arg0 = p1))
 }
 
 fun <T : Any?> qux(t: T, i: I<in (T & Any)>) {
-  i.input(t = CHECK_NOT_NULL<T>(arg0 = t))
+  i.input(t = CHECK_NOT_NULL<(T & Any)>(arg0 = t))
 }
 

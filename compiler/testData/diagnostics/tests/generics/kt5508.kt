@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // KT-5508 Stackoverflow in type substitution
 
 abstract class A<T> {

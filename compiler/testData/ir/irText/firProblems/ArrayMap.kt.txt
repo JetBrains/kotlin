@@ -110,7 +110,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   }
 
   constructor() {
-    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = Companion.<get-DEFAULT_SIZE>()))
+    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
   }
 
   override fun copy(): ArrayMap<T> {
@@ -120,7 +120,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   private fun ensureCapacity(index: Int) {
     when {
       lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
-        <this>.<set-data>(<set-?> = copyOf<Any?>(/* <this> = <this>.<get-data>(), */ newSize = <this>.<get-data>().<get-size>().times(other = Companion.<get-INCREASE_K>())))
+        <this>.<set-data>(<set-?> = copyOf<Any?>(/* <this> = <this>.<get-data>(), */ newSize = <this>.<get-data>().<get-size>().times(other = 2)))
       }
     }
   }
@@ -128,7 +128,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   fun entries(): List<Entry<T>> {
     return mapIndexedNotNull<Any?, Entry<T>>(/* <this> = <this>.<get-data>(), */ transform = local fun <anonymous>(index: Int, value: Any?): Entry<T>? {
       return when {
-        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
+        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value /*as Any */ as T)
         else -> null
       }
     }
@@ -157,12 +157,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
           { // BLOCK
             do// COMPOSITE {
             { // BLOCK
-              val tmp_1: <no name provided><T> = <this>
-              { // BLOCK
-                val tmp_2: Int = tmp_1.<get-index>()
-                tmp_1.<set-index>(<set-?> = tmp_2.inc())
-                tmp_2
-              }
+              val tmp_1: Int = <this>.<get-index>()
+              <this>.<set-index>(<set-?> = tmp_1.inc())
+              tmp_1
             } /*~> Unit */
             // }            while (when {
               less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
@@ -188,14 +185,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   fun remove(index: Int) {
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
-        { // BLOCK
-          val tmp_3: ArrayMapImpl<T> = <this>
-          { // BLOCK
-            val tmp_4: Int = tmp_3.<get-size>()
-            tmp_3.<set-size>(<set-?> = tmp_4.dec())
-            tmp_4
-          }
-        }
+        val tmp_2: Int = <this>.<get-size>()
+        <this>.<set-size>(<set-?> = tmp_2.dec())
+        tmp_2
       } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = null)
@@ -205,14 +197,9 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     <this>.ensureCapacity(index = index)
     when {
       EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
-        { // BLOCK
-          val tmp_5: ArrayMapImpl<T> = <this>
-          { // BLOCK
-            val tmp_6: Int = tmp_5.<get-size>()
-            tmp_5.<set-size>(<set-?> = tmp_6.inc())
-            tmp_6
-          }
-        }
+        val tmp_3: Int = <this>.<get-size>()
+        <this>.<set-size>(<set-?> = tmp_3.inc())
+        tmp_3
       } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = value)

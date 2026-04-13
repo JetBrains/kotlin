@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: +ExperimentalBuilderInference
 // OPT_IN: kotlin.RequiresOptIn
 // SKIP_TXT

@@ -45,24 +45,24 @@ while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.h
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] conditions2.kt
-    public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.name] name: R|kotlin/String|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.parent] parent: R|Foo?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.children] children: R|kotlin/collections/List<Foo>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.isValid] isValid: R|kotlin/Boolean|): R|Foo| {
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.name] name: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.parent] parent: R|Foo?|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.children] children: R|kotlin/collections/List<Foo>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.isValid] isValid: R|kotlin/Boolean|): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val parent: R|Foo?| = R|<local>/parent|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|Foo?|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val parent: R|Foo?| = R|<local>/parent|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|Foo?|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val children: R|kotlin/collections/List<Foo>| = R|<local>/children|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/collections/List<Foo>|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val children: R|kotlin/collections/List<Foo>| = R|<local>/children|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/collections/List<Foo>|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val isValid: R|kotlin/Boolean| = R|<local>/isValid|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val isValid: R|kotlin/Boolean| = R|<local>/isValid|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
 
-        public final [ResolvedTo(CONTRACTS)] fun findChild([ResolvedTo(CONTRACTS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun findChild([ResolvedTo(STATUS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=9(9/10) #1] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] file: R|Foo?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {
@@ -135,24 +135,24 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] conditions2.kt
-    public final [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.name] name: R|kotlin/String|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.parent] parent: R|Foo?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.children] children: R|kotlin/collections/List<Foo>|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Foo.isValid] isValid: R|kotlin/Boolean|): R|Foo| {
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.name] name: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.parent] parent: R|Foo?|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.children] children: R|kotlin/collections/List<Foo>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.isValid] isValid: R|kotlin/Boolean|): R|Foo| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val parent: R|Foo?| = R|<local>/parent|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|Foo?|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val parent: R|Foo?| = R|<local>/parent|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|Foo?|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val children: R|kotlin/collections/List<Foo>| = R|<local>/children|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/collections/List<Foo>|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val children: R|kotlin/collections/List<Foo>| = R|<local>/children|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/collections/List<Foo>|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val isValid: R|kotlin/Boolean| = R|<local>/isValid|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val isValid: R|kotlin/Boolean| = R|<local>/isValid|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/Boolean|
 
-        public final [ResolvedTo(CONTRACTS)] fun findChild([ResolvedTo(CONTRACTS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] fun findChild([ResolvedTo(STATUS)] name: R|kotlin/String|): R|Foo?| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] [PartialBodyAnalysisStateKey=10(10/10) #2] fun test([ResolvedTo(BODY_RESOLVE)] file: R|Foo?|, [ResolvedTo(BODY_RESOLVE)] includeSelf: R|kotlin/Boolean|): R|kotlin/collections/List<Foo>| {

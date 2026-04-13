@@ -17,8 +17,8 @@ class DTO<T> {
 
 fun main(intDTO: DTO<Int>?) {
     if (intDTO != null) {
-        <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO<Int>::q] = <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO<Int>::test]!!.size
-        <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO<Int>::q] = <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO<Int>::test]!!.size
+        intDTO[DTO<Int>::q] = intDTO[DTO<Int>::test]!!.size
+        intDTO[DTO<Int>::q] = intDTO[DTO<Int>::test]!!.size
     }
 }
 

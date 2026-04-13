@@ -3,27 +3,27 @@
 
 fun foo(x: Number, y: Int) {
     when (x) {
-        is Int -> checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        is Int -> checkSubtype<Int>(x)
         y -> {}
         else -> {}
     }
-    checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 fun bar(x: Number) {
     when (x) {
-        is Int -> checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        is Int -> checkSubtype<Int>(x)
         else -> {}
     }
-    checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 fun whenWithoutSubject(x: Number) {
     when {
-        (x is Int) -> checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        (x is Int) -> checkSubtype<Int>(x)
         else -> {}
     }
-    checkSubtype<Int>(<!TYPE_MISMATCH!>x<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,

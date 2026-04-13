@@ -54,3 +54,11 @@ class A4 {
         fun `^)run.something.weird^(`(): String = ")_("
     }
 }
+
+// Enum classes
+
+@JsExport
+enum class FooEnum {
+    `-Escaped-Value-`,
+    `With.Dot`,
+}

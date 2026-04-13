@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] whenConditionInRange.kt
         }
 
     }
-    public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> [ResolvedTo(CONTRACTS)] R|T|.contains([ResolvedTo(CONTRACTS)] int: R|kotlin/Int|): R|kotlin/Boolean| { LAZY_BLOCK }
+    public final operator [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> [ResolvedTo(STATUS)] R|T|.contains([ResolvedTo(STATUS)] int: R|kotlin/Int|): R|kotlin/Boolean| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
         when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/Int| = Int(1)) {
             R|/MyClass.MyClass|().R|/contains|<R|MyClass|>($subj$) ->  {

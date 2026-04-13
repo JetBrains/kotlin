@@ -5,7 +5,7 @@ fun test() {
     val ints = Array<Int?>(2, { null })
     ints.forEach lit@ {
         if (it == null) return@lit
-        use(<!DEBUG_INFO_SMARTCAST!>it<!> + 5)
+        use(it + 5)
     }
 }
 

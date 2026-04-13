@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractSourceDeprecationsResolveTest> {
-                model("lazyResolveDeprecation", pattern = TestGeneratorUtil.KT)
+                model("lazyResolveDeprecation", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractFirSourceLikeLazyDeclarationResolveTest> {
@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirSourceLazyDeclarationResolveByReferenceTest> {
-                model("lazyResolveByReference")
+                model("lazyResolveByReference", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractSourceLikeLazyDeclarationResolveScopeBasedTest> {
@@ -110,7 +110,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractContentAndResolutionScopesProvidersTest> {
-                model("contentAndResolutionScopesProviders", recursive = false, pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+                model("contentAndResolutionScopesProviders", recursive = false, pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             // Modifiable PSI tests must not be generated until KT-63650 is fixed.
@@ -247,7 +247,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractSourceTypeArgumentAnnotationCollectionTest> {
-                model("annotationPlacement", pattern = TestGeneratorUtil.KT)
+                model("annotationPlacement", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             run {

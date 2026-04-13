@@ -16,19 +16,19 @@ interface SubInterfaceInt : SubGenericInterface<Int> {
 fun foo1(a: MyGenericInterface<Number>) {
     a <!UNCHECKED_CAST!>as MyGenericInterface<Int><!>
 
-    <!DEBUG_INFO_SMARTCAST!>a<!>.update { expectInt(it) }
+    a.update { expectInt(it) }
 }
 
 fun foo2(a: MyGenericInterface<Number>) {
     a <!UNCHECKED_CAST!>as SubGenericInterface<Int><!>
 
-    <!DEBUG_INFO_SMARTCAST!>a<!>.update { expectInt(it) }
+    a.update { expectInt(it) }
 }
 
 fun foo3(a: MyGenericInterface<Number>) {
     a as SubInterfaceInt
 
-    <!DEBUG_INFO_SMARTCAST!>a<!>.update { expectInt(it) }
+    a.update { expectInt(it) }
 }
 
 fun expectInt(w: Int): Int = w

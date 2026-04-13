@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // MODULE: library
 // KOTLINC_ARGS: -jvm-default=no-compatibility
 // JVM_DEFAULT_MODE: no-compatibility

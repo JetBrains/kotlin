@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun use(fn: () -> Unit) {}
 

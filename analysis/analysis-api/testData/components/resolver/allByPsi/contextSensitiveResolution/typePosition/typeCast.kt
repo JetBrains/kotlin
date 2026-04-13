@@ -75,5 +75,3 @@ fun testSafeTypeCast(i: SealedClass) {
     consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)
     consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)
 }
-
-// IGNORE_STABILITY_K1: candidates

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 //   Ignore reasons: anonymous suspend functions are prohibited, KT-62018
 // ISSUE: KT-58332
 

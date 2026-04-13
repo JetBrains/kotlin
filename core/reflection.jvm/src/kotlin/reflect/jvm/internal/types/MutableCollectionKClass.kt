@@ -8,8 +8,10 @@ package kotlin.reflect.jvm.internal.types
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
 import kotlin.reflect.jvm.internal.KTypeParameterOwnerImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
@@ -29,11 +31,13 @@ internal class MutableCollectionKClass<T : Any>(
     createTypeParameters: (MutableCollectionKClass<T>) -> List<KTypeParameter>,
     createSupertypes: (MutableCollectionKClass<T>) -> List<KType>,
 ) : KClass<T> by klass, TypeConstructorMarker, KTypeParameterOwnerImpl {
-    override val typeParameters: List<KTypeParameter> =
+    override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
         createTypeParameters(this)
+    }
 
-    override val supertypes: List<KType> =
+    override val supertypes: List<KType> by lazy(PUBLICATION) {
         createSupertypes(this)
+    }
 
     override val simpleName: String
         get() = qualifiedName.substringAfterLast(".")
@@ -94,7 +98,7 @@ internal fun getMutableCollectionKClass(mutableFqName: FqName, readonlyKClass: K
                 else -> null
             }
             val typeArguments = klass.typeParameters.map { KTypeProjection.invariant(it.createType()) }
-            listOfNotNull(readonlyKClass, mutableSuperInterface).map { it.createType(typeArguments) }
+            listOfNotNull(readonlyKClass, mutableSuperInterface).map { it.createTypeImpl(typeArguments) }
         },
     )
     return klass

@@ -12,8 +12,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A.Y
         CONSTRUCTOR visibility:private returnType:<root>.A.Y [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.A'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Y modality:FINAL visibility:private superTypes:[<root>.A]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
@@ -41,7 +40,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
             RETURN type=kotlin.Nothing from='public open fun f (): kotlin.String declared in <root>.A.Y'
               CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
                 ARG <this>: CALL 'public open fun f (): kotlin.String declared in <root>.A' superQualifier='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.String origin=null
-                  ARG <this>: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=null
+                  ARG <this>: GET_VAR '<this>: <root>.A.Y declared in <root>.A.Y.f' type=<root>.A.Y origin=IMPLICIT_ARGUMENT
                 ARG other: CONST String type=kotlin.String value="#Y"
         PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
           annotations:
@@ -140,10 +139,10 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           TYPE_ARG E: <root>.A
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.Unit
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           value: CONST String type=kotlin.String value="default"
         CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
-          ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           ARG <set-?>: CONST String type=kotlin.String value="empty"
     CONSTRUCTOR visibility:private returnType:<root>.A
       VALUE_PARAMETER kind:Regular name:arg index:0 type:kotlin.String
@@ -152,7 +151,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           TYPE_ARG E: <root>.A
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.A>]' type=kotlin.Unit
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          receiver: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           value: GET_VAR 'arg: kotlin.String declared in <root>.A.<init>' type=kotlin.String origin=null
     CONSTRUCTOR visibility:private returnType:<root>.A
       VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
@@ -161,7 +160,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           ARG arg: CALL 'public open fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
             ARG <this>: GET_VAR 'x: kotlin.Int declared in <root>.A.<init>' type=kotlin.Int origin=null
         CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
-          ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=null
+          ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
           ARG <set-?>: CONST String type=kotlin.String value="int"
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.A
       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String

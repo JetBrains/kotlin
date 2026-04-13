@@ -19,7 +19,7 @@ fun <K, V> B<K>.star(p: KProperty1<*, V>): B<V> = TODO()
 fun <R : A> B<R>.test(){
     foo(A::bla)
     bar(A::bla)
-    baz(<!TYPE_MISMATCH!>A::bla<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(A::<!INAPPLICABLE_CANDIDATE!>bla<!>)
     star(A::bla)
 }
 

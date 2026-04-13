@@ -1,6 +1,5 @@
-// WASM_MUTE_REASON: FAILS_IN_JS_IR
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.3.0
+// KT-85411: Supported in 2.4.0-Beta2
 // IGNORE_BACKEND_K2_MULTI_MODULE: ANY
 // ^^^ Cannot split to two modules due to cyclic import
 // FILE: test.kt

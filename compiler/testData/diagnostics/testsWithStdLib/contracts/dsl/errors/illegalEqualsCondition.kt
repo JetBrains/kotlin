@@ -7,26 +7,26 @@ import kotlin.contracts.*
 
 fun equalsWithVariables(x: Any?, y: Any?) {
     contract {
-        returns() implies (<!ERROR_IN_CONTRACT_DESCRIPTION("only equality comparisons with 'null' allowed")!>x == y<!>)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x == y)<!>
     }
 }
 
 fun identityEqualsWithVariables(x: Any?, y: Any?) {
     contract {
-        returns() implies (<!ERROR_IN_CONTRACT_DESCRIPTION("only equality comparisons with 'null' allowed")!>x === y<!>)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x === y)<!>
     }
 }
 
 fun equalConstants() {
     contract {
-        returns() implies (<!ERROR_IN_CONTRACT_DESCRIPTION("only equality comparisons with 'null' allowed"), SENSELESS_COMPARISON!>null == null<!>)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!SENSELESS_COMPARISON!>null == null<!>)<!>
     }
 }
 
 fun get(): Int? = null
 fun equalNullWithCall() {
     contract {
-        returns() implies (<!ERROR_IN_CONTRACT_DESCRIPTION("only references to parameters are allowed in contract description")!>get()<!> == null)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (get() == null)<!>
     }
 }
 

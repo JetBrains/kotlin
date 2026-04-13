@@ -7,7 +7,7 @@ public fun foo() {
     var s: Any = "not null"
     if (s is String) {
         s = 42
-        bar(<!TYPE_MISMATCH!>s<!>)
+        bar(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
     }
 }
 

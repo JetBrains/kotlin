@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JS_IR
-// FIR_IDENTICAL
 // FILE: nativeNativeKotlin.kt
 
 package foo

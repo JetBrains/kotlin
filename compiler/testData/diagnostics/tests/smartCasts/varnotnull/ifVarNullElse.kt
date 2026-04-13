@@ -8,7 +8,7 @@ public fun foo() {
     if (s == null) {
         // Coming soon
     } else {
-        fooNotNull(<!DEBUG_INFO_SMARTCAST!>s<!>)
+        fooNotNull(s)
     }
 }
 

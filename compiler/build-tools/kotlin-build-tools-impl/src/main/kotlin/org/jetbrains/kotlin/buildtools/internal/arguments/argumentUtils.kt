@@ -1,7 +1,14 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("SpellCheckingInspection", "unused")
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import java.nio.file.Path
 import kotlin.reflect.KMutableProperty
@@ -9,10 +16,14 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.jvmName
 
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger) {
+    for (violation in restrictedArgViolations) {
+        when (violation) {
+            is RestrictedArgViolation.Error -> throw CompilerArgumentsParseException(violation.message)
+            is RestrictedArgViolation.Warning -> logger.warn(violation.message)
+        }
+    }
+}
 
 internal fun <T> CommonToolArguments.setUsingReflection(propertyName: String, value: T) {
     this::class.declaredMemberProperties.filterIsInstance<KMutableProperty<T>>().firstOrNull { it.name == propertyName }
@@ -34,3 +45,14 @@ internal fun Path.absolutePathStringOrThrow(): String = toFile().absolutePath
 internal fun <T> Array<out T>?.toListOrEmpty(): List<T> = this?.toList() ?: emptyList()
 
 internal fun <T, R> Array<out T>?.mapOrEmpty(transform: (T) -> R): List<R> = this?.map(transform) ?: emptyList()
+
+internal fun List<String>.checkNoneContains(other: CharSequence) {
+    val invalidItem = firstOrNull { it.contains(other) }
+    if (invalidItem != null) {
+        throw CompilerArgumentsParseException(
+            "Invalid character '${other}' found in argument '$invalidItem'. " +
+                    "This character is currently not supported in this context. " +
+                    "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
+        )
+    }
+}

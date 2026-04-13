@@ -7,8 +7,8 @@ fun test() {
     while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!>) {}
     l@ while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@l<!>) {}
 
-    do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>)
-    l@ do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>)
+    do {} while (continue)
+    l@ do {} while (continue@l)
 
     //KT-5704
     var i = 0
@@ -17,11 +17,11 @@ fun test() {
 
 fun test2(b: Boolean) {
     while (b) {
-        <!UNREACHABLE_CODE!>while (<!>break<!UNREACHABLE_CODE!>) {}<!>
+        while (break) {}
     }
 
     do {
-        <!UNREACHABLE_CODE!>while (<!>continue<!UNREACHABLE_CODE!>) {}<!>
+        while (continue) {}
     } while (b)
 
     while (b) {

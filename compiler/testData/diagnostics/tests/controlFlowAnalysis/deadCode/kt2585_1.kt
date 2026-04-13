@@ -3,7 +3,7 @@
 
 fun foo(x: String): String {
     try {
-        <!UNREACHABLE_CODE!>throw<!> RuntimeException()
+        throw RuntimeException()
     } finally {
         try {
         } catch (e: Exception) {

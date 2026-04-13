@@ -5,7 +5,7 @@ fun box() : Int {
     var d = 1
 
     if (a is Int) {
-        return <!DEBUG_INFO_SMARTCAST!>a<!> + d
+        return a + d
     } else {
         return 2
     }

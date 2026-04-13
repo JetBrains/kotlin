@@ -5,7 +5,7 @@ fun bar(d: Delegate): String {
 }
 
 class Delegate {
-    suspend <!UNSUPPORTED!>operator<!> fun getValue(thisRef: Any?, property: Any?): String = ""
+    suspend <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun getValue(thisRef: Any?, property: Any?): String = ""
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, operator, propertyDeclaration,

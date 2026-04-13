@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // MODULE: dep1
 // FILE: util11.kt
 package my.pack

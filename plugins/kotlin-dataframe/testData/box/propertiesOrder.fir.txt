@@ -15,7 +15,7 @@ FILE: propertiesOrder.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Invoke_64I>|.full_name: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
@@ -34,13 +34,13 @@ FILE: propertiesOrder.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Invoke_64I>|.b: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class Invoke_64 : R|<local>/Invoke_64I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/Invoke_64|
 
@@ -49,6 +49,6 @@ FILE: propertiesOrder.kt
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1), Int(2), Int(3)))
         }
         )
-        (this@R|/box|, R|<local>/df|).R|<local>/Scope0.full_name|
+        (this@R|/box|, R|<local>/df|).R|<local>/DataFramePropertiesScope0.full_name|
         ^box String(OK)
     }

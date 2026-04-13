@@ -9,7 +9,7 @@ private fun doTest() : Int {
     try {
         list = ArrayList()
         // Not-null was just assigned to the list
-        <!DEBUG_INFO_SMARTCAST!>list<!>.add(3)
+        list.add(3)
         return 0 ;
     }
     finally {

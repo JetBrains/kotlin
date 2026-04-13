@@ -26,7 +26,7 @@ fun unknownFunction(x: Any?) = x == 42
 
 fun annotatedTrue(x: Any?) {
     if (trueWhenString(x) && unknownFunction(x)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -44,7 +44,7 @@ fun annotatedFalse(x: Any?) {
 
 fun annotatedTrueWithVariable(x: Any?, b: Boolean) {
     if (trueWhenString(x) && b) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

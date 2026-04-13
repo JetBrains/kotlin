@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Int?
+          TYPE_ARG T: kotlin.Int
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Int>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Int?>? varargElementType:@[FlexibleNullability] kotlin.Int? [vararg]
+      VALUE_PARAMETER kind:Regular name:a index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Int?>? varargElementType:@[FlexibleNullability] kotlin.Int? [vararg]
       overridden:
         public open fun foo (vararg a: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Any?
+          TYPE_ARG T: kotlin.Any
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Any>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -56,12 +56,12 @@ FILE fqName:<root> fileName:/1.kt
     BLOCK_BODY
       CALL 'public open fun foo (vararg a: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        ARG a: VARARG type=kotlin.Array<out @[FlexibleNullability] kotlin.Int?>? varargElementType=@[FlexibleNullability] kotlin.Int?
+        ARG a: VARARG type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Int?>? varargElementType=@[FlexibleNullability] kotlin.Int?
           CONST Int type=kotlin.Int value=1
           CONST Int type=kotlin.Int value=2
       CALL 'public open fun foo (vararg a: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        ARG a: VARARG type=kotlin.Array<out @[FlexibleNullability] kotlin.Int?>? varargElementType=@[FlexibleNullability] kotlin.Int?
+        ARG a: VARARG type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Int?>? varargElementType=@[FlexibleNullability] kotlin.Int?
           CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo (vararg a: kotlin.Any): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null

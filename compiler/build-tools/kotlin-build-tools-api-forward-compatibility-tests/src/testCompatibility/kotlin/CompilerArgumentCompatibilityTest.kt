@@ -27,6 +27,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.toPath
 import kotlin.io.path.writeText
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalCompilerArgument::class, ExperimentalBuildToolsApi::class)
 internal class CompilerArgumentCompatibilityTest : BaseCompilationTest() {
 

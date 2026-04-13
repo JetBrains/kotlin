@@ -2,7 +2,7 @@
 @kotlin.Metadata
 public final class Internal {
     // source: 'constructorVisibility.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     public method <init>(p0: boolean): void
 }
 
@@ -16,7 +16,7 @@ public annotation class NoArg {
 @kotlin.Metadata
 public final class Private {
     // source: 'constructorVisibility.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     private method <init>(p0: int[]): void
 }
 
@@ -24,6 +24,6 @@ public final class Private {
 @kotlin.Metadata
 public abstract class Protected {
     // source: 'constructorVisibility.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     protected method <init>(p0: char): void
 }

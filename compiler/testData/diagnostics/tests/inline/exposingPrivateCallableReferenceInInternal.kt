@@ -11,7 +11,7 @@ private class PC {
 }
 
 class A private constructor() {
-    internal inline fun internalInlineFunction() = ::A
+    internal inline fun internalInlineFunction() = ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>A<!>
 }
 
 private fun Int.privateExtensionFun() {}
@@ -20,11 +20,11 @@ private val String.privateVal: String
     get() = this
 
 internal inline fun test() {
-    ::f
-    ::p
+    ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>f<!>
+    ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>p<!>
 
-    PC::<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>f<!>
-    PC::<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>p<!>
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>PC<!>::<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>f<!>
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>PC<!>::<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>p<!>
 
     val o = object {
         private fun f() {}
@@ -36,8 +36,8 @@ internal inline fun test() {
         }
     }
 
-    Int::privateExtensionFun
-    String::privateVal
+    Int::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>privateExtensionFun<!>
+    String::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>privateVal<!>
 }
 
 class C {
@@ -53,13 +53,13 @@ class C {
     }
 
     internal inline fun test() {
-        ::f
-        ::p
-        ::protectedF
-        ::protectedP
+        ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>f<!>
+        ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>p<!>
+        ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>protectedF<!>
+        ::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>protectedP<!>
 
-        PC::f
-        PC::p
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>PC<!>::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>f<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>PC<!>::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING!>p<!>
     }
 }
 

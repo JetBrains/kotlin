@@ -18,11 +18,11 @@ fun case_1(x: Double?, y: Double?) : Double {
     return if (x == null && y == null) {
         0.0
     } else if (x != null && y == null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>
+        x
     } else if (x == null && y != null) {
-        <!DEBUG_INFO_SMARTCAST!>y<!>
+        y
     } else {
-        x <!UNSAFE_OPERATOR_CALL!>+<!> <!TYPE_MISMATCH!>y<!>
+        x <!UNSAFE_OPERATOR_CALL!>+<!> <!ARGUMENT_TYPE_MISMATCH!>y<!>
     }
 }
 
@@ -69,9 +69,9 @@ fun case_4(x : EnumClassSingle?, y : Any?) {
  */
 fun case_5(x: SealedClass) {
     when (x) {
-        is SealedChild1 -> <!DEBUG_INFO_SMARTCAST!>x<!>.number
-        is SealedChild2 -> <!DEBUG_INFO_SMARTCAST!>x<!>.e1 + <!DEBUG_INFO_SMARTCAST!>x<!>.e2
-        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> x.<!UNRESOLVED_REFERENCE!>m1<!>
+        is SealedChild1 -> x.number
+        is SealedChild2 -> x.e1 + x.e2
+        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> + x.<!UNRESOLVED_REFERENCE!>m1<!>
     }
 }
 
@@ -81,9 +81,9 @@ fun case_5(x: SealedClass) {
  */
 fun case_6(x: SealedClass?) {
     when (x) {
-        is SealedChild1 -> <!DEBUG_INFO_SMARTCAST!>x<!>.number
-        is SealedChild2 -> <!DEBUG_INFO_SMARTCAST!>x<!>.e1 + <!DEBUG_INFO_SMARTCAST!>x<!>.e2
+        is SealedChild1 -> x.number
+        is SealedChild2 -> x.e1 + x.e2
         null -> {}
-        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> x.<!UNRESOLVED_REFERENCE!>m1<!>
+        else -> x.<!UNRESOLVED_REFERENCE!>m1<!> + x.<!UNRESOLVED_REFERENCE!>m1<!>
     }
 }

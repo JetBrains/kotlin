@@ -1,5 +1,4 @@
 // FIR_DUMP
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ContextParameters
 

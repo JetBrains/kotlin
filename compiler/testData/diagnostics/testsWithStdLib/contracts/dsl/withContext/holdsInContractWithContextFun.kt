@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +HoldsInContracts, +ContextParameters
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts

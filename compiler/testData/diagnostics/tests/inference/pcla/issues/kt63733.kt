@@ -11,11 +11,11 @@ fun test() {
     }
     val buildee = boundedBuild {
         setBoundedTypeVariable(TargetType())
-        setBoundedTypeVariable(<!TYPE_MISMATCH("TargetTypeBase; DifferentType")!>DifferentType()<!>)
+        setBoundedTypeVariable(DifferentType())
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<BoundedBuildee<TargetType>>(<!TYPE_MISMATCH("BoundedBuildee<TargetType>; BoundedBuildee<Any>"), TYPE_MISMATCH("BoundedBuildee<Any>; BoundedBuildee<TargetType>")!>buildee<!>)
+    checkExactType<BoundedBuildee<TargetType>>(buildee)
 }
 
 

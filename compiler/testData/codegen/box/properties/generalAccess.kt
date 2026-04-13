@@ -1,4 +1,4 @@
-package  As
+package As
 
 val staticProperty : String = "1"
 

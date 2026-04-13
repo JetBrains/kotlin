@@ -20,7 +20,7 @@ fun bar(x: Int) {}
 fun foo(x: Int?) {
     generate {
         ensureNotNull(x) { "" }
-        bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        bar(x)
     }
 }
 

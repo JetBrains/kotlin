@@ -10,6 +10,8 @@ import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
@@ -154,6 +156,10 @@ internal class JvmCompilerArgumentsImpl(
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
@@ -192,23 +198,23 @@ internal class JvmCompilerArgumentsImpl(
     if (X_EMIT_JVM_TYPE_ANNOTATIONS in this) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)}
     if (X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL in this) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)}
     try { if (X_ENHANCED_COROUTINES_DEBUGGING in this) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_ENHANCED_COROUTINES_DEBUGGING. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     if (X_GENERATE_STRICT_METADATA_VERSION in this) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)}
     try { if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INDY_ALLOW_ANNOTATED_LAMBDAS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
     if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
-    if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
+    if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS).map { it.absolutePathStringOrThrow() }.also { list -> list.checkNoneContains(",") }.toTypedArray()}
     try { if (X_JAVAC_ARGUMENTS in this) { arguments.setUsingReflection("javacArguments", get(X_JAVAC_ARGUMENTS) ?: emptyArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_JAVAC_ARGUMENTS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_JDK_RELEASE in this) { arguments.jdkRelease = get(X_JDK_RELEASE)?.stringValue}
     if (X_JSPECIFY_ANNOTATIONS in this) { arguments.jspecifyAnnotations = get(X_JSPECIFY_ANNOTATIONS)?.stringValue}
     if (X_JVM_DEFAULT in this) { arguments.jvmDefault = get(X_JVM_DEFAULT)}
     if (X_JVM_ENABLE_PREVIEW in this) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)}
     try { if (X_JVM_EXPOSE_BOXED in this) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_JVM_EXPOSE_BOXED. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.0""").initCause(e) }
-    if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)?.joinToString(File.pathSeparator)}
+    if (X_KLIB in this) { arguments.klibLibraries = get(X_KLIB)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_LAMBDAS in this) { arguments.lambdas = get(X_LAMBDAS)?.stringValue}
     if (X_LINK_VIA_SIGNATURES in this) { arguments.linkViaSignatures = get(X_LINK_VIA_SIGNATURES)}
-    if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)?.joinToString(File.pathSeparator)}
+    if (X_MODULE_PATH in this) { arguments.javaModulePath = get(X_MODULE_PATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (X_MULTIFILE_PARTS_INHERIT in this) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT)}
     if (X_NO_CALL_ASSERTIONS in this) { arguments.noCallAssertions = get(X_NO_CALL_ASSERTIONS)}
     if (X_NO_NEW_JAVA_ANNOTATION_TARGETS in this) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS)}
@@ -238,7 +244,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_VALIDATE_BYTECODE in this) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)}
     if (X_VALUE_CLASSES in this) { arguments.valueClasses = get(X_VALUE_CLASSES)}
     try { if (X_WHEN_EXPRESSIONS in this) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)?.stringValue} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_WHEN_EXPRESSIONS. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.2.20""").initCause(e) }
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.joinToString(File.pathSeparator)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.also { list -> list.checkNoneContains("${File.pathSeparator}") }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (EXPRESSION in this) { arguments.expression = get(EXPRESSION)}
     if (INCLUDE_RUNTIME in this) { arguments.includeRuntime = get(INCLUDE_RUNTIME)}

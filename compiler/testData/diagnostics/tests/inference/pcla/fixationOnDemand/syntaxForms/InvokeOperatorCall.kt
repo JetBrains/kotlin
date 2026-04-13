@@ -5,12 +5,12 @@ fun testRegularNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.<!FUNCTION_EXPECTED!>instance<!>(Value)
+        otvOwner.instance(Value)
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 }
 
 fun testSafeNavigation() {
@@ -19,12 +19,12 @@ fun testSafeNavigation() {
     val resultA = pcla { otvOwner ->
         otvOwner?.constrain(ScopeOwner())
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner?.<!FUNCTION_EXPECTED!>instance<!>(Value)
+        otvOwner?.instance(Value)
         // expected: Interloper </: ScopeOwner
-        otvOwner?.constrain(Interloper)
+        otvOwner?.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 }
 
 

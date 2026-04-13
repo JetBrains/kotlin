@@ -19,12 +19,12 @@ class My {
         set
 
     init {
-        <!DEBUG_INFO_LEAKING_THIS!>x<!> = 3
-        <!DEBUG_INFO_LEAKING_THIS!>m<!> = 6
+        x = 3
+        m = 6
 
         // Writing properties using setters is dangerous
-        <!DEBUG_INFO_LEAKING_THIS!>y<!> = 4
-        this.<!DEBUG_INFO_LEAKING_THIS!>z<!> = 5
+        y = 4
+        this.z = 5
     }
 
     val w = "6"

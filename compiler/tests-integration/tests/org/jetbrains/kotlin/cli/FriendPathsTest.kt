@@ -24,7 +24,7 @@ import java.io.File
 import kotlin.io.path.createSymbolicLinkPointingTo
 
 class FriendPathsTest : TestCaseWithTmpdir() {
-    private fun getTestDataDirectory(): File = File("compiler/testData/friendPaths/")
+    private fun getTestDataDirectory(): File = File("compiler/tests-integration/testData/friendPaths/")
 
     private val absoluteArchive by lazy { File(tmpdir, "lib.jar") }
     private val relativeArchive by lazy { absoluteArchive.relativeTo(File("").absoluteFile) }

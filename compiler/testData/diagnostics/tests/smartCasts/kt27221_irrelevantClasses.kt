@@ -10,9 +10,9 @@ object CC : C()
 
 fun foo(a: A) {
     if (a is B) {
-        if (a is C) {
-            val t = when (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-                is CC -> "CC"
+        if (<!IMPOSSIBLE_IS_CHECK_WARNING!>a is C<!>) {
+            val t = when (a) {
+                <!IMPOSSIBLE_IS_CHECK_WARNING!>is CC<!> -> "CC"
             }
         }
     }
@@ -20,9 +20,9 @@ fun foo(a: A) {
 
 fun foo2(a: A) {
     if (a is C) {
-        if (a is B) {
-            val t = <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>a<!>) {
-                    is CC -> "CC"
+        if (<!IMPOSSIBLE_IS_CHECK_WARNING!>a is B<!>) {
+            val t = when (a) {
+                    <!IMPOSSIBLE_IS_CHECK_WARNING!>is CC<!> -> "CC"
             }
         }
     }

@@ -28,11 +28,11 @@ open class Base {
 }
 
 class Derived : Base() {
-    fun test(javaStaticInTypePosition: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Classifier<!>) {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>method()<!>
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>property<!>
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Classifier()<!>
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>syntheticSam { }<!>
+    fun test(javaStaticInTypePosition: <!UNRESOLVED_REFERENCE!>Classifier<!>) {
+        <!UNRESOLVED_REFERENCE!>method<!>()
+        <!UNRESOLVED_REFERENCE!>property<!>
+        <!UNRESOLVED_REFERENCE!>Classifier<!>()
+        <!UNRESOLVED_REFERENCE!>syntheticSam<!> { }
 
         // Instance members shouldn't be affected, but we check them, just in case
         val y = instanceSyntheticProperty
@@ -43,7 +43,7 @@ class Derived : Base() {
         <!UNRESOLVED_REFERENCE!>syntheticProperty<!> = 42
     }
 
-    class JavaStaticInSupertypeList : <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Classifier<!>() {
+    class JavaStaticInSupertypeList : <!UNRESOLVED_REFERENCE!>Classifier<!>() {
 
     }
 }

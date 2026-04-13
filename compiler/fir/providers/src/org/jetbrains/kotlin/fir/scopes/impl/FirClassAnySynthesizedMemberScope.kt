@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,15 +16,11 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildNamedFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
@@ -184,11 +180,14 @@ class FirClassAnySynthesizedMemberScope(
         this.name = name
         status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.OPEN, EffectiveVisibility.Public).apply {
             this.isOperator = isOperator
-            this.returnValueStatus = ReturnValueStatus.MustUse // kotlin.Any is compiled in FULL mode, so overrides of Any functions have to be must-use
+
+            // kotlin.Any is compiled in FULL mode, so overrides of Any functions have to be must-use
+            this.returnValueStatus = ReturnValueStatus.MustUse
         }
         isLocal = klass.isLocal
         symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
         dispatchReceiverType = this@FirClassAnySynthesizedMemberScope.dispatchReceiverType
+        resolvePhase = FirResolvePhase.BODY_RESOLVE
     }
 
     @DelicateScopeAPI

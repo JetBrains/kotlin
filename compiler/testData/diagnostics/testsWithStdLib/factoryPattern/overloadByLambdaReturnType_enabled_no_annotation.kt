@@ -12,12 +12,12 @@ fun takeInt(s: Int) {}
 
 fun test_1() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { "" }
-    takeString(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    takeString(x)
 }
 
 fun test_2() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!> { 1 }
-    takeInt(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    takeInt(x)
 }
 
 fun test_3() {
@@ -29,12 +29,12 @@ fun <T> create(x: T, f: (T) -> String): String = ""
 
 fun test_4() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { "" }
-    takeString(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    takeString(x)
 }
 
 fun test_5() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { 1 }
-    takeInt(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!>)
+    takeInt(x)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,

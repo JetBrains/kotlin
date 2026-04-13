@@ -6,7 +6,7 @@ interface I {
 open class A {
     fun f1() {
         this as I
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>prop<!>
+        prop
     }
 
     fun f2() {
@@ -18,7 +18,7 @@ open class B {
     fun f() {
         {
             this as I
-            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>prop<!>
+            prop
         }
         <!UNRESOLVED_REFERENCE!>prop<!>
     }

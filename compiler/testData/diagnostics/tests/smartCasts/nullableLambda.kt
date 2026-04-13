@@ -5,7 +5,7 @@ class Test1(val lambda: (() -> String)?) {
     fun foo() {
         if (lambda != null) {
             lambda.invoke()
-            <!UNSAFE_IMPLICIT_INVOKE_CALL!>lambda<!>()
+            lambda()
         }
     }
 }
@@ -24,7 +24,7 @@ class Test3 {
     val nullableCallableClass: A? = null
     fun foo() {
         if (nullableCallableClass != null) {
-            <!UNSAFE_CALL!>nullableCallableClass<!>()
+            nullableCallableClass()
         }
     }
 }

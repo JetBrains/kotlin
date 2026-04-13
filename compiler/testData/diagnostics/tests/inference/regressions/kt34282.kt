@@ -6,7 +6,7 @@ fun foo(x: Float) = 10f
 fun foo(x: String) = ""
 
 fun main() {
-    bar(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>) // no report about unresolved callable reference for `foo`
+    bar(::<!NONE_APPLICABLE!>foo<!>) // no report about unresolved callable reference for `foo`
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, stringLiteral */

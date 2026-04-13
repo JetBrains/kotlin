@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
@@ -77,7 +79,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             copyFunctionSignatureFrom(source)
             // Exposed functions should have no @JvmName annotation, since it does not affect them,
             // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
-            if (source.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+            if (source.shouldBeExposedByAnnotationOrFlag(context) &&
                 source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
             ) {
                 annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation() +
@@ -309,6 +311,34 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             }
         }
 
+    override fun createExposedNoArgConstructor(constructor: IrConstructor): IrConstructor? {
+        // No inline class - nothing to expose
+        if (constructor.parameters.none { it.type.isInlineClassType() }) return null
+        // We generate no-arg constructor if all parameters have default value
+        // Unless one of the parameters is an inline class
+        // @JvmExposeBoxed bridges the gap, so, we need to generate no-arg constuctor of all parameter have default value.
+        if (constructor.parameters.any { it.defaultValue == null }) return null
+        // If there is @JvmOverloads, it covers no-arg constructor for us.
+        if (constructor.hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)) return null
+        return constructor.parentAsClass.factory.buildConstructor {
+            updateFrom(constructor)
+            isPrimary = false
+        }.apply noArg@{
+            copyFunctionSignatureFrom(constructor)
+            parameters = emptyList()
+            // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
+            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, context)
+            constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
+            body = context.createIrBuilder(this.symbol).irBlockBody(this) {
+                +irDelegatingConstructorCall(constructor).apply {
+                    for ((index, param) in constructor.parameters.withIndex()) {
+                        arguments[index] = param.defaultValue!!.deepCopyWithSymbols(this@noArg).expression
+                    }
+                }
+            }
+        }
+    }
+
     private fun IrExpression.coerceToUnboxed() =
         coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
 
@@ -466,7 +496,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             copyFunctionSignatureFrom(irConstructor)
             // Don't create a default argument stub for the primary constructor
             parameters.forEach { it.defaultValue = null }
-            if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
+            if (irConstructor.shouldBeExposedByAnnotationOrFlag(context)) {
                 addValueParameter {
                     origin = INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
                     name = Name.identifier("\$null")
@@ -508,7 +538,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         valueClass.declarations.removeAll(initBlocks)
         valueClass.declarations += function
 
-        if (irConstructor.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) {
+        if (irConstructor.shouldBeExposedByAnnotationOrFlag(context)) {
             valueClass.addExposedForJavaConstructor(irConstructor, primaryConstructor, function)
         }
     }

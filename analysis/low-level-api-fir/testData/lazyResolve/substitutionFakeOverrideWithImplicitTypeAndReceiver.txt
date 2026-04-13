@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiver.
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+        public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
     }
 
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiver.
         public final [ResolvedTo(CONSTANT_EVALUATION)] val [ResolvedTo(CONSTANT_EVALUATION)] R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
             public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+        public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
     }
 
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiver.
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+        public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
     }
 
@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverrideWithImplicitTypeAndReceiver.
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|T|.property: R|T| = this@R|/AbstractClass|.R|/AbstractClass.foo|()
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|T|
 
-        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|T|
+        public abstract [ResolvedTo(STATUS)] fun foo(): R|T|
 
     }
 

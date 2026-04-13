@@ -22,7 +22,7 @@ inline fun case_1(block: () -> Unit) {
 inline fun case_2(block: () -> Unit) {
     10 - 1
     <!CONTRACT_NOT_ALLOWED!>contract<!> {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
     return block()
 }
@@ -31,7 +31,7 @@ inline fun case_2(block: () -> Unit) {
 inline fun case_3(block: () -> Unit) {
     throw Exception()
     <!CONTRACT_NOT_ALLOWED!>contract<!> {
-        callsInPlace(block, InvocationKind.UNKNOWN)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.UNKNOWN)
     }
     return block()
 }
@@ -43,7 +43,7 @@ inline fun case_3(block: () -> Unit) {
 inline fun case_4(block: () -> Unit) {
     .0009
     return <!CONTRACT_NOT_ALLOWED!>contract<!> {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
 }
 

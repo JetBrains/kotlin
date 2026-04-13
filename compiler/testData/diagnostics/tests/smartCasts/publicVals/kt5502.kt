@@ -10,7 +10,7 @@ public class Foo(protected val maxParsingTimeInMillis: Long?) {
     protected fun checkForParsingTimeout(): Boolean {
         if (maxParsingTimeInMillis == null)
             return true
-        if (currentTimeMillis - parsingStartTimeStamp > <!DEBUG_INFO_SMARTCAST!>maxParsingTimeInMillis<!>)
+        if (currentTimeMillis - parsingStartTimeStamp > maxParsingTimeInMillis)
             return false
         return true
     }

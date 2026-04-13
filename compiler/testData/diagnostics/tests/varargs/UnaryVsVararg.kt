@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 fun foo1(a : Int) : String = "noarg"
 
 fun foo1(a : Int, vararg t : Int) : String = "vararg"

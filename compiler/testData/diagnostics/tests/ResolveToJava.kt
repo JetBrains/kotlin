@@ -8,7 +8,7 @@
 
 import java.*
 import java.util.*
-import <!UNRESOLVED_REFERENCE!>utils<!>.*
+import <!UNRESOLVED_IMPORT!>utils<!>.*
 
 import java.io.PrintStream
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Com
@@ -19,19 +19,19 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
   val x : java.<!UNRESOLVED_REFERENCE!>List<!>
   val y : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>
   val b : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Object<!>
-  val z : java.<!UNRESOLVED_REFERENCE!>utils<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>List<!><Int>
+  val z : java.<!UNRESOLVED_REFERENCE!>utils<!>.List<Int>
 
   val f : java.io.File? = null
 
-  Collections.<!FUNCTION_CALL_EXPECTED, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>
-  Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<Int><!>
+  Collections.<!CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED!>emptyList<!>
+  Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<!><!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>
   Collections.emptyList<Int>()
-  Collections.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+  Collections.<!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
-  Collections.singleton<Int>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>)
+  Collections.singleton<Int>(<!ARGUMENT_TYPE_MISMATCH!>1.0<!>)
 
-  <!RESOLUTION_TO_CLASSIFIER!>List<!><Int>
+  <!NO_COMPANION_OBJECT!>List<Int><!>
 
 
   val o = "sdf" as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>
@@ -52,7 +52,7 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
 //  Collections.sort<Integer>(ArrayList<Integer>())
   xxx.<!UNRESOLVED_REFERENCE!>Class<!>()
 
-  java.lang.String()
+  java.lang.<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>String<!>()
 }
 
 

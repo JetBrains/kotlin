@@ -8,6 +8,6 @@ expect class DefaultArgsInConstructor(p1: String = "common", p2: String = "commo
 // FILE: jvm.kt
 class DefaultArgsInConstructorImpl(p1: String = "common", p2: String = "common", p3: String)
 
-<!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>DefaultArgsInConstructor<!> = DefaultArgsInConstructorImpl<!>
+<!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>DefaultArgsInConstructor<!> = DefaultArgsInConstructorImpl<!>
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, stringLiteral, typeAliasDeclaration */

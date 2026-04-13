@@ -19,7 +19,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -161,8 +160,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     fun `don't publish wasm targets with KotlinJsCompilerAttribute attribute`() {
         with(kotlin) {
             val jsAttribute = Attribute.of(String::class.java)
-            js("nodeJs", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "nodeJs") } }
-            js("browser", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "browser") } }
+            js("nodeJs") { attributes { attribute(jsAttribute, "nodeJs") } }
+            js("browser") { attributes { attribute(jsAttribute, "browser") } }
             @OptIn(ExperimentalWasmDsl::class)
             wasmJs()
 
@@ -455,58 +454,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 )
             }
         }
-    }
-
-    @Test
-    fun `test platform notation for BOM is consumable in dependencies`() {
-        val project = buildProjectWithMPP {
-            kotlin {
-                jvm()
-                sourceSets.getByName("jvmMain").apply {
-                    dependencies {
-                        api(
-                            // Deprecated in KT-58759, remove test after deletion
-                            @Suppress("DEPRECATION_ERROR")
-                            platform("test:platform-dependency:1.0.0")
-                        )
-                    }
-                }
-            }
-        }
-
-        project.evaluate()
-
-        project.assertContainsDependencies("jvmMainApi", project.dependencies.platform("test:platform-dependency:1.0.0"))
-    }
-
-
-    @Test
-    fun `test enforcedPlatform notation for BOM is consumable in dependencies`() {
-        val project = buildProjectWithMPP {
-            kotlin {
-                js("browser") {
-                    browser {
-                        binaries.executable()
-                    }
-                }
-                sourceSets.getByName("browserMain").apply {
-                    dependencies {
-                        implementation(
-                            // Deprecated in KT-58759, remove test after deletion
-                            @Suppress("DEPRECATION_ERROR")
-                            enforcedPlatform("test:enforced-platform-dependency")
-                        )
-                    }
-                }
-            }
-        }
-
-        project.evaluate()
-
-        project.assertContainsDependencies(
-            "browserMainImplementation",
-            project.dependencies.enforcedPlatform("test:enforced-platform-dependency")
-        )
     }
 
     /**

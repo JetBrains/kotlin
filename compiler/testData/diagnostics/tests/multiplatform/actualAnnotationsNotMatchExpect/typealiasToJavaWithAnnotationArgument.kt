@@ -10,7 +10,7 @@ expect class Foo
 // FILE: Foo.kt
 actual annotation class Ann actual constructor(actual val p: Int)
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> = FooImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias Foo = FooImpl
 
 // FILE: FooImpl.java
 @Ann(p = 2)

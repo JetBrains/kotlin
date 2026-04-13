@@ -2,11 +2,11 @@
 // ISSUE: KT-37179
 
 fun test() {
-    fun Receiver.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>foo<!>() {}
+    fun Receiver.foo() {}
 }
 
 object Receiver {
-    fun Receiver.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>foo<!>() {}
+    fun Receiver.foo() {}
 
     val Receiver.foo get() = Property
 }

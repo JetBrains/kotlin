@@ -255,7 +255,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         val factory = when {
             forceWarning -> factoryForDeprecation.warningFactory
-            else -> factoryForDeprecation.chooseFactory(context)
+            else -> factoryForDeprecation.chooseFactory()
         }
 
         return factory.createOn(expression.source, valueToWarnAbout, context.session)

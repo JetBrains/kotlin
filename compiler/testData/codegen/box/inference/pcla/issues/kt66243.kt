@@ -1,6 +1,5 @@
 // ISSUE: KT-66243
-// IGNORE_BACKEND_K1: ANY
-// Reason: Could not load module <Error module>
+// IGNORE_BACKEND: ANDROID
 
 class A<T>
 class Test<T> {

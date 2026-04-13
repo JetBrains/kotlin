@@ -9,7 +9,7 @@ fun baz() {}
 fun main() {
     launch {
         // We should not run Unit-coercion for `myRun { null }`
-        myRun { null } ?: baz()
+        myRun { null } <!USELESS_ELVIS!>?: baz()<!>
     }
 }
 

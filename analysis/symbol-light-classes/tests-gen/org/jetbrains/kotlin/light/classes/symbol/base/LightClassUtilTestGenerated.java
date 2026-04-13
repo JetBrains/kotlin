@@ -24,7 +24,7 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
 
   @Test
   public void testAllFilesPresentInLightElements() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightElements"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightElements"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
   @Test

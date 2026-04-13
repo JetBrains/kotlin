@@ -35,11 +35,11 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     value_1.case_1()
-    println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    println(value_1.toByte())
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?, value_2: Number, value_3: Any?, value_4: String?) {
     value_1.case_2(value_2, value_3, value_4)
-    println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    println(value_1.toByte())
 }

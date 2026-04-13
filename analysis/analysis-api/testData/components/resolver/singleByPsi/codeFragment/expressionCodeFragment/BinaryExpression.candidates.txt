@@ -1,4 +1,4 @@
-KtOperationReferenceExpression(143,144): '+'
+KtOperationReferenceExpression(141,142): '+'
   KaInapplicableCallCandidateInfo:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}

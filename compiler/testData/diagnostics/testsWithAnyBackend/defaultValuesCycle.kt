@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
-// FIR_IDENTICAL
 
 inline fun foo(x: Int = <!INLINE_CALL_CYCLE!>bar()<!>): Int = x
 

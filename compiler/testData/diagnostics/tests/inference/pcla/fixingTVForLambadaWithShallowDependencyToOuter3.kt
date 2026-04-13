@@ -19,7 +19,7 @@ fun main() {
         // R <: S
         // R <: String
         // R = String
-        yield(foo(materialize()) { it.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>toString<!>() })
+        yield(foo(materialize()) { it.length.toString() })
     }
 
     generate {
@@ -28,7 +28,7 @@ fun main() {
         // S <: R
         // => String <: R
         // R = CST(S, String) = String
-        foo(<!TYPE_MISMATCH, TYPE_MISMATCH!>get()<!>) { it.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>toString<!>() }
+        foo(get()) { it.length.toString() }
     }
 }
 

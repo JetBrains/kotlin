@@ -29,7 +29,7 @@ fun testNotNull(foo: Foo) {
     foo.baz(s!!)?.gav.let {
         it<!UNSAFE_CALL!>.<!>length
         // Ok because of foo.
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length.hashCode()
+        s.length.hashCode()
     }
 }
 

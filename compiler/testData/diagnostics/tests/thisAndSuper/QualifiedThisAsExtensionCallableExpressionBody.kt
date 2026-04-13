@@ -3,7 +3,7 @@
 
 val Int.fooA: Int get() = this@fooA
 
-val Int.fooB get() = this<!UNRESOLVED_REFERENCE!>@fooB<!>
+val Int.fooB get() = this@fooB
 
 fun Int.fooC(): Int = this@fooC
 

@@ -26,7 +26,7 @@ Backend implementations:
 - `compiler/ir/backend.jvm/` - JVM backend
 - `compiler/ir/backend.js/` - JavaScript backend
 - `compiler/ir/backend.wasm/` - WebAssembly backend
-- `kotlin-native/backend.native/` - Native backend
+- `kotlin-native/backend.native/`, `native/` - Native backend
 
 ## Inference
 

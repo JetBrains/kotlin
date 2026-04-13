@@ -71,8 +71,8 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
-            public [ResolvedTo(CONTRACTS)] get(): R|util/MyPair|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val pair: R|util/MyPair|
+            public [ResolvedTo(STATUS)] get(): R|util/MyPair|
 
         [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|util/MyPair| = R|util/pair|
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val left: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = LAZY_EXPRESSION
@@ -83,4 +83,3 @@ FILE: [ResolvedTo(IMPORTS)] destructEntryWithTypeUsage.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol util/left], ScriptTopLevelDeclaration=true] val property: R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>| = R|util/left|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(0)])  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(1)])  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|) [evaluated = Int(2)])  kotlin/Int>>|
-

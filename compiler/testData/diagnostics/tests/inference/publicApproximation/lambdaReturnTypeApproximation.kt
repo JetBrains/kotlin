@@ -12,11 +12,11 @@ fun <R> run(fn: () -> R): R = TODO()
 
 fun topLevel() = run {
     val local = intersect(First, Second)
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Bound1 & Bound2}")!>local<!>
+    local
 }
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>topLevel()<!>
+    topLevel()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, intersectionType, lambdaLiteral,

@@ -31,13 +31,13 @@ fun test2(){
 }
 
 class B: A(){
-    <!OVERRIDE_BY_INLINE!>override inline fun foo(a: () -> Int, b: String)<!> { }
+    override inline <!OVERRIDE_BY_INLINE!>fun foo(a: () -> Int, b: String)<!> { }
 }
 
 fun test3(){
     val x: String
     B().foo (
-        { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        { x.length },
         if (true) { x = ""; "" } else { x = ""; "" }
     )
 }

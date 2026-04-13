@@ -10,7 +10,7 @@ fun foo(a: A?, aOther: A?): A {
         if (newA == null) {
             newA = A()
         }
-        <!DEBUG_INFO_SMARTCAST!>newA<!>
+        newA
     }
 }
 fun bar(a: A?, aOther: A?): A {
@@ -22,7 +22,7 @@ fun bar(a: A?, aOther: A?): A {
             return A()
         }
 
-        <!DEBUG_INFO_SMARTCAST!>aOther<!>
+        aOther
     }
 }
 fun foo1(a: A?, aOther: A?): A {
@@ -34,7 +34,7 @@ fun foo1(a: A?, aOther: A?): A {
         if (newA == null) {
             newA = A()
         }
-        <!DEBUG_INFO_SMARTCAST!>newA<!>
+        newA
     }
     return result
 }
@@ -47,7 +47,7 @@ fun bar1(a: A?, aOther: A?): A {
             return A()
         }
 
-        <!DEBUG_INFO_SMARTCAST!>aOther<!>
+        aOther
     }
     return result
 }

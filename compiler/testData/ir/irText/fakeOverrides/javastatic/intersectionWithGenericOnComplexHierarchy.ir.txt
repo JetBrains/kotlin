@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] T of <root>.C.bar? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       overridden:
-        public open fun bar <T> (): @[FlexibleNullability] T of <root>.Java1.bar? declared in <root>.Java1
+        public open fun bar <T> (): @[FlexibleNullability] T of <root>.KotlinClass.bar? declared in <root>.KotlinClass
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -222,13 +222,13 @@ FILE fqName:<root> fileName:/1.kt
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.C.foo?
       overridden:
-        public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java1.foo?): kotlin.Unit declared in <root>.Java1
+        public open fun foo <T> (t: @[FlexibleNullability] T of <root>.KotlinClass.foo?): kotlin.Unit declared in <root>.KotlinClass
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:t index:0 type:@[FlexibleNullability] T of <root>.C.foo?
       VALUE_PARAMETER kind:Regular name:t2 index:1 type:@[FlexibleNullability] T of <root>.C.foo?
       overridden:
-        public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java1.foo?, t2: @[FlexibleNullability] T of <root>.Java1.foo?): kotlin.Unit declared in <root>.Java1
+        public open fun foo <T> (t: @[FlexibleNullability] T of <root>.KotlinClass.foo?, t2: @[FlexibleNullability] T of <root>.KotlinClass.foo?): kotlin.Unit declared in <root>.KotlinClass
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -272,7 +272,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.Unit declared in <root>.C'
           CALL 'public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java1.foo?, t2: @[FlexibleNullability] T of <root>.Java1.foo?): kotlin.Unit declared in <root>.Java1' type=kotlin.Unit origin=null
-            TYPE_ARG T: @[FlexibleNullability] kotlin.Any?
+            TYPE_ARG T: kotlin.Any?
             ARG t: CONST Double type=kotlin.Double value=1.5
             ARG t2: CONST Int type=kotlin.Int value=8
     FUN name:test6 visibility:public modality:FINAL returnType:kotlin.Unit
@@ -353,7 +353,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test5 (): kotlin.Unit declared in <root>.D'
           CALL 'public open fun foo <T> (t: @[FlexibleNullability] T of <root>.Java4.foo?, t2: @[FlexibleNullability] T of <root>.Java4.foo?): kotlin.Unit declared in <root>.Java4' type=kotlin.Unit origin=null
-            TYPE_ARG T: @[FlexibleNullability] kotlin.Any?
+            TYPE_ARG T: kotlin.Any?
             ARG t: CONST Double type=kotlin.Double value=1.5
             ARG t2: CONST Int type=kotlin.Int value=8
     FUN name:test6 visibility:public modality:FINAL returnType:kotlin.Unit

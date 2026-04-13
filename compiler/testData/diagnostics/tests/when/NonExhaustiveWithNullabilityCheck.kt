@@ -14,7 +14,7 @@
 enum class X { A, B }
 fun foo(arg: X?): Int {
     if (arg != null) {
-        return <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>arg<!>) {
+        return <!NO_ELSE_IN_WHEN!>when<!> (arg) {
             X.B -> 2
         }
     } 

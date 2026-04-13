@@ -1,11 +1,11 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: common
-expect abstract <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Foo<!>() {
-    abstract fun foo()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> abstract class Foo() {
+    abstract fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>()
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{JVM}!>class Impl<!> : Foo() {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class Impl<!> : Foo() {}
 
 fun common() {
     Impl().foo()
@@ -18,7 +18,7 @@ interface I {
 
 expect open class Base() {}
 
-actual abstract <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS{JVM}!>Foo<!><!> : Base(), I {
+actual abstract class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> : Base(), I {
     // In non-KMP world, these two f/o would squash into a single f/o final fun foo()
     // f/o abstract fun foo(): Unit in intermediate
     // f/o final fun foo(): Unit in platform

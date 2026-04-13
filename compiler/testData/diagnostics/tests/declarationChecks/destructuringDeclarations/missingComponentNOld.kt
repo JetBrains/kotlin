@@ -13,7 +13,7 @@ fun test() {
     val (_: String, _) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>A()<!>
 
     val f: (A) -> Int = { (_, _) -> 1 }
-    val g: (A) -> Int = { (_, _, <!COMPONENT_FUNCTION_MISSING!>_<!>) -> 2 }
+    val g: (A) -> Int = { <!COMPONENT_FUNCTION_MISSING!>(_, _, _)<!> -> 2 }
     val h: (A) -> Int = { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, _) -> 3}
 }
 

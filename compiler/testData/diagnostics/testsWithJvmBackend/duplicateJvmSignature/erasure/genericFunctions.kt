@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 <!CONFLICTING_JVM_DECLARATIONS!>fun <T> test2(x: List<T>) = x<!>
 <!CONFLICTING_JVM_DECLARATIONS!>fun test2(x: List<String>) = x<!>
 

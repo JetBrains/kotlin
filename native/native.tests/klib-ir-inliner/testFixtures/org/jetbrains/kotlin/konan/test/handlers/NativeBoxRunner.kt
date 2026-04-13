@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
 import org.jetbrains.kotlin.test.groupingPhaseInputs
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -208,22 +209,34 @@ class PrettyResultsHandler(
 ) : ResultHandler(runResult, checks, testRun, loggedParameters) {
     companion object {
         @Suppress("RegExpRepeatedSpace")
-        val failedRegex = """\[  FAILED  ] (.*)\.(.*)\.__launcher__Kt.runTest""".toRegex()
+        val failedRegex = """\[  FAILED  ] (.*)\.__launcher__Kt.runTest""".toRegex()
     }
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
         val output = getLoggedRun().toString()
         val failedTests = failedRegex.findAll(output)
-            .map { it.groupValues }
-            .distinct()
-            .map { it[1] to it[2] }
-            .toList()
+            .map { it.groupValues }.distinct()
+            .map { it[1] }.toList()
         val phaseInputs = testServices.groupingPhaseInputs
-        for ((className, methodName) in failedTests) {
+
+        if (phaseInputs.size == 1) {
+            check(failedTests.size <= 1) {
+                "There should be at most one failed test in the batch mode, but there were $failedTests"
+            }
+            if (failedTests.isNotEmpty()) {
+                phaseInputs.single().catchingExecutor.executeWithCatching {
+                    super.processNonExpectedFailure(failedResults)
+                }
+            }
+            return
+        }
+
+        for (failedTest in failedTests) {
             val correspondingInput = phaseInputs.find {
                 val testInfo = it.testInfo
-                testInfo.className.replace("$", ".").endsWith(className) && testInfo.methodName == methodName
-            } ?: error("Can't find corresponding input for $className.$methodName")
+                val correspondingTestName = BatchingPackageInserter.computePackage(testInfo)
+                correspondingTestName == failedTest
+            } ?: error("Can't find corresponding input for $failedTest")
             correspondingInput.catchingExecutor.executeWithCatching {
                 super.processNonExpectedFailure(failedResults)
             }

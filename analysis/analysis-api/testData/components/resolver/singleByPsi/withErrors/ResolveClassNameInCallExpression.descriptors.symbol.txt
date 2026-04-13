@@ -1,5 +1,0 @@
-KtNameReferenceExpression(327,331): 'Test'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      <constructor>(): Test<T>
-    ]

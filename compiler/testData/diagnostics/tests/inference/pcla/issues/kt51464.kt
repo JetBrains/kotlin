@@ -10,7 +10,7 @@ fun <T, R> Flow<T>.transform(transform: FlowCollector<R>.(T) -> Unit): Flow<R> =
 
 fun f() {
     fun <T> doEmit(collector: FlowCollector<T>) {}
-    flowOf(1).<!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>transform<!> { doEmit(this) }
+    flowOf(1).<!CANNOT_INFER_PARAMETER_TYPE!>transform<!> { <!CANNOT_INFER_PARAMETER_TYPE!>doEmit<!>(this) }
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, in, integerLiteral,

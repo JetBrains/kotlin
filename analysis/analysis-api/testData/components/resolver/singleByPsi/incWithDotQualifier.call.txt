@@ -1,4 +1,4 @@
-KtCallExpression(93,99): 'peek()'
+KtCallExpression(78,84): 'peek()'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.api.jvm
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
@@ -34,35 +33,74 @@ public interface JvmIncrementalCompilationConfiguration
  * @property sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
  * @property dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation].
  * @property shrunkClasspathSnapshot The path to the shrunk classpath snapshot file from a previous compilation.
- * @property options an option set produced by [JvmCompilationOperation.createSnapshotBasedIcOptions]
+ * @property options is deprecated and unused
  *
  * @see JvmCompilationOperation.Builder.snapshotBasedIcConfigurationBuilder
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalBuildToolsApi
 public open class JvmSnapshotBasedIncrementalCompilationConfiguration
-@Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.") constructor(
+@Deprecated(
+    "Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.",
+    level = DeprecationLevel.ERROR
+)
+constructor(
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
     @Deprecated("This property is no longer required and will be removed in a future release.")
     public val shrunkClasspathSnapshot: Path,
-    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.") // Hide in 2.4, remove in 2.7
+    @Deprecated("Use `get` directly instead or a `Builder` instance to set options. This property will be removed in a future release.", level = DeprecationLevel.ERROR)
     public open val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration, BaseIncrementalCompilationConfiguration {
+
+    /**
+     * When instantiating JvmSnapshotBasedIncrementalCompilationConfiguration through `snapshotBasedIcConfigurationBuilder`,
+     * the `options` property is completely unused, but we cannot remove it or change it to nullable for compatibility reasons.
+     * So, we put a dummy implementation that does nothing in there instead.
+     */
+    private object DUMMY_OPTIONS : JvmSnapshotBasedIncrementalCompilationOptions {
+        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V {
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+        }
+
+        override fun <V> set(
+            key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
+            value: V,
+        ) {
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+        }
+
+        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+            error("Not implemented. Do not use `JvmSnapshotBasedIncrementalCompilationConfiguration.options` - it's deprecated.")
+        }
+    }
 
     @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
     public constructor(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
         dependenciesSnapshotFiles: List<Path>,
-        options: JvmSnapshotBasedIncrementalCompilationOptions,
     ) : this(
         workingDirectory,
         sourcesChanges,
         dependenciesSnapshotFiles,
         workingDirectory.resolve("classpath-snapshot"),
-        options,
+        DUMMY_OPTIONS
+    )
+
+    @Deprecated("Instantiating this class directly will not be possible and it will become abstract in a future release. Use `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`.")
+    public constructor(
+        workingDirectory: Path,
+        sourcesChanges: SourcesChanges,
+        dependenciesSnapshotFiles: List<Path>,
+        shrunkClasspathSnapshot: Path,
+    ) : this(
+        workingDirectory,
+        sourcesChanges,
+        dependenciesSnapshotFiles,
+        shrunkClasspathSnapshot,
+        DUMMY_OPTIONS
     )
 
     /**
@@ -140,7 +178,7 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
      * @see get
      * @see set
      */
-    public class Option<V> internal constructor(id: String) : JvmSnapshotBasedIncrementalCompilationOptions.Option<V>(id)
+    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -323,8 +361,11 @@ public open class JvmSnapshotBasedIncrementalCompilationConfiguration
  *
  * @since 2.3.0
  */
-@Suppress("DEPRECATION")
-@Deprecated("Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.")
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    "Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.",
+    level = DeprecationLevel.ERROR
+)
 @ExperimentalBuildToolsApi
 public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncrementalCompilationConfiguration {
     /**
@@ -333,7 +374,10 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
      * @see get
      * @see set
      */
-    @Deprecated("Use `JvmSnapshotBasedIncrementalCompilationConfiguration.Option` This interface will be removed in a future release.")
+    @Deprecated(
+        "Use `JvmSnapshotBasedIncrementalCompilationConfiguration.Option` This interface will be removed in a future release.",
+        level = DeprecationLevel.ERROR
+    )
     public open class Option<V> internal constructor(id: String) : BaseOption<V>(id)
 
     /**
@@ -349,6 +393,10 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
      */
     public operator fun <V> set(key: Option<V>, value: V)
 
+    @Deprecated(
+        "Use `JvmSnapshotBasedIncrementalCompilationConfiguration` and `JvmCompilationOperation.snapshotBasedIcConfigurationBuilder`. This interface will be removed in a future release.",
+        level = DeprecationLevel.ERROR
+    )
     public companion object {
 
         /**

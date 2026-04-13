@@ -16,7 +16,7 @@ operator fun String.unaryPlus(): Int = 0
 fun test() {
     requireInt(+ "")
     requireInt(+ Example())
-    requireString(<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> ExampleDeprecated())
+    requireString(<!ARGUMENT_TYPE_MISMATCH!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> ExampleDeprecated()<!>)
 }
 
 fun requireInt(n: Int) {}

@@ -3,7 +3,7 @@ fun <T> test(t: T): String? {
     if (t != null) {
         return t<!UNNECESSARY_SAFE_CALL!>?.<!>toString()
     }
-    return <!DEBUG_INFO_CONSTANT!>t<!>?.toString()
+    return t?.toString()
 }
 
 fun <T> T.testThis(): String? {

@@ -29,9 +29,9 @@ class UserKlass
 // test 1: PTV is in consuming position (yield-case)
 fun testYield() {
     val buildee = build {
-        yield { val x: UserKlass = <!NO_THIS!>this@yield<!> }
+        yield { val x: UserKlass = this<!UNRESOLVED_LABEL!>@yield<!> }
     }
-    checkExactType<Buildee<UserKlass.() -> Unit>>(<!TYPE_MISMATCH("Buildee<UserKlass.() -> Unit>; Buildee<() -> Unit>"), TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
+    checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
 }
 
 // test 2: PTV is in producing position (materialize-case)
@@ -39,11 +39,11 @@ fun testMaterialize() {
     fun <T> shareTypeInfo(from: T, to: T) {}
     val buildee = build {
         shareTypeInfo(
-            { val x: UserKlass = <!NO_THIS!>this@shareTypeInfo<!> },
+            { val x: UserKlass = this<!UNRESOLVED_LABEL!>@shareTypeInfo<!> },
             materialize()
         )
     }
-    checkExactType<Buildee<UserKlass.() -> Unit>>(<!TYPE_MISMATCH("Buildee<UserKlass.() -> Unit>; Buildee<() -> Unit>"), TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
+    checkExactType<Buildee<UserKlass.() -> Unit>>(<!ARGUMENT_TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, asExpression, classDeclaration, functionDeclaration, functionalType,

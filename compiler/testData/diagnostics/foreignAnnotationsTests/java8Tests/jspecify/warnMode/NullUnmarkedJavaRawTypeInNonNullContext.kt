@@ -21,5 +21,5 @@ public class NullMarkedType {
 // FILE: kotlin.kt
 
 fun test() {
-    NullMarkedType.TargetType.INSTANCE().consume(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    NullMarkedType.TargetType.INSTANCE().consume(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

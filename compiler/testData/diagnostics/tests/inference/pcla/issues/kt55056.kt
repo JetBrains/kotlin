@@ -5,7 +5,7 @@
 fun test() {
     val buildee = build {
         setTypeVariable(TargetType())
-        consumeDifferentType(<!RECEIVER_TYPE_MISMATCH("DifferentType; TargetType")!>extensionReplaceOutProjectedTypeVariable<!>(DifferentType()))
+        consumeDifferentType(<!ARGUMENT_TYPE_MISMATCH!>extensionReplaceOutProjectedTypeVariable(DifferentType())<!>)
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

@@ -21,6 +21,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -46,14 +47,13 @@ import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.tasks.CInteropWorkAction
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
-import org.jetbrains.kotlin.gradle.targets.native.tasks.createExecutionContext
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -190,17 +190,26 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     abstract val kotlinOptions: T
 
-    @Deprecated("Use implementations compilerOptions to get/set freeCompilerArgs")
+    @Deprecated(
+        message = "Use implementations compilerOptions to get/set freeCompilerArgs",
+        level = DeprecationLevel.ERROR,
+    )
     @get:Input
     abstract val additionalCompilerOptions: Provider<Collection<String>>
 
-    @Deprecated("Use implementations compilerOptions")
+    @Deprecated(
+        message = "Use implementations compilerOptions",
+        level = DeprecationLevel.ERROR,
+    )
     @get:Internal
     val languageSettings: LanguageSettings
         get() = compilation.languageSettings
 
     @Suppress("DeprecatedCallableAddReplaceWith")
-    @get:Deprecated("Replaced with 'compilerOptions.progressiveMode'")
+    @get:Deprecated(
+        message ="Replaced with 'compilerOptions.progressiveMode'",
+        level = DeprecationLevel.ERROR,
+    )
     @get:Internal
     val progressiveMode: Boolean
         get() = compilation.compilerOptions.options.progressiveMode.get()
@@ -295,6 +304,7 @@ internal constructor(
 
     @Deprecated(
         message = "Please use 'compilerOptions.moduleName' to configure",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
     )
     @get:Internal
@@ -327,12 +337,14 @@ internal constructor(
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Internal
     val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
@@ -348,6 +360,7 @@ internal constructor(
     // region Language settings imported from a SourceSet.
     @Deprecated(
         message = "Replaced with kotlinOptions.languageVersion",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("kotlinOptions.languageVersion")
     )
     val languageVersion: String?
@@ -355,12 +368,16 @@ internal constructor(
 
     @Deprecated(
         message = "Replaced with kotlinOptions.apiVersion",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("kotlinOptions.apiVersion")
     )
     val apiVersion: String?
         @Optional @Input get() = compilerOptions.apiVersion.orNull?.version
 
-    @Deprecated("Language features is internal Kotlin compiler flags and should not be used directly")
+    @Deprecated(
+        message = "Language features is internal Kotlin compiler flags and should not be used directly",
+        level = DeprecationLevel.ERROR,
+    )
     val enabledLanguageFeatures: Set<String>
         @Internal get() = compilerOptions
             .freeCompilerArgs.get()
@@ -369,6 +386,7 @@ internal constructor(
 
     @Deprecated(
         message = "Replaced with compilerOptions.optIn",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("compilerOptions.optIn")
     )
     val optInAnnotationsInUse: Set<String>
@@ -395,6 +413,7 @@ internal constructor(
     @Suppress("UNCHECKED_CAST")
     @Deprecated(
         message = "Replaced with compilerOptions.freeCompilerArgs",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs.get()")
     )
     @get:Input
@@ -819,6 +838,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @Deprecated(
         "Eager outputFile was replaced with lazy outputFileProvider",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("outputFileProvider")
     )
     @get:Internal
@@ -836,12 +856,14 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Internal
     val konanDataDir: Provider<String?> = kotlinNativeProvider.flatMap { it.konanDataDir }
 
     @Deprecated(
         message = "This property will be removed in future releases. Don't use it in your code.",
+        level = DeprecationLevel.ERROR,
     )
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
@@ -850,15 +872,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
 
-    private val cinteropRunner: KotlinNativeToolRunner
-        get() = objectFactory.KotlinNativeCInteropRunner(
-            metrics,
-            classLoadersCachingService,
-            actualNativeHomeDirectory,
-            runnerJvmArgs,
-            useXcodeMessageStyle,
-            konanPropertiesService,
-        )
+    @get:Inject
+    internal abstract val workerExecutor: WorkerExecutor
 
     // Inputs and outputs.
 
@@ -868,8 +883,8 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     override val klibOutput: Provider<File>
         get() = outputFileProvider
 
-    //Error file will be written only for errors during a project sync because for the sync task mustn't fail
-    //see: org.jetbrains.kotlin.gradle.targets.native.tasks.IdeaSyncKotlinNativeCInteropRunnerExecutionContext
+    // Error file will be written only for errors during a project sync because for the sync task mustn't fail.
+    // See IDE sync error handling in CInteropWorkAction.
     @get:OutputFile
     internal val errorFileProvider: Provider<File> = destinationDirectory.map { it.asFile.resolve("cinterop_error.out") }
 
@@ -890,6 +905,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     @Deprecated(
         "This eager parameter is deprecated.",
+        level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("definitionFile")
     )
     val defFile: File get() = definitionFile.asFile.get()
@@ -989,24 +1005,26 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             addAll(extraOpts)
         }
 
-        addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
-            outputFileProvider.get().parentFile.mkdirs()
-            createExecutionContext(
-                isInIdeaSync = isInIdeaSync.get(),
-                cinteropRunner = cinteropRunner,
-            ).runWithContext {
-                runTool(
-                    KotlinNativeToolRunner.ToolArguments(
-                        shouldRunInProcessMode = false,
-                        compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
-                        arguments = args,
-                    )
-                )
-            }
+        // Pre-compute header hashes while we have access to task state
+        val headerHashes = createHeadersHashByPathMap()
 
-            val allHeadersMetadataDirectory = allHeadersHashesFile.get().asFile
-            allHeadersMetadataDirectory.parentFile.mkdirs()
-            allHeadersMetadataDirectory.writeText(JsonUtils.gson.toJson(createHeadersHashByPathMap()))
+        addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
+            workerExecutor.noIsolation().submit(CInteropWorkAction::class.java) { params ->
+                params.arguments.set(args)
+                params.outputFile.set(outputFileProvider.get())
+                params.errorFile.set(errorFileProvider.get())
+                params.ideaSyncEnabled.set(isInIdeaSync.get())
+                params.taskPath.set(path)
+                params.compilerArgumentsLogLevel.set(kotlinCompilerArgumentsLogLevel.get())
+                params.allHeadersHashesFile.set(allHeadersHashesFile)
+                params.headerHashMap.set(headerHashes)
+                params.metricsReporter.set(metrics)
+                params.classLoadersCachingService.set(classLoadersCachingService)
+                params.konanPropertiesService.set(konanPropertiesService)
+                params.actualNativeHomeDirectory.set(actualNativeHomeDirectory.get())
+                params.runnerJvmArgs.set(runnerJvmArgs.get())
+                params.useXcodeMessageStyle.set(useXcodeMessageStyle.get())
+            }
         }
     }
 

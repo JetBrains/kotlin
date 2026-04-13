@@ -27,7 +27,7 @@ inline fun <reified L : Any, reified R : Any> Either<L, R>.isRight(): Boolean {
 fun test() {
     val result: Either<Exception, Unit> = Either.Left(RuntimeException("simulating missing code"))
     if (result.isLeft()) {
-        val cause = <!DEBUG_INFO_SMARTCAST!>result<!>.leftValue.cause
+        val cause = result.leftValue.cause
     }
 }
 

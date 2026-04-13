@@ -24,7 +24,7 @@ fun withNull(e: E?) = when (e) {
     null -> null
 }
 
-fun withNullableNothingCheck(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
+fun withNullableNothingCheck(e: E?) = when (e) {
     E.A -> 3
     E.B -> 4
     is Nothing? -> null
@@ -43,7 +43,7 @@ fun withNullableNothing(e: E?) = when (e) {
     nullableNothing() -> null
 }
 
-fun platformType() = when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.foo()<!>) {
+fun platformType() = when (J.foo()) {
     E.A -> 7
     E.B -> 8
 }
@@ -51,7 +51,7 @@ fun platformType() = when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.foo()<!>) {
 fun platformTypeSmartCast(): Int {
     val e = J.foo()
     if (e == null) return -1
-    return when (<!DEBUG_INFO_SMARTCAST!>e<!>) {
+    return when (e) {
         E.A -> 1
         E.B -> 2
     }

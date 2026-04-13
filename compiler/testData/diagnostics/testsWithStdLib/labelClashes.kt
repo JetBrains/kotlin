@@ -5,14 +5,14 @@
 // FIR_DUMP
 
 fun Int.with() {
-    with("") {
-        this<!LABEL_RESOLVE_WILL_CHANGE("function with; anonymous function")!>@with<!>.inc()
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
+        this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
 fun Int.bar() {
-    with("") bar@{
-        this<!LABEL_RESOLVE_WILL_CHANGE!>@bar<!>.inc()
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") bar@{
+        this<!LABEL_NAME_CLASH!>@bar<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
@@ -20,12 +20,12 @@ fun foo(f: with.() -> Unit) {}
 
 class with {
     fun foo() {
-        with("") {
-            this<!LABEL_RESOLVE_WILL_CHANGE("class with; anonymous function")!>@with<!>.foo()
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
+            this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
 
-        with("") with@{
-            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.foo()
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") with@{
+            this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
 
         with("") other@{
@@ -38,7 +38,7 @@ private typealias Extension = TypedThis
 
 class TypedThis {
     fun TypedThis.baz() {
-        this<!LABEL_RESOLVE_WILL_CHANGE("class TypedThis; function baz extension receiver")!>@TypedThis<!>
+        this@TypedThis
     }
 
     fun Extension.bar() {
@@ -48,10 +48,10 @@ class TypedThis {
 
 object OtherTests {
     fun Int.with() {
-        with("") {
-            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.toString()
-            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.<!UNRESOLVED_REFERENCE!>length<!>
-            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.inc()
+        <!CANNOT_INFER_PARAMETER_TYPE!>with<!>("") {
+            this<!LABEL_NAME_CLASH!>@with<!>.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
+            this<!LABEL_NAME_CLASH!>@with<!>.length
+            this<!LABEL_NAME_CLASH!>@with<!>.<!UNRESOLVED_REFERENCE!>inc<!>()
         }
     }
 }
@@ -59,7 +59,7 @@ object OtherTests {
 object OtherTests2 {
     fun Int.with() {
         with("") {
-            this<!LABEL_RESOLVE_WILL_CHANGE!>@with<!>.toString()
+            this<!LABEL_NAME_CLASH!>@with<!>.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
         }
     }
 }

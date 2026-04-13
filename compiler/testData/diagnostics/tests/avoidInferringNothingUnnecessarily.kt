@@ -7,7 +7,7 @@ object A {
         return Any() <!UNCHECKED_CAST!>as? T<!> ?: block()
     }
 
-    val property: Any = <!DEBUG_INFO_LEAKING_THIS!>genericFunction<!> {
+    val property: Any = genericFunction {
         throw Exception()
     }
 }

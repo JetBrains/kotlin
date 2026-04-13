@@ -1,7 +1,0 @@
-KtNameReferenceExpression(59,69): 'Annotation'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in test.Annotation) constructor()

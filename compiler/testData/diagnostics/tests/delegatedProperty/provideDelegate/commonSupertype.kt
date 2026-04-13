@@ -13,7 +13,7 @@ interface Delegate<V> {
 }
 
 fun main() {
-    val x: String by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>mat()<!>
+    val x: String by mat()
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,

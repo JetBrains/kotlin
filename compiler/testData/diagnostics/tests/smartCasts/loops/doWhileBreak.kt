@@ -8,7 +8,7 @@ public fun foo(p: String?): Int {
         if (p == "abc") break
     } while (!x())
     // p should be smart casted despite of break
-    return <!DEBUG_INFO_SMARTCAST!>p<!>.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,

@@ -37,7 +37,7 @@ private fun <K, V : Any, M> containsNullable(
     assertionCreator: AssertionPlantNullable<V?>.(M) -> Unit
 ) = contains(
     pairs,
-    { option, key -> <!DEBUG_INFO_EXPRESSION_TYPE("CreatorNullable<kotlin.collections.Map<out K, V?>, V?>")!>option.withParameterObjectNullable(createGetParameterObject(plant, key))<!> },
+    { option, key -> option.withParameterObjectNullable(createGetParameterObject(plant, key)) },
     assertionCreator
 )
 

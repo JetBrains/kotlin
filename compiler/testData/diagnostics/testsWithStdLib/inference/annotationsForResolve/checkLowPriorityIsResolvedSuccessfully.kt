@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 class Foo {
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    @Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
     @kotlin.internal.LowPriorityInOverloadResolution
     val test: Bar = Bar()
 }
@@ -16,7 +16,7 @@ fun Scope.bar(e: Foo) {
 }
 
 class Baz
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 @kotlin.internal.LowPriorityInOverloadResolution
 constructor(val x: Foo)
 

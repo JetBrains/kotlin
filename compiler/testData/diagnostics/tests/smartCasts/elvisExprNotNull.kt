@@ -2,7 +2,7 @@
 fun foo(s: Any?): String {
     val t = when {
         // To resolve: String U Nothing? = String?
-        s is String -> <!DEBUG_INFO_SMARTCAST!>s<!>
+        s is String -> s
         else -> null
     } ?: ""
     return t
@@ -16,7 +16,7 @@ fun bar(s: Any?): String {
     else {
         val u: Any? = null
         if (u !is String) return ""
-        <!DEBUG_INFO_SMARTCAST!>u<!>
+        u
     }) ?: "xyz"
     // Ideally we should have smart cast to String here
     return t
@@ -24,7 +24,7 @@ fun bar(s: Any?): String {
 
 fun baz(s: String?, r: String?): String {
     val t = r ?: when {
-        s != null -> <!DEBUG_INFO_SMARTCAST!>s<!>
+        s != null -> s
         else -> ""
     }
     return t
@@ -33,7 +33,7 @@ fun baz(s: String?, r: String?): String {
 fun withNull(s: String?): String {
     val t = s <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     // Error: nullable
-    return <!TYPE_MISMATCH!>t<!>
+    return <!RETURN_TYPE_MISMATCH!>t<!>
 }
 
 /* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, isExpression,

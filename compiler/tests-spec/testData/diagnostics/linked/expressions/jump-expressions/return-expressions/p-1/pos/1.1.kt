@@ -30,7 +30,7 @@ fun case2() {
 fun fooCase2(): Case1 {
     val x = ""
     return Case1()
-    <!UNREACHABLE_CODE!>val y = ""<!>
+    val y = ""
 }
 
 // TESTCASE NUMBER: 3
@@ -38,8 +38,8 @@ fun case3() {
     val x = object : Case13 {
         override fun fooCase3(): Int {
             return 1
-            <!UNREACHABLE_CODE!>"str"<!>
-            <!UNREACHABLE_CODE!>3<!>
+            "str"
+            3
         }
     }.fooCase3()
 

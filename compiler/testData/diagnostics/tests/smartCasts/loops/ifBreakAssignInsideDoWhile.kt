@@ -7,7 +7,7 @@ public fun foo(x: String?): Int {
         // This and hashCode() below are needed just to prevent 
         // UNINITIALIZED_VARIABLE, UNUSED_VALUE, ...
         y = "" 
-        y = if (x == null) break else <!DEBUG_INFO_SMARTCAST!>x<!>
+        y = if (x == null) break else x
     } while (bar())
     y.hashCode()
     // x is null because of the break

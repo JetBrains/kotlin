@@ -3,21 +3,21 @@ class My<T>(val value: T)
 
 open class Base
 
-val <!EXPOSED_PROPERTY_TYPE!>invalid1<!> = run {
+val invalid1 = run {
     class Local
     My(Local())
 }
 
-val <!EXPOSED_PROPERTY_TYPE!>invalid2<!> = My(object {})
+val invalid2 = My(object {})
 
-val <!EXPOSED_PROPERTY_TYPE!>invalid3<!> = My(object : Base() {})
+val invalid3 = My(object : Base() {})
 
-val <!EXPOSED_PROPERTY_TYPE!>invalid4<!> = run {
+val invalid4 = run {
     class Local
     My(My(Local()))
 }
 
-val <!EXPOSED_PROPERTY_TYPE!>invalid5<!> = run {
+val invalid5 = run {
     fun invalid5a() = run {
         class Local
         Local()

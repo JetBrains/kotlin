@@ -1,6 +1,0 @@
-package
-
-public fun ifElse(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun ifIs(/*0*/ x: kotlin.Int?, /*1*/ cond: kotlin.Boolean): kotlin.Unit
-public fun ifThen(/*0*/ x: kotlin.Int?): kotlin.Unit
-public fun ifThenElse(/*0*/ x: kotlin.Int?): kotlin.Unit

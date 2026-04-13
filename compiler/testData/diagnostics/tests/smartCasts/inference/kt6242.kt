@@ -8,7 +8,7 @@ fun baz() {
         val task: String? = null
         if (task == null) {
             return
-        } else <!DEBUG_INFO_SMARTCAST!>task<!>
+        } else task
     }
 }
 

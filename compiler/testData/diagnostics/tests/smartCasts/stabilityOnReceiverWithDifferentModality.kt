@@ -90,7 +90,7 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is AbstractFinalDefault){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is AbstractOpenCustom){
         a.a as String
@@ -114,7 +114,7 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is AbstractFinalFake){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is AbstractFinalFakeCustom){
         a.a as String
@@ -126,7 +126,7 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is OpenFinalDefault){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is OpenOpenCustom){
         a.a as String
@@ -146,7 +146,7 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is OpenFinalFake){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is OpenFinalFakeCustom){
         a.a as String
@@ -154,11 +154,11 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is FinalOpenDefault){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is FinalFinalDefault){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is FinalOpenCustom){
         a.a as String
@@ -170,7 +170,7 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is FinalOpenFake){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is FinalOpenFakeCustom){
         a.a as String
@@ -178,7 +178,7 @@ fun test1(a: AbstractOpenDefault) {
     }
     if(a is FinalFinalFake){
         a.a as String
-        <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+        a.a.length
     }
     if(a is FinalFinalFakeCustom){
         a.a as String
@@ -197,7 +197,7 @@ fun test2() {
 
     a = OpenFinalDefault()
     a.a as String
-    <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+    a.a.length
 
     a = OpenFinalCustom()
     a.a as String
@@ -213,7 +213,7 @@ fun test2() {
 
     a = OpenFinalFake()
     a.a as String
-    <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+    a.a.length
 
     a = OpenFinalFakeCustom()
     a.a as String
@@ -221,11 +221,11 @@ fun test2() {
 
     a = FinalOpenDefault()
     a.a as String
-    <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+    a.a.length
 
     a = FinalFinalDefault()
     a.a as String
-    <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+    a.a.length
 
     a = FinalOpenCustom()
     a.a as String
@@ -237,7 +237,7 @@ fun test2() {
 
     a = FinalOpenFake()
     a.a as String
-    <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+    a.a.length
 
     a = FinalFinalFakeCustom()
     a.a as String
@@ -245,7 +245,7 @@ fun test2() {
 
     a = FinalFinalFake()
     a.a as String
-    <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
+    a.a.length
 
     a = FinalOpenFakeCustom()
     a.a as String

@@ -64,6 +64,12 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   }
 
   @Test
+  @TestMetadata("destructuringDeclarationsRepl.repl.kts")
+  public void testDestructuringDeclarationsRepl_repl() {
+    run("destructuringDeclarationsRepl.repl.kts");
+  }
+
+  @Test
   @TestMetadata("destructuringDeclarationsScript.kts")
   public void testDestructuringDeclarationsScript() {
     run("destructuringDeclarationsScript.kts");

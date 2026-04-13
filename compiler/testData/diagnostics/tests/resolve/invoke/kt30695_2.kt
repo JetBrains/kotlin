@@ -26,8 +26,8 @@ val Cls.extensionProperty: MemberInvokeOwner
     get() = TODO()
 
 fun testNullableReceiver(nullable: Cls?) {
-    nullable?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>extensionProperty<!>()
-    nullable<!UNSAFE_CALL!>.<!><!FUNCTION_EXPECTED!>extensionProperty<!>()
+    nullable?.extensionProperty()
+    nullable.<!FUNCTION_EXPECTED!>extensionProperty<!>()
 }
 
 fun testNotNullableReceiver(notNullable: Cls) {
@@ -38,7 +38,7 @@ fun testNotNullableReceiver(notNullable: Cls) {
 fun testFlexibleReceiver() {
     val flexible = JavaClass.createFlexible()
     flexible.extensionProperty()
-    flexible?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>extensionProperty<!>()
+    flexible?.extensionProperty()
     flexible.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
     flexible?.<!UNSAFE_IMPLICIT_INVOKE_CALL!>nullableExtensionProperty<!>()
 }

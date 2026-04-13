@@ -17,11 +17,11 @@ object Obj {
 }
 
 fun main() {
-    <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>A::foo<!>.invoke(A())
-    <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>A::foo<!>.invoke<!NO_VALUE_FOR_PARAMETER!>()<!>
-    val x = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>A::foo<!>
-    x.invoke(A())
-    x.invoke<!NO_VALUE_FOR_PARAMETER!>()<!>
+    A::foo.invoke(<!TOO_MANY_ARGUMENTS!>A()<!>)
+    A::foo.invoke()
+    val x = A::foo
+    x.invoke(<!TOO_MANY_ARGUMENTS!>A()<!>)
+    x.invoke()
 
     A.Companion::foo.invoke()
     val x0 = A.Companion::foo
@@ -46,11 +46,11 @@ fun main() {
 }
 
 fun mainProp() {
-    <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>A::companionProp<!>.invoke(A())
-    <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>A::companionProp<!>.invoke<!NO_VALUE_FOR_PARAMETER!>()<!>
-    val x = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>A::companionProp<!>
-    x.invoke(A())
-    x.invoke<!NO_VALUE_FOR_PARAMETER!>()<!>
+    A::companionProp.invoke(<!TOO_MANY_ARGUMENTS!>A()<!>)
+    A::companionProp.invoke()
+    val x = A::companionProp
+    x.invoke(<!TOO_MANY_ARGUMENTS!>A()<!>)
+    x.invoke()
 
     A.Companion::companionProp.invoke()
     val x0 = A.Companion::companionProp

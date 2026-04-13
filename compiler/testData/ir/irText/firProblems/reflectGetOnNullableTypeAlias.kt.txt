@@ -15,7 +15,7 @@ fun box(): String {
   val backRefProp: KProperty1<Foo, Any?>? = Foo::bar
   when {
     EQEQ(arg0 = backRefProp, arg1 = null).not() -> { // BLOCK
-      return backRefProp.get(receiver = Foo()) as String
+      return backRefProp /*as KProperty1<Foo, Any?> */.get(receiver = Foo()) as String
     }
   }
   return "FAIL"

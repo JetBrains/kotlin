@@ -1,5 +1,0 @@
-Classifier names:
-  KotlinClass
-
-Callable names:
-  KotlinClass

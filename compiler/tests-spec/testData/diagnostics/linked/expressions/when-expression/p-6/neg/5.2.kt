@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // SKIP_TXT
 

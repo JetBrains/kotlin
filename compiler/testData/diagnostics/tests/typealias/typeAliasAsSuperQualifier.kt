@@ -38,8 +38,8 @@ class TestSuperForGenericBase<T> : GB<T>() {
         super<GenericBase>.foo()
         super<GB>.foo()
         super<MyBase>.foo()
-        super<MyBaseInt>.foo() // Type arguments don't matter here in K1 but matters in K2
-        super<TopLevelMyBaseInt>.foo() // because nested type aliases are treated as top-level type aliases
+        super<<!NOT_A_SUPERTYPE!>MyBaseInt<!>>.foo() // Type arguments don't matter here in K1 but matters in K2
+        super<<!NOT_A_SUPERTYPE!>TopLevelMyBaseInt<!>>.foo() // because nested type aliases are treated as top-level type aliases
         super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }
 }

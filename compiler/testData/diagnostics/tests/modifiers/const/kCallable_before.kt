@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // LANGUAGE: -IntrinsicConstEvaluation
 
 class SomeClassWithName(val property: Int) {

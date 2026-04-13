@@ -8,18 +8,18 @@ class X {
 fun getLong(): Long = TODO()
 
 fun test_1(list: List<X>) {
-    val props = list.map { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long?")!>it.toLong()<!> ?: <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>0<!> }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Long>")!>props<!>
+    val props = list.map { it.toLong() ?: 0 }
+    props
 }
 
 fun test_2(cond: Boolean) {
     val props = if (cond) getLong() else 0
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Long")!>props<!>
+    props
 }
 
 fun test_3(list: List<X>) {
     val props = list.map { Pair(it.toLong() ?: 0, it.toLong() ?: 0) }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<kotlin.Pair<kotlin.Long, kotlin.Long>>")!>props<!>
+    props
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, ifExpression, lambdaLiteral,

@@ -12,7 +12,7 @@ open class A {
 class C : B()
 
 fun box(): String {
-    return C().<!INVISIBLE_MEMBER!>a<!>
+    return C().a
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, propertyDeclaration, stringLiteral */

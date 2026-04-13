@@ -6,34 +6,34 @@ fun callAny(arg: Any?) {}
 fun <T> callParam(arg: T) {}
 
 fun testAny() {
-    callAny { <!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>error<!> }
-    callAny l@{ <!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>error<!> }
-    callAny({<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>error<!>})
-    callAny(({<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>error<!>}))
-    callAny(l@{<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>error<!>})
-    callAny((l@{<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>error<!>}))
+    callAny { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> error }
+    callAny l@{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> error }
+    callAny({<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> error})
+    callAny(({<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> error}))
+    callAny(l@{<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> error})
+    callAny((l@{<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> error}))
 }
 
 fun testAnyCall() {
     callAny {
-        <!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!DEBUG_INFO_MISSING_UNRESOLVED!>error<!>()
+        <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>error<!> -> <!UNRESOLVED_REFERENCE!>error<!>()
     }
 }
 
 fun testParam() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
-        <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>param<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+        <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>param<!> -> param
     }
 }
 
 fun testParamCall() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
-        <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!DEBUG_INFO_MISSING_UNRESOLVED!>param<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+        <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>param<!> -> <!UNRESOLVED_REFERENCE!>param<!>()
     }
 }
 
 fun testNoContext() {
-    { <!CANNOT_INFER_PARAMETER_TYPE!>it<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!> }
+    { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> it }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, typeParameter */

@@ -26,5 +26,5 @@ public class Test {
 
 // FILE: main.kt
 fun main(y: test2.Test) {
-    y.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    y.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 }

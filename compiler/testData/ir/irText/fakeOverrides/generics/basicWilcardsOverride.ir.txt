@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/test.kt
         public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<out @[FlexibleNullability] kotlin.Number?>? declared in <root>.Java1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.collections.MutableList<out kotlin.Number> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<out kotlin.Number> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:bar2 visibility:public modality:OPEN returnType:kotlin.collections.MutableList<in kotlin.Number>
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/test.kt
         public open fun bar2 (): @[FlexibleNullability] kotlin.collections.MutableList<in @[FlexibleNullability] kotlin.Number?>? declared in <root>.Java1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar2 (): kotlin.collections.MutableList<in kotlin.Number> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<in kotlin.Number> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:bar3 visibility:public modality:OPEN returnType:kotlin.collections.MutableList<*>
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/test.kt
         public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<*>? declared in <root>.Java1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar3 (): kotlin.collections.MutableList<*> declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<*> origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
@@ -118,9 +118,9 @@ FILE fqName:<root> fileName:/test.kt
         ARG a: CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<out @[FlexibleNullability] kotlin.Number?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        ARG a: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Nothing?> origin=null
-          TYPE_ARG T: kotlin.Nothing?
-          ARG elements: VARARG type=kotlin.Array<out kotlin.Nothing?> varargElementType=kotlin.Nothing?
+        ARG a: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Number?> origin=null
+          TYPE_ARG T: @[FlexibleNullability] kotlin.Number?
+          ARG elements: VARARG type=kotlin.Array<out @[FlexibleNullability] kotlin.Number?> varargElementType=@[FlexibleNullability] kotlin.Number?
             CONST Null type=kotlin.Nothing? value=null
       CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<out @[FlexibleNullability] kotlin.Number?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null

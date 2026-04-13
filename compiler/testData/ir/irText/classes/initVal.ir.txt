@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/initVal.kt
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.TestInitValInInitBlock declared in <root>.TestInitValInInitBlock' type=<root>.TestInitValInInitBlock origin=null
+          receiver: GET_VAR '<this>: <root>.TestInitValInInitBlock declared in <root>.TestInitValInInitBlock' type=<root>.TestInitValInInitBlock origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=0
     CONSTRUCTOR visibility:public returnType:<root>.TestInitValInInitBlock [primary]
       BLOCK_BODY

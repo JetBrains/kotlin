@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterBoundsScript.kts>, ScriptTopLevelDeclaration=true] interface Bar<[ResolvedTo(TYPES)] T : R|Foo|> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] F : R|Foo|, [ResolvedTo(CONTRACTS)] B : R|Bar<F>|> [ResolvedTo(CONTRACTS)] R|F|.util(): R|B| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(STATUS)] F : R|Foo|, [ResolvedTo(STATUS)] B : R|Bar<F>|> [ResolvedTo(STATUS)] R|F|.util(): R|B| { LAZY_BLOCK }
 
 
 FILE RAW TO BODY:
@@ -240,4 +240,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterBoundsScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(BODY_RESOLVE)] F : R|Foo|, [ResolvedTo(BODY_RESOLVE)] B : R|Bar<F>|> [ResolvedTo(BODY_RESOLVE)] R|F|.util(): R|B| {
             ^util Null(null)!!
         }
-

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.internal.targetCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
+import org.jetbrains.kotlin.gradle.utils.jvmModuleName
 import org.jetbrains.kotlin.gradle.utils.moduleName
 
 internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinCompilationImplFactory.PostConfigure {
@@ -46,8 +47,9 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
                 compilationName,
                 targetCompilerOptions.moduleName
             ).orElse(
-                project.moduleName(
-                    moduleNameForCompilation(project.baseModuleName())
+                project.jvmModuleName(
+                    moduleNameForCompilation(project.baseModuleName()),
+                    project.kotlinExtension.compilerVersion
                 )
             )
         )

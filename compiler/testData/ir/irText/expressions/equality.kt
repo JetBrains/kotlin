@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun test1(a: Int, b: Int) = a == b
 fun test2(a: Int, b: Int) = a != b

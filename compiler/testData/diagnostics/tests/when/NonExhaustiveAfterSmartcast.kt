@@ -33,7 +33,7 @@ fun testDoubleWhen(x: IAbstract): Int {
 
 fun testDoubleWhen(x: ISealed): Int {
     val a = when (x) { is ISealed.C -> 1 }
-    val b = when (<!DEBUG_INFO_SMARTCAST!>x<!>) { <!USELESS_IS_CHECK!>is ISealed.C<!> -> 2 }
+    val b = when (x) { <!USELESS_IS_CHECK!>is ISealed.C<!> -> 2 }
     return a + b
 }
 

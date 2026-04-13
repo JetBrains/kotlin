@@ -4,6 +4,7 @@ dexMemberList = "4.1.1"
 dokka = "2.2.0"
 gradle-custom-user-data = "2.4.0"
 develocity = "4.2.2"
+develocity-plugin-adapter = "1.2.1"
 gradle-plugin-publish = "2.1.1"
 # The version for foojay should be synced with the version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "1.0.0"
@@ -20,9 +21,10 @@ spdx = "0.10.0-dev-15"
 proguard = "7.4.2"
 ktor = "3.1.3"
 kotlinx-bcv = "0.17.0"
+kotlinx-benchmark = "0.4.16"
 gson = "2.11.0"
 jetbrains-ideaExt = "1.0.1"
-jackson = "2.19.0"
+jackson = "2.21.1"
 jgit = "7.3.0.202506031305-r"
 jsoup = "1.17.2"
 junit4 = "4.13.2"
@@ -76,6 +78,7 @@ antlr = "4.13.2"
 org-tukaani-xz = "1.10"
 slf4j = "2.0.17"
 maven-xml-impl = "4.0.0-beta-5"
+yarn = "1.22.22"
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -91,6 +94,7 @@ dokka-multiModulePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugi
 downloadTask-gradlePlugin = { module = "de.undercouch:gradle-download-task", version.ref = "downloadTask" }
 gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
 develocity-gradlePlugin = { module = "com.gradle:develocity-gradle-plugin", version.ref = "develocity" }
+develocity-gradlePluginAdapter = { module = "com.gradle:develocity-gradle-plugin-adapters", version.ref = "develocity-plugin-adapter" }
 gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
 gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -98,6 +102,7 @@ kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutin
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "kotlinx-serialization" }
+kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
 shadow-gradlePlugin = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
@@ -123,6 +128,7 @@ ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 
 jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -189,4 +195,5 @@ maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "ma
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }
+kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }
 kotlinx-bcv = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }

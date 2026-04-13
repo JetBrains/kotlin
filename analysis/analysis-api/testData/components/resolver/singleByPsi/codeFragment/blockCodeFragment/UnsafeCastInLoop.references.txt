@@ -1,4 +1,4 @@
-KtNameReferenceExpression(218,221): 'inc'
+KtNameReferenceExpression(216,219): 'inc'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

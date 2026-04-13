@@ -28,7 +28,7 @@ object DefaultHttpClientWithBy : HttpClient by client {
     val client by lazy { HttpClientImpl() }
 }
 
-object DefaultFqHttpClient : HttpClient by DefaultFqHttpClient.<!UNINITIALIZED_VARIABLE!>client<!> {
+object DefaultFqHttpClient : HttpClient by <!UNINITIALIZED_VARIABLE!>DefaultFqHttpClient.client<!> {
     val client = HttpClientImpl()
 }
 

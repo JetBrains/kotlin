@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value'
                       CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=GET_PROPERTY
-                        ARG <this>: GET_ENUM 'ENUM_ENTRY name:B' type=<root>.X.B
+                        ARG <this>: GET_VAR '<this>: <root>.X.B declared in <root>.X.B' type=<root>.X.B origin=IMPLICIT_ARGUMENT
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:OPEN returnType:kotlin.Function0<kotlin.String>
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.X.B
             correspondingProperty: PROPERTY name:value visibility:public modality:OPEN [val]
@@ -39,8 +39,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
                   receiver: GET_VAR '<this>: <root>.X.B declared in <root>.X.B.<get-value>' type=<root>.X.B origin=null
         CONSTRUCTOR visibility:private returnType:<root>.X.B [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.X'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.X'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B modality:FINAL visibility:private superTypes:[<root>.X]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.X>

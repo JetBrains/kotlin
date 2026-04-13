@@ -1,4 +1,4 @@
-FILE: exclExclInference.fir.kt
+FILE: exclExclInference.kt
     public final fun foo(): R|kotlin/Unit| {
         lval x: R|kotlin/String?|
         R|<local>/x| = R|/materialize|<R|kotlin/String?|>()!!

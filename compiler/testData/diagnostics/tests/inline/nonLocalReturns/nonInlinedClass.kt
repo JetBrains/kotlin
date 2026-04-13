@@ -6,7 +6,7 @@ inline fun <R> inlineFunOnlyLocal(crossinline p: () -> R) {
 
         val z = p()
 
-        fun a() {
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> a() {
             p()
         }
     }
@@ -17,7 +17,7 @@ inline fun <R> inlineFun(p: () -> R) {
 
         val z = <!NON_LOCAL_RETURN_NOT_ALLOWED!>p<!>()
 
-        fun a() {
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> a() {
             <!NON_LOCAL_RETURN_NOT_ALLOWED!>p<!>()
         }
     }

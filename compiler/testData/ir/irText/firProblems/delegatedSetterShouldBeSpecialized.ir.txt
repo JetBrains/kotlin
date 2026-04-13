@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/delegatedSetterShouldBeSpecialized.kt
             CALL 'public final fun getValue <V> (<this>: kotlin.reflect.KProperty0<V of kotlin.getValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.getValue declared in kotlin' type=kotlin.Int origin=null
               TYPE_ARG V: kotlin.Int
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedToTopLevel$delegate type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final] declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
-                receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-delegatedToTopLevel>' type=<root>.MyClass origin=null
+                receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-delegatedToTopLevel>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-delegatedToTopLevel>' type=<root>.MyClass origin=null
               ARG property: PROPERTY_REFERENCE 'public final delegatedToTopLevel: kotlin.Int declared in <root>.MyClass' field=null getter='public final fun <get-delegatedToTopLevel> (): kotlin.Int declared in <root>.MyClass' setter='public final fun <set-delegatedToTopLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty1<<root>.MyClass, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-delegatedToTopLevel> visibility:public modality:FINAL returnType:kotlin.Unit
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/delegatedSetterShouldBeSpecialized.kt
             CALL 'public final fun setValue <V> (<this>: kotlin.reflect.KMutableProperty0<V of kotlin.setValue>, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.setValue): kotlin.Unit declared in kotlin' type=kotlin.Unit origin=null
               TYPE_ARG V: kotlin.Int
               ARG <this>: GET_FIELD 'FIELD PROPERTY_DELEGATE name:delegatedToTopLevel$delegate type:kotlin.reflect.KMutableProperty0<kotlin.Int> visibility:private [final] declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
-                receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-delegatedToTopLevel>' type=<root>.MyClass origin=null
+                receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-delegatedToTopLevel>' type=<root>.MyClass origin=IMPLICIT_ARGUMENT
               ARG thisRef: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<set-delegatedToTopLevel>' type=<root>.MyClass origin=null
               ARG property: PROPERTY_REFERENCE 'public final delegatedToTopLevel: kotlin.Int declared in <root>.MyClass' field=null getter='public final fun <get-delegatedToTopLevel> (): kotlin.Int declared in <root>.MyClass' setter='public final fun <set-delegatedToTopLevel> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyClass' type=kotlin.reflect.KMutableProperty1<<root>.MyClass, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               ARG value: GET_VAR '<set-?>: kotlin.Int declared in <root>.MyClass.<set-delegatedToTopLevel>' type=kotlin.Int origin=null

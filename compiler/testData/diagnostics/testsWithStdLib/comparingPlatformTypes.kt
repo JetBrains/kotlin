@@ -10,8 +10,8 @@ public class B {
 class A
 
 fun main(args: Array<String>) {
-    <!EQUALITY_NOT_APPLICABLE!>(1 to A()) == A()<!>
-    <!EQUALITY_NOT_APPLICABLE!>(1 to B()) == B()<!>
+    (1 to A()) == A()
+    (1 to B()) == B()
 
     <!EQUALITY_NOT_APPLICABLE!>(1 to A()) === A()<!>
     <!EQUALITY_NOT_APPLICABLE!>(1 to B()) === B()<!>

@@ -19,7 +19,7 @@ class Builder<B : Builder<B>> {
 class Out<out T>
 
 fun testStar(builder: Builder<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Builder<*>")!>builder.test()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>builder.test()<!>
 
     builder
         .test()
@@ -43,7 +43,7 @@ fun <K : Builder<K>> testTypeParam(builder: Builder<K>) {
 }
 
 fun testStarJava(builder: JavaBuilder<*>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("(JavaBuilder<*>..JavaBuilder<*>?)")!>builder.test()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("(CapturedType(*)..CapturedType(*)?)")!>builder.test()<!>
 
     builder
         .test()

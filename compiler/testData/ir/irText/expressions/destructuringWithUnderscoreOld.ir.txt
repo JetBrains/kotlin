@@ -58,14 +58,13 @@ FILE fqName:<root> fileName:/destructuringWithUnderscoreOld.kt
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.B
     BLOCK_BODY
-      COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
-        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
-          GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-        VAR name:x type:kotlin.Int [val]
-          CALL 'public final fun component1 (<this>: <root>.A): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=1)
-            ARG <this>(index:0): GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
-            ARG <this>(index:1): GET_VAR 'val tmp_0: <root>.A declared in <root>.test' type=<root>.A origin=null
-        VAR name:z type:kotlin.Int [val]
-          CALL 'public final fun component3 (<this>: <root>.A): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=3)
-            ARG <this>(index:0): GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
-            ARG <this>(index:1): GET_VAR 'val tmp_0: <root>.A declared in <root>.test' type=<root>.A origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
+        GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
+      VAR name:x type:kotlin.Int [val]
+        CALL 'public final fun component1 (<this>: <root>.A): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=1)
+          ARG <this>(index:0): GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          ARG <this>(index:1): GET_VAR 'val tmp_0: <root>.A declared in <root>.test' type=<root>.A origin=null
+      VAR name:z type:kotlin.Int [val]
+        CALL 'public final fun component3 (<this>: <root>.A): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=3)
+          ARG <this>(index:0): GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          ARG <this>(index:1): GET_VAR 'val tmp_0: <root>.A declared in <root>.test' type=<root>.A origin=null

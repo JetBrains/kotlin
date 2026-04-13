@@ -1,4 +1,3 @@
-// IGNORE_FE10
 
 // FILE: lib/JavaClass.java
 package lib;

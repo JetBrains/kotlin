@@ -2,7 +2,7 @@
 fun error(): Nothing = null!!
 
 fun test0(): String {
-    null ?: return ""
+    <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> return ""
 }
 
 fun test1(): String {
@@ -14,7 +14,7 @@ fun test2(): String {
 }
 
 fun test3(): String {
-    run { error() } <!UNREACHABLE_CODE, USELESS_ELVIS!>?: return ""<!>
+    run { error() } <!USELESS_ELVIS!>?: return ""<!>
 }
 
 fun test4(): String {

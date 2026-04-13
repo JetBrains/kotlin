@@ -4,12 +4,12 @@
 package kt609
 
 fun test(a: Int) {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>aa<!> = a
-    <!UNUSED_VALUE!>aa =<!> 324 //should be an 'unused value' warning here
+    var aa = a
+    aa = 324 //should be an 'unused value' warning here
 }
 
 class C() {
-    fun foo(<!UNUSED_PARAMETER!>s<!>: String) {}  //should be an 'unused variable' warning
+    fun foo(s: String) {}  //should be an 'unused variable' warning
 }
 
 open class A() {

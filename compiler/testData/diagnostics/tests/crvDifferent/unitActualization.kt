@@ -29,7 +29,7 @@ actual interface Foo : Readable {
 }
 
 fun main(f: Foo) {
-    f.read()
+    f.<!RETURN_VALUE_NOT_USED!>read<!>()
     f.close()
 }
 

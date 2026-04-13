@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 
 fun <T: B> foo(t: T) {

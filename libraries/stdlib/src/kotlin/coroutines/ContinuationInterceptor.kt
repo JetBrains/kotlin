@@ -51,7 +51,7 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
 
     public override operator fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? {
         // getPolymorphicKey specialized for ContinuationInterceptor key
-        @OptIn(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class) @Suppress("DEPRECATION")
         if (key is AbstractCoroutineContextKey<*, *>) {
             @Suppress("UNCHECKED_CAST")
             return if (key.isSubKey(this.key)) key.tryCast(this) as? E else null
@@ -63,7 +63,7 @@ public interface ContinuationInterceptor : CoroutineContext.Element {
 
     public override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext {
         // minusPolymorphicKey specialized for ContinuationInterceptor key
-        @OptIn(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class) @Suppress("DEPRECATION")
         if (key is AbstractCoroutineContextKey<*, *>) {
             return if (key.isSubKey(this.key) && key.tryCast(this) != null) EmptyCoroutineContext else this
         }

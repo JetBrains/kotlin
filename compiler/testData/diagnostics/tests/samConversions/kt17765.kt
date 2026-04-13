@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // FILE: Test.java
 public class Test {
     interface MyRunnable extends Runnable {}

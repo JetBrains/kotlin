@@ -12,15 +12,15 @@ public class J {
 // FILE: k.kt
 fun test() {
     val n = J.staticN
-    foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>)
-    J.staticNN = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>
+    foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>)
+    J.staticNN = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>n<!>
     if (n != null) {
         foo(n)
         J.staticNN = n
     }
 
     val x: J? = null
-    J.staticNN = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>
+    J.staticNN = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>
     if (x != null) {
         J.staticNN = x
     }

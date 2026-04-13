@@ -116,6 +116,7 @@ sourcesJar()
 javadocJar()
 testsJar()
 
+val projectDir = layout.projectDirectory
 val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencies")
 val prepareRobolectricDependencies by tasks.registering(Copy::class) {
     from(robolectricDependency)
@@ -138,9 +139,10 @@ projectTests {
         addClasspathProperty(layoutLibApi, "layoutLibApi.path")
 
         val robolectricDependencyDir: Provider<Directory> = robolectricDependencyDir
+        val projectDir = projectDir
         doFirst {
             systemProperty("robolectric.offline", "true")
-            systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile)
+            systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile.relativeTo(projectDir.asFile))
         }
     }
 

@@ -17,11 +17,11 @@ fun <S> intersect(vararg elements: S): S = TODO()
 fun intersectAfterSmartCast(arg: Base, arg2: Base) = intersect(
     run {
         if (arg !is One) throw Exception()
-        <!DEBUG_INFO_SMARTCAST!>arg<!>
+        arg
     },
     run {
         if (arg2 !is Two) throw Exception()
-        <!DEBUG_INFO_SMARTCAST!>arg2<!>
+        arg2
     }
 )
 

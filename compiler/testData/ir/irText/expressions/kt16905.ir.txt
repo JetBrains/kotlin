@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/kt16905.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer.Inner'
-            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.InnerDerived0.<init>' type=<root>.Outer origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=IMPLICIT_ARGUMENT
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived0 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/kt16905.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer.Inner'
-            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.InnerDerived1.<init>' type=<root>.Outer origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=IMPLICIT_ARGUMENT
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InnerDerived1 modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.Inner]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

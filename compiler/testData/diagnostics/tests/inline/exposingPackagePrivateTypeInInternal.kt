@@ -8,15 +8,15 @@ interface Private {
 }
 
 // FILE: test.kt
-internal inline fun internal(arg: Any): Boolean = arg is Private // should be an error
+internal inline fun internal(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!> // should be an error
 
 fun <T> ignore() {}
 
 internal inline fun internal() {
-    ignore<Private>() // should be an error
-    Private::class
-    Private.foo
-    Private::foo
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>::class
+    Private.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>
+    Private::<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, inline, nullableType, typeParameter */

@@ -8,7 +8,7 @@ public fun foo(p: String?): Int {
         if (p == "abc") continue
     } while (!x())
     // p should be smart casted despite of continue
-    return <!DEBUG_INFO_SMARTCAST!>p<!>.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,

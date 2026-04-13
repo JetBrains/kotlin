@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.Path
 import kotlin.io.path.reader
 
+@DisplayName("JDK compatibility")
 class JdkCompatibilityIT : KotlinMavenTestBase() {
 
     @MavenTest

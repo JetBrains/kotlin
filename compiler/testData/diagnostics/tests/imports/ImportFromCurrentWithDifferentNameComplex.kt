@@ -22,10 +22,10 @@ fun main() {
     ER()
     a.A()
 
-    <!UNRESOLVED_REFERENCE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> 1
+    <!UNRESOLVED_REFERENCE!>x<!> + 1
     y + 1
 
-    <!UNRESOLVED_REFERENCE!>foo<!>() <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> 1
+    <!UNRESOLVED_REFERENCE!>foo<!>() + 1
     bar() + 1
 }
 

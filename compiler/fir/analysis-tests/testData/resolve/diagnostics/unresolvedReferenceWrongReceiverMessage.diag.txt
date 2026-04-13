@@ -1,0 +1,9 @@
+/unresolvedReferenceWrongReceiverMessage.kt:(164,167): error: Candidate 'fun String.foo(): Unit' is inapplicable because of a receiver type mismatch.
+
+/unresolvedReferenceWrongReceiverMessage.kt:(179,182): error: None of the following candidates is applicable:
+
+fun String.bar(): Unit:
+  Candidate 'fun String.bar(): Unit' is inapplicable because of a receiver type mismatch.
+
+fun Int.bar(): Unit:
+  Candidate 'fun Int.bar(): Unit' is inapplicable because of a receiver type mismatch.

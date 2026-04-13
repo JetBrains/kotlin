@@ -1,1 +1,0 @@
-/emptyLambdaTypeMismatchDiagnostic.fir.kt:(101,103): error: Argument type mismatch: actual type is '(Int) -> Unit', but '(Int) -> String' was expected.

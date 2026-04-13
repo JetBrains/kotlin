@@ -1,4 +1,4 @@
-KtDestructuringDeclarationEntry(120,124): 'val1'
+KtDestructuringDeclarationEntry(105,109): 'val1'
   KtDestructuringDeclarationReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

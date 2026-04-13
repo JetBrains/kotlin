@@ -87,9 +87,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] val withGetter: R|kotlin/Int|
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun receive([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val withGetter: R|kotlin/Int|
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithGetter.kt

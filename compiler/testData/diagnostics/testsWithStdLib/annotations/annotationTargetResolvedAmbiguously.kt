@@ -2,21 +2,21 @@
 import kotlin.annotation.AnnotationTarget.FIELD
 
 object Some {
-    @Target(<!TYPE_MISMATCH!>AnnotationTarget.CLASS<!>)
+    @Target(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>CLASS<!><!>)
     annotation class Ann
 
     enum class AnnotationTarget {
         CLASS
     }
 
-    @Target(<!TYPE_MISMATCH!>FIELD<!>)
+    @Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ARGUMENT_TYPE_MISMATCH!>FIELD<!>)
     annotation class Ann2
 
     const val FIELD = ""
 }
 
 object SomeMore {
-    @Target(<!TYPE_MISMATCH!>kotlin.annotation.AnnotationTarget.FUNCTION<!>)
+    @Target(<!ARGUMENT_TYPE_MISMATCH!>kotlin.annotation.AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>FUNCTION<!><!>)
     annotation class Ann3
 
     object kotlin {
@@ -37,7 +37,7 @@ abstract class Base {
 }
 
 class Derived : Base() {
-    @Target(AnnotationTarget.TYPE)
+    @<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>Target<!>(<!ARGUMENT_TYPE_MISMATCH!>AnnotationTarget.<!AMBIGUOUS_ANNOTATION_ARGUMENT!>TYPE<!><!>)
     annotation class Ann
 
     fun foo(x: <!WRONG_ANNOTATION_TARGET!>@Ann<!> String) {}

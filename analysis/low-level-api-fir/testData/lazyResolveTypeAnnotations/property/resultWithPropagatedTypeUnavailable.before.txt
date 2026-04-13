@@ -45,10 +45,9 @@ FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
             private final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] get(): <implicit>
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| { LAZY_BLOCK }
 
         }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol foo/Obj.explicitType]] val $$result: R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>| = Q|foo/Obj|.R|foo/Obj.explicitType|()
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>|
-

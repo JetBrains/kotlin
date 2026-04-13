@@ -10,13 +10,13 @@ public fun foo(qq: String?): Int {
             var p = r
             do {
                 // p = r, r = q and q is not null
-                <!DEBUG_INFO_SMARTCAST!>p<!>.length
+                p.length
             } while (!x())
         } while (<!SENSELESS_COMPARISON!>r == null<!>) // r = q and q is not null
         if (!x()) break
     }
     // Smart cast is possible
-    return <!DEBUG_INFO_SMARTCAST!>q<!>.length
+    return q.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,

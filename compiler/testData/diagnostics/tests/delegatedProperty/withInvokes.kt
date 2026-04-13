@@ -13,13 +13,13 @@ val <X3> C<X3>.getValue: D<X3> get() = TODO()
 operator fun <X4> D<X4>.invoke(x: Any?, y: Any?): X4 = TODO()
 
 fun foo(a: A<String>, c: C<String>) {
-    val x1 by a
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Error delegation type for a]")!>x1<!>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x1<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    val x1 by <!NOT_FUNCTION_AS_OPERATOR!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x1<!>
+    x1.length
 
-    val y1 by c
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Error delegation type for c]")!>y1<!>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y1<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
+    val y1 by <!NOT_FUNCTION_AS_OPERATOR!>c<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>y1<!>
+    y1.length
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration, localProperty,

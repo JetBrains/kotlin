@@ -60,7 +60,7 @@ abstract enum class Test2 : Enum<Test2> {
   ZERO = ZERO()
   private enum entry class ZERO : Test2 {
     private constructor() /* primary */ {
-      super/*Test2*/() /*~> Unit */
+      super/*Test2*/()
       /* <init>() */
 
     }
@@ -74,7 +74,7 @@ abstract enum class Test2 : Enum<Test2> {
   ONE = ONE()
   private enum entry class ONE : Test2 {
     private constructor() /* primary */ {
-      super/*Test2*/(x = 1) /*~> Unit */
+      super/*Test2*/(x = 1)
       /* <init>() */
 
     }

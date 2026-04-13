@@ -3,12 +3,12 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
-        typeVariableMutableProperty = <!TYPE_MISMATCH("TypeVariable(PTV); () -> Unit")!>{}<!>
+    val buildee = build {
+        typeVariableMutableProperty = {}
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<() -> Unit>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>buildee<!>)
+    checkExactType<Buildee<() -> Unit>>(buildee)
 }
 
 

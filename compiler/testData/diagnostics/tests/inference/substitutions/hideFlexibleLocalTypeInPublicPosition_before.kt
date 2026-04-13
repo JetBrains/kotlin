@@ -11,7 +11,7 @@ interface I {
     fun foo(): String
 }
 
-<!APPROXIMATED_LOCAL_TYPE_WILL_BECOME_FLEXIBLE!>fun bar(condition: Boolean)<!> /*: I! */ =
+fun bar(condition: Boolean) /*: I! */ =
     J.flexibleId(object : I {
         override fun foo() = "may or may not check for null first"
         fun baz() = "invisible"
@@ -20,7 +20,7 @@ interface I {
 fun main() {
     bar(false).<!UNRESOLVED_REFERENCE!>baz<!>()
     bar(false).foo()
-    bar(false)<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
+    bar(false)?.foo()
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction,

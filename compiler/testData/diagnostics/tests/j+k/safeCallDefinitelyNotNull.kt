@@ -8,7 +8,7 @@ public abstract class Api<T> {
 
 // FILE: main.kt
 fun <E> foo(a: Api<E>, e: E?) {
-    e?.let { a.typeOf(<!DEBUG_INFO_SMARTCAST!>e<!>) }
+    e?.let { a.typeOf(e) }
 }
 
 /* GENERATED_FIR_TAGS: dnnType, functionDeclaration, javaType, lambdaLiteral, nullableType, safeCall, smartcast,

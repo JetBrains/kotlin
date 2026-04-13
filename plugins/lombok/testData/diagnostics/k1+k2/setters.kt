@@ -26,7 +26,7 @@ fun test() {
     obj.age = 42
 
     //synthetic property generated only when there is a getter
-    obj.<!INVISIBLE_MEMBER!>primitiveBoolean<!> = false
+    obj.<!INVISIBLE_REFERENCE!>primitiveBoolean<!> = false
     obj.setPrimitiveBoolean(true)
 
     obj.setName("abc")

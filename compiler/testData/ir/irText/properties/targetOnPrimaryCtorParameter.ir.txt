@@ -106,6 +106,8 @@ FILE fqName:<root> fileName:/targetOnPrimaryCtorParameter.kt
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Foo
     PROPERTY name:param visibility:public modality:FINAL [var]
       annotations:
+        NoTarget
+        PropValueField
         PropertyOnly
         PropertyOnly2
       FIELD PROPERTY_BACKING_FIELD name:param type:kotlin.Int visibility:private

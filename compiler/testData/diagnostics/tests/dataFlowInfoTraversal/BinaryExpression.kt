@@ -6,7 +6,7 @@ fun foo() {
     val x: Int? = null
 
     bar(1 + (if (x == null) 0 else x))
-    bar(<!TYPE_MISMATCH!>if (x == null) <!DEBUG_INFO_CONSTANT!>x<!> else x<!>)
+    bar(<!ARGUMENT_TYPE_MISMATCH!>if (x == null) x else x<!>)
     if (x != null) bar(x + x/(x-x*x))
 }
 

@@ -5,7 +5,7 @@
 fun indexOfMax(a: IntArray): Int? {
     var maxI: Int? = null
     a.forEachIndexed { i, value ->
-        if (maxI == null || value >= a[<!SMARTCAST_IMPOSSIBLE!>maxI<!>]) {
+        if (maxI == null || value >= a[maxI]) {
             maxI = i
         }
     }

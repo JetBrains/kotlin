@@ -1,4 +1,4 @@
-KtNameReferenceExpression(134,141): 'MyAlias'
+KtNameReferenceExpression(105,112): 'MyAlias'
   KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}

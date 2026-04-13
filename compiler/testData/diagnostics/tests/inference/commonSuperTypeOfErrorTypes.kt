@@ -15,7 +15,7 @@ fun test() {
 
     consume(
         materialize<Foo<Bar<<!UNRESOLVED_REFERENCE!>ErrorType<!>>>>(),
-        materialize<Foo<<!UNRESOLVED_REFERENCE!>ErrorType<!>>>()
+        <!ARGUMENT_TYPE_MISMATCH!>materialize<Foo<<!UNRESOLVED_REFERENCE!>ErrorType<!>>>()<!>
     )
 
 }

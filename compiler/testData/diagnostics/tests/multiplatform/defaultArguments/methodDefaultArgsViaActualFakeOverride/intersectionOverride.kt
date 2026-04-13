@@ -2,8 +2,8 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect interface Foo {
-    fun foo(p: Int = 1)
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> interface Foo {
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(p: Int = 1)
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -17,6 +17,6 @@ interface Base2 {
 }
 
 @Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING")
-actual interface Foo : Base1, Base2
+actual interface Foo : <!DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE!>Base1, Base2<!>
 
 /* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, interfaceDeclaration, stringLiteral */

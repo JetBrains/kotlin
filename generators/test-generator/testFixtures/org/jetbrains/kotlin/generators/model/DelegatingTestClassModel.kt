@@ -28,4 +28,7 @@ abstract class DelegatingTestClassModel(private val delegate: TestClassModel) : 
 
     override val tags: List<String>
         get() = delegate.tags
+
+    override val testKClass: Class<*>
+        get() = delegate.testKClass
 }

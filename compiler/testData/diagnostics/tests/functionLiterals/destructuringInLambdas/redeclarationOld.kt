@@ -14,7 +14,7 @@ fun bar() {
     }
 
     foo { (<!REDECLARATION!>a<!>, b), <!REDECLARATION!>a<!> ->
-        a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
+        a checkType { _<Int>() }
         b checkType { _<String>() }
     }
 

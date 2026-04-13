@@ -29,8 +29,8 @@ object Test2 {
             fun bar(x: Int = 42): String = ""
 
             fun test() {
-                val result = foo(<!COMPATIBILITY_WARNING!>::bar<!>)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+                val result = foo(::bar)
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
             }
         }
     }

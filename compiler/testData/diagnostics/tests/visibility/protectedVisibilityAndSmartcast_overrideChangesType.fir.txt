@@ -1,4 +1,4 @@
-FILE: protectedVisibilityAndSmartcast_overrideChangesType.fir.kt
+FILE: protectedVisibilityAndSmartcast_overrideChangesType.kt
     public abstract interface Base : R|kotlin/Any| {
         public abstract fun baseFun(): R|kotlin/Unit|
 

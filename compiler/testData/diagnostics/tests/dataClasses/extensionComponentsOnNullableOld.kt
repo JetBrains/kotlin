@@ -10,7 +10,7 @@ fun foo(): Int {
     val d: Data<Int>? = null
     // An error must be here
     val (x, y) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>d<!>
-    return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y<!>
+    return x + y
 }
 
 data class NormalData<T>(val x: T, val y: T)
@@ -19,7 +19,7 @@ fun bar(): Int {
     val d: NormalData<Int>? = null
     // An error must be here
     val (x, y) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>d<!>
-    return <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>x<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y<!>
+    return x + y
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, data, destructuringDeclaration, funWithExtensionReceiver,

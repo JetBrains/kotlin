@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlinx.dataframe.plugin.InterpretationErrorReporter
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.SchemaProperty
 import org.jetbrains.kotlinx.dataframe.plugin.analyzeRefinedCallShape
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationSafe
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -135,9 +137,14 @@ class FunctionCallTransformer(
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
         if (!shouldRefine(callSiteAnnotations, symbol, session)) return null
+
+        if (callInfo.containingDeclarations.any { it.hasAnnotationSafe(Names.DISABLE_INTERPRETATION_ANNOTATION, session) }) {
+            return null
+        }
         // See org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineBodyRegularClassChecker
         if (callInfo.containingDeclarations.lastOrNull() is FirPropertyAccessor) return null
         if (callInfo.containingDeclarations.any { it is FirFunction && it.isInline }) return null
+        if (callInfo.containingDeclarations.any { it.symbol.typeParameterSymbols?.isNotEmpty() == true }) return null
 
         return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, callInfo.twoDigitHash()) }
     }
@@ -181,7 +188,6 @@ class FunctionCallTransformer(
             // possibly null if explicit receiver type is typealias
             val argument = (callInfo.explicitReceiver?.resolvedType)?.typeArguments?.getOrNull(0)
             val newDataFrameArgument = buildNewTypeArgument(argument, callInfo.name, hash, callInfo.callSite)
-
             val typeRef = buildResolvedTypeRef {
                 coneType = dataSchemaLikeClassId.constructClassLikeType(
                     typeArguments = arrayOf(
@@ -201,11 +207,12 @@ class FunctionCallTransformer(
                 analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
             val (tokens, dataFrameSchema) = callResult ?: return null
             val token = tokens[0]
-            val firstSchema = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
+            val rootSchemaSymbol = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()!!
+            val firstSchema = rootSchemaSymbol.fir
             val dataSchemaApis = materialize(dataFrameSchema ?: PluginDataFrameSchema.EMPTY, call, firstSchema)
 
             val tokenFir = token.toRegularClassSymbol()!!.fir
-            tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
+            tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol }, rootSchemaSymbol)
 
             return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
         }
@@ -253,17 +260,19 @@ class FunctionCallTransformer(
                 PluginDataFrameSchema.EMPTY to PluginDataFrameSchema.EMPTY
             }
 
-            val firstSchema = keyMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
-            val firstSchema1 = groupMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()?.fir!!
+            val keysRootSchemaSymbol = keyMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)?.toRegularClassSymbol()!!
+            val groupsRootSchemaSymbol = groupMarker.toClassSymbol()?.resolvedSuperTypes?.get(0)?.toRegularClassSymbol()!!
+            val firstSchema = keysRootSchemaSymbol.fir
+            val firstSchema1 = groupsRootSchemaSymbol.fir
 
             val keyApis = materialize(keySchema, call, firstSchema, "Key")
             val groupApis = materialize(groupSchema, call, firstSchema1, "Group", i = keyApis.size)
 
             val groupToken = keyMarker.toRegularClassSymbol()!!.fir
-            groupToken.callShapeData = CallShapeData.RefinedType(keyApis.map { it.scope.symbol })
+            groupToken.callShapeData = CallShapeData.RefinedType(keyApis.map { it.scope.symbol }, keysRootSchemaSymbol)
 
             val keyToken = groupMarker.toRegularClassSymbol()!!.fir
-            keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol })
+            keyToken.callShapeData = CallShapeData.RefinedType(groupApis.map { it.scope.symbol }, groupsRootSchemaSymbol)
 
             return buildScopeFunctionCall(
                 call,
@@ -502,7 +511,7 @@ class FunctionCallTransformer(
                 buildSchema(name)
             }
 
-            val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope${i++}"), true)
+            val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("DataFramePropertiesScope${i++}"), true)
             val scope = buildRegularClass {
                 moduleData = session.moduleData
                 source = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)

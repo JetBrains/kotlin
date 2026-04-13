@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/innerClass.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Outer.TestInnerClass'
-            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.DerivedInnerClass.<init>' type=<root>.Outer origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=IMPLICIT_ARGUMENT
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DerivedInnerClass modality:FINAL visibility:public [inner] superTypes:[<root>.Outer.TestInnerClass]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any

@@ -35,8 +35,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.annotations.HasSchema
 import org.jetbrains.kotlinx.dataframe.columns.ColumnPath
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.CallShapeData
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.callShapeData
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColumnsResolver
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
@@ -320,16 +322,16 @@ fun pluginDataFrameSchema(schemaTypeArg: ConeTypeProjection): PluginDataFrameSch
 
 context(sessionHolder: SessionHolder)
 fun pluginDataFrameSchema(coneClassLikeType: ConeClassLikeType): PluginDataFrameSchema {
-    val symbol = coneClassLikeType.toSymbol() as? FirRegularClassSymbol ?: return PluginDataFrameSchema.EMPTY
-    val anyType = sessionHolder.session.builtinTypes.anyType.coneType
-    val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.firstOrNull() != anyType) {
-        val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol() as? FirRegularClassSymbol
-        rootSchemaSymbol?.declaredMemberScope(sessionHolder.session, FirResolvePhase.DECLARATIONS)
+    val symbol = coneClassLikeType.toRegularClassSymbol() ?: return PluginDataFrameSchema.EMPTY
+    val callShapeData = symbol.callShapeData
+    val declarationSymbols = if (callShapeData is CallShapeData.RefinedType) {
+        val rootSchemaSymbol = callShapeData.schemaSymbol
+        rootSchemaSymbol.declaredMemberScope(sessionHolder.session, FirResolvePhase.DECLARATIONS)
     } else {
         symbol.unsubstitutedScope(sessionHolder.session, ScopeSession(), false, FirResolvePhase.DECLARATIONS)
     }.let { scope ->
-        val names = scope?.getCallableNames() ?: emptySet()
-        names.flatMap { scope?.getProperties(it) ?: emptyList() }
+        val names = scope.getCallableNames()
+        names.flatMap { scope.getProperties(it) }
     }
 
     val mapping = symbol.typeParameterSymbols
@@ -370,7 +372,7 @@ private fun KotlinTypeFacade.columnWithPathApproximations(propertyAccess: FirPro
             Names.DATA_COLUMN_CLASS_ID -> {
                 val type = when (val arg = it.typeArguments.single()) {
                     is ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
-                    else -> arg as ConeClassLikeType
+                    is ConeKotlinTypeProjection -> arg.type
                 }
                 simpleColumnOf(propertyAccess.columnName(), type)
             }

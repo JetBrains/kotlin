@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -460,12 +461,17 @@ class FirCallResolver(
             }
         }
 
+        // Retry as function call and report FUNCTION_CALL_EXPECTED if it resolves.
         var functionCallExpected = false
-        if (result.candidates.isEmpty() && qualifiedAccess !is FirFunctionCall) {
+        if (result.candidates.isEmpty() &&
+            qualifiedAccess !is FirFunctionCall &&
+            // Don't report FUNCTION_CALL_EXPECTED in name-based destructuring, it's not helpful.
+            qualifiedAccess.source?.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring
+        ) {
             val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
-                functionCallExpected = newResult.applicability > CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+                functionCallExpected = true
             }
         }
 
@@ -899,13 +905,47 @@ class FirCallResolver(
             OperatorNameConventions.TOKENS_BY_OPERATOR_NAME[name]
         }
 
+        fun diagnosticOrNull() = when {
+            candidates.isEmpty() -> {
+                when {
+                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression ->
+                        ConeFunctionExpectedError(
+                            explicitReceiver.value?.toString() ?: "",
+                            explicitReceiver.resolvedType,
+                        )
+                    else -> {
+                        val classLikeBySuperRef = (reference as? FirSuperReference)?.superTypeRef?.firClassLike(session) as? FirClass
+                        when {
+                            classLikeBySuperRef?.isInterface == true -> ConeNoConstructorError
+                            classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
+                            else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
+                        }
+                    }
+                }
+            }
+
+            candidates.size > 1 -> {
+                val candidatesWithErrors = candidates.associateWith {
+                    runIf(!it.isSuccessful) { createConeDiagnosticForCandidateWithError(it.applicability, it) }
+                }
+                ConeAmbiguityError(name, applicability, candidatesWithErrors)
+            }
+
+            else -> {
+                val candidate = candidates.single()
+                runIf(!candidate.isSuccessful) {
+                    createConeDiagnosticForCandidateWithError(applicability, candidate)
+                }
+            }
+        }
+
         val diagnostic = when {
             expectedCallKind != null -> when (expectedCallKind) {
                 CallKind.Function -> {
                     val hasValueParameters = candidates.any {
                         (it.symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.isNotEmpty() == true
                     }
-                    ConeFunctionCallExpectedError(name, hasValueParameters, candidates)
+                    ConeFunctionCallExpectedError(name, hasValueParameters, candidates, diagnosticOrNull())
                 }
                 else -> {
                     val singleExpectedCandidate = expectedCandidates?.singleOrNull()
@@ -950,37 +990,7 @@ class FirCallResolver(
                 }
             }
 
-            candidates.isEmpty() -> {
-                when {
-                    name.asString() == "invoke" && explicitReceiver is FirLiteralExpression ->
-                        ConeFunctionExpectedError(
-                            explicitReceiver.value?.toString() ?: "",
-                            explicitReceiver.resolvedType,
-                        )
-                    else -> {
-                        val classLikeBySuperRef = (reference as? FirSuperReference)?.superTypeRef?.firClassLike(session) as? FirClass
-                        when {
-                            classLikeBySuperRef?.isInterface == true -> ConeNoConstructorError
-                            classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
-                            else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
-                        }
-                    }
-                }
-            }
-
-            candidates.size > 1 -> {
-                val candidatesWithErrors = candidates.associateWith {
-                    runIf(!it.isSuccessful) { createConeDiagnosticForCandidateWithError(it.applicability, it) }
-                }
-                ConeAmbiguityError(name, applicability, candidatesWithErrors)
-            }
-
-            else -> {
-                val candidate = candidates.single()
-                runIf(!candidate.isSuccessful) {
-                    createConeDiagnosticForCandidateWithError(applicability, candidate)
-                }
-            }
+            else -> diagnosticOrNull()
         }
 
         if (diagnostic != null) {

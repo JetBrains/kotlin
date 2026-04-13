@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
-// FIR_IDENTICAL
 @file:JsModule("lib")
 
 class <!NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE!>A<!> {

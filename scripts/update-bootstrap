@@ -30,7 +30,7 @@ if __name__ == '__main__':
     update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />\n')
     update_content(kotlin_maven_pom, '        <kotlin.bootstrap.version>', f'        <kotlin.bootstrap.version>{version}</kotlin.bootstrap.version>\n')
     update_content(kotlin_maven_pom_test, '        <kotlin.bootstrap.version>', f'        <kotlin.bootstrap.version>{version}</kotlin.bootstrap.version>\n')
-    git_add(properties, kotlinc, kotlin_maven_pom)
+    git_add(properties, kotlinc, kotlin_maven_pom, kotlin_maven_pom_test)
     git_commit(f'Advance bootstrap to {version}')
 
     subprocess.run(['sed', '-i', '-e', r'/<components>/,/<\/components>/d', 'gradle/verification-metadata.xml'])

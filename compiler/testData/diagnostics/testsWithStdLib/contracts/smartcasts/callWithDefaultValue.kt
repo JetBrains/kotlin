@@ -14,7 +14,7 @@ fun myAssert(condition: Boolean, message: String = "") {
 
 fun test(x: Any?) {
     myAssert(x is String)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 /* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,

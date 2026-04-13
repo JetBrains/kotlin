@@ -1,6 +1,6 @@
 // LANGUAGE: +UnnamedLocalVariables
 // RETURN_VALUE_CHECKER_MODE: FULL
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // WITH_STDLIB
 
 @file:MustUseReturnValues

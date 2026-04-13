@@ -9,6 +9,8 @@ import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -133,6 +135,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
@@ -154,12 +157,16 @@ internal abstract class CommonCompilerArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
@@ -476,6 +483,14 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (COMPILER_PLUGINS in this) { arguments.applyCompilerPlugins(get(COMPILER_PLUGINS))}
     if (X_WARNING_LEVEL in this) { arguments.applyWarningLevels(get(X_WARNING_LEVEL))}
     return arguments
+  }
+
+  internal override fun collectRestrictedArgViolations(compilerArgs: CommonToolArguments, defaultArgs: CommonToolArguments) {
+    super.collectRestrictedArgViolations(compilerArgs, defaultArgs)
+    val args = compilerArgs as CommonCompilerArguments
+    val castedDefaults = defaultArgs as CommonCompilerArguments
+    if (args.repl != castedDefaults.repl) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xrepl' is not supported in the Build Tools API. This warning will become an error starting from Kotlin 2.5.0."))
+    if (args.incrementalCompilation != castedDefaults.incrementalCompilation) _restrictedArgViolations.add(RestrictedArgViolation.Warning("Argument '-Xenable-incremental-compilation' is not supported in the Build Tools API. Configure it via the JvmCompilationOperation.INCREMENTAL_COMPILATION option instead. This warning will become an error starting from Kotlin 2.5.0."))
   }
 
   public class CommonCompilerArgument<V>(

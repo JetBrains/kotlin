@@ -6,11 +6,11 @@ class A {
 }
 
 fun a() {
-    val (<!REDECLARATION!>a<!>, <!NAME_SHADOWING, REDECLARATION!>a<!>) = A()
+    val (<!REDECLARATION!>a<!>, <!REDECLARATION!>a<!>) = A()
     val (x, <!REDECLARATION!>y<!>) = A();
     val <!REDECLARATION!>b<!> = 1
     use(b)
-    val (<!NAME_SHADOWING, REDECLARATION!>b<!>, <!NAME_SHADOWING, REDECLARATION!>y<!>) = A();
+    val (<!REDECLARATION!>b<!>, <!REDECLARATION!>y<!>) = A();
 }
 
 

@@ -73,7 +73,7 @@ val KClass<*>.defaultType: KType
     get() = createDefaultType()
 
 internal fun KClass<*>.createDefaultType(): KType =
-    createType(allTypeParameters().map { typeParameter ->
+    createTypeImpl(allTypeParameters().map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
     })
 

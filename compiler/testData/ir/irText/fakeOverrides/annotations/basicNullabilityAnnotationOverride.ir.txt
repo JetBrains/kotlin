@@ -32,8 +32,6 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Java1
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
@@ -61,7 +59,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun bar (): @[EnhancedNullability] kotlin.String? declared in <root>.Java1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.String declared in <root>.B'
-          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
             TYPE_ARG T0: kotlin.Nothing
             ARG arg0: CONST Null type=kotlin.Nothing? value=null
     FUN name:foo visibility:public modality:OPEN returnType:kotlin.Unit
@@ -71,8 +69,6 @@ FILE fqName:<root> fileName:/1.kt
         public open fun foo (s: @[EnhancedNullability] kotlin.String?): kotlin.Unit declared in <root>.Java1
       BLOCK_BODY
     PROPERTY FAKE_OVERRIDE name:nullableString visibility:public modality:FINAL [fake_override,var]
-      annotations:
-        Nullable(value = <null>)
       overridden:
         public final nullableString: @[EnhancedNullability] kotlin.String? declared in <root>.Java1
   CLASS CLASS name:C modality:ABSTRACT visibility:public superTypes:[<root>.Java2]

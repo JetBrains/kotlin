@@ -1831,7 +1831,10 @@ open class IrFileSerializer(
         return SerializedDeclaration(sigIndex, byteArray)
     }
 
-    private fun tryMatchPath(fileName: String): String? {
+    private fun IrFileEntry.matchAndNormalizeFilePath(): String =
+        tryMatchPath(name).replace(File.separatorChar, '/')
+
+    private fun tryMatchPath(fileName: String): String {
         val file = File(fileName)
         val path = file.toPath()
 
@@ -1841,18 +1844,7 @@ open class IrFileSerializer(
             }
         }
 
-        return null
-    }
-
-    private fun IrFileEntry.matchAndNormalizeFilePath(): String {
-        tryMatchPath(name)?.let {
-            return it.replace(File.separatorChar, '/')
-        }
-
-        if (!settings.normalizeAbsolutePaths) return name
-
-        return name.replace(File.separatorChar, '/')
-
+        return fileName
     }
 
     private inline fun <T : IrElement> requireAbiAtLeast(

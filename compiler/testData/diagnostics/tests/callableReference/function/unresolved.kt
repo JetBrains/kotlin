@@ -10,16 +10,16 @@ fun test1() {
 
     A::<!UNRESOLVED_REFERENCE!>bar<!>
 
-    <!UNRESOLVED_REFERENCE!>B<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>
+    <!UNRESOLVED_REFERENCE!>B<!>::bar
 }
 
 fun test2() {
     fun foo(x: Any) {}
     fun foo() {}
 
-    <!UNRESOLVED_REFERENCE!>Unresolved<!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
-    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
-    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::<!UNRESOLVED_REFERENCE!>unresolved<!>)
+    <!UNRESOLVED_REFERENCE!>Unresolved<!>::foo
+    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::foo)
+    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved)
     ::<!UNRESOLVED_REFERENCE!>unresolved<!>
 }
 

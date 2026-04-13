@@ -51,10 +51,18 @@ class ColumnType private constructor(internal val coneType: ConeKotlinType) {
     companion object {
         context(context: SessionHolder)
         operator fun invoke(type: ConeKotlinType): ColumnType {
-            val type = if (type is ConeFlexibleType) {
-                type.lowerBound
-            } else {
-                type
+            val type = when (type) {
+                is ConeFlexibleType -> {
+                    type.lowerBound
+                }
+
+                is ConeTypeParameterType -> {
+                    type.lookupTag.typeParameterSymbol.resolvedBounds.singleOrNull()?.coneType ?: TODO()
+                }
+
+                else -> {
+                    type
+                }
             }
             return ColumnType(type)
         }

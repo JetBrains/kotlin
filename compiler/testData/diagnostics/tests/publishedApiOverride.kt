@@ -20,14 +20,14 @@ class MyDemo3 : DemoClassInternal() {
 
 class MyDemo4 : DemoClassInternal() {
     fun demo(): Int {
-        return super.<!INVISIBLE_MEMBER!>demo<!>()
+        return super.<!INVISIBLE_REFERENCE!>demo<!>()
     }
 }
 
 // FILE: Test.kt
 fun test() {
-    MyDemo1().<!INVISIBLE_MEMBER!>demo<!>()
-    MyDemo2().<!INVISIBLE_MEMBER!>demo<!>()
+    MyDemo1().<!INVISIBLE_REFERENCE!>demo<!>()
+    MyDemo2().<!INVISIBLE_REFERENCE!>demo<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, superExpression */

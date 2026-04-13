@@ -3,7 +3,7 @@
 
 fun testNullableAnyToBoolean(x: Any?) {
     if (x !is Boolean) return
-    return when (<!DEBUG_INFO_SMARTCAST!>x<!>) {
+    return when (x) {
         true -> Unit
         false -> Unit
     }
@@ -11,7 +11,7 @@ fun testNullableAnyToBoolean(x: Any?) {
 
 fun testAnyToBoolean(x: Any) {
     if (x !is Boolean) return
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    return when (x) {
         true -> Unit
         false -> Unit
     }

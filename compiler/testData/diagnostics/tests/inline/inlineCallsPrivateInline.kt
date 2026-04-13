@@ -21,142 +21,142 @@ open class FunHolder {
     }
 
     protected inline fun <reified T> protectedInlineCaller(
-        privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
-    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
         publishedInternalInlineFun()
     }
 
     inline fun <reified T> inlineCaller(
-        privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
-    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
     }
 
     protected val a : Any
         inline get() {
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
             publishedInternalInlineFun()
             return 1
         }
 
     val b : Any
         inline get() {
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
             return 1
         }
 
     inner class Inner {
 
         protected inline fun <reified T> protectedInlineCaller(
-            privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
-        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+            privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
+        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
         ) {
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
             publishedInternalInlineFun()
         }
 
         inline fun <reified T> inlineCaller(
-            privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
-        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+            privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
+        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
         ) {
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
             publishedInternalInlineFun()
         }
     }
 }
 
 inline fun <reified T> FunHolder.inlineExtensionCaller(
-    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
 ) {
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+    <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
     publishedInternalInlineFun()
 }
 
 class KSubHolder:FunHolder() {
     protected inline fun <reified T> protectedInlineSubCaller(
-        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
         publishedInternalInlineFun()
     }
 
     inline fun <reified T> inlineSubCaller(
-        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
         publishedInternalInlineFun()
     }
 
     inner class Inner {
         protected inline fun <reified T> protectedInlineSubCaller(
-            internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+            internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
         ) {
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
             publishedInternalInlineFun()
         }
 
         inline fun <reified T> inlineSubCaller(
-            internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+            internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
         ) {
-            <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
             publishedInternalInlineFun()
         }
     }
 }
 
 inline fun <reified T> KSubHolder.inlineExtensionCaller(
-    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
 ) {
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+    <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
     publishedInternalInlineFun()
 }
 
 class KJSubHolder: JSubHolder() {
     protected inline fun <reified T> protectedInlineSubCaller(
-        internalInlineParam: () -> Boolean = ::<!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
-        <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedInternalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        publishedInternalInlineFun()
     }
 
     inline fun <reified T> inlineSubCaller(
-        internalInlineParam: () -> Boolean = ::<!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
-        <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedInternalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        publishedInternalInlineFun()
     }
 
     inner class Inner {
         protected inline fun <reified T> protectedInlineSubCaller(
-            internalInlineParam: () -> Boolean = ::<!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+            internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
         ) {
-            <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
-            <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedInternalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            publishedInternalInlineFun()
         }
 
         inline fun <reified T> inlineSubCaller(
-            internalInlineParam: () -> Boolean = ::<!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+            internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
         ) {
-            <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
-            <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedInternalInlineFun<!>()
+            <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+            publishedInternalInlineFun()
         }
     }
 }
 
 inline fun <reified T> KJSubHolder.inlineExtensionCaller(
-    internalInlineParam: () -> Boolean = ::<!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
 ) {
-    <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
-    <!INVISIBLE_MEMBER, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publishedInternalInlineFun<!>()
+    <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+    publishedInternalInlineFun()
 }
 
 object FunHolderObject {
@@ -174,19 +174,19 @@ object FunHolderObject {
     }
 
     inline fun <reified T> inlineCaller(
-        privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
-    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+        privateInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>,
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
     ) {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateInlineFun<!>()
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
         publishedInternalInlineFun()
     }
 }
 
 inline fun <reified T> FunHolderObject.inlineExtensionCaller(
-    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
+    internalInlineParam: () -> Boolean = ::<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>
 ) {
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
+    <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalInlineFun<!>()
     publishedInternalInlineFun()
 }
 
@@ -212,9 +212,9 @@ internal open class InternalHolder {
 }
 
 inline fun <reified T> privateInlineFunc1(){
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalHolder<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationPrivate<!>()
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalHolder<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationInternal<!>()
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalHolder<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationProtected<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalHolder<!>().<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationPrivate<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalHolder<!>().<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationInternal<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalHolder<!>().<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationProtected<!>()
 }
 
 private open class PrivateHolder {
@@ -239,9 +239,9 @@ private open class PrivateHolder {
 }
 
 inline fun <reified T> privateInlineFunc2(){
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateHolder<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationPrivate<!>()
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateHolder<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationInternal<!>()
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateHolder<!>().<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationProtected<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateHolder<!>().<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationPrivate<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateHolder<!>().<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationInternal<!>()
+    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>PrivateHolder<!>().<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>publicInlineDeclarationProtected<!>()
 }
 
 class PropHolder {
@@ -260,10 +260,10 @@ class PropHolder {
         inline set(value) {}
 
     <!NOTHING_TO_INLINE!>inline<!> fun myPublicFunction() {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privatePropInline<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalPropInline<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privateVarPropInline<!> = ""
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalVarPropInline<!> = ""
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privatePropInline<!>
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalPropInline<!>
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateVarPropInline<!> = ""
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>internalVarPropInline<!> = ""
     }
 }
 

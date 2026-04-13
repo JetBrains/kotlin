@@ -11,7 +11,7 @@ fun foo() {
     if (base is Derived) {
         fun can(n: Int) = n > 0
         trans(42, ::can)
-        bar(<!DEBUG_INFO_SMARTCAST!>base<!>)
+        bar(base)
     }
 }
 

@@ -4,10 +4,10 @@
 fun <T, R : Any> foo(body: (R?) -> T): T = fail()
 
 fun test1() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>foo<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         true
-    }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
+    }<!>
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>foo<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         true
     }
 }
@@ -16,10 +16,10 @@ fun test1() {
 fun <T, R> bar(body: (R) -> T): T = fail()
 
 fun test2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>bar<!> <!CANNOT_INFER_PARAMETER_TYPE!>{
         true
-    }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
+    }<!>
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>bar<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         true
     }
 }
@@ -27,10 +27,10 @@ fun test2() {
 fun <T, R> baz(body: (List<R>) -> T): T = fail()
 
 fun test3() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>baz<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>baz<!> {
         true
     }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>baz<!> { x ->
+    <!CANNOT_INFER_PARAMETER_TYPE!>baz<!> { x ->
         true
     }
 }
@@ -38,10 +38,10 @@ fun test3() {
 fun <T, R : Any> brr(body: (List<R?>) -> T): T = fail()
 
 fun test4() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>brr<!> {
+    <!CANNOT_INFER_PARAMETER_TYPE!>brr<!> {
         true
     }
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>brr<!> { x ->
+    <!CANNOT_INFER_PARAMETER_TYPE!>brr<!> { x ->
         true
     }
 }

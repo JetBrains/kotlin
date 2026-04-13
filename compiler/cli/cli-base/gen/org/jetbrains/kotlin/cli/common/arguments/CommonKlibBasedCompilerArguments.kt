@@ -60,6 +60,7 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xklib-normalize-absolute-path",
         description = "Normalize absolute paths in klibs.",

@@ -26,34 +26,34 @@ typealias S = String
 
 // FILE: invalid_noargs_suspend.kt
 package invalid5
-<!CONFLICTING_OVERLOADS!>suspend fun main()<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main()<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main()<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main()<!> {}
 
 // FILE: invalid_array_suspend.kt
 package invalid6
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
 
 // FILE: invalid_vararg_suspend.kt
 package invalid7
-<!CONFLICTING_OVERLOADS!>suspend fun main(vararg args: String)<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main(vararg args: String)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(vararg args: String)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(vararg args: String)<!> {}
 
 // FILE: invalid_array_typealias_suspend.kt
 package invalid8
 typealias S = String
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<S>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
+suspend <!CONFLICTING_OVERLOADS!>fun main(args: Array<S>)<!> {}
 
 // ### VALID
 
 // FILE: valid_noargs.kt
 package valid1
-<!CONFLICTING_OVERLOADS!>fun main()<!> {}
+fun main() {}
 
 // FILE: valid_noargs2.kt
 package valid1
-<!CONFLICTING_OVERLOADS!>fun main()<!> {}
+fun main() {}
 
 // FILE: valid_array.kt
 package valid2
@@ -82,35 +82,35 @@ fun main(args: Array<S>) {}
 
 // FILE: valid_noargs_suspend.kt
 package valid5
-<!CONFLICTING_OVERLOADS!>suspend fun main()<!> {}
+suspend fun main() {}
 
 // FILE: valid_noargs_suspend2.kt
 package valid5
-<!CONFLICTING_OVERLOADS!>suspend fun main()<!> {}
+suspend fun main() {}
 
 // FILE: valid_array_suspend.kt
 package valid6
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
+suspend fun main(args: Array<String>) {}
 
 // FILE: valid_array_suspend2.kt
 package valid6
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
+suspend fun main(args: Array<String>) {}
 
 // FILE: valid_vararg_suspend.kt
 package valid7
-<!CONFLICTING_OVERLOADS!>suspend fun main(vararg args: String)<!> {}
+suspend fun main(vararg args: String) {}
 
 // FILE: valid_vararg_suspend2.kt
 package valid7
-<!CONFLICTING_OVERLOADS!>suspend fun main(vararg args: String)<!> {}
+suspend fun main(vararg args: String) {}
 
 // FILE: valid_array_typealias_suspend.kt
 package valid8
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<String>)<!> {}
+suspend fun main(args: Array<String>) {}
 
 // FILE: valid_array_typealias_suspend2.kt
 package valid8
 typealias S = String
-<!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<S>)<!> {}
+suspend fun main(args: Array<S>) {}
 
 /* GENERATED_FIR_TAGS: functionDeclaration, suspend, typeAliasDeclaration, vararg */

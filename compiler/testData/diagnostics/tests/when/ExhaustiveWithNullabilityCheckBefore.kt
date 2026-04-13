@@ -16,7 +16,7 @@ fun foo(arg: X?): Int {
     if (arg == null) {
         return 0
     }
-    return when (<!DEBUG_INFO_SMARTCAST!>arg<!>) {
+    return when (arg) {
         X.A -> 1
         X.B -> 2
         // else or null branch should not be required here!

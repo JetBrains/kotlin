@@ -31,11 +31,11 @@ fun getArr(): Array<String>? = null
 
 fun f() {
     A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>args)
-    A().foo(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>args<!> = <!SPREAD_OF_NULLABLE!>*<!><!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>args<!>)
-    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>args<!>)
-    bar(2, s = <!SPREAD_OF_NULLABLE!>*<!><!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, TYPE_MISMATCH!>args<!>)
-    baz(<!NON_VARARG_SPREAD_ERROR, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>args<!>)
-    baz(s = <!NON_VARARG_SPREAD_ERROR, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>args<!>)
+    A().foo(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>args<!> = <!SPREAD_OF_NULLABLE!>*<!>args)
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    bar(2, s = <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    baz(s = <!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
 }
 
 fun g(args: Array<String>?) {
@@ -53,17 +53,17 @@ class B {
 fun h(b: B) {
     if (b.args != null) {
         A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>b.args)
-        A().foo(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>args<!> = <!SPREAD_OF_NULLABLE!>*<!><!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>b.args<!>)
+        A().foo(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>args<!> = <!SPREAD_OF_NULLABLE!>*<!>b.args)
     }
 }
 
 fun k() {
     A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>getArr())
-    A().foo(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>args<!> = <!SPREAD_OF_NULLABLE!>*<!><!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>getArr()<!>)
-    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>getArr()<!>)
-    bar(2, s = <!SPREAD_OF_NULLABLE!>*<!><!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, TYPE_MISMATCH!>getArr()<!>)
-    baz(<!NON_VARARG_SPREAD_ERROR, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>getArr()<!>)
-    baz(s = <!NON_VARARG_SPREAD_ERROR, SPREAD_OF_NULLABLE!>*<!><!TYPE_MISMATCH!>getArr()<!>)
+    A().foo(1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>args<!> = <!SPREAD_OF_NULLABLE!>*<!>getArr())
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    bar(2, s = <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    baz(s = <!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
 }
 
 fun invokeTest(goodArgs: Array<String>) {

@@ -12,7 +12,7 @@ class C() {
 
 fun box(): String {
     val c = C()
-    if (c.<!INVISIBLE_MEMBER!>f<!> != 610) return "fail"
+    if (c.<!INVISIBLE_REFERENCE!>f<!> != 610) return "fail"
     return "OK"
 }
 

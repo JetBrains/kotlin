@@ -1,5 +1,4 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER +UNUSED_DESTRUCTURED_PARAMETER_ENTRY

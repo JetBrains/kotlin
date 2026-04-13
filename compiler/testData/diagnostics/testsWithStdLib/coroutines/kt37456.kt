@@ -11,7 +11,7 @@ object Foo {
 fun test1() {
     runBlocking {
         val someLambda: () -> suspend() -> Unit = {
-            Foo::<!NON_LOCAL_SUSPENSION_POINT!>bar<!>
+            Foo::bar
         }
 
         someLambda()
@@ -28,7 +28,7 @@ suspend fun mySuspend(arg: Any) {
 }
 suspend fun test2() {
     createBlock {
-        receiver(::<!NON_LOCAL_SUSPENSION_POINT!>mySuspend<!>)
+        receiver(::mySuspend)
     }
 }
 
@@ -39,7 +39,7 @@ suspend fun <A, B> takeRef(supplier: suspend () -> KSuspendFunction1<A, B>) = Un
 
 fun test3() = runBlocking {
     takeRef { ::fun1.apply { } }
-    takeRef { ::<!NON_LOCAL_SUSPENSION_POINT!>fun1<!> }
+    takeRef { ::fun1 }
 }
 
 /* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral,

@@ -71,6 +71,9 @@ public actual external fun readlnOrNull(): String?
  * Reads a line of input from the standard input stream.
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
+ *
+ * @see readln
+ * @see readlnOrNull
  */
 @GCUnsafeCall("Kotlin_io_Console_readLine")
 @Escapes.Nothing

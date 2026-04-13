@@ -13,7 +13,7 @@
 
 fun foo(s: Any): String {
     val x = when (s) {
-        is String -> <!DEBUG_INFO_SMARTCAST!>s<!>
+        is String -> s
         is Int -> "$s"
         else -> return ""
     }

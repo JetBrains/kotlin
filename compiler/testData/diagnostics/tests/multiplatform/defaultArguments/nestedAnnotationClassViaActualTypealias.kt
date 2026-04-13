@@ -12,7 +12,7 @@ class DefaultArgsInNestedClassImpl {
 }
 
 // Incompatible in K1 because of bug KT-31636
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>DefaultArgsInNestedClass<!> = DefaultArgsInNestedClassImpl
+actual typealias DefaultArgsInNestedClass = DefaultArgsInNestedClassImpl
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, nestedClass, primaryConstructor,
 propertyDeclaration, stringLiteral, typeAliasDeclaration */

@@ -19,7 +19,7 @@ fun bar(x: B.() -> Unit) {}
 fun test() {
     foo {
         bar {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>(1)
+            <!NONE_APPLICABLE!>f<!>(1)
         }
     }
 }

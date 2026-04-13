@@ -2,7 +2,7 @@
 
 fun simpleTypeAndNumberType(b: Comparable<*>?) {
     if (b is Byte?) {
-        <!DEBUG_INFO_SMARTCAST!>b<!>!!.dec()
+        b!!.dec()
     }
 }
 
@@ -14,13 +14,13 @@ fun <T> typeParmeterAndNumberType(b: T?) {
 
 fun anyAndNumberType(b: Any?) {
     if (b is Byte?) {
-        <!DEBUG_INFO_SMARTCAST!>b<!>!!.dec()
+        b!!.dec()
     }
 }
 
 fun comparableAndNumberType(b: Comparable<Byte>?) {
     if (b is Byte?) {
-        <!DEBUG_INFO_SMARTCAST!>b<!>!!.dec()
+        b!!.dec()
     }
 }
 

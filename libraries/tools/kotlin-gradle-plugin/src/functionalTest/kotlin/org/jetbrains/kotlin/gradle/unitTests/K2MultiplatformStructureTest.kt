@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
@@ -101,7 +100,7 @@ class K2MultiplatformStructureTest {
 
     @Test
     fun `test - configure js compilation`() {
-        `test compilations multiplatformStructure configuration`(kotlin.js(IR).compilations.main)
+        `test compilations multiplatformStructure configuration`(kotlin.js().compilations.main)
     }
 
     @Test

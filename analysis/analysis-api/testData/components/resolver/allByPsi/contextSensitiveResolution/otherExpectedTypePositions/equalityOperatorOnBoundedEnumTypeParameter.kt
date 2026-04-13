@@ -56,5 +56,3 @@ fun <T : MyEnum> foo(a: T) {
         else -> {}
     }
 }
-
-// IGNORE_STABILITY_K1: candidates

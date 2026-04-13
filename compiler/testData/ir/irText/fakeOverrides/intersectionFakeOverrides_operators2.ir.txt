@@ -18,14 +18,14 @@ FILE fqName:<root> fileName:/main.kt
         public open fun hashCode (): kotlin.Int declared in <root>.B
         public open fun hashCode (): kotlin.Int declared in <root>.C
         public open fun hashCode (): kotlin.Int declared in <root>.D
-    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:
         public final fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.B
         public abstract fun infixFun (a: kotlin.Any): kotlin.CharSequence declared in <root>.C
         public abstract fun infixFun (a: kotlin.Any): kotlin.Any declared in <root>.D
-    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:
@@ -57,14 +57,14 @@ FILE fqName:<root> fileName:/main.kt
         public open fun hashCode (): kotlin.Int declared in <root>.B
         public open fun hashCode (): kotlin.Int declared in <root>.D
         public open fun hashCode (): kotlin.Int declared in <root>.C
-    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:
         public final fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.B
         public abstract fun infixFun (a: kotlin.Any): kotlin.Any declared in <root>.D
         public abstract fun infixFun (a: kotlin.Any): kotlin.CharSequence declared in <root>.C
-    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:
@@ -128,13 +128,13 @@ FILE fqName:<root> fileName:/main.kt
       overridden:
         public open fun hashCode (): kotlin.Int declared in <root>.B
         public open fun hashCode (): kotlin.Int declared in <root>.D
-    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override,infix]
+    FUN FAKE_OVERRIDE name:infixFun visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:
         public final fun infixFun (a: kotlin.Any): kotlin.String declared in <root>.B
         public abstract fun infixFun (a: kotlin.Any): kotlin.Any declared in <root>.D
-    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override,operator]
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:FINAL returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.B
       VALUE_PARAMETER kind:Regular name:a index:1 type:kotlin.Any
       overridden:

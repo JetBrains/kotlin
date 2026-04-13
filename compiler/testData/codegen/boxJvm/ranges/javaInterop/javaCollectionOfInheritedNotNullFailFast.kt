@@ -1,6 +1,5 @@
 // LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM_IR
 // WITH_STDLIB
 
 // Note: this fails on JVM_IR because of KT-36343.

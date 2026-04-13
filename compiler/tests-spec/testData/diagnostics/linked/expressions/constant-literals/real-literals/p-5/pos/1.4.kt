@@ -48,7 +48,7 @@ val value_15 = .0_0_0_0e-88888888 checkType { check<Double>() }
 val value_19 = .345678e00000000001 checkType { check<Double>() }
 
 // TESTCASE NUMBER: 20
-val value_20 = <!FLOAT_LITERAL_CONFORMS_ZERO!>.4______567E-100000000000<!> checkType { check<Double>() }
+val value_20 = .4______567E-100000000000 checkType { check<Double>() }
 
 // TESTCASE NUMBER: 21
 val value_21 = .5_6e-0 checkType { check<Double>() }

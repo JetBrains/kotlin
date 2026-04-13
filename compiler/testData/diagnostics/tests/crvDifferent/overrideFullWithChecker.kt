@@ -30,8 +30,8 @@ interface I3: Base {
 }
 
 fun checkLib(i1: I1, i2: I2, i3: I3) {
-    i1.foo()
-    i2.foo()
+    i1.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    i2.<!RETURN_VALUE_NOT_USED!>foo<!>()
     i3.foo()
 }
 
@@ -54,20 +54,20 @@ open class C3: I3 {
 
 @MustUseReturnValues
 class C4: I3 {
-    override fun foo(): String = "" // Should be a warning on overriding explicit @Ignorable
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>foo<!>(): String = "" // Should be a warning on overriding explicit @Ignorable
 }
 
 @MustUseReturnValues
 class C5: C3() {
-    override fun foo(): String = ""
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>foo<!>(): String = ""
 }
 
 fun check(c1: C1, c2: C2, c3: C3, c4: C4, c5: C5) {
-    c1.foo()
-    c2.foo()
+    c1.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c2.<!RETURN_VALUE_NOT_USED!>foo<!>()
     c3.foo()
-    c4.foo()
-    c5.foo()
+    c4.<!RETURN_VALUE_NOT_USED!>foo<!>()
+    c5.<!RETURN_VALUE_NOT_USED!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

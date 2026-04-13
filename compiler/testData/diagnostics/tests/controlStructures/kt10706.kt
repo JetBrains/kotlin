@@ -1,8 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun fn(c: Char?): Any? =
         if (c == null) TODO()
-        else when (<!DEBUG_INFO_SMARTCAST!>c<!>) {
-            'a' -> when (<!DEBUG_INFO_SMARTCAST!>c<!>) {
+        else when (c) {
+            'a' -> when (c) {
                 'B' -> 1
                 'C' -> "sdf"
                 else -> TODO()

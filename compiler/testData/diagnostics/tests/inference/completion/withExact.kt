@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 
 import kotlin.internal.Exact
 
@@ -16,13 +16,13 @@ fun <K> id(arg: K): K = arg
 
 fun test1(arg: Derived) {
     id<Inv<Base>>(Inv(arg))
-    id<Inv<Base>>(<!TYPE_MISMATCH!>InvExact(arg)<!>)
+    id<Inv<Base>>(<!ARGUMENT_TYPE_MISMATCH!>InvExact(arg)<!>)
 }
 
 fun <R> Inv<@Exact R>.select(first: R, second: R): R = TODO()
 
 fun test2(derived: Derived, other: Other) {
-    Inv(derived).select(derived, <!TYPE_MISMATCH!>other<!>)
+    Inv(derived).select(derived, <!ARGUMENT_TYPE_MISMATCH!>other<!>)
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, funWithExtensionReceiver, functionDeclaration,

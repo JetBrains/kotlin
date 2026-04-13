@@ -14,15 +14,15 @@ class C {
 
 annotation class Anno(val x: Int)
 
-@Anno(C.A)
+@Anno(<!ARGUMENT_TYPE_MISMATCH!>C.<!DEPRECATION_ERROR!>A<!><!>)
 fun test() {
-    C.A
+    C.<!DEPRECATION_ERROR!>A<!>
     C.A::class
 
     // K2: both are unresolved without companion object (hence, should be unresolved with hidden companion)
     // K1: callable reference is resolved to property, call is unresolved
     C.A.<!UNRESOLVED_REFERENCE!>toLong<!>()
-    C.A::toLong
+    C.A::<!UNRESOLVED_REFERENCE!>toLong<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, companionObject, const,

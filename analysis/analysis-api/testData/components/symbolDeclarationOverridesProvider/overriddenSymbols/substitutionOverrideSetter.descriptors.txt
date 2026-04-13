@@ -1,5 +1,0 @@
-ALL:
-  test/A.x.<no name>: Unit
-DIRECT:
-  test/A.x.<no name>: Unit
-INTERSECTION:

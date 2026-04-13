@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -538,9 +537,9 @@ class KotlinKarma internal constructor(
                             }
                     }
 
-                    override fun testFailedMessage(execHandle: ExecAsyncHandle, exitValue: Int): String {
+                    override fun testFailedMessage(displayName: String, exitValue: Int): String {
                         if (failedBrowsers.isEmpty()) {
-                            return super.testFailedMessage(execHandle, exitValue)
+                            return super.testFailedMessage(displayName, exitValue)
                         }
 
                         val failedBrowsers = failedBrowsers

@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JS_IR
 // TARGET_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND_K1: JS_IR
-// K1 unsupported because of KT-62215
 
 // MODULE: lib
 // FILE: lib.kt

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-70395
 
 // Caused by: kotlin.reflect.jvm.internal.KotlinReflectionInternalError: This method should not be called on kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext@635362ae with a new kotlin-reflect implementation. Please file an issue at https://kotl.in/issue

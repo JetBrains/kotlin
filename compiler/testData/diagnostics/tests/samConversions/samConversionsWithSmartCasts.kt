@@ -6,49 +6,49 @@
 
 fun test1(a: () -> Unit) {
     if (a is Runnable) {
-        J.runStatic(<!DEBUG_INFO_SMARTCAST!>a<!>)
+        J.runStatic(a)
     }
 }
 
 fun test2(a: () -> Unit) {
     if (a is Runnable) {
-        J().run1(<!DEBUG_INFO_SMARTCAST!>a<!>)
+        J().run1(a)
     }
 }
 
 fun test3(a: () -> Unit) {
     if (a is Runnable) {
-        J().run2(<!DEBUG_INFO_SMARTCAST!>a<!>, <!DEBUG_INFO_SMARTCAST!>a<!>)
+        J().run2(a, a)
     }
 }
 
 fun test4(a: () -> Unit, b: () -> Unit) {
     if (a is Runnable) {
-        J().run2(<!DEBUG_INFO_SMARTCAST!>a<!>, b)
+        J().run2(a, b)
     }
 }
 
 fun test5(a: Any) {
     if (a is Runnable) {
-        J().run1(<!DEBUG_INFO_SMARTCAST!>a<!>)
+        J().run1(a)
     }
 }
 
 fun test5x(a: Any) {
     if (a is Runnable) {
         a <!UNCHECKED_CAST!>as () -> Unit<!>
-        J().run1(<!DEBUG_INFO_SMARTCAST!>a<!>)
+        J().run1(a)
     }
 }
 
 fun test6(a: Any) {
     a <!UNCHECKED_CAST!>as () -> Unit<!>
-    J().run1(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    J().run1(a)
 }
 
 fun test7(a: (Int) -> Int) {
     a <!UNCHECKED_CAST!>as () -> Unit<!>
-    J().run1(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    J().run1(a)
 }
 
 fun test8(a: () -> Unit) {

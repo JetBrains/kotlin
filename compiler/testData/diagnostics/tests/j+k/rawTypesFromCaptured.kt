@@ -22,7 +22,7 @@ fun StubBasedPsiElement<*>.foo(): String? {
         return foo1().bar("")
     }
 
-    return <!TYPE_MISMATCH!>foo2().<!TYPE_MISMATCH!>bar("")<!><!>
+    return <!RETURN_TYPE_MISMATCH!>foo2().bar("")<!>
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression,

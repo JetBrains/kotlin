@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Int? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass<@[FlexibleNullability] kotlin.Int?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int? declared in <root>.Java2
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Int? declared in <root>.Java2
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass<@[FlexibleNullability] kotlin.Int?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java2
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int? declared in <root>.Java2

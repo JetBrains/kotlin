@@ -9,6 +9,6 @@ import kotlin.jvm.optionals.getOrNull
 val collection: Collection<*> = listOf(1, 2, 3)
 val stream = collection.stream()
 val first = stream.findFirst()
-val result = first.getOrNull()
+val result = first.<!NONE_APPLICABLE!>getOrNull<!>()
 
 /* GENERATED_FIR_TAGS: flexibleType, integerLiteral, nullableType, propertyDeclaration, starProjection */

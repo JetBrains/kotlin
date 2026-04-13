@@ -11,8 +11,8 @@ interface B {
 
 fun test(x: A) {
     if (x is B) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.foo()
-        <!DEBUG_INFO_SMARTCAST!>x<!>.bar
+        x.foo()
+        x.bar
     }
 }
 

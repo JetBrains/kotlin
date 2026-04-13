@@ -3,6 +3,6 @@ interface T {
         get() = 1
 }
 
-interface C : T {
+<!CONFLICTING_JVM_DECLARATIONS!><!>interface C : T {
     <!ACCIDENTAL_OVERRIDE!>fun getX() = 1<!>
 }

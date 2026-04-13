@@ -12,7 +12,7 @@ fun <V, T : V?> G<T>.foo(vararg values: V2<V?>) = build()
 fun forReference(ref: Any?) {}
 
 fun test() {
-    forReference(G<Int?>::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
+    forReference(G<Int?>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,

@@ -15,14 +15,14 @@ package derived
 import base.BaseJava
 
 open class Intermediate : BaseJava() {
-    private val a = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!> = "FAIL"
 }
 
 class Derived : Intermediate() {
-    fun foo() = a
+    fun foo() = <!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
 
     fun bar() {
-        a = "OK"
+        <!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> = "OK"
     }
 }
 

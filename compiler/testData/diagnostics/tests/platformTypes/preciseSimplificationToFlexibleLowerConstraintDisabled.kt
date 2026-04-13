@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78621

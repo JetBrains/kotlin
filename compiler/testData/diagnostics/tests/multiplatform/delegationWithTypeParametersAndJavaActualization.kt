@@ -23,9 +23,9 @@ class Test2(val a: Base1<Any?>, val b: Base2<Any?>): Base1<Any?> by a, Base2<Any
     }
 }
 
-class Test3(val a: Base1<Int>, val b: Base2<Number>): Base1<Int> by a, Base2<Number> by b
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Test3(val a: Base1<Int>, val b: Base2<Number>): Base1<Int> by a, Base2<Number> by b<!>
 
-class Test4(val a: Base1<Int>, val b: Base2<Any>): Base1<Int> by a, Base2<Any> by b
+<!ACCIDENTAL_OVERRIDE!>class Test4(val a: Base1<Int>, val b: Base2<Any>): Base1<Int> by a, Base2<Any> by b<!>
 
 // MODULE: platform()()(common)
 // FILE: Base1Java.java

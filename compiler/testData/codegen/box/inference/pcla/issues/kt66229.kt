@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // ISSUE: KT-66229
-// IGNORE_BACKEND_K1: ANY
-// Reason: Could not load module <Error module>
+// IGNORE_BACKEND: ANDROID
 
 fun foo() {
     buildMap {

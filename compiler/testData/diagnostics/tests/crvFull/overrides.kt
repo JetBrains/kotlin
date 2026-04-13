@@ -32,11 +32,11 @@ fun MyException(message: String?, cause: Throwable?): MyException {
 // FILE: App.kt
 
 fun main(a: Base, b: Impl, s: Super) {
-    s.a()
+    s.<!RETURN_VALUE_NOT_USED!>a<!>()
     a.a()
     b.a()
-    a.b()
-    b.b()
+    a.<!RETURN_VALUE_NOT_USED!>b<!>()
+    b.<!RETURN_VALUE_NOT_USED!>b<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, interfaceDeclaration,

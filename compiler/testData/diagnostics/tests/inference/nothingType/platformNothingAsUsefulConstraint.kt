@@ -29,9 +29,9 @@ fun test() {
         withLock { TODO() }
     }.asOut()
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<(kotlin.Nothing..kotlin.Nothing?)>..Inv<(kotlin.Nothing..kotlin.Nothing?)>?)")!>Tasks.call {
+    Tasks.call {
         withLock { TODO() }
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,

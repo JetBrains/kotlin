@@ -6,7 +6,7 @@ import kotlin.reflect.KProperty
 val Int.a by Delegate(<!NO_THIS!>this<!>)
 
 class A {
-  val Int.a by Delegate(<!TYPE_MISMATCH!>this<!>)
+  val Int.a by Delegate(<!ARGUMENT_TYPE_MISMATCH!>this<!>)
 }
 
 class Delegate(i: Int) {

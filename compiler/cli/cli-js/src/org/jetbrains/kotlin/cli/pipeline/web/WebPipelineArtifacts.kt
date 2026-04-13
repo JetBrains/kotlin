@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.pipeline.web
 
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.LoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
@@ -55,12 +56,13 @@ data class JsSerializedKlibPipelineArtifact(
     }
 }
 
-data class JsLoadedKlibPipelineArtifact(
-    val project: Project,
+data class WebLoadedIrPipelineArtifact(
+    override val moduleInfo: IrModuleInfo,
+    val moduleStructure: ModulesStructure,
     override val configuration: CompilerConfiguration,
-) : PipelineArtifact() {
+) : LoadedIrPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsLoadedKlibPipelineArtifact {
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WebLoadedIrPipelineArtifact {
         return copy(configuration = newConfiguration)
     }
 }

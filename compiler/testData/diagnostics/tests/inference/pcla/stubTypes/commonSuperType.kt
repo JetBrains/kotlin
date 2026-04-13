@@ -32,25 +32,25 @@ fun <E> select(vararg x: E) = x[0]
 fun test() {
     val ret = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R)..TypeVariable(R)?)")!>Test.foo(get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R)>..Inv<TypeVariable(R)>?)")!>Test.foo(getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>id(get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select(get(), get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select(Test.foo(get()), Test.foo(get()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select(Test.foo(get()), get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>select(getInv(), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String>..Inv<kotlin.String>?)")!>select(Test.foo(getInv()), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String>..Inv<kotlin.String>?)")!>select(Test.foo(getInv()), getInv())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String>..Inv<kotlin.String>?)")!>select(getInv(), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select(id(get()), id(get()))<!>
-        <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build2<!> {
+        Test.foo(get())
+        Test.foo(getInv())
+        id(get())
+        select(get(), get())
+        select(Test.foo(get()), Test.foo(get()))
+        select(Test.foo(get()), get())
+        select(getInv(), getInv())
+        select(Test.foo(getInv()), Test.foo(getInv()))
+        select(Test.foo(getInv()), getInv())
+        select(getInv(), Test.foo(getInv()))
+        select(id(get()), id(get()))
+        build2 {
             emit(1)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(Test.foo(this@build.get()), Test.foo(get()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Any?>")!>select(this@build.getInv(), getInv())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<out kotlin.Any?>..Inv<out kotlin.Any?>?)")!>select(Test.foo(this@build.getInv()), Test.foo(getInv()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<out kotlin.Any?>..Inv<out kotlin.Any?>?)")!>select(Test.foo(this@build.getInv()), getInv())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(id(this@build.get()), id(get()))<!>
+            select(this@build.get(), get())
+            select(Test.foo(this@build.get()), Test.foo(get()))
+            select(this@build.getInv(), getInv())
+            select(Test.foo(this@build.getInv()), Test.foo(getInv()))
+            select(Test.foo(this@build.getInv()), getInv())
+            select(id(this@build.get()), id(get()))
             ""
         }
         ""

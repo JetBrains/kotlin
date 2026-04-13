@@ -9,8 +9,8 @@ fun Any.isString(): Boolean {
 }
 
 fun test(x: Any?) {
-    if (x != null && <!DEBUG_INFO_SMARTCAST!>x<!>.isString()) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+    if (x != null && x.isString()) {
+        x.length
     }
 }
 

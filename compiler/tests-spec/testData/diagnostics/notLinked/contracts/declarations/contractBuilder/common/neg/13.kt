@@ -15,6 +15,6 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?, block: () -> Unit) {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>implies<!> (value_1 != null) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(block, InvocationKind.EXACTLY_ONCE) <!OPT_IN_USAGE_ERROR, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>implies<!> (value_1 != null)<!> }
     if (value_1 != null) block()
 }

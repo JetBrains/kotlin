@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|Foo<kotlin/String>?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun bar(): R|Foo<kotlin/String>?| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>?| = R|/bar|()
     }

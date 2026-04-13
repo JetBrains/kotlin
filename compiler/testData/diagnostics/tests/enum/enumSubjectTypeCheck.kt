@@ -7,7 +7,7 @@ fun foo() {
     // nullable variable
     val en2: Any? = En.A
     if (en2 is En) {
-        when (<!DEBUG_INFO_SMARTCAST!>en2<!>) {
+        when (en2) {
             En.A -> {}
             En.B -> {}
             En.С -> {}
@@ -17,7 +17,7 @@ fun foo() {
     // not nullable variable
     val en1: Any = En.A
     if (en1 is En) {
-        when (<!DEBUG_INFO_SMARTCAST!>en1<!>) {
+        when (en1) {
             En.A -> {}
             En.B -> {}
             En.С -> {}
@@ -31,10 +31,10 @@ fun useEn(x: En) = x
 fun useEn2(x: En2) = x
 
 fun bar(x: Any) {
-    if (x is En && <!USELESS_IS_CHECK!>x is En2<!>) {
-        when (<!DEBUG_INFO_SMARTCAST!>x<!>) {
-            En.A -> useEn(<!DEBUG_INFO_SMARTCAST!>x<!>)
-            En2.D -> useEn2(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    if (x is En && <!IMPOSSIBLE_IS_CHECK_WARNING!>x is En2<!>) {
+        when (x) {
+            En.A -> useEn(x)
+            En2.D -> useEn2(x)
             else -> {}
         }
     }

@@ -1,4 +1,4 @@
-FILE: genericEntriesPropertyClashPrioritized.fir.kt
+FILE: genericEntriesPropertyClashPrioritized.kt
     package pckg
 
     public final enum class A : R|kotlin/Enum<pckg/A>| {

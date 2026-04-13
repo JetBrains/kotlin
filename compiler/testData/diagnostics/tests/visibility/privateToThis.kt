@@ -13,11 +13,11 @@ class A<in T>(t: T) {
     }
 
     fun foo(a: A<String>) {
-        val x: String = a.<!INVISIBLE_MEMBER!>t<!> // Invisible!
+        val x: String = a.<!INVISIBLE_REFERENCE!>t<!> // Invisible!
     }
 
     fun bar(a: A<*>) {
-        a.<!INVISIBLE_MEMBER!>t<!> // Invisible!
+        a.<!INVISIBLE_REFERENCE!>t<!> // Invisible!
     }
 
     inner class B {
@@ -33,7 +33,7 @@ class C<in T>(t: T) {
     private val tt = t
 
     fun foo(a: C<String>) {
-        val x: String = a.<!INVISIBLE_MEMBER!>tt<!>
+        val x: String = a.<!INVISIBLE_REFERENCE!>tt<!>
     }
 }
 

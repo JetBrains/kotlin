@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
@@ -57,7 +56,7 @@ class IdeSourceSetConstraintTest {
     fun `test single target JS project`() {
         val project = buildMppProject()
         val kotlin = project.multiplatformExtension
-        kotlin.js(KotlinJsCompilerType.IR)
+        kotlin.js()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -290,7 +289,7 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProject()
         val kotlin = project.multiplatformExtension
         kotlin.linuxX64("linux")
-        kotlin.js(KotlinJsCompilerType.IR)
+        kotlin.js()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -354,7 +353,7 @@ class IdeSourceSetConstraintTest {
         kotlin.applyDefaultHierarchyTemplate()
 
         kotlin.jvm()
-        kotlin.js(KotlinJsCompilerType.IR)
+        kotlin.js()
         kotlin.linuxX64()
         kotlin.linuxArm64()
 

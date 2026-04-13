@@ -10,12 +10,12 @@ fun <T : Foo> foo(): T? {
 }
 
 fun main() {
-    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo?"), TYPE_MISMATCH!><!TYPE_MISMATCH!>foo<!>()<!>
+    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>foo<!>()<!>
 }
 
 
 fun <T : Appendable> wtf(): T = TODO()
-val bar: Int = <!TYPE_MISMATCH!><!TYPE_MISMATCH!>wtf<!>()<!> // happily compiles
+val bar: Int = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>wtf<!>() // happily compiles
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, intersectionType, localProperty, nullableType,
 propertyDeclaration, typeConstraint, typeParameter */

@@ -10,10 +10,10 @@ class Delegate {
     operator fun setValue(thisRef: Any?, property: Any, value: String) {}
 }
 
-external class A : <!EXTERNAL_DELEGATION!>I by O<!> {
-    val prop <!EXTERNAL_DELEGATION!>by Delegate()<!>
+external class A : <!EXTERNAL_DELEGATION!>I<!> by O {
+    val prop by <!EXTERNAL_DELEGATION!>Delegate()<!>
 
-    var mutableProp <!EXTERNAL_DELEGATION!>by Delegate()<!>
+    var mutableProp by <!EXTERNAL_DELEGATION!>Delegate()<!>
 }
 
-external val topLevelProp <!EXTERNAL_DELEGATION!>by Delegate()<!>
+external val topLevelProp by <!EXTERNAL_DELEGATION!>Delegate()<!>

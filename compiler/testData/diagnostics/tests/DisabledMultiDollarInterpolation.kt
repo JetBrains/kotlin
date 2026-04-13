@@ -2,7 +2,6 @@
 // LANGUAGE: -MultiDollarInterpolation
 // WITH_STDLIB
 
-// FIR_IDENTICAL
 
 // FIR_DUMP
 // REASON: KT-68971

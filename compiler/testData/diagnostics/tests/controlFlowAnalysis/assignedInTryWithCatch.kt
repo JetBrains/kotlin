@@ -47,11 +47,11 @@ fun sideEffectBeforeAssignedInTryAndCatch(s: Any) {
 fun assignedAtAll() {
     val a: Int
     try {
-        <!UNUSED_VALUE!>a =<!> 42
+        a = 42
     } catch (e: Exception) {
-        <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> 41
+        <!VAL_REASSIGNMENT!>a<!> = 41
     } finally {
-        a = 40
+        <!VAL_REASSIGNMENT!>a<!> = 40
     }
     a.hashCode()
 }
@@ -60,12 +60,12 @@ fun sideEffectBeforeAssignedInTryCatchButNotFinally(s: Any) {
     val a: Int
     try {
         s as String // Potential cast exception
-        <!UNUSED_VALUE!>a =<!> 42
+        a = 42
     } catch (e: Exception) {
         s as String // Potential cast exception
-        <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> 41
+        <!VAL_REASSIGNMENT!>a<!> = 41
     } finally {
-        a = 40
+        <!VAL_REASSIGNMENT!>a<!> = 40
     }
     a.hashCode()
 }

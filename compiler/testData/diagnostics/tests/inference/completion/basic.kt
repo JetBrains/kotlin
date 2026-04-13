@@ -16,55 +16,55 @@ fun <I> wrapIn(arg: I): Inv<in I> = TODO()
 
 fun test1(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Cls>")!>Inv(cls)<!>
+        Inv(cls)
     )
 }
 
 fun test2(cls: Cls) {
     id<Inv<Bound>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Bound>")!>Inv(cls)<!>
+        Inv(cls)
     )
 }
 
 fun test3(cls: Cls) {
     id<Out<Bound>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<Cls>")!>Out(cls)<!>
+        Out(cls)
     )
 }
 
 fun test4(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<Cls>")!>Out(cls)<!>
+        Out(cls)
     )
 }
 
 fun test5(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<Cls>")!>In(cls)<!>
+        In(cls)
     )
 }
 
 fun test6(cls: Cls) {
     id<In<Bound>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<Bound>")!>In(cls)<!>
+        In(cls)
     )
 }
 
 fun test7(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Cls>")!>wrapOut(cls)<!>
+        wrapOut(cls)
     )
 }
 
 fun test8(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in Cls>")!>wrapIn(cls)<!>
+        wrapIn(cls)
     )
 }
 
 fun test9(cls: Cls) {
     id(
-        <!DEBUG_INFO_EXPRESSION_TYPE("InB<Cls>")!>InB(cls)<!>
+        InB(cls)
     )
 }
 

@@ -9,7 +9,7 @@ annotation class C(val f: String)
 const val flag = true
 
 @C(
-    f = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ANNOTATION_ARGUMENT_MUST_BE_CONST{JVM}!>when (flag) {
+    f = <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>when (flag) {
         true -> "OK"
         false -> "Not OK"
     }<!>

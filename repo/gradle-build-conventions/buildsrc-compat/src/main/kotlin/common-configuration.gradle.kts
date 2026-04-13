@@ -196,6 +196,7 @@ fun Project.configureKotlinCompilationOptions() {
                             "-jvm-default=disable"
                     )
                 }
+
             }
         }
     }
@@ -320,7 +321,6 @@ fun Project.configureTests() {
             ":compiler:fir:modularized-tests",
             ":compiler:fir:raw-fir:light-tree2fir",
             ":compiler:fir:raw-fir:psi2fir",
-            ":compiler:incremental-compilation-impl",
             ":compiler:ir.backend.common",
             ":compiler:multiplatform-parsing",
             ":compiler:test-infrastructure-utils",
@@ -340,8 +340,6 @@ fun Project.configureTests() {
             ":kotlin-compiler-client-embeddable",
             ":kotlin-compiler-embeddable",
             ":kotlin-daemon-client",
-            ":kotlin-daemon-tests",
-            ":kotlin-dataframe-compiler-plugin",
             ":kotlin-gradle-plugin",
             ":kotlin-gradle-plugin-dsl-codegen",
             ":kotlin-gradle-plugin-idea",
@@ -392,13 +390,7 @@ fun Project.configureTests() {
             ":native:objcexport-header-generator",
             ":native:objcexport-header-generator-analysis-api",
             ":native:objcexport-header-generator-k1",
-            ":native:swift:sir-light-classes",
-            ":native:swift:sir-printer",
-            ":native:swift:swift-export-embeddable",
-            ":native:swift:swift-export-ide",
-            ":native:swift:swift-export-standalone-integration-tests:coroutines",
-            ":native:swift:swift-export-standalone-integration-tests:external",
-            ":native:swift:swift-export-standalone-integration-tests:simple",
+
             ":native:unsafe-mem", // KTI-3068.
             ":plugins:compose-compiler-plugin:compiler-hosted",
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
@@ -413,6 +405,8 @@ fun Project.configureTests() {
             ":tools:jdk-api-validator",
             ":wasm:wasm.ir",
             ":compiler:test-engine-sandbox",
+            ":repo:test-federation-runtime",
+            ":benchmarks",
         )
         val projectPath = project.path
         val hasTestInputCheckPlugin = plugins.hasPlugin("test-inputs-check")

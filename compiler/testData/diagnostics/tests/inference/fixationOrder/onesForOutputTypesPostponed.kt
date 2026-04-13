@@ -9,7 +9,7 @@ fun <T, R> myFold(initial: R, t: T, operation: (acc: R, String, T) -> R, b: (T) 
 
 fun main1(x: List<String>) {
     myFold(B(), 1, { acc: A, s, t  ->
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>C()<!>
+        C()
     }, { it })
 }
 

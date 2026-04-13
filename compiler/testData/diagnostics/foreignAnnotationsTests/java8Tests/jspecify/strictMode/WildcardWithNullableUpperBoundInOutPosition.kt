@@ -21,11 +21,11 @@ fun <T> accept(arg: T) {}
 
 fun test() {
     accept<Any?>(FromJava.EXPLICIT_UPPER_BOUND.produce())
-    accept<Any>(<!TYPE_MISMATCH!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
+    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>FromJava.EXPLICIT_UPPER_BOUND.produce()<!>)
 
     accept<Any?>(FromJava.EXPLICIT_LOWER_BOUND.produce())
-    accept<Any>(<!TYPE_MISMATCH!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
+    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>FromJava.EXPLICIT_LOWER_BOUND.produce()<!>)
 
     accept<Any?>(FromJava.IMPLICIT_BOUNDS.produce())
-    accept<Any>(<!TYPE_MISMATCH!>FromJava.IMPLICIT_BOUNDS.produce()<!>)
+    accept<Any>(<!ARGUMENT_TYPE_MISMATCH!>FromJava.IMPLICIT_BOUNDS.produce()<!>)
 }

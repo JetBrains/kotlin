@@ -55,6 +55,8 @@ data class AbstractModuleCacheKey(
     val compilationArguments: (JvmCompilationOperation.Builder) -> Unit,
 ) : DependencyScenarioDslCacheKey
 
+val EXPLICIT_NULL_MODULE_NAME_MARKER = "###null_module_name###"
+
 abstract class AbstractModule(
     override val project: Project,
     final override val moduleName: String,

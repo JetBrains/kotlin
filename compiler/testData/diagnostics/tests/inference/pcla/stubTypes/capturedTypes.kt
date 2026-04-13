@@ -30,18 +30,18 @@ fun <K> capture(x: Inv<K>): K = null as K
 fun main() {
     build {
         emit("")
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>captureOut(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>captureIn(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>")!>getInv()<!>)<!>
+        getInv()
+        captureOut(getInv())
+        captureIn(getInv())
 
         // K is fixed into CapturedType(out NotFixed: TypeVariable(R))
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>capture(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.String>")!>getOut()<!>)<!>
+        <!CANNOT_INFER_PARAMETER_TYPE!>capture<!>(<!ARGUMENT_TYPE_MISMATCH!>getOut()<!>)
         ""
     }
-    <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build<!> {
+    build {
         emit("")
         // K is fixed into CapturedType(in NotFixed: TypeVariable(R))
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>capture(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<in kotlin.Any?>")!>getIn()<!>)<!>
+        capture(getIn())
         ""
     }
 }

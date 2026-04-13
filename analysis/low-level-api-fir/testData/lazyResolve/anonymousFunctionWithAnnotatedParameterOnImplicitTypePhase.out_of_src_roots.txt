@@ -153,8 +153,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(RAW_FIR)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
@@ -174,8 +174,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
     public final [ResolvedTo(CONSTANT_EVALUATION)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(RAW_FIR)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
@@ -195,8 +195,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(RAW_FIR)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
@@ -216,8 +216,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+        public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {

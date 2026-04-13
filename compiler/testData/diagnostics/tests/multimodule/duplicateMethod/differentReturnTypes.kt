@@ -32,7 +32,7 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b?.<!OVERLOAD_RESOLUTION_AMBIGUITY!>getParent<!>()
+        b?.getParent()
     }
 }
 

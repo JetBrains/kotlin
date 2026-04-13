@@ -4,7 +4,7 @@
 fun foo(s: String?) {
     when {
         s == null -> 1
-        <!DEBUG_INFO_SMARTCAST!>s<!>.foo() -> 2
+        s.foo() -> 2
         else -> 3
     }
 }

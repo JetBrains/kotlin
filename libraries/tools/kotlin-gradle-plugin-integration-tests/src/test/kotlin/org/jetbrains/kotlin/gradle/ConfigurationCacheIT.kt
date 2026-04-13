@@ -68,9 +68,8 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val publishedTargets = mutableListOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
-            if (patchKmpSampleLibForIsolatedProjects()) {
-                publishedTargets.remove("nodeJs")
-            }
+            patchKmpSampleLibForIsolatedProjects()
+            publishedTargets.remove("nodeJs")
             testConfigurationCacheOf(
                 taskNames = publishedTargets
                     .map { ":publish${it.replaceFirstChar(Char::uppercaseChar)}PublicationToLocalRepoRepository" }
@@ -382,17 +381,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 }
 
 /** @return true when the patch was applied */
-private fun TestProject.patchKmpSampleLibForIsolatedProjects() =
-    if (kmpIsolatedProjectsSupportEnabled) {
-        // TODO: KT-70569 add support for JS/WASM JS. The current problem with buildModulesInfo for Incremental Compilation
-        buildGradle.replaceText(
-            "shouldBeJs = true",
-            "shouldBeJs = false",
-        )
-        true
-    } else {
-        false
-    }
+private fun TestProject.patchKmpSampleLibForIsolatedProjects() {
+    // TODO: KT-70569 add support for JS/WASM JS. The current problem with buildModulesInfo for Incremental Compilation
+    buildGradle.replaceText(
+        "shouldBeJs = true",
+        "shouldBeJs = false",
+    )
+}
 
 abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
 

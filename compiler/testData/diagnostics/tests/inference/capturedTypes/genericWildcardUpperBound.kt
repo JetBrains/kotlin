@@ -2,7 +2,7 @@
 // ISSUE: KT-66570
 
 fun testInference(container: IContainer<*, *>) {
-    container.getProducer().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>produce<!>
+    container.getProducer().produce
 }
 
 interface IContainer<out P : IProducer<T>, out T : IChild> {

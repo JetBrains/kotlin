@@ -10,7 +10,7 @@ class Bar<T>(x: T): Parent<T> {}
 fun <R> select(vararg x: R) = x[0]
 
 fun <S> main(x: S) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Parent<S>")!>select(Foo(x), Bar(x))<!>
+    select(Foo(x), Bar(x))
 }
 
 
@@ -20,7 +20,7 @@ inline fun <R> test(transform: () -> R) {}
 class Inv<T>(x: T?) {}
 
 fun <K> foo(x: K) {
-    test { <!DEBUG_INFO_EXPRESSION_TYPE("Inv<K>")!>Inv(x)<!> }
+    test { Inv(x) }
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, functionalType, inline, integerLiteral,

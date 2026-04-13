@@ -13,10 +13,10 @@ interface B: A {
 }
 
 fun <T> test(a: T) where T : B, T : C {
-    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> = ""
-    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> = null
+    a.foo = ""
+    a.foo = null
 
-    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    a.foo.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

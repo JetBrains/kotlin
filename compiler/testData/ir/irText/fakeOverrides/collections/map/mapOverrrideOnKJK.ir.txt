@@ -142,7 +142,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-entries> (): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>> declared in <root>.Java1
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open keys: kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN returnType:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.Java1
@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN returnType:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
@@ -330,7 +330,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open keys: kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN returnType:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
@@ -338,7 +338,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.Java1
@@ -346,7 +346,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN returnType:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1

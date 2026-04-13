@@ -148,7 +148,6 @@ private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testCla
 private val AnalysisApiTestConfiguratorFactoryData.testPath: String?
     get() = when (frontend) {
         FrontendKind.Fir if analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fir/tests-gen"
-        FrontendKind.Fe10 if analysisApiMode == AnalysisApiMode.Ide -> "analysis/analysis-api-fe10/tests-gen"
         FrontendKind.Fir if analysisApiMode == AnalysisApiMode.Standalone -> "analysis/analysis-api-standalone/tests-gen"
         else -> null
     }

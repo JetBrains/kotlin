@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.utils.Printer
  */
 class RunTestWithDirectoryPrefixMethodModel(
     val directory: String,
+    val testKClass: Class<*>,
 ) : MethodModel<RunTestWithDirectoryPrefixMethodModel>() {
     override val generator: MethodGenerator<RunTestWithDirectoryPrefixMethodModel> get() = Generator
     override val name get() = METHOD_NAME
@@ -27,7 +28,22 @@ class RunTestWithDirectoryPrefixMethodModel(
 
     object Generator : MethodGenerator<RunTestWithDirectoryPrefixMethodModel>() {
         override fun generateBody(method: RunTestWithDirectoryPrefixMethodModel, p: Printer) {
-            p.println("""${DEFAULT_RUN_TEST_METHOD_NAME}("${method.directory}/" + fileName);""")
+            val methodToCall = if (method.testKClass.isTestWithGrouping()) {
+                GROUPED_TEST_INITIALIZATION_METHOD_NAME
+            } else {
+                DEFAULT_RUN_TEST_METHOD_NAME
+            }
+            p.println("""${methodToCall}("${method.directory}/" + fileName);""")
+        }
+
+        private fun Class<*>.isTestWithGrouping(): Boolean {
+            val baseGroupedTestClass = try {
+                Class.forName(GROUPED_BASE_TEST_CLASS_NAME)
+            } catch (_: ClassNotFoundException) {
+                return false
+            }
+
+            return baseGroupedTestClass.isAssignableFrom(this)
         }
 
         override fun generateSignature(method: RunTestWithDirectoryPrefixMethodModel, p: Printer) {

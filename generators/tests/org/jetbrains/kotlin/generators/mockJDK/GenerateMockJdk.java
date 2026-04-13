@@ -347,7 +347,7 @@ public class GenerateMockJdk {
                 }
             }
         }
-        File mockJdkRuntimeJarPath = new File("compiler/testData/mockJDK/jre/lib/rt.jar");
+        File mockJdkRuntimeJarPath = new File("third-party/mockJDKs/mockJDK/jre/lib/rt.jar");
 
         generateFilteredJar(
                 openjdk7Path,
@@ -358,7 +358,7 @@ public class GenerateMockJdk {
         generateFilteredJar(
                 openjdk7Path    ,
                 "src.zip",
-                new File("compiler/testData/mockJDK/src.zip"),
+                new File("third-party/mockJDKs/mockJDK/src.zip"),
                 sourceFileEntries,
                 false);
         FilterMockJdkKt.removeInterfacesFromMockJdkClassfiles(mockJdkRuntimeJarPath);

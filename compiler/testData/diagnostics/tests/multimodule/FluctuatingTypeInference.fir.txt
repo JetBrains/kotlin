@@ -1,0 +1,52 @@
+Module: base
+FILE: base.kt
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+Module: missing
+FILE: missing.kt
+    public open class Missing : R|Base| {
+        public constructor(): R|Missing| {
+            super<R|Base|>()
+        }
+
+    }
+Module: middle
+FILE: middle.kt
+    public final class Middle : R|Missing| {
+        public constructor(): R|Middle| {
+            super<R|Missing|>()
+        }
+
+    }
+Module: foo
+FILE: foo.kt
+    public final fun foo(flag: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval myParent: R|kotlin/Any| = when () {
+            R|<local>/flag| ->  {
+                R|/BaseImpl.BaseImpl|()
+            }
+            else ->  {
+                R|/Middle.Middle|()
+            }
+        }
+
+        lval myParent2: R|Base| = when () {
+            R|<local>/flag| ->  {
+                R|/BaseImpl.BaseImpl|()
+            }
+            else ->  {
+                R|/Middle.Middle|()
+            }
+        }
+
+    }
+    public final class BaseImpl : R|Base| {
+        public constructor(): R|BaseImpl| {
+            super<R|Base|>()
+        }
+
+    }

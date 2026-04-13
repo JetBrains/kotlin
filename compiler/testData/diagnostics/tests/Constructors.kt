@@ -15,7 +15,7 @@ class WithPC1(a : Int) {
 }
 
 
-class Foo() : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>WithPC0<!>, <!SYNTAX!>this<!>() {
+class Foo() : <!FINAL_SUPERTYPE!>WithPC0<!>, <!SYNTAX!>this<!>() {
 
 }
 

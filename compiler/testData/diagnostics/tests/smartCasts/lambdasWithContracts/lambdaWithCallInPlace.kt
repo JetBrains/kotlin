@@ -28,7 +28,7 @@ fun test1() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
         x = 10
     }
 }
@@ -37,7 +37,7 @@ fun test2() {
     var x: Any? = materialize()
     require(x is String)
     exactlyOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
         x = 10
     }
 }
@@ -46,7 +46,7 @@ fun test3() {
     var x: Any? = materialize()
     require(x is String)
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
         x = 10
     }
 }
@@ -56,7 +56,7 @@ fun test4() {
     require(x is String)
     runWithoutContract {
         x = ""
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 
@@ -65,7 +65,7 @@ fun test5() {
     require(x is String)
     exactlyOnce {
         x = ""
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 
@@ -74,7 +74,7 @@ fun test6() {
     require(x is String)
     atLeastOnce {
         x = ""
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
 }
 
@@ -82,9 +82,9 @@ fun test7() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
         }
         x = 10
     }
@@ -94,7 +94,7 @@ fun test8() {
     var x: Any? = materialize()
     require(x is String)
     exactlyOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
         exactlyOnce {
             <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
@@ -106,9 +106,9 @@ fun test9() {
     var x: Any? = materialize()
     require(x is String)
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
         }
         x = 10
     }
@@ -119,7 +119,7 @@ fun test10() {
     runWithoutContract {
         val b = x is String
         if (b) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }
@@ -128,7 +128,7 @@ fun test11(x: Any) {
     exactlyOnce {
         val b = x is String
         if (b) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }
@@ -137,7 +137,7 @@ fun test12(x: Any) {
     atLeastOnce {
         val b = x is String
         if (b) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }
@@ -221,7 +221,7 @@ fun test22(x: Any) {
     val state: Boolean = x is String
     runWithoutContract {
         if (state) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }
@@ -230,7 +230,7 @@ fun test23(x: Any) {
     val state: Boolean = x is String
     exactlyOnce {
         if (state) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }
@@ -239,7 +239,7 @@ fun test24(x: Any) {
     val state: Boolean = x is String
     atLeastOnce {
         if (state) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
         }
     }
 }
@@ -257,7 +257,7 @@ fun test26() {
     var x: Any? = materialize()
     require(x is String)
     exactlyOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x = ""
 }
@@ -266,7 +266,7 @@ fun test27() {
     var x: Any? = materialize()
     require(x is String)
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     x = ""
 }
@@ -449,7 +449,7 @@ fun test46() {
     var x: Any = materialize()
     exactlyOnce {
         while (x is String) {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = 10
         }
     }
@@ -459,7 +459,7 @@ fun test47() {
     var x: Any = materialize()
     atLeastOnce {
         while (x is String) {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = 10
         }
     }
@@ -479,7 +479,7 @@ fun test49() {
     var x: Any = materialize()
     while (x is String) {
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = 10
         }
     }
@@ -489,7 +489,7 @@ fun test50() {
     var x: Any = materialize()
     while (x is String) {
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = 10
         }
     }
@@ -499,7 +499,7 @@ fun test51() {
     var x: Any = materialize()
     while (x is String) {
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = 10
         }
     }
@@ -548,7 +548,7 @@ fun test56() {
     atLeastOnce {
         for (i in 1..3) {
             require(x is String)
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = 10
         }
     }
@@ -559,7 +559,7 @@ fun test57() {
     exactlyOnce {
         for (i in 1..3) {
             require(x is String)
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = 10
         }
     }
@@ -570,7 +570,7 @@ fun test58() {
     for (i in 1..3) {
         require(x is String)
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = 10
         }
     }
@@ -581,7 +581,7 @@ fun test59() {
     for (i in 1..3) {
         require(x is String)
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = 10
         }
     }
@@ -592,7 +592,7 @@ fun test60() {
     for (i in 1..3) {
         require(x is String)
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = 10
         }
     }
@@ -637,7 +637,7 @@ fun test65() {
     var x: Any = materialize()
     require(x is String)
     atLeastOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     for (i in 1..3) {
         x = 10
@@ -648,7 +648,7 @@ fun test66() {
     var x: Any = materialize()
     require(x is String)
     exactlyOnce {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x.length
     }
     for (i in 1..3) {
         x = 10

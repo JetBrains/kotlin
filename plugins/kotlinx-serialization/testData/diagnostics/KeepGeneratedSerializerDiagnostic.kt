@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// FIR_IDENTICAL
 
 // FILE: annotation.kt
 package kotlinx.serialization

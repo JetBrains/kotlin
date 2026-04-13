@@ -15,14 +15,15 @@ import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
-import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
+private const val optInAnnotationFqName = "kotlin.OptIn"
 private const val cinterop = "kotlinx.cinterop.*"
 private const val convertBlockPtrToKotlinFunction = "kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction"
 private const val stdintHeader = "stdint.h"
@@ -31,6 +32,7 @@ private const val foundationHeader = "Foundation/Foundation.h"
 public class SirBridgeProviderImpl(private val session: SirSession, private val typeNamer: SirTypeNamer) : SirBridgeProvider {
     override fun generateTypeBridge(
         kotlinFqName: FqName?,
+        kotlinOptIns: List<ClassId>,
         swiftFqName: String,
         swiftSymbolName: String,
     ): SirTypeBindingBridge? {
@@ -40,7 +42,8 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         val kotlinFqName = kotlinFqName?.asString() ?: ""
         return SirTypeBindingBridge(
             name = swiftFqName,
-            kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")"
+            kotlinFileAnnotation = "$annotationName($kotlinFqName::class, \"$swiftSymbolName\")",
+            kotlinOptIns = kotlinOptIns.map { it.asFqNameString() }
         )
     }
 
@@ -49,6 +52,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
         explicitParameters: List<SirParameter>,
         returnType: SirType,
         kotlinFqName: FqName,
+        kotlinOptIns: List<ClassId>,
         selfParameter: SirParameter?,
         contextParameters: List<SirParameter>,
         extensionReceiverParameter: SirParameter?,
@@ -72,6 +76,7 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
             parameters = parameters,
             returnType = bridgeReturnType(returnType),
             kotlinFqName = kotlinFqName,
+            kotlinOptIns = kotlinOptIns,
             selfParameter = selfParameter?.let { bridgeParameter(it, 0) },
             contextParameters = parameters.takeLast(contextParameters.size),
             extensionReceiverParameter = extensionReceiverParameter?.let { bridgeParameter(it, 0) },
@@ -141,7 +146,7 @@ public interface BridgeFunctionProxy {
     public fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge>
 
     context(session: SirSession)
-    public fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String>
+    public fun createSwiftInvocation(argumentOverrides: Map<String, String> = emptyMap(), resultTransformer: ((String) -> String)?): List<String>
 
     context(session: SirSession)
     public fun argumentsForInvocation(): List<String>
@@ -152,6 +157,7 @@ private class BridgeFunctionDescriptor(
     override val parameters: List<BridgedParameter>,
     override val returnType: KotlinToSwiftBridge,
     override val kotlinFqName: FqName,
+    val kotlinOptIns: List<ClassId>,
     override val selfParameter: BridgedParameter?,
     override val contextParameters: List<BridgedParameter>,
     override val extensionReceiverParameter: BridgedParameter?,
@@ -159,7 +165,7 @@ private class BridgeFunctionDescriptor(
     override val isAsync: Boolean,
     override val typeNamer: SirTypeNamer,
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
-    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, typeNamer)
+    val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, contextParameters, extensionReceiverParameter, typeNamer)
     val cBridgeName = kotlinBridgeName
 
     context(session: SirSession)
@@ -261,7 +267,7 @@ private class BridgeFunctionDescriptor(
     }
 
     context(session: SirSession)
-    override fun createSwiftInvocation(resultTransformer: ((String) -> String)?): List<String> = buildList {
+    override fun createSwiftInvocation(argumentOverrides: Map<String, String>, resultTransformer: ((String) -> String)?): List<String> = buildList {
         val descriptor = this@BridgeFunctionDescriptor
         val contextParameters = descriptor.contextParameters
         val errorParameter = descriptor.errorParameter
@@ -270,15 +276,15 @@ private class BridgeFunctionDescriptor(
             add("let (${contextParameters.joinToString { it.name.swiftIdentifier }}) = context")
         }
         if (isAsync) {
-            add(descriptor.swiftAsyncCall(typeNamer))
+            add(descriptor.swiftAsyncCall(typeNamer, argumentOverrides))
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
-            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer))
+            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer, argumentOverrides))
             val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
             add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
             resultTransformer?.let { add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))) }
         } else {
-            val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer)
+            val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer, argumentOverrides)
             addAll(swiftCallAndTransformationLines.dropLast(1))
             add((resultTransformer ?: { it })(swiftCallAndTransformationLines.last()))
         }
@@ -294,16 +300,26 @@ private class BridgeFunctionDescriptor(
 // problems with this approach are:
 // 1. there can be limit for declaration names in Clang compiler
 // 1. this name will be UGLY in the debug session
-private fun bridgeDeclarationName(bridgeName: String, parameterBridges: List<BridgedParameter>, typeNamer: SirTypeNamer): String {
-    val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
-        typeNamer.swiftFqName(it.bridge.swiftType)
-            .replace(".", "_")
-            .replace(",", "_")
-            .replace("<", "_")
-            .replace(">", "_") +
-                if (it.bridge is Bridge.AsNSArrayForVariadic) "_Vararg_" else ""
-    }
-    val suffixString = if (parameterBridges.isNotEmpty()) "__TypesOfArguments__${nameSuffixForOverloadSimulation}__" else ""
+private fun bridgeDeclarationName(
+    bridgeName: String,
+    parameterBridges: List<BridgedParameter>,
+    contextParameters: List<BridgedParameter>,
+    extensionReceiverParameter: BridgedParameter?,
+    typeNamer: SirTypeNamer
+): String {
+    val suffixString = if (parameterBridges.isNotEmpty()) {
+        val nameSuffixForOverloadSimulation = parameterBridges.joinToString(separator = "_") {
+            typeNamer.swiftFqName(it.bridge.swiftType)
+                .replace(".", "_")
+                .replace(",", "_")
+                .replace("<", "_")
+                .replace(">", "_") +
+                    if (it.bridge is Bridge.AsNSArrayForVariadic) "_Vararg_" else ""
+        }
+        val extensionSuffix = if (extensionReceiverParameter != null) "E" else ""
+        val contextSuffix = contextParameters.size.takeIf { it > 0 }?.let { "C$it" } ?: ""
+        "__TypesOfArguments${extensionSuffix}${contextSuffix}__${nameSuffixForOverloadSimulation}__"
+    } else ""
     val result = "${bridgeName}${suffixString}".cIdentifier
     return result
 }
@@ -314,6 +330,8 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
     buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
     add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
+    kotlinOptIns.optInAnnotation?.let(::add)
+
     val kotlinReturnType = returnType.kotlinType.takeIf { !isAsync } ?: KotlinType.Unit
 
     val parameters = allParameters.joinToString {
@@ -373,22 +391,23 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer): String {
+private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): String {
     val parameters = allParameters.joinToString {
+        val nameExpr = it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
-        it.bridge.inSwiftSources.swiftToKotlin(typeNamer, it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier)
+        argumentOverrides[nameExpr] ?: it.bridge.inSwiftSources.swiftToKotlin(typeNamer, nameExpr)
     }
     return "$cBridgeName($parameters)"
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer): List<String> {
-    val swiftInvocation = swiftInvocationLineForCBridge(typeNamer)
+private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): List<String> {
+    val swiftInvocation = swiftInvocationLineForCBridge(typeNamer, argumentOverrides)
     return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation))
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): String {
+private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): String {
     val (continuation, exception, cancellation) = asyncParameters ?: error("Async function must have a continuation & cancellation")
     val errorParameter = errorParameter ?: error("Async function must have an error parameter")
     val indent = "                        "
@@ -406,7 +425,7 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer): St
                         }
                         ${cancellation.name.swiftIdentifier} = ${cancellation.bridge.swiftType.swiftName}(currentTask!)
                         
-                        let _: Bool = ${swiftInvocationLineForCBridge(typeNamer).prependIndentToTrailingLines(indent)}
+                        let _: Bool = ${swiftInvocationLineForCBridge(typeNamer, argumentOverrides).prependIndentToTrailingLines(indent)}
                     }            
                 }
             } onCancel: {
@@ -452,6 +471,11 @@ private val BridgeFunctionDescriptor.safeImportName: String
 
 private val FqName.safeImportName: String
     get() = pathSegments().joinToString(separator = "_") { it.asString().replace("_", "__") }
+
+private val List<ClassId>.optInAnnotation: String?
+    get() = this.takeIf { it.isNotEmpty() }
+        ?.joinToString { "${it.asFqNameString()}::class" }
+        ?.let { "@${optInAnnotationFqName.substringAfterLast('.')}($it)" }
 
 private fun String.prependIndentToTrailingLines(indent: String): String = this.lines().let { lines ->
     lines.singleOrNull() ?: buildString {

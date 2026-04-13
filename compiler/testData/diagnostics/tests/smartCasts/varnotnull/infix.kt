@@ -7,7 +7,7 @@ fun box() : Int {
     if (a == null) {
         return 2
     } else {
-        return <!DEBUG_INFO_SMARTCAST!>a<!> + d
+        return a + d
     }
 }
 

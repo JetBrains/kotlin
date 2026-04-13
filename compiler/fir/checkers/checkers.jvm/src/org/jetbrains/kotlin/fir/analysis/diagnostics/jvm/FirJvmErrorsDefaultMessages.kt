@@ -217,15 +217,17 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS,
-            "Type argument is not within its bounds: must be subtype of ''{0}''.",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''.",
             RENDER_TYPE,
-            RENDER_TYPE
+            RENDER_TYPE,
+            RENDER_TYPE,
         )
         map.put(
             UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS,
-            "Type argument is not within its bounds: must be subtype of ''{0}''.",
+            "Type argument is not within its bounds: type parameter ''{2}'' must be subtype of ''{0}'', but actual: ''{1}''.",
             RENDER_TYPE,
-            RENDER_TYPE
+            RENDER_TYPE,
+            RENDER_TYPE,
         )
         map.put(
             PROPERTY_HIDES_JAVA_FIELD,

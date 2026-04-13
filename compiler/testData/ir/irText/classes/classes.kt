@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class TestClass
 
 interface TestInterface

@@ -25,8 +25,8 @@ import LibPackCase1.b.plusAssign
 
 fun case1 (){
     var b: B = B()
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!>{ C() }
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!>{ 1 }
+    b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!>{ C() }
+    b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!>{ 1 }
 }
 
 class B
@@ -58,8 +58,8 @@ import LibPackCase2.b.plusAssign
 
 fun case2 (){
     var b: B = B()
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!>{ C() }
-    b <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+=<!>{ 1 }
+    b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!>{ C() }
+    b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!>{ 1 }
 
     b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>plusAssign<!>{ C() }
 }

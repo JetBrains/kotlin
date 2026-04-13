@@ -7,7 +7,7 @@ fun test() {
     } else {
         if (true) return else return
     }
-    <!DEBUG_INFO_SMARTCAST!>x<!>.and(1) // unsafe call
+    x.and(1) // unsafe call
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,

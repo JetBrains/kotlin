@@ -21,7 +21,7 @@ package other
 
 class a {}
 
-fun test(a_: a.<!UNRESOLVED_REFERENCE!>b<!>) {
+fun test(a_: a.b) {
     val a_2 = a.<!UNRESOLVED_REFERENCE!>b<!>()
 }
 

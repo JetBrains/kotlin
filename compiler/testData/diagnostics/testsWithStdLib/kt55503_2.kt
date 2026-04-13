@@ -6,7 +6,7 @@
 
 package sample.pack
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 @kotlin.internal.HidesMembers
 fun A.forEach() = "::A.forEach"
 

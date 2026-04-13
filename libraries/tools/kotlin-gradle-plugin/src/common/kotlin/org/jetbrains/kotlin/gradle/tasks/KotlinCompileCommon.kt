@@ -20,6 +20,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -72,6 +73,13 @@ abstract class KotlinCompileCommon @Inject constructor(
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
+    @get:Deprecated(
+        message = "Task.moduleName is only used in metadata compilations",
+        level = DeprecationLevel.WARNING,
+    )
+    @get:Input
+    abstract override val moduleName: Property<String>
+
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -83,7 +91,8 @@ abstract class KotlinCompileCommon @Inject constructor(
         primitive { args ->
             args.multiPlatform = multiPlatformEnabled.get()
 
-            args.moduleName = this@KotlinCompileCommon.moduleName.get()
+            @Suppress("DEPRECATION")
+            args.moduleName = moduleName.get()
 
             args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
                 .arguments.toTypedArray()

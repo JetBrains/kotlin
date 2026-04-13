@@ -9,7 +9,7 @@ interface ImplA<T> {
     val fooOrNull: T?
         get() = if (this is Foo<*>) {
             @Suppress("UNCHECKED_CAST")
-            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>foo<!> as T
+            foo as T
         } else null
 }
 

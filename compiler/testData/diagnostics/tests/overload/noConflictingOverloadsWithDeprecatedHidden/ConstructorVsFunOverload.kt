@@ -19,28 +19,28 @@ public class G {
 // FILE: test.kt
 package constructorVsFun
 
-class a<!CONFLICTING_OVERLOADS!>()<!> { }
+class a() { }
 
-<!CONFLICTING_OVERLOADS!>@Deprecated("a", level = DeprecationLevel.HIDDEN)
-fun a()<!> = 1
+@Deprecated("a", level = DeprecationLevel.HIDDEN)
+fun a() = 1
 
-class b @Deprecated("b", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!> { }
+class b @Deprecated("b", level = DeprecationLevel.HIDDEN) constructor() { }
 
-<!CONFLICTING_OVERLOADS!>fun b()<!> = 2
+fun b() = 2
 
 class Tram {
-    <!CONFLICTING_OVERLOADS!>@Deprecated("f", level = DeprecationLevel.HIDDEN)
-    fun f()<!> { }
+    @Deprecated("f", level = DeprecationLevel.HIDDEN)
+    fun f() { }
 
-    class f<!CONFLICTING_OVERLOADS!>()<!> { }
+    class f() { }
 }
 
 class Yvayva {
     companion object {
-        <!CONFLICTING_OVERLOADS!>@Deprecated("fghj", level = DeprecationLevel.HIDDEN)
-        fun fghj()<!> { }
+        @Deprecated("fghj", level = DeprecationLevel.HIDDEN)
+        fun fghj() { }
 
-        class fghj<!CONFLICTING_OVERLOADS!>()<!> { }
+        class fghj() { }
     }
 }
 

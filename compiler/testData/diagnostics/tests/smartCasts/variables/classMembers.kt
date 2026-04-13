@@ -22,8 +22,8 @@ class A {
 
 fun test(a: A) {
     if (a.a is String) a.a.length
-    if (a.b is String) <!SMARTCAST_IMPOSSIBLE!>a.b<!>.length
-    if (a.c is String) <!SMARTCAST_IMPOSSIBLE!>a.c<!>.length
+    if (a.b is String) a.b.length
+    if (a.c is String) a.c.length
     if (a.d is String) <!SMARTCAST_IMPOSSIBLE!>a.d<!>.length
     if (a.e is String) <!SMARTCAST_IMPOSSIBLE!>a.e<!>.length
 }

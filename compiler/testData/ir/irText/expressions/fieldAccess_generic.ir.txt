@@ -23,15 +23,15 @@ FILE fqName:<root> fileName:/main.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.Impl origin=null
-            receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=IMPLICIT_ARGUMENT
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.Derived origin=null
-            receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=IMPLICIT_ARGUMENT
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Impl origin=EQ
-          receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+          receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=1
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
-          receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+          receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=1
     FUN name:testClassStatic visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Impl
@@ -75,15 +75,15 @@ FILE fqName:<root> fileName:/main.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.OtherImpl origin=null
-            receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+            receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=IMPLICIT_ARGUMENT
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.Impl origin=null
-            receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+            receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=IMPLICIT_ARGUMENT
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.OtherImpl origin=EQ
-          receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+          receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=1
         SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:@[FlexibleNullability] T of <root>.Base? visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Impl origin=EQ
-          receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+          receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=IMPLICIT_ARGUMENT
           value: CONST Int type=kotlin.Int value=1
     FUN name:testOtherClassStatic visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.OtherImpl

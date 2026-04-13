@@ -50,7 +50,6 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit4)
     testRuntimeOnly(libs.junit.vintage.engine)
-    testImplementation(testFixtures(project(":analysis:analysis-api-fe10")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
@@ -61,6 +60,10 @@ dependencies {
     testImplementation(project(":compiler:plugin-api"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
+
+
+    testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
 
     // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }

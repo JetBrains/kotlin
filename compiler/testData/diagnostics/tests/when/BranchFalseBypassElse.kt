@@ -19,7 +19,7 @@ fun test(a: Any): String {
         else -> q = "2"
     }
     // When is not exhaustive
-    return <!DEBUG_INFO_SMARTCAST!>q<!>
+    return q
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, isExpression, localProperty, nullableType,

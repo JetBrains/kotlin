@@ -29,87 +29,87 @@ fun GuardMustHaveExpression(x: Any) {
 fun GuardNewlines(x: Any) {
     when (x) {
         // Test new-lines in guarded when conditions (without parentheses)
-        is Boolean <!UNSUPPORTED_FEATURE!>if
-            x == true<!> -> Unit
-        is Boolean <!UNSUPPORTED_FEATURE!>if
-            x == true<!>
+        is Boolean if
+            x == true -> Unit
+        is Boolean if
+            x == true
         -> Unit
-        is Boolean <!UNSUPPORTED_FEATURE!>if x == true ||
-            x == false<!> -> Unit
+        is Boolean if x == true ||
+            x == false -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if x == true<!> -> Unit
+            if x == true -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if x == true<!>
+            if x == true
         -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if
-                x == true<!> -> Unit
+            if
+                x == true -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if
-                x == true<!>
+            if
+                x == true
         -> Unit
 
         // Test new-lines in guarded when conditions (with parentheses)
-        is Boolean <!UNSUPPORTED_FEATURE!>if
-            (x == true)<!> -> Unit
-        is Boolean <!UNSUPPORTED_FEATURE!>if
-            (x == true)<!>
+        is Boolean if
+            (x == true) -> Unit
+        is Boolean if
+            (x == true)
         -> Unit
-        is Boolean <!UNSUPPORTED_FEATURE!>if (x == true ||
-            x == false)<!> -> Unit
+        is Boolean if (x == true ||
+            x == false) -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if (x == true)<!> -> Unit
+            if (x == true) -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if (x == true)<!>
+            if (x == true)
         -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if
-                (x == true)<!> -> Unit
+            if
+                (x == true) -> Unit
         is Boolean
-            <!UNSUPPORTED_FEATURE!>if
-                (x == true)<!>
+            if
+                (x == true)
         -> Unit
 
         // Test new-lines in guarded else (without parentheses)
-        else <!UNSUPPORTED_FEATURE!>if
-            x == true<!> -> Unit
-        else <!UNSUPPORTED_FEATURE!>if
-            x == true<!>
+        else if
+            x == true -> Unit
+        else if
+            x == true
         -> Unit
-        else <!UNSUPPORTED_FEATURE!>if x == true ||
-            x == false<!> -> Unit
+        else if x == true ||
+            x == false -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if x == true<!> -> Unit
+            if x == true -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if x == true<!>
+            if x == true
         -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if
-                x == true<!> -> Unit
+            if
+                x == true -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if
-                x == true<!>
+            if
+                x == true
         -> Unit
 
         // Test new-lines in guarded else (with parentheses)
-        else <!UNSUPPORTED_FEATURE!>if
-            (x == true)<!> -> Unit
-        else <!UNSUPPORTED_FEATURE!>if
-            (x == true)<!>
+        else if
+            (x == true) -> Unit
+        else if
+            (x == true)
         -> Unit
-        else <!UNSUPPORTED_FEATURE!>if (x == true ||
-            x == false)<!> -> Unit
+        else if (x == true ||
+            x == false) -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if (x == true)<!> -> Unit
+            if (x == true) -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if (x == true)<!>
+            if (x == true)
         -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if
-                (x == true)<!> -> Unit
+            if
+                (x == true) -> Unit
         else
-            <!UNSUPPORTED_FEATURE!>if
-                (x == true)<!>
+            if
+                (x == true)
         -> Unit
     }
 }

@@ -67,24 +67,3 @@ inline fun buildTypeAlias(init: FirTypeAliasBuilder.() -> Unit): FirTypeAlias {
     }
     return FirTypeAliasBuilder().apply(init).build()
 }
-
-@OptIn(ExperimentalContracts::class)
-inline fun buildTypeAliasCopy(original: FirTypeAlias, init: FirTypeAliasBuilder.() -> Unit): FirTypeAlias {
-    contract {
-        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
-    }
-    val copyBuilder = FirTypeAliasBuilder()
-    copyBuilder.source = original.source
-    copyBuilder.resolvePhase = original.resolvePhase
-    copyBuilder.moduleData = original.moduleData
-    copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes.copy()
-    copyBuilder.typeParameters.addAll(original.typeParameters)
-    copyBuilder.status = original.status
-    copyBuilder.deprecationsProvider = original.deprecationsProvider
-    copyBuilder.scopeProvider = original.scopeProvider
-    copyBuilder.name = original.name
-    copyBuilder.expandedTypeRef = original.expandedTypeRef
-    copyBuilder.annotations.addAll(original.annotations)
-    return copyBuilder.apply(init).build()
-}

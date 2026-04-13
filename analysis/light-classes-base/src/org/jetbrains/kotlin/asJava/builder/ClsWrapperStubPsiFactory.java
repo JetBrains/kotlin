@@ -95,6 +95,16 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
     }
 
     @Override
+    public PsiRecordComponent createRecordComponent(PsiRecordComponentStub stub) {
+        return delegate.createRecordComponent(stub);
+    }
+
+    @Override
+    public PsiRecordHeader createRecordHeader(PsiRecordHeaderStub stub) {
+        return delegate.createRecordHeader(stub);
+    }
+
+    @Override
     public PsiNameValuePair createNameValuePair(PsiNameValuePairStub stub) {
         return delegate.createNameValuePair(stub);
     }

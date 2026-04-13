@@ -16,11 +16,11 @@ class A<T> : ArrayList<T>() {
         super.addLast(t)
     }
 
-    override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T = super.getFirst()
-    override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T = super.getLast()
+    override fun <!OVERRIDE_DEPRECATION!>getFirst<!>(): T = super.<!DEPRECATION!>getFirst<!>()
+    override fun <!OVERRIDE_DEPRECATION!>getLast<!>(): T = super.<!DEPRECATION!>getLast<!>()
 
-    fun superFirst2(): T = super.first
-    fun superLast2(): T = super.last
+    fun superFirst2(): T = super.<!DEPRECATION!>first<!>
+    fun superLast2(): T = super.<!DEPRECATION!>last<!>
 
     override fun removeFirst(): T = super.removeFirst()
     override fun removeLast(): T = super.removeLast()
@@ -57,11 +57,11 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
 
     y.addFirst("")
     y.addLast("")
-    y.getFirst()
-    y.first
+    y.<!DEPRECATION!>getFirst<!>()
+    y.<!DEPRECATION!>first<!>
     y.first()
-    y.getLast()
-    y.last
+    y.<!DEPRECATION!>getLast<!>()
+    y.<!DEPRECATION!>last<!>
     y.last()
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeFirst; typeCall: function")!>removeFirst()<!>
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeLast; typeCall: function")!>removeLast()<!>
@@ -69,11 +69,11 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
 
     z.addFirst("")
     z.addLast("")
-    z.getFirst()
-    z.first
+    z.<!DEPRECATION!>getFirst<!>()
+    z.<!DEPRECATION!>first<!>
     z.first()
-    z.getLast()
-    z.last
+    z.<!DEPRECATION!>getLast<!>()
+    z.<!DEPRECATION!>last<!>
     z.last()
     z.<!DEBUG_INFO_CALL("fqName: A.removeFirst; typeCall: function")!>removeFirst()<!>
     z.<!DEBUG_INFO_CALL("fqName: A.removeLast; typeCall: function")!>removeLast()<!>

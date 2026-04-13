@@ -11,7 +11,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupportDeprecated as KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.io.PrintWriter
 import java.nio.file.attribute.PosixFilePermission
@@ -264,17 +263,6 @@ internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_L
         }
     }
 }
-
-internal val TestProject.kmpIsolatedProjectsSupportEnabled: Boolean
-    get() {
-        val mode = buildOptions.kmpIsolatedProjectsSupport
-        @Suppress("DEPRECATION")
-        return when (mode) {
-            KmpIsolatedProjectsSupport.ENABLE -> true
-            KmpIsolatedProjectsSupport.DISABLE -> false
-            KmpIsolatedProjectsSupport.AUTO, null -> buildOptions.isolatedProjects.toBooleanFlag(gradleVersion)
-        }
-    }
 
 val Throwable.fullMessage
     get(): String = java.io.StringWriter().use {

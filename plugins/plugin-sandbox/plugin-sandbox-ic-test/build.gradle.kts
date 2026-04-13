@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("d8-configuration")
+    id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
 }
@@ -9,6 +10,7 @@ dependencies {
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(testFixtures(project(":wasm:wasm.tests")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
     testFixturesApi(libs.junit.jupiter.api)
 
@@ -40,12 +42,20 @@ projectTests {
         dependsOn(":plugins:plugin-sandbox:jar")
         dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
         useJsIrBoxTests(buildDir = layout.buildDirectory)
+        with(wasmNodeJsKotlinBuild) {
+            setupNodeJs(nodejsVersion)
+        }
+        jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
+            property.set("kotlin.wasm.test.root.out.dir")
+            buildDirectory.set(layout.buildDirectory)
+        }
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")
 
     withJvmStdlibAndReflect()
     withJsRuntime()
+    withWasmRuntime()
     withStdlibWeb()
     withStdlibCommon()
 }

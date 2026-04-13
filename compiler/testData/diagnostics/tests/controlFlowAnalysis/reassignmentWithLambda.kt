@@ -13,11 +13,11 @@ fun smartCast(item: Any?) {
     var current = item
     if (current == null) {
         current = Any()
-        listeners.forEach { it.added(<!SMARTCAST_IMPOSSIBLE!>current<!>) }
+        listeners.forEach { it.added(current) }
     } else {
-        listeners.forEach { it.removed(<!SMARTCAST_IMPOSSIBLE!>current<!>) }
+        listeners.forEach { it.removed(current) }
         current = Any()
-        listeners.forEach { it.added(<!DEBUG_INFO_SMARTCAST!>current<!>) }
+        listeners.forEach { it.added(current) }
     }
 }
 

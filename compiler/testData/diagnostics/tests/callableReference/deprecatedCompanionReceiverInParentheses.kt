@@ -22,11 +22,11 @@ import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
 
 fun case() {
-    <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(V)<!>::a checkType { _<KProperty0<Int>>() }
-    <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(V)<!>::a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><KProperty1<V, String>>() }
+    (V)::a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><KProperty0<Int>>() }
+    (V)::a checkType { _<KProperty1<V, String>>() }
 
-    <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(test.abc.V)<!>::a checkType { _<KProperty0<Int>>() }
-    <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(test.abc.V)<!>::a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><KProperty1<V, String>>() }
+    (test.abc.V)::a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><KProperty0<Int>>() }
+    (test.abc.V)::a checkType { _<KProperty1<V, String>>() }
 
     V::a checkType { _<KProperty1<V, String>>() }
     V.Companion::a checkType { _<KProperty0<Int>>() }

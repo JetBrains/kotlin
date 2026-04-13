@@ -4,7 +4,7 @@
 fun <T> materialize(): T = TODO()
 
 fun main() {
-    val x = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>run<!> { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>() }
+    val x = <!CANNOT_INFER_PARAMETER_TYPE!>run<!> { <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>() }
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration,

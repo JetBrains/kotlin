@@ -50,19 +50,19 @@ fun <T> case_7(x: Boolean) {
 class Case8<K> {
     inline fun <reified T: K, L: Nothing?> case_12(x: L) {
         x!!
-        checkSubtype<K>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        checkSubtype<K>(x)
     }
 }
 
 // TESTCASE NUMBER: 9
-inline fun <reified L: Nothing?> case_9(x: L) = x!! as Int
+inline fun <reified L: Nothing?> case_9(x: L) = x!! <!CAST_NEVER_SUCCEEDS!>as<!> Int
 
 // TESTCASE NUMBER: 10
 fun <K> case_10(x: Nothing) = x as Iterable<K>
 
 // TESTCASE NUMBER: 11
 fun case_11() {
-    return <!USELESS_CAST!>as Nothing?<!>
+    return as Nothing?
 }
 
 // TESTCASE NUMBER: 12
@@ -74,13 +74,13 @@ fun case_13() = null as Float?
 // TESTCASE NUMBER: 14
 inline fun <reified T, K> case_14() {
     while (true) {
-        break <!USELESS_CAST!>as Map<T, K><!>
+        break as Map<T, K>
     }
 }
 
 // TESTCASE NUMBER: 15
 inline fun <reified T> case_15() {
     while (true) {
-        continue <!USELESS_CAST!>as T<!>
+        continue as T
     }
 }

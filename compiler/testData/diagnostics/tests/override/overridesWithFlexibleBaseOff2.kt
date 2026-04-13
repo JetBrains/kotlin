@@ -18,16 +18,16 @@ public interface Foo<T> extends Base<T> {
 
 // FILE: main.kt
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><E> : Foo<E> {
+class FooImpl<E> : Foo<E> {
     override fun E.foo() {}
 
-    <!NOTHING_TO_OVERRIDE!>override<!> fun (E & Any).bar() {}
+    override fun (E & Any).bar() {}
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl2<!><E> : Foo<E> {
     <!NOTHING_TO_OVERRIDE!>override<!> fun (E & Any).foo() {}
 
-    <!NOTHING_TO_OVERRIDE!>override<!> fun (E & Any).bar() {}
+    override fun (E & Any).bar() {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,

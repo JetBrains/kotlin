@@ -1,3 +1,0 @@
-/unclearTypeMismatchWithCapturedTypes.fir.kt:(339,350): error: Argument type mismatch: actual type is 'Box<CapturedType(in Number)>', but 'Box<Number>' was expected.
-
-/unclearTypeMismatchWithCapturedTypes.fir.kt:(384,395): error: Argument type mismatch: actual type is 'Box<CapturedType(in Number)>', but 'Box<out Number>' was expected.

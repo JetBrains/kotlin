@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -24,4 +25,10 @@ class KotlinBlockStringTemplateEntryStubImpl(
         hasMultipleExpressions = hasMultipleExpressions,
         text = text,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinBlockStringTemplateEntryStubImpl &&
+                other.hasMultipleExpressions == hasMultipleExpressions &&
+                other.text == text
 }

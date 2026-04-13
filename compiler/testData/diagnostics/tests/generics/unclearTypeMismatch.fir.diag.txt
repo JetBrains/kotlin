@@ -1,3 +1,0 @@
-/unclearTypeMismatch.fir.kt:(114,117): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
-
-/unclearTypeMismatch.fir.kt:(118,122): error: Argument type mismatch: actual type is 'List<Int>', but 'List<uninferred T (of fun <T : CharSequence> foo)>' was expected.

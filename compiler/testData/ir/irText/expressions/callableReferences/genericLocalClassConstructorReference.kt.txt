@@ -60,6 +60,6 @@ val <PT : Any?> Rec<PT>.p: L<PT>
 
     }
 
-    return foo2<PT, PT, PLocal<PT>>(t1 = <this>.<get-rt>(), t2 = <this>.<get-rt>(), bb = ::PLocal/*<PT>() */)
+    return foo2<PT, PT, PLocal<PT, PT>>(t1 = <this>.<get-rt>(), t2 = <this>.<get-rt>(), bb = ::PLocal/*<PT>() */)
   }
 

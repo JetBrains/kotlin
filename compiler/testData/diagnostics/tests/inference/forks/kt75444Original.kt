@@ -55,12 +55,12 @@ fun <A : AuthCapability<out K>, K : KeyType> Algorithm<A, *, K>.requiresNonce():
 fun<A: AuthCapability.Authenticated<out K>, K: KeyType> Algorithm<A, NonceTrait.Required, K>.foo() {}
 
 fun test_1_1(algorithm: Algorithm<AuthCapability<out KeyType>, NonceTrait, KeyType>) {
-    algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
+    algorithm.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
 }
 
 fun test_1_2(algorithm: Algorithm<AuthCapability<out KeyType>, NonceTrait, KeyType>) {
     if (!algorithm.requiresNonce()) {
-        algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
+        algorithm.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
     }
 }
 
@@ -71,13 +71,13 @@ fun test_1_3(algorithm: Algorithm<AuthCapability<out KeyType>, NonceTrait, KeyTy
 }
 
 fun test_1_4(algorithm: Algorithm<AuthCapability<out KeyType>, NonceTrait, KeyType>) {
-    if (!algorithm.requiresNonce() && <!DEBUG_INFO_SMARTCAST!>algorithm<!>.isAuthenticated()) {
+    if (!algorithm.requiresNonce() && algorithm.isAuthenticated()) {
         algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // OK, but should be wrong receiver
     }
 }
 
 fun test_2_1(algorithm: Algorithm.WithoutNonce<AuthCapability<out KeyType>, KeyType>) {
-    algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
+    algorithm.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
 }
 
 

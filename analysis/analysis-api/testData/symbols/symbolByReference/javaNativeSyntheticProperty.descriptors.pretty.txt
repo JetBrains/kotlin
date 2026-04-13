@@ -1,3 +1,0 @@
-external var JavaClass.count: kotlin.Int
-  get()
-  set(value: kotlin.Int)

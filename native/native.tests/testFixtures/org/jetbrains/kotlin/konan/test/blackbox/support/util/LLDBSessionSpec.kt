@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -234,7 +233,6 @@ internal class SteppingLLDBSessionSpec(
             return false
         }
         checkSteppingTestResult(
-            FrontendKinds.FIR,
             TargetBackend.NATIVE,
             originalFile,
             loggedSteps,

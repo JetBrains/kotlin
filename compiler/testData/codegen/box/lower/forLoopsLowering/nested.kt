@@ -15,19 +15,13 @@ inline fun multipleReturnsRequireDeeperAnalysis(useShorterRange: Boolean): Itera
     return 0..10
 }
 
-// TODO: complex analysis of IrReturnableBlock is required to find out actual return type is IntRange.
-// Meanwhile, iterator is used in every fun which invokes `iterableInt()`
 inline fun iterableInt(): Iterable<Int> = (0..10)
 
-// TODO: complex analysis of IrReturnableBlock is required to find out actual return type is IntRange.
-// Meanwhile, iterator is used in every fun which invokes `iterableIntWithTempVal()`
 inline fun iterableIntWithTempVal(): Iterable<Int> {
     val iterableInt: Iterable<Int> = 0..10
     return iterableInt
 }
 
-// TODO: complex analysis of IrReturnableBlock is required to find out actual return type is IntRange.
-// Meanwhile, iterator is used in every fun which invokes `iterableIntWithTempValIterableInt()`
 inline fun iterableIntWithTempValIterableInt(): Iterable<Int> {
     val iterableInt: Iterable<Int> = iterableInt()
     return iterableInt
@@ -67,14 +61,14 @@ fun testMultipleReturnsRequireDeeperAnalysisShortRange(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableInt(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfIterableInt(): Int {
     return iterableInt().sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfTempVal(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfTempVal(): Int {
     val iterableInt: Iterable<Int> = iterableInt()
@@ -82,14 +76,14 @@ fun testIntSumOfTempVal(): Int {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableIntWithTempVal(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfIterableIntWithTempVal(): Int {
     return iterableIntWithTempVal().sumOf { it }
 }
 
 // CHECK-LABEL: define i32 @"kfun:#testIntSumOfIterableIntWithTempValIterableInt(){}kotlin.Int
-// CHECK: iterator
+// CHECK-NOT: iterator
 // CHECK-LABEL: epilogue:
 fun testIntSumOfIterableIntWithTempValIterableInt(): Int {
     return iterableIntWithTempValIterableInt().sumOf { it }

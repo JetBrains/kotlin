@@ -1,4 +1,4 @@
-KtNameReferenceExpression(136,140): 'Anno'
+KtNameReferenceExpression(134,138): 'Anno'
   KaSymbolResolutionSuccess:
     symbols = [
       /Anno

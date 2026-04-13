@@ -4,26 +4,26 @@
 // LANGUAGE: +UnnamedLocalVariables, +ContextParameters
 
 fun testLambdaUnderscore() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = { _: Int ->
-        val <!UNDERSCORE_IS_RESERVED!>_<!>: Int = 1
+    val _ = { _: Int ->
+        val _: Int = 1
     }
 }
 
 fun testAnonymousUnderscore() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = fun(_: Int) {
-        val <!UNDERSCORE_IS_RESERVED!>_<!> = 1
+    val _ = fun(_: Int) {
+        val _ = 1
     }
 }
 
 fun testTypeUnderscore() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!>: MutableList<String> = mutableListOf<_>("")
+    val _: MutableList<String> = mutableListOf<_>("")
 }
 
 fun testUnderscoreInCatch() {
     try {
-        val <!UNDERSCORE_IS_RESERVED!>_<!>: Exception = Exception()
+        val _: Exception = Exception()
     } catch (_: Exception) {
-        val <!UNDERSCORE_IS_RESERVED!>_<!>: Exception = Exception()
+        val _: Exception = Exception()
     }
 }
 
@@ -31,16 +31,16 @@ class A {
     fun foo() {}
 }
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
+context(_: A)
 fun testContextParameters() {
-    val <!UNDERSCORE_IS_RESERVED!>_<!> = ""
+    val _ = ""
 }
 
 fun testLocalContext() {
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(_: String)
     fun foo() {}
 
-    val <!UNDERSCORE_IS_RESERVED!>_<!>: String = ""
+    val _: String = ""
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionDeclarationWithContext,

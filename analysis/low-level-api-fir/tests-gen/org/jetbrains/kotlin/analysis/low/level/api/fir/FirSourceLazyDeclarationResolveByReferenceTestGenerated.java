@@ -24,7 +24,7 @@ public class FirSourceLazyDeclarationResolveByReferenceTestGenerated extends Abs
 
   @Test
   public void testAllFilesPresentInLazyResolveByReference() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolveByReference"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
   @Test

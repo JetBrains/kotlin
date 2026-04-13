@@ -4,7 +4,7 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+expect enum class Foo {
     ENTRY;
     fun getEntry()
 }

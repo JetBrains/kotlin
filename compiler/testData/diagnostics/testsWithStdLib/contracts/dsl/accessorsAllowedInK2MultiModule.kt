@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // LANGUAGE: +AllowContractsOnPropertyAccessors, +ContextParameters

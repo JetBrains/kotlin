@@ -9,7 +9,7 @@ fun Project.configureMpp() {
         "No multiplatform extension found"
     }
     kotlinExtension.apply {
-        js(IR) {
+        js {
             nodejs {
             }
         }

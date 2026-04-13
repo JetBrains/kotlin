@@ -1,5 +1,0 @@
-expression: 42 / 0
-constant: error("Division by zero")
-constantValueKind: ErrorValue
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED

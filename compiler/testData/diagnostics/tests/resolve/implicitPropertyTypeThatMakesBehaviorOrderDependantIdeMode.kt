@@ -7,10 +7,10 @@ val Int.p: String
     get() = "ext prop"
 
 class Foo {
-    val f = <!DEBUG_INFO_LEAKING_THIS!>f<!>()
-    fun f() = 42.f()
+    val f = f()
+    fun f() = 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT_ERROR!>f<!>()
 
-    val p = <!DEBUG_INFO_LEAKING_THIS!>p<!>()
+    val p = p()
     fun p() = 42.p
 }
 

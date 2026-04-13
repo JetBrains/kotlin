@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.dataframe.plugin.utils
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -16,12 +17,24 @@ fun ConeKotlinType.isDataFrame(session: FirSession) =
         session
     )
 
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isDataFrame() = isDataFrame(sessionHolder.session)
+
 fun ConeKotlinType.isGroupBy(session: FirSession) = fullyExpandedClassId(session) == Names.GROUP_BY_CLASS_ID
+
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isGroupBy() = isGroupBy(sessionHolder.session)
 
 fun ConeKotlinType.isDataRow(session: FirSession) = fullyExpandedClassId(session) == Names.DATA_ROW_CLASS_ID
 
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isDataRow() = isDataRow(sessionHolder.session)
+
 fun ConeKotlinType.isPair(session: FirSession) =
     fullyExpandedClassId(session) == Names.PAIR
+
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isPair() = isPair(sessionHolder.session)
 
 /**
  * Returns `true` only if [this] represents an optionally nullable primitive number,
@@ -30,8 +43,10 @@ fun ConeKotlinType.isPair(session: FirSession) =
  * We don't check for "subtype of Number" to prevent `BigInteger` etc. to be included, but since columns with
  * mixed primitives are allowed in statistics, we do include `Number?` and `Number`
  */
-fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession): Boolean =
-    this.isPrimitiveNumberOrNullableType ||
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isPrimitiveOrMixedNumber(): Boolean {
+    val session = sessionHolder.session
+    return this.isPrimitiveNumberOrNullableType ||
             this.equalTypes(
                 otherType = session.builtinTypes.numberType.coneType,
                 session = session,
@@ -40,9 +55,12 @@ fun ConeKotlinType.isPrimitiveOrMixedNumber(session: FirSession): Boolean =
                 otherType = session.builtinTypes.numberType.coneType.withNullability(true, session.typeContext),
                 session = session,
             )
+}
 
 /** Returns `true` if `this` is a type `T` where `T : Comparable<T & Any>?` */
-fun ConeKotlinType.isSelfComparable(session: FirSession): Boolean {
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isSelfComparable(): Boolean {
+    val session = sessionHolder.session
     val comparable = StandardClassIds.Comparable.constructClassLikeType(
         typeArguments = arrayOf(this.withNullability(nullable = false, session.typeContext)),
         isMarkedNullable = this.isMarkedNullable,

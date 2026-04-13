@@ -72,13 +72,6 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    val TEST_ALONGSIDE_K1_TESTDATA by directive(
-        description = """
-            This directive indicates that the test is run on the testdata,
-            which is also used for K1 tests
-        """.trimIndent()
-    )
-
     val USE_LATEST_LANGUAGE_VERSION by directive(
         description = """
             Indicates that test is run with latest language version.

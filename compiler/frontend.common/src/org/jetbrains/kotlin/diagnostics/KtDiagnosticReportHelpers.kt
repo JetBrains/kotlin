@@ -152,7 +152,7 @@ fun DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), context, positioningStrategy)
+    with(context) { reportOn(source, factory.chooseFactory(), positioningStrategy) }
 }
 
 context(context: DiagnosticContext)
@@ -161,7 +161,7 @@ fun DiagnosticReporter.reportOn(
     factory: KtDiagnosticFactoryForDeprecation0,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), positioningStrategy)
+    reportOn(source, factory.chooseFactory(), positioningStrategy)
 }
 
 // #### KtDiagnosticFactoryForDeprecation1 ####
@@ -173,7 +173,7 @@ fun <A> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, context, positioningStrategy)
+    with(context) { reportOn(source, factory.chooseFactory(), a, positioningStrategy) }
 }
 
 context(context: DiagnosticContext)
@@ -183,7 +183,7 @@ fun <A> DiagnosticReporter.reportOn(
     a: A,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, positioningStrategy)
 }
 
 // #### KtDiagnosticFactoryForDeprecation2 ####
@@ -196,7 +196,7 @@ fun <A, B> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, b, context, positioningStrategy)
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, positioningStrategy) }
 }
 
 context(context: DiagnosticContext)
@@ -207,7 +207,7 @@ fun <A, B> DiagnosticReporter.reportOn(
     b: B,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, b, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, positioningStrategy)
 }
 
 // #### KtDiagnosticFactoryForDeprecation3 ####
@@ -221,7 +221,7 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, b, c, context, positioningStrategy)
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, positioningStrategy) }
 }
 
 context(context: DiagnosticContext)
@@ -233,7 +233,7 @@ fun <A, B, C> DiagnosticReporter.reportOn(
     c: C,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, b, c, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, c, positioningStrategy)
 }
 
 // #### KtDiagnosticFactoryForDeprecation4 ####
@@ -248,7 +248,7 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, b, c, d, context, positioningStrategy)
+    with(context) { reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategy) }
 }
 
 context(context: DiagnosticContext)
@@ -261,10 +261,11 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     d: D,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    reportOn(source, factory.chooseFactory(context), a, b, c, d, positioningStrategy)
+    reportOn(source, factory.chooseFactory(), a, b, c, d, positioningStrategy)
 }
 
-fun <F : KtDiagnosticFactoryN> KtDiagnosticFactoryForDeprecation<F>.chooseFactory(context: DiagnosticContext): F {
+context(context: DiagnosticContext)
+fun <F : KtDiagnosticFactoryN> KtDiagnosticFactoryForDeprecation<F>.chooseFactory(): F {
     return if (context.languageVersionSettings.supportsFeature(deprecatingFeature)) {
         errorFactory
     } else {

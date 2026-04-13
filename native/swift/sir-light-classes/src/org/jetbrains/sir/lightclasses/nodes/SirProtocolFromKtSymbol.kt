@@ -32,6 +32,7 @@ import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
 import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import org.jetbrains.sir.lightclasses.utils.translatedOptInAttributes
 
 internal open class SirProtocolFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -134,6 +135,7 @@ internal class SirMarkerProtocolFromKtSymbol(
         listOfNotNull(
             sirSession.generateTypeBridge(
                 ktSymbol.classId?.asSingleFqName(),
+                kotlinOptIns = ktSymbol.allRequiredOptIns,
                 swiftFqName = swiftFqName,
                 swiftSymbolName = objcClassSymbolName,
             ))
@@ -324,7 +326,7 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
         )
     }
 
-    override val attributes: List<SirAttribute> get() = emptyList()
+    override val attributes: List<SirAttribute> by lazy { this.translatedOptInAttributes }
 
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
 }

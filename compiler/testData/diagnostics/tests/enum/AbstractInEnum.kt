@@ -3,7 +3,7 @@ package abstract
 
 
 enum class MyEnum() {
-    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>INSTANCE<!>;
+    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY!>INSTANCE<!>;
     //properties
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a: Int<!>
     val a1: Int = 1

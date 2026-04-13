@@ -70,12 +70,12 @@ fun t5() : Int {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
-  while (<!NON_TRIVIAL_BOOLEAN_CONSTANT, UNREACHABLE_CODE!>1 > 2<!>)
+  while (<!UNREACHABLE_CODE!>1 > 2<!>)
   <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun t6() : Int {
-  while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 > 2<!>) {
+  while (1 > 2) {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
@@ -83,7 +83,7 @@ fun t6() : Int {
 }
 
 fun t6break() : Int {
-  while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 > 2<!>) {
+  while (1 > 2) {
     break
     <!UNREACHABLE_CODE!>2<!>
   }
@@ -111,7 +111,7 @@ fun t7() : Int {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
-  catch (<!TYPE_MISMATCH!>e : Any<!>) {
+  catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     2
   }
   return 1 // this is OK, like in Java
@@ -122,7 +122,7 @@ fun t8() : Int {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
-  catch (<!TYPE_MISMATCH!>e : Any<!>) {
+  catch (<!THROWABLE_TYPE_MISMATCH!>e : Any<!>) {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
@@ -130,23 +130,23 @@ fun t8() : Int {
 }
 
 fun blockAndAndMismatch() : Boolean {
-  (return true) <!UNREACHABLE_CODE!>|| (return false)<!>
+  (return true) || (<!UNREACHABLE_CODE!>return false<!>)
   <!UNREACHABLE_CODE!>return true<!>
 }
 
 fun tf() : Int {
-  try {<!UNREACHABLE_CODE!>return<!> 1} finally{return 1}
+  try {return 1} finally{return 1}
   <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun failtest(a : Int) : Int {
-  if (fail() <!UNREACHABLE_CODE!>|| true<!>) <!UNREACHABLE_CODE!>{
+  if (fail() || <!UNREACHABLE_CODE!>true<!>) {
 
-  }<!>
+  }
   <!UNREACHABLE_CODE!>return 1<!>
 }
 
-fun foo(a : Nothing) : Unit {
+fun foo(a : Nothing) : <!REDUNDANT_RETURN_UNIT_TYPE!>Unit<!> {
   1
   a
   <!UNREACHABLE_CODE!>2<!>
@@ -156,7 +156,7 @@ fun fail() : Nothing {
   throw java.lang.RuntimeException()
 }
 
-fun nullIsNotNothing() : Unit {
+fun nullIsNotNothing() : <!REDUNDANT_RETURN_UNIT_TYPE!>Unit<!> {
     val x : Int? = 1
     if (x != null) {
          return

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.isJs
@@ -56,5 +59,8 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         configuration.generateRegionComments = true
 
         configuration.filePathsPrefixMap = mapOf(File(".").absolutePath.removeSuffix(".") to "")
+
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageLogLevel.ERROR))
     }
 }

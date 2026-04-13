@@ -14,30 +14,30 @@ open class A {
 
 class B : A() {
     init {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
     }
 
     fun test2() {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
     }
 
     object O {
         fun test() {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
         }
     }
 
     companion object {
         init {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
         }
 
         fun test() {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
         }
 

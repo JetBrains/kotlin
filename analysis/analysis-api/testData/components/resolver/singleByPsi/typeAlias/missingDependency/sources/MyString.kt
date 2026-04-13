@@ -1,6 +1,5 @@
 // KT-65038
 
-// IGNORE_FE10
 
 // MODULE: dependency1
 // MODULE_KIND: Source

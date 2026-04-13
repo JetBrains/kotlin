@@ -19,5 +19,5 @@ public class JavaClass {
     public void setSomething(int value) {}
 }
 
-// IGNORE_STABILITY_K2: candidates
+// IGNORE_STABILITY: candidates
 // ^KT-69962

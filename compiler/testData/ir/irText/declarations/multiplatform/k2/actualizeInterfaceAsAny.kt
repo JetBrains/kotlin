@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
-// FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects +AllowAnyAsAnActualTypeForExpectInterface
 
 // MODULE: common

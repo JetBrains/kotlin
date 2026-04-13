@@ -14,7 +14,7 @@ class B : A() {
 fun test() {
     B::foo checkType { _<KFunction2<B, String, String>>() }
 
-    (B::hashCode)(<!TYPE_MISMATCH!>"No."<!>)
+    (B::hashCode)(<!ARGUMENT_TYPE_MISMATCH!>"No."<!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,

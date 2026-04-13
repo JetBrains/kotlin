@@ -25,6 +25,6 @@ package c
 import a.*
 import b.*
 
-fun test(): <!UNRESOLVED_REFERENCE!>x<!> = d().<!MISSING_DEPENDENCY_CLASS!>x<!>()
+fun test(): <!OVERLOAD_RESOLUTION_AMBIGUITY!>x<!> = d().<!MISSING_DEPENDENCY_CLASS!>x<!>()
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

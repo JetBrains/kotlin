@@ -13,17 +13,17 @@ interface B
 interface C
 
 fun test_1() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("(A) -> kotlin.Any")!>select(
+    select(
         { a: A -> a.toB() },
         { a: A -> a.toC() }
-    )<!>
+    )
 }
 
 fun test_2() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<A, kotlin.Any>")!>select(
+    select(
         A::toB,
         A::toC
-    )<!>
+    )
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,

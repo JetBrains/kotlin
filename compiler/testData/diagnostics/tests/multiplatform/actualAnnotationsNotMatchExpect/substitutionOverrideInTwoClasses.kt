@@ -20,7 +20,7 @@ abstract class Parent<T> {
 
 abstract class Intermediate : Parent<String>()
 
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>WithAnn<!> : Intermediate()
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class WithAnn : Intermediate()
 
 actual class WithoutAnn : Intermediate()
 

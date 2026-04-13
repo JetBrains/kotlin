@@ -32,7 +32,6 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
         builder.forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
             defaultDirectives {
                 +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
-                +AnalysisApiTestDirectives.IGNORE_FE10
             }
         }
     }

@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Nothing?
+          TYPE_ARG T: kotlin.Nothing
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Nothing>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Nothing? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Nothing>
@@ -36,9 +36,9 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] kotlin.Nothing?
+          TYPE_ARG T: kotlin.Nothing?
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<kotlin.Nothing?>]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:kotlin.Nothing? [fake_override]
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Nothing? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Nothing?>
       overridden:
         public open fun bar (): @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<kotlin.Nothing?>
-      VALUE_PARAMETER kind:Regular name:t index:1 type:kotlin.Nothing?
+      VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] kotlin.Nothing?
       overridden:
         public open fun foo (t: @[FlexibleNullability] T of <root>.Java1?): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
@@ -83,9 +83,9 @@ FILE fqName:<root> fileName:/1.kt
         GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] T of <root>.Java1? visibility:public declared in <root>.Java1' type=kotlin.Nothing? superQualifierSymbol=<root>.B origin=null
           receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k5 type:kotlin.Nothing? [val]
-        CALL 'public open fun bar (): kotlin.Nothing? declared in <root>.B' type=kotlin.Nothing? origin=null
+        CALL 'public open fun bar (): @[FlexibleNullability] kotlin.Nothing? declared in <root>.B' type=kotlin.Nothing? origin=null
           ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k6 type:kotlin.Unit [val]
-        CALL 'public open fun foo (t: kotlin.Nothing?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        CALL 'public open fun foo (t: @[FlexibleNullability] kotlin.Nothing?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
           ARG t: GET_VAR 'val k: kotlin.Nothing declared in <root>.test' type=kotlin.Nothing origin=null

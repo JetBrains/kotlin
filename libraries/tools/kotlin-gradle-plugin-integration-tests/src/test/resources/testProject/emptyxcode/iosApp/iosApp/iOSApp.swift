@@ -1,8 +1,6 @@
-import SwiftUI
-
 @main
-struct iOSApp: App {
-    var body: some Scene {
-        WindowGroup { }
+struct iOSApp {
+    static func main() {
+        
     }
 }

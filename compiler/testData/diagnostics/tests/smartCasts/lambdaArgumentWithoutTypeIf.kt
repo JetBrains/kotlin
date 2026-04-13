@@ -8,7 +8,7 @@ fun foo(): Int {
             return@let 1
         }
 
-        <!DEBUG_INFO_SMARTCAST!>value<!> // smart-cast should be here
+        value // smart-cast should be here
     }
     return x
 }

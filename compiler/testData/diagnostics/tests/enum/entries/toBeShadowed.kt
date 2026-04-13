@@ -9,7 +9,7 @@ enum class E05 {
 }
 
 fun test05() {
-    println(E05.entries)
+    println(<!DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER!>E05.entries<!>)
 }
 
 enum class E07(val entries: String) {

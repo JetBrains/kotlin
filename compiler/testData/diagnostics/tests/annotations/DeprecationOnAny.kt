@@ -8,19 +8,19 @@ annotation class OptInMarker
 
 class A {
     @Other
-    @Deprecated("equals")
-    @SinceKotlin("1.2")
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@Deprecated("equals")<!>
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@SinceKotlin("1.2")<!>
     override fun equals(other: Any?): Boolean {
         return super.equals(other)
     }
 
-    @SinceKotlin("1.3")
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@SinceKotlin("1.3")<!>
     override fun hashCode(): Int {
         return super.hashCode()
     }
 
-    @Deprecated("toString")
-    @OptInMarker
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@Deprecated("toString")<!>
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@OptInMarker<!>
     override fun toString(): String {
         return super.toString()
     }

@@ -2,8 +2,8 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect class Foo() {
-    fun foo(p: Int = 1)
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo() {
+    fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>(p: Int = 1)
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -12,7 +12,7 @@ open class Base<T> {
     fun foo(p: T) {}
 }
 
-actual class Foo : Base<Int>()
+actual class Foo : <!DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE!>Base<Int>()<!>
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType,
 primaryConstructor, typeParameter */

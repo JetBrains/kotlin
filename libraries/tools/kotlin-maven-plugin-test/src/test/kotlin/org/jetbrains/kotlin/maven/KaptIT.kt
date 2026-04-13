@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.maven
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.DisplayName
 
+@DisplayName("KAPT annotation processing")
 class KaptIT : KotlinMavenTestBase() {
 
     @MavenTest
@@ -68,6 +69,61 @@ class KaptIT : KotlinMavenTestBase() {
         }
     }
 
+    @MavenTest
+    @DisplayName("KAPT respects includeCompileClasspath=false in kapt mojo configuration")
+    fun testKaptIncludeCompileClasspathDisabledInKaptMojo(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        // first run with no options set
+        testProject("test-kapt-include-compile-classpath-disabled", mavenVersion, buildOptions) {
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertBuildLogContains(
+                    "[INFO] [kapt] Kapt is enabled.",
+                    "[INFO] [kapt] Need to discovery annotation processors in the AP classpath",
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor, example.AnotherAnnotationProcessor",
+                    "[WARNING] Annotation processors discovery from compile classpath is deprecated.",
+                    "Set 'kapt.include.compile.classpath=false' to disable discovery.",
+                    "The following files, containing annotation processors, are not present in KAPT classpath:",
+                    "another-annotation-processor-1.0-SNAPSHOT.jar'",
+                    "Add corresponding dependencies to the <annotationProcessorPaths> section of the kapt configuration."
+                )
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt"
+                )
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/anotherMyClass.kt"
+                )
+            }
+
+            // then run with the includeCompileClasspath disabled
+            build(
+                "package", "-X", "-Dkapt.include.compile.classpath=false",
+                expectedToFail = false
+            ) {
+                assertBuildLogContains(
+                    "plugin:org.jetbrains.kotlin.kapt3:includeCompileClasspath=false",
+                    "[INFO] [kapt] Kapt is enabled.",
+                    "[INFO] [kapt] Need to discovery annotation processors in the AP classpath",
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor",
+                )
+                assertBuildLogDoesNotContain(
+                    "[INFO] [kapt] Annotation processors: example.ExampleAnnotationProcessor, example.AnotherAnnotationProcessor",
+                    "[WARNING] Annotation processors discovery from compile classpath is deprecated.",
+                )
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt"
+                )
+                assertFileDoesNotExist(
+                    "app/target/generated-sources/kaptKotlin/compile/anotherMyClass.kt"
+                )
+            }
+        }
+    }
+    
     @MavenTest
     @DisplayName("KAPT with allopen generates Dagger sources on JDK 8")
     fun testKaptWithAllopenOnJdk8(mavenVersion: TestVersions.Maven) {
@@ -130,6 +186,23 @@ class KaptIT : KotlinMavenTestBase() {
             ) {
                 assertJarExistsAndNotEmpty("target/test-enable-extensions-kapt-allopen-1.0-SNAPSHOT.jar")
                 assertFileExists("target/generated-sources/kapt/compile/coffee/CoffeeMaker_Factory.java")
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("KAPT runs after standard resources are copied and can access them")
+    fun testKaptHasAccessToResources(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-kapt-hasAccessToResources", mavenVersion, buildOptions) {
+            build(
+                "package", "-X",
+                expectedToFail = false
+            ) {
+                assertFileContains(
+                    "app/target/generated-sources/kaptKotlin/compile/MyClass.kt",
+                    "fun MyClass.customToString() = \"OK\""
+                )
             }
         }
     }

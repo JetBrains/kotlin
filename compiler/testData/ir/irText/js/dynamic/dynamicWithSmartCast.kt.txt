@@ -7,7 +7,7 @@ fun test1(d: dynamic): Int {
 
 fun test2(d: dynamic): Int {
   return when {
-    d is Array<*> -> d /*~> Array<out Any?> */.<get-size>()
+    d is Array<*> -> d /*~> Array<*> */.<get-size>()
     else -> -1
   }
 }

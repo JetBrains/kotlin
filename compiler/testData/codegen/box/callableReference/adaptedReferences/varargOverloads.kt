@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 fun foo(vararg ii: Int) = 1
 fun foo(vararg ss: String) = 2

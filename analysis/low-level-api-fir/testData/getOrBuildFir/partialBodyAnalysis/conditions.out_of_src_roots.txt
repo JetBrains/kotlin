@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] conditions.kt
 
         log#(count#.toString#())
     }
-    public final [ResolvedTo(CONTRACTS)] fun log([ResolvedTo(CONTRACTS)] line: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun log([ResolvedTo(STATUS)] line: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -99,4 +99,4 @@ FILE: [ResolvedTo(IMPORTS)] conditions.kt
 
         R|/log|(R|<local>/count|.R|kotlin/Int.toString|())
     }
-    public final [ResolvedTo(CONTRACTS)] fun log([ResolvedTo(CONTRACTS)] line: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun log([ResolvedTo(STATUS)] line: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }

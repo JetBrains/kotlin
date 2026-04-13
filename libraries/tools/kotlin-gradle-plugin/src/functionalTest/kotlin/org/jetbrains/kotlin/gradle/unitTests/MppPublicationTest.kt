@@ -107,7 +107,7 @@ class MppPublicationTest {
         val userAttribute = Attribute.of("userAttribute", String::class.java)
         kotlin.run {
             targets.all { target -> target.attributes { attribute(userAttribute, target.name) } }
-            js(IR)
+            js()
             linuxX64()
             @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
             iosX64()

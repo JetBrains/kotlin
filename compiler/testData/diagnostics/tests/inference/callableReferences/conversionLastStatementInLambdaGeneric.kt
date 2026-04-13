@@ -5,11 +5,11 @@
 
 fun main(b: Boolean) {
     callWithLambda {
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::test1<!>
+        ::test1
     }
 
     callWithLambda {
-        if (b) <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::test1<!> else <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::test2<!>
+        if (b) ::test1 else ::test2
     }
 
     callWithLambda {
@@ -21,7 +21,7 @@ fun main(b: Boolean) {
     }
 
     callWithLambda {
-        (<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::test1<!>)
+        (::test1)
     }
 }
 

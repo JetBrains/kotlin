@@ -62,7 +62,8 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
           GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=<root>.Foo<kotlin.Any> origin=CAST typeOperand=<root>.Foo<kotlin.Any>
-          GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
+          TYPE_OP type=<root>.Bar<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Bar<kotlin.Any>
+            GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
       CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
         ARG <this>: TYPE_OP type=<root>.Foo<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Foo<kotlin.Any>
           GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
@@ -85,7 +86,8 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
           GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=<root>.Foo<kotlin.Any>? origin=CAST typeOperand=<root>.Foo<kotlin.Any>?
-          GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
+          TYPE_OP type=<root>.Bar<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Bar<kotlin.Any>
+            GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
       CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
         ARG <this>: TYPE_OP type=<root>.Foo<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Foo<kotlin.Any>
           CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
@@ -116,7 +118,8 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
           GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         TYPE_OP type=<root>.Foo<kotlin.Any>? origin=CAST typeOperand=<root>.Foo<kotlin.Any>?
-          GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+          TYPE_OP type=<root>.Bar<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Bar<kotlin.Any>
+            GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
       CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
         ARG <this>: TYPE_OP type=<root>.Foo<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Foo<kotlin.Any>
           BLOCK type=kotlin.Any origin=ELVIS

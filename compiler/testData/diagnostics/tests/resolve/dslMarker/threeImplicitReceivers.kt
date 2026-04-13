@@ -41,7 +41,7 @@ fun test() {
             baz {
                 y()
 
-                <!FUNCTION_EXPECTED, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>x<!>()
+                <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>x<!>()
 
                 with(D()) {
                     x()

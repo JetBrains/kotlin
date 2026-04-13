@@ -18,13 +18,13 @@ open class S(
 class A : I by S(
         foo(),
         Nested(),
-        <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>(),
         CONST,
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
 ) {
 
     class Nested {

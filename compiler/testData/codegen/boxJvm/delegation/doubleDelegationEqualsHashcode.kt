@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: JVM_IR
 
 interface A {
     override operator fun equals(other: Any?): Boolean

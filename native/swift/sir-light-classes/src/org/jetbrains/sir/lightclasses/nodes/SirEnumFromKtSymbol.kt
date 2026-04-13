@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -119,6 +120,7 @@ private class SirEnumFromKtSymbol(
             explicitParameters = emptyList(),
             returnType = SirNominalType(SirSwiftModule.int32),
             kotlinFqName = enumFqName.child(Name.identifier("ordinal")),
+            kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = SirParameter(
                 argumentName = "self",
                 type = SirNominalType(this@SirEnumFromKtSymbol),
@@ -303,6 +305,7 @@ private class SirEnumCaseFromKtSymbol(
             explicitParameters = emptyList(),
             returnType = SirType.any,
             kotlinFqName = fqName,
+            kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = null,
             contextParameters = emptyList(),
             extensionReceiverParameter = null,

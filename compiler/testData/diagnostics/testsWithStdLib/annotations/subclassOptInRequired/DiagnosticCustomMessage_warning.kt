@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 @file:OptIn(ExperimentalSubclassOptIn::class)
 
 @RequiresOptIn(message = "API Unstable!", level = RequiresOptIn.Level.WARNING)

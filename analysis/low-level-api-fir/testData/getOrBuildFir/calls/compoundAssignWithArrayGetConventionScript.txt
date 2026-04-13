@@ -12,12 +12,12 @@ FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayGetConventionScript.kts
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compoundAssignWithArrayGetConventionScript.kts>, ScriptTopLevelDeclaration=true] interface A : R|kotlin/Any| {
-            public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract operator [ResolvedTo(STATUS)] fun plusAssign([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
         }
 
         public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compoundAssignWithArrayGetConventionScript.kts>, ScriptTopLevelDeclaration=true] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
-            public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
+            public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] k: R|K|): R|V|
 
         }
 

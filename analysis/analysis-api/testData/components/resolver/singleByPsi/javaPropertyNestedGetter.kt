@@ -17,5 +17,5 @@ class JavaSubClass {
     void setFoo(int v) { foo = v; }
 }
 
-// IGNORE_STABILITY_K2: candidates
+// IGNORE_STABILITY: candidates
 // ^KT-69962

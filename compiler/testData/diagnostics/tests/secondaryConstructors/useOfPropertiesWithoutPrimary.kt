@@ -2,9 +2,9 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     val x: Int
-    val useUnitialized = <!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>x<!> + // reported on each secondary constructor
-                         <!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>y<!> +
-                         <!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>v<!>
+    val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> + // reported on each secondary constructor
+                         <!UNINITIALIZED_VARIABLE!>y<!> +
+                         <!UNINITIALIZED_VARIABLE!>v<!>
     var y: Int
     val v = -1
 
@@ -37,7 +37,7 @@ class A {
 
     //anonymous
     init {
-        <!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>y<!>
+        <!UNINITIALIZED_VARIABLE!>y<!>
     }
 
     // anonymous

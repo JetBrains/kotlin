@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/InnerClassInAnonymous.kt
                 VALUE_PARAMETER kind:Regular name:s index:1 type:kotlin.String
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) declared in <root>.box.<no name provided>.Base'
-                    ARG <this>: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>.Some.<init>' type=<root>.box.<no name provided> origin=null
+                    ARG <this>: GET_VAR '<this>: <root>.box.<no name provided> declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=IMPLICIT_ARGUMENT
                     ARG s: GET_VAR 's: kotlin.String declared in <root>.box.<no name provided>.Some.<init>' type=kotlin.String origin=null
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:local [inner] superTypes:[<root>.box.<no name provided>.Base]' type=kotlin.Unit
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

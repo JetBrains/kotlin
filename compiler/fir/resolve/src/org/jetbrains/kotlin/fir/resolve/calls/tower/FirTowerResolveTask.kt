@@ -67,6 +67,8 @@ internal abstract class FirBaseTowerResolveTask(
 ) : SessionHolder by components {
     private val handler: TowerLevelHandler = TowerLevelHandler()
 
+    protected val companionBlocksAndExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
+
     open fun interceptTowerGroup(towerGroup: TowerGroup) = towerGroup
     open fun onSuccessfulLevel(towerGroup: TowerGroup) {}
 
@@ -200,65 +202,23 @@ internal abstract class FirBaseTowerResolveTask(
         if (collector.isSuccess) onSuccessfulLevel(finalGroup)
         return result == ProcessResult.SCOPE_EMPTY
     }
-}
 
-internal open class FirTowerResolveTask(
-    components: BodyResolveComponents,
-    manager: TowerResolveManager,
-    towerDataElementsForName: TowerDataElementsForName,
-    collector: CandidateCollector,
-    candidateFactory: CandidateFactory,
-) : FirBaseTowerResolveTask(
-    components,
-    manager,
-    towerDataElementsForName,
-    collector,
-    candidateFactory,
-) {
-
-    private val companionExtensionsEnabled = LanguageFeature.CompanionBlocksAndExtensions.isEnabled()
-
-    suspend fun runResolverForQualifierReceiver(
-        info: CallInfo,
-        resolvedQualifier: FirResolvedQualifier
-    ) {
-        val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
-
-        processQualifierScopes(info, qualifierReceiver)
-        processClassifierScope(info, qualifierReceiver)
-
-        // Searching for companion extensions triggers a bunch of resolution tasks.
-        // We skip them for performance reasons when the LF is disabled.
-        if (companionExtensionsEnabled) {
-            enumerateTowerLevelsForCompanionExtensions(
-                info,
-                resolvedQualifier,
-                TowerGroup.QualifierOrClassifier,
-                explicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER
-            )
-        }
-
-        if (resolvedQualifier.symbol != null) {
-            if (info is CallableReferenceInfo && info.lhs is DoubleColonLHS.Type) {
-                val stubReceiver = buildExpressionStub {
-                    source = info.explicitReceiver?.source
-                    this.coneTypeOrNull = info.lhs.type
+    protected suspend fun processCallableScope(info: CallInfo, qualifierReceiver: QualifierReceiver?, group: TowerGroup) {
+        if (qualifierReceiver == null) return
+        val callableScope = qualifierReceiver.callableScope() ?: return
+        processLevel(
+            callableScope.toScopeBasedTowerLevel(
+                constructorFilter = ConstructorFilter.OnlyNested,
+                dispatchReceiverForStatics = when (qualifierReceiver) {
+                    is ClassQualifierReceiver -> ExpressionReceiverValue(qualifierReceiver.explicitReceiver)
+                    else -> null
                 }
-
-                val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
-
-                runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
-            }
-
-            // NB: canBeValue means it's resolved to an object or companion object
-            if (resolvedQualifier.canBeValue && resolvedQualifier.typeArguments.isEmpty()) {
-                runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
-            }
-
-        }
+            ),
+            info, group
+        )
     }
 
-    private suspend fun enumerateTowerLevelsForCompanionExtensions(
+    protected suspend fun enumerateTowerLevelsForCompanionExtensions(
         info: CallInfo,
         resolvedQualifier: FirResolvedQualifier,
         parentGroup: TowerGroup,
@@ -304,21 +264,74 @@ internal open class FirTowerResolveTask(
         }
     }
 
-    private suspend fun processQualifierScopes(
-        info: CallInfo, qualifierReceiver: QualifierReceiver?
+    protected suspend inline fun processScopeForExplicitReceiver(
+        scope: FirScope,
+        explicitReceiverValue: ExpressionReceiverValue,
+        info: CallInfo,
+        towerGroup: TowerGroup,
+        companionExtensionPolicy: CompanionExtensionPolicy,
+        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER,
+        onEmptyLevel: () -> Unit = {}
     ) {
-        if (qualifierReceiver == null) return
-        val callableScope = qualifierReceiver.callableScope() ?: return
         processLevel(
-            callableScope.toScopeBasedTowerLevel(
-                constructorFilter = ConstructorFilter.OnlyNested,
-                dispatchReceiverForStatics = when (qualifierReceiver) {
-                    is ClassQualifierReceiver -> ExpressionReceiverValue(qualifierReceiver.explicitReceiver)
-                    else -> null
-                }
-            ),
-            info, TowerGroup.QualifierOrClassifier
+            scope.toScopeBasedTowerLevel(companionExtensionPolicy = companionExtensionPolicy, extensionReceiver = explicitReceiverValue),
+            info, towerGroup, explicitReceiverKind,
+            onEmptyLevel = onEmptyLevel,
         )
+    }
+}
+
+internal open class FirTowerResolveTask(
+    components: BodyResolveComponents,
+    manager: TowerResolveManager,
+    towerDataElementsForName: TowerDataElementsForName,
+    collector: CandidateCollector,
+    candidateFactory: CandidateFactory,
+) : FirBaseTowerResolveTask(
+    components,
+    manager,
+    towerDataElementsForName,
+    collector,
+    candidateFactory,
+) {
+    suspend fun runResolverForQualifierReceiver(
+        info: CallInfo,
+        resolvedQualifier: FirResolvedQualifier
+    ) {
+        val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
+
+        processCallableScope(info, qualifierReceiver, TowerGroup.QualifierOrClassifier)
+        processClassifierScope(info, qualifierReceiver)
+
+        // Searching for companion extensions triggers a bunch of resolution tasks.
+        // We skip them for performance reasons when the LF is disabled.
+        if (companionBlocksAndExtensionsEnabled) {
+            enumerateTowerLevelsForCompanionExtensions(
+                info,
+                resolvedQualifier,
+                TowerGroup.QualifierOrClassifier,
+                explicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER
+            )
+        }
+
+        if (resolvedQualifier.symbol != null) {
+            if (info is CallableReferenceInfo && info.lhs is DoubleColonLHS.Type) {
+                val stubReceiver = buildExpressionStub {
+                    source = info.explicitReceiver?.source
+                    this.coneTypeOrNull = info.lhs.type
+                }
+
+                val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
+
+                runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
+            }
+
+            // NB: canBeValue means it's resolved to an object or companion object
+            if (resolvedQualifier.canBeValue && resolvedQualifier.typeArguments.isEmpty()) {
+                runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
+            }
+
+        }
     }
 
     private suspend fun processClassifierScope(
@@ -401,7 +414,7 @@ internal open class FirTowerResolveTask(
             onStaticScopeOwnerSymbol = { staticScopeOwnerSymbol, group ->
                 // Searching for companion extensions triggers a bunch of resolution tasks.
                 // We skip them for performance reasons when the LF is disabled.
-                if (companionExtensionsEnabled) {
+                if (companionBlocksAndExtensionsEnabled) {
                     enumerateTowerLevelsForCompanionExtensionsForImplicitReceiver(
                         info,
                         staticScopeOwnerSymbol,
@@ -474,22 +487,6 @@ internal open class FirTowerResolveTask(
                 explicitReceiverKind, parentGroup
             )
         }
-    }
-
-    private suspend inline fun processScopeForExplicitReceiver(
-        scope: FirScope,
-        explicitReceiverValue: ExpressionReceiverValue,
-        info: CallInfo,
-        towerGroup: TowerGroup,
-        companionExtensionPolicy: CompanionExtensionPolicy,
-        explicitReceiverKind: ExplicitReceiverKind = ExplicitReceiverKind.EXTENSION_RECEIVER,
-        onEmptyLevel: () -> Unit = {}
-    ) {
-        processLevel(
-            scope.toScopeBasedTowerLevel(companionExtensionPolicy = companionExtensionPolicy, extensionReceiver = explicitReceiverValue),
-            info, towerGroup, explicitReceiverKind,
-            onEmptyLevel = onEmptyLevel,
-        )
     }
 
     private suspend fun processCandidatesWithGivenImplicitReceiverAsValue(

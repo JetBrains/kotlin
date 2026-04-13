@@ -10,9 +10,9 @@ fun guardWithoutSubject(x: Any) {
     return when {
         <!EXPECTED_CONDITION!>!is String<!> -> Unit
         x is String -> Unit
-        x is BooleanHolder <!UNSUPPORTED_FEATURE!>if x.value<!> -> Unit
+        x is BooleanHolder <!WHEN_GUARD_WITHOUT_SUBJECT!>if x.value<!> -> Unit
         if (x is Boolean) true else false -> Unit
-        else <!UNSUPPORTED_FEATURE!>if x is Boolean<!> -> Unit
+        else <!WHEN_GUARD_WITHOUT_SUBJECT!>if x is Boolean<!> -> Unit
         else -> Unit
     }
 }

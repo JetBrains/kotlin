@@ -19,12 +19,12 @@ fun test1(
 }
 
 fun test2(
-    a: <!UNSUPPORTED!>Array<Nothing><!>?,
-    b: <!UNSUPPORTED!>Array<Nothing?><!>?,
-    c: <!UNSUPPORTED!>Array<in Nothing><!>?,
-    d: <!UNSUPPORTED!>Array<in Nothing?><!>?,
-    e: <!UNSUPPORTED!>Array<out Nothing><!>?,
-    f: <!UNSUPPORTED!>Array<out Nothing?><!>?
+    a: <!UNSUPPORTED!>Array<Nothing>?<!>,
+    b: <!UNSUPPORTED!>Array<Nothing?>?<!>,
+    c: <!UNSUPPORTED!>Array<in Nothing>?<!>,
+    d: <!UNSUPPORTED!>Array<in Nothing?>?<!>,
+    e: <!UNSUPPORTED!>Array<out Nothing>?<!>,
+    f: <!UNSUPPORTED!>Array<out Nothing?>?<!>
 ) {}
 
 fun test3(

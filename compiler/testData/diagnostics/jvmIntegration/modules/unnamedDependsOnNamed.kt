@@ -22,7 +22,7 @@ public class Impl {}
 // ADDITIONAL_JAVA_MODULES: moduleA
 // FILE: usage.kt
 import foo.Foo
-import foo.impl.<!JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE!>Impl<!>
+import foo.impl.Impl
 
 fun usage() {
     Foo()

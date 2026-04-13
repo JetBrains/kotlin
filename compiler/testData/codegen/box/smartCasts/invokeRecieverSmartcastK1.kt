@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 // ISSUE: KT-63709
 
 operator fun String.invoke(unused: String): String = "String.invoke(String)"

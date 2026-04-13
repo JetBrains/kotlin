@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE:-ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 class Foo {

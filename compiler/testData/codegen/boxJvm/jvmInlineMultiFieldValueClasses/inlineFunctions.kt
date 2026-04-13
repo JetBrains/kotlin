@@ -3,7 +3,6 @@
 // CHECK_BYTECODE_LISTING___ // Temporary turn off the directive, revert after the next bootstrapt advance
 // WITH_STDLIB
 // CHECK_BYTECODE_TEXT
-// FIR_IDENTICAL
 // IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
 
 // FILE: caller.kt

@@ -28,9 +28,16 @@ import org.jetbrains.kotlin.psi.KtFile
 import kotlin.reflect.KClass
 
 internal class KaFe10DiagnosticProvider(
-    override val analysisSessionProvider: () -> KaFe10Session
+    override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseSessionComponent<KaFe10Session>(), KaDiagnosticProvider, KaFe10SessionComponent {
-    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
+    @Deprecated("Use KtElement.directDiagnostics instead", replaceWith = ReplaceWith("directDiagnostics(filter)"))
+    override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
+        return directDiagnostics(filter)
+    }
+
+    override fun KtElement.directDiagnostics(
+        filter: KaDiagnosticCheckerFilter,
+    ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
         val bindingContext = analysisContext.analyze(this, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)
         val diagnostics = bindingContext.diagnostics.forElement(this)
         return diagnostics.map { KaFe10Diagnostic(it, token) }
@@ -39,14 +46,18 @@ internal class KaFe10DiagnosticProvider(
     override fun KtFile.collectDiagnostics(
         filter: KaDiagnosticCheckerFilter,
     ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
-        val bindingContext = analysisContext.analyze(this)
-        val result = mutableListOf<KaDiagnosticWithPsi<*>>()
-        for (diagnostic in bindingContext.diagnostics) {
-            if (this == diagnostic.psiFile) {
-                result += KaFe10Diagnostic(diagnostic, token)
+        return diagnostics(filter).toList()
+    }
+
+    override fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
+        sequence {
+            val bindingContext = analysisContext.analyze(this@diagnostics)
+            for (diagnostic in bindingContext.diagnostics) {
+                if (this@diagnostics == diagnostic.psiFile) {
+                    this@sequence.yield(KaFe10Diagnostic(diagnostic, token))
+                }
             }
         }
-        return result
     }
 }
 

@@ -28,18 +28,18 @@ fun main(arg: Any, condition: Boolean) {
     val value = myBuilder {
         b[0] = 123
         a = 45
-        <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY!>a<!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>++<!>
+        a<!NONE_APPLICABLE!>++<!>
         bar(::a)
-        if (<!USELESS_IS_CHECK, USELESS_IS_CHECK!>a is Int<!>) {
+        if (<!USELESS_IS_CHECK!>a is Int<!>) {
             a = 67
-            <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY!>a<!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>--<!>
+            a<!NONE_APPLICABLE!>--<!>
             bar(::a)
         }
         when (condition) {
             true -> a = 87
             false -> a = 65
         }
-        val x by <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>a<!>
+        val x <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> a
 
         change {
             a = 99
@@ -48,24 +48,24 @@ fun main(arg: Any, condition: Boolean) {
 
     val value2 = myBuilder {
         accept("")
-        a = <!TYPE_MISMATCH!>45<!>
+        a = 45
         when (condition) {
-            true -> a = <!TYPE_MISMATCH!>87<!>
-            false -> a = <!TYPE_MISMATCH!>65<!>
+            true -> a = 87
+            false -> a = 65
         }
         change {
-            a = <!TYPE_MISMATCH!>99<!>
+            a = 99
         }
-        if (<!USELESS_IS_CHECK, USELESS_IS_CHECK!>a is Int<!>) {
-            a = <!TYPE_MISMATCH!>67<!>
+        if (a is Int) {
+            a = 67
         }
     }
 
     // See KT-54664
     val value3 = myBuilder {
-        accept(<!TYPE_MISMATCH!>""<!>)
+        accept("")
         a = 45
-        bar(<!TYPE_MISMATCH!>::a<!>)
+        bar(::<!INAPPLICABLE_CANDIDATE!>a<!>)
     }
 
     fun baz(t: Int) {}
@@ -74,7 +74,7 @@ fun main(arg: Any, condition: Boolean) {
         accept("")
         a = 45
         b[0] = 123
-        baz(<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>)
+        baz(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     }
 }
 

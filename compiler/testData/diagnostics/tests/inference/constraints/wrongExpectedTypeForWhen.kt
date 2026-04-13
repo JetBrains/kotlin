@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun foo() {
-    var f: Int = if (true) <!TYPE_MISMATCH!>{ x: Long ->  }<!> else <!TYPE_MISMATCH!>{ x: Long ->  }<!>
+    var f: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> if (true) <!ARGUMENT_TYPE_MISMATCH!>{ x: Long ->  }<!> else { x: Long ->  }
 }
 
 class A {
     var x: Int
-        get(): Int = if (true) <!TYPE_MISMATCH!>{ {42} }<!> else <!TYPE_MISMATCH!>{ {24} }<!>
+        get(): Int = <!RETURN_TYPE_MISMATCH!>if (true) { <!ARGUMENT_TYPE_MISMATCH!>{42}<!> } else { <!ARGUMENT_TYPE_MISMATCH!>{24}<!> }<!>
         set(i: Int) {}
 }
 

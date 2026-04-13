@@ -10,7 +10,7 @@ fun foo(): String? {
             if (true) {
                 Obj()
             } else
-                <!INVALID_IF_AS_EXPRESSION!>if<!> (true) return null // Error, coercion to Unit doesn't propagate inside nested lambdas
+                if (true) return null // Error, coercion to Unit doesn't propagate inside nested lambdas
         }
 
         if (true) {
@@ -26,7 +26,7 @@ fun foo(): String? {
             if (true) {
                 Obj()
             } else
-            <!INVALID_IF_AS_EXPRESSION!>if<!> (true) return null // Error, coercion to Unit doesn't propagate inside nested lambdas
+            if (true) return null // Error, coercion to Unit doesn't propagate inside nested lambdas
         }
     }
 

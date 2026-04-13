@@ -16,7 +16,7 @@ enum class A {
 }
 
 fun test() {
-    A.<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
+    A.entries
 
     with(A) {
         entries

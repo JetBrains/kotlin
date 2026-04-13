@@ -4,7 +4,7 @@
 fun localFun() {
     fun local(): Int = 123
     @IgnorableReturnValue fun localIgnorable() = ""
-    local()
+    <!RETURN_VALUE_NOT_USED!>local<!>()
     localIgnorable()
 }
 
@@ -13,12 +13,12 @@ class Outer {
         class Inner {
             @IgnorableReturnValue fun bar() {
                 fun local() = ""
-                local()
+                <!RETURN_VALUE_NOT_USED!>local<!>()
             }
             fun inner() = ""
         }
-        Inner()
-        Inner().inner()
+        <!RETURN_VALUE_NOT_USED!>Inner<!>()
+        Inner().<!RETURN_VALUE_NOT_USED!>inner<!>()
         Inner().bar()
         return ""
     }
@@ -27,8 +27,8 @@ class Outer {
 }
 
 fun main() {
-    Outer().foo()
-    Outer().bar()
+    Outer().<!RETURN_VALUE_NOT_USED!>foo<!>()
+    Outer().<!RETURN_VALUE_NOT_USED!>bar<!>()
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, integerLiteral, localFunction */

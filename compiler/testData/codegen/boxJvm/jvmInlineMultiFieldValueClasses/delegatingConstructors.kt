@@ -2,7 +2,6 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +JvmInlineMultiFieldValueClasses
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 data class A(val w: Float)
 

@@ -13,24 +13,24 @@ fun testSimpleValInWhenSubject() {
 
 fun testValWithoutInitializerWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
-        is String -> <!DEBUG_INFO_SMARTCAST, UNINITIALIZED_VARIABLE!>y<!>.length
+        is String -> <!UNINITIALIZED_VARIABLE!>y<!>.length
     }
 }
 
 fun testVarInWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>var y = foo()<!>) {
-        is String -> <!DEBUG_INFO_SMARTCAST!>y<!>.length
+        is String -> y.length
     }
 }
 
 fun testDelegatedValInWhenSubject() {
-    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y by <!UNRESOLVED_REFERENCE!>lazy<!> { 42 }<!>) {
+    when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val <!VARIABLE_WITH_NO_TYPE_NO_INITIALIZER!>y<!> by lazy { 42 }<!>) {
     }
 }
 
 fun testExtensionPropertyInWhenSubject() {
-    when (val <!DEBUG_INFO_MISSING_UNRESOLVED, LOCAL_EXTENSION_PROPERTY!>Int<!>.a: String = "") {
-        "" -> a
+    when (val <!LOCAL_EXTENSION_PROPERTY!>Int<!>.a: String = "") {
+        "" -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 }
 

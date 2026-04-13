@@ -4,8 +4,8 @@
 
 fun test() {
     val buildee = buildFromValue(
-        innerBuild <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ setInnerTypeVariable(TargetType()) }<!>,
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ <!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>placeholderExtensionInvokeOnInnerBuildee<!>() }<!>
+        innerBuild { setInnerTypeVariable(TargetType()) },
+        { it.placeholderExtensionInvokeOnInnerBuildee() }
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests

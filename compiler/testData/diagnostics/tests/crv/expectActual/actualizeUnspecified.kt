@@ -30,10 +30,10 @@ fun commonMain() {
 // <init>, x, p: Unspecifed -> MustUse is not allowed
 // ign: Unspecified -> ExplicitlyIgnorable is allowed
 @MustUseReturnValues
-actual class Foo actual constructor() {
-    actual fun x(): String = ""
+actual class Foo <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect constructor(): Foo' defined in 'Foo'; unspecified (implicitly ignorable); 'actual constructor(): Foo' defined in 'Foo'; must-use")!>actual constructor()<!> {
+    actual fun <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect fun x(): String' defined in 'Foo'; unspecified (implicitly ignorable); 'actual fun x(): String' defined in 'Foo'; must-use")!>x<!>(): String = ""
     @IgnorableReturnValue actual fun ign(): String = ""
-    actual val p: Int = 42
+    actual val <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect val p: Int' defined in 'Foo'; unspecified (implicitly ignorable); 'actual val p: Int' defined in 'Foo'; must-use")!>p<!>: Int = 42
     fun notActual(): String = ""
 }
 
@@ -42,11 +42,11 @@ actual fun toplvl(): String = "" // Unspecified -> Unspecified is allowed
 
 fun main() {
     toplvl()
-    Foo()
-    Foo().x()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
-    Foo().p
-    Foo().notActual()
+    Foo().<!RETURN_VALUE_NOT_USED!>p<!>
+    Foo().<!RETURN_VALUE_NOT_USED!>notActual<!>()
     ignToplvl()
 }
 

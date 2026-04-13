@@ -14,12 +14,12 @@ interface Proxy {
 }
 
 open class Intermediate : Base() {
-    val x get() = " "
+    val <!PROPERTY_HIDES_JAVA_FIELD!>x<!> get() = " "
 }
 
 class Derived : Proxy, Intermediate() {
     fun test() {
-        <!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>x<!>
+        x
     }
 }
 

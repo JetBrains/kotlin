@@ -9,8 +9,8 @@ fun test_1() {
         if (s == null) {
             s = "hello"
         }
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast in K1 and K2
-        noInlineRun { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // smartcast in K1 and K2
+        s.length // smartcast in K1 and K2
+        noInlineRun { s.length } // smartcast in K1 and K2
     }
 }
 
@@ -21,7 +21,7 @@ fun test_2_1() {
         if (s == null) {
             s = "hello"
         }
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast in K1 and K2
+        s.length // smartcast in K1 and K2
         noInlineRun { <!SMARTCAST_IMPOSSIBLE!>s<!>.length } // unsafe call in K1 and K2
         s = ""
     }
@@ -34,7 +34,7 @@ fun test_2_2() {
         if (s == null) {
             s = "hello"
         }
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast in K1 and K2
+        s.length // smartcast in K1 and K2
         noInlineRun { <!SMARTCAST_IMPOSSIBLE!>s<!>.length } // unsafe call in K1 and K2
         s = null
     }
@@ -63,8 +63,8 @@ fun test_3_2() {
         } else {
             s = "world"
         }
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast in K1 and K2
-        noInlineRun { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // smartcast in K1 and K2
+        s.length // smartcast in K1 and K2
+        noInlineRun { s.length } // smartcast in K1 and K2
     }
 }
 
@@ -91,19 +91,19 @@ fun test_4_2() {
         } else {
             s = getString()
         }
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast in K1 and K2
-        noInlineRun { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // smartcast in K1 and K2
+        s.length // smartcast in K1 and K2
+        noInlineRun { s.length } // smartcast in K1 and K2
     }
 }
 
 fun test_5() {
-    var s: String? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+    var s: String? = null
 
     for (i in 1..10) {
         s = null
         s = getString()
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length // smartcast in K1 and K2
-        noInlineRun { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // smartcast in K1, unsafe call in K2
+        s.length // smartcast in K1 and K2
+        noInlineRun { <!SMARTCAST_IMPOSSIBLE!>s<!>.length } // smartcast in K1, unsafe call in K2
     }
 }
 

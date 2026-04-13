@@ -42,7 +42,7 @@ fun immutableInitAfterCaptureInline() {
 fun immutableInitAfterCaptureInPlace() {
     val x: String
     invokeInPlace(
-        x = { x.length },
+        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -66,7 +66,7 @@ fun immutableInitAfterCaptureInlineWithNoinline() {
 fun immutableInitAfterCaptureInlineWithCrossinline() {
     val x: String
     invokeInlineWithCrossinline(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -74,7 +74,7 @@ fun immutableInitAfterCaptureInlineWithCrossinline() {
 fun immutableInitAfterCaptureInlineWithT() {
     val x: String
     invokeInlineWithT(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -146,7 +146,7 @@ fun mutableInitAfterCaptureInPlace() {
 fun mutableInitAfterCaptureLater() {
     var x: String
     invokeLater(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -154,7 +154,7 @@ fun mutableInitAfterCaptureLater() {
 fun mutableInitAfterCaptureInlineWithNoinline() {
     var x: String
     invokeInlineWithNoinline(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -162,7 +162,7 @@ fun mutableInitAfterCaptureInlineWithNoinline() {
 fun mutableInitAfterCaptureInlineWithCrossinline() {
     var x: String
     invokeInlineWithCrossinline(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -170,7 +170,7 @@ fun mutableInitAfterCaptureInlineWithCrossinline() {
 fun mutableInitAfterCaptureInlineWithT() {
     var x: String
     invokeInlineWithT(
-        x = { <!UNINITIALIZED_VARIABLE!>x<!>.length },
+        x = { x.length },
         y = if (true) { x = ""; "" } else { x = ""; "" },
     )
 }
@@ -283,7 +283,7 @@ class Later {
 
     init {
         invokeLater(
-            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            x = { immutableBefore.length },
             y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
         )
         invokeLater(
@@ -291,7 +291,7 @@ class Later {
             x = { immutableAfter.length },
         )
         invokeLater(
-            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            x = { mutableBefore.length },
             y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
         )
         invokeLater(
@@ -309,7 +309,7 @@ class NoInline {
 
     init {
         invokeInlineWithNoinline(
-            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            x = { immutableBefore.length },
             y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
         )
         invokeInlineWithNoinline(
@@ -317,7 +317,7 @@ class NoInline {
             x = { immutableAfter.length },
         )
         invokeInlineWithNoinline(
-            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            x = { mutableBefore.length },
             y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
         )
         invokeInlineWithNoinline(
@@ -335,7 +335,7 @@ class CrossInline {
 
     init {
         invokeInlineWithCrossinline(
-            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            x = { immutableBefore.length },
             y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
         )
         invokeInlineWithCrossinline(
@@ -343,7 +343,7 @@ class CrossInline {
             x = { immutableAfter.length },
         )
         invokeInlineWithCrossinline(
-            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            x = { mutableBefore.length },
             y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
         )
         invokeInlineWithCrossinline(
@@ -361,7 +361,7 @@ class InlineWithT {
 
     init {
         invokeInlineWithT(
-            x = { <!UNINITIALIZED_VARIABLE!>immutableBefore<!>.length },
+            x = { immutableBefore.length },
             y = if (true) { immutableBefore = ""; "" } else { immutableBefore = ""; "" },
         )
         invokeInlineWithT(
@@ -369,7 +369,7 @@ class InlineWithT {
             x = { immutableAfter.length },
         )
         invokeInlineWithT(
-            x = { <!UNINITIALIZED_VARIABLE!>mutableBefore<!>.length },
+            x = { mutableBefore.length },
             y = if (true) { mutableBefore = ""; "" } else { mutableBefore = ""; "" },
         )
         invokeInlineWithT(

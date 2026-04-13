@@ -15,10 +15,10 @@ FILE: [ResolvedTo(IMPORTS)] thisExpression_plusAssignWithArrayGetConvention_this
         )
     }
     public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
-        public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|
+        public abstract operator [ResolvedTo(STATUS)] fun plusAssign([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
     }
     public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
-        public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] k: R|K|): R|V|
 
     }

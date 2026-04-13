@@ -3,7 +3,7 @@
 
 <!CONFLICTING_OVERLOADS!>fun <A> topLevelFoo(arg: A?)<!> {}
 <!CONFLICTING_OVERLOADS!>fun <B> topLevelFoo(arg: B)<!> {}
-<!CONFLICTING_OVERLOADS!>fun <C> topLevelFoo(arg: C & Any)<!> {}
+fun <C> topLevelFoo(arg: C & Any) {}
 
 class Klass<T> {
     fun memberFoo(arg: T?) {}
@@ -15,12 +15,12 @@ class Klass<T> {
 
 fun <A> fooA(arg: A?): A {
     <!DEBUG_INFO_EXPRESSION_TYPE("A?")!>fooB(arg)<!>
-    fooC(<!TYPE_MISMATCH("A & Any; A?")!>arg<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("A? (of fun <A> fooA); uninferred C (of fun <C> fooC) & Any")!>arg<!>)
     return null!!
 }
 fun <B> fooB(arg: B): B {
     <!DEBUG_INFO_EXPRESSION_TYPE("B & Any")!>fooA(arg)<!>
-    fooC(<!TYPE_MISMATCH("B & Any; B")!>arg<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>fooC<!>(<!ARGUMENT_TYPE_MISMATCH("B (of fun <B> fooB); uninferred C (of fun <C> fooC) & Any")!>arg<!>)
     return null!!
 }
 fun <C> fooC(arg: C & Any): C {
@@ -34,12 +34,12 @@ fun <C> fooC(arg: C & Any): C {
 
 class RationaleKlass<T> {
     fun fooD(arg: T?) {
-        fooE(<!TYPE_MISMATCH("T; T?")!>arg<!>)
-        fooF(<!TYPE_MISMATCH("T & Any; T?")!>arg<!>)
+        fooE(<!ARGUMENT_TYPE_MISMATCH("T? (of class RationaleKlass<T>); T (of class RationaleKlass<T>)")!>arg<!>)
+        fooF(<!ARGUMENT_TYPE_MISMATCH("T? (of class RationaleKlass<T>); T (of class RationaleKlass<T>) & Any")!>arg<!>)
     }
     fun fooE(arg: T) {
         fooD(arg)
-        fooF(<!TYPE_MISMATCH("T & Any; T")!>arg<!>)
+        fooF(<!ARGUMENT_TYPE_MISMATCH("T (of class RationaleKlass<T>); T (of class RationaleKlass<T>) & Any")!>arg<!>)
     }
     fun fooF(arg: T & Any) {
         fooD(arg)

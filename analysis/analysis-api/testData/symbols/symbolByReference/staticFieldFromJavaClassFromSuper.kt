@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // FILE: BaseClass.java
 public class BaseClass {
     public static int bar = 1;

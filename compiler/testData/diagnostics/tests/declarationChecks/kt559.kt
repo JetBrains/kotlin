@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //KT-559 Forbid abstract method call through super
 
 package kt559

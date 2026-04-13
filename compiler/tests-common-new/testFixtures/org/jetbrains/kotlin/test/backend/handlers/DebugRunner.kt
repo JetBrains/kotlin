@@ -153,7 +153,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
             }
             eventSet.resume()
         }
-        checkSteppingTestResult(frontend, backend, wholeFile, loggedItems, testServices.defaultDirectives)
+        checkSteppingTestResult(backend, wholeFile, loggedItems, testServices.defaultDirectives)
         virtualMachine.resume()
     }
 

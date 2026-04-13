@@ -5,7 +5,7 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    javaClass.<!INVISIBLE_MEMBER!>doSomething<!> {
+    javaClass.<!INVISIBLE_REFERENCE!>doSomething<!> {
         bar()
     }
 }
@@ -13,7 +13,7 @@ fun foo(javaClass: JavaClass) {
 class X : JavaClass() {
     fun foo(other: JavaClass) {
         doSomething { bar() }
-        other.<!INVISIBLE_MEMBER!>doSomething<!> { bar() }
+        other.<!INVISIBLE_REFERENCE!>doSomething<!> { bar() }
     }
 }
 

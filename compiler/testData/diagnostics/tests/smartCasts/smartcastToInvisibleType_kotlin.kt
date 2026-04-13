@@ -16,7 +16,7 @@ class B : PrivateInterface
 
 fun testSmartcast(x: Any) {
     if (x is A || x is B) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>x<!>.foo()
     }
 }
 
@@ -40,8 +40,8 @@ fun testSmartcast(x: Any) {
 }
 
 fun testInference(a: A, b: B) {
-    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!>select(a, b)<!>
-    x.<!INVISIBLE_MEMBER!>foo<!>()
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PrivateInterface")!><!INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING!>select<!>(a, b)<!>
+    x.<!INVISIBLE_REFERENCE!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, disjunctionExpression, functionDeclaration,

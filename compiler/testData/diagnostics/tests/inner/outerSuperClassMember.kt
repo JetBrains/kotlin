@@ -5,7 +5,7 @@ open class Base {
 
 class Derived : Base() {
     class Nested {
-        fun bar() = <!UNRESOLVED_REFERENCE!>foo<!>()
+        fun bar() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>foo<!>()
     }
 }
 

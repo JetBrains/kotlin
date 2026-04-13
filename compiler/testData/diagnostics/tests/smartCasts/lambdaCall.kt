@@ -3,7 +3,7 @@
 fun bar(): Int = {
     var i: Int?
     i = 42
-    <!DEBUG_INFO_SMARTCAST!>i<!>
+    i
 }()
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,

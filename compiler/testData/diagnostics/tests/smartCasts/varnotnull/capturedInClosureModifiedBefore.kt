@@ -10,7 +10,7 @@ fun foo(s: String?) {
     }
     if (x != null) {
         run {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+            x.hashCode()
         }
     }
 }
@@ -19,7 +19,7 @@ fun bar(s: String?) {
     var x = s
     if (x != null) {
         run {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+            x.hashCode()
         }
     }
 }
@@ -31,7 +31,7 @@ fun baz(s: String?) {
             <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
         }
         run {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
             x = null
         }
     }
@@ -41,7 +41,7 @@ fun gaz(s: String?) {
     var x = s
     if (x != null) {
         run {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
             x = null
         }
         run {

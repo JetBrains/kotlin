@@ -4,7 +4,7 @@ fun test1() {
     val nullableString: String? = ""
     val savedSmartCastResult = nullableString != null
     if (savedSmartCastResult) {
-        nullableString<!UNSAFE_CALL!>.<!>length
+        nullableString.length
     }
 }
 
@@ -23,7 +23,7 @@ class A {
 fun test3(a: A){
     val savedSmartCastResult = a.a != null
     if(savedSmartCastResult) {
-        a.a<!UNSAFE_CALL!>.<!>length
+        a.a.length
     }
 }
 
@@ -31,7 +31,7 @@ fun test4() {
     val nullableAny: Any? = ""
     val savedSmartCastResult = (nullableAny!= null && nullableAny is String?)
     if(savedSmartCastResult) {
-        nullableAny.<!UNRESOLVED_REFERENCE!>length<!>
+        nullableAny.length
     }
 }
 

@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // KT-64503
 
 // MODULE: lib

@@ -286,6 +286,10 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             }
         }
     }
+
+    override fun GradleProject.disableFailOnNoDiscoveredTests(gradleVersion: GradleVersion) {
+        // do nothing
+    }
 }
 
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
@@ -328,6 +332,23 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                             it.fileSize() < developmentSize.getValue(it.name)
                         }
                     }
+            }
+        }
+    }
+
+    // For per-module and incremental compilation, generation of startUnitTests does not work
+    // It leads to errors with Gradl 9, because of no tests
+    // KT-85463
+    @OptIn(ExperimentalWasmDsl::class)
+    override fun GradleProject.disableFailOnNoDiscoveredTests(gradleVersion: GradleVersion) {
+        if (gradleVersion < GradleVersion.version("9.0")) return
+        buildScriptInjection {
+            kotlinMultiplatform.wasmJs {
+                nodejs {
+                    testTask {
+                        it.failOnNoDiscoveredTests.set(false)
+                    }
+                }
             }
         }
     }
@@ -623,6 +644,9 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasmJsImportMetaUrlLibrary(gradleVersion: GradleVersion) {
         project("mpp-wasm-js-browser-nodejs", gradleVersion) {
+
+            disableFailOnNoDiscoveredTests(gradleVersion)
+
             build(":assemble", ":wasmJsNodeTest") {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileKotlinWasmJs")
@@ -641,6 +665,8 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasmSyncTaskCopiesMainResourcesToTest(gradleVersion: GradleVersion) {
         project("mpp-wasm-js-browser-nodejs", gradleVersion) {
+            disableFailOnNoDiscoveredTests(gradleVersion)
+
             build(":wasmJsNodeTest") {
                 assertTasksExecuted(":wasmJsNodeTest")
                 assertTasksExecuted(":wasmJsTestTestDevelopmentExecutableCompileSync")
@@ -942,6 +968,8 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             // `:compileKotlinWasmJs` task is not compatible with CC on Gradle 7
             buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
+            disableFailOnNoDiscoveredTests(gradleVersion)
+
             fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()
                     .resolve(NpmProject.PACKAGE_JSON)
@@ -1133,4 +1161,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    abstract fun GradleProject.disableFailOnNoDiscoveredTests(gradleVersion: GradleVersion)
 }

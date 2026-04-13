@@ -18,7 +18,7 @@ fun main(a: A<String>, c: C) {
     val x2 = generate {
         predicate(a, this) { x ->
             // USELESS_IS_CHECK is errorenously reported in K1
-            <!USELESS_IS_CHECK!>x is B<!>
+            x is B
         }
 
         yield(c)

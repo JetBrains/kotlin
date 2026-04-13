@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun <F : CharSequence> F.bar() {}
 
 inline fun <reified T : CharSequence> test_1(x: Any) {

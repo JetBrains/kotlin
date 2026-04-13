@@ -38,7 +38,7 @@ fun test() {
 // MODULE: m3()(m2)
 // FILE: c.kt
 
-import <!UNRESOLVED_REFERENCE!>p<!>.*
+import <!UNRESOLVED_IMPORT!>p<!>.*
 
 fun test3() {
     val _a = <!UNRESOLVED_REFERENCE!>a<!>
@@ -47,10 +47,10 @@ fun test3() {
     <!UNRESOLVED_REFERENCE!>B<!>()
 
     val inst = <!UNRESOLVED_REFERENCE!>A<!>()
-    val ia = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>
-    val iv = <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>v<!>
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>B<!>()
+    val ia = inst.a
+    val iv = inst.v
+    inst.a()
+    inst.B()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

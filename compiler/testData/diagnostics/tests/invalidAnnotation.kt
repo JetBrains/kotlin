@@ -7,11 +7,11 @@ import java.io.*
 
 class X<K, V> constructor() : Closeable {
 
-    @Throws(IOException::claut(key: K, value: V) {
-    }
+    @Throws(IOException::<!UNRESOLVED_REFERENCE!>claut<!><!SYNTAX!>(<!UNRESOLVED_REFERENCE!>key<!><!SYNTAX{LT}!>: K<!>, <!UNRESOLVED_REFERENCE!>value<!><!SYNTAX{LT}!>: V<!>) {
+    }<!><!SYNTAX!><!>
 
     @Throws(IOException::class)
-    override fun close() {}
+    <!WRONG_MODIFIER_TARGET!>override<!> fun <!ANONYMOUS_FUNCTION_WITH_NAME!>close<!>() {}<!SYNTAX!><!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, localFunction, nullableType, override,

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Wrapper {
     private val dummy = object : Bar {}
     private val bar = object : Bar by dummy {}

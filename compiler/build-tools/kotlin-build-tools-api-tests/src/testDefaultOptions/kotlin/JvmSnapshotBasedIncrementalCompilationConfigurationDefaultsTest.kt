@@ -22,24 +22,23 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val icConfiguration = kotlinToolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path("."))
             .snapshotBasedIcConfigurationBuilder(Path("."), SourcesChanges.Unknown, emptyList()).build()
-        testDefaults(icConfiguration.toUnifiedAccessor())
+        testDefaults(icConfiguration)
     }
 
-    @Test
-    fun testDefaultOptionsOnLegacyObject() {
-        val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        @Suppress("DEPRECATION") val icConfiguration = kotlinToolchains.jvm.createJvmCompilationOperation(emptyList(), Path("."))
-            .createSnapshotBasedIcOptions()
-        testDefaults(icConfiguration.toUnifiedAccessor())
-    }
-
-    private fun testDefaults(icConfiguration: HasSnapshotBasedIcOptionsAccessor) {
+    @Suppress("DEPRECATION")
+    private fun testDefaults(icConfiguration: JvmSnapshotBasedIncrementalCompilationConfiguration) {
+        assertEquals(null, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.ROOT_PROJECT_DIR])
         assertEquals(null, icConfiguration[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR])
+        assertEquals(null, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.MODULE_BUILD_DIR])
         assertEquals(null, icConfiguration[BaseIncrementalCompilationConfiguration.MODULE_BUILD_DIR])
         assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.PRECISE_JAVA_TRACKING])
+        assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
         assertEquals(false, icConfiguration[BaseIncrementalCompilationConfiguration.BACKUP_CLASSES])
+        assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.KEEP_IC_CACHES_IN_MEMORY])
         assertEquals(false, icConfiguration[BaseIncrementalCompilationConfiguration.KEEP_IC_CACHES_IN_MEMORY])
+        assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
         assertEquals(false, icConfiguration[BaseIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(null, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.OUTPUT_DIRS])
         assertEquals(null, icConfiguration[BaseIncrementalCompilationConfiguration.OUTPUT_DIRS])
         assertEquals(false, icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES])
         @OptIn(ExperimentalCompilerArgument::class)
@@ -51,29 +50,19 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
         )
         @OptIn(ExperimentalCompilerArgument::class)
         assertEquals(
+            false,
+            icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM]
+        )
+        @OptIn(ExperimentalCompilerArgument::class)
+        assertEquals(
             true,
             icConfiguration[BaseIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]
         )
+        @OptIn(ExperimentalCompilerArgument::class)
+        assertEquals(
+            true,
+            icConfiguration[JvmSnapshotBasedIncrementalCompilationConfiguration.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION]
+        )
         assertEquals(false, icConfiguration[BaseIncrementalCompilationConfiguration.TRACK_CONFIGURATION_INPUTS])
-    }
-}
-
-internal interface HasSnapshotBasedIcOptionsAccessor {
-    operator fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V
-    operator fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V
-}
-
-internal fun JvmSnapshotBasedIncrementalCompilationConfiguration.toUnifiedAccessor(): HasSnapshotBasedIcOptionsAccessor {
-    return object : HasSnapshotBasedIcOptionsAccessor {
-        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
-        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
-    }
-}
-
-@Suppress("DEPRECATION")
-internal fun org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.toUnifiedAccessor(): HasSnapshotBasedIcOptionsAccessor {
-    return object : HasSnapshotBasedIcOptionsAccessor {
-        override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
-        override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V = this@toUnifiedAccessor[key]
     }
 }

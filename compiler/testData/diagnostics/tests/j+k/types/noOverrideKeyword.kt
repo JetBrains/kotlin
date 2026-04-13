@@ -11,7 +11,7 @@ public interface JavaInterface<V> {
 
 // FILE: main.kt
 interface KotlinInterface<X> : JavaInterface<X> {
-    override <!SYNTAX!><<!><!SYNTAX!>T<!><!SYNTAX!>><!> fun <!VIRTUAL_MEMBER_HIDDEN!>interfaceMethod<!>(x: X)
+    override <!SYNTAX!><<!><!SYNTAX!>T<!><!SYNTAX!>><!> fun interfaceMethod(x: X)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, typeParameter */

@@ -2,7 +2,7 @@
 open class SuperFoo {
     public fun bar(): String {
         if (this is Foo) {
-            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>superFoo<!>()
+            superFoo()
             return baz()
         }
         return baz()

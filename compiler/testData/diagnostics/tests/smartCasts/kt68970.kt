@@ -10,16 +10,16 @@ fun <K, V> takeB(p: B<K, A<V>>) {}
 
 fun <K, V> test(w: B<K, A<V>>, b: Boolean) {
     val a = if (b) w else foo()
-    takeB(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    takeB(a)
 
     val a2 = when {
         b -> w
         else -> foo()
     }
-    takeB(<!DEBUG_INFO_SMARTCAST!>a2<!>)
+    takeB(a2)
 
     val a3 = select(w, foo())
-    takeB(<!TYPE_MISMATCH!>a3<!>)
+    takeB(a3)
 }
 
 fun <T> select(vararg x: T): T = x[0]

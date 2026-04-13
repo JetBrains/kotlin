@@ -7,10 +7,10 @@ class TestClass {
 }
 
 fun <T> test(value: T, test: TestClass): T {
-    <!UNREACHABLE_CODE!>val x =<!> test { return value }
-    <!UNREACHABLE_CODE!>x checkType { _<Nothing>() }<!>
+    val x = test { return value }
+    x checkType { _<Nothing>() }
 
-    <!UNREACHABLE_CODE!>return value<!>
+    return value
 }
 
 // ---

@@ -8,6 +8,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.fastForEach
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runner.Runner
@@ -116,7 +117,8 @@ private class RuntimeTestCompiler(
                 Classpath.jarFor<kotlinx.coroutines.test.TestDispatcher>(), // kotlinx-coroutines-test
                 Classpath.jarFor(kotlin.test.asserter::class.java.canonicalName), // kotlin-test metadata
                 Classpath.jarFor<kotlin.test.Asserter>(), // kotlin-test
-                Classpath.jarFor<Test>() // junit
+                Classpath.jarFor<Test>(), // junit
+                Classpath.jarFor<SmokeTest>() // test-federation-runtime
             )
         )
 
@@ -133,8 +135,6 @@ private class RuntimeTestCompiler(
             if (generatedFile.relativePath.endsWith(".class")) {
                 val className = generatedFile.relativePath.removeSuffix(".class").replace('/', '.')
                 classLoader.defineClass(className, generatedFile.asByteArray())
-            } else {
-                null
             }
         }
 

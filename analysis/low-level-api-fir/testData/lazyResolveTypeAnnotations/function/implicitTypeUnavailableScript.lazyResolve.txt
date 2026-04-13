@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailableScript.kts
             private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] get(): <implicit>
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
         }
 
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailableScript.kts
             private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
                 private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] get(): <implicit>
 
-            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|lowlevel/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
         }
 
@@ -442,4 +442,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeUnavailableScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun implicitType(): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|) [evaluated = String(return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|) [evaluated = String(nested return type str)])  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|) [evaluated = String(nested nested return type str)])  kotlin/Int>>| {
             ^implicitType Q|lowlevel/Obj|.R|lowlevel/Obj.explicitType|()
         }
-

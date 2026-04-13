@@ -343,50 +343,6 @@ interface KotlinDependencyHandler : HasProject {
     fun project(notation: Map<String, Any?>): ProjectDependency
 
     /**
-     * @suppress
-     */
-    @Deprecated(
-        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation)"),
-        level = DeprecationLevel.ERROR,
-    )
-    fun enforcedPlatform(notation: Any): Dependency =
-        project.dependencies.enforcedPlatform(notation)
-
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.enforcedPlatform(notation, configureAction)"),
-        level = DeprecationLevel.ERROR,
-    )
-    fun enforcedPlatform(notation: Any, configureAction: Action<in Dependency>): Dependency =
-        project.dependencies.enforcedPlatform(notation, configureAction)
-
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.platform(notation)"),
-        level = DeprecationLevel.ERROR,
-    )
-    fun platform(notation: Any): Dependency =
-        project.dependencies.platform(notation)
-
-    /**
-     * @suppress
-     */
-    @Deprecated(
-        "Scheduled for removal in Kotlin 2.3. Check KT-58759",
-        replaceWith = ReplaceWith("project.dependencies.platform(notation, configureAction)"),
-        level = DeprecationLevel.ERROR,
-    )
-    fun platform(notation: Any, configureAction: Action<in Dependency>): Dependency =
-        project.dependencies.platform(notation, configureAction)
-
-    /**
      * Creates a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
      *
      * Note: The created dependency should be manually added to this entity using other methods from this DSL:

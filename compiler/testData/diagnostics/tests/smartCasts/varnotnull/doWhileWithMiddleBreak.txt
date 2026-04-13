@@ -1,4 +1,0 @@
-package
-
-public fun foo(/*0*/ pp: kotlin.String?): kotlin.Int
-public fun x(): kotlin.Boolean

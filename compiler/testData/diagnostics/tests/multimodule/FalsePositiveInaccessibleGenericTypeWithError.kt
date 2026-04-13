@@ -21,7 +21,7 @@ fun register(owner: Owner<*>) {}
 // FILE: user.kt
 
 fun test(some: Some<String>) {
-    register(some.g)
+    register(some.<!MISSING_DEPENDENCY_CLASS!>g<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, propertyDeclaration,

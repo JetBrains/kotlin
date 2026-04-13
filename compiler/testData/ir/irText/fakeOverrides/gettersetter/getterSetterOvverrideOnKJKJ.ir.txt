@@ -122,7 +122,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public final b: kotlin.Boolean declared in <root>.Java3
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.KotlinClass2
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java3
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-b> (): kotlin.Boolean declared in <root>.Java3
@@ -218,10 +218,10 @@ FILE fqName:<root> fileName:/1.kt
     BLOCK_BODY
       VAR name:k1 type:kotlin.Int [val]
         CALL 'public open fun getA (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-          ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       VAR name:k2 type:kotlin.Boolean [val]
         CALL 'public open fun isB (): kotlin.Boolean declared in <root>.A' type=kotlin.Boolean origin=GET_PROPERTY
-          ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
       CALL 'public open fun setA (t: kotlin.Int): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
         ARG <this>: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         ARG t: CONST Int type=kotlin.Int value=2
@@ -230,10 +230,10 @@ FILE fqName:<root> fileName:/1.kt
         ARG t: CONST Boolean type=kotlin.Boolean value=true
       VAR name:k3 type:kotlin.Int [val]
         CALL 'public open fun getA (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
-          ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       VAR name:k4 type:kotlin.Boolean [val]
         CALL 'public open fun isB (): kotlin.Boolean declared in <root>.B' type=kotlin.Boolean origin=GET_PROPERTY
-          ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
       CALL 'public open fun setA (t: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=EQ
         ARG <this>: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         ARG t: CONST Int type=kotlin.Int value=2
@@ -245,13 +245,13 @@ FILE fqName:<root> fileName:/1.kt
           ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       VAR name:k6 type:kotlin.Boolean [val]
         CALL 'public open fun isB (): kotlin.Boolean declared in <root>.C' type=kotlin.Boolean origin=GET_PROPERTY
-          ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'public open fun setB (t: kotlin.Boolean): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
         ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         ARG t: CONST Boolean type=kotlin.Boolean value=true
       VAR name:k7 type:kotlin.Int [val]
         CALL 'public open fun getA (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
-          ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=IMPLICIT_ARGUMENT
+          ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
       CALL 'public open fun setA (t: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
         ARG <this>: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         ARG t: CONST Int type=kotlin.Int value=2

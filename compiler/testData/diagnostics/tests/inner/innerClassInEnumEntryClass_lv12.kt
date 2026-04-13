@@ -5,13 +5,13 @@ enum class Enum {
     ENTRY_WITH_CLASS {
         inner class TestInner
 
-        <!NESTED_CLASS_DEPRECATED!>class TestNested<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>class TestNested<!>
 
-        <!NESTED_CLASS_DEPRECATED!>interface TestInterface<!>
+        <!NESTED_CLASS_NOT_ALLOWED!>interface TestInterface<!>
 
-        <!NESTED_CLASS_DEPRECATED!>object TestObject<!>
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object TestObject<!>
 
-        <!NESTED_CLASS_DEPRECATED!>enum class TestEnumClass<!> {
+        <!WRONG_MODIFIER_TARGET!>enum<!> class TestEnumClass {
             OTHER_ENTRY
         }
 

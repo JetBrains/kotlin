@@ -53,9 +53,9 @@ class NonAnnotated {
 }
 
 fun usage() {
-    Usage().method()
+    Usage().<!RETURN_VALUE_NOT_USED!>method<!>()
     Usage().ignored()
-    KotlinUsage().method()
+    KotlinUsage().<!RETURN_VALUE_NOT_USED!>method<!>()
     KotlinUsage().ignored()
     NonAnnotated().method()
 }

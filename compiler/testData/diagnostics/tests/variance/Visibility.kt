@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 interface Test<in I, out O> {
     val internal_val: <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>
     public val public_val: <!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>

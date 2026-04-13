@@ -10,14 +10,14 @@ public class Jaba {
 
 // FILE: test.kt
 open class My : Jaba() {
-    private val a: String = "FAIL"
-    private val b: String = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!>: String = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>b<!>: String = "FAIL"
 }
 
 class Some : My() {
     fun soo(): String {
-        super<My>.b = "K"
-        return super<My>.a + super<My>.b
+        super<My>.<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>b<!> = "K"
+        return super<My>.<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> + super<My>.<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>b<!>
     }
 }
 

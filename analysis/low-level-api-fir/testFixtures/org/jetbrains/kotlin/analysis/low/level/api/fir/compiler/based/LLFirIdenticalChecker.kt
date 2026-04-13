@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
-import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractFirIdenticalChecker
+import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractAlternativeKtFileIdenticalChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.utils.isLLFirTestData
+import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import java.io.File
 
 /**
@@ -18,19 +19,17 @@ import java.io.File
  * As the `LL_FIR_DIVERGENCE` directive only exists in `.ll.kt` files, [LLFirIdenticalChecker] ignores this directive when comparing the
  * LL FIR file's content to the base file's content.
  */
-class LLFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
+class LLFirIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtFileIdenticalChecker(testServices) {
     override fun checkTestDataFile(testDataFile: File) {
         if (!testDataFile.isLLFirTestData) return
 
-        val helper = Helper()
-        val originalFile = helper.getClassicFileToCompare(testDataFile)
-        val baseFile = helper.getFirFileToCompare(originalFile).takeIf { it.exists() } ?: originalFile
+        val baseFile = testDataFile.originalTestDataFile
 
         // `readContentIgnoringLlFirDivergenceDirective` trims whitespace after the `LL_FIR_DIVERGENCE` directive to allow blank lines
         // after the directive. Hence, the base content's starting whitespace needs to be trimmed as well, otherwise file contents might
         // differ in their starting whitespace.
-        val baseContent = helper.readContent(baseFile, trimLines = true).trimStart()
-        val llContent = helper.readContent(testDataFile, trimLines = false).removeLlFirDivergenceDirective(trimLines = true)
+        val baseContent = readContent(baseFile, trimLines = true).trimStart()
+        val llContent = readContent(testDataFile, trimLines = false).removeLlFirDivergenceDirective(trimLines = true)
         if (baseContent == llContent) {
             testServices.assertions.fail {
                 "`${testDataFile.name}` and `${baseFile.name}` are identical. Remove `$testDataFile`."

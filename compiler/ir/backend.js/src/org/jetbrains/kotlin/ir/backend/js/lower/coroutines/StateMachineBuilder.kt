@@ -569,7 +569,7 @@ class StateMachineBuilder(
         )
     }
 
-    private fun <E : IrExpression?> transformArguments(arguments: MutableList<E>) {
+    private inline fun <reified E : IrExpression?> transformArguments(arguments: MutableList<E>) {
         var suspendableCount = arguments.fold(0) { r, n -> if (n != null && n in suspendableNodes) r + 1 else r }
         arguments.replaceAll { arg ->
             if (arg.isPure(false)) arg else {

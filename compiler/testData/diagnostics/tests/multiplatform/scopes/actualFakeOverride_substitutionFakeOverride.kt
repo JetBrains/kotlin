@@ -8,7 +8,7 @@ expect class Foo {
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
-actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : A
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Foo<!> : A
 
 interface A : B<Int> {
     override fun getDefault(): Int = 3

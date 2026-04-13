@@ -2,24 +2,24 @@
 // LANGUAGE: +NestedTypeAliases +LocalTypeAliases
 
 fun conflicts() {
-    class <!REDECLARATION!>C<!>
-    class <!REDECLARATION!>C<!>
+    class <!CONFLICTING_OVERLOADS, REDECLARATION!>C<!>
+    class <!CONFLICTING_OVERLOADS, REDECLARATION!>C<!>
 
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias <!REDECLARATION!>TA<!> = String<!>
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias <!REDECLARATION!>TA<!> = String<!>
+    typealias <!REDECLARATION!>TA<!> = String
+    typealias <!REDECLARATION!>TA<!> = String
 
     class <!REDECLARATION!>ClassConflictsTA<!>
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias <!REDECLARATION!>ClassConflictsTA<!> = Int<!>
+    typealias <!REDECLARATION!>ClassConflictsTA<!> = Int
 }
 
 fun noConflics(condition: Boolean) {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias TA = Char<!>
+    typealias TA = Char
 
     if (condition) {
-        <!TOPLEVEL_TYPEALIASES_ONLY!>typealias TA = String<!>
+        typealias TA = String
         val s: TA = "string"
     } else {
-        <!TOPLEVEL_TYPEALIASES_ONLY!>typealias TA = Int<!>
+        typealias TA = Int
         val i: TA = 42
     }
 

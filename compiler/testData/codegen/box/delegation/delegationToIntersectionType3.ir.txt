@@ -204,8 +204,8 @@ FILE fqName:<root> fileName:/delegationToIntersectionType3.kt
                     public abstract fun foo (): T of <root>.B declared in <root>.B
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.CharSequence declared in <root>.test.<no name provided>'
-                      CALL 'public abstract fun foo (): T2 of <root>.BBB declared in <root>.BBB' type=kotlin.String origin=null
-                        ARG <this>: TYPE_OP type=<root>.BBB<*> origin=IMPLICIT_CAST typeOperand=<root>.BBB<*>
+                      CALL 'public abstract fun foo (): T of <root>.B declared in <root>.B' type=kotlin.CharSequence origin=null
+                        ARG <this>: TYPE_OP type=<root>.B<kotlin.CharSequence> origin=IMPLICIT_CAST typeOperand=<root>.B<kotlin.CharSequence>
                           GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:kotlin.Any visibility:private [final] declared in <root>.test.<no name provided>' type=kotlin.Any origin=null
                             receiver: GET_VAR '<this>: <root>.test.<no name provided> declared in <root>.test.<no name provided>.foo' type=<root>.test.<no name provided> origin=null
                 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

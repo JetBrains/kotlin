@@ -11,6 +11,7 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
     copyCommonCompilerArguments(from, to)
 
     to.classpath = from.classpath
+    to.compileIr = from.compileIr
     to.destination = from.destination
     to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
     to.expectBuiltinsAsPartOfStdlib = from.expectBuiltinsAsPartOfStdlib

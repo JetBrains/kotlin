@@ -47,8 +47,8 @@ fun test3() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        x.length
-        x += ""
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        <!SMARTCAST_IMPOSSIBLE!>x<!> += ""
     }
 }
 
@@ -74,8 +74,8 @@ fun test6() {
     var x: Any? = materialize()
     require(x is Int)
     runWithoutContract {
-        x.inc()
-        x *= 1
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.inc()
+        <!SMARTCAST_IMPOSSIBLE!>x<!> *= 1
     }
 }
 
@@ -101,8 +101,8 @@ fun test9() {
     var x: Any? = materialize()
     require(x is Int)
     runWithoutContract {
-        x.inc()
-        x %= 1
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.inc()
+        <!SMARTCAST_IMPOSSIBLE!>x<!> %= 1
     }
 }
 
@@ -184,7 +184,7 @@ fun test18() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        x += ""
+        <!SMARTCAST_IMPOSSIBLE!>x<!> += ""
         x.length
     }
 }
@@ -240,7 +240,7 @@ fun test24() {
     var x: Any? = materialize()
     require(x is String)
     runWithoutContract {
-        x.length
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
     }
     x += ""
 }
@@ -335,7 +335,7 @@ fun test34() {
     var y = x
     atLeastOnce {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y += ""
     }
 }
@@ -345,7 +345,7 @@ fun test35() {
     var y = x
     exactlyOnce {
         require(y is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
         y += ""
     }
 }
@@ -356,7 +356,7 @@ fun test36() {
     runWithoutContract {
         require(y is String)
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        y += ""
+        y <!UNRESOLVED_REFERENCE!>+=<!> ""
     }
 }
 
@@ -365,7 +365,7 @@ fun test37() {
     var y = x
     atLeastOnce {
         require(y is Int)
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
         y++
     }
 }
@@ -375,7 +375,7 @@ fun test38() {
     var y = x
     exactlyOnce {
         require(y is Int)
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
         y++
     }
 }
@@ -385,7 +385,7 @@ fun test39() {
     var y = x
     runWithoutContract {
         require(y is Int)
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
         y++
     }
 }
@@ -398,7 +398,7 @@ fun test40() {
     atLeastOnce {
         require(y is String)
         y += ""
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -408,7 +408,7 @@ fun test41() {
     exactlyOnce {
         require(y is String)
         y += ""
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -417,7 +417,7 @@ fun test42() {
     var y = x
     runWithoutContract {
         require(y is String)
-        y += ""
+        y <!UNRESOLVED_REFERENCE!>+=<!> ""
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
@@ -428,7 +428,7 @@ fun test43() {
     atLeastOnce {
         require(y is Int)
         y++
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
     }
 }
 
@@ -438,7 +438,7 @@ fun test44() {
     exactlyOnce {
         require(y is Int)
         y++
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
     }
 }
 
@@ -448,7 +448,7 @@ fun test45() {
     runWithoutContract {
         require(y is Int)
         y++
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.inc()
     }
 }
 

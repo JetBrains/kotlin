@@ -16,9 +16,7 @@ fun test(x: I1) {
   when {
     x !is I2 -> return Unit
   }
-  // COMPOSITE {
-  val tmp_0: I2 = x /*as I2 */
-  val c1: Int = component1(/* <this> = tmp_0 /*as I1 */ */)
-  val c2: String = component2(/* <this> = tmp_0 */)
-  // }
+  val tmp_0: I1 = x
+  val c1: Int = component1(/* <this> = tmp_0 */)
+  val c2: String = component2(/* <this> = tmp_0 /*as I2 */ */)
 }

@@ -13,13 +13,13 @@ interface FooDerived: Foo<String>
 
 class Unspecialized<Y> : Foo<Y>
 
-open class <!EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE, EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE!>UnspecializedFromDerived<!> : FooDerived
+open class UnspecializedFromDerived : FooDerived
 
-abstract class <!EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE, EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE!>AbstractUnspecializedFromDerived<!> : FooDerived
+abstract class AbstractUnspecializedFromDerived : FooDerived
 
-open class <!EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE, EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE!>Specialized<!> : Foo<String>
+open class Specialized : Foo<String>
 
-abstract class <!EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE, EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE!>AbstractSpecialized<!> : Foo<String>
+abstract class AbstractSpecialized : Foo<String>
 
 
 @JvmDefaultWithoutCompatibility

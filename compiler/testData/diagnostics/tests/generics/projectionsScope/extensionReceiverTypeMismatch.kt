@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class A<T> {
     fun T.foo() {}
     fun Out<T>.bar() {}

@@ -3,7 +3,7 @@ class My {
     val x: String
 
     constructor() {
-        val temp = <!DEBUG_INFO_LEAKING_THIS!>this<!>
+        val temp = this
         x = bar(temp)
     }
 

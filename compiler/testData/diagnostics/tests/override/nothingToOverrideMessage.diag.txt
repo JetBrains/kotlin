@@ -1,55 +1,88 @@
-/nothingToOverrideMessage.kt:14:1: error: class 'Simple' is not abstract and does not implement abstract member public abstract fun foo(s: String): Unit defined in I
-class Simple : I {
-^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:15:5: error: 'foo' overrides nothing
-    override fun foo() {}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:19:5: error: 'foo' overrides nothing
-    override fun foo() {}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:23:1: error: class 'OverloadedMethods' is not abstract and does not implement abstract member public abstract fun bar(a: String): Unit defined in I
-class OverloadedMethods : I {
-^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:24:5: error: 'bar' overrides nothing
-    override fun bar(a: Int) {}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:27:1: error: class 'DefaultParameters' is not abstract and does not implement abstract member public abstract fun baz(a: Int = ...): Unit defined in I
-class DefaultParameters : I {
-^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:28:5: error: 'baz' overrides nothing
-    override fun baz(a: String) {}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:31:1: error: class 'VarargParameters' is not abstract and does not implement abstract member public abstract fun qux(vararg a: String): Unit defined in I
-class VarargParameters : I {
-^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:32:5: error: 'qux' overrides nothing
-    override fun qux(a: String){}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:35:1: error: class 'FunctionalType' is not abstract and does not implement abstract member public abstract fun quux(a: (s: String) -> Unit): Unit defined in I
-class FunctionalType : I {
-^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:36:5: error: 'quux' overrides nothing
-    override fun quux(a: ()->Any){}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:39:1: error: class 'ExtensionFunction' is not abstract and does not implement abstract member public abstract fun String.corge(): Unit defined in I
-class ExtensionFunction: I {
-^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:40:5: error: 'corge' overrides nothing
-    override fun Any.corge(){}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:47:1: error: class 'GenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: R): Unit defined in Generic
-class GenericOverride<R> : Generic<R> {
-^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:48:5: error: 'foo' overrides nothing
-    override fun foo() {}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:51:1: error: class 'NonGenericOverride' is not abstract and does not implement abstract member public abstract fun foo(t: String): Unit defined in Generic
-class NonGenericOverride : Generic<String> {
-^^^^^^^^^^^^^^^^^^^^^^^^
-/nothingToOverrideMessage.kt:52:5: error: 'foo' overrides nothing
-    override fun foo() {}
-    ^^^^^^^^
-/nothingToOverrideMessage.kt:60:5: error: 'foo' overrides nothing
-    override fun foo() {}
-    ^^^^^^^^
+/nothingToOverrideMessage.kt:(262,274): error: Class 'Simple' is not abstract and does not implement abstract members:
+fun foo(s: String): Unit
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+fun baz(a: Int = ...): Unit
+fun qux(vararg a: String): Unit
+fun quux(a: (String) -> Unit): Unit
+fun String.corge(): Unit
 
+/nothingToOverrideMessage.kt:(285,293): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(s: String): Unit
+
+/nothingToOverrideMessage.kt:(332,340): error: 'foo' overrides nothing.
+
+/nothingToOverrideMessage.kt:(383,406): error: Class 'OverloadedMethods' is not abstract and does not implement abstract members:
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+fun foo(s: String): Unit
+fun baz(a: Int = ...): Unit
+fun qux(vararg a: String): Unit
+fun quux(a: (String) -> Unit): Unit
+fun String.corge(): Unit
+
+/nothingToOverrideMessage.kt:(417,425): error: 'bar' overrides nothing. Potential signatures for overriding:
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+
+/nothingToOverrideMessage.kt:(448,471): error: Class 'DefaultParameters' is not abstract and does not implement abstract members:
+fun baz(a: Int = ...): Unit
+fun foo(s: String): Unit
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+fun qux(vararg a: String): Unit
+fun quux(a: (String) -> Unit): Unit
+fun String.corge(): Unit
+
+/nothingToOverrideMessage.kt:(482,490): error: 'baz' overrides nothing. Potential signatures for overriding:
+fun baz(a: Int = ...): Unit
+
+/nothingToOverrideMessage.kt:(516,538): error: Class 'VarargParameters' is not abstract and does not implement abstract members:
+fun qux(vararg a: String): Unit
+fun foo(s: String): Unit
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+fun baz(a: Int = ...): Unit
+fun quux(a: (String) -> Unit): Unit
+fun String.corge(): Unit
+
+/nothingToOverrideMessage.kt:(549,557): error: 'qux' overrides nothing. Potential signatures for overriding:
+fun qux(vararg a: String): Unit
+
+/nothingToOverrideMessage.kt:(582,602): error: Class 'FunctionalType' is not abstract and does not implement abstract members:
+fun quux(a: (String) -> Unit): Unit
+fun foo(s: String): Unit
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+fun baz(a: Int = ...): Unit
+fun qux(vararg a: String): Unit
+fun String.corge(): Unit
+
+/nothingToOverrideMessage.kt:(613,621): error: 'quux' overrides nothing. Potential signatures for overriding:
+fun quux(a: (String) -> Unit): Unit
+
+/nothingToOverrideMessage.kt:(648,671): error: Class 'ExtensionFunction' is not abstract and does not implement abstract members:
+fun String.corge(): Unit
+fun foo(s: String): Unit
+fun bar(a: String): Unit
+fun bar(a: Boolean): Unit
+fun baz(a: Int = ...): Unit
+fun qux(vararg a: String): Unit
+fun quux(a: (String) -> Unit): Unit
+
+/nothingToOverrideMessage.kt:(681,689): error: 'corge' overrides nothing. Potential signatures for overriding:
+fun String.corge(): Unit
+
+/nothingToOverrideMessage.kt:(755,776): error: Class 'GenericOverride' is not abstract and does not implement abstract member:
+fun foo(t: T): Unit
+
+/nothingToOverrideMessage.kt:(799,807): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(t: R): Unit
+
+/nothingToOverrideMessage.kt:(824,848): error: Class 'NonGenericOverride' is not abstract and does not implement abstract member:
+fun foo(t: T): Unit
+
+/nothingToOverrideMessage.kt:(873,881): error: 'foo' overrides nothing. Potential signatures for overriding:
+fun foo(t: String): Unit
+
+/nothingToOverrideMessage.kt:(977,985): error: 'foo' overrides nothing.

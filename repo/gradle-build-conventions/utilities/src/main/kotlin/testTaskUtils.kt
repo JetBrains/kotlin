@@ -14,7 +14,7 @@ private val reservedMemoryMb = 9000 // system processes, gradle daemon, kotlin d
 val totalMaxMemoryForTestsMb: Int
     get() {
         val mxbean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        val availableMemoryMb = (mxbean.totalPhysicalMemorySize / 1048576 - reservedMemoryMb).toInt()
+        val availableMemoryMb = (mxbean.totalMemorySize / 1048576 - reservedMemoryMb).toInt()
         return availableMemoryMb - (availableMemoryMb % 1024)
     }
 

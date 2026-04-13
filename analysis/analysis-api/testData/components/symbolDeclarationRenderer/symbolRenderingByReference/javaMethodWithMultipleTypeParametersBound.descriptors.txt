@@ -1,1 +1,0 @@
-open fun <K> foo() where K : T?, K : java.lang.Runnable?

@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 @Target(AnnotationTarget.TYPE)
 annotation class Anno1
 @Target(AnnotationTarget.TYPE)

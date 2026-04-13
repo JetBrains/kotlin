@@ -14,7 +14,7 @@
 fun case_1(x: Any?) {
     val y = run {
         if (x is Class)
-            return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>
+            return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
         Class()
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>
@@ -25,7 +25,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Class?) {
     val y = run {
         x!!
-        return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?"), DEBUG_INFO_SMARTCAST!>x<!>
+        return@run <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>y<!>.fun_1()
@@ -35,8 +35,8 @@ fun case_2(x: Class?) {
 fun case_3(z: Any?) {
     val y = run {
         when (z) {
-            is Class? -> <!DEBUG_INFO_SMARTCAST!>z<!>!!
-            is Class -> return@run <!DEBUG_INFO_SMARTCAST!>z<!>
+            is Class? -> z!!
+            is Class -> return@run z
             is Float -> Class()
             else -> return@run Class()
         }
@@ -49,8 +49,8 @@ fun case_3(z: Any?) {
 fun case_4(z: Any?) {
     val y = run {
         when (z) {
-            is Class? -> <!DEBUG_INFO_SMARTCAST!>z<!>!!
-            is Class -> return@run <!DEBUG_INFO_SMARTCAST!>z<!>
+            is Class? -> z!!
+            is Class -> return@run z
             is Float -> Class()
             else -> return@run Class()
         }
@@ -64,8 +64,8 @@ fun case_4(z: Any?) {
 fun case_5(z: Any?) {
     val y = run {
         when (z) {
-            is Class? -> <!DEBUG_INFO_SMARTCAST!>z<!>!!
-            is Class -> return@run <!DEBUG_INFO_SMARTCAST!>z<!>
+            is Class? -> z!!
+            is Class -> return@run z
             is Float -> Class()
             else -> return@run Class()
         }
@@ -79,8 +79,8 @@ fun case_5(z: Any?) {
 fun case_6(z: Any?) {
     val y = z.let {
         when (it) {
-            is Class? -> <!DEBUG_INFO_SMARTCAST!>it<!>!!
-            is Class -> return@let <!DEBUG_INFO_SMARTCAST!>it<!>
+            is Class? -> it!!
+            is Class -> return@let it
             is Float -> Class()
             else -> return@let Class()
         }
@@ -129,7 +129,7 @@ fun case_10(z: Any?) {
 fun case_11(z: Any?, x: Any?) {
     val y = z.let {
         if (it is ClassLevel6)
-            return@let <!DEBUG_INFO_SMARTCAST!>it<!>
+            return@let it
         x as ClassLevel3
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel3")!>y<!>
@@ -140,10 +140,10 @@ fun case_11(z: Any?, x: Any?) {
 fun case_12(z: Any?) {
     val y = z.let {
         return@let it as Int
-        <!UNREACHABLE_CODE!>it as? Float ?: 10f<!>
+        it <!NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL!>as? Float<!> ?: 10f
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>.toByte()
 }
 
 /*
@@ -153,7 +153,7 @@ fun case_12(z: Any?) {
 fun case_13(z: Any?) {
     val y = z.run {
         if (this is ClassLevel6)
-            return@run <!DEBUG_INFO_SMARTCAST!>this<!>
+            return@run this
         this as ClassLevel3
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel3")!>y<!>
@@ -164,10 +164,10 @@ fun case_13(z: Any?) {
 fun case_14(z: Any?) {
     val y = z.run {
         return@run this as Int
-        <!UNREACHABLE_CODE!>this as? Float ?: 10f<!>
+        this <!NUMERIC_CAST_NEVER_SUCCEEDS_BUT_CAN_BE_REPLACED_WITH_TO_CALL!>as? Float<!> ?: 10f
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Comparable<*>")!>y<!>.toByte()
 }
 
 /*
@@ -177,7 +177,7 @@ fun case_14(z: Any?) {
 fun case_15(z: Any?) {
     val y = z.let {
         return@let it as Int
-        <!UNREACHABLE_CODE!>while (true) { println(1) }<!>
+        while (true) { println(1) }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -190,7 +190,7 @@ fun case_15(z: Any?) {
 fun case_16(z: Any?) {
     val y = z.run {
         return@run this as Int
-        <!UNREACHABLE_CODE!>while (true) { println(1) }<!>
+        while (true) { println(1) }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -203,8 +203,8 @@ fun case_16(z: Any?) {
 fun case_17(z: Any?) {
     val y = z.run {
         when (this) {
-            is Class? -> <!DEBUG_INFO_SMARTCAST!>this<!>!!
-            is Class -> return@run <!DEBUG_INFO_SMARTCAST!>this<!>
+            is Class? -> this!!
+            is Class -> return@run this
             is Float -> Class()
             else -> return@run Class()
         }
@@ -220,7 +220,7 @@ fun case_17(z: Any?) {
 fun case_18(z: Any?) {
     val y = z.run {
         this as Int
-        <!DEBUG_INFO_SMARTCAST!>this<!>
+        this
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>.inv()
@@ -230,7 +230,7 @@ fun case_18(z: Any?) {
 fun case_19(z: Any?) {
     val y = z.let {
         it as Int
-        <!DEBUG_INFO_SMARTCAST!>it<!>
+        it
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>.inv()
@@ -243,7 +243,7 @@ fun case_19(z: Any?) {
 fun case_20(z: Any?) {
     val y = z.run {
         this!!
-        <!DEBUG_INFO_SMARTCAST!>this<!>
+        this
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -297,10 +297,10 @@ fun case_24(z: Any?) {
 fun case_25(z: Any?) {
     val y = z.run {
         when (this) {
-            true -> <!DEBUG_INFO_SMARTCAST!>this<!>
-            if (true) this as Int else this as Float -> <!DEBUG_INFO_SMARTCAST!>this<!>
-            return@run this as Float<!UNREACHABLE_CODE!><!> -> <!DEBUG_INFO_SMARTCAST, UNREACHABLE_CODE!>this<!>
-            <!UNREACHABLE_CODE!>else -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
+            true -> this
+            if (true) this as Int else this as Float -> this
+            return@run this as Float -> this
+            else -> this<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
@@ -311,10 +311,10 @@ fun case_25(z: Any?) {
 fun case_26(z: Any?) {
     val y = z.let {
         when (it) {
-            true -> <!DEBUG_INFO_SMARTCAST!>it<!>
-            if (true) it as Int else it as Float -> <!DEBUG_INFO_SMARTCAST!>it<!>
-            return@let it as Int<!UNREACHABLE_CODE!><!> -> <!DEBUG_INFO_SMARTCAST, UNREACHABLE_CODE!>it<!>
-            <!UNREACHABLE_CODE!>else -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
+            true -> it
+            if (true) it as Int else it as Float -> it
+            return@let it as Int -> it
+            else -> it<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
@@ -325,7 +325,7 @@ fun case_26(z: Any?) {
 fun case_27(z: Any?) {
     val y = z.let {
         if (it == null) return@let Any()
-        <!DEBUG_INFO_SMARTCAST!>it<!>
+        it
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -338,7 +338,7 @@ fun case_27(z: Any?) {
 fun case_28(z: Any?) {
     val y = z.run {
         if (this == null) throw IllegalStateException()
-        <!DEBUG_INFO_SMARTCAST!>this<!>
+        this
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -348,7 +348,7 @@ fun case_28(z: Any?) {
 fun case_29(z: Any?) {
     val y = z.let {
         if (it == null) throw IllegalStateException()
-        <!DEBUG_INFO_SMARTCAST!>it<!>
+        it
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)

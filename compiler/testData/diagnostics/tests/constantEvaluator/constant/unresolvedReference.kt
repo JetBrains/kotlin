@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 import kotlin.reflect.KClass
 
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)

@@ -1,2 +1,0 @@
-expression: myFun
-type: kotlin.Unit

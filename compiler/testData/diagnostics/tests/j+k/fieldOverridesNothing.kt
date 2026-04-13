@@ -14,11 +14,11 @@ interface A {
 }
 
 class C : B() {
-    override val size: Int get() = 1
+    override val <!PROPERTY_HIDES_JAVA_FIELD!>size<!>: Int get() = 1
 }
 
 fun foo() {
-    C().<!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>size<!>
+    C().size
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, javaType,

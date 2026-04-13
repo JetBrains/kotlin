@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEPRECATION -TOPLEVEL_TYPEALIASES_ONLY -UNSUPPORTED_FEATURE
 // LANGUAGE: +UnnamedLocalVariables +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm

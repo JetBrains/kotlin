@@ -32,11 +32,11 @@ class WithExperimentalStdlib {
 typealias WithMarkedCompanionTypealias = WithMarkedCompanion
 
 fun test() {
-    val withMarkedCompanion = <!OPT_IN_USAGE_ERROR!>WithMarkedCompanion<!>
+    val withMarkedCompanion = <!OPT_IN_USAGE!>WithMarkedCompanion<!>
     val withMarkedOuter = <!OPT_IN_USAGE_ERROR!>WithMarkedOuter<!>
     val withMarkedCompanionWarning = <!OPT_IN_USAGE!>WithMarkedCompanionWarning<!>
-    val withExperimentalStdlibApi = <!OPT_IN_USAGE_ERROR!>WithExperimentalStdlib<!>
-    val withMarkedCompanionViaTypealias = <!OPT_IN_USAGE_ERROR!>WithMarkedCompanionTypealias<!>
+    val withExperimentalStdlibApi = <!OPT_IN_USAGE!>WithExperimentalStdlib<!>
+    val withMarkedCompanionViaTypealias = <!OPT_IN_USAGE!>WithMarkedCompanionTypealias<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, functionDeclaration, localProperty,

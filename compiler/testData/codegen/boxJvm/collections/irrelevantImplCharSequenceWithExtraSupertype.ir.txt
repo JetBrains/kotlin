@@ -24,10 +24,10 @@ FILE fqName:<root> fileName:/test.kt
         public open fun hashCode (): kotlin.Int declared in <root>.I
     FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.J.A
-      VALUE_PARAMETER kind:Regular name:startIndex index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:endIndex index:2 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:start index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:end index:2 type:kotlin.Int
       overridden:
-        public open fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.J.A
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.J.A
         public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in <root>.I
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/test.kt
         public final length: kotlin.Int declared in <root>.J.A
         public abstract length: kotlin.Int declared in <root>.I
       FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:FINAL returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.CharSequence
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.J.A
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-length> (): kotlin.Int declared in <root>.J.A

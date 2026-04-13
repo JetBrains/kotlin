@@ -23,8 +23,8 @@ class Bar {
             this.bar2()
         }
 
-        <!NO_TAIL_CALLS_FOUND!>tailrec<!> fun bar3() {
-            Bar.<!NON_TAIL_RECURSIVE_CALL!>bar3<!>()
+        tailrec fun bar3() {
+            Bar.bar3()
         }
 
         tailrec fun bar4() {

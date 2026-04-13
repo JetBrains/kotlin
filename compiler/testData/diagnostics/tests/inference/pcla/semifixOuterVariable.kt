@@ -41,7 +41,7 @@ fun main() {
             }
 
             // Base <: E4v
-            add(<!TYPE_MISMATCH!>Base()<!>)
+            add(<!ARGUMENT_TYPE_MISMATCH!>Base()<!>)
         }
     }
 }

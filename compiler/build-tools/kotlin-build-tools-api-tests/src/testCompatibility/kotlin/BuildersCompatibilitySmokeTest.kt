@@ -2,34 +2,27 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.buildtools.tests
 
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_REFLECT
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.NO_STDLIB
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsOnlyCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.io.path.toPath
@@ -58,48 +51,6 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(JvmTarget.JVM_17, operation3.compilerArguments[JvmCompilerArguments.JVM_TARGET])
     }
 
-    @DisplayName("Test all APIs using legacy non-builders")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testAllApisUsingLegacyNonBuilders(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
-        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
-        val destination = workingDirectory.resolve("classes")
-
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(sources, destination)
-        jvmOperation.compilerArguments[JvmCompilerArguments.MODULE_NAME] = "a"
-        jvmOperation.compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17
-        jvmOperation.compilerArguments[NO_REFLECT] = true
-        jvmOperation.compilerArguments[NO_STDLIB] = true
-        jvmOperation.compilerArguments[CLASSPATH] =
-            listOf(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath())
-        val icOptions = jvmOperation.createSnapshotBasedIcOptions()
-        icOptions[JvmSnapshotBasedIncrementalCompilationOptions.ROOT_PROJECT_DIR] = workingDirectory
-        icOptions[JvmSnapshotBasedIncrementalCompilationOptions.FORCE_RECOMPILATION] = true
-        val icConfig = JvmSnapshotBasedIncrementalCompilationConfiguration(
-            workingDirectory.resolve("ic-cache"),
-            SourcesChanges.Unknown,
-            emptyList(),
-            workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
-            icOptions
-        )
-
-        jvmOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = icConfig
-        val executionMode = toolchain.createDaemonExecutionPolicy()
-        executionMode[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 1000L
-
-        val snapshotOperation = toolchain.jvm.createClasspathSnapshottingOperation(
-            KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
-        )
-        snapshotOperation[JvmClasspathSnapshottingOperation.GRANULARITY] = ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-        snapshotOperation[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES] = false
-        snapshotOperation[BuildOperation.METRICS_COLLECTOR] = null
-
-        toolchain.createBuildSession().use {
-            it.executeOperation(jvmOperation, executionMode)
-            it.executeOperation(snapshotOperation)
-        }
-    }
-
     @DisplayName("Modifying WithDaemon builder after build does not affect the built policy")
     @BtaVersionsOnlyCompilationTest
     fun testWithDaemonBuilderImmutability(toolchain: KotlinToolchains) {
@@ -115,6 +66,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(10000L, policy2[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS])
     }
 
+    @Suppress("DEPRECATION")
     @DisplayName("Modifying IC configuration builder after build does not affect the built configuration")
     @DefaultStrategyAgnosticCompilationTest
     fun testICConfigBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
@@ -127,18 +79,18 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
             sourcesChanges = SourcesChanges.Unknown,
             dependenciesSnapshotFiles = emptyList(),
         ).apply {
-            this[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION] = false
+            this[FORCE_RECOMPILATION] = false
             this[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
         }
         val icConfig1 = icBuilder.build()
 
-        icBuilder[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION] = true
+        icBuilder[FORCE_RECOMPILATION] = true
         icBuilder[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = false
         val icConfig2 = icBuilder.build()
 
-        assertEquals(false, icConfig1[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(false, icConfig1[FORCE_RECOMPILATION])
         assertEquals(true, icConfig1[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
-        assertEquals(true, icConfig2[JvmSnapshotBasedIncrementalCompilationConfiguration.FORCE_RECOMPILATION])
+        assertEquals(true, icConfig2[FORCE_RECOMPILATION])
         assertEquals(false, icConfig2[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES])
     }
 
@@ -185,13 +137,17 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
         assertEquals(false, operation2[JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES])
     }
 
-    @Disabled("KT-85072")
     @DisplayName("Modifying DiscoverScriptExtensionsOperation builder after build does not affect the built operation")
-    @DefaultStrategyAgnosticCompilationTest
-    fun testDiscoverScriptExtensionsBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val toolchain = strategyConfig.first
+    @BtaVersionsOnlyCompilationTest
+    fun testDiscoverScriptExtensionsBuilderImmutability(kotlinToolchain: KotlinToolchains) {
+        val version = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+        assumeTrue(
+            version >= KotlinToolingVersion(2, 4, 0, "snapshot")
+                    || kotlinToolchain::class.simpleName == "KotlinToolchainsV1Adapter"
+        )
+
         val classpath = listOf(workingDirectory.resolve("greet-script-template"))
-        val builder = toolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath)
+        val builder = kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath)
         val renderer1 = object : CompilerMessageRenderer {
             override fun render(
                 severity: CompilerMessageRenderer.Severity,

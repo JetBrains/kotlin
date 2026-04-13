@@ -13,11 +13,11 @@ const val CONST = 1
 class TopLevelClass {
     val CONST = "str"
 
-    <!TOPLEVEL_TYPEALIASES_ONLY!>@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>CONST<!>)
-    typealias A = @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>CONST<!>) String<!>
+    @Anno(CONST)
+    typealias A = @Anno(CONST) String
 
-    <!TOPLEVEL_TYPEALIASES_ONLY!>@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>CONST<!>)
-    <!WRONG_MODIFIER_TARGET!>inner<!> typealias B = @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>CONST<!>) String<!>
+    @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>)
+    <!WRONG_MODIFIER_TARGET!>inner<!> typealias B = @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>) String
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, integerLiteral, primaryConstructor,

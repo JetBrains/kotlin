@@ -46,7 +46,7 @@ fun main() {
     }
 
     val sam: Supplier<String> = Supplier{
-        <!TYPE_MISMATCH!>TestValueProvider.getNullableString()<!>
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>TestValueProvider.getNullableString()<!>
     }
 
     Supplier<String> {
@@ -96,32 +96,32 @@ fun main() {
     }
 
     val sam3: Supplier<String> = Supplier{
-        <!TYPE_MISMATCH!>returnNullableString()<!>
+        <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString()<!>
     }
 
     Supplier<String>(
         fun(): String {
-            if (true) return <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+            if (true) return <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }
     )
 
     val sam4: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String {
-            if (true) return <!TYPE_MISMATCH!>returnNullableString()<!>
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
+            if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
     }
 
     Supplier<String>(
-        <!TYPE_MISMATCH!>fun(): String? {
+        fun(): String? {
             if (true) return returnNullableString()
             return ""
-        }<!>
+        }
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!TYPE_MISMATCH, TYPE_MISMATCH!>fun(): String? {
+        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>
@@ -176,25 +176,25 @@ import java.util.function.Supplier
 
 fun scopes () {
     Supplier<String> {
-        <!TYPE_MISMATCH!>run {
+        <!RETURN_TYPE_MISMATCH!>run {
             returnNullableString()
         }<!>
     }
 
     Supplier<String> {
-        <!TYPE_MISMATCH!>run {
-            return@run <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+        <!RETURN_TYPE_MISMATCH!>run {
+            return@run <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> {
-        <!TYPE_MISMATCH!>run run@ {
-            return@run <!TYPE_MISMATCH, TYPE_MISMATCH!>returnNullableString()<!>
+        <!RETURN_TYPE_MISMATCH!>run run@ {
+            return@run <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>returnNullableString()<!>
         }<!>
     }
 
     Supplier<String> lambda@ {
-        <!TYPE_MISMATCH!>run {
+        <!RETURN_TYPE_MISMATCH!>run {
             return@lambda returnNullableString()
         }<!>
     }

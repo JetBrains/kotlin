@@ -14,14 +14,13 @@ import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
-internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
+internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder {
     protected abstract val options: Options
     private val executionStarted = AtomicBoolean(false)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
-    @Deprecated("Build operations will become immutable in an upcoming release. Obtain an instance of a mutable builder for the operation from the appropriate `Toolchain` instead.")
     @UseFromImplModuleRestricted
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
         options[key] = value

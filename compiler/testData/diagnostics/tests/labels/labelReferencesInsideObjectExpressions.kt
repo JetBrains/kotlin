@@ -17,7 +17,7 @@ fun B.b() {
 
 
 fun test() {
-    fun <T> without(f: T.() -> Unit): Unit = (null!!).f<!UNREACHABLE_CODE!>()<!>
+    fun <T> without(f: T.() -> Unit): Unit = (null!!).f()
     without<B>() b@ {
         object : A {
             override fun foo() {

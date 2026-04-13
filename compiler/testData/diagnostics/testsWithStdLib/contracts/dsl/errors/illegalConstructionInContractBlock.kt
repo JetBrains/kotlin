@@ -7,7 +7,7 @@ import kotlin.contracts.*
 
 fun ifInContract(x: Any?, boolean: Boolean) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unexpected construction in contract description")!>if (boolean) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>if (boolean) {
             returns() implies (x is String)
         } else {
             returns() implies (x is Int)
@@ -17,7 +17,7 @@ fun ifInContract(x: Any?, boolean: Boolean) {
 
 fun whenInContract(x: Any?, boolean: Boolean) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unexpected construction in contract description")!>when (boolean) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>when (boolean) {
             true -> returns() implies (x is String)
             else -> returns() implies (x is Int)
         }<!>
@@ -26,7 +26,7 @@ fun whenInContract(x: Any?, boolean: Boolean) {
 
 fun forInContract(x: Any?) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unexpected construction in contract description")!>for (i in 0..1) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>for (i in 0..1) {
             returns() implies (x is String)
         }<!>
     }
@@ -34,7 +34,7 @@ fun forInContract(x: Any?) {
 
 fun whileInContract(x: Any?) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unexpected construction in contract description")!>while (false) {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>while (false) {
             returns() implies (x is String)
         }<!>
     }
@@ -42,7 +42,7 @@ fun whileInContract(x: Any?) {
 
 fun doWhileInContract(x: Any?) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unexpected construction in contract description")!>do {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>do {
             returns() implies (x is String)
         } while (false)<!>
     }
@@ -50,7 +50,7 @@ fun doWhileInContract(x: Any?) {
 
 fun localValInContract(x: Any?) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION("unexpected construction in contract description")!>val y: Int = 42<!>
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>val y: Int = 42<!>
         returns() implies (x is String)
     }
 }

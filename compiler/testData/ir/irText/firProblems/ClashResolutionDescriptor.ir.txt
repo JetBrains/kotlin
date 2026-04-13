@@ -153,9 +153,9 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
                 BLOCK type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.collections.Collection<<root>.ComponentDescriptor>? [val]
                     TYPE_OP type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=SAFE_CAST typeOperand=kotlin.collections.Collection<<root>.ComponentDescriptor>
-                      CALL 'public open fun get (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap' type=@[EnhancedNullability] kotlin.Any? origin=GET_ARRAY_ELEMENT
+                      CALL 'public open fun get (p0: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap' type=@[EnhancedNullability] kotlin.Any? origin=GET_ARRAY_ELEMENT
                         ARG <this>: CALL 'private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any> declared in <root>' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any> origin=GET_PROPERTY
-                        ARG key: CALL 'public final fun <get-applicableTo> (): java.lang.Class<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver' type=java.lang.Class<out <root>.PlatformSpecificExtension<*>> origin=GET_PROPERTY
+                        ARG p0: CALL 'public final fun <get-applicableTo> (): java.lang.Class<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver' type=java.lang.Class<out <root>.PlatformSpecificExtension<*>> origin=GET_PROPERTY
                           ARG <this>: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
                   WHEN type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null
                     BRANCH
@@ -166,9 +166,9 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: GET_VAR 'val tmp_1: kotlin.collections.Collection<<root>.ComponentDescriptor>? declared in <root>.resolveClashesIfAny' type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=null
-              VAR name:substituteDescriptor type:<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> [val]
-                CONSTRUCTOR_CALL 'public constructor <init> (container: <root>.ComponentContainer, resolver: <root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor>, clashedComponents: kotlin.collections.List<<root>.ComponentDescriptor>) declared in <root>.ClashResolutionDescriptor' type=<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>> origin=null
-                  TYPE_ARG (of class) E: <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out <root>.PlatformSpecificExtension<out kotlin.Any?>>>>>
+              VAR name:substituteDescriptor type:<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<*>> [val]
+                CONSTRUCTOR_CALL 'public constructor <init> (container: <root>.ComponentContainer, resolver: <root>.PlatformExtensionsClashResolver<E of <root>.ClashResolutionDescriptor>, clashedComponents: kotlin.collections.List<<root>.ComponentDescriptor>) declared in <root>.ClashResolutionDescriptor' type=<root>.ClashResolutionDescriptor<out <root>.PlatformSpecificExtension<*>> origin=null
+                  TYPE_ARG (of class) E: <root>.PlatformSpecificExtension<*>
                   ARG container: GET_VAR 'container: <root>.ComponentContainer declared in <root>.resolveClashesIfAny' type=<root>.ComponentContainer origin=null
                   ARG resolver: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
                   ARG clashedComponents: CALL 'public final fun toList <T> (<this>: kotlin.collections.Iterable<T of kotlin.collections.toList>): kotlin.collections.List<T of kotlin.collections.toList> declared in kotlin.collections' type=kotlin.collections.List<<root>.ComponentDescriptor> origin=null

@@ -6,23 +6,23 @@ fun foo() : Int {
         doSmth()
     }
     catch (e: Exception) {
-        <!UNREACHABLE_CODE!>return<!> <!TYPE_MISMATCH!>""<!>
+        return <!RETURN_TYPE_MISMATCH!>""<!>
     }
     finally {
-        return <!TYPE_MISMATCH!>""<!>
+        return <!RETURN_TYPE_MISMATCH!>""<!>
     }
 }
 
 fun bar() : Int =
-    try <!TYPE_MISMATCH!>{
+    <!RETURN_TYPE_MISMATCH!>try {
         doSmth()
-    }<!>
-    catch (e: Exception) <!TYPE_MISMATCH!>{
-        ""
-    }<!>
-    finally {
+    }
+    catch (e: Exception) {
         ""
     }
+    finally {
+        ""
+    }<!>
 
 
 fun doSmth() {}

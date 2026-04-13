@@ -11,14 +11,14 @@ interface Tr<T> {
 
 fun test(t: Tr<*>) {
     t.v = null!!
-    <!SETTER_PROJECTED_OUT!>t.v<!> = ""
-    <!SETTER_PROJECTED_OUT!>t.v<!> = null
+    t.v <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
+    t.v = <!NULL_FOR_NONNULL_TYPE!>null<!>
     t.v checkType { _<Any?>() }
 }
 
 fun test2(t: JavaClass<*>) {
     t.v = null!!
-    t.v = <!TYPE_MISMATCH_WARNING!>""<!>
+    t.v <!ASSIGNMENT_TYPE_MISMATCH!>=<!> ""
     t.v = null
     t.v checkType { _<Any?>() }
 }

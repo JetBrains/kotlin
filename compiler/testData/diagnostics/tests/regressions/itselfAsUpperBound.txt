@@ -1,4 +1,0 @@
-package
-
-public val </*0*/ T : [Error type: Cyclic upper bounds]> prop: [Error type: Return type for property prop cannot be resolved]
-public fun </*0*/ T : [Error type: Cyclic upper bounds]> foo(): kotlin.Unit

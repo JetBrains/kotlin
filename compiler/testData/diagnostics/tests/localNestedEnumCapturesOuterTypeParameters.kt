@@ -5,9 +5,9 @@ fun foo() {
     abstract class ShorteningProcessor<TElement> {
         fun analyzeCollectedElements() = E.A == E.A
 
-        <!WRONG_MODIFIER_TARGET!>enum<!> class E {
+        <!TYPE_PARAMETERS_IN_ENUM!><!WRONG_MODIFIER_TARGET!>enum<!> class E {
             A;
-        }
+        }<!>
     }
 }
 

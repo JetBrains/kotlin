@@ -17,21 +17,21 @@ class B {
 fun <T> bar(f: (T) -> Unit): T = TODO()
 
 fun test() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(A()) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>myWith<!>(A()) {
         val t1 = bar(::foo)
-        <!DEBUG_INFO_EXPRESSION_TYPE("A")!>t1<!>
+        t1
 
         val t2 = bar(::baz)
-        <!DEBUG_INFO_EXPRESSION_TYPE("A")!>t2<!>
+        t2
 
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(B()) {
+        <!CANNOT_INFER_PARAMETER_TYPE!>myWith<!>(B()) {
             val a: A = bar(::foo)
             val b: B = bar(::foo)
 
             val t3 = bar(::baz)
-            <!DEBUG_INFO_EXPRESSION_TYPE("B")!>t3<!>
+            t3
 
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
+            <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
         }
     }
 }

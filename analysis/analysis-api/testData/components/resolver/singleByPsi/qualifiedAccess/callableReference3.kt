@@ -1,4 +1,3 @@
-// IGNORE_FE10
 package foo.bar.baz
 
 class AA {

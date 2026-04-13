@@ -11,7 +11,7 @@ public fun foo(p: String?, r: String?): Int {
     // Auto cast NOT possible due to long continue
     r<!UNSAFE_CALL!>.<!>length
     // Auto cast possible
-    return <!DEBUG_INFO_SMARTCAST!>p<!>.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // SKIP_TXT
 abstract class Parent<K>
 abstract class DefaultParent<K, X> : Parent<K>()

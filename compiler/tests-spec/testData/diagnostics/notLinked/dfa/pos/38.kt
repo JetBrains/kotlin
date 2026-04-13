@@ -13,49 +13,49 @@
 // TESTCASE NUMBER: 1
 fun case_1(x: Comparable<*>?) {
     if (x is Byte?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte? & kotlin.Comparable<*>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte? & kotlin.Comparable<*>?")!>x<!>?.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte")!><!DEBUG_INFO_SMARTCAST!>x<!>!!<!>.dec()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte?")!>x<!>?.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Byte")!>x!!<!>.dec()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: ClassWithThreeTypeParameters<*, *, *>?) {
     if (x is InterfaceWithTwoTypeParameters<*, *>?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>?")!>x<!>?.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x?.y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x?.z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>}")!>x!!<!>.ip2test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *>? & ClassWithThreeTypeParameters<*, *, *>?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *>? & ClassWithThreeTypeParameters<*, *, *>?")!>x<!>?.x
+        x?.y
+        x?.z
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x!!<!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>.x
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(x: ClassWithThreeTypeParameters<*, *, *>) {
-    if (x is InterfaceWithTwoTypeParameters<*, *><!USELESS_NULLABLE_CHECK!>?<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>}")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
+    if (x is InterfaceWithTwoTypeParameters<*, *>?) {
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>.x
+        x.y
+        x.z
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>.x
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(x: ClassWithSixTypeParameters<*, *, *, *, *, *>?) {
     if (x is InterfaceWithTwoTypeParameters<*, *>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.u<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{ClassWithSixTypeParameters<*, Nothing, *, *, Nothing, *> & InterfaceWithTwoTypeParameters<*, *>}")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithSixTypeParameters<*, *, *, *, *, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!>.x
+        x.y
+        x.z
+        x.u
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithSixTypeParameters<*, *, *, *, *, *>")!>x<!>.x
     }
 }
 
@@ -63,13 +63,13 @@ fun case_4(x: ClassWithSixTypeParameters<*, *, *, *, *, *>?) {
 fun case_5(x: ClassWithThreeTypeParameters<*, *, *>?) {
     if (x is InterfaceWithTwoTypeParameters<*, *>?) {
         if (x === null) return
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.ip2test()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & ClassWithThreeTypeParameters<*, *, *>? & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>.x
+        x.y
+        x.z
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>.ip2test()
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & ClassWithThreeTypeParameters<*, *, *>")!>x<!>.x
     }
 }
 
@@ -78,13 +78,13 @@ fun case_5(x: Any?) {
     if (x is ClassWithThreeTypeParameters<*, *, *>?) {
         if (x is InterfaceWithTwoTypeParameters<*, *>?) {
             if (x === null) return
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *> & kotlin.Any & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_SMARTCAST!>x<!>.y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_SMARTCAST!>x<!>.z<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTwoTypeParameters<*, *> & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.ip2test()
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *> & kotlin.Any & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!><!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>x<!>.x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x
+            x.y
+            x.z
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.ip2test()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithThreeTypeParameters<*, *, *> & InterfaceWithTwoTypeParameters<*, *>")!>x<!>.x
         }
     }
 }

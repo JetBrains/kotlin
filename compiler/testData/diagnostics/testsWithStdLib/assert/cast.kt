@@ -11,13 +11,13 @@ class B: A {
 
 fun test1(a: A) {
     assert((a as B).bool())
-    <!DEBUG_INFO_SMARTCAST!>a<!>.bool()
+    a.bool()
 }
 
 fun test2() {
     val a: A? = null;
     assert((a as B).bool())
-    <!DEBUG_INFO_SMARTCAST!>a<!><!UNNECESSARY_SAFE_CALL!>?.<!>bool()
+    a<!UNNECESSARY_SAFE_CALL!>?.<!>bool()
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,

@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProx
 import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
-import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
@@ -138,12 +138,14 @@ internal abstract class SirAbstractGetter(
         val variable = variable ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
         val baseName = fqName.baseBridgeName + suffix
+        val getterSymbol = variable.kaSymbolOrNull<KaPropertySymbol>()?.getter ?: variable.kaSymbolOrNull<KaVariableSymbol>()
 
         generateFunctionBridge(
             baseBridgeName = baseName,
             explicitParameters = emptyList(),
             returnType = variable.type,
             kotlinFqName = fqName,
+            kotlinOptIns = getterSymbol?.allRequiredOptIns ?: emptyList(),
             selfParameter = (variable.parent !is SirModule && variable.isInstance).ifTrue {
                 SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
             },
@@ -206,12 +208,14 @@ internal abstract class SirAbstractSetter(
         val variable = variable ?: return@lazyWithSessions null
         val fqName = fqName ?: return@lazyWithSessions null
         val baseName = fqName.baseBridgeName + suffix
+        val setterSymbol = variable.kaSymbolOrNull<KaPropertySymbol>()?.setter ?: variable.kaSymbolOrNull<KaVariableSymbol>()
 
         generateFunctionBridge(
             baseBridgeName = baseName,
             explicitParameters = listOf(SirParameter(parameterName = parameterName, type = variable.type)),
             returnType = SirNominalType(SirSwiftModule.void),
             kotlinFqName = fqName,
+            kotlinOptIns = setterSymbol?.allRequiredOptIns ?: emptyList(),
             selfParameter = (parent !is SirModule && variable.isInstance).ifTrue {
                 SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
             },

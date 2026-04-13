@@ -10,9 +10,9 @@ abstract class WithVarPrivateSet {
         private set
 }
 
-class G2 : WithVarPrivateSet(), IVar {
+class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING!>G2<!> : WithVarPrivateSet(), IVar {
     fun foo() {
-        z = 5
+        <!INVISIBLE_SETTER!>z<!> = 5
     }
 }
 

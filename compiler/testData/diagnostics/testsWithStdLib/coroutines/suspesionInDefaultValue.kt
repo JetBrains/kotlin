@@ -5,10 +5,10 @@
 suspend fun foo() = 1
 
 suspend fun bar(
-        x: Int = 2 + <!UNSUPPORTED!>foo<!>(),
+        x: Int = 2 + <!UNSUPPORTED!>foo()<!>,
         y: suspend () -> Int = { foo() },
         z: () -> Int = { <!NON_LOCAL_SUSPENSION_POINT!>foo<!>() },
-        w: Int = myInline { <!UNSUPPORTED!>foo<!>() },
+        w: Int = myInline { <!UNSUPPORTED!>foo()<!> },
         q: Int = myInline2 { <!NON_LOCAL_SUSPENSION_POINT!>foo<!>() },
         v: Any? = object {
             fun x() = <!NON_LOCAL_SUSPENSION_POINT!>foo<!>()

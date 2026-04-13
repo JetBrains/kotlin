@@ -23,8 +23,8 @@ fun case1() {
         throwException()
     } catch (e: ExcA) {
     } finally {
-    } <!UNRESOLVED_REFERENCE!>catch<!> (<!UNRESOLVED_REFERENCE!>e<!><!SYNTAX!><!SYNTAX!><!>: ExcB)<!> <!UNUSED_LAMBDA_EXPRESSION!>{
-    }<!>
+    } <!UNRESOLVED_REFERENCE!>catch<!> (<!UNRESOLVED_REFERENCE!>e<!><!SYNTAX!><!SYNTAX!><!>: ExcB)<!> {
+    }
 }
 
 // TESTCASE NUMBER: 2
@@ -34,7 +34,7 @@ fun case2() {
         throwException()
     } catch (e: ExcB) {
     } finally
-<!SYNTAX!><!>}<!SYNTAX!><!>
+<!SYNTAX!><!>}<!SYNTAX{PSI}!><!>
 
 // TESTCASE NUMBER: 3
 
@@ -43,37 +43,3 @@ fun case3() {
         throwException()
     } finally
 <!SYNTAX!><!>}<!SYNTAX!><!>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

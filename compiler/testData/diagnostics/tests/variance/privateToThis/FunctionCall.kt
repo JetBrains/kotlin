@@ -15,26 +15,26 @@ class Test<in I> {
         apply(foo())
         apply(this.foo())
         with(Test<I>()) {
-            apply(foo()) // K1: this@Test.foo, K2: this@with.foo, see KT-55446
-            apply(this.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
-            apply(this@with.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
+            apply(<!INVISIBLE_REFERENCE!>foo<!>()) // K1: this@Test.foo, K2: this@with.foo, see KT-55446
+            apply(this.<!INVISIBLE_REFERENCE!>foo<!>())
+            apply(this@with.<!INVISIBLE_REFERENCE!>foo<!>())
             apply(this@Test.foo())
         }
     }
 
     fun <I> test(t: Test<I>) {
-        t.apply(t.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
+        t.apply(t.<!INVISIBLE_REFERENCE!>foo<!>())
     }
 
     companion object {
         fun <I> test(t: Test<I>) {
-            t.apply(t.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
+            t.apply(t.<!INVISIBLE_REFERENCE!>foo<!>())
         }
     }
 }
 
 fun <I> test(t: Test<I>) {
-    t.apply(t.<!INVISIBLE_MEMBER("foo; private/*private to this*/; 'Test'")!>foo<!>())
+    t.apply(t.<!INVISIBLE_REFERENCE!>foo<!>())
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, in, init, lambdaLiteral,

@@ -7,7 +7,7 @@ fun main() {
     var stat = Stat()
 
     if (stat.link != null) {
-        takeString(<!SMARTCAST_IMPOSSIBLE!>stat.link<!>)
+        takeString(stat.link)
     }
 }
 

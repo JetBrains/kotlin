@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: Kt-47447, KT-47729
 
 fun takeLong(x: Long) {}

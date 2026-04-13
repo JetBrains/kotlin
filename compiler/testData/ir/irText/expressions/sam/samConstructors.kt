@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_JDK
 // TARGET_BACKEND: JVM
 fun test1() = Runnable { }

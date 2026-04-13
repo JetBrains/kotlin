@@ -10,7 +10,7 @@ class LateinitProperties {
     @get:Ann
     lateinit var y0: String
 
-    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
+    @get:Ann
     private lateinit var y1: String
 }
 

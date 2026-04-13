@@ -3,19 +3,19 @@
 
 fun f1(s: String?) {
     if (s!! == "");
-    checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>s<!>)
+    checkSubtype<String>(s)
 }
 
 fun f2(s: Number?) {
     if (s is Int);
-    checkSubtype<Int>(<!TYPE_MISMATCH!>s<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
     if (s as Int == 42);
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>s<!>)
+    checkSubtype<Int>(s)
 }
 
 fun f3(s: Number?) {
     if (s is Int && s <!USELESS_CAST!>as Int<!> == 42);
-    checkSubtype<Int>(<!TYPE_MISMATCH!>s<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 }
 
 fun f4(s: Int?) {

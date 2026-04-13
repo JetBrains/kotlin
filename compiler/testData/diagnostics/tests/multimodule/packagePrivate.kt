@@ -11,6 +11,6 @@ private val a = 1
 
 package p
 
-val c = <!INVISIBLE_MEMBER!>a<!> // same package, another module
+val c = <!INVISIBLE_REFERENCE!>a<!> // same package, another module
 
 /* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */

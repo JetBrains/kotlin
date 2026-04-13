@@ -24,8 +24,8 @@ interface IrPluginContext: IrGeneratorContext {
 // MODULE: main(disabledJvmDefaults, enabledJvmDefaults)
 // FILE: source.kt
 fun test(pluginContext: IrPluginContext) {
-    pluginContext.optInModuleDescriptor
-    pluginContext.deprecatedModuleDescriptor
+    pluginContext.<!OPT_IN_USAGE_ERROR!>optInModuleDescriptor<!>
+    pluginContext.<!DEPRECATION_ERROR!>deprecatedModuleDescriptor<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, getter, interfaceDeclaration, propertyDeclaration,

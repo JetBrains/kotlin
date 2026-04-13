@@ -1,6 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 class A {
     operator fun component1() = 1
 }

@@ -15,8 +15,8 @@ fun foo(): Int {
             override fun run() = arg
         }
         k.run()
-        val d: Int = <!DEBUG_INFO_SMARTCAST!>c<!>
-        return <!DEBUG_INFO_SMARTCAST!>a<!> + d
+        val d: Int = c
+        return a + d
     }
     else return -1
 }

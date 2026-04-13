@@ -1,4 +1,0 @@
-package
-
-public fun foo(/*0*/ a: kotlin.Number): kotlin.Unit
-public operator fun kotlin.Int.component1(): kotlin.String

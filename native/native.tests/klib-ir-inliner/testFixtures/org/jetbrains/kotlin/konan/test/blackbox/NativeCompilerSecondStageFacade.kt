@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
@@ -198,9 +199,9 @@ class NativeCompilerSecondStageFacade private constructor(
                 friendDependencies.flatMap {
                     listOf(K2NativeCompilerArguments::friendModules.cliArgument, it)
                 },
-                customLanguageFeatures.map {
-                    CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it"
-                },
+                customLanguageFeatures
+                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
+                    .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 freeArgs,
                 fileCheckStage?.let {
                     listOf(

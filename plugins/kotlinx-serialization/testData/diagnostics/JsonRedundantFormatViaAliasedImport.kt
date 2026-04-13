@@ -6,52 +6,52 @@ import kotlinx.serialization.json.Json as JsonImportAlias
 
 object Instance
 
-val defaultWarn = JsonImportAlias {}
-val receiverWarn = JsonImportAlias {encodeDefaults = true}.encodeToString(Instance)
+val defaultWarn = <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>
+val receiverWarn = <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.encodeToString(Instance)
 val noWarnFormat = JsonImportAlias {encodeDefaults = true}
 val receiverNoWarn = noWarnFormat.encodeToString(Instance)
 val defaultNoWarn = JsonImportAlias.encodeToString(Instance)
 
 class SomeContainerClass {
-    val memberDefaultWarn = JsonImportAlias {}
-    val memberReceiverWarn = JsonImportAlias {encodeDefaults = true}.encodeToString(Instance)
+    val memberDefaultWarn = <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>
+    val memberReceiverWarn = <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.encodeToString(Instance)
     val memberNoWarnFormat = JsonImportAlias {encodeDefaults = true}
     val memberReceiverNoWarn = noWarnFormat.encodeToString(Instance)
     val memberDefaultNoWarn = JsonImportAlias.encodeToString(Instance)
 
     fun testDefaultWarnings() {
-        JsonImportAlias {}
-        JsonImportAlias() {}
-        JsonImportAlias {}.encodeToString(Any())
-        JsonImportAlias {}.encodeToString(Instance)
-        JsonImportAlias { /*some comment*/ }.encodeToString(Instance)
-        val localDefaultFormat = JsonImportAlias {}
-        JsonImportAlias(JsonImportAlias.Default) {}
-        JsonImportAlias(JsonImportAlias) {}
-        JsonImportAlias(JsonImportAlias.Default, {})
-        JsonImportAlias(builderAction = {})
-        JsonImportAlias(builderAction = fun JsonBuilder.() {})
-        JsonImportAlias(builderAction = fun JsonBuilder.() = Unit)
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias() {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>.encodeToString(Any())
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias { /*some comment*/ }<!>.encodeToString(Instance)
+        val localDefaultFormat = <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias(JsonImportAlias.Default) {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias(JsonImportAlias) {}<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias(JsonImportAlias.Default, {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias(builderAction = {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias(builderAction = fun JsonBuilder.() {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias(builderAction = fun JsonBuilder.() = Unit)<!>
 
         "{}".let {
-            JsonImportAlias {}.decodeFromString<Any>(it)
+            <!JSON_FORMAT_REDUNDANT_DEFAULT!>JsonImportAlias {}<!>.decodeFromString<Any>(it)
         }
     }
 
     fun testReceiverWarnings() {
-        JsonImportAlias {encodeDefaults = true}.encodeToString(Instance)
-        val encoded = JsonImportAlias {encodeDefaults = true}.encodeToString(Instance)
-        JsonImportAlias {encodeDefaults = true}.decodeFromString<Any>("{}")
-        JsonImportAlias {encodeDefaults = true}.hashCode()
-        JsonImportAlias {encodeDefaults = true}.toString()
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.encodeToString(Instance)
+        val encoded = <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.decodeFromString<Any>("{}")
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.hashCode()
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.toString()
 
-        JsonImportAlias(noWarnFormat) {encodeDefaults = true}.encodeToString(Instance)
-        JsonImportAlias(builderAction = {encodeDefaults = true}).encodeToString(Instance)
-        JsonImportAlias(noWarnFormat, {encodeDefaults = true}).encodeToString(Instance)
-        JsonImportAlias(builderAction = fun JsonBuilder.() {encodeDefaults = true}).encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias(noWarnFormat) {encodeDefaults = true}<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias(builderAction = {encodeDefaults = true})<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias(noWarnFormat, {encodeDefaults = true})<!>.encodeToString(Instance)
+        <!JSON_FORMAT_REDUNDANT!>JsonImportAlias(builderAction = fun JsonBuilder.() {encodeDefaults = true})<!>.encodeToString(Instance)
 
         "{}".let {
-            JsonImportAlias {encodeDefaults = true}.decodeFromString<Any>(it)
+            <!JSON_FORMAT_REDUNDANT!>JsonImportAlias {encodeDefaults = true}<!>.decodeFromString<Any>(it)
         }
     }
 

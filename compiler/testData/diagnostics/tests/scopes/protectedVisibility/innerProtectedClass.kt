@@ -9,7 +9,7 @@ class Foo : BaseClass() {
     fun bar() {
         val f = foo()
         f.x
-        f.<!INVISIBLE_MEMBER!>y<!>
+        f.<!INVISIBLE_REFERENCE!>y<!>
     }
 }
 

@@ -8,7 +8,7 @@ inline fun <reified F : Bound> foo(key: String): F? = null
 
 fun main() {
     val value: Map<String, String> = requireNotNull(
-        foo("")
+        <!TYPE_INTERSECTION_AS_REIFIED_ERROR!>foo<!>("")
     )
 }
 

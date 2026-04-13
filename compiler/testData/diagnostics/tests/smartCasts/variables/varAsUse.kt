@@ -6,7 +6,7 @@ fun get(): Any {
 fun foo(): Int {
     var c: Any = get()
     (c as String).length
-    return <!DEBUG_INFO_SMARTCAST!>c<!>.length // Previous line should make as unnecessary here.
+    return c.length // Previous line should make as unnecessary here.
 }
 
 /* GENERATED_FIR_TAGS: asExpression, functionDeclaration, localProperty, propertyDeclaration, smartcast, stringLiteral */

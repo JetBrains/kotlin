@@ -7,8 +7,8 @@ fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()
 fun <K> Foo<K>.bar(x: Int = 1) {}
 
 fun main() {
-    val x = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildFoo<!> {
-        bar()
+    val x = <!CANNOT_INFER_PARAMETER_TYPE!>buildFoo<!> {
+        <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>()
     }
 }
 

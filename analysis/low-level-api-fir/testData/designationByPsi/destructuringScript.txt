@@ -1,0 +1,4 @@
+KT element: KtDestructuringDeclaration
+Resolve target: destructuringScript.kts -> <script-destructuringScript.kts> -> <destruct>
+FIR:
+  lval <destruct>: <implicit> = LAZY_EXPRESSION

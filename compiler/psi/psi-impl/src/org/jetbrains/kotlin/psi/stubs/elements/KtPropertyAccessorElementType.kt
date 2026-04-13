@@ -39,7 +39,6 @@ internal object KtPropertyAccessorElementType : KtStubElementType<KotlinProperty
         val mayHaveContract = stub.mayHaveContract
         dataStream.writeBoolean(mayHaveContract)
         if (mayHaveContract) {
-            @OptIn(KtImplementationDetail::class)
             dataStream.writeContract(stub.contract)
         }
     }
@@ -50,7 +49,6 @@ internal object KtPropertyAccessorElementType : KtStubElementType<KotlinProperty
         val hasNoExpressionBody = dataStream.readBoolean()
         val mayHaveContract = dataStream.readBoolean()
         val contract = if (mayHaveContract) {
-            @OptIn(KtImplementationDetail::class)
             dataStream.readContract()
         } else {
             null

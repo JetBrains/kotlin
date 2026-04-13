@@ -305,10 +305,11 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         print(
             when (mode) {
                 SirImport.Mode.Exported -> "@_exported "
+                SirImport.Mode.Default -> ""
                 SirImport.Mode.ImplementationOnly -> "@_implementationOnly "
-                null -> ""
             }
         )
+        print(spi.render(SirTypeVariance.INVARIANT).takeUnless { it.isBlank() }?.let { "$it " } ?: "")
         println("import ${moduleName.swiftIdentifier}")
     }
 

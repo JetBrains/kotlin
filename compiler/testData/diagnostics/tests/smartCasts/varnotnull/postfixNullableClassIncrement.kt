@@ -8,7 +8,7 @@ public fun box() : MyClass? {
     var i : MyClass? 
     i = MyClass()
     var j = i++
-    <!DEBUG_INFO_SMARTCAST!>j<!>.hashCode()
+    j.hashCode()
     return i
 }
 

@@ -18,12 +18,12 @@ fun foo(): Bar {
         while (y != null) {
             if (x == y)
                 // x is not null because of outer while
-                return <!DEBUG_INFO_SMARTCAST!>x<!>
+                return x
             // y is not null because of inner while
-            y = <!DEBUG_INFO_SMARTCAST!>y<!>.next()
+            y = y.next()
         }
         // x is not null because of outer while
-        x = <!DEBUG_INFO_SMARTCAST!>x<!>.next()
+        x = x.next()
     }
     return Bar()
 }

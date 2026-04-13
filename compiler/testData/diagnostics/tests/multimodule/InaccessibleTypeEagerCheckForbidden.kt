@@ -1,6 +1,5 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidUsingSupertypesWithInaccessibleContentInTypeArguments +ForbidLambdaParameterWithMissingDependencyType +AllowEagerSupertypeAccessibilityChecks
+// LANGUAGE: +ForbidUsingExpressionTypesWithInaccessibleContent +ForbidLambdaParameterWithMissingDependencyType +AllowEagerSupertypeAccessibilityChecks
 
 // MODULE: missing
 // FILE: Base.kt

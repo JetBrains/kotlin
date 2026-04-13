@@ -1,12 +1,12 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun baz(s: String?, u: String?): String {
-    val t = when(if (u == null) return "" else <!DEBUG_INFO_SMARTCAST!>u<!>) {
-        "abc" -> <!DEBUG_INFO_SMARTCAST!>u<!>
+    val t = when(if (u == null) return "" else u) {
+        "abc" -> u
         "" -> {
             if (s == null) return ""
-            <!DEBUG_INFO_SMARTCAST!>s<!>
+            s
         }
-        else -> <!DEBUG_INFO_SMARTCAST!>u<!>
+        else -> u
     }
     return t
 }

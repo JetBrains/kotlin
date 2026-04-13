@@ -9,7 +9,7 @@ class Outer<E> {
 
     fun foo(x: InnerBase<String>, y: Any?, z: Outer<*>.InnerBase<String>) {
         if (x is Inner) {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.prop.checkType { _<E>() }
+            x.prop.checkType { _<E>() }
         }
 
         if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) return
@@ -20,7 +20,7 @@ class Outer<E> {
         }
 
         if (y is Outer<*>.Inner<*>) {
-            <!DEBUG_INFO_SMARTCAST!>y<!>.prop.checkType { _<Any?>() }
+            y.prop.checkType { _<Any?>() }
         }
     }
 

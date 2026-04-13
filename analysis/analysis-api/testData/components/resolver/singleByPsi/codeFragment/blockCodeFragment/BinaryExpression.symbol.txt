@@ -1,4 +1,4 @@
-KtOperationReferenceExpression(138,139): '+'
+KtOperationReferenceExpression(136,137): '+'
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int

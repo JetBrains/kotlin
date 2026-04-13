@@ -45,6 +45,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Under4
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Ungroup0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.With0
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.getAnnotationWithResolvedArgumentsByClassId
+import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -61,6 +63,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlinx.dataframe.plugin.impl.StringApiOverloadInterpreter
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslAddGroupInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AddDslNamedGroup
@@ -334,9 +337,17 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls2
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
+@Suppress("UNCHECKED_CAST")
 internal fun FirFunctionCall.loadInterpreter(session: FirSession, isTest: Boolean): Interpreter<*>? {
     val interpreter = Stdlib.interpreter(this)
     if (interpreter != null) return interpreter
+    val stringApiOverload = stringApiOverload(session)
+    if (stringApiOverload != null) {
+        val adaptee: Interpreter<*> = stringApiOverload.interpreter.load<Interpreter<*>>(isTest)
+            ?: return null // error is already reported if isTest by `load`
+        val stringOverloadInterpreter = StringApiOverloadInterpreter(adaptee, stringApiOverload)
+        return stringOverloadInterpreter
+    }
     return interpreterName(session)?.load<Interpreter<*>>(isTest)
 }
 
@@ -378,6 +389,23 @@ internal fun FirFunctionCall.interpreterName(session: FirSession): String? {
             name
         }
 }
+
+internal fun FirFunctionCall.stringApiOverload(session: FirSession): StringApiOverloadData? {
+    val symbol =
+        (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirCallableSymbol ?: return null
+    val annotation = symbol
+        .getAnnotationWithResolvedArgumentsByClassId(Names.STRING_API_INTERPRETABLE_ANNOTATION, session)
+        ?: return null
+    val name = annotation.getStringArgument(Name.identifier("interpreter")) ?: return null
+    val stringArgument = annotation.getStringArgument(Name.identifier("stringArgument")) ?: return null
+    val targetArgument = annotation.getStringArgument(Name.identifier("targetArgument"))?.let {
+        // default "" value means that target name is expected to be the same
+        if (it == "") stringArgument else it
+    } ?: return null
+    return StringApiOverloadData(name, stringArgument, targetArgument)
+}
+
+class StringApiOverloadData(val interpreter: String, val stringArgument: String, val targetArgument: String)
 
 context(facade: KotlinTypeFacade)
 fun FirFunctionCall.loadInterpreter(): Interpreter<*>? = this.loadInterpreter(facade.session, facade.isTest)

@@ -3,13 +3,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-inline expect fun inlineFun()
+inline <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun inlineFun()
 expect fun nonInlineFun()
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-<!ACTUAL_WITHOUT_EXPECT!>actual<!> fun inlineFun() { }
+actual fun <!EXPECT_ACTUAL_INCOMPATIBLE_FUNCTION_MODIFIERS_NOT_SUBSET!>inlineFun<!>() { }
 actual fun nonInlineFun() { }
 
 /* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, inline */

@@ -11,43 +11,43 @@ fun <T : CharSequence?> foo(x: T) {
     if (x != null) {
         if (<!SENSELESS_COMPARISON!>x != null<!>) {}
 
-        y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
-        y2 = <!TYPE_MISMATCH!>x<!>
+        y1 = x
+        y2 <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
 
-        bar1(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar3(<!TYPE_MISMATCH!>x<!>)
+        bar1(x)
+        bar1<CharSequence>(x)
+        bar2(x)
+        bar3(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     }
 
     if (x is String) {
-        y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
-        y2 = <!DEBUG_INFO_SMARTCAST!>x<!>
+        y1 = x
+        y2 = x
 
-        bar1(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar3(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        bar1(x)
+        bar2(x)
+        bar3(x)
     }
 
     if (x is CharSequence) {
-        y1 = <!DEBUG_INFO_SMARTCAST!>x<!>
-        y2 = <!TYPE_MISMATCH!>x<!>
+        y1 = x
+        y2 <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
 
-        bar1(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar3(<!TYPE_MISMATCH!>x<!>)
+        bar1(x)
+        bar2(x)
+        bar3(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     }
 
     if (1 == 1) {
         val y = x!!
-        bar1(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar1<CharSequence>(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar2(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        bar3(<!TYPE_MISMATCH!>x<!>)
+        bar1(x)
+        bar1<CharSequence>(x)
+        bar2(x)
+        bar3(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
         bar1(y)
         bar2(y)
-        bar3(<!TYPE_MISMATCH!>y<!>)
+        bar3(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
     }
 }
 

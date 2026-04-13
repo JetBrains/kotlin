@@ -25,9 +25,7 @@ class BaseImpl : Base {
 class Derived : DerivedBase, Base {
   private /* final field */ val $$delegate_0: Base = newBase()
   init {
-    { // BLOCK
-      <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
-    }
+    <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
   }
 
   constructor() /* primary */ {
@@ -45,9 +43,7 @@ class Derived : DerivedBase, Base {
 class Derived1 : DerivedBase, Base {
   private /* final field */ val $$delegate_0: Base = newBase()
   init {
-    { // BLOCK
-      <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
-    }
+    <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
   }
 
   constructor() /* primary */ {
@@ -64,9 +60,7 @@ class Derived1 : DerivedBase, Base {
 
 open class DerivedBase {
   init {
-    { // BLOCK
-      <set-global>(<set-?> = <get-global>().plus(other = ":DerivedBase"))
-    }
+    <set-global>(<set-?> = <get-global>().plus(other = ":DerivedBase"))
   }
 
   constructor() /* primary */ {
@@ -89,9 +83,7 @@ fun box(): String {
 }
 
 fun newBase(): Base {
-  { // BLOCK
-    <set-global>(<set-?> = <get-global>().plus(other = ":newBase"))
-  }
+  <set-global>(<set-?> = <get-global>().plus(other = ":newBase"))
   return BaseImpl(s = "test")
 }
 

@@ -17,7 +17,7 @@
 fun case_1(x: Int?) {
     val y = x != null
     if (y) {
-        x<!UNSAFE_CALL!>.<!>inv()
+        x.inv()
     }
 }
 
@@ -28,7 +28,7 @@ fun case_1(x: Int?) {
 fun case_2(x: Any?) {
     val y = x is Int
     if (y) {
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        x.inv()
     }
 }
 
@@ -39,7 +39,7 @@ fun case_2(x: Any?) {
 fun <T> case_3(x: T) {
     val y = x is Int
     if (y) {
-        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        x.inv()
     }
 }
 
@@ -50,6 +50,6 @@ fun <T> case_3(x: T) {
 fun <T> case_4(x: T) {
     val y = x is Int?
     if (y) {
-        x?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>()
+        x?.inv()
     }
 }

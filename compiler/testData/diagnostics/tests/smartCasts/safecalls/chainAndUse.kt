@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 fun calc(x: List<String>?): Int {
     // x should be non-null in arguments list, despite of a chain
-    x?.subList(0, 1)?.get(<!DEBUG_INFO_SMARTCAST!>x<!>.size)
+    x?.subList(0, 1)?.get(x.size)
     // But not here!
     return x!!.size
 }

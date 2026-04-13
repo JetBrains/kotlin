@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline operator fun <reified T> T.plus(p: T): T = this

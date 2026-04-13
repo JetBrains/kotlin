@@ -3,18 +3,18 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
+expect open class Foo {
     internal fun bar()
     protected fun foo()
     fun baz()
     public fun qux()
 }
 
-internal expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Bar<!>
+internal expect class Bar
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Baz<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Baz
 
-public expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Qux<!>
+public expect class Qux
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: Foo.java

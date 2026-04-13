@@ -6,12 +6,12 @@ open class B: A()
 class C: B()
 
 fun test(expr: B) {
-    checkExactType<A>(<!TYPE_MISMATCH!>expr<!>)
+    checkExactType<A>(<!ARGUMENT_TYPE_MISMATCH!>expr<!>)
     checkExactType<B>(expr)
-    checkExactType<C>(<!TYPE_MISMATCH!>expr<!>)
-    checkTypeEquality(A(), <!TYPE_MISMATCH!>expr<!>)
+    checkExactType<C>(<!ARGUMENT_TYPE_MISMATCH!>expr<!>)
+    checkTypeEquality(A(), <!ARGUMENT_TYPE_MISMATCH!>expr<!>)
     checkTypeEquality(B(), expr)
-    checkTypeEquality(C(), <!TYPE_MISMATCH!>expr<!>)
+    checkTypeEquality(C(), <!ARGUMENT_TYPE_MISMATCH!>expr<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, stringLiteral, typeParameter */

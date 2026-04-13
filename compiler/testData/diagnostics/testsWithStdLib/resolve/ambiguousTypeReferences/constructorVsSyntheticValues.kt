@@ -21,7 +21,7 @@ enum class SomeClass {
 val resultValues = SomeClass.<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>()
 val resultValuesRef = SomeClass::<!OVERLOAD_RESOLUTION_AMBIGUITY!>values<!>
 
-val resultEntries = take<SomeClass.entries.Companion>(SomeClass.entries)
+val resultEntries = take<SomeClass.entries.Companion>(<!DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER!>SomeClass.entries<!>)
 val resultEntriesRef = take<KFunction0<SomeClass.entries>>(SomeClass::entries)
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, enumDeclaration, enumEntry,

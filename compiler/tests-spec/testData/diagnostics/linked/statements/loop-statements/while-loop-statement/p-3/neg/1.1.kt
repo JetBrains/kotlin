@@ -16,13 +16,13 @@
 // TESTCASE NUMBER: 1
 fun case1() {
     val condition: Any = true
-    while (<!TYPE_MISMATCH!>condition<!> && <!TYPE_MISMATCH!>"true"<!>) {
+    while (<!CONDITION_TYPE_MISMATCH!>condition<!> && <!CONDITION_TYPE_MISMATCH!>"true"<!>) {
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case2() {
     val condition: Boolean? = true
-    while (<!TYPE_MISMATCH, TYPE_MISMATCH!>condition<!>) {
+    while (<!CONDITION_TYPE_MISMATCH!>condition<!>) {
     }
 }

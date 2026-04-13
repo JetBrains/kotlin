@@ -8,17 +8,17 @@ typealias SomeUnusedAlias<T> = Some
 
 fun test_1() {
     Some::foo
-    Some<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Some<Int><!>::foo
 
     SomeAlias::foo
-    SomeAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>SomeAlias<Int><!>::foo
 
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>SomeUnusedAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>SomeUnusedAlias<!>::foo
     SomeUnusedAlias<Int>::foo
     SomeUnusedAlias<out Int>::foo
     SomeUnusedAlias<in Int>::foo
     SomeUnusedAlias<*>::foo
-    SomeUnusedAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>SomeUnusedAlias<Int, Int><!>::foo
 }
 
 // ----------------------------------------------------------------
@@ -33,27 +33,27 @@ typealias InvSpecificAlias = Inv<String>
 typealias Mixed3<B> = Inv<InvAlias<B>>
 
 fun test_2() {
-    <!UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION!>Mixed3<String><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>Mixed3<String><!>::foo
 
     Inv<String>::foo
     Inv<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     Inv<*>::foo
-    Inv<out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    Inv<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     Inv<out String>::foo
-    Inv<in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    Inv<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
     Inv<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>::foo
-    Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<String, String><!>::foo
 
     InvAlias<String>::foo
     InvAlias<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     InvAlias<*>::foo
-    InvAlias<out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    InvAlias<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     InvAlias<out String>::foo
-    InvAlias<in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    InvAlias<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
     InvAlias<in String>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvAlias<!>::foo
-    InvAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvAlias<String, String><!>::foo
 
     InvUnusedCorrectAlias<String>::foo
     InvUnusedCorrectAlias<Int>::foo
@@ -62,29 +62,29 @@ fun test_2() {
     InvUnusedCorrectAlias<out String>::foo
     InvUnusedCorrectAlias<in Int>::foo
     InvUnusedCorrectAlias<in String>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvUnusedCorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedCorrectAlias<String, String><!>::foo
 
-    InvUnusedIncorrectAlias<String>::foo
-    InvUnusedIncorrectAlias<Int>::foo
-    InvUnusedIncorrectAlias<*>::foo
-    InvUnusedIncorrectAlias<out Int>::foo
-    InvUnusedIncorrectAlias<out String>::foo
-    InvUnusedIncorrectAlias<in Int>::foo
-    InvUnusedIncorrectAlias<in String>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><out String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvUnusedIncorrectAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<String><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<Int><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<*><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<out Int><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<out String><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<in Int><!>::foo
+    <!UPPER_BOUND_VIOLATED_DEPRECATION_WARNING!>InvUnusedIncorrectAlias<in String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<String, String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<in String, in String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<out String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<in String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvUnusedIncorrectAlias<*, *><!>::foo
 
     InvSpecificAlias::foo
-    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, in String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><out String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><in String, out String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    InvSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<String, String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<in String, in String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<out String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<in String, out String><!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>InvSpecificAlias<*, *><!>::foo
 }
 
 // ----------------------------------------------------------------
@@ -105,31 +105,31 @@ fun test_3() {
     BoundedPair<<!UPPER_BOUND_VIOLATED!>Int<!>, Int>::foo
     BoundedPair<*, *>::foo
     BoundedPair<out String, out Int>::foo
-    BoundedPair<out <!UPPER_BOUND_VIOLATED!>Int<!>, out Int>::foo
+    BoundedPair<<!UPPER_BOUND_VIOLATED!>out Int<!>, out Int>::foo
     BoundedPair<in String, in Int>::foo
-    BoundedPair<in <!UPPER_BOUND_VIOLATED!>Int<!>, in Int>::foo
+    BoundedPair<<!UPPER_BOUND_VIOLATED!>in Int<!>, in Int>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPair<!>::foo
-    BoundedPair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPair<Int, Int, Int><!>::foo
 
     BoundedPairAlias<String, Int>::foo
     BoundedPairAlias<<!UPPER_BOUND_VIOLATED!>Int<!>, Int>::foo
     BoundedPairAlias<*, *>::foo
     BoundedPairAlias<out String, out Int>::foo
-    BoundedPairAlias<out <!UPPER_BOUND_VIOLATED!>Int<!>, out Int>::foo
+    BoundedPairAlias<<!UPPER_BOUND_VIOLATED!>out Int<!>, out Int>::foo
     BoundedPairAlias<in String, in Int>::foo
-    BoundedPairAlias<in <!UPPER_BOUND_VIOLATED!>Int<!>, in Int>::foo
+    BoundedPairAlias<<!UPPER_BOUND_VIOLATED!>in Int<!>, in Int>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairAlias<!>::foo
-    BoundedPairAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairAlias<Int, Int, Int><!>::foo
 
     BoundedPairInverted<String, <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     BoundedPairInverted<Int, <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     BoundedPairInverted<*, *>::foo
-    BoundedPairInverted<out String, out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
-    BoundedPairInverted<out Int, out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
-    BoundedPairInverted<in String, in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
-    BoundedPairInverted<in Int, in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    BoundedPairInverted<out String, <!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
+    BoundedPairInverted<out Int, <!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
+    BoundedPairInverted<in String, <!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
+    BoundedPairInverted<in Int, <!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairInverted<!>::foo
-    BoundedPairInverted<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairInverted<Int, Int, Int><!>::foo
 
     BoundedPairFirstFixedAlias<Int>::foo
     BoundedPairFirstFixedAlias<Int>::foo
@@ -138,18 +138,18 @@ fun test_3() {
     BoundedPairFirstFixedAlias<out Int>::foo
     BoundedPairFirstFixedAlias<in String>::foo
     BoundedPairFirstFixedAlias<in Int>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairFirstFixedAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    BoundedPairFirstFixedAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairFirstFixedAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairFirstFixedAlias<Int, Int><!>::foo
 
     BoundedPairSecondFixedAlias<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     BoundedPairSecondFixedAlias<<!UPPER_BOUND_VIOLATED!>Int<!>>::foo
     BoundedPairSecondFixedAlias<*>::foo
     BoundedPairSecondFixedAlias<out String>::foo
-    BoundedPairSecondFixedAlias<out <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
+    BoundedPairSecondFixedAlias<<!UPPER_BOUND_VIOLATED!>out Int<!>>::foo
     BoundedPairSecondFixedAlias<in String>::foo
-    BoundedPairSecondFixedAlias<in <!UPPER_BOUND_VIOLATED!>Int<!>>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSecondFixedAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    BoundedPairSecondFixedAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    BoundedPairSecondFixedAlias<<!UPPER_BOUND_VIOLATED!>in Int<!>>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSecondFixedAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSecondFixedAlias<Int, Int><!>::foo
 
     BoundedPairFirstUnusedAlias<String, Int>::foo
     BoundedPairFirstUnusedAlias<Int, Int>::foo
@@ -158,18 +158,18 @@ fun test_3() {
     BoundedPairFirstUnusedAlias<out Int, out Int>::foo
     BoundedPairFirstUnusedAlias<in String, in Int>::foo
     BoundedPairFirstUnusedAlias<in Int, in Int>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairFirstUnusedAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    BoundedPairFirstUnusedAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairFirstUnusedAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairFirstUnusedAlias<Int, Int, Int><!>::foo
 
     BoundedPairSecondUnusedAlias<String, Int>::foo
     BoundedPairSecondUnusedAlias<<!UPPER_BOUND_VIOLATED!>Int<!>, Int>::foo
     BoundedPairSecondUnusedAlias<*, *>::foo
     BoundedPairSecondUnusedAlias<out String, out Int>::foo
-    BoundedPairSecondUnusedAlias<out <!UPPER_BOUND_VIOLATED!>Int<!>, out Int>::foo
+    BoundedPairSecondUnusedAlias<<!UPPER_BOUND_VIOLATED!>out Int<!>, out Int>::foo
     BoundedPairSecondUnusedAlias<in String, in Int>::foo
-    BoundedPairSecondUnusedAlias<in <!UPPER_BOUND_VIOLATED!>Int<!>, in Int>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSecondUnusedAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    BoundedPairSecondUnusedAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    BoundedPairSecondUnusedAlias<<!UPPER_BOUND_VIOLATED!>in Int<!>, in Int>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSecondUnusedAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSecondUnusedAlias<Int, Int, Int><!>::foo
 
     BoundedPairBothAlias<String, Int>::foo
     BoundedPairBothAlias<Int, Int>::foo
@@ -178,8 +178,8 @@ fun test_3() {
     BoundedPairBothAlias<out Int, out Int>::foo
     BoundedPairBothAlias<in String, in Int>::foo
     BoundedPairBothAlias<in Int, in Int>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairBothAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    BoundedPairBothAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairBothAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairBothAlias<Int, Int, Int><!>::foo
 
     BoundedPairSpecificAlias<String, Int>::foo
     BoundedPairSpecificAlias<Int, Int>::foo
@@ -188,8 +188,8 @@ fun test_3() {
     BoundedPairSpecificAlias<out Int, out Int>::foo
     BoundedPairSpecificAlias<in String, in Int>::foo
     BoundedPairSpecificAlias<in Int, in Int>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    BoundedPairSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<!>::foo
+    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<Int, Int, Int><!>::foo
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, typeAliasDeclaration,

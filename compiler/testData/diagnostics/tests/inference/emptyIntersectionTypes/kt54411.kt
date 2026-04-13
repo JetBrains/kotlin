@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 class AtomicRef<T>(val value: T)
 
 inline fun <F : Segment<F>> AtomicRef<F>.findSegmentAndMoveForward(createNewSegment: (prev: F?) -> F) = null

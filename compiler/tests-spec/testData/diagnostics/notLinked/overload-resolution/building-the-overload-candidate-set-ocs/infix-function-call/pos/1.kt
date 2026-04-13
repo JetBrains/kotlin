@@ -26,8 +26,8 @@ fun case1() {
 //    b.memberValCNull.invoke(1)         //nok (UNSAFE_CALL)
 
     if (b.memberValCNull != null) {
-        b <!UNSAFE_INFIX_CALL!>memberValCNull<!> 1            //nok  (UNSAFE_INFIX_CALL) !!!!
-        <!DEBUG_INFO_SMARTCAST!>b.memberValCNull<!>.invoke(2)    //ok
-        b.<!UNSAFE_IMPLICIT_INVOKE_CALL!>memberValCNull<!>(3)           //nok (UNSAFE_CALL)  !!!
+        b memberValCNull 1            //nok  (UNSAFE_INFIX_CALL) !!!!
+        b.memberValCNull.invoke(2)    //ok
+        b.memberValCNull(3)           //nok (UNSAFE_CALL)  !!!
     }
 }

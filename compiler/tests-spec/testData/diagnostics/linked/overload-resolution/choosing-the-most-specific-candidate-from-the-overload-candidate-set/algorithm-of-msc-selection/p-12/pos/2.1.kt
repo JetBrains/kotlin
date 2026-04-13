@@ -159,7 +159,7 @@ class Case10() {
 
 fun testcase10(case: Case10) {
     case.<!DEBUG_INFO_CALL("fqName: Case10.xoo; typeCall: function")!>xoo(1, 1)<!>
-    case.<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>xoo(1, 1)<!>
+    case.xoo(1, 1)
 }
 
 // TESTCASE NUMBER: 11

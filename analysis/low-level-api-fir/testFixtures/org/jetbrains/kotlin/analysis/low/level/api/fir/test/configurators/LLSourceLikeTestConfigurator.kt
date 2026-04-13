@@ -8,17 +8,15 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtSourceLikeTestModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleFactory
+import org.jetbrains.kotlin.analysis.test.framework.services.DependencyKindModuleStructureTransformer
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.configureLibraryCompilationSupport
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator.Companion.defaultTargetPlatformValue
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 /**
  * A universal test configurator for source-like tests that use FIR.
- *
- * It covers [AnalysisApiFirSourceTestConfigurator] and [AnalysisApiFirScriptTestConfigurator].
- *
- * @see AnalysisApiFirSourceTestConfigurator
- * @see AnalysisApiFirScriptTestConfigurator
  */
 open class LLSourceLikeTestConfigurator(
     analyseInDependentSession: Boolean = false,
@@ -27,7 +25,13 @@ open class LLSourceLikeTestConfigurator(
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
 
-        builder.useAdditionalService<KtTestModuleFactory> { KtSourceLikeTestModuleFactory }
-        AnalysisApiFirSourceTestConfigurator.configureTest(builder)
+        builder.apply {
+            useAdditionalService<KtTestModuleFactory> { KtSourceLikeTestModuleFactory }
+
+            @OptIn(TestInfrastructureInternals::class)
+            useModuleStructureTransformers(DependencyKindModuleStructureTransformer)
+
+            configureLibraryCompilationSupport()
+        }
     }
 }

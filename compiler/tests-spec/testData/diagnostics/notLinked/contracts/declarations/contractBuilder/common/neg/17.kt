@@ -15,18 +15,18 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(): Boolean {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(null) implies throw Exception() }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies throw Exception()<!> }
     return true
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(): Boolean {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(null) implies return return return false }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies return return return false<!> }
     return true
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(): Boolean {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns(null) implies return return return false && throw throw throw throw Exception() }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies return return return false && throw throw throw throw Exception()<!> }
     return true
 }

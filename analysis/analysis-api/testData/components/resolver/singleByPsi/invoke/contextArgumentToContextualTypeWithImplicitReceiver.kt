@@ -4,4 +4,3 @@ fun Int.foo(block: context(String) Int.() -> Unit) {
 }
 
 // LANGUAGE: +ContextParameters
-// IGNORE_STABILITY_K1: candidates

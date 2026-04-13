@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -19,4 +20,8 @@ class KotlinClassLiteralExpressionStubImpl(
     override fun copyInto(newParent: StubElement<*>?): KotlinClassLiteralExpressionStubImpl = KotlinClassLiteralExpressionStubImpl(
         parent = newParent,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinClassLiteralExpressionStubImpl
 }

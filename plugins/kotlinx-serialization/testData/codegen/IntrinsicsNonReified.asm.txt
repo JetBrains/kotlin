@@ -1,5 +1,5 @@
 public final class Box$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
-    private final kotlinx.serialization.internal.PluginGeneratedSerialDescriptor descriptor
+    private final kotlinx.serialization.descriptors.SerialDescriptor descriptor
 
     private final kotlinx.serialization.KSerializer typeSerial0
 
@@ -7,21 +7,21 @@ public final class Box$$serializer : java/lang/Object, kotlinx/serialization/int
 
     public void <init>(kotlinx.serialization.KSerializer typeSerial0)
 
-    public kotlinx.serialization.KSerializer[] childSerializers()
+    public final kotlinx.serialization.KSerializer[] childSerializers()
 
-    public Box deserialize(kotlinx.serialization.encoding.Decoder decoder)
+    public final Box deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
     public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
 
-    public kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
 
     private final kotlinx.serialization.KSerializer getTypeSerial0()
 
-    public void serialize(kotlinx.serialization.encoding.Encoder encoder, Box value)
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Box value)
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
 
-    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+    public final kotlinx.serialization.KSerializer[] typeParametersSerializers()
 }
 
 public final class Box$Companion : java/lang/Object {
@@ -43,7 +43,7 @@ public final class Box : java/lang/Object {
 
     public void <init>(java.lang.Object t)
 
-    public void <init>(int seen1, java.lang.Object t, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+    public void <init>(int seen0, java.lang.Object t, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
 
     public final java.lang.Object getT()
 

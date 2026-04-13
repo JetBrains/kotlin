@@ -19,7 +19,7 @@ abstract public class A implements CharSequence {
 
 // FILE: main.kt
 abstract class KA : A() {
-    override <!ACCIDENTAL_OVERRIDE!>fun get(index: Int) = 'O'<!>
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>get<!>(index: Int) = 'O'
 }
 
 fun foo(a: A, ka: KA) {

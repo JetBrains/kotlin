@@ -26,11 +26,11 @@ abstract class Sub<T>: foo.Super<T>() {
 package foo
 
 fun test(s: bar.Sub<String>) {
-    s.<!INVISIBLE_MEMBER!>name<!>
-    s.<!INVISIBLE_MEMBER!>name<!> = ""
+    s.<!INVISIBLE_REFERENCE!>name<!>
+    s.<!INVISIBLE_REFERENCE!>name<!> = ""
     s.name2
     s.name2 = ""
-    s.<!INVISIBLE_MEMBER!>doSomething<!>()
+    s.<!INVISIBLE_REFERENCE!>doSomething<!>()
     s.doSomething2()
     val s2: Super<String> = s
     s2.name

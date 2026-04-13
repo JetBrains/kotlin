@@ -2,8 +2,8 @@
 fun reproduce() {
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        <!BUILDER_INFERENCE_STUB_RECEIVER, TYPE_MISMATCH("String?; ScopeOwner")!>otvOwner.myVar<!> += ScopeOwner()
-        <!BUILDER_INFERENCE_STUB_RECEIVER, VAL_REASSIGNMENT!>otvOwner.myVal<!> += ScopeOwner()
+        otvOwner.myVar += ScopeOwner()
+        otvOwner.<!VAL_REASSIGNMENT!>myVal<!> += ScopeOwner()
     }
 }
 

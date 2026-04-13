@@ -16,7 +16,7 @@ expect class Foo : Base {
 
 actual class Foo : Base() {
     actual override var foo: Int = 2
-        <!ACTUAL_WITHOUT_EXPECT!>public<!> set
+        public set
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, override, propertyDeclaration */

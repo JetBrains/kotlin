@@ -5,7 +5,7 @@
 // ISSUE: KT-25694
 
 fun test_1(
-    x: () -> String = { <!UNINITIALIZED_PARAMETER_WARNING!>y<!> }, // Error
+    x: () -> String = { <!UNINITIALIZED_PARAMETER!>y<!> }, // Error
     y: String = "OK"
 ) {}
 
@@ -15,7 +15,7 @@ fun test_2(
 ) {}
 
 fun test_3(
-    x: () -> Any = { <!UNINITIALIZED_PARAMETER_WARNING!>y<!>() to <!UNINITIALIZED_PARAMETER_WARNING!>y<!>.invoke() }, // Error
+    x: () -> Any = { <!UNINITIALIZED_PARAMETER!>y<!>() to <!UNINITIALIZED_PARAMETER!>y<!>.invoke() }, // Error
     y: () -> String = { "OK" }
 ) {}
 
@@ -30,15 +30,15 @@ interface Foo {
 
 fun test_5(
     x: Foo = object : Foo {
-        val z1 = <!UNINITIALIZED_PARAMETER, UNINITIALIZED_PARAMETER_WARNING!>y<!> // Error
-        val z2 = run { <!UNINITIALIZED_PARAMETER_WARNING!>y<!> } // Error
+        val z1 = <!UNINITIALIZED_PARAMETER!>y<!> // Error
+        val z2 = run { <!UNINITIALIZED_PARAMETER!>y<!> } // Error
 
         init {
-            println(<!UNINITIALIZED_PARAMETER_WARNING!>y<!>) // Error
+            println(<!UNINITIALIZED_PARAMETER!>y<!>) // Error
         }
 
         override fun foo() {
-            println(<!UNINITIALIZED_PARAMETER_WARNING!>y<!>) // Error
+            println(<!UNINITIALIZED_PARAMETER!>y<!>) // Error
         }
     },
     y: String = "OK"
@@ -63,7 +63,7 @@ fun test_6(
 fun getFoo(x: String): Foo = null!!
 
 fun test_7(
-    x: Foo = object : Foo by getFoo(<!UNINITIALIZED_PARAMETER, UNINITIALIZED_PARAMETER_WARNING!>y<!>) {}, // Error
+    x: Foo = object : Foo by getFoo(<!UNINITIALIZED_PARAMETER!>y<!>) {}, // Error
     y: String = "OK"
 ) {}
 

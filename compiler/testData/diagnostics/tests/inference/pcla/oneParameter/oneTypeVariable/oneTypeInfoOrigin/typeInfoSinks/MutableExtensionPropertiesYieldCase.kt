@@ -9,12 +9,12 @@
 // PTV is in consuming position (yield-case)
 fun testYield() {
     val arg: UserKlass = UserKlass()
-    val buildee = <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build<!> {
+    val buildee = build {
         variable = arg
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<UserKlass>>(<!TYPE_MISMATCH, TYPE_MISMATCH!>buildee<!>)
+    checkExactType<Buildee<UserKlass>>(buildee)
 }
 
 /* REQUIRED DECLARATIONS */

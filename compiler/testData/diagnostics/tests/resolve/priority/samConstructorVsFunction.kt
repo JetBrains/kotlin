@@ -10,7 +10,7 @@ fun <T> Foo(value: T): T = value
 
 fun test() {
     consume<Foo<String>>(Foo { "" })
-    consume<() -> String>(<!TYPE_MISMATCH!>Foo { "" }<!>)
+    consume<() -> String>(<!ARGUMENT_TYPE_MISMATCH!>Foo { "" }<!>)
 }
 
 fun <T> consume(t: T) {}
@@ -25,7 +25,7 @@ fun interface Foo<T> {
 fun <T> Foo(value: () -> T): T = value()
 
 fun test() {
-    consume<Foo<String>>(<!TYPE_MISMATCH!>Foo { "" }<!>)
+    consume<Foo<String>>(<!ARGUMENT_TYPE_MISMATCH!>Foo { "" }<!>)
     consume<String>(Foo { "" })
 }
 

@@ -1,5 +1,3 @@
-// IGNORE_FE10
-
 // MODULE: context
 
 // FILE: context.kt
@@ -8,7 +6,6 @@ fun test() {
 }
 
 fun foo() {}
-
 
 // MODULE: contextFragment
 // MODULE_KIND: CodeFragment

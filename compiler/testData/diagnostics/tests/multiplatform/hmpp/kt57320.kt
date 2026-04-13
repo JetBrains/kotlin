@@ -5,9 +5,9 @@
 // MODULE: common
 
 // FILE: StringValue.kt
-expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>StringValue<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> class StringValue
 
-expect fun StringValue.<!NO_ACTUAL_FOR_EXPECT{JVM}!>plus<!>(other: String): StringValue
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> fun StringValue.plus(other: String): StringValue
 
 // MODULE: commonJS()()(common)
 
@@ -25,14 +25,14 @@ interface KotlinXStringDemoInterface {
     val value: String
 }
 
-expect fun StringDemoInterface.plusK(): <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!>
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> fun StringDemoInterface.plusK(): String
 
 // MODULE: js()()(common, intermediate)
 
 // FILE: StringDemoInterfaceJs.kt
 actual typealias StringDemoInterface = KotlinXStringDemoInterface
 
-actual fun StringDemoInterface.<!ACTUAL_WITHOUT_EXPECT("Actual function 'plusK'; The following declaration is incompatible because return type is different:    public expect fun StringDemoInterface /* = KotlinXStringDemoInterface */.plusK(): String")!>plusK<!>() = <!RESOLUTION_TO_CLASSIFIER!>StringValue<!>(value).<!DEBUG_INFO_MISSING_UNRESOLVED!>plus<!>("K").<!DEBUG_INFO_MISSING_UNRESOLVED!>value<!>
+actual fun StringDemoInterface.<!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>plusK<!>() = <!EXPECT_CLASS_AS_FUNCTION!>StringValue<!>(value).plus("K").<!UNRESOLVED_REFERENCE!>value<!>
 
 // FILE: main.kt
 class StringDemo(override val value: String) : StringDemoInterface

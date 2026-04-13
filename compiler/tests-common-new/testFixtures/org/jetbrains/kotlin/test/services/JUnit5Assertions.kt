@@ -16,6 +16,8 @@ import org.opentest4j.FileInfo
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import kotlin.time.Duration
+import kotlin.time.toJavaDuration
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
 object JUnit5Assertions : AssertionsService() {
@@ -108,6 +110,10 @@ object JUnit5Assertions : AssertionsService() {
 
     override fun assumeFalse(value: Boolean, message: () -> String) {
         Assumptions.assumeFalse(value, message)
+    }
+
+    override fun assertTimeoutPreemptively(timeout: Duration, message: () -> String, action: () -> Unit) {
+        org.junit.jupiter.api.assertTimeoutPreemptively(timeout.toJavaDuration(), message, action)
     }
 
     private object AssertionFailedErrorFirst : Comparator<Throwable> {

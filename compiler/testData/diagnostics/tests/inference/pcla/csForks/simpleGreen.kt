@@ -18,7 +18,7 @@ fun <T> bar(a: A<T>, w: T) {
         baz(a, w)
 
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, 1)
+            baz(a, 1)
         }
 
         if (a is B || a is C) {

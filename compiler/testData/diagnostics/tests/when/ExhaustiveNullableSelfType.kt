@@ -1,18 +1,18 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +ImprovedExhaustivenessChecksIn21
 // ISSUE: KT-70672, KT-70673
-fun testNullableBoolean(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableBoolean(arg: Boolean?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Boolean<!> -> 2
+    is Boolean -> 2
 }
 
-fun testNullableBoolean2(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableBoolean2(arg: Boolean?) = when (arg) {
     <!USELESS_IS_CHECK!>is Boolean?<!> -> 2
 }
 
-fun testNullableBooleanAgainstAny(arg: Boolean?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableBooleanAgainstAny(arg: Boolean?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Any<!> -> 2
+    is Any -> 2
 }
 
 sealed class Sealed {
@@ -22,10 +22,10 @@ sealed class Sealed {
 
 fun testNullableSealed(arg: Sealed?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Sealed<!> -> 2
+    is Sealed -> 2
 }
 
-fun testNullableSealed2(arg: Sealed?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableSealed2(arg: Sealed?) = when (arg) {
     <!USELESS_IS_CHECK!>is Sealed?<!> -> 2
 }
 
@@ -38,22 +38,22 @@ fun testNullableEnum(arg: MyEnum?) = when (arg) {
     null -> null
 }
 
-fun testNullableEnum2(arg: MyEnum?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableEnum2(arg: MyEnum?) = when (arg) {
     <!USELESS_IS_CHECK!>is MyEnum?<!> -> 1
 }
 
-fun testNullableAny(arg: Any?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableAny(arg: Any?) = when (arg) {
     null -> 1
-    <!USELESS_IS_CHECK!>is Any<!> -> 2
+    is Any -> 2
 }
 
-fun testNullableAny2(arg: Any?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun testNullableAny2(arg: Any?) = when (arg) {
     <!USELESS_IS_CHECK!>is Any?<!> -> 2
 }
 
-fun <T> testNullableTypeParameter(arg: T?) = <!NO_ELSE_IN_WHEN!>when<!> (arg) {
+fun <T> testNullableTypeParameter(arg: T?) = when (arg) {
     null -> true
-    <!USELESS_IS_CHECK!>is <!CANNOT_CHECK_FOR_ERASED!>T<!><!> -> false
+    is T -> false
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, dnnType, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,

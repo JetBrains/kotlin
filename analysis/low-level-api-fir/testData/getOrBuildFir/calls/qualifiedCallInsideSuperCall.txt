@@ -12,8 +12,8 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/String| = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] val prop: R|kotlin/String| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(STATUS)] object B : R|A| {

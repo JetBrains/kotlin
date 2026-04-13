@@ -27,7 +27,7 @@ fun case1(){
     <!DEBUG_INFO_CALL("fqName: lib.case1.A; typeCall: function")!>A()<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("tests.case1.B")!>B()<!>
-    <!DEBUG_INFO_CALL("fqName: tests.case1.B.<init>; typeCall: function")!>B()<!>
+    <!DEBUG_INFO_CALL("fqName: tests.case1.B.B; typeCall: function")!>B()<!>
 }
 
 // FILE: Lib1.kt
@@ -55,7 +55,7 @@ fun case2(){
     <!DEBUG_INFO_CALL("fqName: lib.case2.A.invoke; typeCall: variable&invoke")!>A()<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("tests.case2.B")!>B()<!>
-    <!DEBUG_INFO_CALL("fqName: tests.case2.B.<init>; typeCall: function")!>B()<!>
+    <!DEBUG_INFO_CALL("fqName: tests.case2.B.B; typeCall: function")!>B()<!>
 }
 
 // FILE: Lib2.kt
@@ -80,13 +80,13 @@ class B : I
 
 fun case3(){
     <!DEBUG_INFO_EXPRESSION_TYPE("tests.case3.A")!>A()<!>
-    <!DEBUG_INFO_CALL("fqName: tests.case3.A.<init>; typeCall: function")!>A()<!>
+    <!DEBUG_INFO_CALL("fqName: tests.case3.A.A; typeCall: function")!>A()<!>
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>A.invoke()<!>
+    A.invoke()
     A.<!DEBUG_INFO_CALL("fqName: lib.case3.A.invoke; typeCall: function")!>invoke()<!>
 
     <!DEBUG_INFO_EXPRESSION_TYPE("tests.case3.B")!>B()<!>
-    <!DEBUG_INFO_CALL("fqName: tests.case3.B.<init>; typeCall: function")!>B()<!>
+    <!DEBUG_INFO_CALL("fqName: tests.case3.B.B; typeCall: function")!>B()<!>
 }
 
 // FILE: Lib3.kt

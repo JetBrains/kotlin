@@ -13,7 +13,7 @@ fun <S> intersect(vararg elements: S): S where S : Bound1, S : Bound2 = TODO()
 fun testIntersectionAlternative() = intersect(First, Second)
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound")!>testIntersectionAlternative()<!>
+    testIntersectionAlternative()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, objectDeclaration, typeConstraint,

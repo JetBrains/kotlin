@@ -34,8 +34,9 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 | Analysis API             | `Ka*`, `KaFir*`, `LL*` | analysis/                                                 | [AGENTS.md](../analysis/AGENTS.md)                                               |
 | Backend: JVM             |                        | compiler/ir/backend.jvm/                                  | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: JS              |                        | compiler/ir/backend.js/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
-| Backend: Native          |                        | kotlin-native/                                            | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Backend: Native          |                        | kotlin-native/, native/                                   | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | Backend: WASM            |                        | compiler/ir/backend.wasm/                                 | [AGENTS.md](../compiler/AGENTS.md)                                               |
+| Build Tools API          |                        | compiler/build-tools/                                     | [AGENTS.md](../compiler/build-tools/AGENTS.md)                                   |
 | Compiler plugins         |                        | plugins/                                                  | —                                                                                |
 | FIR (K2 frontend)        | `Fir*`                 | compiler/fir/                                             | [AGENTS.md](../compiler/AGENTS.md)                                               |
 | FIR Analysis Tests       |                        | compiler/fir/analysis-tests/                              | [AGENTS.md](../compiler/fir/analysis-tests/AGENTS.md)                            |
@@ -132,3 +133,13 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 ### MANDATORY - Verify After Writing Code
 
 Use JetBrains MCP `get_file_problems` with errorsOnly=false to check files for warnings. FIX any warnings related to the code changes made. You may ignore unrelated warnings.
+
+## Working with YouTrack
+
+"KT-XXXXX", where XXXXX is the issue number, is an issue in https://youtrack.jetbrains.com/.
+The direct URL for an issue is `https://youtrack.jetbrains.com/issue/KT-XXXXX`.
+When accessing youtrack.jetbrains.com, never fetch web pages from such URLs directly.
+Use YouTrack MCP if configured. Otherwise, use YouTrack REST API, e.g. with a GET request to
+```text
+https://youtrack.jetbrains.com/api/issues/KT-XXXXX?fields=fields=summary,description,customFields(name,value(name,login,text))
+```

@@ -1,10 +1,3 @@
-// -- Module: <m1> --
+/B.kt:(134,135): error: Smart cast to 'String' is impossible, because 'x' is a public API property declared in different module.
 
-// -- Module: <m2> --
-/B.kt:15:13: warning: smart cast to 'String' is deprecated, because 'x' is a property declared in base class from different module inherited in non-public API class
-            x.length
-            ^
-/B.kt:24:9: warning: smart cast to 'String' is deprecated, because 'i.x' is a property declared in base class from different module inherited in non-public API class
-        i.x.length
-        ^^^
-
+/B.kt:(266,269): error: Smart cast to 'String' is impossible, because 'x' is a public API property declared in different module.

@@ -19,11 +19,11 @@ abstract class A1<E5> : LinkedList<E5>() {
 }
 
 abstract class A2<E6> : LinkedList<E6>()  {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: E6?) {}
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: E6?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): E6? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): E6? = super.removeLast()
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): E6? = super.removeFirst()
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): E6? = super.removeLast()
 }
 
 abstract class A3 : LinkedList<String>() {
@@ -35,11 +35,11 @@ abstract class A3 : LinkedList<String>() {
 }
 
 abstract class A4 : LinkedList<String>() {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: String?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: String?) {}
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: String?) {}
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: String?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
+    <!WRONG_TYPE_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, nullableType, override, superExpression,

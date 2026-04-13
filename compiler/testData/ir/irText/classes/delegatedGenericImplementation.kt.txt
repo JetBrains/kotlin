@@ -26,12 +26,12 @@ class Test1<E : Any?> : IBase<E> {
 }
 
 class Test2 : IBase<String> {
+  private /* final field */ val $$delegate_0: IBase<String> = j
   var j: IBase<String>
     field = j
     get
     set
 
-  private /* final field */ val $$delegate_0: IBase<String> = j
   constructor(j: IBase<String>) /* primary */ {
     super/*Any*/()
     /* <init>() */

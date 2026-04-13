@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79672
 // LANGUAGE: +DataFlowBasedExhaustiveness

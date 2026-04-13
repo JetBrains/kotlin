@@ -7,35 +7,35 @@ class DifferentType
 
 fun test() {
     val targetTypeBuildee = build {
-        var variable = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>getTypeVariable()<!>
+        var variable = getTypeVariable()
         variable = TargetType()
         variable.targetTypeMemberFunction()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<TargetType>>(<!TYPE_MISMATCH("Buildee<TargetType>; Buildee<TargetType?>"), TYPE_MISMATCH("Buildee<TargetType?>; Buildee<TargetType>")!>targetTypeBuildee<!>)
+    checkExactType<Buildee<TargetType>>(targetTypeBuildee)
 
-    val differentTypeBuildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
-        var variable = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>getTypeVariable()<!>
+    val differentTypeBuildee = build {
+        var variable = getTypeVariable()
         variable = DifferentType()
-        variable.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
+        variable.<!UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<DifferentType>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>differentTypeBuildee<!>)
+    checkExactType<Buildee<DifferentType>>(differentTypeBuildee)
 
     val anyBuildee = build {
-        var variable = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>getTypeVariable()<!>
+        var variable = getTypeVariable()
         variable = TargetType()
         variable.targetTypeMemberFunction()
-        variable = DifferentType()
-        variable.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>targetTypeMemberFunction<!>()
+        variable <!ASSIGNMENT_TYPE_MISMATCH!>=<!> DifferentType()
+        variable.targetTypeMemberFunction()
         variable = TargetType()
         variable.targetTypeMemberFunction()
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<Any>>(<!TYPE_MISMATCH("Buildee<Any>; Buildee<TargetType>"), TYPE_MISMATCH("Buildee<TargetType>; Buildee<Any>")!>anyBuildee<!>)
+    checkExactType<Buildee<Any>>(<!ARGUMENT_TYPE_MISMATCH!>anyBuildee<!>)
 }
 
 

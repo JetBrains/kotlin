@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 abstract class AbstractClass {
     abstract fun abstractFun()

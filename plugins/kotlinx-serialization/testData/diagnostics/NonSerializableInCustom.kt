@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_STDLIB
 
 import kotlinx.serialization.*

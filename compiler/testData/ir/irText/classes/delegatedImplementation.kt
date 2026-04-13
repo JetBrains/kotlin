@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IBase {
     fun foo(x: Int, s: String)
     fun bar(): Int

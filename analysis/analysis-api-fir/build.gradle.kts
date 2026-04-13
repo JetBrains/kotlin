@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.isSmokeTest
 
 plugins {
     kotlin("jvm")
@@ -10,28 +12,13 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:psi:psi-api"))
-    api(project(":compiler:fir:fir2ir"))
-    api(project(":compiler:ir.tree"))
-    api(project(":compiler:fir:resolve"))
-    api(project(":compiler:fir:providers"))
-    api(project(":compiler:fir:semantics"))
-    api(project(":compiler:fir:checkers"))
-    api(project(":compiler:fir:checkers:checkers.jvm"))
-    api(project(":compiler:fir:checkers:checkers.js"))
-    api(project(":compiler:fir:checkers:checkers.native"))
-    api(project(":compiler:fir:fir-jvm"))
+    implementation(project(":compiler:ir.tree"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":analysis:light-classes-base"))
-    api(project(":compiler:backend.common.jvm"))
-    implementation(project(":compiler:cli-base"))
-    implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
-    implementation(project(":compiler:ir.backend.common"))
-    implementation(project(":compiler:ir.serialization.jvm"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-internal-utils"))
@@ -47,12 +34,9 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
+
     testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesImplementation(kotlinTest("junit"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
@@ -82,6 +66,9 @@ projectTests {
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
         useJUnitPlatform()
+
+        @OptIn(TemporaryTestFederationApi::class)
+        isSmokeTest = true
 
         extensions.configure<TestInputsCheckExtension> {
             allowFlightRecorder = true

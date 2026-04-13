@@ -19,7 +19,7 @@ fun throwIfNotCalled() {
     myRun outer@ {
         unknownRun {
             myRun {
-                <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42
+                x = 42
                 return@outer
             }
         }
@@ -36,7 +36,7 @@ fun catchThrowIfNotCalled() {
         myRun outer@ {
             unknownRun {
                 myRun {
-                    <!CAPTURED_VAL_INITIALIZATION!>x<!> = 42
+                    x = 42
                     return@outer
                 }
             }

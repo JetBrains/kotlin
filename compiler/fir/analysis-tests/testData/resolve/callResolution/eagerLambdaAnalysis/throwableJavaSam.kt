@@ -3,7 +3,7 @@
 // FULL_JDK
 // WITH_STDLIB
 // ISSUE: KT-7052
-// LANGUAGE: +EagerLambdaAnalysis
+// LANGUAGE: +EagerLambdaAnalysis +InferThrowableTypeParameterToUpperBound
 
 // FILE: com/intellij/openapi/util/Computable.java
 package com.intellij.openapi.util;
@@ -51,7 +51,7 @@ fun main(app: Application) {
     app.runSomething { myUnitFun() }
     app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { "" }
     app.<!OVERLOAD_RESOLUTION_AMBIGUITY!>runSomething2<!> { myUnitFun() }
-    app.<!CANNOT_INFER_PARAMETER_TYPE!>runSomething3<!> { "" }
+    app.runSomething3 { "" }
     app.runSomething3 { myUnitFun() }
 }
 

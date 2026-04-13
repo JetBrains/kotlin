@@ -1,5 +1,4 @@
 // ISSUE: KT-68617
-// FIR_IDENTICAL
 
 sealed class UnspecifiedPrimary()
 sealed class PrivatePrimary private constructor()

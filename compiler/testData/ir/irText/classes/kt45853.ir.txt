@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/kt45853.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun getA (): <root>.X? declared in <root>.B'
           CALL 'public open fun <get-a> (): @[EnhancedNullability] <root>.AX? declared in <root>.AX' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]' type=@[EnhancedNullability] <root>.AX? origin=GET_PROPERTY
-            ARG <this>: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=null
+            ARG <this>: GET_VAR '<this>: <root>.B declared in <root>.B.getA' type=<root>.B origin=IMPLICIT_ARGUMENT
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
       overridden:
         public open a: @[EnhancedNullability] <root>.AX? declared in <root>.AX

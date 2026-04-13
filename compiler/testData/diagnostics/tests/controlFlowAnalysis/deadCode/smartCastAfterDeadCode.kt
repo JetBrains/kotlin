@@ -7,7 +7,7 @@ fun foo(a: String?) {
         return
         <!UNREACHABLE_CODE!>"hi".length<!>
     }
-    a<!UNSAFE_CALL!>.<!>length
+    a.length
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType, smartcast, stringLiteral */

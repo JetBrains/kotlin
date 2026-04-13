@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 
 
@@ -760,6 +762,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun reportCocoaPodsFUS(project: Project, cocoapodsExtension: CocoapodsExtension) {
+        cocoapodsExtension.pods.all {
+            project.addConfigurationMetrics {
+                it.put(BooleanMetrics.KMP_COCOAPODS_HAS_DIRECT_DEPENDENCIES, true)
+            }
+            project.addConfigurationMetrics {
+                it.put(NumericalMetrics.KMP_COCOAPODS_NUMBER_OF_DIRECT_DEPENDENCIES, 1)
+            }
+        }
+    }
+
     private fun Project.taskProjectPath(): String {
         return if (project.depth != 0) project.path else ""
     }
@@ -785,6 +798,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             kotlinExtension.addExtension(COCOAPODS_EXTENSION_NAME, cocoapodsExtension)
 
+            reportCocoaPodsFUS(project, cocoapodsExtension)
             createDefaultFrameworks(kotlinExtension)
             val dummyFrameworkTaskProvider = registerDummyFrameworkTask(project, cocoapodsExtension)
             createSyncTask(project, kotlinExtension, cocoapodsExtension)

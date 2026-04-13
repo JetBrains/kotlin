@@ -9,6 +9,7 @@ data class MavenBuildOptions(
     val javaVersion: TestVersions.Java = TestVersions.Java.JDK_17,
     val useKotlinDaemon: Boolean? = null,
     val extraMavenProperties: Map<String, String> = emptyMap(),
+    val toolchains: List<TestVersions.Java> = emptyList(),
 ) {
     fun asCliArgs(): List<String> = buildList {
         useKotlinDaemon?.let { add("-Dkotlin.compiler.daemon=$it") }

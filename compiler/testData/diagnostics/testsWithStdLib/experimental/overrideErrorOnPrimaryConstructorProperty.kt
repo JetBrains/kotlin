@@ -11,7 +11,7 @@ interface Foo {
     val foo: Int
 }
 
-data class Bar @Experimental constructor(override val foo: Int): Foo
+data class Bar @Experimental constructor(override val <!OPT_IN_OVERRIDE_ERROR!>foo<!>: Int): Foo
 
 fun main() {
     @OptIn(Experimental::class)

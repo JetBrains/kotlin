@@ -43,7 +43,7 @@ class Y: C() {
     init {
         Y().A_Y()
 
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Z()<!>.A_C_Z()
+        <!UNRESOLVED_REFERENCE!>Z<!>().A_C_Z()
     }
 }
 

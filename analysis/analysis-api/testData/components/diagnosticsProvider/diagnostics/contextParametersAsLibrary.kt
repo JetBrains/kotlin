@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // LANGUAGE: +ContextParameters
 // MODULE: lib
 // MODULE_KIND: LibraryBinary

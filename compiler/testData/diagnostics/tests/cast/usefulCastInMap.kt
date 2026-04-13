@@ -10,7 +10,7 @@ fun xxx() {
 
     listOf(1L, 2L)
         // We cannot remove 'as A', otherwise we get TYPE_MISMATCH in reduce
-        .map { B(it) <!USELESS_CAST!>as A<!> }
+        .map { B(it) as A }
         .reduce { a, b -> C(a, b) }
 }
 

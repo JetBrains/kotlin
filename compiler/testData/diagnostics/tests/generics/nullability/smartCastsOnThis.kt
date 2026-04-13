@@ -11,13 +11,13 @@ fun <T : String?> T.foo() {
     if (this != null) {
         if (<!SENSELESS_COMPARISON!>this != null<!>) {}
 
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>length<!>
+        length
         this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar1<!>()
+        bar1()
         bar2()
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar3<!>()
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar4<!>()
+        bar3()
+        bar4()
 
 
         this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
@@ -26,12 +26,12 @@ fun <T : String?> T.foo() {
     <!UNSAFE_CALL!>length<!>
 
     if (this is String) {
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>length<!>
+        length
         this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar1<!>()
+        bar1()
         bar2()
-        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar3<!>()
+        bar3()
     }
 }
 

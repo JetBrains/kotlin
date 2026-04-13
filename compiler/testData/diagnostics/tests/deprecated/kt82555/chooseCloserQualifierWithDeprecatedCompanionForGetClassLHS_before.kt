@@ -1,5 +1,4 @@
 // LANGUAGE: -SkipHiddenObjectsInResolution
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-82555
 // FIR_DUMP

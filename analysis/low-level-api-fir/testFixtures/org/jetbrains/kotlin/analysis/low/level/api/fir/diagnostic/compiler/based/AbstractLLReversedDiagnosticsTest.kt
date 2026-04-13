@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLL
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractFirIdenticalChecker
+import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractAlternativeKtFileIdenticalChecker
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.llFirTestDataFile
+import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.utils.bind
 import java.io.File
 
@@ -52,17 +53,16 @@ fun reversedDiagnosticsConfigurator(testServices: TestServices): MetaTestConfigu
     return CustomOutputDiagnosticsConfigurator(".reversed.", testServices)
 }
 
-class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
+class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtFileIdenticalChecker(testServices) {
     override fun checkTestDataFile(testDataFile: File) {
         if (".reversed." !in testDataFile.path) return
-        val helper = Helper()
-        val originalFile = helper.getClassicFileToCompare(testDataFile).path.replace(".reversed", "").let(::File)
+        val originalFile = testDataFile.originalTestDataFile.path.replace(".reversed", "").let(::File)
         val baseFile = originalFile.llFirTestDataFile.takeIf(File::exists)
             ?: originalFile.firTestDataFile.takeIf(File::exists)
             ?: originalFile
 
-        val baseContent = helper.readContent(baseFile, trimLines = false)
-        val reversedFirContent = helper.readContent(testDataFile, trimLines = false)
+        val baseContent = readContent(baseFile, trimLines = false)
+        val reversedFirContent = readContent(testDataFile, trimLines = false)
         if (baseContent == reversedFirContent) {
             testServices.assertions.fail {
                 "`${testDataFile.name}` and `${baseFile.name}` are identical. Remove `$testDataFile`."

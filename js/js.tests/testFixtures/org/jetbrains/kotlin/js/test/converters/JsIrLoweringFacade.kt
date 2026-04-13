@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
+import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
@@ -35,10 +36,8 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsModuleArtifactName
 import org.jetbrains.kotlin.test.services.configuration.createJsTestPhaseConfig
 import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
-import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import java.io.File
 
 class JsIrLoweringFacade(
@@ -56,8 +55,8 @@ class JsIrLoweringFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Js? {
         require(JsEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is IrBackendInput.JsIrDeserializedFromKlibBackendInput) {
-            "JsIrLoweringFacade expects IrBackendInput.JsIrDeserializedFromKlibBackendInput as input"
+        require(inputArtifact is IrBackendInput.DeserializedFromKlibBackendInput<*>) {
+            "JsIrLoweringFacade expects IrBackendInput.DeserializedFromKlibBackendInput as input"
         }
 
         return compileIrToJs(

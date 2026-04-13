@@ -77,7 +77,7 @@ public class KotlinOverride implements KotlinOverrideBase {
 
 // FILE: main.kt
 fun test_1(d: NoOverride, s: String) {
-    <!VAL_REASSIGNMENT!>d.foo<!> = s
+    d.<!VAL_REASSIGNMENT!>foo<!> = s
 }
 
 fun test_2(d: JavaBase, s: String) {
@@ -89,11 +89,11 @@ fun test_3(d: JavaOverride, s: String) {
 }
 
 fun test_4(d: KotlinOverrideBase, s: String) {
-    <!VAL_REASSIGNMENT!>d.foo<!> = s
+    d.<!VAL_REASSIGNMENT!>foo<!> = s
 }
 
 fun test_5(d: KotlinOverride, s: String) {
-    <!VAL_REASSIGNMENT!>d.foo<!> = s
+    d.<!VAL_REASSIGNMENT!>foo<!> = s
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, javaProperty, javaType,

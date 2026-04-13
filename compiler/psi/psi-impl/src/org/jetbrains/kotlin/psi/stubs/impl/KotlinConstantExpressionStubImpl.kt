@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
 
 @OptIn(KtImplementationDetail::class)
@@ -30,4 +31,10 @@ class KotlinConstantExpressionStubImpl(
         kind = kind,
         valueRef = valueRef,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinConstantExpressionStubImpl &&
+                other.kind == kind &&
+                other.valueRef == valueRef
 }

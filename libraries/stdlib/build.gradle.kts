@@ -256,7 +256,7 @@ kotlin {
             }
         }
     }
-    js(IR) {
+    js {
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             browser {}
         }

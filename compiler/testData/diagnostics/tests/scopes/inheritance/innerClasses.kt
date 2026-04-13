@@ -31,16 +31,16 @@ class E: A() {
         B().<!UNRESOLVED_REFERENCE!>bar<!>()
 
         D()
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>C()<!>
+        <!UNRESOLVED_REFERENCE!>C<!>()
     }
 
     object Z {
         init {
-            <!RESOLUTION_TO_CLASSIFIER!>B<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
-            <!RESOLUTION_TO_CLASSIFIER!>B<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>B<!>().foo()
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>B<!>().<!UNRESOLVED_REFERENCE!>bar<!>()
 
-            <!RESOLUTION_TO_CLASSIFIER!>D<!>()
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>C()<!>
+            <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>D<!>()
+            <!UNRESOLVED_REFERENCE!>C<!>()
         }
     }
 }
@@ -61,7 +61,7 @@ class F: A() {
     companion object {
         init {
             B().fas()
-            <!RESOLUTION_TO_CLASSIFIER!>D<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>f<!>()
+            <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>D<!>().<!UNRESOLVED_REFERENCE!>f<!>()
         }
     }
 }

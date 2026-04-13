@@ -3,8 +3,8 @@
 // ISSUE: KT-61227
 // FIR_DUMP
 
-fun <B> goBar(t: B) = Bar<B & Any>(<!TYPE_MISMATCH, TYPE_MISMATCH!>t<!>)
-fun <BB> goBarNoTypeArguments(t: BB) = Bar(<!TYPE_MISMATCH!>t<!>)
+fun <B> goBar(t: B) = Bar<B & Any>(t)
+fun <BB> goBarNoTypeArguments(t: BB) = Bar(t)
 
 class Bar<BT : Any>(t: BT?)
 

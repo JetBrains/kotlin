@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 
 sealed class Tree<TIndex, out TCommon, out TInner, out TLeaf> {
     abstract val value: TCommon

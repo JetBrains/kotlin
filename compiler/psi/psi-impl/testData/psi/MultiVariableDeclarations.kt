@@ -1,5 +1,4 @@
 // COMPILATION_ERRORS
-// IGNORE_ERRORS_FROM_API: KT-85154
 
 fun a() {
     val (a) = 1

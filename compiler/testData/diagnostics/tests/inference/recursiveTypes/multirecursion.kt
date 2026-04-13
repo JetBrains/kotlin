@@ -14,7 +14,7 @@ class Box<T>
 
 fun test(c1: C1<Box<Box<Box<Int>>>>, c2: C2) {
     val v = select(c1, c2)
-    <!DEBUG_INFO_EXPRESSION_TYPE("{I1<*> & I2<*>}")!>v<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I2<*> & I1<*>")!>v<!>
 }
 
 fun <S> select(vararg args: S): S = TODO()

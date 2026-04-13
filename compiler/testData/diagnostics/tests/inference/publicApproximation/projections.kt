@@ -15,8 +15,8 @@ fun testOut() = makeOut(First, Second)
 fun testIn() = makeIn(First, Second)
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Bound1>")!>testOut()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in Bound1>")!>testIn()<!>
+    testOut()
+    testIn()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, intersectionType,

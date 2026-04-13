@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class C<T>
 
 object Delegate {

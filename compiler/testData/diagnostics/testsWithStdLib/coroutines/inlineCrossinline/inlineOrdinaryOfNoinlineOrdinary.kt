@@ -21,7 +21,7 @@ inline fun test(noinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>startCoroutine<!>(EmptyContinuation)
+    c.startCoroutine(EmptyContinuation)
 }
 
 suspend fun calculate() = "OK"

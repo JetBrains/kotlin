@@ -1,6 +1,6 @@
 class A1 : ArrayList<String> {
   constructor() /* primary */ {
-    super/*ArrayList*/<@FlexibleNullability String?>()
+    super/*ArrayList*/<String>()
     /* <init>() */
 
   }
@@ -9,7 +9,7 @@ class A1 : ArrayList<String> {
 
 class A2 : ArrayList<String> {
   constructor() /* primary */ {
-    super/*ArrayList*/<@FlexibleNullability String?>()
+    super/*ArrayList*/<String>()
     /* <init>() */
 
   }

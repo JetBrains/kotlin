@@ -18,16 +18,16 @@ fun bar(f: (Some) -> Unit) {}
 // FILE: m3.kt
 
 fun test() {
-    foo { _, _ -> }
-    foo { some, str -> }
-    foo { some, _ -> some.toString() }
-    foo { some: <!UNRESOLVED_REFERENCE!>Some<!>, _ -> }
+    <!MISSING_DEPENDENCY_CLASS!>foo<!> { <!MISSING_DEPENDENCY_CLASS!>_<!>, _ -> }
+    <!MISSING_DEPENDENCY_CLASS!>foo<!> { <!MISSING_DEPENDENCY_CLASS!>some<!>, str -> }
+    <!MISSING_DEPENDENCY_CLASS!>foo<!> { <!MISSING_DEPENDENCY_CLASS!>some<!>, _ -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
+    <!MISSING_DEPENDENCY_CLASS!>foo<!> { some: <!UNRESOLVED_REFERENCE!>Some<!>, _ -> }
 
-    bar { }
-    bar { _ -> }
-    bar { it -> }
-    bar { it.toString() }
-    bar { some -> some.toString() }
+    <!MISSING_DEPENDENCY_CLASS!>bar<!> <!MISSING_DEPENDENCY_CLASS!>{ }<!>
+    <!MISSING_DEPENDENCY_CLASS!>bar<!> { <!MISSING_DEPENDENCY_CLASS!>_<!> -> }
+    <!MISSING_DEPENDENCY_CLASS!>bar<!> { <!MISSING_DEPENDENCY_CLASS!>it<!> -> }
+    <!MISSING_DEPENDENCY_CLASS!>bar<!> <!MISSING_DEPENDENCY_CLASS!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.toString() }<!>
+    <!MISSING_DEPENDENCY_CLASS!>bar<!> { <!MISSING_DEPENDENCY_CLASS!>some<!> -> <!MISSING_DEPENDENCY_CLASS!>some<!>.toString() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral */

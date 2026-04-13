@@ -4,10 +4,10 @@
 fun testLambda() {
     val basicTest: (Int) -> Int = myRun {
         val x: Any? = null
-        if (x is String) return@myRun { it -> <!DEBUG_INFO_SMARTCAST!>x<!>.length + it }
+        if (x is String) return@myRun { it -> x.length + it }
         if (x !is Int) return@myRun { it -> it }
 
-        { it -> <!DEBUG_INFO_SMARTCAST!>x<!> + it }
+        { it -> x + it }
     }
 
     val twoLambda: (Int) -> Int = myRun {

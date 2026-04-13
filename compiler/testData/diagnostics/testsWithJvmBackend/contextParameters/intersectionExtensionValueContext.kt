@@ -3,10 +3,10 @@
 class A
 
 interface First {
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
+    context(a: A)
     fun foo()
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(a: <!DEBUG_INFO_MISSING_UNRESOLVED!>A<!>)<!>
+    context(a: A)
     val b: String
 }
 
@@ -19,6 +19,6 @@ interface Third {
     fun foo(a: A)
 }
 
-interface IntersectionContextWithExtension : First, Second
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface IntersectionContextWithExtension : First, Second<!>
 
-interface IntersectionContextWithValue : First, Third
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface IntersectionContextWithValue : First, Third<!>

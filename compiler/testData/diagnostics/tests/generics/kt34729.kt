@@ -13,8 +13,8 @@ fun <T : ILength> bar(a: (Int) -> T) {
 }
 
 fun test() {
-    foo<String> <!TYPE_MISMATCH!>{ }<!>
-    bar<Impl> <!TYPE_MISMATCH, TYPE_MISMATCH!>{ }<!>
+    foo<String> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
+    bar<Impl> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,

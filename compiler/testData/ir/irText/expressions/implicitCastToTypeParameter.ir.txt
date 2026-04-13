@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
             GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
         CALL 'public final fun useT (t: T of <root>.Bar): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
           ARG <this>: GET_VAR '<this>: <root>.Bar<T of <root>.Bar> declared in <root>.Bar.test' type=<root>.Bar<T of <root>.Bar> origin=IMPLICIT_ARGUMENT
-          ARG t: TYPE_OP type=T of <root>.Bar origin=IMPLICIT_CAST typeOperand=T of <root>.Bar
+          ARG t: TYPE_OP type={T of <root>.Bar & Any} origin=IMPLICIT_CAST typeOperand={T of <root>.Bar & Any}
             GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
     FUN name:useT visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Bar<T of <root>.Bar>

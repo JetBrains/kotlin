@@ -13,6 +13,7 @@ class ContinuationInterceptorKeyTest {
     private val CoroutineContext.size get() = fold(0) { acc, _ -> acc + 1 }
 
     abstract class BaseElement : AbstractCoroutineContextElement(ContinuationInterceptor), ContinuationInterceptor {
+        @Suppress("DEPRECATION")
         companion object Key :
             AbstractCoroutineContextKey<ContinuationInterceptor, BaseElement>(ContinuationInterceptor, { it as? BaseElement })
 
@@ -27,6 +28,7 @@ class ContinuationInterceptorKeyTest {
 
     // "New" code with AbstractCoroutineContextKey
     class DerivedElementWithPolyKey : BaseElement() {
+        @Suppress("DEPRECATION")
         companion object Key :
             AbstractCoroutineContextKey<BaseElement, DerivedElementWithPolyKey>(BaseElement, { it as? DerivedElementWithPolyKey })
     }

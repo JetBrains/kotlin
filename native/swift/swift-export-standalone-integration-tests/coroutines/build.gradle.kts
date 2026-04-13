@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 description = "A set of integration tests for Swift Export Standalone with Coroutines as a dependency"
@@ -33,12 +34,17 @@ sourceSets {
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     nativeTestTaskWithExternalDependencies(
         "test",
         requirePlatformLibs = true,
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
+        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            allowFlightRecorder.set(true)
+        }
     }
 }
 

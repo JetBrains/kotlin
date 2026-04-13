@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // WITH_STDLIB
 // ISSUE: KT-50776
 interface Entities<Target> : MutableCollection<Target>, Sequence<Target>

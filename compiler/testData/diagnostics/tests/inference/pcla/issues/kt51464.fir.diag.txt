@@ -1,3 +1,0 @@
-/kt51464.fir.kt:(328,337): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
-
-/kt51464.fir.kt:(340,346): error: Cannot infer type for type parameter 'T'. Specify it explicitly.

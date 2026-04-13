@@ -18,4 +18,4 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         R|/bar|()
     }
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

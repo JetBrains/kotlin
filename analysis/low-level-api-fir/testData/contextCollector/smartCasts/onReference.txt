@@ -34,8 +34,8 @@ FILE: [ResolvedTo(IMPORTS)] onReference.kt
         R|/check|(R|<local>/a|.R|/Foo.process|())
         check#(Boolean(true))
     }
-    public final [ResolvedTo(CONTRACTS)] fun check([ResolvedTo(CONTRACTS)] condition: R|kotlin/Boolean|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun check([ResolvedTo(STATUS)] condition: R|kotlin/Boolean|): R|kotlin/Unit| { LAZY_BLOCK }
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] fun process(): R|kotlin/Boolean|
+        public abstract [ResolvedTo(STATUS)] fun process(): R|kotlin/Boolean|
 
     }

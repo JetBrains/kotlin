@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtProjectionKind;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -37,5 +38,11 @@ public class KotlinTypeProjectionStubImpl extends KotlinStubBaseImpl<KtTypeProje
                 newParent,
                 projectionKindOrdinal
         );
+    }
+
+    @Override
+    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
+        if (!(other instanceof KotlinTypeProjectionStubImpl)) return false;
+        return this.projectionKindOrdinal == ((KotlinTypeProjectionStubImpl) other).projectionKindOrdinal;
     }
 }

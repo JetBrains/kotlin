@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.artifacts.ModuleVersionIdentifier
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -48,14 +47,6 @@ internal class ExternalKotlinTargetComponent(
 
     override val defaultArtifactId: String
         get() = dashSeparatedName(target.project.name, target.name.toLowerCaseAsciiOnly())
-
-    @Deprecated(
-        message = "Sources artifacts are now published as separate variant " +
-                "use target.sourcesElementsConfigurationName to obtain necessary information",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
-    )
-    override val sourcesArtifacts: Set<PublishArtifact>
-        get() = emptySet()
 
     override fun getName(): String = target.name
 

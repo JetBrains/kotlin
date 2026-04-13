@@ -24,7 +24,7 @@ fun case1() {
 
 fun case2() {
     val c2: Char = <!EMPTY_CHARACTER_LITERAL!>''<!><!SYNTAX!>'<!>
-    val c3: Char = '<!ILLEGAL_ESCAPE!>\<!>'
+    val c3: Char = <!ILLEGAL_ESCAPE!>'\'<!>
 }
 
 // TESTCASE NUMBER: 3

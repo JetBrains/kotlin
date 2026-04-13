@@ -347,7 +347,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             R|/variableWithImplicitType| = Int(10)
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
@@ -365,17 +365,17 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
 
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
             }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
-            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
@@ -443,4 +443,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/<set-?>|)
             }
-

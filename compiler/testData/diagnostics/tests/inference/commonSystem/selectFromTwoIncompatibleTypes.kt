@@ -15,7 +15,7 @@ fun test1(a: Inv<A>, b: Inv<B>) {
 
 fun test2(a: Inv<*>?, b: Inv<*>) {
     generic(a ?: b)
-    generic(if (a != null) <!DEBUG_INFO_SMARTCAST!>a<!> else b)
+    generic(if (a != null) a else b)
     generic(a!!)
 }
 

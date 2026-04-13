@@ -1,3 +1,0 @@
-package
-
-public var x: kotlin.Int

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: SetterTest.java
 
 import lombok.AccessLevel;

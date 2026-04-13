@@ -14,6 +14,7 @@ import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.LazyTypeParameterReference
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 
 internal fun KClassifier.createK1KType(
@@ -26,6 +27,7 @@ internal fun KClassifier.createK1KType(
             if (mutableCollectionClass != null) JavaToKotlinClassMapper.convertReadOnlyToMutable(descriptor) else descriptor
         }
         is KTypeParameterImpl -> descriptor
+        is LazyTypeParameterReference -> return unwrapped.createK1KType(arguments, nullable, mutableCollectionClass)
         else -> throw KotlinReflectionInternalError("Cannot create type for an unsupported classifier: $this (${this.javaClass})")
     }
 

@@ -16,8 +16,8 @@
  */
 fun case_1(x: Pair<*, *>) {
     if (x.first !is String) return
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.first<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), SMARTCAST_IMPOSSIBLE!>x.first<!>.length
+    x.first
+    <!SMARTCAST_IMPOSSIBLE!>x.first<!>.length
 }
 
 /*
@@ -26,6 +26,6 @@ fun case_1(x: Pair<*, *>) {
  */
 fun case_2(x: Pair<*, *>) {
     if (x.first !is String?) throw Exception()
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x.first<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), SMARTCAST_IMPOSSIBLE!>x.first<!>?.length
+    x.first
+    x.first?.<!UNRESOLVED_REFERENCE!>length<!>
 }

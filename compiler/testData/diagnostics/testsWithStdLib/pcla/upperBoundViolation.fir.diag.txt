@@ -1,3 +1,0 @@
-/upperBoundViolation.fir.kt:(257,275): error: Cannot infer type for type parameter 'T'. Specify it explicitly.
-
-/upperBoundViolation.fir.kt:(276,283): error: Argument type mismatch: actual type is 'String', but 'Number' was expected.

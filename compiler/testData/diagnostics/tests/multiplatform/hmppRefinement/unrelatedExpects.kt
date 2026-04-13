@@ -3,15 +3,15 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common1
-<!CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
-expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
+expect fun foo()
+expect class Foo
 
 // MODULE: common2
-<!CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
-expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
+expect fun foo()
+expect class Foo
 
 // MODULE: main()()(common1, common2)
-actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
-actual class <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
+<!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
+<!AMBIGUOUS_EXPECTS!>actual<!> class Foo
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

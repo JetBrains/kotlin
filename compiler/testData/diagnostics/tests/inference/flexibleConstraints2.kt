@@ -17,7 +17,7 @@ fun test(list: MutableList<out String?>) {
     // The test can be made green by precise actions for subType.isCapturedType() in simplifyLowerConstraints
     // (see the experimental feature PreciseSimplificationToFlexibleLowerConstraint)
     // However, such a change will affect resolve of resImplicit.get(0).toString(), as it's String? VS String! situation
-    val res: Collection<String> = <!TYPE_MISMATCH("Collection<String>; (Mutable)Collection<String?>!")!>JavaClass.filter(list)<!>
+    val res: Collection<String> <!INITIALIZER_TYPE_MISMATCH("Collection<String>; (Mutable)Collection<String?>!")!>=<!> JavaClass.filter(list)
     // typeof = (Mutable)Collection<String?>!
     val resImplicit = JavaClass.filter(list)
 }

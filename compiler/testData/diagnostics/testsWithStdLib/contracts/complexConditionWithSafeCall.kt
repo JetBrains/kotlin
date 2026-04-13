@@ -10,11 +10,11 @@ fun test() {
     val person: PersonDto? = null
 
     if (!name.isNullOrEmpty()) {
-        <!DEBUG_INFO_SMARTCAST!>name<!>.length // Smart cast work
+        name.length // Smart cast work
     }
 
     if (!person?.name.isNullOrEmpty()) {
-        person<!UNSAFE_CALL!>.<!>name // Smart cast doesn't work
+        person.name // Smart cast doesn't work
     }
 }
 

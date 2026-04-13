@@ -43,14 +43,14 @@ var v6: String = ""
 
 fun test(c: C) {
     with (c) {
-        <!DEPRECATION_ERROR!>v1<!>  // FE1.0: Resolves to C.v1, FIR: Resolves to top-level v1
+        v1  // FE1.0: Resolves to C.v1, FIR: Resolves to top-level v1
         v2  // FE1.0/FIR: Resolves to top-level v2
-        <!DEPRECATION_ERROR!>v3<!>  // FE1.0: Resolves to C.v3, FIR: Resolves to top-level v3
+        v3  // FE1.0: Resolves to C.v3, FIR: Resolves to top-level v3
         v3 = ""  // FE1.0/FIR: Resolves to C.v3
         v4  // FE1.0/FIR: Resolves to C.v4
-        <!DEPRECATION_ERROR!>v4<!> = ""  // FE1.0: Resolves to C.v4, FIR: Resolves to top-level v4
-        <!DEPRECATION_ERROR!>v5<!>  // FE1.0: Resolves to C.v5, FIR: resolves to top-level v5
-        <!DEPRECATION_ERROR!>v5<!> = ""  // FE1.0: Resolves to C.v5, FIR: resolves to top-level v5
+        v4 = ""  // FE1.0: Resolves to C.v4, FIR: Resolves to top-level v4
+        v5  // FE1.0: Resolves to C.v5, FIR: resolves to top-level v5
+        v5 = ""  // FE1.0: Resolves to C.v5, FIR: resolves to top-level v5
         v6  // FE1.0/FIR: Resolves to top-level v6
         v6 = ""  // FE1.0/FIR: Resolves to top-level v6
     }

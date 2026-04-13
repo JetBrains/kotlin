@@ -8,9 +8,9 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>) {
-    a + <!TYPE_MISMATCH!>""<!>
-    a[1] = <!TYPE_MISMATCH!>""<!>
-    a[<!TYPE_MISMATCH!>""<!>]
+    a + <!MEMBER_PROJECTED_OUT!>""<!>
+    a[1] = <!MEMBER_PROJECTED_OUT!>""<!>
+    a[<!MEMBER_PROJECTED_OUT!>""<!>]
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, capturedType, classDeclaration, functionDeclaration,

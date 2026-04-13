@@ -82,6 +82,30 @@ public class SourceLikeDesignationByPsiTestGenerated extends AbstractSourceLikeD
   }
 
   @Test
+  @TestMetadata("destructuringEntryRepl.repl.kts")
+  public void testDestructuringEntryRepl_repl() {
+    run("destructuringEntryRepl.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("destructuringEntryScript.kts")
+  public void testDestructuringEntryScript() {
+    run("destructuringEntryScript.kts");
+  }
+
+  @Test
+  @TestMetadata("destructuringRepl.repl.kts")
+  public void testDestructuringRepl_repl() {
+    run("destructuringRepl.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("destructuringScript.kts")
+  public void testDestructuringScript() {
+    run("destructuringScript.kts");
+  }
+
+  @Test
   @TestMetadata("memberFunction.kt")
   public void testMemberFunction() {
     run("memberFunction.kt");
@@ -235,6 +259,12 @@ public class SourceLikeDesignationByPsiTestGenerated extends AbstractSourceLikeD
   @TestMetadata("topLevelClassScript.kts")
   public void testTopLevelClassScript() {
     run("topLevelClassScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelConstRepl.repl.kts")
+  public void testTopLevelConstRepl_repl() {
+    run("topLevelConstRepl.repl.kts");
   }
 
   @Test

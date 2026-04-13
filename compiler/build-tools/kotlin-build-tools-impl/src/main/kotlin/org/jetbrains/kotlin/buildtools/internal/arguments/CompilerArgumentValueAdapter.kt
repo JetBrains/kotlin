@@ -319,6 +319,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
         JvmCompilerArguments.X_ADD_MODULES,
         JvmCompilerArguments.SCRIPT_TEMPLATES,
         JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT,
+        JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
             -> {
             if (value == null) return emptyArray<String>() as V
 
@@ -466,12 +467,13 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 if (value == null) return emptyList<Path>() as T
 
                 val arrayValue = value as Array<String>
-                arrayValue.map { Path(it) } as T
+                arrayValue.also { array -> array.asList().checkNoneContains(",") }.map { Path(it) } as T
             }
 
             JvmCompilerArguments.X_ADD_MODULES,
             JvmCompilerArguments.SCRIPT_TEMPLATES,
             JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT,
+            JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
                 -> {
                 if (value == null) return emptyList<String>() as T
 
@@ -488,7 +490,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     require(parts.size == 2) { "Invalid -Xnullability-annotations format: $this" }
 
                     val nullabilityAnnotationMode =
-                        NullabilityAnnotation.Mode.values().firstOrNull { entry -> entry.stringValue == parts[1] }
+                        NullabilityAnnotation.Mode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
                             ?: throw CompilerArgumentsParseException("Unknown -Xnullability-annotations mode: $it")
                     NullabilityAnnotation(parts[0].removePrefix("@"), nullabilityAnnotationMode)
                 } as T
@@ -498,7 +500,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 if (value == null) return emptyList<Jsr305>() as T
 
                 val arrayValue = value as Array<String>
-                fun jsr305mode(stringValue: String) = Jsr305.Mode.values().firstOrNull { entry -> entry.stringValue == stringValue }
+                fun jsr305mode(stringValue: String) = Jsr305.Mode.entries.firstOrNull { entry -> entry.stringValue == stringValue }
                     ?: throw CompilerArgumentsParseException("Unknown -Xjsr305 mode: $stringValue")
 
                 arrayValue.map {

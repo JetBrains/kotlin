@@ -7,12 +7,12 @@ private open class Foo {
     fun bar() {}
 }
 
-fun <T : Foo> foo(x: T?) = x
+fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND!>Foo<!>> foo(x: T?) = x
 
 open class Box<T, K>
 internal open class Bar
 
-fun <T : Box<Unit, Bar>> bar(x: T?) = x
-fun <T : Box<Bar, Foo>> baz(x: T?) = x
+fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING!>Box<Unit, Bar><!>> bar(x: T?) = x
+fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND!>Box<Bar, Foo><!>> baz(x: T?) = x
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

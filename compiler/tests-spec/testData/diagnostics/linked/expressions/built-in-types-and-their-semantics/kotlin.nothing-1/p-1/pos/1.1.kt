@@ -19,8 +19,8 @@ fun case1() {
         k.name
         loop@ for (i in men) {
             i.name
-            <!UNREACHABLE_CODE!>val valeua : Int =<!>     break@loop
-            <!UNREACHABLE_CODE!>i.name<!>
+            val valeua : Int =     break@loop
+            i.name
         }
         k.name
         val s = k.name ?: break
@@ -39,9 +39,9 @@ fun case2() {
     for (k in men) {
         loop@ for (i in men) {
             i.name
-            <!UNREACHABLE_CODE!>val val1 =<!>    continue@loop
-            <!UNREACHABLE_CODE!>val1<!>
-            <!UNREACHABLE_CODE!>i.name<!>
+            val val1 =    continue@loop
+            val1
+            i.name
         }
         val s = k.name ?: continue
         k.name
@@ -60,7 +60,7 @@ fun case3() {
         listOf(1, 2, 3, 4, 5).forEach lit@{
             it
             return@lit
-            <!UNREACHABLE_CODE!>print(it)<!>
+            print(it)
         }
         val y = x
         if (x == 3) return

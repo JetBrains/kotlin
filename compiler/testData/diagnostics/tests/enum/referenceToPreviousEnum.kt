@@ -3,9 +3,9 @@
 
 enum class E(val higherPriority: E?) {
     Foo(null),
-    Bar(Foo),
-    Baz(E.Foo),
-    Qux(<!UNINITIALIZED_ENUM_COMPANION, UNINITIALIZED_VARIABLE!>companionProp<!>),
+    Bar(<!UNINITIALIZED_ENUM_COMPANION!>Foo<!>),
+    Baz(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.Foo),
+    Qux(<!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>),
     Quux(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.companionProp),
     ;
 

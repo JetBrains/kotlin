@@ -6,7 +6,7 @@ fun case_0() {
     val z: Any? = 10
     val y = z.run {
         this as Int
-        <!DEBUG_INFO_SMARTCAST!>this<!> // error in NI: required Int, found Any?; just inferred to Any? in OI
+        this // error in NI: required Int, found Any?; just inferred to Any? in OI
     }
     y checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any?>() }
     y checkType { _<Int>() }
@@ -15,7 +15,7 @@ fun case_0() {
 fun case_1(z: Any?) {
     val y = z.run {
         when (this) {
-            is String -> return@run <!DEBUG_INFO_SMARTCAST!>this<!> // type mismatch in the new inference (required String, found Any?)
+            is String -> return@run this // type mismatch in the new inference (required String, found Any?)
             is Float -> ""
             else -> return@run ""
         }
@@ -28,7 +28,7 @@ fun case_1(z: Any?) {
 fun case_2(z: Any?) {
     val y = z.run {
         when (this) {
-            is String -> <!DEBUG_INFO_SMARTCAST!>this<!>
+            is String -> this
             is Float -> ""
             else -> return@run ""
         }
@@ -40,7 +40,7 @@ fun case_2(z: Any?) {
 fun case_3(z: Any?) {
     val y = z.let {
         when (it) {
-            is String -> return@let <!DEBUG_INFO_SMARTCAST!>it<!>
+            is String -> return@let it
             is Float -> ""
             else -> return@let ""
         }

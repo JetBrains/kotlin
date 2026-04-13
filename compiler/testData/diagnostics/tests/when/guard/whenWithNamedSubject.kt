@@ -12,16 +12,16 @@ fun <T> supply(v: T): T {
 
 fun whenWithNamedSubject(y: BooleanHolder) {
     when (val x = if (y.value) y else supply(True)) {
-        is True <!UNSUPPORTED_FEATURE!>if x.value<!> -> Unit
-        is False <!UNSUPPORTED_FEATURE!>if x.value<!> -> Unit
-        is <!INCOMPATIBLE_TYPES!>String<!> <!UNSUPPORTED_FEATURE!>if x.length == 0<!> -> Unit
-        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> Unit
+        is True if x.value -> Unit
+        is False if x.value -> Unit
+        <!IMPOSSIBLE_IS_CHECK_ERROR!>is String<!> if x.length == 0 -> Unit
+        else -> Unit
     }
 
     when (val x = y) {
-        is True <!UNSUPPORTED_FEATURE!>if x.value<!> -> Unit
-        is False <!UNSUPPORTED_FEATURE!>if x.value<!> -> Unit
-        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> Unit
+        is True if x.value -> Unit
+        is False if x.value -> Unit
+        else -> Unit
     }
 }
 

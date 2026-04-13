@@ -936,6 +936,14 @@ private fun KaDiagnosticConverterBuilder.addConversions16() {
             token,
         )
     }
+    add(FirErrors.DEPRECATION_OF_OUTER_CLASS) { firDiagnostic ->
+        DeprecationOfOuterClassImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY) { firDiagnostic ->
         HasNextFunctionAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
@@ -1184,7 +1192,8 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
         UpperBoundViolatedInTypeOperatorOrParameterBoundsWarningImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic.c,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.d,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1504,6 +1513,12 @@ private fun KaDiagnosticConverterBuilder.addConversions30() {
     }
     add(FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE) { firDiagnostic ->
         MethodOfAnyImplementedInInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE) { firDiagnostic ->
+        UnnamedPropertyWithImplicitUnitTypeImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1853,14 +1868,6 @@ private fun KaDiagnosticConverterBuilder.addConversions37() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions38() {
-    add(FirErrors.MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT) { firDiagnostic ->
-        MissingDependencySuperclassInTypeArgumentImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.NOT_A_CLASS) { firDiagnostic ->
         NotAClassImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -2128,6 +2135,7 @@ private fun KaDiagnosticConverterBuilder.addConversions44() {
         UpperBoundViolatedInTypealiasExpansionBasedOnJavaAnnotationsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -3815,7 +3823,8 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
         UpperBoundViolatedInTypeOperatorOrParameterBoundsErrorImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic.c,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.d,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -3884,6 +3893,12 @@ private fun KaDiagnosticConverterBuilder.addConversions87() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions88() {
+    add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER.errorFactory) { firDiagnostic ->
+        ParenthesizedPackageQualifierErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
         InapplicableTargetPropertyImmutableImpl(
             firDiagnostic.a,
@@ -4099,6 +4114,12 @@ private fun KaDiagnosticConverterBuilder.addConversions91() {
 private fun KaDiagnosticConverterBuilder.addConversions92() {
     add(FirErrors.VARIABLE_EXPECTED) { firDiagnostic ->
         VariableExpectedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PARENTHESIZED_PACKAGE_QUALIFIER.warningFactory) { firDiagnostic ->
+        ParenthesizedPackageQualifierWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4536,7 +4557,8 @@ private fun KaDiagnosticConverterBuilder.addConversions102() {
         UpperBoundViolatedImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic.c,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.d,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4934,6 +4956,12 @@ private fun KaDiagnosticConverterBuilder.addConversions110() {
     add(FirErrors.INCONSISTENT_TYPE_PARAMETERS_IN_OF_OVERLOADS) { firDiagnostic ->
         InconsistentTypeParametersInOfOverloadsImpl(
             firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED_IN_PACKAGE_QUALIFIER_WARNING) { firDiagnostic ->
+        TypeArgumentsNotAllowedInPackageQualifierWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5560,6 +5588,7 @@ private fun KaDiagnosticConverterBuilder.addConversions124() {
         UpperBoundViolatedInTypealiasExpansionImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5650,8 +5679,8 @@ private fun KaDiagnosticConverterBuilder.addConversions125() {
 private fun KaDiagnosticConverterBuilder.addConversions126() {
     add(FirErrors.MISSING_DEPENDENCY_SUPERCLASS) { firDiagnostic ->
         MissingDependencySuperclassImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.a,
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -6881,6 +6910,7 @@ private fun KaDiagnosticConverterBuilder.addConversions156() {
         UpperBoundViolatedInTypealiasExpansionDeprecationWarningImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7442,9 +7472,7 @@ private fun KaDiagnosticConverterBuilder.addConversions169() {
 private fun KaDiagnosticConverterBuilder.addConversions170() {
     add(FirErrors.UNRESOLVED_REFERENCE_WRONG_RECEIVER) { firDiagnostic ->
         UnresolvedReferenceWrongReceiverImpl(
-            firDiagnostic.a.map { firBasedSymbol ->
-                firSymbolBuilder.buildSymbol(firBasedSymbol)
-            },
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7625,8 +7653,8 @@ private fun KaDiagnosticConverterBuilder.addConversions173() {
 private fun KaDiagnosticConverterBuilder.addConversions174() {
     add(FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING) { firDiagnostic ->
         MissingDependencySuperclassWarningImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.a,
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7647,7 +7675,8 @@ private fun KaDiagnosticConverterBuilder.addConversions174() {
         UpperBoundViolatedDeprecationWarningImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic.c,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.d,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -7863,6 +7892,7 @@ private fun KaDiagnosticConverterBuilder.addConversions178() {
         UpperBoundViolatedBasedOnJavaAnnotationsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -8627,6 +8657,15 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
 private fun KaDiagnosticConverterBuilder.addConversions198() {
     add(FirErrors.ANNOTATION_IN_CONTRACT_ERROR) { firDiagnostic ->
         AnnotationInContractErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING) { firDiagnostic ->
+        UpperBoundViolatedInLhsOfClassLiteralWarningImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

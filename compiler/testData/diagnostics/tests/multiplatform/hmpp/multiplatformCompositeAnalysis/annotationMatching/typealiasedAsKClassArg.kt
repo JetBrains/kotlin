@@ -8,7 +8,7 @@ annotation class Ann(val p: kotlin.reflect.KClass<*>)
 @Ann(Typealiased::class)
 expect fun test()
 
-@Ann(<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<Typealiased>::class<!>)
+@Ann(Array<Typealiased>::class)
 expect fun testInArray()
 
 // MODULE: main()()(common)

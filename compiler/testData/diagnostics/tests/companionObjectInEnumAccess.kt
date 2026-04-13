@@ -7,7 +7,7 @@ enum class MyEnum {
     VALUE;
 
     init {
-        println(<!UNINITIALIZED_VARIABLE!>staticValue<!>)
+        println(<!UNINITIALIZED_ENUM_COMPANION!>staticValue<!>)
     }
 
     companion object {

@@ -32,7 +32,7 @@ package usage2
 import api.*
 
 // TODO: there should be no warning here
-@Anno(<!OPT_IN_USAGE!>MEANING<!>)
+@Anno(MEANING)
 fun usage() {}
 
 // FILE: usage-none.kt

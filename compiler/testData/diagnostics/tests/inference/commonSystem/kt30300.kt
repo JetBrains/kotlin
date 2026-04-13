@@ -13,10 +13,10 @@ fun <K2, V2> emptyInvOut(): InvOut<K2, V2> = TODO()
 fun <S> create(element: S): InvOut<Inv<S>, S> = TODO()
 
 fun test(s: Sample, b: InvOut<Inv<*>, Any?>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("InvOut<Inv<*>, kotlin.Any?>")!>selectInvOut(
+    selectInvOut(
         b,
         select(create(s), emptyInvOut())
-    )<!>
+    )
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, out, outProjection, starProjection,

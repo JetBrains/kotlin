@@ -18,7 +18,7 @@ public class Base implements I<String> {
 class Box<T>
 
 class Derived : Base() {
-    override fun foo(box: Box<String>): Box<String> {
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(box: Box<String>): Box<String> {
         return box
     }
 }

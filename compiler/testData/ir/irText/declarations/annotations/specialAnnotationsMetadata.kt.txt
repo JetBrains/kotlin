@@ -25,9 +25,8 @@ fun unsafeVariance(): @UnsafeVariance String {
 // FILE: main.kt
 
 fun main() {
-  val mainExact: @Exact String = exact()
-  val mainNoInfer: @NoInfer String = noInfer()
+  val mainExact: String = exact()
+  val mainNoInfer: String = noInfer()
   val mainUnsafeVariance: String = unsafeVariance()
   val mainExtensionFunctionType: @ExtensionFunctionType Function1<Int, Unit> = <get-extensionFunctionType>()
 }
-

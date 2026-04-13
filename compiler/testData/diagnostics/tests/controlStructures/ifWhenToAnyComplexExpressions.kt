@@ -8,13 +8,13 @@ fun <T> fooGeneric(x: T) {}
 fun testMixedIfAndWhen() =
         if (true)
             when {
-                true -> if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                else <!IMPLICIT_CAST_TO_ANY!>1<!>
-                    true -> if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                else <!IMPLICIT_CAST_TO_ANY!>println()<!>
-                else -> <!INVALID_IF_AS_EXPRESSION!>if<!> (true) <!IMPLICIT_CAST_TO_ANY!>println()<!>
+                true -> if (true) 42
+                else 1
+                    true -> if (true) 42
+                else println()
+                else -> <!INVALID_IF_AS_EXPRESSION!>if<!> (true) println()
             }
-        else <!IMPLICIT_CAST_TO_ANY!>println()<!>
+        else println()
 
 fun testWrappedExpressions() =
         if (true) {
@@ -22,13 +22,13 @@ fun testWrappedExpressions() =
             <!INVALID_IF_AS_EXPRESSION!>if<!> (true) {
                 println()
                 if (true) {
-                    <!IMPLICIT_CAST_TO_ANY!>println()<!>
+                    println()
                 }
-                else <!IMPLICIT_CAST_TO_ANY!>{}<!>
+                else {}
             }
         }
         else {
-            (((<!IMPLICIT_CAST_TO_ANY!>((42)) + 1<!>)))
+            (((((42)) + 1)))
         }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, nullableType, typeParameter, whenExpression */

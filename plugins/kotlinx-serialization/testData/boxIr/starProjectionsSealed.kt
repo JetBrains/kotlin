@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR
-// K1 did not allow star projections, any compilable code with Sealed<*> uses K2.
 
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*

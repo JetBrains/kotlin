@@ -174,5 +174,5 @@ FILE fqName:<root> fileName:/classMembers.kt
         correspondingProperty: PROPERTY name:propertyWithGetAndSet visibility:public modality:FINAL [var]
         BLOCK_BODY
           CALL 'public final fun <set-z> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=EQ
-            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.<set-propertyWithGetAndSet>' type=<root>.C origin=null
+            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.<set-propertyWithGetAndSet>' type=<root>.C origin=IMPLICIT_ARGUMENT
             ARG <set-?>: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-propertyWithGetAndSet>' type=kotlin.Int origin=null

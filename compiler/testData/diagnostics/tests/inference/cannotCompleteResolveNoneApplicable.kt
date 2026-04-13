@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package f
 
 fun <T> f(i: Int, t: T, c: MutableCollection<T>) {}

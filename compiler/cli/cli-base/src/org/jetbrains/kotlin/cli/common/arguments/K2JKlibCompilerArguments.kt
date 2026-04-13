@@ -192,7 +192,7 @@ The default value is 'warn'.""",
         }
 
     @Argument(
-        value = "Xmultifile-parts-inherit",
+        value = "-Xmultifile-parts-inherit",
         description = "Compile multifile classes as a hierarchy of parts and a facade."
     )
     var inheritMultifileParts: Boolean = false
@@ -253,6 +253,15 @@ The default value is 'indy'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xcompile-ir",
+        description = "Enable the IR compilation phase."
+    )
+    var compileIr: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     override fun copyOf(): Freezable = TODO() // copyK2JKlibCompilerArguments(this, K2JKlibCompilerArguments())
 

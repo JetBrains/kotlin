@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
+                public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
 
                 public final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
                     public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -227,7 +227,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitFunctionUnavailableScript.kts
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
+                public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|second/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Symbol not found for T>>?| { LAZY_BLOCK }
 
                 public final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
                     public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -382,4 +382,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitFunctionUnavailableScript.kts
             }
 
         }
-

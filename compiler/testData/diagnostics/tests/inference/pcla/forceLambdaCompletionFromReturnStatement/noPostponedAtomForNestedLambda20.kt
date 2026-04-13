@@ -16,9 +16,9 @@ open class Child: Parent()
 fun main() {
     val result = func /* Bv <: Av */ (
         { containerA/*: Container<Av> */ ->
-            { <!CANNOT_INFER_PARAMETER_TYPE!>containerB<!>/*: Container<Bv> */ ->
+            { containerB/*: Container<Bv> */ ->
                 consume<Parent>(containerA.produce()) // Av <: Parent
-                consume<Child>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>containerB<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>produce<!>()) // Bv <: Child
+                consume<Child>(containerB.produce()) // Bv <: Child
             }
         }
         // resulting system of constraints:
@@ -27,7 +27,7 @@ fun main() {
         // resulting type arguments: Av = Parent, Bv = Child
     )
     // resulting expression type: TypePair<Parent, Child>
-    val test: TypePair<Parent, Child> = <!TYPE_MISMATCH!>result<!>
+    val test: TypePair<Parent, Child> = result
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,

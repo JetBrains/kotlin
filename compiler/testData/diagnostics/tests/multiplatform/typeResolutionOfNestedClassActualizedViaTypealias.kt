@@ -6,7 +6,7 @@ expect class Foo {
     class Nested
 }
 
-fun foo(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Nested<!>) {}
+fun foo(p: Foo.Nested) {}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -17,7 +17,7 @@ class FooImpl {
 actual typealias Foo = FooImpl
 
 fun test() {
-    foo(FooImpl.Nested())
+    foo(<!ARGUMENT_TYPE_MISMATCH!>FooImpl.Nested()<!>)
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

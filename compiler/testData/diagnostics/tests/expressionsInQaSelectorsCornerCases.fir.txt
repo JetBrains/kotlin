@@ -1,4 +1,4 @@
-FILE: expressionsInQaSelectorsCornerCases.fir.kt
+FILE: expressionsInQaSelectorsCornerCases.kt
     public final fun <T> R|T|.b(): R|kotlin/Int| {
         ^b Int(10)
     }

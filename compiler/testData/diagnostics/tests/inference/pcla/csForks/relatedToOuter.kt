@@ -15,9 +15,9 @@ fun <F> Controller<F>.baz(a: A<F>, f: F) {}
 fun <T> bar(a: A<T>, w: T) {
     generate {
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, 1)
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>w<!>)
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>""<!>)
+            baz(a, 1)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>w<!>)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
         }
     }
 
@@ -25,19 +25,19 @@ fun <T> bar(a: A<T>, w: T) {
         baz(a, w)
 
         if (a is B) {
-            baz(<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>, <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
-            baz(a, <!TYPE_MISMATCH!>w<!>)
-            baz(a, <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>1<!>)
+            baz(a, w)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
         }
     }
 
     generate {
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, 1)
+            baz(a, 1)
         }
 
         if (a is B) {
-            baz(<!DEBUG_INFO_SMARTCAST!>a<!>, <!TYPE_MISMATCH!>w<!>)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>w<!>)
         }
     }
 
@@ -45,11 +45,11 @@ fun <T> bar(a: A<T>, w: T) {
         baz(a, w)
 
         if (a is B) {
-            baz(<!TYPE_MISMATCH, TYPE_MISMATCH!>a<!>, <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+            baz(a, <!ARGUMENT_TYPE_MISMATCH!>1<!>)
         }
 
         if (a is B) {
-            baz(a, <!TYPE_MISMATCH!>w<!>)
+            baz(a, w)
         }
     }
 

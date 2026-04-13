@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,13 +18,7 @@ import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.js.config.dce
-import org.jetbrains.kotlin.js.config.generateDts
-import org.jetbrains.kotlin.js.config.outputDir
-import org.jetbrains.kotlin.js.config.outputName
-import org.jetbrains.kotlin.js.config.propertyLazyInitialization
-import org.jetbrains.kotlin.js.config.sourceMap
-import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -42,13 +36,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.wasm.config.wasmDebug
-import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
-import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
-import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
-import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
-import org.jetbrains.kotlin.wasm.config.wasmTarget
-import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
+import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
@@ -81,7 +69,7 @@ class WasmLoweringFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm? {
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is IrBackendInput.WasmDeserializedFromKlibBackendInput)
+        require(inputArtifact is IrBackendInput.DeserializedFromKlibBackendInput<*>)
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo

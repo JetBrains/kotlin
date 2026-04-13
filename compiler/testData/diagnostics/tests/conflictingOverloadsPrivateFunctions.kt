@@ -2,10 +2,10 @@
 // ISSUE: KT-62814
 
 class K2DuplicatesOkayBug {
-    <!CONFLICTING_OVERLOADS!>private fun startBackgroundSync()<!> {
+    private <!CONFLICTING_OVERLOADS!>fun startBackgroundSync()<!> {
         //todo
     }
-    <!CONFLICTING_OVERLOADS!>private fun startBackgroundSync()<!> {
+    private <!CONFLICTING_OVERLOADS!>fun startBackgroundSync()<!> {
         //todo
     }
 }

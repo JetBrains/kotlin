@@ -18,12 +18,12 @@ class Sub : Base() {
         val TAG = "FAIL"
     }
 
-    fun log() = TAG
+    fun log() = <!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>TAG<!>
 
-    fun logReference() = this::TAG.get()
+    fun logReference() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>TAG<!>.get()
 
     fun logAssignment(): String {
-        TAG = "12"
+        <!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>TAG<!> = "12"
         if (foo() != "12") return "Error writing: ${foo()}"
         return "OK"
     }

@@ -16,7 +16,7 @@ fun test() {
     val platformN = J.staticN
     val platformJ = J.staticJ
 
-    fun foo(p: J = platformNN, p1: J = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>, p2: J = platformJ) {}
+    fun foo(p: J = platformNN, p1: J = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>, p2: J = platformJ) {}
 
     fun foo1(p: J? = platformNN, p1: J? = platformN, p2: J? = platformJ) {}
 }

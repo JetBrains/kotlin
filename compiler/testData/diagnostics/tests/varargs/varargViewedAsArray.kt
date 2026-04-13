@@ -21,11 +21,11 @@ fun test() {
     useStringArray(::stringVararg)
     useIntArray(::numberVararg)
     usePrimitiveIntArray(::intVararg)
-    useIntArray(<!TYPE_MISMATCH("(Array<Int>) -> Unit; KFunction1<IntArray, Unit>")!>::intVararg<!>)
-    useMixedStringArgs1(<!TYPE_MISMATCH("(String, Array<String>) -> Unit; KFunction1<Array<out String>, Unit>")!>::stringVararg<!>)
-    useMixedStringArgs2(<!TYPE_MISMATCH("(Array<String>, String) -> Unit; KFunction1<Array<out String>, Unit>")!>::stringVararg<!>)
-    useMixedStringArgs3(<!TYPE_MISMATCH("(String, Array<String>, String) -> Unit; KFunction1<Array<out String>, Unit>")!>::stringVararg<!>)
-    useTwoStringArrays(<!TYPE_MISMATCH("(Array<String>, Array<String>) -> Unit; KFunction1<Array<out String>, Unit>")!>::stringVararg<!>)
+    useIntArray(::<!INAPPLICABLE_CANDIDATE!>intVararg<!>)
+    useMixedStringArgs1(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useMixedStringArgs2(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useMixedStringArgs3(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
+    useTwoStringArrays(::<!INAPPLICABLE_CANDIDATE!>stringVararg<!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, outProjection,

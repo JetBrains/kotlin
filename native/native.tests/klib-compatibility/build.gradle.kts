@@ -85,12 +85,16 @@ fun Project.customCompilerTest(
         allowParallelExecution = true,
         requirePlatformLibs = false,
     ) {
+        // nativeTestTask sets workingDir to rootDir so here we need to override it to projectDir to make compatibility tests cacheable
+        // Same override is made in `native/native.tests/codegen-box/build.gradle.kts`
+        workingDir = projectDir
+
         useJUnitPlatform { includeTags(tag) }
         extensions.configure<TestInputsCheckExtension> {
             isNative.set(true)
             // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
-            extraPermissions.add("""permission java.io.FilePermission "${rootDir.resolve("stdlib")}", "read";""")
-            extraPermissions.add("""permission java.io.FilePermission "${rootDir.resolve("stdlib.klib")}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${projectDir.resolve("stdlib")}", "read";""")
+            extraPermissions.add("""permission java.io.FilePermission "${projectDir.resolve("stdlib.klib")}", "read";""")
         }
         val rawVersion = version.rawVersion
 

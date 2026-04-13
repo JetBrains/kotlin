@@ -7,9 +7,9 @@ import java.util.HashMap
 
 fun foo(map: MutableMap<Int, String>, value: String?) {
     if (value != null) {
-        map.put(1, <!DEBUG_INFO_SMARTCAST!>value<!>) //ok
-        map.set(1, <!DEBUG_INFO_SMARTCAST!>value<!>) //type inference failed
-        map[1] = <!DEBUG_INFO_SMARTCAST!>value<!>    //type inference failed
+        map.put(1, value) //ok
+        map.set(1, value) //type inference failed
+        map[1] = value    //type inference failed
     }
 }
 
@@ -27,7 +27,7 @@ public data class Tag(public var tagName: String) {
             }
             else {
                 attributes["id"] = value<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-                attributes["id"] = <!DEBUG_INFO_SMARTCAST!>value<!>
+                attributes["id"] = value
             }
         }
 }

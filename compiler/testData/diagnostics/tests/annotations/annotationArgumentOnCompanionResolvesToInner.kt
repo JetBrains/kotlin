@@ -8,7 +8,7 @@ abstract class Super(c: Int)
 
 class TopLevelClass() {
     @Anno(<!UNRESOLVED_REFERENCE!>inner<!>)
-    companion object : @Anno(<!UNRESOLVED_REFERENCE!>inner<!>) Super(<!UNRESOLVED_REFERENCE!>inner<!>) {
+    companion object : @Anno(<!UNRESOLVED_REFERENCE!>inner<!>) Super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>inner<!>) {
         const val inner = 1
     }
 }

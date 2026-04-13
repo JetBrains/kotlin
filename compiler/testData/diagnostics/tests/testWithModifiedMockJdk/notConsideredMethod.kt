@@ -4,12 +4,12 @@
 
 interface A : MutableCollection<String> {
     // Override of deprecated function could be marked as deprecated too
-    override fun <!OVERRIDE_DEPRECATION!>nonExistingMethod<!>(x: String) = ""
+    override fun nonExistingMethod(x: String) = ""
 }
 
 fun foo(x: MutableCollection<Int>, y: Collection<String>, z: A) {
-    x.<!DEPRECATION!>nonExistingMethod<!>(1).checkType { _<String>() }
-    y.<!DEPRECATION!>nonExistingMethod<!>("")
+    x.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>(1).<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
+    y.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>("")
     z.<!DEPRECATION!>nonExistingMethod<!>("")
 }
 

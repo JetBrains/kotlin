@@ -6,7 +6,7 @@ enum class E {
 }
 
 fun foo() {
-    val e = E.<!SYNTAX!><!>
+    val e = <!NO_COMPANION_OBJECT!>E<!>.<!SYNTAX!><!>
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

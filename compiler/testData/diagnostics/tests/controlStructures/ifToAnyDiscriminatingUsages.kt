@@ -29,25 +29,25 @@ fun testResultOfAnonFun2() =
 
 fun testReturnFromAnonFun() =
         run(fun () {
-            return <!TYPE_MISMATCH!>if (true) 42 else println()<!>
+            return <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>if (true) 42 else println()<!>
         })
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
-            return <!TYPE_MISMATCH!>if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                   else <!IMPLICIT_CAST_TO_ANY!>println()<!><!>
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>if (true) 42
+                   else println()<!>
         }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
-            return <!TYPE_MISMATCH!>if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                   else if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-                   else <!IMPLICIT_CAST_TO_ANY!>println()<!><!>
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>if (true) 42
+                   else if (true) 42
+                   else println()<!>
         }
 
 fun testUsage1() =
-        if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-        else <!IMPLICIT_CAST_TO_ANY!>println()<!>
+        if (true) 42
+        else println()
 
 fun testUsage2() =
         foo(if (true) 42 else println())
@@ -56,8 +56,8 @@ fun testUsage2Generic() =
         fooGeneric(if (true) 42 else println())
 
 val testUsage3 =
-        if (true) <!IMPLICIT_CAST_TO_ANY!>42<!>
-        else <!IMPLICIT_CAST_TO_ANY!>println()<!>
+        if (true) 42
+        else println()
 
 val testUsage4: Any get() =
         if (true) 42 else println()

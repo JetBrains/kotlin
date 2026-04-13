@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/innerClassWithDelegatingConstructor.kt
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Outer
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) declared in <root>.Outer.Inner'
-            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer.Inner.<init>' type=<root>.Outer origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Outer declared in <root>.Outer' type=<root>.Outer origin=IMPLICIT_ARGUMENT
             ARG x: CONST Int type=kotlin.Int value=0
       CONSTRUCTOR visibility:public returnType:<root>.Outer.Inner [primary]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Outer

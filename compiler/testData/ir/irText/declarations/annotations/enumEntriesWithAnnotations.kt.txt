@@ -17,14 +17,13 @@ open enum class TestEnum : Enum<TestEnum> {
 
   @TestAnn(x = "ENTRY2")
   ENTRY2 = ENTRY2()
-  @TestAnn(x = "ENTRY2")
   private enum entry class ENTRY2 : TestEnum {
     val x: Int
       field = 42
       get
 
     private constructor() /* primary */ {
-      super/*TestEnum*/() /*~> Unit */
+      super/*TestEnum*/()
       /* <init>() */
 
     }

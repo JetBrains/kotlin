@@ -32,7 +32,7 @@ import some.*
 import some2.*
 import some3.*
 
-fun test() = <!UNRESOLVED_REFERENCE!>Some<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+fun test() = Some.foo
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nestedClass, objectDeclaration,
 propertyDeclaration, stringLiteral */

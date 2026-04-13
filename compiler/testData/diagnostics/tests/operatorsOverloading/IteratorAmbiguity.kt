@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //KT-1821 Write test for ITERATOR_AMBIGUITY diagnostic
 
 interface MyCollectionInterface {

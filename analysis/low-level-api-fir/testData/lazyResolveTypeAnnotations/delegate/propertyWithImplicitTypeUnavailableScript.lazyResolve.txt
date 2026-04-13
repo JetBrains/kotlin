@@ -420,7 +420,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+                public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
                 public final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
                     public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -431,7 +431,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
                 ^getValue this@R|/Delegate.Companion|.R|/Delegate.Companion.explicitType|()
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -470,7 +470,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
                     LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
+                public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>| { LAZY_BLOCK }
 
                 public final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
                     public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
@@ -481,7 +481,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
                 ^getValue this@R|/Delegate.Companion|.R|/Delegate.Companion.explicitType|()
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -531,7 +531,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
                 ^getValue this@R|/Delegate.Companion|.R|/Delegate.Companion.explicitType|()
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -581,7 +581,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailableScript.kts
                 ^getValue this@R|/Delegate.Companion|.R|/Delegate.Companion.explicitType|()
             }
 
-            public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
+            public open override operator [ResolvedTo(STATUS)] fun setValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(STATUS)] value: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -645,4 +645,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeUnavailableScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|) [evaluated = String(explicitType return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|) [evaluated = String(explicitType nested return type 0)])  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|) [evaluated = String(explicitType nested nested return type 0)])  kotlin/Int>>|): R|kotlin/Unit| {
                 ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
-

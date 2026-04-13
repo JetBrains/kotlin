@@ -2,7 +2,7 @@
 // LATEST_LV_DIFFERENCE
 // IGNORE_DEXING
 // LANGUAGE: -ErrorAboutDataClassCopyVisibilityChange, -DataClassCopyRespectsConstructorVisibility
-data class Data private constructor(val x: Int) {
+data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int) {
     fun member() {
         copy()
         this.copy()
@@ -15,33 +15,33 @@ data class Data private constructor(val x: Int) {
     }
 }
 
-data class VarargData private constructor(val value: IntArray) {
-    fun copy(vararg value: Int): VarargData = null!!
-}
+<!CONFLICTING_JVM_DECLARATIONS!>data class VarargData <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val value: IntArray) {
+    <!CONFLICTING_JVM_DECLARATIONS!>fun copy(vararg value: Int): VarargData = null!!<!>
+}<!>
 
 data object DataObject {
-    <!CONFLICTING_OVERLOADS!>fun copy(): DataObject<!> = null!!
+    fun copy(): DataObject = null!!
 }
 
 fun topLevel(data: Data, varargData: VarargData) {
-    data.copy()
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     varargData.copy(42, 42)
-    DataObject.<!OVERLOAD_RESOLUTION_AMBIGUITY!>copy<!>()
+    DataObject.copy()
 }
 
 fun Data.topLevelExtension() {
-    copy()
+    <!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
 }
 
 fun local() {
-    data class Local private constructor(val x: Int)
+    data class Local <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val x: Int)
 
     fun Local.foo() {
-        copy()
+        <!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     }
 }
 
-data class GenericData<A, B: CharSequence> private constructor(val a: A, val b: B) {
+data class GenericData<A, B: CharSequence> <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val a: A, val b: B) {
     fun copy(a: B, b: A) {}
     fun member() {
         copy()
@@ -50,11 +50,11 @@ data class GenericData<A, B: CharSequence> private constructor(val a: A, val b: 
 }
 
 fun topLevel(data: GenericData<Int, String>) {
-    data.copy()
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
     data.copy("", 1) // fake copy
 }
 
-data class GenericDataForRef<A> private constructor(val a: A) {
+data class GenericDataForRef<A> <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING!>private<!> constructor(val a: A) {
     fun member() {
         copy()
         this.copy()
@@ -68,12 +68,12 @@ data class GenericDataForRef<A> private constructor(val a: A) {
 }
 
 fun topLevel(data: GenericDataForRef<Int>) {
-    data.copy()
-    data::copy
-    GenericDataForRef<Int>::copy
-    GenericDataForRef<*>::copy
-    GenericDataForRef<in Int>::copy
-    GenericDataForRef<out Int>::copy
+    data.<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>()
+    data::<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>
+    GenericDataForRef<Int>::<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>
+    GenericDataForRef<*>::<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>
+    GenericDataForRef<in Int>::<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>
+    GenericDataForRef<out Int>::<!DATA_CLASS_INVISIBLE_COPY_USAGE_WARNING!>copy<!>
 }
 
 /* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, data,

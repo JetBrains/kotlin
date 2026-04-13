@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,3 +63,20 @@ private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array
     arrayOf<dynamic>(metadataObject(), metadataObject()), // 1
     arrayOf<dynamic>(metadataObject(), metadataObject())  // 2
 )
+
+@UsedFromCompilerGeneratedCode
+internal fun constructCallableReference(
+    callable: dynamic,
+    arity: Int,
+    flags: Int?,
+    signatureId: Any?,
+    name: String?,
+    bounds: Array<Any>?
+): dynamic {
+    callable.callableName = name
+    callable.`$flags` = flags
+    callable.`$arity` = arity
+    callable.`$id` = signatureId
+    callable.`$bound` = bounds
+    return callable
+}

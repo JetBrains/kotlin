@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.maven.test
 
 import org.apache.maven.shared.verifier.Verifier
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -19,6 +18,11 @@ class MavenTestProject(
     val buildOptions: MavenBuildOptions,
     val mavenVersion: String,
 ) {
+    val jdk8: String get() = context.getJavaHomeString(TestVersions.Java.JDK_1_8)
+    val jdk11: String get() = context.getJavaHomeString(TestVersions.Java.JDK_11)
+    val jdk17: String get() = context.getJavaHomeString(TestVersions.Java.JDK_17)
+    val jdk21: String get() = context.getJavaHomeString(TestVersions.Java.JDK_21)
+
     fun build(
         vararg args: String,
         environmentVariables: Map<String, String> = emptyMap(),
@@ -56,6 +60,13 @@ class MavenTestProject(
 
         verifier.setSystemProperty("kotlin.version", context.kotlinVersion)
         verifier.addCliArguments("--settings", settingsFile.absolutePathString())
+
+        if (buildOptions.toolchains.isNotEmpty()) {
+            val toolchainsXml = workDir.resolve("toolchains.xml")
+            val entries = buildOptions.toolchains.map { context.toolchain(it) }
+            toolchainsXml.writeToolchainsXml(entries)
+            verifier.addCliArguments("--global-toolchains", toolchainsXml.absolutePathString())
+        }
 
         val buildOptionsArgs = buildOptions.asCliArgs().toTypedArray()
 

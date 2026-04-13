@@ -3,416 +3,416 @@
 
 
 class TestBasic {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun TestBasic()<!> {}
+fun TestBasic() {}
 
 class TestBasicReverse {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestBasicReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestBasicReverse() {}
 
 
 class TestIdenticalReturnTypes {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun TestIdenticalReturnTypes(): TestIdenticalReturnTypes<!> = TestIdenticalReturnTypes()
+fun TestIdenticalReturnTypes(): TestIdenticalReturnTypes = TestIdenticalReturnTypes()
 
 class TestIdenticalReturnTypesReverse {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestIdenticalReturnTypesReverse(): TestIdenticalReturnTypesReverse<!> = TestIdenticalReturnTypesReverse()
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestIdenticalReturnTypesReverse(): TestIdenticalReturnTypesReverse = TestIdenticalReturnTypesReverse()
 
 
 class TestFunctionWithReifiedTypeParameterVsConstructorA<T> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorA()<!> {}
+inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorA() {}
 
 class TestFunctionWithReifiedTypeParameterVsConstructorAReverse<T> {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorAReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorAReverse() {}
 
 class TestFunctionWithReifiedTypeParameterVsConstructorB<T> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorB(arg: T)<!> {}
+inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorB(arg: T) {}
 
 class TestFunctionWithReifiedTypeParameterVsConstructorBReverse<T> {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorBReverse(arg: T)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorBReverse(arg: T) {}
 
 class TestFunctionWithReifiedTypeParameterVsConstructorC<T> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorC(arg: Invariant<T>)<!> {}
+inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorC(arg: Invariant<T>) {}
 
 class TestFunctionWithReifiedTypeParameterVsConstructorCReverse<T> {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorCReverse(arg: Invariant<T>)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun <reified T> TestFunctionWithReifiedTypeParameterVsConstructorCReverse(arg: Invariant<T>) {}
 
 
 class TestInlineFunctionVsConstructor {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>inline fun TestInlineFunctionVsConstructor()<!> {}
+inline fun TestInlineFunctionVsConstructor() {}
 
 class TestInlineFunctionVsConstructorReverse {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun TestInlineFunctionVsConstructorReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) inline fun TestInlineFunctionVsConstructorReverse() {}
 
 
 class TestTailrecFunctionVsConstructor {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>tailrec fun TestTailrecFunctionVsConstructor()<!> {}
+tailrec fun TestTailrecFunctionVsConstructor() {}
 
 class TestTailrecFunctionVsConstructorReverse {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun TestTailrecFunctionVsConstructorReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) tailrec fun TestTailrecFunctionVsConstructorReverse() {}
 
 
-class TestFunctionVsPrimaryConstructor @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
-<!CONFLICTING_OVERLOADS!>fun TestFunctionVsPrimaryConstructor()<!> {}
+class TestFunctionVsPrimaryConstructor @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
+fun TestFunctionVsPrimaryConstructor() {}
 
-class TestFunctionVsPrimaryConstructorReverse <!CONFLICTING_OVERLOADS!>constructor()<!> {}
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestFunctionVsPrimaryConstructorReverse()<!> {}
+class TestFunctionVsPrimaryConstructorReverse constructor() {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestFunctionVsPrimaryConstructorReverse() {}
 
 
 class TestFunctionVsDelegatedPrimaryConstructorCall constructor(placeholder: UserKlass) {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!> : this(UserKlass())
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor() : this(UserKlass())
 }
-<!CONFLICTING_OVERLOADS!>fun TestFunctionVsDelegatedPrimaryConstructorCall()<!> {}
+fun TestFunctionVsDelegatedPrimaryConstructorCall() {}
 
 class TestFunctionVsDelegatedPrimaryConstructorCallReverse constructor(placeholder: UserKlass) {
-    <!CONFLICTING_OVERLOADS!>constructor()<!> : this(UserKlass())
+    constructor() : this(UserKlass())
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestFunctionVsDelegatedPrimaryConstructorCallReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestFunctionVsDelegatedPrimaryConstructorCallReverse() {}
 
 
 open class SuperConstructorSource constructor(placeholder: UserKlass)
 
 class TestFunctionVsDelegatedSuperConstructorCall: SuperConstructorSource {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!> : super(UserKlass())
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor() : super(UserKlass())
 }
-<!CONFLICTING_OVERLOADS!>fun TestFunctionVsDelegatedSuperConstructorCall()<!> {}
+fun TestFunctionVsDelegatedSuperConstructorCall() {}
 
 class TestFunctionVsDelegatedSuperConstructorCallReverse: SuperConstructorSource {
-    <!CONFLICTING_OVERLOADS!>constructor()<!> : super(UserKlass())
+    constructor() : super(UserKlass())
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestFunctionVsDelegatedSuperConstructorCallReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestFunctionVsDelegatedSuperConstructorCallReverse() {}
 
 
 class TestIdenticalValueParameters {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: UserKlass)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: UserKlass)
 }
-<!CONFLICTING_OVERLOADS!>fun TestIdenticalValueParameters(arg: UserKlass)<!> {}
+fun TestIdenticalValueParameters(arg: UserKlass) {}
 
 class TestIdenticalValueParametersReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: UserKlass)<!>
+    constructor(arg: UserKlass)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestIdenticalValueParametersReverse(arg: UserKlass)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestIdenticalValueParametersReverse(arg: UserKlass) {}
 
 class TestDifferentlyNamedValueParameters {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(argA: UserKlass)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(argA: UserKlass)
 }
-<!CONFLICTING_OVERLOADS!>fun TestDifferentlyNamedValueParameters(argB: UserKlass)<!> {}
+fun TestDifferentlyNamedValueParameters(argB: UserKlass) {}
 
 class TestDifferentlyNamedValueParametersReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(argA: UserKlass)<!>
+    constructor(argA: UserKlass)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestDifferentlyNamedValueParametersReverse(argB: UserKlass)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestDifferentlyNamedValueParametersReverse(argB: UserKlass) {}
 
 class TestTypeAliasedValueParameterTypesA {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: UserKlass)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: UserKlass)
 }
-<!CONFLICTING_OVERLOADS!>fun TestTypeAliasedValueParameterTypesA(arg: SameUserKlass)<!> {}
+fun TestTypeAliasedValueParameterTypesA(arg: SameUserKlass) {}
 
 class TestTypeAliasedValueParameterTypesAReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: UserKlass)<!>
+    constructor(arg: UserKlass)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestTypeAliasedValueParameterTypesAReverse(arg: SameUserKlass)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestTypeAliasedValueParameterTypesAReverse(arg: SameUserKlass) {}
 
 class TestTypeAliasedValueParameterTypesB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: SameUserKlass)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: SameUserKlass)
 }
-<!CONFLICTING_OVERLOADS!>fun TestTypeAliasedValueParameterTypesB(arg: UserKlass)<!> {}
+fun TestTypeAliasedValueParameterTypesB(arg: UserKlass) {}
 
 class TestTypeAliasedValueParameterTypesBReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: SameUserKlass)<!>
+    constructor(arg: SameUserKlass)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestTypeAliasedValueParameterTypesBReverse(arg: UserKlass)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestTypeAliasedValueParameterTypesBReverse(arg: UserKlass) {}
 
 
 class TestMultipleIdenticalValueParameters {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg1: UserKlassA, arg2: UserKlassB)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg1: UserKlassA, arg2: UserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>fun TestMultipleIdenticalValueParameters(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+fun TestMultipleIdenticalValueParameters(arg1: UserKlassA, arg2: UserKlassB) {}
 
 class TestMultipleIdenticalValueParametersReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg1: UserKlassA, arg2: UserKlassB)<!>
+    constructor(arg1: UserKlassA, arg2: UserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleIdenticalValueParametersReverse(arg1: UserKlassA, arg2: UserKlassB)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleIdenticalValueParametersReverse(arg1: UserKlassA, arg2: UserKlassB) {}
 
 class TestMultipleDifferentlyNamedValueParametersA {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg1: UserKlassA, arg2A: UserKlassB)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg1: UserKlassA, arg2A: UserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>fun TestMultipleDifferentlyNamedValueParametersA(arg1: UserKlassA, arg2B: UserKlassB)<!> {}
+fun TestMultipleDifferentlyNamedValueParametersA(arg1: UserKlassA, arg2B: UserKlassB) {}
 
 class TestMultipleDifferentlyNamedValueParametersAReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg1: UserKlassA, arg2A: UserKlassB)<!>
+    constructor(arg1: UserKlassA, arg2A: UserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleDifferentlyNamedValueParametersAReverse(arg1: UserKlassA, arg2B: UserKlassB)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleDifferentlyNamedValueParametersAReverse(arg1: UserKlassA, arg2B: UserKlassB) {}
 
 class TestMultipleDifferentlyNamedValueParametersB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg1A: UserKlassA, arg2A: UserKlassB)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg1A: UserKlassA, arg2A: UserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>fun TestMultipleDifferentlyNamedValueParametersB(arg1B: UserKlassA, arg2B: UserKlassB)<!> {}
+fun TestMultipleDifferentlyNamedValueParametersB(arg1B: UserKlassA, arg2B: UserKlassB) {}
 
 class TestMultipleDifferentlyNamedValueParametersBReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg1A: UserKlassA, arg2A: UserKlassB)<!>
+    constructor(arg1A: UserKlassA, arg2A: UserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleDifferentlyNamedValueParametersBReverse(arg1B: UserKlassA, arg2B: UserKlassB)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleDifferentlyNamedValueParametersBReverse(arg1B: UserKlassA, arg2B: UserKlassB) {}
 
 class TestMultipleTypeAliasedValueParameterTypesA {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg1: UserKlassA, arg2: SameUserKlassB)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg1: UserKlassA, arg2: SameUserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>fun TestMultipleTypeAliasedValueParameterTypesA(arg1: UserKlassA, arg2: SameUserKlassB)<!> {}
+fun TestMultipleTypeAliasedValueParameterTypesA(arg1: UserKlassA, arg2: SameUserKlassB) {}
 
 class TestMultipleTypeAliasedValueParameterTypesAReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg1: UserKlassA, arg2: SameUserKlassB)<!>
+    constructor(arg1: UserKlassA, arg2: SameUserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleTypeAliasedValueParameterTypesAReverse(arg1: UserKlassA, arg2: SameUserKlassB)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleTypeAliasedValueParameterTypesAReverse(arg1: UserKlassA, arg2: SameUserKlassB) {}
 
 class TestMultipleTypeAliasedValueParameterTypesB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg1: SameUserKlassA, arg2: SameUserKlassB)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg1: SameUserKlassA, arg2: SameUserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>fun TestMultipleTypeAliasedValueParameterTypesB(arg1: SameUserKlassA, arg2: SameUserKlassB)<!> {}
+fun TestMultipleTypeAliasedValueParameterTypesB(arg1: SameUserKlassA, arg2: SameUserKlassB) {}
 
 class TestMultipleTypeAliasedValueParameterTypesBReverse {
-    <!CONFLICTING_OVERLOADS!>constructor(arg1: SameUserKlassA, arg2: SameUserKlassB)<!>
+    constructor(arg1: SameUserKlassA, arg2: SameUserKlassB)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleTypeAliasedValueParameterTypesBReverse(arg1: SameUserKlassA, arg2: SameUserKlassB)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestMultipleTypeAliasedValueParameterTypesBReverse(arg1: SameUserKlassA, arg2: SameUserKlassB) {}
 
 
 class TestIdenticalTypeParametersA<T> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun <T> TestIdenticalTypeParametersA()<!> {}
+fun <T> TestIdenticalTypeParametersA() {}
 
 class TestIdenticalTypeParametersAReverse<T> {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestIdenticalTypeParametersAReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestIdenticalTypeParametersAReverse() {}
 
 class TestIdenticalTypeParametersB<T> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>fun <T> TestIdenticalTypeParametersB(arg: T)<!> {}
+fun <T> TestIdenticalTypeParametersB(arg: T) {}
 
 class TestIdenticalTypeParametersBReverse<T> {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestIdenticalTypeParametersBReverse(arg: T)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestIdenticalTypeParametersBReverse(arg: T) {}
 
 class TestIdenticalTypeParametersC<T> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>fun <T> TestIdenticalTypeParametersC(arg: Invariant<T>)<!> {}
+fun <T> TestIdenticalTypeParametersC(arg: Invariant<T>) {}
 
 class TestIdenticalTypeParametersCReverse<T> {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestIdenticalTypeParametersCReverse(arg: Invariant<T>)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestIdenticalTypeParametersCReverse(arg: Invariant<T>) {}
 
 
 class TestMultipleIdenticalTypeParameters<T1, T2> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun <T1, T2> TestMultipleIdenticalTypeParameters()<!> {}
+fun <T1, T2> TestMultipleIdenticalTypeParameters() {}
 
 class TestMultipleIdenticalTypeParametersReverse<T1, T2> {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T1, T2> TestMultipleIdenticalTypeParametersReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T1, T2> TestMultipleIdenticalTypeParametersReverse() {}
 
 
 class TestTypeParameterWithIdenticalUpperBoundsA<T: UserInterface> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsA()<!> {}
+fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsA() {}
 
 class TestTypeParameterWithIdenticalUpperBoundsAReverse<T: UserInterface> {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsAReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsAReverse() {}
 
 class TestTypeParameterWithIdenticalUpperBoundsB<T: UserInterface> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsB(arg: T)<!> {}
+fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsB(arg: T) {}
 
 class TestTypeParameterWithIdenticalUpperBoundsBReverse<T: UserInterface> {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsBReverse(arg: T)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsBReverse(arg: T) {}
 
 class TestTypeParameterWithIdenticalUpperBoundsC<T: UserInterface> {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsC(arg: Invariant<T>)<!> {}
+fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsC(arg: Invariant<T>) {}
 
 class TestTypeParameterWithIdenticalUpperBoundsCReverse<T: UserInterface> {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsCReverse(arg: Invariant<T>)<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterface> TestTypeParameterWithIdenticalUpperBoundsCReverse(arg: Invariant<T>) {}
 
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsAA<T> where T: UserInterfaceA, T: UserInterfaceB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAA()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAA() where T: UserInterfaceA, T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsAAReverse<T> where T: UserInterfaceA, T: UserInterfaceB {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAAReverse()<!> where T: UserInterfaceA, T: UserInterfaceB {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAAReverse() where T: UserInterfaceA, T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsAB<T> where T: UserInterfaceA, T: UserInterfaceB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAB(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAB(arg: T) where T: UserInterfaceA, T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsABReverse<T> where T: UserInterfaceA, T: UserInterfaceB {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsABReverse(arg: T)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsABReverse(arg: T) where T: UserInterfaceA, T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsAC<T> where T: UserInterfaceA, T: UserInterfaceB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAC(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsAC(arg: Invariant<T>) where T: UserInterfaceA, T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsACReverse<T> where T: UserInterfaceA, T: UserInterfaceB {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsACReverse(arg: Invariant<T>)<!> where T: UserInterfaceA, T: UserInterfaceB {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T> TestTypeParameterWithMultipleIdenticalUpperBoundsACReverse(arg: Invariant<T>) where T: UserInterfaceA, T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsBA<T: UserInterfaceA> where T: UserInterfaceB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor()
 }
-<!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBA()<!> where T: UserInterfaceB {}
+fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBA() where T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsBAReverse<T: UserInterfaceA> where T: UserInterfaceB {
-    <!CONFLICTING_OVERLOADS!>constructor()<!>
+    constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBAReverse()<!> where T: UserInterfaceB {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBAReverse() where T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsBB<T: UserInterfaceA> where T: UserInterfaceB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBB(arg: T)<!> where T: UserInterfaceB {}
+fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBB(arg: T) where T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsBBReverse<T: UserInterfaceA> where T: UserInterfaceB {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: T)<!>
+    constructor(arg: T)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBBReverse(arg: T)<!> where T: UserInterfaceB {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBBReverse(arg: T) where T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsBC<T: UserInterfaceA> where T: UserInterfaceB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBC(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBC(arg: Invariant<T>) where T: UserInterfaceB {}
 
 class TestTypeParameterWithMultipleIdenticalUpperBoundsBCReverse<T: UserInterfaceA> where T: UserInterfaceB {
-    <!CONFLICTING_OVERLOADS!>constructor(arg: Invariant<T>)<!>
+    constructor(arg: Invariant<T>)
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBCReverse(arg: Invariant<T>)<!> where T: UserInterfaceB {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun <T: UserInterfaceA> TestTypeParameterWithMultipleIdenticalUpperBoundsBCReverse(arg: Invariant<T>) where T: UserInterfaceB {}
 
 
 class TestIdenticalPrivateVisibility {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private constructor()
 }
-<!CONFLICTING_OVERLOADS!>private fun TestIdenticalPrivateVisibility()<!> {}
+private fun TestIdenticalPrivateVisibility() {}
 
 class TestIdenticalPrivateVisibilityReverse {
-    private <!CONFLICTING_OVERLOADS!>constructor()<!>
+    private constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun TestIdenticalPrivateVisibilityReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun TestIdenticalPrivateVisibilityReverse() {}
 
 class TestIdenticalInternalVisibility {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal constructor()
 }
-<!CONFLICTING_OVERLOADS!>internal fun TestIdenticalInternalVisibility()<!> {}
+internal fun TestIdenticalInternalVisibility() {}
 
 class TestIdenticalInternalVisibilityReverse {
-    internal <!CONFLICTING_OVERLOADS!>constructor()<!>
+    internal constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal fun TestIdenticalInternalVisibilityReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal fun TestIdenticalInternalVisibilityReverse() {}
 
 class TestDifferencesInPrivateAndPublicVisibilitiesA {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private constructor()
 }
-<!CONFLICTING_OVERLOADS!>public fun TestDifferencesInPrivateAndPublicVisibilitiesA()<!> {}
+public fun TestDifferencesInPrivateAndPublicVisibilitiesA() {}
 
 class TestDifferencesInPrivateAndPublicVisibilitiesAReverse {
-    private <!CONFLICTING_OVERLOADS!>constructor()<!>
+    private constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) public fun TestDifferencesInPrivateAndPublicVisibilitiesAReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) public fun TestDifferencesInPrivateAndPublicVisibilitiesAReverse() {}
 
 class TestDifferencesInPrivateAndPublicVisibilitiesB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) public <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) public constructor()
 }
-<!CONFLICTING_OVERLOADS!>private fun TestDifferencesInPrivateAndPublicVisibilitiesB()<!> {}
+private fun TestDifferencesInPrivateAndPublicVisibilitiesB() {}
 
 class TestDifferencesInPrivateAndPublicVisibilitiesBReverse {
-    public <!CONFLICTING_OVERLOADS!>constructor()<!>
+    public constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun TestDifferencesInPrivateAndPublicVisibilitiesBReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun TestDifferencesInPrivateAndPublicVisibilitiesBReverse() {}
 
 class TestDifferencesInInternalAndPublicVisibilitiesA {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal constructor()
 }
-<!CONFLICTING_OVERLOADS!>public fun TestDifferencesInInternalAndPublicVisibilitiesA()<!> {}
+public fun TestDifferencesInInternalAndPublicVisibilitiesA() {}
 
 class TestDifferencesInInternalAndPublicVisibilitiesAReverse {
-    internal <!CONFLICTING_OVERLOADS!>constructor()<!>
+    internal constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) public fun TestDifferencesInInternalAndPublicVisibilitiesAReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) public fun TestDifferencesInInternalAndPublicVisibilitiesAReverse() {}
 
 class TestDifferencesInInternalAndPublicVisibilitiesB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) public <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) public constructor()
 }
-<!CONFLICTING_OVERLOADS!>internal fun TestDifferencesInInternalAndPublicVisibilitiesB()<!> {}
+internal fun TestDifferencesInInternalAndPublicVisibilitiesB() {}
 
 class TestDifferencesInInternalAndPublicVisibilitiesBReverse {
-    public <!CONFLICTING_OVERLOADS!>constructor()<!>
+    public constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal fun TestDifferencesInInternalAndPublicVisibilitiesBReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal fun TestDifferencesInInternalAndPublicVisibilitiesBReverse() {}
 
 class TestDifferencesInPrivateAndInternalVisibilitiesA {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) private constructor()
 }
-<!CONFLICTING_OVERLOADS!>internal fun TestDifferencesInPrivateAndInternalVisibilitiesA()<!> {}
+internal fun TestDifferencesInPrivateAndInternalVisibilitiesA() {}
 
 class TestDifferencesInPrivateAndInternalVisibilitiesAReverse {
-    private <!CONFLICTING_OVERLOADS!>constructor()<!>
+    private constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal fun TestDifferencesInPrivateAndInternalVisibilitiesAReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal fun TestDifferencesInPrivateAndInternalVisibilitiesAReverse() {}
 
 class TestDifferencesInPrivateAndInternalVisibilitiesB {
-    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal <!CONFLICTING_OVERLOADS!>constructor()<!>
+    @Deprecated(message = "", level = DeprecationLevel.HIDDEN) internal constructor()
 }
-<!CONFLICTING_OVERLOADS!>private fun TestDifferencesInPrivateAndInternalVisibilitiesB()<!> {}
+private fun TestDifferencesInPrivateAndInternalVisibilitiesB() {}
 
 class TestDifferencesInPrivateAndInternalVisibilitiesBReverse {
-    internal <!CONFLICTING_OVERLOADS!>constructor()<!>
+    internal constructor()
 }
-<!CONFLICTING_OVERLOADS!>@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun TestDifferencesInPrivateAndInternalVisibilitiesBReverse()<!> {}
+@Deprecated(message = "", level = DeprecationLevel.HIDDEN) private fun TestDifferencesInPrivateAndInternalVisibilitiesBReverse() {}
 
 
 open class Invariant<T>

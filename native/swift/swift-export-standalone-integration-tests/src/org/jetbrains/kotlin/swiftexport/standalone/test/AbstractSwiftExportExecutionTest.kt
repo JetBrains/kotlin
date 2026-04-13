@@ -34,6 +34,11 @@ import java.io.File
  * Harness is at native/native.tests/testData/framework/main-testing.swift
  */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
+    @BeforeEach
+    fun disableExecutionTests() {
+        Assumptions.abort<Unit>("Swift export execution tests are temporarily disabled, reenable with KT-85308")
+    }
+
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
     override fun runCompiledTest(
@@ -95,7 +100,8 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             ),
             TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
             swiftExtraOpts,
-            outputFile = { executable -> executable.executableFile }
+            outputFile = { executable -> executable.executableFile },
+            minOSVersion = minOSVersion,
         ).result.assertSuccess()
         return TestExecutable(
             success.resultingArtifact,

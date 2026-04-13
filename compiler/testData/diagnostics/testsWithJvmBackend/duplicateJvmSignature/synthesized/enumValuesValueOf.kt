@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 <!CONFLICTING_JVM_DECLARATIONS!>enum class A {
     A1,

@@ -55,7 +55,7 @@ fun nullWhenNotString(x: Any?): String? {
 
 fun nested1(x: Any?) {
     if (equalsTrue(isString(x))) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -64,25 +64,25 @@ fun nested1(x: Any?) {
 
 fun nested2(x: Any?) {
     myAssert(equalsTrue(isString(x)))
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun nested3(x: Any?) {
     myAssert(equalsTrue(notEqualsNull(nullWhenNotString(x))))
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun branchedAndNested(x: Any?, y: Any?) {
     myAssert(equalsTrue(notEqualsNull(nullWhenNotString(x))) && equalsTrue(isString(y)))
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
-    <!DEBUG_INFO_SMARTCAST!>y<!>.length
+    x.length
+    y.length
 }
 
 
 fun br(y: Any?) {
-    if (myAssert(y is Int) == Unit && myAssert(<!USELESS_IS_CHECK!>y is String<!>) == Unit) {
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length
-        <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
+    if (myAssert(y is Int) == Unit && myAssert(<!IMPOSSIBLE_IS_CHECK_WARNING!>y is String<!>) == Unit) {
+        y.length
+        y.inc()
     }
 }
 
@@ -91,16 +91,16 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
             equalsTrue(notEqualsNull(nullWhenNotString(x)))   // x is String
             &&
             (
-                    (myAssert(y is Int) == Unit && myAssert(<!USELESS_IS_CHECK!>y is String<!>) == Unit)  // y is Int, String
+                    (myAssert(y is Int) == Unit && myAssert(<!IMPOSSIBLE_IS_CHECK_WARNING!>y is String<!>) == Unit)  // y is Int, String
                     ||
                     equalsTrue(isInt(y) && isString(y))                          // y is Int, String
             )
             &&
-            (1 == 2 || y is Int || isString(y))
+            (1 == 2 || <!USELESS_IS_CHECK!>y is Int<!> || isString(y))
     )
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
-    y.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    x.length
+    y.length
+    y.inc()
 }
 
 /* GENERATED_FIR_TAGS: andExpression, contractConditionalEffect, contracts, disjunctionExpression, equalityExpression,

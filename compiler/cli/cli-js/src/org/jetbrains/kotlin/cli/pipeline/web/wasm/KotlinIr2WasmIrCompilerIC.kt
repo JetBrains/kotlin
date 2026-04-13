@@ -47,6 +47,7 @@ private val linkerFunctionSignatures = setOf(
     Synthetics.Functions.tryGetAssociatedObjectBuiltIn.value,
     Synthetics.Functions.jsToKotlinStringAdapterBuiltIn.value,
     Synthetics.Functions.jsToKotlinAnyAdapterBuiltIn.value,
+    Synthetics.Functions.runRootSuitesBuiltIn.value,
 )
 private val linkerTypeSignatures = setOf(
     Synthetics.HeapTypes.associatedObjectGetterWrapper.type,
@@ -60,24 +61,24 @@ private fun WasmCompiledDependencyFileFragment.hasBuiltinSignature() =
             linkerTypeSignatures.any { it in definedTypes.definedVTableGcTypes }
 
 private fun WasmModuleArtifactMultimodule.loadDependency(
-    builtInStdlibFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
-    isStdlibArtifact: Boolean
+    builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
+    isBuiltInFragments: Boolean
 ): List<WasmCompiledDependencyFileFragment> {
     val loadedDependencies = mutableListOf<WasmCompiledDependencyFileFragment>()
     for (fileArtifact in this.fileArtifacts) {
         val loadedFragment = fileArtifact.loadIrDependencyFragments() ?: continue
         loadedDependencies.add(loadedFragment)
 
-        if (isStdlibArtifact && loadedFragment.hasBuiltinSignature()) {
-            builtInStdlibFragments.add(fileArtifact.loadIrFragments()!!)
+        if (isBuiltInFragments && loadedFragment.hasBuiltinSignature()) {
+            builtInFragments.add(fileArtifact.loadIrFragments()!!)
         }
     }
     return loadedDependencies
 }
 
 private fun WasmModuleArtifactMultimodule.loadRecompileAndDependency(
-    builtInStdlibFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
-    isStdlibArtifact: Boolean
+    builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
+    isBuiltInFragments: Boolean
 ): Pair<List<WasmIrProgramFragmentsMultimodule>, List<WasmCompiledDependencyFileFragment>> {
     val loadedFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
     val loadedDependencyFragments = mutableListOf<WasmCompiledDependencyFileFragment>()
@@ -90,8 +91,8 @@ private fun WasmModuleArtifactMultimodule.loadRecompileAndDependency(
         )
         loadedDependencyFragments.add(dependencyFragment)
 
-        if (isStdlibArtifact && dependencyFragment.hasBuiltinSignature()) {
-            builtInStdlibFragments.add(loadedFragment)
+        if (isBuiltInFragments && dependencyFragment.hasBuiltinSignature()) {
+            builtInFragments.add(loadedFragment)
         }
     }
 
@@ -103,7 +104,7 @@ private fun compileArtifactMultimodule(
     dependencyFragments: Map<WasmModuleArtifactMultimodule, List<WasmCompiledDependencyFileFragment>>,
     loadedFragments: List<WasmIrProgramFragmentsMultimodule>,
     dependencyResolutionMap: Map<String, String>,
-    builtInStdlibFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
+    builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
     configuration: CompilerConfiguration,
     stdlibModuleName: String,
 ): WasmIrModuleConfiguration {
@@ -113,10 +114,11 @@ private fun compileArtifactMultimodule(
         WasmCompiledCodeFileFragment(fragment.definedTypes, fragment.codeDeclarations, fragment.linkerData)
     }
 
-    val mainModuleReferencesFragments = loadedFragments + builtInStdlibFragments
-    val currentModuleTypeReferences = mainModuleReferencesFragments.collectTypeReferences { it.referencedTypes }
+    val currentModuleTypeReferences = (loadedFragments + builtInFragments).collectTypeReferences { it.referencedTypes }
     currentModuleTypeReferences.gcTypes.addAll(linkerTypeSignatures)
-    val currentModuleDeclarationReferences = mainModuleReferencesFragments.collectDeclarationReferences { it.referencedDeclarations }
+    currentModuleTypeReferences.functionTypes.addAll(linkerFunctionSignatures)
+
+    val currentModuleDeclarationReferences = loadedFragments.collectDeclarationReferences { it.referencedDeclarations }
     currentModuleDeclarationReferences.functions.addAll(linkerFunctionSignatures)
 
     val currentModuleImports = mutableSetOf<WasmModuleDependencyImport>()
@@ -193,18 +195,19 @@ fun compileIncrementallyMultimodule(
     check(moduleArtifacts.size == artifacts.size)
 
     val stdLibArtifact = artifacts.first { it.moduleName == "<kotlin>" }
+    val kotlinTestArtifact = artifacts.firstOrNull { it.moduleName == "<kotlin-test>" }
 
     val (toRecompile, toDependency) = artifacts.partition { artifact ->
         artifact.fileArtifacts.any { it.isModified() }
     }
 
-    val builtInStdlibFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
+    val builtInFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
     val dependencyFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmCompiledDependencyFileFragment>>()
     val recompileFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmIrProgramFragmentsMultimodule>>()
     for (recompile in toRecompile) {
         val (loadedToRecompile, loadedDependency) = recompile.loadRecompileAndDependency(
-            builtInStdlibFragments = builtInStdlibFragments,
-            isStdlibArtifact = recompile == stdLibArtifact
+            builtInFragments = builtInFragments,
+            isBuiltInFragments = (recompile == stdLibArtifact || recompile == kotlinTestArtifact),
         )
         recompileFragments[recompile] = loadedToRecompile
         dependencyFragments[recompile] = loadedDependency
@@ -218,8 +221,8 @@ fun compileIncrementallyMultimodule(
     for (dependency in toDependency) {
         if (dependency.moduleName !in allReferencedModules) continue
         dependencyFragments[dependency] = dependency.loadDependency(
-            builtInStdlibFragments = builtInStdlibFragments,
-            isStdlibArtifact = dependency == stdLibArtifact
+            builtInFragments = builtInFragments,
+            isBuiltInFragments = (dependency == stdLibArtifact || dependency == kotlinTestArtifact),
         )
     }
 
@@ -241,7 +244,7 @@ fun compileIncrementallyMultimodule(
                 dependencyFragments = dependencyFragments,
                 loadedFragments = currentModuleCodeArtifact,
                 dependencyResolutionMap = dependencyResolutionMap,
-                builtInStdlibFragments = builtInStdlibFragments,
+                builtInFragments = builtInFragments,
                 configuration = configuration,
                 stdlibModuleName = stdLibArtifact.moduleName,
             )

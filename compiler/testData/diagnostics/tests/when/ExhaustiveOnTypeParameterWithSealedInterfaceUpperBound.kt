@@ -12,7 +12,7 @@ enum class EnumClass : SealedI { A, B }
 
 data class DataClass(val value: Int): SealedI
 
-fun <T: SealedI> testInstance(value: T) = <!NO_ELSE_IN_WHEN!>when<!>(value) {
+fun <T: SealedI> testInstance(value: T) = when(value) {
     is SimpleClass1 -> 1
     is SimpleClass2 -> 2
     EnumClass.A -> 3
@@ -20,14 +20,14 @@ fun <T: SealedI> testInstance(value: T) = <!NO_ELSE_IN_WHEN!>when<!>(value) {
     is DataClass -> 5
 }
 
-fun <T: SealedI> testInstanceAgain(value: T) = <!NO_ELSE_IN_WHEN!>when<!> (value) {
+fun <T: SealedI> testInstanceAgain(value: T) = when (value) {
     is SimpleClass1 -> 1
     is SimpleClass2 -> 2
     is EnumClass -> 3
     is DataClass -> 4
 }
 
-fun <T : SealedI> T.extensionFun() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
+fun <T : SealedI> T.extensionFun() = when (this) {
     is SimpleClass1 -> 1
     is SimpleClass2 -> 2
     EnumClass.A -> 3
@@ -35,7 +35,7 @@ fun <T : SealedI> T.extensionFun() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
     is DataClass -> 5
 }
 
-inline fun <reified T : SealedI> T.inlineExtensionFun() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
+inline fun <reified T : SealedI> T.inlineExtensionFun() = when (this) {
     is SimpleClass1 -> 1
     is SimpleClass2 -> 2
     EnumClass.A -> 3
@@ -44,7 +44,7 @@ inline fun <reified T : SealedI> T.inlineExtensionFun() = <!NO_ELSE_IN_WHEN!>whe
 }
 
 val <T : SealedI> T.extensionPropWithGetter
-    get() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
+    get() = when (this) {
         is SimpleClass1 -> 1
         is SimpleClass2 -> 2
         EnumClass.A -> 3
@@ -53,14 +53,14 @@ val <T : SealedI> T.extensionPropWithGetter
     }
 
 class Test<T: SealedI> {
-    fun testInstance(value: T) = <!NO_ELSE_IN_WHEN!>when<!>(value) {
+    fun testInstance(value: T) = when(value) {
         is SimpleClass1 -> 1
         is SimpleClass2 -> 2
         EnumClass.A -> 3
         EnumClass.B -> 4
         is DataClass -> 5
     }
-    fun T.extensionFun() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
+    fun T.extensionFun() = when (this) {
         is SimpleClass1 -> 1
         is SimpleClass2 -> 2
         EnumClass.A -> 3
@@ -68,7 +68,7 @@ class Test<T: SealedI> {
         is DataClass -> 5
     }
     val T.extensionPropWithGetter
-        get() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
+        get() = when (this) {
             is SimpleClass1 -> 1
             is SimpleClass2 -> 2
             EnumClass.A -> 3
@@ -79,7 +79,7 @@ class Test<T: SealedI> {
 
 class Inv<T>(val prop: T)
 
-fun <T: SealedI> testOut(instance: Inv<out T>) = <!NO_ELSE_IN_WHEN!>when<!>(instance.prop) {
+fun <T: SealedI> testOut(instance: Inv<out T>) = when(instance.prop) {
     is SimpleClass1 -> 1
     is SimpleClass2 -> 2
     EnumClass.A -> 3

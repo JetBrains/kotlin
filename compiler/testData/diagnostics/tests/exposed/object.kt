@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // From KT-10753
-object My : <!EXPOSED_SUPER_CLASS!>Inter()<!> {
+object My : <!EXPOSED_SUPER_CLASS!>Inter<!>() {
     fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(<!EXPOSED_PARAMETER_TYPE!>arg: Inter<!>): Inter = arg
     val <!EXPOSED_PROPERTY_TYPE!>x<!>: Inter? = null
 }

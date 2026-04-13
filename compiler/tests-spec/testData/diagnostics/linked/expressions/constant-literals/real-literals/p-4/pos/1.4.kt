@@ -62,7 +62,7 @@ val value_17 = .12345678_90
 val value_18 = .1_2_3_4_5_6_7_8_9_0
 
 // TESTCASE NUMBER: 19
-val value_19 = <!FLOAT_LITERAL_CONFORMS_ZERO!>.345______________6e-7_______8f<!>
+val value_19 = .345______________6e-7_______8f
 
 // TESTCASE NUMBER: 20
 val value_20 = .45_67f
@@ -77,10 +77,10 @@ val value_22 = .6_0______________05F
 val value_23 = .76_5e4
 
 // TESTCASE NUMBER: 24
-val value_24 = <!FLOAT_LITERAL_CONFORMS_INFINITY!>.8E7654_3<!>
+val value_24 = .8E7654_3
 
 // TESTCASE NUMBER: 25
-val value_25 = <!FLOAT_LITERAL_CONFORMS_INFINITY!>.9E0_____________8765432f<!>
+val value_25 = .9E0_____________8765432f
 
 // TESTCASE NUMBER: 26
 val value_26 = .09_8765432_____________1F

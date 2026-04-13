@@ -3,13 +3,13 @@ package kotlin.io
 
 import kotlin.internal.*
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@<!INVISIBLE_MEMBER, INVISIBLE_REFERENCE!>RequireKotlin<!>("1.x")<!>
+@<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>RequireKotlin<!>(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.x"<!>)
 class IllegalVersion()
 
-@<!INVISIBLE_MEMBER, INVISIBLE_REFERENCE!>RequireKotlin<!>("1.2")
+@<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>RequireKotlin<!>("1.2")
 class LegalMinimum()
 
-@<!INVISIBLE_MEMBER, INVISIBLE_REFERENCE!>RequireKotlin<!>("1.2", versionKind = <!INVISIBLE_REFERENCE!>RequireKotlinVersionKind<!>.<!INVISIBLE_MEMBER!>COMPILER_VERSION<!>, message = "Requires newer compiler version to be inlined correctly.")
+@<!INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>RequireKotlin<!>("1.2", versionKind = <!INVISIBLE_REFERENCE!>RequireKotlinVersionKind<!>.<!INVISIBLE_REFERENCE!>COMPILER_VERSION<!>, message = "Requires newer compiler version to be inlined correctly.")
 class LegalStdLib()
 
 /* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, stringLiteral */

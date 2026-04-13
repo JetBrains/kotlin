@@ -5,27 +5,27 @@ import kotlin.contracts.*
 
 fun test1Warning(block: () -> Unit) {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        <!WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!>
     }
 }
 
 fun test1Suppress(block: () -> Unit) {
     @Suppress("WRONG_INVOCATION_KIND")
-    <!CONTRACT_NOT_ALLOWED!>contract<!> {
+    contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 }
 
 fun test2Warning(block: () -> Unit) {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        <!WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!>
     }
 }
 
 fun test2Suppress(block: () -> Unit) {
     contract {
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>@Suppress("WRONG_INVOCATION_KIND")
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!>
+        <!ANNOTATION_IN_CONTRACT_ERROR!>@Suppress("WRONG_INVOCATION_KIND")<!>
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 }
 

@@ -22,11 +22,11 @@ class Test {
 
     val Int.c: Int get() = 42
 
-    val test1: () -> Right = a.<!DEBUG_INFO_LEAKING_THIS!>b<!>.<!DEBUG_INFO_LEAKING_THIS!>c<!>::foo
-    val test1a: () -> Right = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!><!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>b<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>c<!><!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+    val test1: () -> Right = a.b.c::foo
+    val test1a: () -> Right = a.b<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>.c::foo
 
-    val test2: () -> Right = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a.<!DEBUG_INFO_LEAKING_THIS!>b<!>.<!DEBUG_INFO_LEAKING_THIS!>c<!><!>?::foo
-    val test2a: () -> Right = <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!><!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>b<!><<!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>c<!><!>?::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+    val test2: () -> Right = <!SAFE_CALLABLE_REFERENCE_CALL!>a.b.c?::foo<!>
+    val test2a: () -> Right = <!SAFE_CALLABLE_REFERENCE_CALL!>a.b<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Int><!>.c?::foo<!>
 }
 
 /* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, funWithExtensionReceiver,

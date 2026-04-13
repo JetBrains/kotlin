@@ -22,7 +22,10 @@ inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
 }
 
 fun test1() {
-  error("") /* ErrorExpression */
+  invoke<ErrorType, ErrorType>(/* <this> = error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+    error("") /* ErrorExpression */
+  }
+;  */) /*~> Unit */
   local fun <no name provided>() {
     error("") /* ErrorExpression */
   }
@@ -51,7 +54,10 @@ fun test1() {
 
 fun test2() {
   L1@ while (true) { // BLOCK
-    error("") /* ErrorExpression */
+    invoke<ErrorType, ErrorType>(/* <this> = error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+      error("") /* ErrorExpression */
+    }
+;  */) /*~> Unit */
     local fun <no name provided>() {
       error("") /* ErrorExpression */
     }
@@ -82,29 +88,32 @@ fun test2() {
 fun test3() {
   L1@ while (true) { // BLOCK
     val lambda: Function0<Unit> = local fun <anonymous>() {
-      error("") /* ErrorExpression */
+      invoke<ErrorType, ErrorType>(/* <this> = error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+        continue@L1
+      }
+;  */) /*~> Unit */
       local fun <no name provided>() {
-        error("") /* ErrorExpression */
+        break@L1
       }
 .invoke()
       local fun <no name provided>() {
-        error("") /* ErrorExpression */
+        continue@L1
       }
 .invoke()
       foo(block = local fun <anonymous>() {
-        error("") /* ErrorExpression */
+        break@L1
       }
 )
       foo(block = local fun <anonymous>() {
-        error("") /* ErrorExpression */
+        continue@L1
       }
 )
       foo(block = local fun <no name provided>() {
-        error("") /* ErrorExpression */
+        break@L1
       }
 )
       foo(block = local fun <no name provided>() {
-        error("") /* ErrorExpression */
+        continue@L1
       }
 )
     }
@@ -114,44 +123,44 @@ fun test3() {
 
 fun test4() {
   while (local fun <anonymous>(): Nothing {
-    return error("") /* ErrorExpression */
+    error("") /* ErrorExpression */
   }
 .invoke()) { // BLOCK
   }
   while (local fun <anonymous>(): Nothing {
-    return error("") /* ErrorExpression */
+    error("") /* ErrorExpression */
   }
 .invoke()) { // BLOCK
   }
   while (local fun <no name provided>() {
     error("") /* ErrorExpression */
   }
-.invoke() /*as Boolean */) { // BLOCK
+.invoke()) { // BLOCK
   }
   while (local fun <no name provided>() {
     error("") /* ErrorExpression */
   }
-.invoke() /*as Boolean */) { // BLOCK
+.invoke()) { // BLOCK
   }
   while (foo(block = local fun <anonymous>() {
     error("") /* ErrorExpression */
   }
-) /*as Boolean */) { // BLOCK
+)) { // BLOCK
   }
   while (foo(block = local fun <anonymous>() {
     error("") /* ErrorExpression */
   }
-) /*as Boolean */) { // BLOCK
+)) { // BLOCK
   }
   while (foo(block = local fun <no name provided>() {
     error("") /* ErrorExpression */
   }
-) /*as Boolean */) { // BLOCK
+)) { // BLOCK
   }
   while (foo(block = local fun <no name provided>() {
     error("") /* ErrorExpression */
   }
-) /*as Boolean */) { // BLOCK
+)) { // BLOCK
   }
 }
 
@@ -188,26 +197,26 @@ fun test6() {
       return Unit
     }
 , block2 = local fun <anonymous>() {
-      error("") /* ErrorExpression */
+      break
     }
 )
     bar(block1 = local fun <anonymous>() {
       return Unit
     }
 , block2 = local fun <anonymous>() {
-      error("") /* ErrorExpression */
+      continue
     }
 )
     bar(block1 = local fun <no name provided>() {
     }
 , block2 = local fun <no name provided>() {
-      error("") /* ErrorExpression */
+      break
     }
 )
     bar(block1 = local fun <no name provided>() {
     }
 , block2 = local fun <no name provided>() {
-      error("") /* ErrorExpression */
+      continue
     }
 )
   }
@@ -227,7 +236,7 @@ fun test7() {
 fun test8() {
   while (true) { // BLOCK
     baz(block = local fun <anonymous>() {
-      error("") /* ErrorExpression */
+      break
     }
 )
   }

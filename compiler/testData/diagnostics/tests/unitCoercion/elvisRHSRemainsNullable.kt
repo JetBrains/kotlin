@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // ISSUE: KT-71751
 
 fun <R> myRun(x: () -> R): R = TODO()

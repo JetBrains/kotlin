@@ -6,10 +6,10 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>, y: Array<out CharSequence>) {
-    a.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>""<!>)
-    a.foo(*<!TYPE_MISMATCH!>y<!>)
+    a.foo(<!MEMBER_PROJECTED_OUT!>""<!>, <!MEMBER_PROJECTED_OUT!>""<!>, <!MEMBER_PROJECTED_OUT!>""<!>)
+    a.foo(*<!ARGUMENT_TYPE_MISMATCH!>y<!>)
     // TODO: TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS probably redundant
-    a.foo(*<!TYPE_MISMATCH!>y<!>, <!TYPE_MISMATCH!>""<!>)
+    a.foo(*<!ARGUMENT_TYPE_MISMATCH!>y<!>, <!MEMBER_PROJECTED_OUT!>""<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, outProjection, stringLiteral, typeParameter,

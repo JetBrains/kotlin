@@ -15,7 +15,7 @@ object Impl : SomeSubClass {
 }
 
 fun g(a: SomeClass?) {
-    var b = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>(a as? SomeSubClass)?.foo<!>
+    var b = (a as? SomeSubClass)?.foo
     b = "Hello"
     if (<!SENSELESS_COMPARISON!>b != null<!>) {
         // 'a' cannot be cast to SomeSubClass!
@@ -24,15 +24,15 @@ fun g(a: SomeClass?) {
         (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
         (a as SomeSubClass).foo
     }
-    var c = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>a as? SomeSubClass<!>
+    var c = a as? SomeSubClass
     c = Impl
     if (<!SENSELESS_COMPARISON!>c != null<!>) {
         // 'a' cannot be cast to SomeSubClass
         a<!UNSAFE_CALL!>.<!>hashCode()
         a.<!UNRESOLVED_REFERENCE!>foo<!>
         (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        <!DEBUG_INFO_SMARTCAST!>c<!>.hashCode()
-        <!DEBUG_INFO_SMARTCAST!>c<!>.foo
+        c.hashCode()
+        c.foo
     }
 }
 
@@ -44,8 +44,8 @@ fun f(a: SomeClass?) {
         // 'aa' cannot be cast to SomeSubClass
         aa<!UNSAFE_CALL!>.<!>hashCode()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
-        (<!DEBUG_INFO_CONSTANT!>aa<!> as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        (<!ALWAYS_NULL!>aa<!> as SomeSubClass).foo
+        (aa <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
+        (aa <!CAST_NEVER_SUCCEEDS!>as<!> SomeSubClass).foo
     }
     val b = (aa as? SomeSubClass)?.foo
     aa = null
@@ -53,18 +53,18 @@ fun f(a: SomeClass?) {
         // 'aa' cannot be cast to SomeSubClass
         aa<!UNSAFE_CALL!>.<!>hashCode()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
-        (<!DEBUG_INFO_CONSTANT!>aa<!> as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        (<!ALWAYS_NULL!>aa<!> as SomeSubClass).foo
+        (aa <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
+        (aa <!CAST_NEVER_SUCCEEDS!>as<!> SomeSubClass).foo
     }
     aa = a
     val c = aa as? SomeSubClass
     if (c != null) {
         // 'c' can be cast to SomeSubClass
-        aa<!UNSAFE_CALL!>.<!>hashCode()
-        aa.<!UNRESOLVED_REFERENCE!>foo<!>
-        (aa as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        <!DEBUG_INFO_SMARTCAST!>c<!>.hashCode()
-        <!DEBUG_INFO_SMARTCAST!>c<!>.foo
+        aa.hashCode()
+        aa.foo
+        (aa <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
+        c.hashCode()
+        c.foo
     }
 }
 

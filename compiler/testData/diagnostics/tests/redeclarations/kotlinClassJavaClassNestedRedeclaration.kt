@@ -2,8 +2,8 @@
 // FILE: test/A.kt
 package test
 
-class A {
-    class Nested
+class <!CLASSIFIER_REDECLARATION!>A<!> {
+    class <!CLASSIFIER_REDECLARATION!>Nested<!>
 }
 
 // FILE: test/A.java

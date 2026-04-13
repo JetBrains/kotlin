@@ -51,40 +51,40 @@ fun main() {
         add("one")
 
         val secondParameter = get(1)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>println<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>secondParameter<!>) // ERROR: [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity. All these functions match.
+        println(secondParameter) // ERROR: [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity. All these functions match.
     }
     val list2 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>println<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>get(1)<!>) // ERROR: [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity. All these functions match.
+        println(get(1)) // ERROR: [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity. All these functions match.
     }
     val list3 = buildList {
         add("one")
 
         val secondParameter = Inv(get(1))
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("Inv<String>; E; String")!>secondParameter<!>)
+        foo(secondParameter)
     }
     val list4 = buildList {
         add("one")
 
         val secondParameter = get(1)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("Inv<String>; E; String")!>Inv(secondParameter)<!>)
+        foo(Inv(secondParameter))
     }
     val list5 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("Inv<String>; E; String")!>Inv(get(1))<!>)
+        foo(Inv(get(1)))
     }
     val list6 = buildList {
         add("one")
 
-        <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; null")!>get(0)<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>bar<!>()
+        get(0).bar()
     }
     val list7 = buildList {
         add("one")
 
         with (get(0)) {
-            <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; null")!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>bar<!>()<!>
+            bar()
         }
     }
     val list71 = buildList {
@@ -92,7 +92,7 @@ fun main() {
 
         with (get(0)) l1@ {
             with (listOf(1)) {
-                <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; LAMBDA_EXPRESSION")!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>bar<!>()<!>
+                bar()
             }
         }
     }
@@ -101,21 +101,21 @@ fun main() {
 
         with (get(0)) {
             with (listOf(1)) {
-                <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; LAMBDA_EXPRESSION")!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>bar<!>()<!>
+                bar()
             }
         }
     }
     val list8 = buildList {
         add("one")
 
-        <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("Inv<String>; E; String; null")!>Inv(get(0))<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo2<!>()
+        Inv(get(0)).foo2()
     }
     val list9 = buildList {
         add("one")
 
         with (get(0)) {
             with (Inv(this)) {
-                <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("Inv<String>; E; String; null")!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo2<!>()<!>
+                foo2()
             }
         }
     }
@@ -124,7 +124,7 @@ fun main() {
 
         with (get(0)) {
             with (Inv(this)) {
-                <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; LAMBDA_EXPRESSION")!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>bar<!>()<!>
+                bar()
             }
         }
     }
@@ -133,63 +133,63 @@ fun main() {
     val list10 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY!>foo0<!>(get(0), 0f)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0<!>(get(0), 0f)
     }
     val list11 = buildList {
         add("one")
 
         val x = get(0)
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY!>foo0<!>(x, 0f)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0<!>(x, 0f)
     }
     val list12 = buildList {
         add("one")
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY!>foo00<!>(get(0), 0f)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo00<!>(get(0), 0f)
     }
 
     // Below are multi-arguments resolution ambiguities
     val list13 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo000<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>get(0)<!>, 0f, <!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>get(0)<!>)
+        foo000(get(0), 0f, get(0))
     }
 
     val list14 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo0000<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>get(0)<!>, 0f, <!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>get(0)<!>)
+        foo0000(get(0), 0f, get(0))
     }
 
     val list17 = buildList l1@ {
         add("one")
 
         with (get(0)) {
-            <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; null")!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo0003<!>(0f, <!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>this@l1.get(0)<!>)<!>
+            foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>this@l1.get(0)<!>)
         }
     }
 
     val list18 = buildList {
         add("one")
 
-        <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY("String; E; String; null")!>get(0)<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo0003<!>(0f, <!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("String; E; String")!>get(0)<!>)
+        get(0).foo0003(0f, <!ARGUMENT_TYPE_MISMATCH!>get(0)<!>)
     }
 
     val map1 = buildMap {
         put(1, "one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo11<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY("MutableSet<MutableMap.MutableEntry<Int, String>>; K, V; Int, String")!>entries<!>)
+        foo11(entries)
     }
 
     // There aren't specific errors below as casting value arguments doesn't make a resolve successful
     val list15 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY!>foo0001<!>(get(0), 0f, get(0))
+        <!NONE_APPLICABLE!>foo0001<!>(get(0), 0f, get(0))
     }
 
     val list16 = buildList {
         add("one")
 
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY!>foo0002<!>(get(0), 0f, get(0))
+        <!NONE_APPLICABLE!>foo0002<!>(get(0), 0f, get(0))
     }
 }
 
@@ -213,13 +213,13 @@ fun test() {
             add("")
             with (get()) {
                 with (listOf(1)) {
-                    <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>bar<!>()<!>
+                    bar()
                 }
             }
         },
         {
             put(1, "one")
-            <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>foo11<!>(<!STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY!>entries()<!>)
+            foo11(entries())
         }
     )
 }

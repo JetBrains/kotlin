@@ -13,7 +13,6 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -42,7 +41,6 @@ class BuildKotlinToolingMetadataTest {
 
     private val project = ProjectBuilder.builder().build() as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
-    private val jsExtension get() = project.extensions.getByType(KotlinJsProjectExtension::class.java)
 
     @Test
     fun `multiplatform empty setup`() {
@@ -158,20 +156,6 @@ class BuildKotlinToolingMetadataTest {
         assertEquals(KonanTarget.LINUX_X64.name, linuxTarget.extras.native?.konanTarget)
         assertEquals(project.nativeProperties.kotlinNativeVersion.get(), linuxTarget.extras.native?.konanVersion)
         assertEquals(KotlinAbiVersion.CURRENT.toString(), linuxTarget.extras.native?.konanAbiVersion)
-    }
-
-    @Test
-    fun js() {
-        project.plugins.apply("org.jetbrains.kotlin.js")
-        val kotlin = jsExtension
-        kotlin.js { nodejs() }
-
-        val metadata = getKotlinToolingMetadata()
-        assertEquals(org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper::class.java.canonicalName, metadata.buildPlugin)
-
-        val jsTarget = metadata.projectTargets.single { it.platformType == js.name }
-        assertEquals(true, jsTarget.extras.js?.isNodejsConfigured)
-        assertEquals(false, jsTarget.extras.js?.isBrowserConfigured)
     }
 
     @Test

@@ -5,5 +5,4 @@ fun test() {
     }
 }
 
-// IGNORE_FE10
 // FIR considers all expressions of type `Nothing` as unused.

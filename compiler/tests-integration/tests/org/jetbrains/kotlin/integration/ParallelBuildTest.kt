@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.integration
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -12,7 +13,7 @@ class ParallelBuildTest : KotlinIntegrationTestBase() {
     fun testParallelBuild() {
         fun rawString(text: String): String = "\"\"\"$text\"\"\""
 
-        val testDataDir = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
+        val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/integration/smoke/helloApp").absolutePath
         val program = ProgramWithDependencyOnCompiler(
             tmpdir, """
             import org.jetbrains.kotlin.cli.common.messages.MessageRenderer

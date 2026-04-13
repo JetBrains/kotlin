@@ -8,37 +8,37 @@
 typealias LocalDateAlias = java.time.LocalDate
 
 fun test(p1: java.time.LocalDate, p2: LocalDateAlias) {
-    synchronized(p1) { }
-    synchronized(p2) { }
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(Integer.valueOf(1)) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p1<!>) { }
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>p2<!>) { }
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Integer.valueOf(1)<!>) {}
 }
 
 fun testMostTypes() {
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Integer.valueOf(1)) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Byte.valueOf(1)) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Double.valueOf(1.0)) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Float.valueOf(1.0f)) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Long.valueOf(1)) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Short.valueOf(1)) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Character.valueOf('a')) {}
-    <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(java.lang.Boolean.valueOf(true)) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Integer.valueOf(1)<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Byte.valueOf(1)<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Double.valueOf(1.0)<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Float.valueOf(1.0f)<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Long.valueOf(1)<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Short.valueOf(1)<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Character.valueOf('a')<!>) {}
+    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>java.lang.Boolean.valueOf(true)<!>) {}
 
-    synchronized(java.lang.Runtime.version()) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.lang.Runtime.version()<!>) {}
 
-    synchronized(java.time.LocalDate.MIN) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.time.LocalDate.MIN<!>) {}
 
-    synchronized(java.util.Optional.empty<Any>()) {}
-    synchronized(java.util.OptionalInt.empty()) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.util.Optional.empty<Any>()<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.util.OptionalInt.empty()<!>) {}
 
-    synchronized(java.time.LocalDate.MIN) {}
-    synchronized(java.time.chrono.JapaneseDate.now()) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.time.LocalDate.MIN<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.time.chrono.JapaneseDate.now()<!>) {}
 
-    synchronized(java.lang.ProcessHandle.current()) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>java.lang.ProcessHandle.current()<!>) {}
 }
 
 class TestField {
     val prop = java.lang.Integer.valueOf(1)
-    fun method() = <!FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES!>synchronized<!>(prop) {
+    fun method() = synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>prop<!>) {
 
     }
 }
@@ -48,7 +48,7 @@ fun getVersion(): Runtime.Version {
 }
 
 fun testReturnVal() {
-    synchronized(getVersion()) {
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>getVersion()<!>) {
 
     }
 }
@@ -56,7 +56,7 @@ fun testReturnVal() {
 fun testLambda() {
     val version = getVersion()
     val lambda = {
-        synchronized(version) {
+        synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>version<!>) {
 
         }
     }

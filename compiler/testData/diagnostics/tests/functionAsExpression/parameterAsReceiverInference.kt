@@ -18,7 +18,7 @@ fun foo2() {
         fun(arg) {
             // K1: TYPE_MISMATCH (String expected, Any? inferred)
             // K2: ok
-            acceptString(<!TYPE_MISMATCH!>arg<!>)
+            acceptString(arg)
         }
     )
 }
@@ -37,11 +37,11 @@ fun foo3() {
 
 fun foo4() {
     execute2<String, Int>(
-        <!TYPE_MISMATCH!>fun(arg1, arg2) {
+        fun(arg1, arg2) {
             // K1: TYPE_MISMATCH (String expected, Any? inferred)
             // K2: ok
-            acceptStringAndInt(<!TYPE_MISMATCH!>arg1<!>, arg2)
-        }<!>
+            acceptStringAndInt(arg1, arg2)
+        }
     )
 }
 

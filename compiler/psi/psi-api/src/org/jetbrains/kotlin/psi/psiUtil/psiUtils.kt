@@ -336,6 +336,12 @@ fun PsiElement.getAssignmentLhsIfUnwrappable(): PsiElement? =
         it?.elementType in UNWRAPPABLE_TOKEN_TYPES
     }
 
+fun PsiElement.getExplicitReceiverOfDotQualified(): PsiElement? =
+    when {
+        elementType == DOT_QUALIFIED_EXPRESSION -> children.firstOrNull()
+        else -> null
+    }
+
 
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 

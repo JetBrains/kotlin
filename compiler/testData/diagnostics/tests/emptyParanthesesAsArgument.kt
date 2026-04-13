@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // RUN_PIPELINE_TILL: FRONTEND
 fun f(a: Int, b: Int, c: Int) {}
 

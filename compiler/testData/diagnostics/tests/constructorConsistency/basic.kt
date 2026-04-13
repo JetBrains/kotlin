@@ -3,8 +3,8 @@ class My {
     val x: String
 
     constructor() {
-        val y = bar(<!DEBUG_INFO_LEAKING_THIS!>this<!>)
-        val z = <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+        val y = bar(this)
+        val z = foo()
         x = "$y$z"
     }
 

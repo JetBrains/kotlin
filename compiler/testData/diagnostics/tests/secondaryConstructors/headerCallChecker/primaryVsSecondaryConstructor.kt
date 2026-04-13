@@ -9,8 +9,8 @@ class A(x: String = y) : Super(y) {
     constructor(
         w: Int,
         z: Int,
-        x: String = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL, TYPE_MISMATCH!>y<!>,
-    ) : this(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL, TYPE_MISMATCH!>y<!>)
+        x: String <!INITIALIZER_TYPE_MISMATCH!>=<!> <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>y<!>,
+    ) : this(<!ARGUMENT_TYPE_MISMATCH, INSTANCE_ACCESS_BEFORE_SUPER_CALL!>y<!>)
 
     val y: Int = 1
 }

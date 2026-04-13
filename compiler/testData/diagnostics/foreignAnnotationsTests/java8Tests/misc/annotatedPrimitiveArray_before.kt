@@ -9,6 +9,6 @@ public interface J {
 }
 
 // FILE: main.kt
-fun bar(j: J) = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j.foo()<!>.iterator()
+fun bar(j: J) = j.foo()<!UNSAFE_CALL!>.<!>iterator()
 
-fun baz(j: J) = <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j.foo()<!>[0]
+fun baz(j: J) = <!UNSAFE_CALL!>j.foo()[0]<!>

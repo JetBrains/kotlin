@@ -12,10 +12,10 @@ public class A {
 
 fun main(a: A, ml: MutableList<String>, l: List<String>) {
     a.foo(ml)
-    a.foo(<!TYPE_MISMATCH!>l<!>)
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 
-    a.bar(<!TYPE_MISMATCH!>ml<!>)
-    a.bar(<!TYPE_MISMATCH!>l<!>)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>ml<!>)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

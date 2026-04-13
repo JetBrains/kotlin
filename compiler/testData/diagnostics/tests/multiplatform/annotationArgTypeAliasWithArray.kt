@@ -16,7 +16,7 @@ expect annotation class BenchmarkMode(vararg val value: Mode)
 actual typealias Mode = mypackage.Mode
 
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>BenchmarkMode<!> = mypackage.BenchmarkMode
+actual typealias BenchmarkMode = mypackage.BenchmarkMode
 
 // FILE: mypackage/Mode.java
 

@@ -12,7 +12,7 @@ var d2: dynamic
   set
 
 fun test1(s: String) {
-  withDynamic(d = s)
+  withDynamic(d = s) /*~> Unit */
 }
 
 fun test2(a: Any) {

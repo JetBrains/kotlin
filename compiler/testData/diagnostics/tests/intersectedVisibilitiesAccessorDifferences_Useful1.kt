@@ -19,7 +19,7 @@ abstract class D : C<String>(), I<String> {
 
 fun main() {
     object : D() {
-        override val x: String = "42"
+        override <!VAR_OVERRIDDEN_BY_VAL!>val<!> x: String = "42"
     }.foo("1")
 }
 

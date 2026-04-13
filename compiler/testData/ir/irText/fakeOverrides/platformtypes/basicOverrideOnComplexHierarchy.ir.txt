@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open a: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-a> (): kotlin.Int declared in <root>.Java1
@@ -97,12 +97,12 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open b: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:
           public open fun <get-b> (): kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<set-b> visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:OPEN [fake_override,var]
         overridden:

@@ -17,7 +17,7 @@ import javapackage.KotlinParentClass
 
 internal class Child : KotlinParentClass() {
     fun foo() {
-        <!INVISIBLE_MEMBER!>publicStaticMethod<!>()
+        <!INVISIBLE_REFERENCE!>publicStaticMethod<!>()
     }
 }
 

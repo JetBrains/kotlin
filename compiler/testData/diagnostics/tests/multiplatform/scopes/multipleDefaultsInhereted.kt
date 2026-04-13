@@ -18,8 +18,8 @@ expect interface I2 {
     override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>x: Int<!>)
 }
 
-<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE!>interface CommonInterface<!> : I1, I2 {
-    override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>x: Int<!>)
+<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE, MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE{METADATA}!>interface CommonInterface<!> : I1, I2 {
+    override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES, MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES{METADATA}!>x: Int<!>)
 }
 
 // MODULE: m1-jvm()()(m1-common)
@@ -35,8 +35,8 @@ actual interface I2 {
     actual fun bar(x: Int)
 }
 
-actual interface ExpectInterface : I1, I2 {
-    actual override fun foo(x: Int)
+<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE!>actual interface ExpectInterface<!> : I1, I2 {
+    actual override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES!>x: Int<!>)
 }
 
 /* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, interfaceDeclaration, override */

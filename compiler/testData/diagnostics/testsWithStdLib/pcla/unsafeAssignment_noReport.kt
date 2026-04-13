@@ -19,7 +19,7 @@ fun main(arg: Any) {
             a = arg
         }
     }
-    println(value.a?.count { it in 'l' .. 'q' })
+    println(value.a?.<!UNRESOLVED_REFERENCE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, ifExpression, integerLiteral,

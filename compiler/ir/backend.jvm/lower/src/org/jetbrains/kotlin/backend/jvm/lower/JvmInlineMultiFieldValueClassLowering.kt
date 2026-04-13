@@ -439,6 +439,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
     }
 
     override fun createExposedConstructor(constructor: IrConstructor): IrConstructor? = null
+    override fun createExposedNoArgConstructor(constructor: IrConstructor): IrConstructor? = null
     override fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor? = null
 
     private fun replaceMfvcStaticFields(declaration: IrClass) {

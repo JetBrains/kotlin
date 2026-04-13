@@ -7,19 +7,31 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
+import org.jetbrains.sir.lightclasses.extensions.withSessions
 
-internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translatedAttributes
-    get(): List<SirAttribute> {
-        val availability = ktSymbol.deprecatedAnnotation?.takeIf { it.level != DeprecationLevel.HIDDEN }?.let { annotation ->
-            SirAttribute.Available(
-                message = annotation.replaceWith.expression.takeIf { it.isNotBlank() }?.let { "${annotation.message}. Replacement: $it" }
-                    ?: annotation.message,
-                deprecated = annotation.level == DeprecationLevel.WARNING,
-                unavailable = annotation.level == DeprecationLevel.ERROR,
-            )
+internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translatedAttributes: List<SirAttribute>
+    get() = buildList {
+        translateAvailabilityAttribute?.let(::add)
+        addAll(translatedOptInAttributes)
+    }
+
+internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translatedOptInAttributes: List<SirAttribute>
+    get() = withSessions {
+        ktSymbol.allRequiredOptIns.mapNotNull {
+            if (it.asFqNameString() == "kotlinx.cinterop.BetaInteropApi") return@mapNotNull null
+            SirAttribute.SPI(it.asSingleFqName().pathSegments().joinToString("$"))
         }
+    }
 
-        return listOfNotNull(availability)
+internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translateAvailabilityAttribute: SirAttribute?
+    get() = ktSymbol.deprecatedAnnotation?.takeIf { it.level != DeprecationLevel.HIDDEN }?.let { annotation ->
+        SirAttribute.Available(
+            message = annotation.replaceWith.expression.takeIf { it.isNotBlank() }?.let { "${annotation.message}. Replacement: $it" }
+                ?: annotation.message,
+            deprecated = annotation.level == DeprecationLevel.WARNING,
+            unavailable = annotation.level == DeprecationLevel.ERROR,
+        )
     }

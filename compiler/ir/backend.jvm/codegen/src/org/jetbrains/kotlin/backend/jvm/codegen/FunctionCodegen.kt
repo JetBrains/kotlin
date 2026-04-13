@@ -52,13 +52,17 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     private val IrClass?.isNotNullAndInterface: Boolean get() = this != null && this.isInterface
 
     fun generate(
-        reifiedTypeParameters: ReifiedTypeParametersUsages = classCodegen.reifiedTypeParametersUsages
+        reifiedTypeParameters: ReifiedTypeParametersUsages = classCodegen.reifiedTypeParametersUsages,
     ): SMAPAndMethodNode =
         try {
             doGenerate(reifiedTypeParameters)
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
-            throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
+            throw RuntimeException(
+                "Exception while generating code for ${RenderIrElementVisitor().renderSymbolReference(irFunction.symbol)}:\n" +
+                        irFunction.dump(),
+                e,
+            )
         }
 
     private fun doGenerate(reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {

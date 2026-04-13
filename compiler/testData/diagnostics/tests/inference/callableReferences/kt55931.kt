@@ -13,7 +13,7 @@ fun foo(b: Boolean) {
         val x2 = if (b) ::fun1 else ::fun2 // OK
         // NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER and DEBUG_UNRESOLVED on both callable references
         // Since 1.4.0 (NI)
-        val x3 = if (b) { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>fun1<!><!> } else { <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::<!DEBUG_INFO_MISSING_UNRESOLVED!>fun2<!><!> }
+        val x3 = if (b) { ::fun1 } else { ::fun2 }
     }
 
     val w: () -> Unit = {

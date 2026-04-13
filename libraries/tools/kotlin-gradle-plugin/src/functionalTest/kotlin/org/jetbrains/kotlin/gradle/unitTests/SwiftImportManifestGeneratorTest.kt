@@ -105,7 +105,6 @@ class SwiftImportManifestGeneratorTest {
             platforms = listOf(".iOS(\"15.0\")"),
             repoDependencies = emptyList(),
             targetDependencies = emptyList(),
-            linkerHackPath = "/path/to/linker/hack",
         )
 
         val expected = """
@@ -129,8 +128,7 @@ class SwiftImportManifestGeneratorTest {
             |    .target(
             |      name: "LinkedPackage",
             |      dependencies: [
-            |      ],
-            |      linkerSettings: [.unsafeFlags(["-fuse-ld=/path/to/linker/hack"])]
+            |      ]
             |    )
             |  ]
             |)

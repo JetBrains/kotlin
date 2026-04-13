@@ -103,7 +103,7 @@ fun main1(a: A1<String>, a1: A1<String?>) {
 fun main2(a: A2<String>, a1: A2<String?>) {
     a.foo("", null)?.length
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo("", null)<!>.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "")<!>.length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
@@ -113,10 +113,10 @@ fun main2(a: A2<String>, a1: A2<String?>) {
 
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz("")<!>.length
     a.baz("")?.length
-    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)<!>.length
 
     a1.baz("")!!.length
-    a1.baz(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)!!.length
+    a1.baz(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)!!.length
 }
 
 fun main3(a: A3<String>, a1: A3<String?>) {

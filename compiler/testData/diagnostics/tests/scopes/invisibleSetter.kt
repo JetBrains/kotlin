@@ -6,7 +6,7 @@ class A<T> {
 
 fun main() {
     val a = A<Any>()
-    <!INVISIBLE_SETTER!>a.x<!> = 1
+    a.<!INVISIBLE_SETTER!>x<!> = 1
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,

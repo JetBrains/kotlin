@@ -15,27 +15,27 @@ fun consume(arg: String) {}
 fun test(a: String?) {
     a.let {
         checkEquality(it)
-        consume(<!DEBUG_INFO_SMARTCAST!>it<!>)
+        consume(it)
     }
     a.let {
         checkIdentity(it)
-        consume(<!DEBUG_INFO_SMARTCAST!>it<!>)
+        consume(it)
     }
     a.let {
         checkTrue(it != null)
-        consume(<!DEBUG_INFO_SMARTCAST!>it<!>)
+        consume(it)
     }
     a.let {
         checkTrue(it !== null)
-        consume(<!TYPE_MISMATCH!>it<!>)
+        consume(it)
     }
     a.let {
         checkFalse(it == null)
-        consume(<!DEBUG_INFO_SMARTCAST!>it<!>)
+        consume(it)
     }
     a.let {
         checkFalse(it === null)
-        consume(<!TYPE_MISMATCH!>it<!>)
+        consume(it)
     }
 }
 

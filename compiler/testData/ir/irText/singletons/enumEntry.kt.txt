@@ -2,7 +2,7 @@ open enum class Z : Enum<Z> {
 
   ENTRY = ENTRY()
   private enum entry class ENTRY : Z {
-    inner class A {
+    local inner class A {
       constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
@@ -10,13 +10,13 @@ open enum class Z : Enum<Z> {
       }
 
       fun test2() {
-        Z.ENTRY.test()
+        <this>.test()
       }
 
     }
 
     private constructor() /* primary */ {
-      super/*Z*/() /*~> Unit */
+      super/*Z*/()
       /* <init>() */
 
     }

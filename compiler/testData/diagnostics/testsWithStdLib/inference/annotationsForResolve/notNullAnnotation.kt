@@ -23,7 +23,7 @@ interface TypePredicate : (KotlinType) -> Boolean {
 
 fun <T : Any?> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
     keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key ->
-        map.plus(<!TYPE_MISMATCH!>key<!>, this)
+        map.plus(<!ARGUMENT_TYPE_MISMATCH!>key<!>, this)
     }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,

@@ -5,7 +5,7 @@ fun foo(arg: Int?) {
     if (x == null) return
     run {
         // Safe: since `run` is in-place
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
+        x.hashCode()
     }
     x = null  
 }

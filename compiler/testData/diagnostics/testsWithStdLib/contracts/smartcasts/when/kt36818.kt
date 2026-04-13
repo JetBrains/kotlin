@@ -6,8 +6,8 @@ fun main(x1: Double?, range: ClosedRange<Double>) {
     }
 
     when {
-        x1 == null -> throw Exception()
-        <!DEBUG_INFO_SMARTCAST!>x1<!> in range -> {}
+        <!SENSELESS_COMPARISON!>x1 == null<!> -> throw Exception()
+        x1 in range -> {}
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -529,6 +529,7 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
         is KtClassBody -> parent.containingClassOrObject
         is KtClassOrObject -> parent
         is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
+        is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
         else -> null
     }
 
@@ -540,10 +541,19 @@ val KtDeclaration.containingClassOrObject: KtClassOrObject?
 @KtExperimentalApi
 val KtDeclaration.containingScript: KtScript?
     get() = when (val parent = parent) {
-        is KtBlockExpression -> parent.parent as? KtScript
+        is KtBlockExpression -> parent.containingScript
+        is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingScript
         else -> null
     }
 
+/**
+ * The containing script for the block expression.
+ *
+ * @see KtDeclaration.containingScript
+ */
+@KtExperimentalApi
+val KtBlockExpression.containingScript: KtScript?
+    get() = parent as? KtScript
 
 /**
  * Containing [ClassId] for a declaration. It supports [KtScript] in REPL mode.

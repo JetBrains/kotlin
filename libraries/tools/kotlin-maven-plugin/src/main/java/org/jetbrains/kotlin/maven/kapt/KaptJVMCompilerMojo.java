@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.maven.kapt;
 
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.resolver.ResolutionErrorHandler;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.compiler.DependencyCoordinate;
 import org.apache.maven.plugins.annotations.*;
@@ -35,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.*;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
@@ -43,8 +43,10 @@ import static org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager.*;
 /**
  * @noinspection UnusedDeclaration
  */
-@Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "kapt", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
+    private static final String ANNOTATION_PROCESSOR_SERVICE_FILE = "META-INF/services/javax.annotation.processing.Processor";
+
     @Parameter
     private String[] annotationProcessors;
 
@@ -68,6 +70,20 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
     @Parameter
     private List<String> javacOptions;
+
+    /**
+     * Use the compile classpath for annotation processor discovery in addition to {@code annotationProcessorPaths}.
+     * If unset, this option is not passed to kapt; for the current kapt version, the default is {@code true}.
+     *
+     * Can be configured as:
+     * - Mojo parameter: {@code <includeCompileClasspath>true|false</includeCompileClasspath>}
+     * - Maven property: {@code -Dkapt.include.compile.classpath=true|false}
+     *
+     * Note that the discovery from the compile classpath is deprecated; prefer declaring processors in
+     * {@code <annotationProcessorPaths>} and setting this option to {@code false}.
+     */
+    @Parameter(property = "kapt.include.compile.classpath")
+    private Boolean includeCompileClasspath;
 
     // Components for AnnotationProcessingManager
 
@@ -101,6 +117,10 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         options.add(new KaptOption("correctErrorTypes", correctErrorTypes));
         options.add(new KaptOption("mapDiagnosticLocations", mapDiagnosticLocations));
         options.add(new KaptOption("processors", annotationProcessors));
+
+        if (includeCompileClasspath != null) {
+            options.add(new KaptOption("includeCompileClasspath", includeCompileClasspath));
+        }
 
         if (arguments.getVerbose()) {
             options.add(new KaptOption("verbose", true));
@@ -197,6 +217,8 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
             throw new MojoExecutionException("Error while processing kapt options", e);
         }
 
+        checkAnnotationProcessorClasspath(resolvedArtifacts);
+
         String[] kaptOptions = renderKaptOptions(getKaptOptions(arguments, resolvedArtifacts));
         arguments.setPluginOptions(joinArrays(arguments.getPluginOptions(), kaptOptions));
 
@@ -209,6 +231,63 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
                                 : new String[]{jdkToolsJarPath, resolvedArtifacts.kaptCompilerPluginArtifact}
                 )
         );
+    }
+
+    private void checkAnnotationProcessorClasspath(@NotNull AnnotationProcessingManager.ResolvedArtifacts resolvedArtifacts) {
+        // Same deprecation warning as in Gradle plugin, see KaptTask.checkAnnotationProcessorClasspath()
+        // But for Maven do not show it if the option is explicitly set to *any* value
+        if (includeCompileClasspath != null) return;
+
+        Set<File> kaptClasspath = resolvedArtifacts.annotationProcessingClasspath.stream()
+                .map(KaptJVMCompilerMojo::normalizeFile)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        List<File> processorsAbsentInKaptClasspath = getClasspath().stream()
+                .map(KaptJVMCompilerMojo::normalizeFile)
+                .filter(this::hasAnnotationProcessors)
+                .filter(file -> !kaptClasspath.contains(file))
+                .collect(Collectors.toList());
+
+        if (processorsAbsentInKaptClasspath.isEmpty()) return;
+
+        if (getLog().isInfoEnabled()) {
+            getLog().warn(
+                    "Annotation processors discovery from compile classpath is deprecated."
+                            + "\nSet 'kapt.include.compile.classpath=false' to disable discovery."
+                            + "\nThe following files, containing annotation processors, are not present in KAPT classpath:\n"
+                            + processorsAbsentInKaptClasspath.stream()
+                            .map(file -> "  '" + file + "'")
+                            .collect(Collectors.joining("\n"))
+                            + "\nAdd corresponding dependencies to the <annotationProcessorPaths> section of the kapt configuration."
+            );
+        } else {
+            getLog().warn(
+                    "Annotation processors discovery from compile classpath is deprecated."
+                            + "\nSet 'kapt.include.compile.classpath=false' to disable discovery."
+                            + "\nRun the build with '--info' for more details."
+            );
+        }
+    }
+
+    @NotNull
+    private static File normalizeFile(@NotNull String path) {
+        return new File(path).getAbsoluteFile().toPath().normalize().toFile();
+    }
+
+    private boolean hasAnnotationProcessors(@NotNull File file) {
+        if (file.isDirectory()) {
+            return new File(file, ANNOTATION_PROCESSOR_SERVICE_FILE).isFile();
+        }
+
+        if (file.isFile() && file.getName().endsWith(".jar")) {
+            try (JarFile jarFile = new JarFile(file)) {
+                return jarFile.getEntry(ANNOTATION_PROCESSOR_SERVICE_FILE) != null;
+            } catch (IOException e) {
+                getLog().debug("Unable to inspect " + file + " for annotation processors", e);
+            }
+        }
+
+        return false;
     }
 
     @Nullable

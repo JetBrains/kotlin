@@ -5,7 +5,7 @@ class C {
 
 typealias CAlias = C
 
-val <!EXPOSED_PROPERTY_TYPE!>test1<!> = <!INVISIBLE_MEMBER!>CAlias<!>
-val <!EXPOSED_PROPERTY_TYPE!>test1a<!> = <!INVISIBLE_MEMBER!>C<!>
+val <!EXPOSED_PROPERTY_TYPE!>test1<!> = <!INVISIBLE_REFERENCE!>CAlias<!>
+val <!EXPOSED_PROPERTY_TYPE!>test1a<!> = <!INVISIBLE_REFERENCE!>C<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

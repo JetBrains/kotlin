@@ -1,3 +1,0 @@
-fun f(p: (kotlin.Int, ERROR_TYPE(Unresolved type for p2)) -> ERROR(No type specified for unknown element), `<no name provided>`: ERROR(Missed a type for a value parameter <no name provided>))
-
-fun `<no name provided>`()

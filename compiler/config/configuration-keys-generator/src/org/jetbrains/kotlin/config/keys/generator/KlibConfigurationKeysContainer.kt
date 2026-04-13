@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.config", "KlibConfigurationKeys") {
     val KLIB_RELATIVE_PATH_BASES by key<List<String>>("Provides a path from which relative paths in klib are being computed.")
 
-    val KLIB_NORMALIZE_ABSOLUTE_PATH by key<Boolean>("Normalize absolute paths in klib (replace file separator with '/').")
-
     val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS by key<Boolean>("Turn on the checks on uniqueness of signatures.")
 
     val DUPLICATED_UNIQUE_NAME_STRATEGY by key<DuplicatedUniqueNameStrategy>("Duplicated KLIB dependencies handling strategy.")

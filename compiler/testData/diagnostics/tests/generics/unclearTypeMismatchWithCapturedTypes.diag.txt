@@ -1,13 +1,3 @@
-/unclearTypeMismatchWithCapturedTypes.kt:15:22: error: type mismatch: inferred type is Number but Number was expected
-    numberBoxHandler(inNumberBox, number)
-                     ^^^^^^^^^^^
-/unclearTypeMismatchWithCapturedTypes.kt:15:35: error: type mismatch: inferred type is Number but Number was expected
-    numberBoxHandler(inNumberBox, number)
-                                  ^^^^^^
-/unclearTypeMismatchWithCapturedTypes.kt:16:25: error: type mismatch: inferred type is Number but Number was expected
-    outNumberBoxHandler(inNumberBox, number)
-                        ^^^^^^^^^^^
-/unclearTypeMismatchWithCapturedTypes.kt:16:38: error: type mismatch: inferred type is Number but Number was expected
-    outNumberBoxHandler(inNumberBox, number)
-                                     ^^^^^^
+/unclearTypeMismatchWithCapturedTypes.kt:(339,350): error: Argument type mismatch: actual type is 'Box<CapturedType(in Number)>', but 'Box<Number>' was expected.
 
+/unclearTypeMismatchWithCapturedTypes.kt:(384,395): error: Argument type mismatch: actual type is 'Box<CapturedType(in Number)>', but 'Box<out Number>' was expected.

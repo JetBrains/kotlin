@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import Host.objectMember
 
 object Host {

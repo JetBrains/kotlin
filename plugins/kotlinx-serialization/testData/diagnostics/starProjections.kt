@@ -7,4 +7,4 @@ import kotlinx.serialization.*
 class Box<T>(val boxed: T)
 
 @Serializable
-class Wrapper(<!SERIALIZER_NOT_FOUND!>val boxed: Box<*><!>)
+class Wrapper(val boxed: Box<<!SERIALIZER_NOT_FOUND!>*<!>>)

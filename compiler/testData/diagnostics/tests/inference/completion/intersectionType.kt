@@ -2,26 +2,26 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun test(a: D1, b: D2) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Out<Base>")!>id<Out<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<{B1 & B2}>")!>makeOut(
-            <!DEBUG_INFO_EXPRESSION_TYPE("{B1 & B2}")!>select(a, b)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Base>")!>id<Inv<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Base>")!>makeInv(
-            <!DEBUG_INFO_EXPRESSION_TYPE("{B1 & B2}")!>select(a, b)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>id<In<Base>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<Base>")!>makeIn(
-            <!DEBUG_INFO_EXPRESSION_TYPE("{B1 & B2}")!>select(a, b)<!>
-        )<!>
-    )<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("In<In<Base>>")!>id<In<In<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<In<{B1 & B2}>>")!>makeInIn(
-            <!DEBUG_INFO_EXPRESSION_TYPE("{B1 & B2}")!>select(a, b)<!>
-        )<!>
-    )<!>
+    id<Out<Base>>(
+        makeOut(
+            select(a, b)
+        )
+    )
+    id<Inv<Base>>(
+        makeInv(
+            select(a, b)
+        )
+    )
+    id<In<Base>>(
+        makeIn(
+            select(a, b)
+        )
+    )
+    id<In<In<Base>>>(
+        makeInIn(
+            select(a, b)
+        )
+    )
 }
 
 interface Base

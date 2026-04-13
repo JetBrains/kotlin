@@ -2,12 +2,12 @@
 fun foo() {
     try {
         throw Exception()
-    } catch (x: Nothing) {
+    } catch (<!THROWABLE_TYPE_MISMATCH!>x: Nothing<!>) {
     }
 
     try {
         throw Exception()
-    } catch (<!TYPE_MISMATCH!>x: Nothing?<!>) {
+    } catch (<!THROWABLE_TYPE_MISMATCH!>x: Nothing?<!>) {
     }
 }
 

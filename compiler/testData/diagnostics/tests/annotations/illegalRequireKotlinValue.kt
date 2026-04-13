@@ -1,31 +1,31 @@
 // RUN_PIPELINE_TILL: FRONTEND
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 package test
 
 import kotlin.internal.RequireKotlin
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>""<!>)
 fun f01() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("x")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"x"<!>)
 fun f02() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("1")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1"<!>)
 fun f03() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("1.0-beta")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.0-beta"<!>)
 fun f04() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("1.1.0-dev-1111")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.1.0-dev-1111"<!>)
 fun f05() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("1.5.3.7")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1.5.3.7"<!>)
 fun f06() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin("1..0")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>"1..0"<!>)
 fun f07() {}
 
-<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>@RequireKotlin(" 1.0")<!>
+@RequireKotlin(<!ILLEGAL_KOTLIN_VERSION_STRING_VALUE!>" 1.0"<!>)
 fun f08() {}
 
 

@@ -16,7 +16,7 @@ expect interface Base2<T>{
 class Test<T>(val x : Base1<T>, val y : Base2<T>) : Base1<T> by x, Base2<T> by y {
     override fun foo(t: T): T { return t }
     override val a : T
-        get() = 1 <!UNCHECKED_CAST, UNCHECKED_CAST{JVM}!>as T<!>
+        get() = 1 <!UNCHECKED_CAST!>as T<!>
 }
 
 class Test2(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int> by y {
@@ -28,14 +28,14 @@ class Test2(val x : Base1<Int>, val y : Base2<Int>): Base1<Int> by x, Base2<Int>
         get() = 1
 }
 
-class Test3(val x : Base1<Int>, val y : Base2<Number>): Base1<Int> by x, Base2<Number> by y {
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Test3(val x : Base1<Int>, val y : Base2<Number>): Base1<Int> by x, Base2<Number> by y {
     override val a: Int
         get() = 1
 
     override fun foo(t: Number): Number {
         return 1
     }
-}
+}<!>
 
 // MODULE: platform()()(common)
 // FILE: platform.kt

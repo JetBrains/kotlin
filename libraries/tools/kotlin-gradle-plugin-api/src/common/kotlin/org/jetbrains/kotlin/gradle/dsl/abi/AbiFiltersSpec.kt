@@ -69,7 +69,7 @@ interface AbiFiltersSpec {
      */
     @Deprecated("Use 'exclude' instead", ReplaceWith("exclude"), DeprecationLevel.ERROR)
     val excluded: AbiFilterSetSpec
-        get() = exclude
+        get() = error("'excluded' property for filters is deprecated. Use 'exclude' instead.")
 
     /**
      * A set of filtering rules that restrict ABI declarations from being included in a dump.
@@ -100,7 +100,7 @@ interface AbiFiltersSpec {
      */
     @Deprecated("Use 'include' instead", ReplaceWith("include"), DeprecationLevel.ERROR)
     val included: AbiFilterSetSpec
-        get() = include
+        get() = error("'included' property for filters is deprecated. Use 'include' instead.")
 
     /**
      * Configures the [exclude] variable with the provided configuration.
@@ -126,7 +126,9 @@ interface AbiFiltersSpec {
      * @deprecated Use 'exclude' instead.
      */
     @Deprecated("Use 'exclude' instead", ReplaceWith("exclude"), DeprecationLevel.ERROR)
-    fun excluded(action: Action<AbiFilterSetSpec>) = exclude(action)
+    fun excluded(action: Action<AbiFilterSetSpec>) {
+        error("'excluded' for filters is deprecated. Use 'exclude' instead.")
+    }
 
     /**
      * Configures the [exclude] variable with the provided configuration.
@@ -134,7 +136,9 @@ interface AbiFiltersSpec {
      * @deprecated Use 'exclude' instead.
      */
     @Deprecated("Use 'exclude' instead", ReplaceWith("exclude"), DeprecationLevel.ERROR)
-    fun excluded(action: AbiFilterSetSpec.() -> Unit) = exclude(action)
+    fun excluded(action: AbiFilterSetSpec.() -> Unit) {
+        error("'excluded' for filters is deprecated. Use 'exclude' instead.")
+    }
 
     /**
      * Configures the [include] variable with the provided configuration.
@@ -160,7 +164,9 @@ interface AbiFiltersSpec {
      * @deprecated Use 'include' instead.
      */
     @Deprecated("Use 'include' instead", ReplaceWith("include"), DeprecationLevel.ERROR)
-    fun included(action: AbiFilterSetSpec.() -> Unit) = include(action)
+    fun included(action: AbiFilterSetSpec.() -> Unit) {
+        error("'included' for filters is deprecated. Use 'include' instead.")
+    }
 
     /**
      * Configures the [include] variable with the provided configuration.
@@ -168,7 +174,9 @@ interface AbiFiltersSpec {
      * @deprecated Use 'include' instead.
      */
     @Deprecated("Use 'include' instead", ReplaceWith("include"), DeprecationLevel.ERROR)
-    fun included(action: Action<AbiFilterSetSpec>) = include(action)
+    fun included(action: Action<AbiFilterSetSpec>) {
+        error("'included' for filters is deprecated. Use 'include' instead.")
+    }
 }
 
 /**

@@ -124,6 +124,7 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     /**
      * @suppress
      */
+    // This API is used in IDEA to create run tasks, should be fixed via KTIJ-38347
     @Deprecated(
         "Use defaultSourceSet.name instead. Scheduled for removal in Kotlin 2.3",
         ReplaceWith("defaultSourceSet.name"),
@@ -201,28 +202,6 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     )
     @Suppress("DEPRECATION_ERROR")
     val compilerOptions: HasCompilerOptions<*>
-
-    /**
-     * @suppress
-     */
-    @Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
-    @Deprecated(
-        message = "Accessing task instance directly is deprecated. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.ERROR,
-    )
-    val compileKotlinTask: KotlinCompileDeprecated<KotlinCommonOptionsDeprecated>
-
-    /**
-     * @suppress
-     */
-    @Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
-    @Deprecated(
-        message = "Replaced with compileTaskProvider. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("compileTaskProvider"),
-        level = DeprecationLevel.ERROR,
-    )
-    val compileKotlinTaskProvider: TaskProvider<out KotlinCompileDeprecated<KotlinCommonOptionsDeprecated>>
 
     /**
      * @suppress

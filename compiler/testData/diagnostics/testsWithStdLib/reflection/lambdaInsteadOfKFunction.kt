@@ -5,7 +5,7 @@
 import kotlin.reflect.KFunction0
 
 fun compose(): KFunction0<String> {
-    return <!TYPE_MISMATCH!>{ "" }<!>
+    return <!RETURN_TYPE_MISMATCH!>{ "" }<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral */

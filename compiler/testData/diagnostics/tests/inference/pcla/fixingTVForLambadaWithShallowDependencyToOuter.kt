@@ -26,15 +26,15 @@ fun main(aI: A, bI: B) {
         // R = B
         // S = B
         myWith(get()) {
-            this.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>a<!>
-            this.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>b<!>
+            this.a
+            this.b
         }
 
-        yield(aI)
+        yield(<!ARGUMENT_TYPE_MISMATCH!>aI<!>)
     }
 
     x.a
-    x.<!UNRESOLVED_REFERENCE!>b<!>
+    x.b
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,

@@ -8,7 +8,7 @@ fun test1() {
     for (i in 1..2) {
         when (i) {
             2 -> x = null
-            1 -> if (x != null) lambda = { <!DEBUG_INFO_SMARTCAST!>x<!>.length } // bad
+            1 -> if (x != null) lambda = { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // bad
         }
     }
     lambda?.invoke()
@@ -45,14 +45,14 @@ fun test3() {
 fun test4() {
     var x: String? = "..."
     if (x != null) {
-        var lambda: (() -> Int)? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+        var lambda: (() -> Int)? = null
         while (true) {
             lambda = { <!SMARTCAST_IMPOSSIBLE!>x<!>.length } // bad
             if (true) break
             return
         }
         x = null
-        lambda?.invoke()
+        lambda<!UNNECESSARY_SAFE_CALL!>?.<!>invoke()
     }
 }
 
@@ -62,7 +62,7 @@ fun test5() {
         lambda = {
             var x: String?
             x = ""
-            <!DEBUG_INFO_SMARTCAST!>x<!>.length // ok
+            x.length // ok
         }
     }
     lambda?.invoke()
@@ -76,11 +76,11 @@ fun test6() {
             s = null
             lambda()
             s = ""
-            lambda = { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // bad - next iteration will assign s = null
+            lambda = { <!SMARTCAST_IMPOSSIBLE!>s<!>.length } // bad - next iteration will assign s = null
         }
 
         if (s != null) {
-            lambda = { <!DEBUG_INFO_SMARTCAST!>s<!>.length } // ok - s about to go out of scope
+            lambda = { s.length } // ok - s about to go out of scope
         }
     }
 }

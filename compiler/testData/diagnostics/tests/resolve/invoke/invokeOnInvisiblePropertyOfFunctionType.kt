@@ -5,7 +5,7 @@ object Foo {
 }
 
 fun main() {
-    Foo.<!FUNCTION_EXPECTED, INVISIBLE_MEMBER!>x<!>()
+    Foo.<!INVISIBLE_REFERENCE!>x<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, objectDeclaration, propertyDeclaration */

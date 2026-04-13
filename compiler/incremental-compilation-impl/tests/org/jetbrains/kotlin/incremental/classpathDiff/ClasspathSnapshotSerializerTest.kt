@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassFile
@@ -18,7 +19,7 @@ internal abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestC
 
     companion object {
         val testDataDir =
-            File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
+            ForTestCompileRuntime.transformTestDataPath("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
     }
 
     protected abstract val sourceFile: TestSourceFile

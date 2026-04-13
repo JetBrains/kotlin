@@ -11,7 +11,7 @@ fun f() = object : ClassData {
 fun g() = object : ClassData {
     init {
         if (true) {
-            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY, RETURN_NOT_ALLOWED!>return<!> 0
+            <!RETURN_NOT_ALLOWED!>return<!> <!RETURN_TYPE_MISMATCH!>0<!>
         }
     }
 

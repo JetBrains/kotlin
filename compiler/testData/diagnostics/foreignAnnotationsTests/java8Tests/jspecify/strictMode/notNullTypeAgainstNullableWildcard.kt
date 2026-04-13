@@ -16,4 +16,4 @@ public class J<T extends @Nullable Object> {
 
 // FILE: test.kt
 
-fun go(): Any = <!TYPE_MISMATCH!>J.makeJ().get()<!>
+fun go(): Any = J.makeJ().get()

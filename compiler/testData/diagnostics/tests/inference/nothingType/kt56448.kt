@@ -38,8 +38,8 @@ internal fun updateVotesForDuplicates(issue: XdIssue) {
     }
     val newDup = getNullableIssue()
 
-    if (oldDup != null && !<!DEBUG_INFO_SMARTCAST!>oldDup<!>.isRemoved) {
-        toRecount.add(<!DEBUG_INFO_SMARTCAST!>oldDup<!>.duplicatesRootSearch())
+    if (oldDup != null && !oldDup.isRemoved) {
+        toRecount.add(oldDup.duplicatesRootSearch())
     }
 }
 

@@ -29,12 +29,12 @@ class X {
 }
 
 fun test(x : X) {
-    x.bar(<!TYPE_MISMATCH!>LinkedList<String?>()<!>)
-    bar(<!TYPE_MISMATCH!>B<String?>()<!>)
+    x.bar(<!ARGUMENT_TYPE_MISMATCH!>LinkedList<String?>()<!>)
+    bar(<!ARGUMENT_TYPE_MISMATCH!>B<String?>()<!>)
     func(A<B<String>>())
-    func(<!TYPE_MISMATCH!>A<B<String?>>()<!>)
-    func(<!TYPE_MISMATCH!>A<B<String?>?>()<!>)
-    func(<!TYPE_MISMATCH!>A<B<String>?>()<!>)
+    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String?>>()<!>)
+    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String?>?>()<!>)
+    func(<!ARGUMENT_TYPE_MISMATCH!>A<B<String>?>()<!>)
 }
 
 class C {
@@ -42,7 +42,7 @@ class C {
 }
 
 fun test(c: C, jj: LinkedList<String?>) {
-    c.bar(<!TYPE_MISMATCH!>jj<!>)
+    c.bar(<!ARGUMENT_TYPE_MISMATCH!>jj<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

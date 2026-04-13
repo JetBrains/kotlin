@@ -40,7 +40,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         configureTaskProvider { taskProvider ->
 
             val jvmToolchain = taskProvider.flatMap { it.defaultKotlinJavaToolchain }
-            val runKotlinCompilerViaBuildToolsApi = propertiesProvider.runKotlinCompilerViaBuildToolsApi
+            @Suppress("DEPRECATION") val runKotlinCompilerViaBuildToolsApi = propertiesProvider.runKotlinCompilerViaBuildToolsApi
             registerTransformsOnce(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
             // Note: Creating configurations should be done during build configuration, not task configuration, to avoid issues with
             // composite builds (e.g., https://issuetracker.google.com/183952598).
@@ -109,8 +109,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     task.associatedJavaCompileTaskTargetCompatibility.value(javaTask.map { it.targetCompatibility })
                     task.associatedJavaCompileTaskName.value(javaTask.map { it.name })
                 }
-
-                task.nagTaskModuleNameUsage.value(true).disallowChanges()
             }
         }
     }

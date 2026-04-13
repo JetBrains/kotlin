@@ -7,9 +7,9 @@ fun test1(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@<!INAPPLICABLE_FILE_T
 <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@<!INAPPLICABLE_FILE_TARGET!>file<!> <!SYNTAX!>@<!>Suppress("")<!>
 fun test2() {}
 
-class OnType(x: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file<!SYNTAX!><!> Suppress("")<!> Int)
+class OnType(x: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file<!SYNTAX!><!> Suppress("")<!> Int)
 
-fun <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file : Suppress("")<!> Int.test3() {}
+fun <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file : Suppress("")<!> Int.test3() {}
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, funWithExtensionReceiver, functionDeclaration,
 primaryConstructor, stringLiteral */

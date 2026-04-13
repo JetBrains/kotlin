@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 package test
 
 annotation class Ann(<!MISSING_VAL_ON_ANNOTATION_PARAMETER!>i: Double<!>)

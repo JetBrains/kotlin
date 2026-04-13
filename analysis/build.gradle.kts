@@ -1,7 +1,6 @@
 tasks.register("analysisAllTests") {
     dependsOn(
         ":analysis:analysis-api:check",
-        ":analysis:analysis-api-fe10:check",
         ":analysis:analysis-api-fir:check",
         ":analysis:analysis-api-platform-interface:check",
         ":analysis:analysis-api-standalone:check",

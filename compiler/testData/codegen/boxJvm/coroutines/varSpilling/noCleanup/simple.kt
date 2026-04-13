@@ -4,6 +4,9 @@
 // LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // PREFER_IN_TEST_OVER_STDLIB
 
+// kotlin package is being relocated in Android tests
+// IGNORE_BACKEND: ANDROID
+
 // FILE: Spilling.kt
 
 package kotlin.coroutines.jvm.internal

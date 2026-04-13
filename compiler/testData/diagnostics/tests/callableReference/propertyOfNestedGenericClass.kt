@@ -17,23 +17,23 @@ fun test() {
     simple(Scope.Nested<String>::key)
     val a = id(Scope.Nested<String>::keyT)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty1<Scope.Nested<kotlin.String>, kotlin.String>")!>a<!>
+    a
 
     val b = id(Scope.Nested<*>::keyT)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty1<Scope.Nested<*>, kotlin.Any?>")!>b<!>
+    b
 
     val c = id(Scope.Nested<out Number?>::keyT)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty1<Scope.Nested<out kotlin.Number?>, kotlin.Number?>")!>c<!>
+    c
 
     val d = id(Scope.Nested<*>::keyT <!UNCHECKED_CAST!>as Scope.Nested<Number><!>)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Scope.Nested<kotlin.Number>")!>d<!>
+    d
 
     val g = id<KProperty1<Scope.Nested<*>, Any?>>(Scope.Nested<*>::keyT)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KProperty1<Scope.Nested<*>, kotlin.Any?>")!>g<!>
+    g
 }
 
 fun justResolve() {

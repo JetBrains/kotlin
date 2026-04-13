@@ -1,5 +1,5 @@
 // LANGUAGE: +AllowReifiedTypeInCatchClause
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 
 // java.lang.VerifyError: Catch type is not a subclass of Throwable in exception handler 13
 // IGNORE_BACKEND: ANY

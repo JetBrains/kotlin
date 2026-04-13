@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun withLambda(block : Int.(String) -> Unit) {

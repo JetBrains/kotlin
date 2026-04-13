@@ -219,7 +219,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/sample1",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .disableKmpIsolatedProjectSupport() // a very old Kotlin is involved in this test
                 .suppressDeprecationWarningsOn(
                     reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
                 ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
@@ -228,6 +227,10 @@ class MppCompositeBuildIT : KGPBaseTest() {
             projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
+            projectPath.resolve("included-build/included/build.gradle.kts").replaceText(
+                "js {",
+                "js(org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR) {"
+            )
 
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
@@ -506,7 +509,6 @@ class MppCompositeBuildIT : KGPBaseTest() {
             "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
             gradleVersion,
             buildOptions = buildOptions
-                .disableKmpIsolatedProjectSupport() // old version of kotlin is involved in this test
                 .suppressWarningForOldKotlinVersion(gradleVersion),
         ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)

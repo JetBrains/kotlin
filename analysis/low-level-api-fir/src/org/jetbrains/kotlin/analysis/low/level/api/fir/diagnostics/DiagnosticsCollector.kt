@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
@@ -20,8 +19,8 @@ internal class DiagnosticsCollector(private val fileStructureCache: FileStructur
         return diagnostics.diagnosticsFor(filter, element)
     }
 
-    fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
+    fun diagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
         val fileStructure = fileStructureCache.getFileStructure(ktFile)
-        return fileStructure.getAllDiagnosticsForFile(filter)
+        return fileStructure.diagnostics(filter)
     }
 }

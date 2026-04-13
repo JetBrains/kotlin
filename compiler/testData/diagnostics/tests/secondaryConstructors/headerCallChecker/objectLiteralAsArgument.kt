@@ -8,7 +8,7 @@ class A {
     constructor(x: Any?)
     constructor() : this(object {
         fun bar() = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foo<!>() + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>.foo() +
-                    <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foobar<!>() + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>super@A<!>.hashCode()
+                    <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>foobar<!>() + super<!UNRESOLVED_LABEL!>@A<!>.hashCode()
     })
 }
 

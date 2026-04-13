@@ -5,6 +5,7 @@ plugins {
     java
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 description = "Runner for Swift Export (for embedding purpose)"
@@ -218,6 +219,10 @@ val unarchivedStandaloneCoroutinesITClasses = tasks.register<Sync>("unarchivedSt
 }
 
 projectTests {
+    testData(project(":native:swift:swift-export-standalone-integration-tests:simple").isolated, "testData")
+    testData(project(":native:swift:swift-export-standalone-integration-tests:external").isolated, "testData")
+    testData(project(":native:swift:swift-export-standalone-integration-tests:coroutines").isolated, "testData")
+
     nativeTestTask(
         "testSimpleITWithEmbeddable",
         allowUnsafe = true, // KT-85212
@@ -229,10 +234,14 @@ projectTests {
             // These dependencies are used by the test classes
             shadedIntransitiveTestDependenciesJar,
             transitiveTestRuntimeClasspath,
+            configurations.testRuntimeClasspath, // Includes KotlinSecurityManager from test-inputs-check
         )
         testClassesDirs = files(
             unarchivedStandaloneSimpleITClasses,
         )
+        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            allowFlightRecorder.set(true)
+        }
     }
 
     nativeTestTaskWithExternalDependencies(
@@ -247,10 +256,14 @@ projectTests {
             // These dependencies are used by the test classes
             shadedIntransitiveTestDependenciesJar,
             transitiveTestRuntimeClasspath,
+            configurations.testRuntimeClasspath, // Includes KotlinSecurityManager from test-inputs-check
         )
         testClassesDirs = files(
             unarchivedStandaloneExternalITClasses,
         )
+        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            allowFlightRecorder.set(true)
+        }
     }
 
     nativeTestTaskWithExternalDependencies(
@@ -265,9 +278,13 @@ projectTests {
             // These dependencies are used by the test classes
             shadedIntransitiveTestDependenciesJar,
             transitiveTestRuntimeClasspath,
+            configurations.testRuntimeClasspath, // Includes KotlinSecurityManager from test-inputs-check
         )
         testClassesDirs = files(
             unarchivedStandaloneCoroutinesITClasses,
         )
+        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            allowFlightRecorder.set(true)
+        }
     }
 }

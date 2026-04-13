@@ -4,39 +4,39 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>justVal<!>: String
-expect var <!NO_ACTUAL_FOR_EXPECT{JVM}!>justVar<!>: String
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val justVal: String
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> var justVar: String
 
-expect val String.<!NO_ACTUAL_FOR_EXPECT{JVM}!>extensionVal<!>: Unit
-expect var <T> T.<!NO_ACTUAL_FOR_EXPECT{JVM}!>genericExtensionVar<!>: T
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val String.extensionVal: Unit
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> var <T> T.genericExtensionVar: T
 
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>valWithGet<!>: String
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val valWithGet: String
     get
-expect var <!NO_ACTUAL_FOR_EXPECT{JVM}!>varWithGetSet<!>: String
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> var varWithGetSet: String
     get set
 
-expect var <!NO_ACTUAL_FOR_EXPECT{JVM}!>varWithPlatformGetSet<!>: String
-    <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> get
-    <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> set
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> var varWithPlatformGetSet: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> get
+    <!WRONG_MODIFIER_TARGET!>expect<!> set
 
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>backingFieldVal<!>: String = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{JVM}!>"no"<!>
-expect var <!NO_ACTUAL_FOR_EXPECT{JVM}!>backingFieldVar<!>: String = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{JVM}!>"no"<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>customAccessorVal<!>: String
-    <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{JVM}!>get()<!> = "no"
-expect var <!NO_ACTUAL_FOR_EXPECT{JVM}!>customAccessorVar<!>: String
-    <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{JVM}!>get()<!> = "no"
-    <!EXPECTED_DECLARATION_WITH_BODY, EXPECTED_DECLARATION_WITH_BODY{JVM}!>set(value)<!> {}
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val customAccessorVal: String
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> var customAccessorVar: String
+    <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
+    <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
 
-expect <!CONST_VAL_WITHOUT_INITIALIZER, CONST_VAL_WITHOUT_INITIALIZER{JVM}!>const<!> val <!NO_ACTUAL_FOR_EXPECT{JVM}!>constVal<!>: Int
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
-expect <!EXPECTED_LATEINIT_PROPERTY, EXPECTED_LATEINIT_PROPERTY{JVM}!>lateinit<!> var <!NO_ACTUAL_FOR_EXPECT{JVM}!>lateinitVar<!>: String
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
-expect val <!NO_ACTUAL_FOR_EXPECT{JVM}!>delegated<!>: String <!EXPECTED_DELEGATED_PROPERTY, EXPECTED_DELEGATED_PROPERTY{JVM}!>by Delegate<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> val delegated: String by <!EXPECTED_DELEGATED_PROPERTY!>Delegate<!>
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
-    <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET{JVM}!>expect<!> val localVariable: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> val localVariable: String
     localVariable = "no"
     return localVariable
 }

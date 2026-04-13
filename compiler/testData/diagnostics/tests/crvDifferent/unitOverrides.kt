@@ -29,7 +29,7 @@ interface U: Super<Unit>, NonAnnotated<Unit> {
 @MustUseReturnValues
 interface S: Super<String>, NonAnnotated<String> {
     override fun x(): String
-    override fun y(): String
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>y<!>(): String
     override fun z(): String
 }
 
@@ -37,9 +37,9 @@ fun main(s: S, u: U) {
     u.x()
     u.y()
     u.z()
-    s.x()
-    s.y()
-    s.z()
+    s.<!RETURN_VALUE_NOT_USED!>x<!>()
+    s.<!RETURN_VALUE_NOT_USED!>y<!>()
+    s.<!RETURN_VALUE_NOT_USED!>z<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, typeParameter */

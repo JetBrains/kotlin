@@ -13,6 +13,7 @@ import org.jetbrains.kotlinx.dataframe.api.select
 import org.jetbrains.kotlinx.dataframe.columns.*
 import org.jetbrains.kotlinx.dataframe.impl.columns.ColumnsList
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
@@ -765,7 +766,7 @@ internal class ColumnPathGetColumn : AbstractInterpreter<ColumnPathApproximation
     }
 }
 
-fun Arguments.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinType): SingleColumnApproximation {
+fun KotlinTypeFacade.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinType): SingleColumnApproximation {
     return object : ColumnsResolverAdapter(), SingleColumnApproximation {
         // we want to help users gradually introduce typed information to their dataframe
         // if they refer to a column by String API once, let's apply logic similar to smart cast and

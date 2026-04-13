@@ -7,11 +7,11 @@ class A {
 
 fun a(aa : A?, b : Any) {
     if (aa != null) {
-        val (a1, b1) = <!DEBUG_INFO_SMARTCAST!>aa<!>;
+        val (a1, b1) = aa;
     }
 
     if (b is A) {
-        val (a1, b1) = <!DEBUG_INFO_SMARTCAST!>b<!>;
+        val (a1, b1) = b;
     }
 }
 

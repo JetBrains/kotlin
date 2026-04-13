@@ -6,12 +6,12 @@ class Bound<T: Number>(val value: T)
 
 fun test_1() {
     val b: Bound<in Int> = Bound(1)
-    val vl: Number = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), TYPE_MISMATCH!>b.value<!>
+    val vl: Number = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(in kotlin.Int)")!>b.value<!>
 }
 
 fun test_2() {
     val b: Bound<*> = Bound(1)
-    val vl: Number = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>b.value<!>
+    val vl: Number = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>b.value<!>
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, integerLiteral, localProperty,

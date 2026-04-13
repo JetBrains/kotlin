@@ -39,10 +39,10 @@ fun foo(): String {
     Lib().prop
     Lib().prop = ""
     toplvl()
-    A().alreadyApplied()
-    A().prop
+    A().<!RETURN_VALUE_NOT_USED!>alreadyApplied<!>()
+    A().<!RETURN_VALUE_NOT_USED!>prop<!>
     E.A.foo()
-    E.A
+    E.<!RETURN_VALUE_NOT_USED!>A<!>
     return Lib().getStuff()
 }
 
@@ -57,17 +57,17 @@ fun bar(): String {
     Lib().prop
     Lib().prop = ""
     toplvl()
-    A().alreadyApplied()
-    A().prop
+    A().<!RETURN_VALUE_NOT_USED!>alreadyApplied<!>()
+    A().<!RETURN_VALUE_NOT_USED!>prop<!>
     E.A.foo()
-    E.A
+    E.<!RETURN_VALUE_NOT_USED!>A<!>
     foo()
     return ""
 }
 
 fun main() {
-    bar()
-    A().alreadyApplied()
+    <!RETURN_VALUE_NOT_USED!>bar<!>()
+    A().<!RETURN_VALUE_NOT_USED!>alreadyApplied<!>()
     val x = bar()
 }
 

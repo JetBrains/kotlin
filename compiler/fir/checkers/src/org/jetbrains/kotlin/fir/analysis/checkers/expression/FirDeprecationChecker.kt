@@ -125,6 +125,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         callSite: FirElement? = null,
+        isOuterClassOfImportDuringMigration: Boolean = false,
     ) {
         val deprecation = getWorstDeprecation(callSite, referencedSymbol) ?: return
         if (referencedSymbol.isNestedTypeAliasReferenceAndRelevantDeprecation(deprecation)) {
@@ -132,7 +133,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
             return
         }
         val isTypealiasExpansion = deprecation.isTypealiasExpansionOf(referencedSymbol, callSite)
-        reportApiStatus(source, referencedSymbol, isTypealiasExpansion, deprecation)
+        reportApiStatus(source, referencedSymbol, isTypealiasExpansion, deprecation, isOuterClassOfImportDuringMigration)
     }
 
     private val NestedTypeAliasesSinceVersion = LanguageFeature.NestedTypeAliases.sinceVersion!!.let {
@@ -187,11 +188,12 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         referencedSymbol: FirBasedSymbol<*>,
         isTypealiasExpansion: Boolean,
         deprecationInfo: FirDeprecationInfo,
+        isOuterClassOfImportDuringMigration: Boolean = false,
     ) {
         when (deprecationInfo) {
             is FutureApiDeprecationInfo -> reportApiNotAvailable(source, deprecationInfo)
             is RequireKotlinDeprecationInfo -> reportVersionRequirementDeprecation(source, referencedSymbol, deprecationInfo)
-            else -> reportDeprecation(source, referencedSymbol, isTypealiasExpansion, deprecationInfo)
+            else -> reportDeprecation(source, referencedSymbol, isTypealiasExpansion, deprecationInfo, isOuterClassOfImportDuringMigration)
         }
     }
 
@@ -228,10 +230,16 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
         referencedSymbol: FirBasedSymbol<*>,
         isTypealiasExpansion: Boolean,
         deprecationInfo: FirDeprecationInfo,
+        isOuterClassOfImportDuringMigration: Boolean,
     ) {
         if (!isTypealiasExpansion) {
             val diagnostic = when (deprecationInfo.deprecationLevel) {
-                DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
+                DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN ->
+                    if (isOuterClassOfImportDuringMigration) {
+                        FirErrors.DEPRECATION_OF_OUTER_CLASS
+                    } else {
+                        FirErrors.DEPRECATION_ERROR
+                    }
                 DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION
             }
             reporter.reportOn(source, diagnostic, referencedSymbol, deprecationInfo.getMessage(context.session) ?: "")

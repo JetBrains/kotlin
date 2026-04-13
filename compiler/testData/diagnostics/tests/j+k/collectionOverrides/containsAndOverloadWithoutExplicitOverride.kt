@@ -13,9 +13,9 @@ abstract class KA : A()
 
 fun foo(a: A, ka: KA) {
     ka.contains("")
-    ka.contains(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ka
-    <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, stringLiteral */

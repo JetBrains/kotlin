@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // ISSUE: KT-52002
 
 class Scope(val name: String)

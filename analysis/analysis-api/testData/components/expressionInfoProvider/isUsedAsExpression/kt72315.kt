@@ -1,5 +1,4 @@
 // LANGUAGE: +WhenGuards
-// IGNORE_FE10
 
 sealed class Status
 object Loading : Status()

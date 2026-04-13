@@ -1,7 +1,7 @@
 // LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
 // ISSUE: KT-61250
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
 // ^^^ Source code is not compiled in JS, Native.
 

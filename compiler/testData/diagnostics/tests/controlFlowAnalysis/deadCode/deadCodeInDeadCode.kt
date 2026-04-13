@@ -8,7 +8,7 @@ fun unreachable0() {
 
 fun unreachable2() {
     return
-    <!UNREACHABLE_CODE!>val a = todo()<!>
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>a<!> = todo()<!>
 }
 
 fun unreachable3() {

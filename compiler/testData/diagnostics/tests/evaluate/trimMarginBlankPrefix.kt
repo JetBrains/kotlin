@@ -4,16 +4,16 @@
 
 const val blank = " "
 
-val s1 = "".trimMargin(" ")
+val s1 = <!TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(" ")<!>
 val s2 = "".trimMargin(blank)
-val s3 = "".trimMargin(
+val s3 = <!TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(
     """
 
-    """)
+    """)<!>
 
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin(" ")<!>) val a1 = 1
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin(" ")<!>) val a1 = 1
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin(blank)<!>) val a2 = 1
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".trimMargin("""
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TRIM_MARGIN_BLANK_PREFIX!>"".trimMargin("""
 
     """)<!>) val a3 = 1
 

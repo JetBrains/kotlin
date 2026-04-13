@@ -3,18 +3,18 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: common1
-<!CONFLICTING_OVERLOADS{JVM;JVM}!>expect fun foo()<!>
-expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM;JVM}!>Foo<!>
-expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM;JVM}!>Bar<!>
+expect fun foo()
+expect class Foo
+expect interface Bar
 
 // MODULE: common2()()(common1)
-<!CONFLICTING_OVERLOADS, CONFLICTING_OVERLOADS{JVM}!>expect fun foo()<!>
-expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Foo<!>
-expect interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECLARATION{JVM}!>Bar<!>
+expect fun <!EXPECT_REFINEMENT_ANNOTATION_MISSING!>foo<!>()
+expect <!EXPECT_REFINEMENT_ANNOTATION_MISSING!>class Foo<!>
+<!EXPECT_REFINEMENT_ANNOTATION_MISSING!>expect interface Bar<!>
 
 // MODULE: main()()(common2)
-actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
-actual class <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!>
-actual interface <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Bar<!>
+actual fun foo() {}
+actual class Foo
+actual interface Bar
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration */

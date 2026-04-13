@@ -7,15 +7,15 @@
 open class Base {
     internal open fun foo() {}
 }
-expect class Foo : Base {
-    override fun foo()
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo : Base {
+    override fun <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>()
 }
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual class Foo : Base() {
-    <!ACTUAL_WITHOUT_EXPECT!>public<!> actual override fun foo() {
+    public actual override fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>foo<!>() {
     }
 }
 

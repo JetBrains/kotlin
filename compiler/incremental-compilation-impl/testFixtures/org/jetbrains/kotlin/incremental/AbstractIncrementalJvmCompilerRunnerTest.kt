@@ -124,11 +124,15 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             }
             mkdirs()
         }
-        val args = arrayOf(
-            "-cp", javaClasspath,
-            "-d", javaDestinationDir.absolutePath,
-            *javaSources.map { it.absolutePath }.toTypedArray()
-        )
+        val args = buildList {
+            val javaVersion = System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 8
+            if (javaVersion <= 8) {
+                add("-Djava.ext.dirs=") // prevent from scanning extensions
+            }
+            add("-cp"); add(javaClasspath)
+            add("-d"); add(javaDestinationDir.absolutePath)
+            addAll(javaSources.map { it.absolutePath })
+        }.toTypedArray()
 
         val err = ByteArrayOutputStream()
         val javac = ToolProvider.getSystemJavaCompiler()
@@ -144,6 +148,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             moduleName = testDir.name
             destination = destinationDir.path
             classpath = compileClasspath
+            kotlinHome = ForTestCompileRuntime.distKotlincForTests().absolutePath
         }
 
     private val compileClasspath =

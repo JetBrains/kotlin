@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_VARIABLE -NO_REFLECTION_IN_CLASS_PATH
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 

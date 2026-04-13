@@ -21,10 +21,10 @@ interface AnotherInterface {
 interface DerivedInterface: Interface, AnotherInterface {
     override fun foo() { super.foo() }
     override fun ambiguous() {
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.ambiguous()
     }
     override val ambiguousProp: Int
-        get() = <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguousProp<!>
+        get() = <!AMBIGUOUS_SUPER!>super<!>.ambiguousProp
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, interfaceDeclaration, override, propertyDeclaration,

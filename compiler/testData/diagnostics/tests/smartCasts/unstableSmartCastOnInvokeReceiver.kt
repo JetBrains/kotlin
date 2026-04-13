@@ -9,7 +9,7 @@ fun someFun(someInterface: SomeInterface) {
     someInterface.<!UNSAFE_IMPLICIT_INVOKE_CALL!>interfaceMethod<!>()
 
     if (someInterface.interfaceMethod != null) {
-        someInterface.<!UNSAFE_IMPLICIT_INVOKE_CALL!>interfaceMethod<!>()
+        someInterface.<!SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER!>interfaceMethod<!>()
     }
 }
 

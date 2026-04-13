@@ -29,10 +29,10 @@ fun unoverriddenEquals(a: Any?) {
     b = c
     if (b == c.also { b = a }) {
         a.<!UNRESOLVED_REFERENCE!>x<!> // bad (b#0 is C, b#1 = a)
-        <!SMARTCAST_IMPOSSIBLE!>b<!>.x // bad (b#0 is C, this is b#1)
+        b.<!UNRESOLVED_REFERENCE!>x<!> // bad (b#0 is C, this is b#1)
         if (b is C) { // b#1
-            a.<!UNRESOLVED_REFERENCE!>x<!> // ok (b#1 = a)
-            <!SMARTCAST_IMPOSSIBLE!>b<!>.x // ok
+            a.x // ok (b#1 = a)
+            b.x // ok
         }
     }
 }
@@ -40,14 +40,14 @@ fun unoverriddenEquals(a: Any?) {
 fun safeCall() {
     var x: String? = ""
     if (x?.let { x = null; 1 } != null) {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad (#2 != null => x#0 != null; but x#1 = null and this is either)
+        x<!UNSAFE_CALL!>.<!>length // bad (#2 != null => x#0 != null; but x#1 = null and this is either)
     }
 }
 
 fun contractFunction() {
     var x: String? = ""
     if (isNotNullAlsoCall(x) { x = null }) {
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad (#2 == true => x#0 != null; but this is x#1 = null)
+        x<!UNSAFE_CALL!>.<!>length // bad (#2 == true => x#0 != null; but this is x#1 = null)
     }
 }
 

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -64,4 +65,12 @@ class KotlinEnumEntryStubImpl(
         name = name,
         isLocal = isLocal,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinEnumEntryStubImpl &&
+                other.isLocal == isLocal &&
+                other.name == name &&
+                other.qualifiedName == qualifiedName &&
+                other.kdocText == kdocText
 }

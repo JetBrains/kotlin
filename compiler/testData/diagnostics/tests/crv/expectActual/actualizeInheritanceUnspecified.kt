@@ -12,8 +12,8 @@ expect class Foo() {
 }
 
 fun commonMain() {
-    Foo()
-    Foo().x()
+    <!RETURN_VALUE_NOT_USED!>Foo<!>()
+    Foo().<!RETURN_VALUE_NOT_USED!>x<!>()
     Foo().ign()
 }
 
@@ -34,7 +34,7 @@ public class JavaFoo {
 
 // Foo.<init> and Java methods are Unspecified.
 // We report mismatch to Unspecified only if there is a meaningful (i.e. member) declaration to report on.
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> : JavaFoo() {
+actual class <!ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT("'expect constructor(): Foo' defined in 'Foo'; must-use; 'constructor(): Foo' defined in 'Foo'; unspecified (implicitly ignorable)")!>Foo<!> : JavaFoo() {
 }
 
 fun main() {

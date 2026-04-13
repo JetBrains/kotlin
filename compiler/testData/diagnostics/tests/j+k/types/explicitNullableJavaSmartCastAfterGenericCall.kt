@@ -11,7 +11,7 @@ public class JavaUtil {
 fun test(x: String?) {
     val y = JavaUtil.id<String?>(x)
 
-    y.length
+    y<!UNSAFE_CALL!>.<!>length
 
     if (y != null) {
         val ok: Int = y.length
@@ -22,7 +22,7 @@ fun test(x: String?) {
     z<!UNSAFE_CALL!>.<!>length
 
     if (z != null) {
-        val ok2: Int = <!DEBUG_INFO_SMARTCAST!>z<!>.length
+        val ok2: Int = z.length
     }
 }
 

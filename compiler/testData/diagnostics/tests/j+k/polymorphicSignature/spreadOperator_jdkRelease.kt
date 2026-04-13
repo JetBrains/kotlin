@@ -7,12 +7,12 @@ import java.lang.invoke.VarHandle
 
 fun test(mh: MethodHandle, vh: VarHandle) {
     mh.invokeExact("1", "2")
-    mh.invokeExact(*emptyArray(), "X")
-    mh.invokeExact(*arrayOf("A", "B"), "C", *arrayOf("D", "E"))
-    mh.invoke(*arrayOf("A"))
+    mh.invokeExact(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>emptyArray(), "X")
+    mh.invokeExact(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>arrayOf("A", "B"), "C", <!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>arrayOf("D", "E"))
+    mh.invoke(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>arrayOf("A"))
     vh.get()
-    vh.get(*emptyArray())
-    vh.set(*emptyArray())
+    vh.get(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>emptyArray())
+    vh.set(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>emptyArray())
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, stringLiteral */

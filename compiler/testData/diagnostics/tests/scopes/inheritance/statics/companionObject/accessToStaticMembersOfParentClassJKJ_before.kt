@@ -19,20 +19,20 @@ open class A {
 
 class B : J2() {
     init {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
         boo()
     }
 
     fun test2() {
-        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
         boo()
     }
 
     object O {
         fun test() {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
             boo()
         }
@@ -40,13 +40,13 @@ class B : J2() {
 
     companion object {
         init {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
             boo()
         }
 
         fun test() {
-            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>foo()<!>
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
             boo()
         }

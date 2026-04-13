@@ -17,8 +17,8 @@ object Obj4 : Rec<Obj4, I4>
 fun testOutOut() {
     val cst1 = select(Obj2, Obj3)
     val cst2 = select(Obj2, Obj4)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Rec<{Obj2 & Obj3}, I1>")!>cst1<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Rec<{Obj2 & Obj4}, kotlin.Any>")!>cst2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Rec<Obj2 & Obj3, I1>")!>cst1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("Rec<Obj2 & Obj4, kotlin.Any>")!>cst2<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, in, interfaceDeclaration, intersectionType, localProperty, nullableType,

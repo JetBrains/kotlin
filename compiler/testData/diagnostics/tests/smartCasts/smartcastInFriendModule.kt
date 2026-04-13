@@ -16,13 +16,13 @@ class C {
 // MODULE: test()(main)
 internal fun test(a: A, b: B, c: C) {
     if (a.x != null) {
-        <!DEBUG_INFO_SMARTCAST!>a.x<!>.length
+        a.x.length
     }
     if (b.x != null) {
-        <!DEBUG_INFO_SMARTCAST!>b.x<!>.length
+        b.x.length
     }
     if (c.x != null) {
-        <!SMARTCAST_IMPOSSIBLE!>c.x<!>.length
+        c.x.length
     }
 }
 

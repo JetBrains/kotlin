@@ -6,7 +6,7 @@ import kotlin.reflect.KClass
 
 expect annotation class Anno(
     // CLASS_LITERAL_LHS_NOT_A_CLASS is reported because we have multiple platforms one of which isn't JVM.
-    val ka: KClass<*> = <!CLASS_LITERAL_LHS_NOT_A_CLASS!>Array<Array<Array<Int>>>::class<!>,
+    val ka: KClass<*> = Array<Array<Array<Int>>>::class,
 )
 
 enum class E { E1, E2, E3 }

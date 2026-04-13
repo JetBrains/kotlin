@@ -5,7 +5,7 @@ fun testInvoke() {
 }
 
 fun testInvokeWithLambda() {
-    operator fun Nothing.invoke(<!UNUSED_PARAMETER!>i<!>: Int, f: () -> Int) = f
+    operator fun Nothing.invoke(i: Int, f: () -> Int) = f
     todo()<!UNREACHABLE_CODE!>(1){ 42 }<!>
 }
 

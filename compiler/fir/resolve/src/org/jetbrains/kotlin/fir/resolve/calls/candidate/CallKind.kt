@@ -72,6 +72,7 @@ sealed class CallKind(
         CheckIncompatibleTypeVariableUpperBounds,
         TypeParameterAsCallable,
         TypeVariablesInExplicitReceivers,
+        InferThrowableTypeParameterToUpperBound,
         CheckLambdaAgainstTypeVariableContradiction,
     )
 
@@ -102,6 +103,7 @@ sealed class CallKind(
             EagerResolveOfCollectionLiteral,
             EagerResolveOfCallableReferences,
             CheckLambdaAgainstTypeVariableContradiction,
+            InferThrowableTypeParameterToUpperBound,
             CheckIncompatibleTypeVariableUpperBounds,
         )
     )
@@ -173,6 +175,7 @@ class ResolutionSequenceBuilder(
     var resolveCallableReferenceArguments: Boolean = false,
     var checkCallableReferenceExpectedType: Boolean = false,
     val checkContextParameters: Boolean = false,
+    val inferThrowableTypeParameterToUpperBound: Boolean = false,
 ) {
     fun build(): CallKind {
         val stages = mutableListOf<ResolutionStage>().apply {
@@ -184,6 +187,7 @@ class ResolutionSequenceBuilder(
             if (checkDispatchReceiver) add(CheckDispatchReceiver)
             if (checkExtensionReceiver) add(CheckExtensionReceiver)
             if (checkArguments) add(CheckArguments)
+            if (inferThrowableTypeParameterToUpperBound) add(InferThrowableTypeParameterToUpperBound)
             if (checkContextParameters) add(CheckContextArguments)
             if (resolveCallableReferenceArguments) add(EagerResolveOfCallableReferences)
             if (checkLowPriorityInOverloadResolution) add(CheckLowPriorityInOverloadResolution)

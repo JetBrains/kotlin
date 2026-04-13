@@ -8,7 +8,7 @@ fun foo(s: String) {}
 
 val x1 = ofType<() -> Unit>(::foo)
 val x2 = ofType<(String) -> Unit>(::foo)
-val x3 = ofType<(Int) -> Unit>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
+val x3 = ofType<(Int) -> Unit>(::<!NONE_APPLICABLE!>foo<!>)
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, nullableType, propertyDeclaration,
 typeParameter */

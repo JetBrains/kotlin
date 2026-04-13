@@ -35,10 +35,10 @@ class D<T> : GenericBase<T>(), Other<T>
 
 // MODULE: main(lib)
 fun test() {
-    <!INVISIBLE_SETTER!>A().v<!> = 4
-    <!INVISIBLE_SETTER!>B<Int>().v<!> = 4
-    <!INVISIBLE_SETTER!>C().v<!> = 4
-    <!INVISIBLE_SETTER!>D<Int>().v<!> = 4
+    A().<!INVISIBLE_SETTER!>v<!> = 4
+    B<Int>().<!INVISIBLE_SETTER!>v<!> = 4
+    C().<!INVISIBLE_SETTER!>v<!> = 4
+    D<Int>().<!INVISIBLE_SETTER!>v<!> = 4
 }
 
 /* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral,

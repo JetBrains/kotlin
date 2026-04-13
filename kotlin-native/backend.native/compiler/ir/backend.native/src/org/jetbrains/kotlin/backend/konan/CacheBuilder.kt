@@ -35,12 +35,11 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.nio.channels.ClosedByInterruptException
-import java.nio.file.*
-import kotlin.random.Random
+import java.nio.channels.FileChannel
+import java.nio.channels.FileLock
+import java.nio.channels.OverlappingFileLockException
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
 import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
@@ -252,9 +251,6 @@ class CacheBuilder(
         }
     }
 
-    private val sleepPeriod = 1_000L // 1 second.
-    private val footprintSize = 16
-
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>) {
         val dependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary)
         val dependencyCaches = dependencies.map {
@@ -291,114 +287,77 @@ class CacheBuilder(
          * this happens during some tests which specify certain binary options which won't allow to use the precompiled caches.
          */
         val lockFileName = "${libraryCache.absolutePath}.lock"
-        val lockFile = File(lockFileName)
-        // For now, per-file caches are only used for the incremental compilation which can't be run in parallel.
-        val shouldUseLockFile = !makePerFileCache
-        var thread: Thread? = null
-        if (shouldUseLockFile) {
-            when (tryCreateLockFile(lockFile, libraryCache, library)) {
-                LockFileCreationResult.AlreadyExists -> {
-                    // Other compilation have built the cache.
-                    return
-                }
-                LockFileCreationResult.Fail -> {
-                    // Failed to distribute the work between different processes.
-                    // Hopefully, this is a rare scenario, so just build the cache ourselves.
-                    // No need to handle lock file anyhow.
-                }
-                LockFileCreationResult.Created -> {
-                    // Touch the lock file every period to signal other processes that the build is in progress.
-                    thread = Thread {
-                        while (true) {
-                            if (Thread.currentThread().isInterrupted)
-                                break
-                            try {
-                                Thread.sleep(sleepPeriod)
-                                lockFile.writeBytes(Random.nextBytes(footprintSize))
-                            } catch (t: IOException) {
-                                break
-                            } catch (t: InterruptedException) {
-                                break
-                            } catch (t: ClosedByInterruptException) {
-                                break
-                            }
-                        }
-                    }
-                    thread.start()
-                }
-            }
+        val lockFile = if (makePerFileCache) {
+            // For now, per-file caches are only used for the incremental compilation which can't be run in parallel.
+            null
+        } else {
+            File(lockFileName)
         }
 
-        try {
+        buildUnderFileLock(lockFile, skipBuildAction = {
+            libraryCache.exists.also {
+                if (it) cacheRootDirectories[library] = libraryCache.absolutePath
+            }
+        }) {
             tryBuildingLibraryCache(library, dependencies, dependencyCaches, libraryCacheDirectory, makePerFileCache, filesToCache, libraryCache)
-        } finally {
-            if (thread != null) {
-                thread.interrupt()
-                thread.join()
-                lockFile.delete()
+        }
+    }
+
+    /**
+     * If [lockFile] is `null`, performs [buildAction] without any synchronization.
+     * Otherwise, acquires an OS-level file lock on [lockFile], calls [skipBuildAction] under the lock
+     * to check whether the build should be skipped (e.g. the cache was already built by another process),
+     * and if not, runs [buildAction] under the lock.
+     * The lock file is created if it didn't exist before.
+     *
+     * Note: it is not absolutely necessary to always achieve mutual exclusion: the [buildAction] is
+     * thread-safe and idempotent. The goal of the synchronization is to avoid memory pressure
+     * caused by simultaneous build of the cache for a large library like stdlib.
+     *
+     * The lock file is intentionally **never deleted**. If you delete the lock file after
+     * releasing the lock, this race appears:
+     *  1. Process A holds a lock on `cache.lock`.
+     *  2. Process B has already opened that file and is blocked waiting on the lock.
+     *  3. Process A releases the lock and deletes `cache.lock`.
+     *  4. Process C creates a new `cache.lock` and locks that new file.
+     *  5. Process B acquires the lock on the old, now-unlinked inode it opened earlier.
+     *
+     * Now B and C both think they own "the" cache lock, but they are locking different
+     * filesystem inodes. That breaks mutual exclusion.
+     */
+    private fun buildUnderFileLock(
+            lockFile: File?,
+            skipBuildAction: () -> Boolean,
+            buildAction: () -> Unit,
+    ) {
+        if (lockFile == null) {
+            return buildAction()
+        }
+
+        FileChannel.open(
+                Paths.get(lockFile.absolutePath),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.READ,
+                StandardOpenOption.WRITE
+        ).use { channel ->
+            channel.acquireLockWithRetry().use {
+                if (skipBuildAction()) return
+                buildAction()
             }
         }
     }
 
-    private enum class LockFileCreationResult {
-        Created,
-        AlreadyExists,
-        Fail
-    }
-
-    private inline fun getFileContentsHash(path: Path, fallbackInCaseOfIOError: () -> Int) = try {
-        val buf = ByteArray(footprintSize)
-        FileInputStream(path.toFile()).use { it.read(buf) }
-        buf.fold(0) { acc, value -> acc * 31 + value }
-    } catch (t: IOException) {
-        fallbackInCaseOfIOError()
-    } catch (t: FileNotFoundException) {
-        fallbackInCaseOfIOError()
-    }
-
-    private fun tryCreateLockFile(
-            lockFile: File,
-            libraryCache: File,
-            library: KotlinLibrary,
-    ): LockFileCreationResult {
-        val absolutePath = Paths.get(lockFile.absolutePath)
-        try {
-            Files.createFile(absolutePath)
-            return LockFileCreationResult.Created
-        } catch (t: FileAlreadyExistsException) {
-            var ok = false
+    private fun FileChannel.acquireLockWithRetry(): FileLock {
+        while (true) {
             try {
-                var fileHash = getFileContentsHash(absolutePath) { 0 }
-                var time = System.currentTimeMillis()
-                while (true) {
-                    if (!lockFile.exists) {
-                        ok = true
-                        break
-                    }
-                    Thread.sleep(sleepPeriod)
-                    val curFileHash = getFileContentsHash(absolutePath) { fileHash }
-                    val curTime = System.currentTimeMillis()
-                    if (curFileHash == fileHash) {
-                        // Other process should change the file every period,
-                        // so if for 10 periods there has been no change, something went wrong.
-                        if (curTime - time > sleepPeriod * 10)
-                            break
-                    } else {
-                        fileHash = curFileHash
-                        time = curTime
-                    }
-                }
-            } finally {
-                // Remove file just in case if the process building the cache crashed,
-                // otherwise the next build will hang here for 10 periods for no reason.
-                lockFile.delete() // It checks that file actually exists.
+                return this.lock()
+            } catch (_: OverlappingFileLockException) {
+                // Another thread in the same JVM holds the lock. Just wait:
+                // — if that thread dies with a crash, the whole process dies.
+                // - if that thread fails with an exception, the lock is released.
+                // - if that thread hangs, we might be tight on resources, so waiting is wise.
+                Thread.sleep(200L)
             }
-
-            if (ok && libraryCache.exists) {
-                cacheRootDirectories[library] = libraryCache.absolutePath
-                return LockFileCreationResult.AlreadyExists
-            }
-            return LockFileCreationResult.Fail
         }
     }
 

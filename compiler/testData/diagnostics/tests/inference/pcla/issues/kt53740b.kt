@@ -4,16 +4,16 @@
 
 fun test() {
     val buildee = parallelInOutBuild(
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
+        {
             setInProjectedTypeVariable(TargetType())
-        }<!>,
-        <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{
-            consumeDifferentType(getOutProjectedTypeVariable())
-        }<!>
+        },
+        {
+            consumeDifferentType(<!ARGUMENT_TYPE_MISMATCH!>getOutProjectedTypeVariable()<!>)
+        }
     )
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<TargetType>>(<!TYPE_MISMATCH("Buildee<TargetType>; Buildee<Any>"), TYPE_MISMATCH("Buildee<Any>; Buildee<TargetType>")!>buildee<!>)
+    checkExactType<Buildee<TargetType>>(buildee)
 }
 
 

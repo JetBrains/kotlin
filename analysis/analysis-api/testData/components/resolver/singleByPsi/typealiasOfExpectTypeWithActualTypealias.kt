@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common

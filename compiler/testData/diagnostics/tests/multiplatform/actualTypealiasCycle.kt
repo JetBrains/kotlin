@@ -4,20 +4,20 @@
 // FILE: common.kt
 
 open class A {}
-expect class B : A
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class B : A
 
 expect open class A2() {}
-expect open class B2 : <!CYCLIC_INHERITANCE_HIERARCHY{JVM}!>A2<!> {}
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class B2 : A2 {}
 
 expect open class A3
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>B<!> = A
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>B<!> = A
 
 actual typealias A2 = B2
-actual open class B2 {}
+actual open class <!EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>B2<!> {}
 
 actual typealias A3 = Any
 

@@ -10,13 +10,13 @@ interface C
 fun foo(b: B) = if (b is A && b is C) b else null
 
 // Ok: given explicitly
-fun gav(b: B): A? = if (b is A && b is C) <!DEBUG_INFO_SMARTCAST!>b<!> else null
+fun gav(b: B): A? = if (b is A && b is C) b else null
 
 class My(b: B) {
     // Error!
     val x = if (b is A && b is C) b else null
     // Ok: given explicitly
-    val y: C? = if (b is A && b is C) <!DEBUG_INFO_SMARTCAST!>b<!> else null
+    val y: C? = if (b is A && b is C) b else null
     // Error!
     fun foo(b: B) = if (b is A && b is C) b else null
 }

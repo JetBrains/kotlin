@@ -1,4 +1,0 @@
-package
-
-public fun test(): kotlin.Unit
-public typealias Exn = java.lang.Exception

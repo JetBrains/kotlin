@@ -5,11 +5,11 @@
 
 class A(val x: String = "x") {
     fun foo(y: String): A {
-        y // local, should not report
-        x // unused, may have getter
-        this // should not report
-        A   // should not report
-        Companion   // should not report
+        <!UNUSED_EXPRESSION!>y<!> // local, should not report
+        <!RETURN_VALUE_NOT_USED!>x<!> // unused, may have getter
+        <!UNUSED_EXPRESSION!>this<!> // should not report
+        <!UNUSED_EXPRESSION!>A<!>   // should not report
+        <!UNUSED_EXPRESSION!>Companion<!>   // should not report
         return this // used
     }
 
@@ -19,14 +19,14 @@ class A(val x: String = "x") {
 
         other as A
 
-        if (x != <!DEBUG_INFO_SMARTCAST!>other<!>.x) return false
+        if (x != other.x) return false
 
         return true
     }
 
     fun Int.foo() {
-        this    // should not report
-        this@A  // should not report
+        <!UNUSED_EXPRESSION!>this<!>    // should not report
+        <!UNUSED_EXPRESSION!>this@A<!>  // should not report
     }
 
     @MustUseReturnValues
@@ -39,7 +39,7 @@ interface I {
 
 object Impl: I {
     override fun foo() {
-        Impl
+        <!UNUSED_EXPRESSION!>Impl<!>
         TODO("Not yet implemented")
     }
 }
@@ -52,8 +52,8 @@ annotation class Bar(
 )
 
 fun main() {
-    A()
-    A().foo("x")
+    <!RETURN_VALUE_NOT_USED!>A<!>()
+    A().<!RETURN_VALUE_NOT_USED!>foo<!>("x")
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, asExpression, classDeclaration,

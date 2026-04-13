@@ -17,8 +17,8 @@ fun case_1(a: Any?) {
         if (true) continue
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
 }
 
 // TESTCASE NUMBER: 2
@@ -39,12 +39,12 @@ fun case_3(a: Any?) {
     loop1@ while (true) {
         loop2@ while (true) {
             if (true) break
-            if (a == null) <!UNREACHABLE_CODE!>return<!> continue@loop1
+            if (a == null) return continue@loop1
         }
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?"), UNREACHABLE_CODE!>a<!>
-    <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -52,7 +52,7 @@ fun case_4(a: Any?) {
     loop1@ while (true) {
         loop2@ while (true) {
             break@loop1
-            <!UNREACHABLE_CODE!>if (a == null) return<!>
+            if (a == null) return
         }
     }
 
@@ -67,13 +67,13 @@ fun case_4(a: Any?) {
 fun case_5(a: Any?) {
     loop1@ while (true) {
         loop2@ while (true) {
-            <!UNREACHABLE_CODE!>return<!> break@loop1
-            <!UNREACHABLE_CODE!>if (a == null) return<!>
+            return break@loop1
+            if (a == null) return
         }
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
 }
 
 /*
@@ -84,28 +84,28 @@ fun case_6(a: Any?) {
     loop1@ while (true) {
         loop2@ while (true) {
             throw break@loop1
-            <!UNREACHABLE_CODE!>if (a == null) return<!>
+            if (a == null) return
         }
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
 }
 
 /*
  * TESTCASE NUMBER: 7
  * UNEXPECTED BEHAVIOUR
  */
-fun case_7(<!UNUSED_PARAMETER!>a<!>: Any?) {
+fun case_7(a: Any?) {
     loop1@ while (true) {
         loop2@ while (true) {
             throw continue@loop1
-            <!UNREACHABLE_CODE!>if (a == null) return<!>
+            if (a == null) return
         }
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), UNREACHABLE_CODE!>a<!>
-    <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>a<!>.equals(10)<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!><!UNSAFE_CALL!>.<!>equals(10)
 }
 
 // TESTCASE NUMBER: 8
@@ -114,8 +114,8 @@ fun case_8(a: Any?) {
     loop1@ while (b != null) {
         loop2@ while (true) {
             b = null
-            <!UNREACHABLE_CODE!>return<!> continue@loop1
-            <!UNREACHABLE_CODE!>if (a == null) return<!>
+            return continue@loop1
+            if (a == null) return
         }
     }
 

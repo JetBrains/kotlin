@@ -14,17 +14,17 @@ fun foo(x: List<String>, y: LinkedList<String>, z: A<String>) {
     x.<!FUNCTION_CALL_EXPECTED!>last<!>
     x.last()
 
-    y.getFirst()
-    y.first
+    y.<!DEPRECATION!>getFirst<!>()
+    y.<!DEPRECATION!>first<!>
     y.first()
-    y.getLast()
-    y.last
+    y.<!DEPRECATION!>getLast<!>()
+    y.<!DEPRECATION!>last<!>
     y.last()
 
-    z.getFirst()
+    z.<!DEPRECATION!>getFirst<!>()
     z.<!FUNCTION_CALL_EXPECTED!>first<!>
     z.first()
-    z.getLast()
+    z.<!DEPRECATION!>getLast<!>()
     z.<!FUNCTION_CALL_EXPECTED!>last<!>
     z.last()
 }

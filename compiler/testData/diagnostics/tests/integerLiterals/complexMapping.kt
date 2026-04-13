@@ -28,10 +28,10 @@ private abstract class Ranges<C : Comparable<C>> {
 private val INF: Nothing? = null
 
 private val foo = listOf(
-    range(0 to 1) to range(<!DEBUG_INFO_CONSTANT!>INF<!> to ""),
-    range(2 to 3) to range(<!DEBUG_INFO_CONSTANT!>INF<!> to "", "" to <!DEBUG_INFO_CONSTANT!>INF<!>),
-    range(4 to 5) to range("" to <!DEBUG_INFO_CONSTANT!>INF<!>),
-    range(6 to <!DEBUG_INFO_CONSTANT!>INF<!>) to range("" to <!DEBUG_INFO_CONSTANT!>INF<!>)
+    range(0 to 1) to range(INF to ""),
+    range(2 to 3) to range(INF to "", "" to INF),
+    range(4 to 5) to range("" to INF),
+    range(6 to INF) to range("" to INF)
 ).map {
     it.first.map(First::compose) to it.second.map(Second::compose)
 }

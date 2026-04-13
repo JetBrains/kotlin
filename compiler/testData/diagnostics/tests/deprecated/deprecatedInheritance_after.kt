@@ -95,7 +95,7 @@ interface EW2: E2, W2 {
 }
 
 interface HEW2: EW2, HiddenDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
     }
 }
 

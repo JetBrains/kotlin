@@ -109,14 +109,14 @@ public class A extends AImpl implements List<String> {
 }
 
 // FILE: X.kt
-class X : A()
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class X<!> : A()
 
 fun main() {
     val x = X()
     x[0]
     x.size
     x.remove("")
-    x.remove(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    x.remove(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,

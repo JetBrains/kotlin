@@ -17,7 +17,7 @@ fun test() {
     val platformJ = J.staticJ
 
     checkSubtype<J>(platformNN)
-    checkSubtype<J>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
+    checkSubtype<J>(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>)
     checkSubtype<J>(platformJ)
 
     checkSubtype<J?>(platformNN)

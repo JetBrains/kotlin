@@ -1,8 +1,19 @@
 FILE: pluginInInline.kt
+    package org.jetbrains.kotlinx.dataframe.annotations
+
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)]) public final annotation class DisableInterpretation : R|kotlin/Annotation| {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     private final inline fun <reified T> convert(l: R|kotlin/collections/List<T>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<T>| {
         ^convert R|<local>/l|.R|org/jetbrains/kotlinx/dataframe/api/toDataFrame|<R|T|>()
     }
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() private final inline fun <reified T> convert1(l: R|kotlin/collections/List<T>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<T>| {
+        ^convert1 R|<local>/l|.R|org/jetbrains/kotlinx/dataframe/api/toDataFrame|<R|T|>()
+    }
     public final fun box(): R|kotlin/String| {
-        R|/convert|<R|kotlin/Int|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
+        R|org/jetbrains/kotlinx/dataframe/annotations/convert|<R|kotlin/Int|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3))))
         ^box String(OK)
     }

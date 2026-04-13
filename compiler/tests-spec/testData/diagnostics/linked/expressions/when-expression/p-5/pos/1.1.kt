@@ -55,7 +55,7 @@ fun case_4(value_1: Int, value_2: String, value_3: String) {
 }
 
 // TESTCASE NUMBER: 5
-fun case_5(value_1: Int, <!UNUSED_PARAMETER!>value_2<!>: Int, value_3: Boolean?) {
+fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     when (value_1) {
         1 -> when (value_3) {
             else -> "3"
@@ -83,7 +83,7 @@ fun case_5(value_1: Int, <!UNUSED_PARAMETER!>value_2<!>: Int, value_3: Boolean?)
 }
 
 // TESTCASE NUMBER: 6
-fun case_6(value_1: Int, <!UNUSED_PARAMETER!>value_2<!>: Int, value_3: Boolean?) = when (value_1) {
+fun case_6(value_1: Int, value_2: Int, value_3: Boolean?) = when (value_1) {
     1 -> when (value_3) {
         else -> 3
     }
@@ -104,8 +104,8 @@ fun case_7(value_1: Int, value_2: Int, value_3: Boolean?) {
             else if (value_2 < 10) "2"
             else "4"
         4 -> if (value_3 == null) "1"
-            else if (<!DEBUG_INFO_SMARTCAST!>value_3<!>) "2"
-            else if (!<!DEBUG_INFO_SMARTCAST!>value_3<!>) "3"
+            else if (value_3) "2"
+            else if (!value_3) "3"
     }
 }
 
@@ -176,8 +176,8 @@ fun case_14(value_1: Int, value_2: Int, value_3: Int, value_4: Boolean?) {
     var mutableValue2 = value_3
 
     when (value_1) {
-        1 -> <!UNUSED_CHANGED_VALUE!>mutableValue1++<!>
-        2 -> <!UNUSED_CHANGED_VALUE!>mutableValue2--<!>
+        1 -> mutableValue1++
+        2 -> mutableValue2--
         3 -> value_4!!
     }
 }
@@ -287,7 +287,7 @@ fun case_23(value_1: Int) {
     fun r_1() {
         when (value_1) {
             1 -> return
-            2 -> <!UNREACHABLE_CODE!>return return<!> return
+            2 -> return return return
         }
     }
 

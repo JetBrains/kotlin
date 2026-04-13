@@ -17,25 +17,25 @@ fun <T : Any> Foo<T?>.boo2(): T = null as T
 open class Bar<out K>(val x: K)
 
 fun main(x: Foo<out Number?>, y: Bar<out Number?>, z1: Foo<out Number>, z2: Bar<out Number>) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x.foo()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x.bar()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>x.boo1()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()<!>
+    x.foo()
+    x.bar()
+    x.boo1()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>y.bar()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()<!>
+    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
+    y.bar()
+    y.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()
+    y.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Number..kotlin.Number?)")!>z1.foo()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z1.bar()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z1.boo1()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>z1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()<!>
+    z1.foo()
+    z1.bar()
+    z1.boo1()
+    z1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z2.foo()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>z2.bar()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>z2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>z2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()<!>
+    z2.foo()
+    z2.bar()
+    z2.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()
+    z2.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()
 }
 
 /* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, flexibleType, funWithExtensionReceiver,

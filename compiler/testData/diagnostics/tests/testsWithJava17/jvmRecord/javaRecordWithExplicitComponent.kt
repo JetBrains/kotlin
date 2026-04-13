@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // API_VERSION: 1.5
 // LANGUAGE: +JvmRecordSupport
 // SCOPE_DUMP: MyRecord:x

@@ -1,5 +1,5 @@
 <caret_1>:
-  KtNameReferenceExpression(268,277): 'something'
+  KtNameReferenceExpression(265,274): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -8,7 +8,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_2>:
-  KtNameReferenceExpression(295,304): 'something'
+  KtNameReferenceExpression(292,301): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -17,7 +17,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_3>:
-  KtNameReferenceExpression(325,334): 'something'
+  KtNameReferenceExpression(322,331): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -33,7 +33,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_4>:
-  KtNameReferenceExpression(356,365): 'something'
+  KtNameReferenceExpression(353,362): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -49,7 +49,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_5>:
-  KtNameReferenceExpression(386,395): 'something'
+  KtNameReferenceExpression(383,392): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -65,7 +65,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_6>:
-  KtNameReferenceExpression(400,409): 'something'
+  KtNameReferenceExpression(397,406): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -81,7 +81,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_7>:
-  KtNameReferenceExpression(507,516): 'something'
+  KtNameReferenceExpression(504,513): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -90,7 +90,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_8>:
-  KtNameReferenceExpression(536,545): 'something'
+  KtNameReferenceExpression(533,542): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -99,7 +99,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_9>:
-  KtNameReferenceExpression(568,577): 'something'
+  KtNameReferenceExpression(565,574): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -115,7 +115,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_10>:
-  KtNameReferenceExpression(601,610): 'something'
+  KtNameReferenceExpression(598,607): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false
@@ -131,7 +131,7 @@
         (in KotlinClass) override var something: kotlin.Int
 
 <caret_11>:
-  KtNameReferenceExpression(633,642): 'something'
+  KtNameReferenceExpression(630,639): 'something'
     KtSimpleNameReference:
       isImplicitReferenceToCompanion: false
       usesContextSensitiveResolution: false

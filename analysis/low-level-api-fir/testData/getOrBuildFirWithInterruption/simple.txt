@@ -11,7 +11,7 @@ null
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|broken/lib/Foo|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -34,7 +34,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         consume#(IntegerLiteral(4))
         consume#(IntegerLiteral(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         R|/consume|(Int(4))
         consume#(IntegerLiteral(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
 
 =====
 
@@ -80,4 +80,4 @@ FILE: [ResolvedTo(IMPORTS)] simple.kt
         R|/consume|(Int(4))
         R|/consume|(Int(5))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] obj: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }

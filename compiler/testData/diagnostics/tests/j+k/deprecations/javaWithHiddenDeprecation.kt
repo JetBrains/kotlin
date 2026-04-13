@@ -24,7 +24,7 @@ fun check(j: <!DEPRECATION_ERROR!>JavaClass<!>) {
     <!UNRESOLVED_REFERENCE!>JavaClass<!>()
 
     ClassWithMembers.<!UNRESOLVED_REFERENCE!>function<!>()
-    ClassWithMembers.<!UNRESOLVED_REFERENCE!>field<!> = 1
+    ClassWithMembers.<!UNRESOLVED_REFERENCE, VARIABLE_EXPECTED!>field<!> = 1
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, javaType */

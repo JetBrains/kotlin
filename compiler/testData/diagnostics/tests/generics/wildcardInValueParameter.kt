@@ -10,7 +10,7 @@ public class JavaClass {
 // FILE: main.kt
 fun foo() {
     JavaClass().foo(Any())
-    JavaClass().bar(<!TYPE_MISMATCH!>Any()<!>)
+    JavaClass().bar(<!ARGUMENT_TYPE_MISMATCH!>Any()<!>)
     JavaClass().bar("")
 }
 

@@ -8,7 +8,7 @@ class Public {
     fun test2(<!EXPOSED_PARAMETER_TYPE!>p: NestedPrivate<!>) {}
     fun <!EXPOSED_RECEIVER_TYPE!>NestedPrivate<!>.test3() {}
     val <!EXPOSED_PROPERTY_TYPE!>test4<!> = NestedPrivate()
-    class Test5 : <!EXPOSED_SUPER_CLASS!>NestedPrivate()<!>
+    class Test5 : <!EXPOSED_SUPER_CLASS!>NestedPrivate<!>()
 }
 
 private class PrivateInFileClass {
@@ -18,7 +18,7 @@ private class PrivateInFileClass {
     fun test2(<!EXPOSED_PARAMETER_TYPE!>p: NestedPrivate<!>) {}
     fun <!EXPOSED_RECEIVER_TYPE!>NestedPrivate<!>.test3() {}
     val <!EXPOSED_PROPERTY_TYPE!>test4<!> = NestedPrivate()
-    class Test5 : <!EXPOSED_SUPER_CLASS!>NestedPrivate()<!>
+    class Test5 : <!EXPOSED_SUPER_CLASS!>NestedPrivate<!>()
 }
 
 private interface PrivateInFile {

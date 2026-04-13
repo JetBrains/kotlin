@@ -17,15 +17,15 @@ public class Test {}
 fun <T : Test> main(a1: NonPlatformTypeParameter<Any?>, a2: NonPlatformTypeParameter<Test>, x: T): Unit {
     a1.foo(null)
     a1.bar<Test?>(null)
-    a1.bar<T>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a1.bar<T>(null)
     a1.bar<T>(x)
 
-    a2.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a2.foo(null)
     a2.bar<Test?>(null)
-    a2.bar<T>(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
+    a2.bar<T>(null)
     a2.bar<T>(x)
 }
 
 fun testNullable(a1: NonPlatformTypeParameter<Test>, x: Test?) {
-    a1.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>)
+    a1.foo(x)
 }

@@ -7,7 +7,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block(this)
 }
@@ -19,10 +19,10 @@ fun b() = true
 
 fun test1(a: String?, b: String?): Int {
     a?.myLet {
-        b?.myLet { return <!DEBUG_INFO_SMARTCAST!>a<!>.length } ?: ign()
+        b?.myLet { return a.length } ?: ign()
     }
-    a?.myLet {
-        b?.myLet { return <!DEBUG_INFO_SMARTCAST!>a<!>.length } ?: a()
+    a?.<!RETURN_VALUE_NOT_USED!>myLet<!> {
+        b?.myLet { return a.length } ?: a()
     }
     a?.myLet {
         b?.myLet { return if (it.length > 4) 0 else 1 }
@@ -31,12 +31,12 @@ fun test1(a: String?, b: String?): Int {
 }
 
 fun test2(a: String?, b: String?): Int {
-    a?.myLet outer@{
+    a?.<!RETURN_VALUE_NOT_USED!>myLet<!> outer@{
         b?.myLet {
             if (it.length > 5) return@outer 1 else ign()
         }
     }
-    a?.myLet outer@{
+    a?.<!RETURN_VALUE_NOT_USED!>myLet<!> outer@{
         b?.myLet {
             if (it.length > 5) return@outer ign() else 1
         }

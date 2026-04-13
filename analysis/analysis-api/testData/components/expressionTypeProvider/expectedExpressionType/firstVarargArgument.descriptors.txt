@@ -1,4 +1,0 @@
-expression: { it -> }
-expected type: KaTypeParameterType:
-  annotations: []
-  type: T

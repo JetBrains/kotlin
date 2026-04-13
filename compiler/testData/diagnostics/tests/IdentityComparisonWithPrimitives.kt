@@ -33,7 +33,7 @@ val test_dd = <!DEPRECATED_IDENTITY_EQUALS!>d === d<!> || <!DEPRECATED_IDENTITY_
 val test_cc = <!DEPRECATED_IDENTITY_EQUALS!>c === c<!> || <!DEPRECATED_IDENTITY_EQUALS!>c !== c<!>
 
 // Identity for primitive values of different types (no extra error)
-val test_zb = <!EQUALITY_NOT_APPLICABLE!>z === b<!> || <!EQUALITY_NOT_APPLICABLE!>z !== b<!>
+val test_zb = <!FORBIDDEN_IDENTITY_EQUALS!>z === b<!> || <!FORBIDDEN_IDENTITY_EQUALS!>z !== b<!>
 
 // Primitive vs nullable
 val test_znz = <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>z === nz<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>nz === z<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>z !== nz<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>nz !== z<!>

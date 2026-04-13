@@ -3,5 +3,5 @@ object O {
 }
 
 <!CONFLICTING_JVM_DECLARATIONS!>object O2 {
-    <!CONFLICTING_JVM_DECLARATIONS!>lateinit var INSTANCE: O2<!>
+    lateinit <!CONFLICTING_JVM_DECLARATIONS!>var INSTANCE: O2<!>
 }<!>

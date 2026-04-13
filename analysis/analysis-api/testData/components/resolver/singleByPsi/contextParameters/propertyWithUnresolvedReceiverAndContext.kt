@@ -8,4 +8,3 @@ fun AAA.usage() {
 
 // LANGUAGE: +ContextParameters
 // COMPILATION_ERRORS
-// IGNORE_STABILITY_K1: candidates

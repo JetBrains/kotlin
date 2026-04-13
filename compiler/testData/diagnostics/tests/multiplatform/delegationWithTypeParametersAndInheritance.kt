@@ -13,11 +13,11 @@ expect interface Base2<T>{
 
 class Test(val x: Base1<Int>) : Base2<Int>, Base1<Int> by x
 
-class Test2(val x: Base1<String>) : Base2<Int>, Base1<String> by x {
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Test2(val x: Base1<String>) : Base2<Int>, Base1<String> by x {
     override fun foo(a: Int): Int {
         return a
     }
-}
+}<!>
 
 // MODULE: platform()()(common)
 // FILE: platform.kt

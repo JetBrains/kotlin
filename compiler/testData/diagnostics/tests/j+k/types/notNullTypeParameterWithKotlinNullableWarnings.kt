@@ -20,12 +20,12 @@ public interface SLRUMap<V> {
 // FILE: main.kt
 
 fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
-    takeV(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>value<!>)
-    takeVList(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>l<!>)
+    takeV(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
+    takeVList(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 
-    takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>value<!>)
-    takeEList(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>l<!>)
-    takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>id(value)<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeE<!>(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeEList<!>(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeE<!>(<!ARGUMENT_TYPE_MISMATCH!>id(value)<!>)
 
     if (value != null) {
         takeV(value)

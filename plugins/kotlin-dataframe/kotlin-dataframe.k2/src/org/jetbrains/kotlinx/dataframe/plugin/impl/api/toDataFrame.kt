@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -37,11 +38,15 @@ import org.jetbrains.kotlinx.dataframe.codeGen.FieldKind
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.wrap
+import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
+import org.jetbrains.kotlinx.dataframe.plugin.getSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DATA_ROW_CLASS_ID
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DATA_SCHEMA_CLASS_ID
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names.DF_CLASS_ID
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isDataFrame
+import org.jetbrains.kotlinx.dataframe.plugin.utils.isDataRow
 import java.util.*
 
 class ToDataFrameDsl : AbstractSchemaModificationInterpreter() {
@@ -233,43 +238,56 @@ internal fun KotlinTypeFacade.toDataFrame(
                         || returnType.classId in preserveClasses
                         || callable in preserveProperties
                         || (!returnType.canBeUnfolded(session) && !fieldKind.shouldBeConvertedToColumnGroup && !fieldKind.shouldBeConvertedToFrameColumn)
-                if (shouldCreateValueCol) {
-                    SimpleDataColumn(
-                        name,
-                        ColumnType(
-                            returnType.withNullability(
-                                returnType.isMarkedNullable || makeNullable,
-                                session.typeContext
+
+                when {
+                    shouldCreateValueCol -> {
+                        SimpleDataColumn(
+                            name,
+                            ColumnType(
+                                returnType.withNullability(
+                                    returnType.isMarkedNullable || makeNullable,
+                                    session.typeContext
+                                )
                             )
                         )
-                    )
-                } else if (
-                    returnType.isSubtypeOf(
-                        StandardClassIds.Iterable.constructClassLikeType(arrayOf(ConeStarProjection)),
-                        session
-                    ) ||
-                    returnType.isSubtypeOf(
-                        StandardClassIds.Iterable.constructClassLikeType(
-                            arrayOf(ConeStarProjection),
-                            isMarkedNullable = true
-                        ), session
-                    )
-                ) {
-                    val type: ConeKotlinType = when (val typeArgument = returnType.typeArguments[0]) {
-                        is ConeKotlinType -> typeArgument
-                        ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
-                        else -> session.builtinTypes.nullableAnyType.coneType
                     }
-                    if (type.isValueType(session)) {
-                        val columnType = List.constructClassLikeType(arrayOf(type), returnType.isMarkedNullable)
-                            .withNullability(makeNullable, session.typeContext)
-                            .wrap()
-                        SimpleDataColumn(name, columnType)
-                    } else {
-                        SimpleFrameColumn(name, convert(type, depth + 1, makeNullable = false))
+
+                    returnType.isDataRow() -> {
+                        val schema = returnType.findSchemaArgument(isTest)?.getSchema()
+                            ?: PluginDataFrameSchema.EMPTY
+                        val group = SimpleColumnGroup(name, schema.columns())
+                        if (!returnType.isMarkedNullable) {
+                            group
+                        } else {
+                            makeNullable(group)
+                        }
                     }
-                } else {
-                    SimpleColumnGroup(name, convert(returnType, depth + 1, returnType.isMarkedNullable || makeNullable))
+
+                    returnType.isDataFrame() && !returnType.isMarkedNullable -> {
+                        val schema = returnType.findSchemaArgument(isTest)?.getSchema()
+                            ?: PluginDataFrameSchema.EMPTY
+                        SimpleFrameColumn(name, schema.columns())
+                    }
+
+                    returnType.isIterable(session) -> {
+                        val type: ConeKotlinType = when (val typeArgument = returnType.typeArguments[0]) {
+                            is ConeKotlinType -> typeArgument
+                            ConeStarProjection -> session.builtinTypes.nullableAnyType.coneType
+                            else -> session.builtinTypes.nullableAnyType.coneType
+                        }
+                        if (type.isValueType(session)) {
+                            val columnType = List.constructClassLikeType(arrayOf(type), returnType.isMarkedNullable)
+                                .withNullability(makeNullable, session.typeContext)
+                                .wrap()
+                            SimpleDataColumn(name, columnType)
+                        } else {
+                            SimpleFrameColumn(name, convert(type, depth + 1, makeNullable = false))
+                        }
+                    }
+
+                    else -> {
+                        SimpleColumnGroup(name, convert(returnType, depth + 1, returnType.isMarkedNullable || makeNullable))
+                    }
                 }
             }
     }
@@ -287,6 +305,21 @@ internal fun KotlinTypeFacade.toDataFrame(
         }
     }
 }
+
+private fun ConeKotlinType.isIterable(session: FirSession): Boolean =
+    isSubtypeOf(
+        StandardClassIds.Iterable.constructClassLikeType(
+            typeArguments = arrayOf(ConeStarProjection),
+            isMarkedNullable = false,
+        ),
+        session
+    ) || isSubtypeOf(
+        StandardClassIds.Iterable.constructClassLikeType(
+            typeArguments = arrayOf(ConeStarProjection),
+            isMarkedNullable = true,
+        ),
+        session
+    )
 
 private data class ToDataFrameProperty(val callable: FirCallableSymbol<*>, val columnName: String)
 
@@ -331,13 +364,12 @@ private fun ConeKotlinType.hasProperties(session: FirSession): Boolean {
 
 private fun ConeKotlinType.properties(session: FirSession): List<ToDataFrameProperty> {
     val symbol = this.toRegularClassSymbol(session) as? FirClassSymbol<*> ?: return emptyList()
-    val scope = symbol.unsubstitutedScope(
+    val scope = scope(
         session,
         ScopeSession(),
-        withForcedTypeCalculator = false,
-        memberRequiredPhase = FirResolvePhase.STATUS
-    )
-
+        CallableCopyTypeCalculator.DoNothing,
+        FirResolvePhase.STATUS
+    ) ?: return emptyList()
 
     @OptIn(SymbolInternals::class)
     symbol.fir.let { firClass ->

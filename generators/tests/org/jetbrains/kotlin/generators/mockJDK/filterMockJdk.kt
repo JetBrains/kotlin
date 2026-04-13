@@ -17,7 +17,7 @@ import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
 fun main() = removeInterfacesFromMockJdkClassfiles(
-    mockJdkRuntimeJar = File("compiler/testData/mockJDK/jre/lib/rt.jar")
+    mockJdkRuntimeJar = File("third-party/mockJDKs/mockJDK/jre/lib/rt.jar")
 )
 
 internal fun removeInterfacesFromMockJdkClassfiles(mockJdkRuntimeJar: File) {

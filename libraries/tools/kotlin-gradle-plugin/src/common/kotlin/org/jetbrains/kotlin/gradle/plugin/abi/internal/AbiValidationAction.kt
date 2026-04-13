@@ -19,7 +19,7 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
     abiValidation.configure(project)
 
     // wait until all compilations are configured
-    KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+    KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
     if (!abiValidation.isActivated) return@KotlinProjectSetupCoroutine
 
@@ -29,19 +29,19 @@ internal val AbiValidationSetupAction = KotlinProjectSetupCoroutine {
         kotlinJvmExtensionOrNull != null -> {
             val extension = kotlinJvmExtension
             val target = extension.target
-            finalizeJvmVariant(this, target)
+            extension.abiValidation.finalizeJvmVariant(this, target)
         }
 
         kotlinAndroidExtensionOrNull != null -> {
             val extension = kotlinAndroidExtension
             val target = extension.target
-            finalizeAndroidVariant(this, target)
+            extension.abiValidation.finalizeAndroidVariant(this, target)
         }
 
         multiplatformExtensionOrNull != null -> {
             val extension = multiplatformExtension
             val targets = extension.awaitTargets()
-            finalizeMultiplatformVariant(this, targets, abiValidation.keepLocallyUnsupportedTargets)
+            extension.abiValidation.finalizeMultiplatformVariant(this, targets, abiValidation.keepLocallyUnsupportedTargets)
         }
     }
 }

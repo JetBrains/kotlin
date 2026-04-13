@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun f() {
     try {
     } catch (<!VAL_OR_VAR_ON_CATCH_PARAMETER!>val<!> e: Exception) {

@@ -2,35 +2,35 @@
 // RUN_PIPELINE_TILL: FIR2IR
 // MODULE: m1-common
 // FILE: common.kt
-expect var v1: Boolean
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> var v1: Boolean
 
 expect var v2: Boolean
     internal set
 
-expect var v3: Boolean
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> var v3: Boolean
     internal set
 
-expect open class C {
-    var foo: Boolean
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class C {
+    var <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>: Boolean
 }
 
-expect open class C2 {
-    var foo: Boolean
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> open class C2 {
+    var <!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>foo<!>: Boolean
 }
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual var v1: Boolean = false
-    <!ACTUAL_WITHOUT_EXPECT!>private<!> set
+actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>v1<!>: Boolean = false
+    private set
 
 actual var v2: Boolean = false
 
-actual var v3: Boolean = false
-    <!ACTUAL_WITHOUT_EXPECT!>private<!> set
+actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>v3<!>: Boolean = false
+    private set
 
 actual open class C {
-    actual var foo: Boolean = false
-        <!ACTUAL_WITHOUT_EXPECT!>protected<!> set
+    actual var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>foo<!>: Boolean = false
+        protected set
 }
 
 open class C2Typealias {
@@ -38,6 +38,6 @@ open class C2Typealias {
         protected set
 }
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>C2<!> = C2Typealias
+actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>C2<!> = C2Typealias
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, propertyDeclaration, typeAliasDeclaration */

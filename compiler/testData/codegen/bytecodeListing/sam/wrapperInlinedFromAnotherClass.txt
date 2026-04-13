@@ -1,38 +1,14 @@
 @kotlin.Metadata
-final class A$testRunnableSamCtor1$1 {
-    // source: 'wrapperInlinedFromAnotherClass.kt'
-    enclosing method A.testRunnableSamCtor1()Ljava/lang/Runnable;
-    public final static field INSTANCE: A$testRunnableSamCtor1$1
-    inner (anonymous) class A$testRunnableSamCtor1$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
-final class A$testRunnableSamCtor2$1 {
-    // source: 'wrapperInlinedFromAnotherClass.kt'
-    enclosing method A.testRunnableSamCtor2()Ljava/lang/Runnable;
-    public final static field INSTANCE: A$testRunnableSamCtor2$1
-    inner (anonymous) class A$testRunnableSamCtor2$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 public final class A {
     // source: 'wrapperInlinedFromAnotherClass.kt'
-    inner (anonymous) class A$testRunnableSamCtor1$1
-    inner (anonymous) class A$testRunnableSamCtor2$1
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method test1a(): java.lang.Runnable
     public final @org.jetbrains.annotations.NotNull method test1b(): java.lang.Runnable
     public final @org.jetbrains.annotations.NotNull method test2a(): java.lang.Runnable
     public final @org.jetbrains.annotations.NotNull method test2b(): java.lang.Runnable
+    private final static method testRunnableSamCtor1$lambda$0(): kotlin.Unit
     public final @org.jetbrains.annotations.NotNull method testRunnableSamCtor1(): java.lang.Runnable
+    private final static method testRunnableSamCtor2$lambda$0(): kotlin.Unit
     public final @org.jetbrains.annotations.NotNull method testRunnableSamCtor2(): java.lang.Runnable
 }
 

@@ -4,7 +4,7 @@
 val <T: Any> T.javaKlass: java.lang.Class<T>
     get() {
         this as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Object<!>
-        return <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>getClass<!>() <!UNCHECKED_CAST!>as java.lang.Class<T><!>
+        return getClass() <!UNCHECKED_CAST!>as java.lang.Class<T><!>
     }
 
 fun consume(arg: java.lang.Class<*>) {}

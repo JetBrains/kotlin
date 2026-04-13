@@ -17,7 +17,14 @@ dependencies {
 
 kotlin {
     @OptIn(ExperimentalAbiValidation::class)
-    abiValidation()
+    abiValidation {
+        /**
+         * Binary compatibility is expected for all public API, except for the `LanguageFeature` enum itself.
+         * The enum is modified very frequently, so and is excluded from binary compatibility guarantees
+         * to avoid requiring contributors to update the dump file on every change.
+         */
+        filters.exclude.byNames.add("org.jetbrains.kotlin.config.LanguageFeature")
+    }
 }
 
 sourceSets {

@@ -6,7 +6,7 @@ fun foo1(x: Int) {
         "" to { x }
     } else { null }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<kotlin.String, () -> kotlin.Int>?")!>x<!>
+    x
 }
 
 fun foo2(x: Int) {
@@ -16,7 +16,7 @@ fun foo2(x: Int) {
         null
     } // Fixed the problem: "type of entire `if` is `Map<String, *>?` (NI) instead of `Map<String, () → Int>?` (OI)"
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<kotlin.String, () -> kotlin.Int>?")!>x<!>
+    x
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,

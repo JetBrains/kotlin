@@ -4,12 +4,12 @@ FILE fqName:<root> fileName:/destructuringInLambdaOld.kt
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER DESTRUCTURED_OBJECT_PARAMETER kind:Regular name:<name for destructuring parameter 0> index:0 type:<root>.A
+            VALUE_PARAMETER DESTRUCTURED_OBJECT_PARAMETER kind:Regular name:<destruct> index:0 type:<root>.A
             BLOCK_BODY
-              VAR name:y type:kotlin.Int [val]
+              VAR IR_DESTRUCTURED_PARAMETER_VARIABLE name:y type:kotlin.Int [val]
                 CALL 'public final fun component2 (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=COMPONENT_N(index=2)
-                  ARG <this>: GET_VAR '<name for destructuring parameter 0>: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=DESTRUCTURING_DECLARATION
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (<name for destructuring parameter 0>: <root>.A): kotlin.Int declared in <root>.fn'
+                  ARG <this>: GET_VAR '<destruct>: <root>.A declared in <root>.fn.<anonymous>' type=<root>.A origin=null
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (<destruct>: <root>.A): kotlin.Int declared in <root>.fn'
                 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
                   ARG <this>: CONST Int type=kotlin.Int value=42
                   ARG other: GET_VAR 'val y: kotlin.Int declared in <root>.fn.<anonymous>' type=kotlin.Int origin=null

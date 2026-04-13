@@ -3,7 +3,7 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 fun bar(list: List<Int>) {
-    foo(<!TYPE_MISMATCH!>list<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!ARGUMENT_TYPE_MISMATCH!>list<!>)
 }
 
 fun <T : CharSequence> foo(list: List<T>) {}

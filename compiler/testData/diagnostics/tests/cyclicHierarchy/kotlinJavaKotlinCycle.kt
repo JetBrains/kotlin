@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FILE: I.kt
 
-open class I : <!CYCLIC_INHERITANCE_HIERARCHY!>K<!>() {
+open class I : K() {
     fun foo() {}
 }
 

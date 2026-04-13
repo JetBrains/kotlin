@@ -30,6 +30,6 @@ fun case_2(value_1: EnumClassSingle?): String = when (value_1) {
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-26044
  */
-fun case_3(value_1: EnumClassEmpty?): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
+fun case_3(value_1: EnumClassEmpty?): String = when(value_1) {
     null -> ""
 }

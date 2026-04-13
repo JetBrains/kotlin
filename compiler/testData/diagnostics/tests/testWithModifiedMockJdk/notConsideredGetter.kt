@@ -6,11 +6,11 @@ fun foo(jalw: java.util.ListWithSomethingOverridden<String>, jal: java.util.Arra
     jalw.<!DEPRECATION!>somethingNonExisting<!>
     jalw.<!DEPRECATION!>getSomethingNonExisting<!>()
     // java.util.ArrayList does not contain explicit override
-    jal.<!DEPRECATION!>somethingNonExisting<!>
-    jal.<!DEPRECATION!>getSomethingNonExisting<!>()
+    jal.<!UNRESOLVED_REFERENCE!>somethingNonExisting<!>
+    jal.<!UNRESOLVED_REFERENCE!>getSomethingNonExisting<!>()
     // Modified java.util.List contains additional getSomethingNonExisting(): String declaration
-    l.<!DEPRECATION!>somethingNonExisting<!>
-    l.<!DEPRECATION!>getSomethingNonExisting<!>()
+    l.<!UNRESOLVED_REFERENCE!>somethingNonExisting<!>
+    l.<!UNRESOLVED_REFERENCE!>getSomethingNonExisting<!>()
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty */

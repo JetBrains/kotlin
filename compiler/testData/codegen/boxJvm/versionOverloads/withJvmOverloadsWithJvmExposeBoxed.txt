@@ -1,0 +1,35 @@
+@kotlin.Metadata
+public final class EverythingC {
+    // source: 'withJvmOverloadsWithJvmExposeBoxed.kt'
+    public method <init>(): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_exposed(p0: float, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_exposed(p0: float, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public synthetic static method foo_renamed$default(p0: EverythingC, p1: float, p2: int, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmName(name="foo_renamed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_renamed(): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmName(name="foo_renamed") method foo_renamed(p0: float): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmName(name="foo_renamed") method foo_renamed(p0: float, @kotlin.IntroducedAt(version="2") p1: boolean): java.lang.String
+    public final @kotlin.jvm.JvmName(name="foo_renamed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_renamed(p0: float, @kotlin.IntroducedAt(version="3") p1: int): java.lang.String
+    public final @kotlin.jvm.JvmName(name="foo_renamed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_renamed(p0: float, @kotlin.IntroducedAt(version="3") p1: int, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ExposedC {
+    // source: 'withJvmOverloadsWithJvmExposeBoxed.kt'
+    public method <init>(): void
+    public synthetic static method foo-OsBMiQA$default(p0: ExposedC, p1: float, p2: int, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo-OsBMiQA(p0: float, @kotlin.IntroducedAt(version="3") p1: int, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo-Qn1smSk(p0: float, @kotlin.IntroducedAt(version="3") p1: int): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_exposed(): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") method foo_exposed(p0: float): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") method foo_exposed(p0: float, @kotlin.IntroducedAt(version="2") p1: boolean): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_exposed(p0: float, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="foo_exposed") @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo_exposed(p0: float, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+}
+
+@kotlin.Metadata
+public final class WithJvmOverloadsWithJvmExposeBoxedKt {
+    // source: 'withJvmOverloadsWithJvmExposeBoxed.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+}

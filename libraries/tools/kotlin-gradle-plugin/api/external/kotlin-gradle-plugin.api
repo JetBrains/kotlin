@@ -87,7 +87,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getNativeMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getNativeTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getPublishing ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPublishing;
-	public final fun getTargetHierarchy ()Lorg/jetbrains/kotlin/gradle/dsl/DeprecatedKotlinTargetHierarchyDsl;
 	public final fun getTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
 	public final fun getTestableTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
 	public fun getTvosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -1132,7 +1131,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedE
 	public final fun getRuntimeElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
 	public final fun getRuntimeElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
-	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public final fun getSourcesElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
 	public final fun getSourcesElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // CHECK_TYPE
 // FILE: module1/AbstractModule.java
 package module1;

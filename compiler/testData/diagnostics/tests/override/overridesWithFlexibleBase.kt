@@ -28,13 +28,13 @@ class FooImpl2<E1>(val e: E1) : Foo<E1> {
     override fun bar(): Inv<E1> = Inv(e)
 }
 
-open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl3<!><E1>(val e: E1) : Foo<E1> {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun foo(t: E1 & Any) {} // Should be OK
+open class FooImpl3<E1>(val e: E1) : Foo<E1> {
+    override fun foo(t: E1 & Any) {} // Should be OK
 
-    override fun bar(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Inv<E1 & Any><!> = Inv(e!!)
+    override fun bar(): Inv<E1 & Any> = Inv(e!!)
 }
 
-<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><S>(s: S) : FooImpl3<S>(s)
+class FooImpl<S>(s: S) : FooImpl3<S>(s)
 
 open class Aside<S>(val s: S) {
     fun foo(t: S & Any) {}
@@ -42,7 +42,7 @@ open class Aside<S>(val s: S) {
     fun bar(): Inv<S & Any> = Inv(s!!)
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Diamond<!><D>(d: D) : Foo<D>, Aside<D>(d)
+class Diamond<D>(d: D) : Foo<D>, Aside<D>(d)
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, dnnType, flexibleType, functionDeclaration, javaFunction,
 javaType, nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

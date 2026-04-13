@@ -30,5 +30,5 @@ fun case_2(value_1: Int): Int {
         }
     }
 
-    <!UNREACHABLE_CODE!>return 0<!>
+    return 0
 }

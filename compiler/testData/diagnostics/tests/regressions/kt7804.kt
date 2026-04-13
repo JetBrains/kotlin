@@ -21,7 +21,7 @@ fun <T> test2(v: T): T {
         foo(v) <!USELESS_CAST!>as T<!>
     }
     else {
-        v <!USELESS_CAST!>as T<!>
+        v as T
     }
 
     val t: T = a

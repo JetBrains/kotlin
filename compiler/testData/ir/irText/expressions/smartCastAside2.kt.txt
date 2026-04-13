@@ -26,7 +26,7 @@ fun <K : Any?> materialize(): K {
 
 fun test_1(x: Any) {
   x as Bar<Any> /*~> Unit */
-  x as Foo<Any> /*~> Unit */
+  x /*as Bar<Any> */ as Foo<Any> /*~> Unit */
   x /*as Foo<Any> */.foo()
   x /*as Bar<Any> */.bar()
   extFoo<Any>(/* <this> = x /*as Foo<Any> */ */)
@@ -35,7 +35,7 @@ fun test_1(x: Any) {
 
 fun test_2(x: Any) {
   x as Bar<Any>? /*~> Unit */
-  x as Foo<Any>? /*~> Unit */
+  x /*as Bar<Any> */ as Foo<Any>? /*~> Unit */
   CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */.foo()
   CHECK_NOT_NULL<Any>(arg0 = x) /*as Bar<Any> */.bar()
   extFoo<Any>(/* <this> = CHECK_NOT_NULL<Any>(arg0 = x) /*as Foo<Any> */ */)
@@ -44,7 +44,7 @@ fun test_2(x: Any) {
 
 fun test_3(x: Any) {
   x as Bar<Any>? /*~> Unit */
-  x as Foo<Any>? /*~> Unit */
+  x /*as Bar<Any> */ as Foo<Any>? /*~> Unit */
   { // BLOCK
     val tmp_0: Any = x
     when {

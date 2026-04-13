@@ -47,6 +47,7 @@ class SimpleTestClassModel(
     override val tags: List<String>,
     private val additionalMethods: Collection<MethodModel<*>>,
     val skipTestAllFilesCheck: Boolean,
+    override val testKClass: Class<*>,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -80,6 +81,7 @@ class SimpleTestClassModel(
                 extractTagsFromDirectory(file),
                 additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                 skipTestAllFilesCheck,
+                testKClass,
             )
         }.sortedWith(BY_NAME)
     }
@@ -111,7 +113,7 @@ class SimpleTestClassModel(
         buildList {
             when (testInfraRevision) {
                 TestInfraRevision.LegacyJUnit4 -> add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
-                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath()))
+                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath(), testKClass))
             }
             if (!skipTestAllFilesCheck) {
                 add(TestAllFilesPresentMethodModel(this@SimpleTestClassModel))

@@ -10,7 +10,7 @@ expect sealed class SealedClass() {
 }
 
 fun whenForExpectSealed(s: SealedClass): Int {
-    return <!EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, NO_ELSE_IN_WHEN!>when<!> (s) { // should be error, because actual sealed class may add more implementations
+    return <!NO_ELSE_IN_WHEN!>when<!> (s) { // should be error, because actual sealed class may add more implementations
         is SealedClass.Nested.NestedDeeper -> 7
         is SealedClass.Nested -> 8
     }

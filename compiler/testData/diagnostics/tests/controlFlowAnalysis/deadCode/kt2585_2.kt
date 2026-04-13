@@ -3,9 +3,9 @@
 
 fun foo() {
     try {
-        <!UNREACHABLE_CODE!>throw<!> RuntimeException()
+        throw RuntimeException()
     } catch (e: Exception) {
-        <!UNREACHABLE_CODE!>return<!>     // <- Wrong UNREACHABLE_CODE
+        return     // <- Wrong UNREACHABLE_CODE
     } finally {
         while (true);
     }

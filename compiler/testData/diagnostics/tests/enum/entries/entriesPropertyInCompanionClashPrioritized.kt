@@ -12,21 +12,21 @@ enum class A {
 }
 
 fun test() {
-    val i: Int = A.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
-    A.Companion.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
+    val i: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> A.entries
+    A.Companion.entries
 
-    with(A) {
-        <!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(A) {
+        entries
         this.entries
         <!UNRESOLVED_REFERENCE!>values<!>() // to be sure that we don't resolve into synthetic 'values'
     }
 
     with(A.Companion) {
-        <!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
+        entries
     }
 
     val aCompanion = A.Companion
-    aCompanion.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
+    aCompanion.entries
 }
 
 /* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,

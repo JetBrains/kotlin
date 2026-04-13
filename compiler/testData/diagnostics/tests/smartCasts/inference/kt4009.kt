@@ -12,10 +12,10 @@ fun foo1(e: PsiElement) {
     while (current != null) {
         if (current is JetExpression && first) {
             // Smartcast is possible here
-            println(<!DEBUG_INFO_SMARTCAST!>current<!>.getText())
+            println(current.getText())
         }
 
-        current = <!DEBUG_INFO_SMARTCAST!>current<!>.getParent()
+        current = current.getParent()
     }
 }
 

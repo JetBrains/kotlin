@@ -78,7 +78,7 @@ internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfi
                 name = name,
                 postactions = getDefaultLlvmModuleActions(),
         ) { context, module ->
-            pipeline(context.llvmConfig, context.performanceManager, context).use {
+            pipeline(context.llvmConfig.copyConfiguringSaveIr(context, name), context.performanceManager, context).use {
                 it.execute(module)
             }
         }

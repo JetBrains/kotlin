@@ -15,16 +15,16 @@ abstract class A {
     fun fest_1(other: A) {
         other.a.baseFun() // OK
         if (other is B) {
-            <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-            <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+            other.a.baseFun()
+            other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
         }
         if (other is C) {
-            <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-            <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+            other.a.baseFun()
+            other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
         }
         if (other is D) {
-            <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-            <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+            other.a.baseFun()
+            other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
         }
     }
 
@@ -33,16 +33,16 @@ abstract class A {
             fun fest_3(other: A) {
                 other.a.baseFun() // OK
                 if (other is B) {
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.a.baseFun()
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.a.derivedFun()
+                    other.a.baseFun()
+                    other.a.derivedFun()
                 }
                 if (other is C) {
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+                    other.a.baseFun()
+                    other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
                 }
                 if (other is D) {
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-                    <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+                    other.a.baseFun()
+                    other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
                 }
             }
         }
@@ -52,16 +52,16 @@ abstract class A {
         fun fest_4(other: A) {
             other.a.baseFun() // OK
             if (other is B) {
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+                other.a.baseFun()
+                other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
             }
             if (other is C) {
-                <!DEBUG_INFO_SMARTCAST!>other<!>.a.baseFun()
-                <!DEBUG_INFO_SMARTCAST!>other<!>.a.derivedFun()
+                other.a.baseFun()
+                other.a.derivedFun()
             }
             if (other is D) {
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+                other.a.baseFun()
+                other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
             }
         }
     }
@@ -70,16 +70,16 @@ abstract class A {
         fun fest_5(other: A) {
             other.a.baseFun() // OK
             if (other is B) {
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+                other.a.baseFun()
+                other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
             }
             if (other is C) {
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.baseFun()
-                <!DEBUG_INFO_SMARTCAST!>other<!>.<!INVISIBLE_MEMBER!>a<!>.derivedFun()
+                other.a.baseFun()
+                other.a.<!UNRESOLVED_REFERENCE!>derivedFun<!>()
             }
             if (other is D) {
-                <!DEBUG_INFO_SMARTCAST!>other<!>.a.baseFun()
-                <!DEBUG_INFO_SMARTCAST!>other<!>.a.derivedFun()
+                other.a.baseFun()
+                other.a.derivedFun()
             }
         }
     }

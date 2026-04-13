@@ -16,20 +16,17 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.kotlinMultiplatformRootPublication
 import org.jetbrains.kotlin.gradle.utils.currentBuild
-import org.jetbrains.kotlin.gradle.utils.future
 
 internal object ModuleIds {
-    fun fromDependency(project: Project, dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
+    suspend fun fromDependency(project: Project, dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
         is ProjectDependency -> {
             val dependencyProject = dependency.compatAccessor(project).dependencyProject()
-
-            @Suppress("DEPRECATION_ERROR")
-            idOfRootModule(dependencyProject)
+            idOfRootModuleSafe(dependencyProject)
         }
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
     }
 
-    private fun fromComponentId(
+    private suspend fun fromComponentId(
         thisProject: Project,
         componentIdentifier: ComponentIdentifier
     ): ModuleDependencyIdentifier =
@@ -39,20 +36,12 @@ internal object ModuleIds {
             else -> idFromName(componentIdentifier.displayName)
         }
 
-    fun fromComponent(thisProject: Project, component: ResolvedComponentResult) =
+    suspend fun fromComponent(thisProject: Project, component: ResolvedComponentResult) =
         // If the project component comes from another build, we can't extract anything from it, so just use the module coordinates:
         if (component is ProjectComponentIdentifier && component !in thisProject.currentBuild)
             ModuleDependencyIdentifier(component.moduleVersion?.group ?: "unspecified", component.moduleVersion?.name ?: "unspecified")
         else
             fromComponentId(thisProject, component.id)
-
-    // TODO KT-62911: Replace unsafe idOfRootModule with suspendable version idRootModule
-    @Deprecated(
-        "Use suspendable version if possible. Scheduled for removal in Kotlin 2.3.",
-        replaceWith = ReplaceWith("idOfRootModuleSafe(project)"),
-        level = DeprecationLevel.ERROR
-    )
-    fun idOfRootModule(project: Project): ModuleDependencyIdentifier = project.future { idOfRootModuleSafe(project) }.getOrThrow()
 
     suspend fun idOfRootModuleSafe(project: Project): ModuleDependencyIdentifier =
         if (project.multiplatformExtensionOrNull != null) {
@@ -67,7 +56,6 @@ internal object ModuleIds {
     private fun idFromName(name: String) =
         ModuleDependencyIdentifier(null, name)
 
-    private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
-        @Suppress("DEPRECATION_ERROR")
-        idOfRootModule(thisProject.project(projectPath))
+    private suspend fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
+        idOfRootModuleSafe(thisProject.project(projectPath))
 }

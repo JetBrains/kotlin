@@ -6,35 +6,58 @@ fun compileLongAsBigInt(): Boolean {
 }
 
 fun box(): String {
-    check(js("Object"), "Any", Any::class)
-    check(js("String"), "String", String::class)
-    check(js("Boolean"), "Boolean", Boolean::class)
-    check(js("Error"), "Throwable", Throwable::class)
-    check(js("Array"), "Array", Array::class)
-    check(js("Function"), "Function0", Function0::class)
-    check(js("Function"), "Function1", Function1::class)
+    check(js("Object"), "Any", Any::class, Any::class.js)
+    check(js("String"), "String", String::class, String::class.js)
+    check(js("Boolean"), "Boolean", Boolean::class, Boolean::class.js)
+    check(js("Error"), "Throwable", Throwable::class, Throwable::class.js)
+    check(js("Array"), "Array", Array::class, Array::class.js)
+    check(js("Function"), "Function0", Function0::class, Function0::class.js)
+    check(js("Function"), "Function1", Function1::class, Function1::class.js)
 
-    check(js("Number"), "Byte", Byte::class)
-    check(js("Number"), "Short", Short::class)
-    check(js("Number"), "Int", Int::class)
-    check(js("Number"), "Float", Float::class)
-    check(js("Number"), "Double", Double::class)
-    check(js("Number"), "Number", Number::class)
+    check(js("Number"), "Byte", Byte::class, Byte::class.js)
+    check(js("Number"), "Short", Short::class, Short::class.js)
+    check(js("Number"), "Int", Int::class, Int::class.js)
+    check(js("Number"), "Float", Float::class, Float::class.js)
+    check(js("Number"), "Double", Double::class, Double::class.js)
+    check(js("Number"), "Number", Number::class, Number::class.js)
 
-    check(js("Array"), "BooleanArray", BooleanArray::class)
-    check(js("Uint16Array"), "CharArray", CharArray::class)
-    check(js("Int8Array"), "ByteArray", ByteArray::class)
-    check(js("Int16Array"), "ShortArray", ShortArray::class)
-    check(js("Int32Array"), "IntArray", IntArray::class)
+    check(js("Array"), "BooleanArray", BooleanArray::class, BooleanArray::class.js)
+    check(js("Uint16Array"), "CharArray", CharArray::class, CharArray::class.js)
+    check(js("Int8Array"), "ByteArray", ByteArray::class, ByteArray::class.js)
+    check(js("Int16Array"), "ShortArray", ShortArray::class, ShortArray::class.js)
+    check(js("Int32Array"), "IntArray", IntArray::class, IntArray::class.js)
 
     if (compileLongAsBigInt()) {
-        check(js("BigInt64Array"), "LongArray", LongArray::class)
+        check(js("BigInt64Array"), "LongArray", LongArray::class, LongArray::class.js)
     } else {
-        check(js("Array"), "LongArray", LongArray::class)
+        check(js("Array"), "LongArray", LongArray::class, LongArray::class.js)
     }
 
-    check(js("Float32Array"), "FloatArray", FloatArray::class)
-    check(js("Float64Array"), "DoubleArray", DoubleArray::class)
+    check(js("Float32Array"), "FloatArray", FloatArray::class, FloatArray::class.js)
+    check(js("Float64Array"), "DoubleArray", DoubleArray::class, DoubleArray::class.js)
+
+    check(js("Object"), "Any", Any())
+    check(js("String"), "String", "*")
+    check(js("Boolean"), "Boolean", true)
+    check(js("Error"), "Throwable", Throwable())
+    check(js("Array"), "Array", arrayOf(1, 2, 3))
+    check(js("Function"), "Function0", { -> 23 })
+    check(js("Function"), "Function1", { x: Int -> x })
+
+    check(js("Array"), "BooleanArray", booleanArrayOf())
+    check(js("Uint16Array"), "CharArray", charArrayOf())
+    check(js("Int8Array"), "ByteArray", byteArrayOf())
+    check(js("Int16Array"), "ShortArray", shortArrayOf())
+    check(js("Int32Array"), "IntArray", intArrayOf())
+
+    if (compileLongAsBigInt()) {
+        check(js("BigInt64Array"), "LongArray", longArrayOf())
+    } else {
+        check(js("Array"), "LongArray", longArrayOf())
+    }
+
+    check(js("Float32Array"), "FloatArray", floatArrayOf())
+    check(js("Float64Array"), "DoubleArray", doubleArrayOf())
 
     check(js("Object"), "Any", Any())
     check(js("String"), "String", "*")
@@ -70,14 +93,13 @@ fun box(): String {
     if (compileLongAsBigInt()) {
         check(js("BigInt"), "Long", 23L)
     }
-
-    check(js("Number"), "Int", Int::class)
-    check(js("Number"), "Byte", Byte::class)
-    check(js("Number"), "Double", Double::class)
+    check(js("Number"), "Int", Int::class, Int::class.js)
+    check(js("Number"), "Byte", Byte::class, Int::class.js)
+    check(js("Number"), "Double", Double::class, Int::class.js)
 
     // KT-84474
     if (compileLongAsBigInt()) {
-        check(js("BigInt"), "Long", Long::class)
+        check(js("BigInt"), "Long", Long::class, Long::class.js)
     }
 
     // KT-84474
@@ -115,12 +137,13 @@ fun box(): String {
     return "OK"
 }
 
-private fun check(nativeClass: dynamic, simpleName: String, c: KClass<*>) {
+private fun check(nativeClass: dynamic, simpleName: String, c: KClass<*>, jsClass: JsClass<*>) {
     assertEquals(simpleName, c.simpleName, "Simple name of class has unexpected value")
     assertEquals(nativeClass, c.js, "Kotlin class does not correspond native class ${nativeClass?.name}")
+    assertEquals(c.js, jsClass, "Native class (gotten by getKClass().js) does not correspond to native class gotten by optimization of ::class.js: ${nativeClass?.name}")
 }
 
 private fun check(nativeClass: dynamic, simpleName: String, value: Any) {
-    check(nativeClass, simpleName, value::class)
+    check(nativeClass, simpleName, value::class, value::class.js)
     assertTrue(value::class.isInstance(value), "isInstance should return true for $simpleName")
 }

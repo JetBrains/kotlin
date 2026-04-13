@@ -5,7 +5,7 @@ fun foo() {
         init {
             var y: Int?
             y = 42
-            x = <!DEBUG_INFO_SMARTCAST!>y<!>.hashCode()
+            x = y.hashCode()
         }
     }
 }

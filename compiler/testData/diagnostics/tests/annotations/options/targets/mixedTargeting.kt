@@ -73,34 +73,34 @@ public class AnnotationTargets {
 
 // FILE: test/AnnotationTargets.kt
 
-<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:AnnotationTargets.typeButKotlinParameter<!>
-<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@file:AnnotationTargets.parameterButKotlinFile<!>
+@file:AnnotationTargets.typeButKotlinParameter
+@file:AnnotationTargets.parameterButKotlinFile
 package test
 
 import test.AnnotationTargets.*
 
-@baseButKotlinType @metaButKotlinFun @typeButKotlinParameter @konstructorButKotlinGetter @fieldannButKotlinMeta
+@baseButKotlinType @metaButKotlinFun @typeButKotlinParameter <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!> @fieldannButKotlinMeta
 annotation class KmetaButKotlinFun
 
-@noneButKotlinClass @baseButKotlinType @metaButKotlinFun @typeButKotlinParameter @methodButKotlinMultiple @multipleButKotlinProperty <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
+@noneButKotlinClass @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@metaButKotlinFun<!> @typeButKotlinParameter @methodButKotlinMultiple <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
 class KClass(
-    @baseButKotlinType @fieldannButKotlinMeta @parameterButKotlinFile @multipleButKotlinProperty val y: <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> Int
+    @baseButKotlinType @fieldannButKotlinMeta @parameterButKotlinFile @multipleButKotlinProperty val y: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> Int
 ) {
     @baseButKotlinType @multipleButKotlinProperty @fieldannButKotlinMeta <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!>
     val x = 0
-        <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @konstructorButKotlinGetter @typeButKotlinParameter get
+        @methodButKotlinMultiple @konstructorButKotlinGetter <!WRONG_ANNOTATION_TARGET!>@typeButKotlinParameter<!> get
 
-    @noneButKotlinClass @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @multipleButKotlinProperty @konstructorButKotlinGetter @metaButKotlinFun
-    fun foo(@parameterButKotlinFile @typeButKotlinParameter i: <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> Int): <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> <!WRONG_ANNOTATION_TARGET!>@parameterButKotlinFile<!> Int {
+    <!WRONG_ANNOTATION_TARGET!>@noneButKotlinClass<!> @baseButKotlinType @methodButKotlinMultiple @multipleButKotlinProperty <!WRONG_ANNOTATION_TARGET!>@konstructorButKotlinGetter<!> @metaButKotlinFun
+    fun foo(@parameterButKotlinFile @typeButKotlinParameter i: @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> Int): <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> <!WRONG_ANNOTATION_TARGET!>@parameterButKotlinFile<!> Int {
 
-        <!WRONG_ANNOTATION_TARGET!>@localButKotlinNone<!> @baseButKotlinType @multipleButKotlinProperty @fieldannButKotlinMeta @methodButKotlinMultiple val j = i + 1
-        <!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> return j
+        @localButKotlinNone @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@multipleButKotlinProperty<!> <!WRONG_ANNOTATION_TARGET!>@fieldannButKotlinMeta<!> @methodButKotlinMultiple val j = i + 1
+        @baseButKotlinType @multipleButKotlinProperty return j
     }
 
     @baseButKotlinType <!WRONG_ANNOTATION_TARGET!>@methodButKotlinMultiple<!> @konstructorButKotlinGetter @multipleButKotlinProperty
     constructor(): this(0)
 
-    @property:baseButKotlinType
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@property:baseButKotlinType<!>
     val z = 0
 
     fun <<!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> T> bar() {}

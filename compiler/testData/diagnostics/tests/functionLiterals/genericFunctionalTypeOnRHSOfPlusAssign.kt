@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> = TODO()

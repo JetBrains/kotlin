@@ -22,7 +22,7 @@ fun bad(): String {
     val x: String? = null
 
     x?.myRun { return "" }
-<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY_MIGRATION!>}<!>
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun ok(): String {
     val x: String? = null

@@ -192,7 +192,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                 CALL 'public final fun collect <T> (<this>: <root>.Flow<T of <root>.collect>, action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "value")] T of <root>.collect, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                   TYPE_ARG T: kotlin.Any?
                   ARG <this>: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asChannel' type=<root>.Flow<*> origin=null
-                  ARG action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "value")] kotlin.Any?, kotlin.Unit> origin=LAMBDA
+                  ARG action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
                       BLOCK_BODY
@@ -231,7 +231,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                 CALL 'public final fun collect <T> (<this>: <root>.Flow<T of <root>.collect>, action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "value")] T of <root>.collect, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                   TYPE_ARG T: kotlin.Any?
                   ARG <this>: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
-                  ARG action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "value")] kotlin.Any?, kotlin.Unit> origin=LAMBDA
+                  ARG action: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Unit> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
                       BLOCK_BODY
@@ -307,12 +307,12 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
         CALL 'public final fun onCompletion <T> (<this>: <root>.Flow<T of <root>.onCompletion>, action: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit>): <root>.Flow<T of <root>.onCompletion> declared in <root>' type=<root>.Flow<T of <root>.onCompletion> origin=null
           TYPE_ARG T: T of <root>.onCompletion
           ARG <this>: GET_VAR '<this>: <root>.Flow<T of <root>.onCompletion> declared in <root>.onCompletion' type=<root>.Flow<T of <root>.onCompletion> origin=IMPLICIT_ARGUMENT
-          ARG action: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, @[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit> origin=LAMBDA
+          ARG action: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.onCompletion>, kotlin.Throwable?, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
               VALUE_PARAMETER kind:ExtensionReceiver name:$this$onCompletion index:0 type:<root>.FlowCollector<T of <root>.onCompletion>
               VALUE_PARAMETER kind:Regular name:it index:1 type:kotlin.Throwable?
               BLOCK_BODY
-                CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1' type=kotlin.Unit origin=INVOKE
+                CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 declared in kotlin.coroutines.SuspendFunction1' type=kotlin.Unit origin=null
                   ARG <this>: GET_VAR 'action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.coroutines.SuspendFunction1<@[ParameterName(name = "cause")] kotlin.Throwable?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
                   ARG p1: GET_VAR 'it: kotlin.Throwable? declared in <root>.onCompletion.<anonymous>' type=kotlin.Throwable? origin=null
   FUN name:produce visibility:public modality:FINAL returnType:<root>.ReceiveChannel<E of <root>.produce>
@@ -345,9 +345,9 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
                       VALUE_PARAMETER kind:ExtensionReceiver name:$this$flowScope index:0 type:<root>.CoroutineScope
                       BLOCK_BODY
-                        CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction2, p2: P2 of kotlin.coroutines.SuspendFunction2): R of kotlin.coroutines.SuspendFunction2 declared in kotlin.coroutines.SuspendFunction2' type=kotlin.Unit origin=INVOKE
+                        CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction2, p2: P2 of kotlin.coroutines.SuspendFunction2): R of kotlin.coroutines.SuspendFunction2 declared in kotlin.coroutines.SuspendFunction2' type=kotlin.Unit origin=null
                           ARG <this>: GET_VAR 'block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> declared in <root>.scopedFlow' type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.CoroutineScope, <root>.FlowCollector<R of <root>.scopedFlow>, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-                          ARG p1: GET_VAR '$this$flowScope: <root>.CoroutineScope declared in <root>.scopedFlow.<anonymous>.<anonymous>' type=<root>.CoroutineScope origin=null
+                          ARG p1: GET_VAR '$this$flowScope: <root>.CoroutineScope declared in <root>.scopedFlow.<anonymous>.<anonymous>' type=<root>.CoroutineScope origin=IMPLICIT_ARGUMENT
                           ARG p2: GET_VAR 'val collector: <root>.FlowCollector<R of <root>.scopedFlow> declared in <root>.scopedFlow.<anonymous>' type=<root>.FlowCollector<R of <root>.scopedFlow> origin=null
   FUN name:unsafeFlow visibility:public modality:FINAL returnType:<root>.Flow<T of <root>.unsafeFlow> [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

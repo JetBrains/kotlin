@@ -19,7 +19,7 @@ open class D {
 }
 
 class E : D() {
-    internal <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun self() = this
+    internal <!NOTHING_TO_OVERRIDE!>override<!> fun self() = this
 
     fun test() {
         val s : E = self()
@@ -36,7 +36,7 @@ class G : F() {
 }
 
 fun test_fun_stays_protected(g: G) {
-    g.<!INVISIBLE_MEMBER!>protected_fun<!>()
+    g.<!INVISIBLE_REFERENCE!>protected_fun<!>()
 }
 
 //------------

@@ -189,11 +189,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
             R|/withGetterAndSetter| = Int(123)
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun receive([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] var withGetterAndSetter: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
-            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] var withGetterAndSetter: R|kotlin/Int| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 FILE RAW TO BODY:
@@ -217,4 +217,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithGetterAndSetterScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
                 F|/withGetterAndSetter| = R|<local>/value|
             }
-

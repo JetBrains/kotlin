@@ -1,5 +1,4 @@
 // LANGUAGE: +HoldsInContracts, +AllowContractsOnSomeOperators
-// IGNORE_FE10
 // MODULE: lib
 // MODULE_KIND: LibraryBinary
 // FILE: declaration.kt

@@ -42,27 +42,27 @@ class A(val x: String = "x") {
 }
 
 fun usage(a: A) {
-    a.test1()
-    a.x
-    A()
-    A("", "")
+    a.<!RETURN_VALUE_NOT_USED!>test1<!>()
+    a.<!RETURN_VALUE_NOT_USED!>x<!>
+    <!RETURN_VALUE_NOT_USED!>A<!>()
+    <!RETURN_VALUE_NOT_USED!>A<!>("", "")
     with("context") {
-        a.test2()
-        a.e
+        a.<!RETURN_VALUE_NOT_USED!>test2<!>()
+        a.<!RETURN_VALUE_NOT_USED!>e<!>
         Unit
     }
     with(a) {
-        "".test3()
-        "".f
+        "".<!RETURN_VALUE_NOT_USED!>test3<!>()
+        "".<!RETURN_VALUE_NOT_USED!>f<!>
         Unit
     }
     a.test4()
-    a.c
-    a.d
+    a.<!RETURN_VALUE_NOT_USED!>c<!>
+    a.<!RETURN_VALUE_NOT_USED!>d<!>
     a.d = ""
-    a.g
-    a.h
-    A.MyTypealias
+    a.<!RETURN_VALUE_NOT_USED!>g<!>
+    a.<!RETURN_VALUE_NOT_USED!>h<!>
+    <!UNUSED_EXPRESSION!>A.MyTypealias<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,

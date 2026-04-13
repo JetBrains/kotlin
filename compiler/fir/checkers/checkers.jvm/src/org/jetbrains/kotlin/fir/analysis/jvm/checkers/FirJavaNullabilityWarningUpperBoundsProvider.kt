@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -18,10 +17,10 @@ class FirJavaNullabilityWarningUpperBoundsProvider(session: FirSession) : FirPla
         session.typeContext,
     )
 
-    override val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+    override val diagnostic: PlatformUpperBoundViolatedDiagnosticFactory
         get() = FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
 
-    override val diagnosticForTypeAlias: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+    override val diagnosticForTypeAlias: PlatformUpperBoundViolatedDiagnosticFactory
         get() = FirJvmErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 
     override fun getAdditionalUpperBound(coneKotlinType: ConeKotlinType): ConeKotlinType? {

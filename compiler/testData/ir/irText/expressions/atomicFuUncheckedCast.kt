@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class AtomicRef<T>(var value: T)
 
 class Box(val b: Int)

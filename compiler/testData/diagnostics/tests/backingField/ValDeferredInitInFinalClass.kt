@@ -6,7 +6,7 @@ class Foo : I {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val final_notInitializedInPlace0: Int<!>
     val final_initializedInPlace0: Int = 1
     override val open_notInitializedInPlace_deferredInit0: Int
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>override val open_notInitializedInPlace0: Int<!>
+    override <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val open_notInitializedInPlace0: Int<!>
     override val open_initializedInPlace0: Int = 1
 
     // getter with field
@@ -14,7 +14,7 @@ class Foo : I {
     <!MUST_BE_INITIALIZED!>val final_notInitializedInPlace1: Int<!>; get() = field
     val final_initializedInPlace1: Int = 1; get() = field
     override val open_notInitializedInPlace_deferredinit1: Int; get() = field
-    <!MUST_BE_INITIALIZED!>override val open_notInitializedInPlace1: Int<!>; get() = field
+    override <!MUST_BE_INITIALIZED!>val open_notInitializedInPlace1: Int<!>; get() = field
     override val open_initializedInPlace1: Int = 1; get() = field
 
     // getter with empty body
@@ -22,7 +22,7 @@ class Foo : I {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val final_notInitializedInPlace2: Int<!>; get
     val final_initializedInPlace2: Int = 1; get
     override val open_notInitializedInPlace_deferredinit2: Int; get
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>override val open_notInitializedInPlace2: Int<!>; get
+    override <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val open_notInitializedInPlace2: Int<!>; get
     override val open_initializedInPlace2: Int = 1; get
 
     // getter no field

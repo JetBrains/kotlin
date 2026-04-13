@@ -15,8 +15,11 @@ class AbstractCoroutineContextElementTest {
     abstract class Base : AbstractCoroutineContextElement(Key) {
         companion object Key : CoroutineContext.Key<Base>
 
-        override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? = getPolymorphicElement(key)
-        override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext = minusPolymorphicKey(key)
+        override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? =
+            @Suppress("DEPRECATION") getPolymorphicElement(key)
+
+        override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext =
+            @Suppress("DEPRECATION") minusPolymorphicKey(key)
     }
 
     class DerivedWithoutKey : Base() {
@@ -24,15 +27,18 @@ class AbstractCoroutineContextElementTest {
     }
 
     open class DerivedWithKey : Base() {
+        @Suppress("DEPRECATION")
         companion object Key : AbstractCoroutineContextKey<Base, DerivedWithKey>(Base, { it as? DerivedWithKey })
     }
 
     class SubDerivedWithKey : DerivedWithKey() {
+        @Suppress("DEPRECATION")
         companion object Key : AbstractCoroutineContextKey<Base, SubDerivedWithKey>(Base, { it as? SubDerivedWithKey })
     }
 
     class SubDerivedWithKeyAndDifferentBase : DerivedWithKey() {
         // Note how different base class is used
+        @Suppress("DEPRECATION")
         companion object Key :
             AbstractCoroutineContextKey<DerivedWithKey, SubDerivedWithKeyAndDifferentBase>(
                 DerivedWithKey,

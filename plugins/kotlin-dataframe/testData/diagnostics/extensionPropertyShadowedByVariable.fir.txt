@@ -14,20 +14,20 @@ FILE: extensionPropertyShadowedByVariable.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01I>|.a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_01I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class DataFrameOf_01 : R|<local>/DataFrameOf_01I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/DataFrameOf_01|
 
@@ -42,11 +42,11 @@ FILE: extensionPropertyShadowedByVariable.kt
         }
         )
         R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|<local>/DataFrameOf_01|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
-            ^ ==((this@R|/box|, R|<local>/it|).R|<local>/Scope0.a|, Int(42))
+            ^ ==((this@R|/box|, R|<local>/it|).R|<local>/DataFramePropertiesScope0.a|, Int(42))
         }
         )
         R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|<local>/DataFrameOf_01|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_01>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
-            ^ ==((this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.a|, Int(42))
+            ^ ==((this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.a|, Int(42))
         }
         )
         R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|MySchema|>().R|org/jetbrains/kotlinx/dataframe/api/filter|<R|MySchema|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<MySchema>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {

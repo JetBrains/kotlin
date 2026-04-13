@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 //KT-2418 Front-end allows enum constants with same name
 
 package kt2418

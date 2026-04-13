@@ -19,16 +19,16 @@ public interface SLRUMap<V> {
 // FILE: main.kt
 
 fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
-    takeV(<!TYPE_MISMATCH!>value<!>)
-    takeVList(<!TYPE_MISMATCH!>l<!>)
+    takeV(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
+    takeVList(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 
-    takeE(<!TYPE_MISMATCH!>value<!>)
-    takeEList(<!TYPE_MISMATCH!>l<!>)
-    takeE(<!TYPE_MISMATCH!>id(value)<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeE<!>(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeEList<!>(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeE<!>(<!ARGUMENT_TYPE_MISMATCH!>id(value)<!>)
 
     if (value != null) {
-        takeV(<!DEBUG_INFO_SMARTCAST!>value<!>)
-        takeE(<!DEBUG_INFO_SMARTCAST!>value<!>)
+        takeV(value)
+        takeE(value)
         takeE(id(value))
     }
 }

@@ -4,9 +4,9 @@
 // FIR_DUMP
 
 enum class Ambiguous {
-    first, <!DEPRECATED_DECLARATION_OF_ENUM_ENTRY!>entries;<!>
+    first, <!DECLARATION_OF_ENUM_ENTRY_ENTRIES_WARNING!>entries<!>;
 }
 
-val e = Ambiguous.entries.ordinal
+val e = Ambiguous.<!OVERLOAD_RESOLUTION_AMBIGUITY!>entries<!>.<!UNRESOLVED_REFERENCE!>ordinal<!>
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, propertyDeclaration */

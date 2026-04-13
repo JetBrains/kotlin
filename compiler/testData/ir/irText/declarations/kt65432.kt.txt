@@ -9,7 +9,7 @@ class A : Java1 {
 
 open class KotlinClass : ArrayList<Int> {
   constructor() /* primary */ {
-    super/*ArrayList*/<@FlexibleNullability Int?>()
+    super/*ArrayList*/<Int>()
     /* <init>() */
 
   }

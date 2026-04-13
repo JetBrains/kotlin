@@ -4,7 +4,7 @@ class My {
     init {
         var y: Int? = null
         if (y != null) {
-            x = <!DEBUG_INFO_SMARTCAST!>y<!>.hashCode()
+            x = y.hashCode()
         }
         else {
             x = 0

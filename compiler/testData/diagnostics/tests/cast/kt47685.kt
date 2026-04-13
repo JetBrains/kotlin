@@ -23,7 +23,7 @@ fun test_1(namedFunction: KtNamedFunction, functionLiteral: KtFunctionLiteral, c
     function.bar()
 
     if (function is KtNamedFunction) {
-        <!DEBUG_INFO_SMARTCAST!>function<!>.baz()
+        function.baz()
     }
 
     val myNamedFunction = function as KtNamedFunction

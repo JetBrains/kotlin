@@ -20,7 +20,7 @@ fun main(a: A<String>) {
     val x = generate {
         withCallback(a, this) {
             (it as B).b.length
-            <!DEBUG_INFO_SMARTCAST!>it<!>.b.length
+            it.b.length
             it.a.length
         }
     }

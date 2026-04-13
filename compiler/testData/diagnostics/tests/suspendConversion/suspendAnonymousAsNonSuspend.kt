@@ -4,8 +4,8 @@
 fun <T> produce(arg: () -> T): T = arg()
 
 fun main() {
-    produce {
-        suspend fun() {} // CCE
+    <!CANNOT_INFER_PARAMETER_TYPE!>produce<!> {
+        <!RETURN_TYPE_MISMATCH!><!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun() {}<!> // CCE
     }
 }
 

@@ -4,10 +4,10 @@
 // (i.e. neither explicitly visible nor hidden) are hidden in the declaring class and since constructors are not inheritable,
 // they're always hidden.
 
-abstract class A : <!DEPRECATION!>Throwable<!>(1.0) {}
+abstract class A : <!NONE_APPLICABLE!>Throwable<!>(1.0) {}
 
 fun foo() {
-    <!DEPRECATION!>Throwable<!>(1.5)
+    <!NONE_APPLICABLE!>Throwable<!>(1.5)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

@@ -5,7 +5,7 @@
 import kotlin.reflect.KClass
 
 expect annotation class Ann(
-    val p: KClass<*> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT{JVM}!>Foo.<!UNRESOLVED_REFERENCE{JVM}!>Nested<!>::class<!>
+    val p: KClass<*> = Foo.Nested::class
 )
 
 expect class Foo {
@@ -24,7 +24,7 @@ class FooImpl {
 actual typealias Foo = FooImpl
 
 actual annotation class Ann(
-    actual val p: KClass<*> = <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>FooImpl.Nested::class<!>
+    actual val p: KClass<*> = FooImpl.Nested::class
 )
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, classReference, expect, nestedClass,

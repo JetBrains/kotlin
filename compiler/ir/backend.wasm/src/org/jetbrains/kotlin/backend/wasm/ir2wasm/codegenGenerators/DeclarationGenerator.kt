@@ -191,7 +191,7 @@ class DeclarationGenerator(
             sourceFile,
         )
 
-        declaration.forEachEffectiveValueParameters { it
+        declaration.forEachEffectiveValueParameters {
             functionCodegenContext.defineLocal(it.symbol)
         }
 

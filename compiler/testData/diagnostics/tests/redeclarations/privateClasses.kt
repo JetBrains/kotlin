@@ -2,9 +2,9 @@
 // ISSUE: KTIJ-30120
 
 // FILE: A1.kt
-private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+private class <!CLASSIFIER_REDECLARATION!>A<!>
 
 // FILE: A2.kt
-private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
+private class <!CLASSIFIER_REDECLARATION!>A<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration */

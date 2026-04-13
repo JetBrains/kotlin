@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // SKIP_TXT
-// FIR_IDENTICAL
 
 abstract class A {
     open public fun foo(x: Any) {}

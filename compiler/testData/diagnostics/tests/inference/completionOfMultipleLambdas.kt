@@ -8,20 +8,20 @@ interface A
 interface B
 
 fun test() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("(A, A) -> kotlin.Unit")!>select3(
+    select3(
         { a: A, b: A -> Unit },
         { b, a -> Unit },
-        <!TYPE_MISMATCH!><!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> <!UNRESOLVED_REFERENCE!>it<!>; Unit }<!>
-    )<!>
+        <!ARGUMENT_TYPE_MISMATCH!>{ <!UNRESOLVED_REFERENCE!>it<!>; Unit }<!>
+    )
 }
 
 // ISSUE: KT-27999
 // ISSUE: KT-30244
 fun test_1() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("() -> {Comparable<*> & java.io.Serializable}")!>select(
+    select(
         { 1 },
         { "" }
-    )<!>
+    )
 }
 
 // ISSUE: KT-31102

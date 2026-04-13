@@ -2,7 +2,7 @@
 fun test5() {
     var a: Int
     try {
-        <!UNUSED_VALUE!>a =<!> 3
+        a = 3
     }
     finally {
         a = 5

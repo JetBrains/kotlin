@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // CHECK_TYPE
 
 // A generic funciton is always less specific than a non-generic one

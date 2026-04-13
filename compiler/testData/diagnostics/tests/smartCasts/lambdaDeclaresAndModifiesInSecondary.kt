@@ -5,7 +5,7 @@ class My {
         run {
             var x = arg
             if (x == null) return@run
-            <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+            x.hashCode()
         }   
     }
 }

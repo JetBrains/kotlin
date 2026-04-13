@@ -24,10 +24,10 @@ class Cls {
     fun testLocalDeclarations() {
         val localVariable = intersect(First, Second)
         fun localFunction() = intersect(First, Second)
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Bound1 & Bound2}")!>localVariable<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>privateProperty<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>localFunction()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>privateMemberFunction()<!>
+        localVariable
+        privateProperty
+        localFunction()
+        privateMemberFunction()
     }
 }
 
@@ -41,21 +41,21 @@ object Obj {
     fun testLocalDeclarations() {
         val localVariable = intersect(First, Second)
         fun localFunction() = intersect(First, Second)
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Bound1 & Bound2}")!>localVariable<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>localFunction()<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>privateProperty<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>privateMemberFunction()<!>
+        localVariable
+        localFunction()
+        privateProperty
+        privateMemberFunction()
     }
 }
 
 fun test(cls: Cls, obj: Obj) {
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>topLevelFunction()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>Unit.extensionProperty<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>Unit.extensionFunction()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>cls.publicProperty<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>cls.publicMemberFunction()<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>obj.publicProperty<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bound1")!>obj.publicMemberFunction()<!>
+    topLevelFunction()
+    Unit.extensionProperty
+    Unit.extensionFunction()
+    cls.publicProperty
+    cls.publicMemberFunction()
+    obj.publicProperty
+    obj.publicMemberFunction()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,

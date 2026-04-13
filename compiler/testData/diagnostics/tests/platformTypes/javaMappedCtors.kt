@@ -11,29 +11,29 @@ typealias AFloat = Float
 typealias ADouble = Double
 
 fun main() {
-    <!INVISIBLE_MEMBER!>ABoolean<!>(<!TOO_MANY_ARGUMENTS!>false<!>)
-    <!INVISIBLE_MEMBER!>Boolean<!>(<!TOO_MANY_ARGUMENTS!>false<!>)
+    ABoolean(<!TOO_MANY_ARGUMENTS!>false<!>)
+    Boolean(<!TOO_MANY_ARGUMENTS!>false<!>)
 
-    <!INVISIBLE_MEMBER!>AChar<!>(<!TOO_MANY_ARGUMENTS!>'c'<!>)
-    <!INVISIBLE_MEMBER!>Char<!>(<!TOO_MANY_ARGUMENTS!>'c'<!>)
+    AChar(<!TOO_MANY_ARGUMENTS!>'c'<!>)
+    Char(<!TOO_MANY_ARGUMENTS!>'c'<!>)
 
-    <!INVISIBLE_MEMBER!>AInt<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
-    <!INVISIBLE_MEMBER!>Int<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
+    AInt(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Int(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_MEMBER!>ALong<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
-    <!INVISIBLE_MEMBER!>Long<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
+    ALong(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Long(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_MEMBER!>AShort<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
-    <!INVISIBLE_MEMBER!>Short<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
+    AShort(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Short(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_MEMBER!>AByte<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
-    <!INVISIBLE_MEMBER!>Byte<!>(<!TOO_MANY_ARGUMENTS!>42<!>)
+    AByte(<!TOO_MANY_ARGUMENTS!>42<!>)
+    Byte(<!TOO_MANY_ARGUMENTS!>42<!>)
 
-    <!INVISIBLE_MEMBER!>AFloat<!>(<!TOO_MANY_ARGUMENTS!>4.2f<!>)
-    <!INVISIBLE_MEMBER!>Float<!>(<!TOO_MANY_ARGUMENTS!>4.2f<!>)
+    AFloat(<!TOO_MANY_ARGUMENTS!>4.2f<!>)
+    Float(<!TOO_MANY_ARGUMENTS!>4.2f<!>)
 
-    <!INVISIBLE_MEMBER!>ADouble<!>(<!TOO_MANY_ARGUMENTS!>4.2<!>)
-    <!INVISIBLE_MEMBER!>Double<!>(<!TOO_MANY_ARGUMENTS!>4.2<!>)
+    ADouble(<!TOO_MANY_ARGUMENTS!>4.2<!>)
+    Double(<!TOO_MANY_ARGUMENTS!>4.2<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, typeAliasDeclaration */

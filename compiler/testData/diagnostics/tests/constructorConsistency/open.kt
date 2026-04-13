@@ -1,8 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 open class Base {
     init {
-        register(<!DEBUG_INFO_LEAKING_THIS!>this<!>)
-        <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+        register(this)
+        foo()
     }
 
     open fun foo() {}
@@ -28,7 +28,7 @@ enum class MyEnum {
     };
 
     init {
-        <!DEBUG_INFO_LEAKING_THIS!>foo<!>()
+        foo()
     }
 
     abstract fun foo()

@@ -34,7 +34,7 @@ fun test_1_continue() {
 fun test_2_continue() {
     while (true) {
         inlineRun {
-            val result = it ?: <!UNSUPPORTED_FEATURE!>continue<!>
+            val result = it ?: continue
         }
     }
 }
@@ -60,7 +60,7 @@ fun test_1_break() {
 fun test_2_break() {
     while (true) {
         inlineRun {
-            val result = it ?: <!UNSUPPORTED_FEATURE!>break<!>
+            val result = it ?: break
         }
     }
 }

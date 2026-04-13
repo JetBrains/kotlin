@@ -93,15 +93,15 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?, value_2: Any?) {
     contracts.case_1(value_1, value_2)
-    println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-    println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+    println(value_1.length)
+    println(value_2.toByte())
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Any?, value_2: Any?) {
     contracts.case_2(value_1, value_2)
-    println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-    println(<!DEBUG_INFO_CONSTANT!>value_2<!>?.toByte())
+    println(value_1.length)
+    println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -110,49 +110,49 @@ class case_3_class {
     fun case_3(value_1: Any?, value_2: Number?) {
         val o = case_3_class()
         contracts.case_3(value_1, value_2, o.prop_1, this.prop_1)
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
+        println(value_1.dec())
         println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
-        println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
+        println(o.prop_1.plus(3))
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?, value_2: Any?) {
     if (contracts.case_4_1(value_1, value_2)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+        println(value_1.length)
+        println(value_2.toByte())
     }
     if (!contracts.case_4_2(value_1, value_2)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+        println(value_1.length)
+        println(value_2.toByte())
     }
     if (contracts.case_4_3(value_1, value_2) != null) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+        println(value_1.length)
+        println(value_2.toByte())
     }
     if (contracts.case_4_4(value_1, value_2) == null) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte())
+        println(value_1.length)
+        println(value_2.toByte())
     }
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Any?, value_2: Any?) {
     if (contracts.case_5_1(value_1, value_2)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_CONSTANT!>value_2<!>?.toByte())
+        println(value_1.length)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!contracts.case_5_2(value_1, value_2)) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_CONSTANT!>value_2<!>?.toByte())
+        println(value_1.length)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_3(value_1, value_2) != null) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_CONSTANT!>value_2<!>?.toByte())
+        println(value_1.length)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_4(value_1, value_2) == null) {
-        println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.length)
-        println(<!DEBUG_INFO_CONSTANT!>value_2<!>?.toByte())
+        println(value_1.length)
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -162,24 +162,24 @@ class case_6_class {
     fun case_6(value_1: Any?, value_2: Number?) {
         val o = case_6_class()
         if (contracts.case_6_1(value_1, value_2, o.prop_1, this.prop_1)) {
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
+            println(value_1.dec())
             println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
-            println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
+            println(o.prop_1.plus(3))
         }
         if (!contracts.case_6_2(value_1, value_2, o.prop_1, this.prop_1)) {
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
+            println(value_1.dec())
             println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
-            println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
+            println(o.prop_1.plus(3))
         }
         if (contracts.case_6_3(value_1, value_2, o.prop_1, this.prop_1) != null) {
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
+            println(value_1.dec())
             println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
-            println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
+            println(o.prop_1.plus(3))
         }
         if (contracts.case_6_4(value_1, value_2, o.prop_1, this.prop_1) == null) {
-            println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
+            println(value_1.dec())
             println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
-            println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
+            println(o.prop_1.plus(3))
         }
     }
 }

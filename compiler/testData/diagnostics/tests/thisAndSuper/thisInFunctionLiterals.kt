@@ -12,7 +12,7 @@ class A(val a:Int) {
         checkSubtype<A>(this@A)
       }
       val b: Double.() -> Unit = a@{ checkSubtype<Double>(this@a) + checkSubtype<Byte>(this@xx) }
-      val c = a@{ -> <!NO_THIS!>this@a<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> checkSubtype<Byte>(this@xx) }
+      val c = a@{ -> this<!UNRESOLVED_LABEL!>@a<!> + checkSubtype<Byte>(this@xx) }
       return (a@{checkSubtype<Double>(this@a) + checkSubtype<Byte>(this@xx)})
     }
   }

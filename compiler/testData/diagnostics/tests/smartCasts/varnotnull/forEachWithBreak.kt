@@ -11,10 +11,10 @@ fun list(start: SomeObject): SomeObject {
         if (e == null)
             break
         // Smart casts are possible because of the break before
-        <!DEBUG_INFO_SMARTCAST!>e<!>.doSomething()
-        e = <!DEBUG_INFO_SMARTCAST!>e<!>.next()
+        e.doSomething()
+        e = e.next()
     }
-    return <!TYPE_MISMATCH!>e<!>
+    return <!RETURN_TYPE_MISMATCH!>e<!>
 }
 
 /* GENERATED_FIR_TAGS: assignment, break, classDeclaration, data, equalityExpression, forLoop, functionDeclaration,

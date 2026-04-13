@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class Fun :
         (Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,

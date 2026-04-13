@@ -8,7 +8,7 @@ repositories {
 }
 
 kotlin {
-    js(IR) {
+    js {
         binaries.library()
         browser()
     }

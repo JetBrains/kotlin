@@ -13,13 +13,13 @@ fun test0(x: Int?) {
     }
 
     if (x != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
         y<!UNSAFE_CALL!>.<!>inc()
     }
 
     if (y != null) {
         x<!UNSAFE_CALL!>.<!>inc()
-        <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
+        y.inc()
     }
 }
 
@@ -32,13 +32,13 @@ fun test1(x: Int?) {
     }
 
     if (x != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
         y<!UNSAFE_CALL!>.<!>inc()
     }
 
     if (y != null) {
         x<!UNSAFE_CALL!>.<!>inc()
-        <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
+        y.inc()
     }
 }
 
@@ -51,13 +51,13 @@ fun test2(x: Int?) {
     }
 
     if (x != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
         y<!UNSAFE_CALL!>.<!>inc()
     }
 
     if (y != null) {
         x<!UNSAFE_CALL!>.<!>inc()
-        <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
+        y.inc()
     }
 }
 
@@ -69,13 +69,13 @@ fun test3(x: Int?) {
     }
 
     if (x != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
         y<!UNSAFE_CALL!>.<!>inc()
     }
 
     if (y != null) {
         x<!UNSAFE_CALL!>.<!>inc()
-        <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
+        y.inc()
     }
 }
 
@@ -91,13 +91,13 @@ fun test5(x: Int?) {
     }
 
     if (x != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
         y<!UNSAFE_CALL!>.<!>inc()
     }
 
     if (y != null) {
         x<!UNSAFE_CALL!>.<!>inc()
-        <!DEBUG_INFO_SMARTCAST!>y<!>.inc()
+        y.inc()
     }
 }
 

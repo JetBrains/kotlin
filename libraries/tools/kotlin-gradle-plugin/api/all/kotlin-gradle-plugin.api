@@ -138,12 +138,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/AbstractKotlinNativeBinary
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/DeprecatedKotlinTargetHierarchyDsl : org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl {
-	public fun apply (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;)V
-	public fun custom (Lkotlin/jvm/functions/Function1;)V
-	public fun default (Lkotlin/jvm/functions/Function1;)V
-}
-
 public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension, org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension {
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
@@ -379,7 +373,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPl
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinJsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
 	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	public fun whenBuildEvaluated (Lorg/gradle/api/Project;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinMultiplatformPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
@@ -484,7 +477,6 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 	public fun getJavacOptions ()Ljava/util/Map;
 	public fun getKeepJavacAnnotationProcessors ()Z
 	public fun getMapDiagnosticLocations ()Z
-	public fun getProcessors ()Ljava/lang/String;
 	public fun getShowProcessorStats ()Z
 	public fun getStrictMode ()Z
 	public fun getStripMetadata ()Z
@@ -499,7 +491,6 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 	public fun setIncludeCompileClasspath (Ljava/lang/Boolean;)V
 	public fun setKeepJavacAnnotationProcessors (Z)V
 	public fun setMapDiagnosticLocations (Z)V
-	public fun setProcessors (Ljava/lang/String;)V
 	public fun setShowProcessorStats (Z)V
 	public fun setStrictMode (Z)V
 	public fun setStripMetadata (Z)V
@@ -528,7 +519,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBaseApiPlugin : o
 	public fun createCompilerJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;
 	public fun createKotlinAndroidExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension;
 	public fun createKotlinJvmExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmExtension;
-	public fun createKotlinJvmOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;
 	public fun getCompilerPlugins ()Lorg/gradle/api/file/FileCollection;
 	public synthetic fun getKaptExtension ()Lorg/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig;
 	public fun getKaptExtension ()Lorg/jetbrains/kotlin/gradle/plugin/KaptExtension;
@@ -898,9 +888,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinCompi
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinNativeCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinCompilation {
-	public synthetic fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
-	public fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile;
-	public fun getCompileKotlinTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public final fun getKonanTarget ()Lorg/jetbrains/kotlin/konan/target/KonanTarget;
@@ -1019,19 +1006,10 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/JointAndroidKotlinTarg
 	public fun getPublicationDelegate ()Lorg/gradle/api/publish/maven/MavenPublication;
 	public fun getPublishable ()Z
 	public fun getPublishableOnCurrentHost ()Z
-	public fun getSourcesArtifacts ()Ljava/util/Set;
 	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun getUsages ()Ljava/util/Set;
 	public fun setPublicationDelegate (Lorg/gradle/api/publish/maven/MavenPublication;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/KmpIsolatedProjectsSupport : java/lang/Enum {
-	public static final field AUTO Lorg/jetbrains/kotlin/gradle/plugin/mpp/KmpIsolatedProjectsSupport;
-	public static final field DISABLE Lorg/jetbrains/kotlin/gradle/plugin/mpp/KmpIsolatedProjectsSupport;
-	public static final field ENABLE Lorg/jetbrains/kotlin/gradle/plugin/mpp/KmpIsolatedProjectsSupport;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KmpIsolatedProjectsSupport;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/mpp/KmpIsolatedProjectsSupport;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinTarget, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions {
@@ -1068,8 +1046,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinAnd
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinCommonCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinCompilation, org/jetbrains/kotlin/gradle/plugin/mpp/KotlinMetadataCompilation {
-	public synthetic fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
-	public fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompileCommon;
 	public fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 }
 
@@ -1100,9 +1076,6 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilation : org/je
 	public synthetic fun getBinaries ()Lorg/gradle/api/DomainObjectSet;
 	public fun getBinaries ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsBinaryContainer;
 	public final fun getCompilationPurpose ()Ljava/lang/String;
-	public synthetic fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
-	public fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile;
-	public fun getCompileKotlinTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public final fun getNpmAggregatedConfigurationName ()Ljava/lang/String;
@@ -1122,9 +1095,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJsCompilationKt 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJvmAndroidCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinCompilationToRunnableFiles {
 	public final fun getAndroidVariant ()Lcom/android/build/gradle/api/BaseVariant;
 	public final fun getCompileJavaTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-	public synthetic fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
-	public fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompile;
-	public fun getCompileKotlinTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
@@ -1143,9 +1113,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJvmAndroidCompil
 
 public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinJvmCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractKotlinCompilationToRunnableFiles, org/jetbrains/kotlin/gradle/plugin/KotlinCompilationWithResources {
 	public final fun getCompileJavaTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-	public synthetic fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;
-	public fun getCompileKotlinTask ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompile;
-	public fun getCompileKotlinTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompileTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public fun getProcessResourcesTaskName ()Ljava/lang/String;
@@ -1377,7 +1344,6 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinVariant : org/jetbrain
 	public fun getPublicationDelegate ()Lorg/gradle/api/publish/maven/MavenPublication;
 	public fun getPublishable ()Z
 	public fun getPublishableOnCurrentHost ()Z
-	public fun getSourcesArtifacts ()Ljava/util/Set;
 	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public fun getUsages ()Ljava/util/Set;
 	public final fun setArtifactTargetName (Ljava/lang/String;)V
@@ -1547,6 +1513,24 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/S
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
 	public abstract fun getFlattenPackage ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$Identifier : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$Identifier;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$Identifier;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$Identifier;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIdentifier ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$None : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization$None;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency : java/io/Serializable {
@@ -1874,27 +1858,30 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/Swif
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension$Companion;
 	public static final field EXTENSION_NAME Ljava/lang/String;
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/Project;)V
 	public final fun branch (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun exact (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun from (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun getDiscoverClangModulesImplicitly ()Lorg/gradle/api/provider/Property;
 	public final fun getIosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
 	public final fun getMacosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
+	public final fun getPackageResolvedSynchronization ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization;
 	public final fun getTvosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
 	public final fun getWatchosMinimumDeploymentTarget ()Lorg/gradle/api/provider/Property;
-	public abstract fun getXcodeProjectPathForKmpIJPlugin ()Lorg/gradle/api/file/RegularFileProperty;
 	public final fun iOS ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Platform;
 	public final fun id (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Id;
+	public final fun identifier (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization;
 	public final fun localPackageWithProducts (Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
 	public static synthetic fun localPackageWithProducts$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
 	public final fun localSwiftPackage (Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
 	public static synthetic fun localSwiftPackage$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Lorg/gradle/api/file/Directory;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)V
 	public final fun macOS ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Platform;
+	public final fun noSynchronization ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization;
 	public final fun product (Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Product;
 	public static synthetic fun product$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMImportExtension;Ljava/lang/String;Ljava/util/Set;Ljava/util/Set;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Product;
 	public final fun range (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
 	public final fun revision (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;
+	public final fun setPackageResolvedSynchronization (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization;)V
 	public final fun swiftPackage (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
 	public final fun swiftPackage (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository$Url;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
 	public final fun swiftPackage (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Repository;Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/SwiftPMDependency$Remote$Version;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/util/Set;)V
@@ -2247,17 +2234,6 @@ public final class org/jetbrains/kotlin/gradle/report/BuildReportsService$Compan
 	public final fun getStartParameters (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;
 }
 
-public final class org/jetbrains/kotlin/gradle/report/BuildScanExtensionHolder : java/io/Serializable, org/jetbrains/kotlin/gradle/internal/report/BuildScanApi {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/report/BuildScanExtensionHolder$Companion;
-	public fun <init> (Lcom/gradle/scan/plugin/BuildScanExtension;)V
-	public fun buildFinished (Lkotlin/jvm/functions/Function0;)V
-	public fun tag (Ljava/lang/String;)V
-	public fun value (Ljava/lang/String;Ljava/lang/String;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/report/BuildScanExtensionHolder$Companion {
-}
-
 public final class org/jetbrains/kotlin/gradle/report/BuildScanSettings : java/io/Serializable {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/report/BuildScanSettings$Companion;
 	public static final field serialVersionUID J
@@ -2274,17 +2250,6 @@ public final class org/jetbrains/kotlin/gradle/report/BuildScanSettings : java/i
 }
 
 public final class org/jetbrains/kotlin/gradle/report/BuildScanSettings$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/report/DevelocityPluginBuildScanWrapper : java/io/Serializable, org/jetbrains/kotlin/gradle/internal/report/BuildScanApi {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/report/DevelocityPluginBuildScanWrapper$Companion;
-	public fun <init> (Lcom/gradle/develocity/agent/gradle/scan/BuildScanConfiguration;)V
-	public fun buildFinished (Lkotlin/jvm/functions/Function0;)V
-	public fun tag (Ljava/lang/String;)V
-	public fun value (Ljava/lang/String;Ljava/lang/String;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/report/DevelocityPluginBuildScanWrapper$Companion {
 }
 
 public final class org/jetbrains/kotlin/gradle/report/GradleBuildMetricsReporter : org/jetbrains/kotlin/build/report/metrics/BuildMetricsReporterImpl {
@@ -2614,86 +2579,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/UtilsKt {
 	public static final field META_JS Ljava/lang/String;
 	public static final field MJS Ljava/lang/String;
 	public static final field WASM Ljava/lang/String;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec$Companion;
-	public fun <init> ()V
-	public final fun getBinaryenSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
-	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
-	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
-	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
-public class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension$Companion;
-	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec;)V
-	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
-	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
-	public final fun getRootProject ()Lorg/gradle/api/Project;
-	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
-	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenPlugin : org/gradle/api/Plugin {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenPlugin$Companion;
-	public static final field TASKS_GROUP_NAME Ljava/lang/String;
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenPlugin$Companion {
-}
-
-public class org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootPlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion;
-	public fun <init> ()V
-	public final fun getD8SetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
-	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
-	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
-	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
-	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-	public final fun getEXTENSION_NAME ()Ljava/lang/String;
-	public fun getPlatformDisambiguator ()Ljava/lang/String;
-}
-
-public abstract class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;
-	public fun <init> ()V
-	protected fun exec ()V
-	public abstract fun getD8Args ()Lorg/gradle/api/provider/ListProperty;
-	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion {
-	public final fun create (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/gradle/api/tasks/TaskProvider;
-	public static synthetic fun create$default (Lorg/jetbrains/kotlin/gradle/targets/js/d8/D8Exec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
-}
-
-public class org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
@@ -3029,7 +2914,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/ir/D8EnvironmentConfig
 public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/DefaultIncrementalSyncTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/tasks/IncrementalSyncTask {
 	public fun <init> ()V
 	public final fun doCopy (Lorg/gradle/work/InputChanges;)V
-	public fun getDestinationDir ()Ljava/io/File;
 	public abstract fun getFs ()Lorg/gradle/api/file/FileSystemOperations;
 	public abstract fun getObjectFactory ()Lorg/gradle/api/model/ObjectFactory;
 }
@@ -5428,13 +5312,18 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec : org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenEnvSpec {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec$Companion;
 	public fun <init> ()V
+	public final fun getBinaryenSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
+	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec$Companion {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec : org/gradle/api/tasks/AbstractExecTask {
@@ -5458,16 +5347,22 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExe
 	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension : org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenExtension {
+public class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension : org/jetbrains/kotlin/gradle/targets/js/AbstractSettings {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension$Companion;
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnvSpec;)V
+	public synthetic fun finalizeConfiguration ()Ljava/lang/Object;
+	protected fun finalizeConfiguration ()Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv;
+	public final fun getProject ()Lorg/gradle/api/Project;
+	public final fun getSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension$Companion {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenExtension$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenPlugin : org/jetbrains/kotlin/gradle/targets/js/binaryen/BinaryenRootPlugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenPlugin : org/gradle/api/Plugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenPlugin$Companion;
 	public static final field TASKS_GROUP_NAME Ljava/lang/String;
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -5515,16 +5410,26 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbr
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/d8/D8EnvSpec {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Companion;
+	public final fun getD8SetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getEdition ()Lorg/gradle/api/provider/Property;
+	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Companion {
+public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8EnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/jetbrains/kotlin/gradle/targets/js/d8/D8Exec {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec : org/gradle/api/tasks/AbstractExecTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion;
+	protected fun exec ()V
+	public abstract fun getD8Args ()Lorg/gradle/api/provider/ListProperty;
+	public final fun getInputFileProperty ()Lorg/gradle/api/file/RegularFileProperty;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion {
@@ -5534,7 +5439,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion 
 	public static synthetic fun register$default (Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Exec$Companion;Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin : org/jetbrains/kotlin/gradle/targets/js/d8/D8Plugin {
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin : org/gradle/api/Plugin {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/d8/D8Plugin$Companion;
 	public static final field TASKS_GROUP_NAME Ljava/lang/String;
 	public synthetic fun apply (Ljava/lang/Object;)V
@@ -6036,7 +5941,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/Kotlin2JsCompile : org/j
 	public fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsOptions;
 	public abstract fun getLibraries ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	protected final fun getLibraryFilter ()Lkotlin/jvm/functions/Function1;
-	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public fun getMultiplatformStructure ()Lorg/jetbrains/kotlin/gradle/tasks/K2MultiplatformStructure;
 	public final synthetic fun getOutputFileProperty ()Lorg/gradle/api/provider/Property;
 	public fun getProduceUnpackagedKlib ()Lorg/gradle/api/provider/Property;
@@ -6065,14 +5969,11 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompile : org/jetb
 	public synthetic fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
 	public final fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmOptions;
 	public abstract fun getLibraries ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public fun getMultiplatformStructure ()Lorg/jetbrains/kotlin/gradle/tasks/K2MultiplatformStructure;
-	public fun getParentKotlinOptions ()Lorg/gradle/api/provider/Property;
 	public final fun getUsePreciseJavaTracking ()Z
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
 	protected fun makeIncrementalCompilationFeatures ()Lorg/jetbrains/kotlin/incremental/IncrementalCompilationFeatures;
-	protected final fun overrideArgsUsingTaskModuleNameWithWarning (Lorg/jetbrains/kotlin/cli/common/arguments/K2JVMCompilerArguments;)V
 	public final fun setJavaPackagePrefix (Ljava/lang/String;)V
 	public fun setSource ([Ljava/lang/Object;)V
 	public final fun setUsePreciseJavaTracking (Z)V
@@ -6099,6 +6000,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinCompileCommon : or
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonCompilerOptions;
 	public synthetic fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
 	public fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformCommonOptions;
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public fun kotlinOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun kotlinOptions (Lorg/gradle/api/Action;)V
 	public synthetic fun setupCompilerArgs (Lorg/jetbrains/kotlin/cli/common/arguments/CommonToolArguments;ZZ)V
@@ -6199,14 +6101,10 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinTest : org/gradle/
 	public final fun addRunListener (Lorg/jetbrains/kotlin/gradle/internal/testing/KotlinTestRunnerListener;)V
 	protected fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
 	public final fun getExcludePatterns ()Ljava/util/Set;
-	public final fun getExcludes ()Ljava/util/Set;
-	public fun getExecHandleFactory ()Ljava/lang/Void;
-	public fun getFileResolver ()Ljava/lang/Void;
 	protected final fun getFilterExt ()Lorg/gradle/api/internal/tasks/testing/filter/DefaultTestFilter;
 	public final fun getIgnoreRunFailures ()Z
 	public final fun getIncludePatterns ()Ljava/util/Set;
 	public final fun getTargetName ()Ljava/lang/String;
-	public final fun setExcludes (Ljava/util/Set;)V
 	public final fun setIgnoreRunFailures (Z)V
 	public final fun setTargetName (Ljava/lang/String;)V
 }

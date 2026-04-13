@@ -41,7 +41,7 @@ fun conditionalThrowInTry_smartcastInTry(a: A) {
         if (a !is B) {
             throw AssertionError()
         }
-        takeB(<!DEBUG_INFO_SMARTCAST!>a<!>)
+        takeB(a)
     } catch (e: Throwable) {}
 }
 
@@ -51,7 +51,7 @@ fun conditionalThrowInTry_noSmartcastAfterTryCatch(a: A) {
             throw AssertionError()
         }
     } catch (e: Throwable) {}
-    takeB(<!TYPE_MISMATCH!>a<!>)
+    takeB(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 }
 
 fun conditionalThrowInTry_rethrow_smartcastAfterTryCatch(a: A) {
@@ -62,7 +62,7 @@ fun conditionalThrowInTry_rethrow_smartcastAfterTryCatch(a: A) {
     } catch (e: Throwable) {
         throw e
     }
-    takeB(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    takeB(a)
 }
 
 fun conditionalThrowInTry_rethrow_smartcastAfterTryCatchFinally(a: A) {
@@ -73,7 +73,7 @@ fun conditionalThrowInTry_rethrow_smartcastAfterTryCatchFinally(a: A) {
     } catch (e: Throwable) {
         throw e
     } finally {}
-    takeB(<!TYPE_MISMATCH!>a<!>)
+    takeB(a)
 }
 
 fun conditionalThrowInTry_rethrow_noSmartcastInFinally(a: A) {
@@ -84,7 +84,7 @@ fun conditionalThrowInTry_rethrow_noSmartcastInFinally(a: A) {
     } catch (e: Throwable) {
         throw e
     } finally {
-        takeB(<!TYPE_MISMATCH!>a<!>)
+        takeB(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     }
 }
 

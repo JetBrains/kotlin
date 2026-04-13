@@ -27,7 +27,7 @@ val test7: Long
   get
 
 val test8: Long
-  field = -1L
+  field = 1L.unaryMinus()
   get
 
 val test9: Double
@@ -35,7 +35,7 @@ val test9: Double
   get
 
 val test10: Double
-  field = -1.0
+  field = 1.0.unaryMinus()
   get
 
 val test11: Float
@@ -43,7 +43,7 @@ val test11: Float
   get
 
 val test12: Float
-  field = -1.0F
+  field = 1.0F.unaryMinus()
   get
 
 val test13: Char

@@ -25,9 +25,9 @@ import LibPackCase1.b.*
 
 fun case1 (){
     var b: B? = B()
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plus; typeCall: operator function"), INVISIBLE_MEMBER, TYPE_MISMATCH!>b <!UNSAFE_OPERATOR_CALL!>+=<!> { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }<!>
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plus; typeCall: operator function"), INVISIBLE_MEMBER, TYPE_MISMATCH!>b <!UNSAFE_OPERATOR_CALL!>+=<!> {<!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>}<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}<!>
 }
 
 class B {
@@ -62,9 +62,9 @@ import LibPackCase2.b.*
 
 fun case2 (){
     var b: B = B()
-    <!DEBUG_INFO_CALL("fqName: testPackCase2.B.plus; typeCall: operator function"), INVISIBLE_MEMBER, TYPE_MISMATCH!>b += { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> { C() }<!>
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase2.B.plus; typeCall: operator function"), INVISIBLE_MEMBER, TYPE_MISMATCH!>b += {<!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>}<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> {1}<!>
 }
 
 class B {

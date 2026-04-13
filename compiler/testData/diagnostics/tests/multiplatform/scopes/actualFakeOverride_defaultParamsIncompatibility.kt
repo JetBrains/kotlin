@@ -14,6 +14,6 @@ interface FooProvider {
     fun foo(a: Int = 2): Int = 42
 }
 
-actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>A<!> : FooProvider
+actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>A<!> : FooProvider
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration */

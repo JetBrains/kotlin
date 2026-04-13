@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -44,7 +46,22 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl
 
     @NotNull
     public List<KtDestructuringDeclarationEntry> getEntries() {
-        return findChildrenByType(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY);
+        List<KtDestructuringDeclarationEntry> result = new ArrayList<>();
+        for (ASTNode child = getNode().getFirstChildNode(); child != null; child = child.getTreeNext()) {
+            if (child.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+                result.add((KtDestructuringDeclarationEntry) child.getPsi());
+            } else if (child.getElementType() == TokenType.ERROR_ELEMENT) {
+                // Entries may be wrapped in ERROR_ELEMENTs (e.g., for top-level destructuring declarations
+                // where the parser reports an error).
+                // TODO(KT-58563): After the reporting is moved out of the parser, this workaround can be removed.
+                for (ASTNode errorChild = child.getFirstChildNode(); errorChild != null; errorChild = errorChild.getTreeNext()) {
+                    if (errorChild.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+                        result.add((KtDestructuringDeclarationEntry) errorChild.getPsi());
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Nullable

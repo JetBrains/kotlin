@@ -20,7 +20,7 @@ fun test1() {
 fun test2() {
     try {}
     catch (e: Exception) {
-        val <!NAME_SHADOWING!>e<!> = "something"
+        val e = "something"
         e.<!UNRESOLVED_REFERENCE!>message<!>
         e.length
     }
@@ -37,7 +37,7 @@ fun test4() {
     try {}
     catch (e: Exception) {
         val <!REDECLARATION!>a<!> = 42
-        val <!NAME_SHADOWING, REDECLARATION!>a<!> = "foo"
+        val <!REDECLARATION!>a<!> = "foo"
     }
 }
 
@@ -48,7 +48,7 @@ fun test5() {
         try {}
         catch (e: MyException) {
             e.myFun()
-            val <!NAME_SHADOWING!>a<!>: String = ""
+            val a: String = ""
             a.length
         }
     }

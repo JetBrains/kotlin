@@ -128,5 +128,5 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       VALUE_PARAMETER kind:Regular name:newValue index:3 type:kotlin.Int
       BLOCK_BODY
         CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Cell' type=kotlin.Unit origin=EQ
-          ARG <this>: GET_VAR '<this>: <root>.Cell declared in <root>.Cell.setValue' type=<root>.Cell origin=null
+          ARG <this>: GET_VAR '<this>: <root>.Cell declared in <root>.Cell.setValue' type=<root>.Cell origin=IMPLICIT_ARGUMENT
           ARG <set-?>: GET_VAR 'newValue: kotlin.Int declared in <root>.Cell.setValue' type=kotlin.Int origin=null

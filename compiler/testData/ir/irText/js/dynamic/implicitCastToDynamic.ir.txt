@@ -35,8 +35,9 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:s index:0 type:kotlin.String
     BLOCK_BODY
-      CALL 'public final fun withDynamic (d: dynamic): dynamic declared in <root>' type=dynamic origin=null
-        ARG d: GET_VAR 's: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun withDynamic (d: dynamic): dynamic declared in <root>' type=dynamic origin=null
+          ARG d: GET_VAR 's: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
   FUN name:test2 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Any
     BLOCK_BODY

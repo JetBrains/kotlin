@@ -12,8 +12,8 @@ fun test(del: Any?) {
   if (del !is Del) return
 
   class Local {
-    val delegatedVal by df(<!DEBUG_INFO_SMARTCAST!>del<!>)
-    val delegatedVal1: Int by df(<!DEBUG_INFO_SMARTCAST!>del<!>)
+    val delegatedVal by df(del)
+    val delegatedVal1: Int by df(del)
   }
 }
 

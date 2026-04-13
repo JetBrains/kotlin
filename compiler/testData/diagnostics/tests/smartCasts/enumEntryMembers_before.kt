@@ -11,12 +11,12 @@ enum class Message(val text: String?) {
 
 fun printMessages() {
     Message.HELLO.text!!
-    <!DEBUG_INFO_SMARTCAST!>Message.HELLO.text<!>.length
+    Message.HELLO.text.length
 
-    <!DEBUG_INFO_SMARTCAST!>Message.NOTHING.text<!>.length
+    Message.NOTHING.text<!UNSAFE_CALL!>.<!>length
 
-    Message.NOTHING.text<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
-    <!DEBUG_INFO_SMARTCAST!>Message.NOTHING.text<!>.length
+    Message.NOTHING.text!!
+    Message.NOTHING.text.length
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, enumDeclaration, enumEntry, functionDeclaration, nullableType,

@@ -22,7 +22,7 @@ fun test(xs: List<String?>, ys: List<String>) {
     val y1: String = b[0]
 
     takeNullableString(JavaWildcards.firstOut<String?>(xs))
-    takeString(JavaWildcards.firstOut<String?>(xs))
+    takeString(<!ARGUMENT_TYPE_MISMATCH!>JavaWildcards.firstOut<String?>(xs)<!>)
 
     takeString(JavaWildcards.firstOut<String>(ys))
     takeNullableString(JavaWildcards.firstOut<String>(ys))

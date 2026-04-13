@@ -48,7 +48,7 @@ object Test4 {
 
     fun test() {
         val result = foo(1, ::bar)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+        result
     }
 }
 
@@ -60,7 +60,7 @@ object Test5 {
         fun foo(r: KRunnable) {}
 
         fun test() {
-            <!DEBUG_INFO_CALL("fqName: Test5.Scope.foo; typeCall: function")!>foo { }<!>
+            foo { }
         }
     }
 }

@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +ContextParameters
 import helpers.*
 import kotlin.coroutines.*

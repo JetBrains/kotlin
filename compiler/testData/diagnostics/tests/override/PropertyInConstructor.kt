@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 open class Base {
     protected open val prot: Int = 1
     internal open val int: Int = 1

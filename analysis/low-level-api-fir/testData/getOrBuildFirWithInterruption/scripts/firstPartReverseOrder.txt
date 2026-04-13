@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] firstPartReverseOrder.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
 
         [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] firstPartReverseOrder.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
 
         [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] firstPartReverseOrder.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
 
         [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/foo|(Int(1))

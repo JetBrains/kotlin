@@ -40,14 +40,14 @@ var v6: String = ""
 
 fun test(c: C) {
     with (c) {
-        <!DEPRECATION_ERROR!>v1<!>  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        v1  // DEPRECATION_ERROR in FE 1.0, see KT-48799
         v2
-        <!DEPRECATION_ERROR!>v3<!>  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        v3  // DEPRECATION_ERROR in FE 1.0, see KT-48799
         v3 = ""
         v4
-        <!DEPRECATION_ERROR!>v4<!> = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
-        <!DEPRECATION_ERROR!>v5<!>  // DEPRECATION_ERROR in FE 1.0, see KT-48799
-        <!DEPRECATION_ERROR!>v5<!> = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        v4 = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        v5  // DEPRECATION_ERROR in FE 1.0, see KT-48799
+        v5 = ""  // DEPRECATION_ERROR in FE 1.0, see KT-48799
         v6
         v6 = ""
     }

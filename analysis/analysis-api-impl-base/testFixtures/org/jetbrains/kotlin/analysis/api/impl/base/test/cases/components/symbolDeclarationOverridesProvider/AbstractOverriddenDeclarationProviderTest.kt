@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -39,12 +38,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
                 val allOverriddenSymbols = symbol.allOverriddenSymbols.map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.directlyOverriddenSymbols.map { renderSignature(it) }
 
-                // K1 doesn't support this
-                val intersectionOverriddenSymbols = if (configurator.frontendKind == FrontendKind.Fe10) {
-                    emptyList()
-                } else {
-                    symbol.intersectionOverriddenSymbols.map { renderSignature(it) }
-                }
+                val intersectionOverriddenSymbols = symbol.intersectionOverriddenSymbols.map { renderSignature(it) }
 
                 buildString {
                     appendLine("ALL:")

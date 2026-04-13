@@ -23,13 +23,13 @@ package other
 
 class a {}
 
-fun test(a_: a.<!UNRESOLVED_REFERENCE!>b<!>) {
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a_<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a_b<!>()
+fun test(a_: a.b) {
+    a_.a_b()
 
     val a_2 = a.<!UNRESOLVED_REFERENCE!>b<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a_2<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a_b<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a_2<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>some_ab<!>()
-    <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a_2<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a_<!>()
+    a_2.a_b()
+    a_2.some_ab()
+    a_2.a_()
 }
 
 // FILE: c2.kt

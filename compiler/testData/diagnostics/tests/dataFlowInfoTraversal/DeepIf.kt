@@ -17,15 +17,15 @@ fun foo() {
         }
         if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x) else bar(x)
         bar(bar(x))
-    } else if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>x<!> == null<!>) {
-        bar(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>)
-        if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>x<!> != null<!>) {
+    } else if (<!SENSELESS_COMPARISON!>x == null<!>) {
+        bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        if (<!SENSELESS_COMPARISON!>x != null<!>) {
             bar(x)
             if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x)
             if (<!SENSELESS_COMPARISON!>x == null<!>) bar(x) else bar(x)
             bar(bar(x) + bar(x))
-        } else if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>x<!> == null<!>) {
-            bar(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>)
+        } else if (<!SENSELESS_COMPARISON!>x == null<!>) {
+            bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         }
     }
 

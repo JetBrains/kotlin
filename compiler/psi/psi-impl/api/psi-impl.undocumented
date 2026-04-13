@@ -20,13 +20,8 @@ org.jetbrains.kotlin.psi.stubs.StubUtils
 org.jetbrains.kotlin.psi.stubs.StubUtils.createClassId(StubElement<*>, KtClassLikeDeclaration)
 org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText()
-org.jetbrains.kotlin.psi.stubs.StubUtils.isDeclaredInsideValueArgument(ASTNode?)
-org.jetbrains.kotlin.psi.stubs.StubUtils.readContract()
-org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableBoolean()
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId(StubOutputStream, ClassId?)
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText(String?)
-org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract(List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?)
-org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableBoolean(Boolean?)
 org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation.INLINE_CLASS
 org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationUseSiteTargetElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType

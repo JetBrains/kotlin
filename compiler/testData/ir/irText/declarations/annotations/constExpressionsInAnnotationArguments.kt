@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 const val ONE = 1
 

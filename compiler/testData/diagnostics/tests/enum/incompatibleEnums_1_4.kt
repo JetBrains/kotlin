@@ -103,7 +103,7 @@ fun foo6(e1: E1?, e2: E2) {
 }
 
 fun foo7(e1: E1?, e2: E2?) {
-    e1 == e2 // There should be an IDE-inspection for such cases
+    <!INCOMPATIBLE_ENUM_COMPARISON!>e1 == e2<!> // There should be an IDE-inspection for such cases
 }
 
 fun <T> foo8(e1: E1?, e2: E2, t: T) {
@@ -118,16 +118,16 @@ fun <T> foo8(e1: E1?, e2: E2, t: T) {
 }
 
 fun <T, K> foo9(e1: E1?, e2: E2, t: T, k: K) where T : MyInterface, T : MyOpenClass, K : MyInterface {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e1 == t<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>t == e1<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>e1 == t<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>t == e1<!>
 
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e2 == t<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>t == e2<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>e2 == t<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>t == e2<!>
 
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>E1.A == t<!>
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>t == E1.A<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>E1.A == t<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>t == E1.A<!>
 
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>E3.X == t<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>E3.X == t<!>
 
     E3.X == k
     k == E3.X

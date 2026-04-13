@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<KtNameReferenceExpression> implements
@@ -48,5 +49,12 @@ public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<Kt
                 referencedName,
                 myClassRef
         );
+    }
+
+    @Override
+    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
+        if (!(other instanceof KotlinNameReferenceExpressionStubImpl)) return false;
+        if (this.myClassRef != ((KotlinNameReferenceExpressionStubImpl) other).myClassRef) return false;
+        return this.referencedName.equals(((KotlinNameReferenceExpressionStubImpl) other).referencedName);
     }
 }

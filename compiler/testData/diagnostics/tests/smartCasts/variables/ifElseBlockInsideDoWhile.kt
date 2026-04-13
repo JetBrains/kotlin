@@ -10,9 +10,9 @@ public fun foo(xx: Any): Int {
             y = "abc"
         }
         // y!! in both branches
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length
+        y.length
     } while (!(x is String))
-    return <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    return x.length
 }
 
 /* GENERATED_FIR_TAGS: assignment, doWhileLoop, functionDeclaration, ifExpression, isExpression, localProperty,

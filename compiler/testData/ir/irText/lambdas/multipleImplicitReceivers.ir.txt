@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                                   VALUE_PARAMETER kind:ExtensionReceiver name:$this$with index:0 type:<root>.IInvoke
                                   BLOCK_BODY
                                     RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$with: <root>.IInvoke): kotlin.Int declared in <root>.test.<anonymous>.<anonymous>'
-                                      CALL 'public open fun invoke (<this>: <root>.B): kotlin.Int declared in <root>.IInvoke' type=kotlin.Int origin=INVOKE
+                                      CALL 'public open fun invoke (<this>: <root>.B): kotlin.Int declared in <root>.IInvoke' type=kotlin.Int origin=null
                                         ARG <this>(index:0): GET_VAR '$this$with: <root>.IInvoke declared in <root>.test.<anonymous>.<anonymous>.<anonymous>' type=<root>.IInvoke origin=IMPLICIT_ARGUMENT
                                         ARG <this>(index:1): CALL 'public open fun <get-foo> (<this>: <root>.A): <root>.B declared in <root>.IFoo' type=<root>.B origin=GET_PROPERTY
                                           ARG <this>(index:0): GET_VAR '$this$with: <root>.IFoo declared in <root>.test.<anonymous>.<anonymous>' type=<root>.IFoo origin=IMPLICIT_ARGUMENT

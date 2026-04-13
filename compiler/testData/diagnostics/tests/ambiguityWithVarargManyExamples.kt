@@ -19,7 +19,7 @@ val Boolean.duhIntArray get() = "duh IntArray"
 fun main() {
     foo(bar = intArrayOf(1, 2)).fooVararg
     foo(bar = *intArrayOf(1, 2)).fooVararg
-    foo(<!TYPE_MISMATCH!>intArrayOf(1, 2)<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>intArrayOf(1, 2)<!>)
     foo(*intArrayOf(1, 2)).fooVararg
     foo(1, 2).fooVararg
 
@@ -30,10 +30,10 @@ fun main() {
     bar(1, 2).barVararg
 
     duh(bar = intArrayOf(1, 2)).duhIntArray
-    duh(bar = <!NON_VARARG_SPREAD_ERROR!>*<!>intArrayOf(1, 2))
+    duh(bar = <!NON_VARARG_SPREAD!>*<!>intArrayOf(1, 2))
     duh(intArrayOf(1, 2)).duhIntArray
-    duh(<!NON_VARARG_SPREAD_ERROR!>*<!>intArrayOf(1, 2))
-    duh(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>)
+    duh(<!NON_VARARG_SPREAD!>*<!>intArrayOf(1, 2))
+    duh(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, propertyDeclaration, propertyWithExtensionReceiver,

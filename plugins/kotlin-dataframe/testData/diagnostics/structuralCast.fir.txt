@@ -27,14 +27,14 @@ FILE: structuralCast.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|<local>/Scope0|
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class DataFrameOf_89 : R|<local>/DataFrameOf_89I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/DataFrameOf_89|
 

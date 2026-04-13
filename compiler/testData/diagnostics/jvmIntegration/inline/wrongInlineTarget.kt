@@ -56,7 +56,7 @@ import a.*
 fun baz() {
     <!INLINE_FROM_HIGHER_PLATFORM!>inlineFun<!> {}
     <!INLINE_FROM_HIGHER_PLATFORM!>inlineGetter<!>
-    <!INLINE_FROM_HIGHER_PLATFORM!>inlineGetter<!> = 1
+    inlineGetter = 1
 
     inlineSetter
     <!INLINE_FROM_HIGHER_PLATFORM!>inlineSetter<!> = 1
@@ -70,7 +70,7 @@ fun baz() {
     val base = Base()
     base.<!INLINE_FROM_HIGHER_PLATFORM!>inlineFunBase<!> {}
     base.<!INLINE_FROM_HIGHER_PLATFORM!>inlineGetterBase<!>
-    base.<!INLINE_FROM_HIGHER_PLATFORM!>inlineGetterBase<!> = 1
+    base.inlineGetterBase = 1
 
     base.inlineSetterBase
     base.<!INLINE_FROM_HIGHER_PLATFORM!>inlineSetterBase<!> = 1
@@ -86,7 +86,7 @@ class Derived : Base() {
     fun test() {
         <!INLINE_FROM_HIGHER_PLATFORM!>inlineFunBase<!> {}
         <!INLINE_FROM_HIGHER_PLATFORM!>inlineGetterBase<!>
-        <!INLINE_FROM_HIGHER_PLATFORM!>inlineGetterBase<!> = 1
+        inlineGetterBase = 1
 
         inlineSetterBase
         <!INLINE_FROM_HIGHER_PLATFORM!>inlineSetterBase<!> = 1

@@ -7,13 +7,13 @@ interface Base {
     fun foo()
 }
 
-expect open class Foo : Base
+expect open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED{METADATA}!>class Foo<!> : Base
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo<!> : Base {
-    <!MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING!>final<!> override fun foo() {}
+actual open class Foo : Base {
+    final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>() {}
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override */

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN)
 class <!CONFLICTING_OVERLOADS!>KlassA<!>

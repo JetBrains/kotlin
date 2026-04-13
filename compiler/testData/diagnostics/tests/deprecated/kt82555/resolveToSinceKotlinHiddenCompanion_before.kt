@@ -8,7 +8,7 @@ class C {
 }
 
 fun test() {
-    <!NO_COMPANION_OBJECT!>C<!>
+    <!API_NOT_AVAILABLE!>C<!>
     <!API_NOT_AVAILABLE!>C<!>.toString()
 }
 

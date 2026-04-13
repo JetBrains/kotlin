@@ -1,19 +1,19 @@
 data class Tag<out RenderingT : Any?> {
-  val action: Function1<@UnsafeVariance RenderingT, Unit>
+  val action: Function1<RenderingT, Unit>
     field = action
     get
 
-  constructor(action: Function1<@UnsafeVariance RenderingT, Unit>) /* primary */ {
+  constructor(action: Function1<RenderingT, Unit>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  operator fun component1(): Function1<@UnsafeVariance RenderingT, Unit> {
+  operator fun component1(): Function1<RenderingT, Unit> {
     return <this>.#action
   }
 
-  fun copy(action: Function1<@UnsafeVariance RenderingT, Unit> = <this>.#action): Tag<RenderingT> {
+  fun copy(action: Function1<RenderingT, Unit> = <this>.#action): Tag<RenderingT> {
     return Tag<RenderingT>(action = action)
   }
 
@@ -49,4 +49,4 @@ fun getTag(): Tag<*> {
   throw Exception()
 }
 
-typealias Action<RenderingT : Any?> = Function1<@UnsafeVariance RenderingT, Unit>
+typealias Action<RenderingT : Any?> = Function1<RenderingT, Unit>

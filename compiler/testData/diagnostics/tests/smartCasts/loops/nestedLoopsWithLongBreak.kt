@@ -7,17 +7,17 @@ public fun foo(p: String?, r: String?, q: String?): Int {
         loop@ do {
             while(true) {
                 p!!.length
-                if (x(<!DEBUG_INFO_SMARTCAST!>p<!>)) break@loop
-                if (x(<!DEBUG_INFO_SMARTCAST!>q<!>)) break
+                if (x(p)) break@loop
+                if (x(q)) break
             }
         } while (r == null)
-        if (!x(<!DEBUG_INFO_SMARTCAST!>p<!>)) break
+        if (!x(p)) break
     }
     // Long break allows r == null
     r<!UNSAFE_CALL!>.<!>length
     // Smart cast is possible
-    <!DEBUG_INFO_SMARTCAST!>q<!>.length
-    return <!DEBUG_INFO_SMARTCAST!>p<!>.length
+    q.length
+    return p.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,

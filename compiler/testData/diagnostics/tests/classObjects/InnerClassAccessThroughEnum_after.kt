@@ -6,7 +6,7 @@ package a
 
 enum class C {
     E1, E2, E3 {
-        <!NESTED_CLASS_NOT_ALLOWED!>object O_O<!>
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object O_O<!>
 
         fun b() {
             O_O
@@ -39,12 +39,12 @@ fun f() {
     C.E2.B()
 
     C.E2.<!UNRESOLVED_REFERENCE!>O<!>
-    C.E3.<!UNRESOLVED_REFERENCE!>O<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>InO<!>
+    C.E3.<!UNRESOLVED_REFERENCE!>O<!>.InO
 
     C.O
     C.O.InO
     C.A()
-    C.<!RESOLUTION_TO_CLASSIFIER!>B<!>()
+    C.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>B<!>()
 
     C.E3.<!UNRESOLVED_REFERENCE!>O_O<!>
     C.E3.<!UNRESOLVED_REFERENCE!>G<!>()

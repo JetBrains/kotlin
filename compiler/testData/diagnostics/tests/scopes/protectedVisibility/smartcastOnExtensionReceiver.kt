@@ -4,7 +4,7 @@ abstract class A<T : Any> {
 
     fun bar(x: T?) {
         if (x != null) {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.foo()
+            x.foo()
         }
     }
 }

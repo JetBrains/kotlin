@@ -13,4 +13,3 @@ fun <T> usage() {
 }
 
 // LANGUAGE: +ContextParameters
-// IGNORE_STABILITY_K1: candidates

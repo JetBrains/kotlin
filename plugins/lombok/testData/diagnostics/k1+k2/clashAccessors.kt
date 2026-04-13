@@ -89,8 +89,8 @@ fun test() {
 
     obj.getAge()
     //thats shouldn't work because lombok doesn't generate clashing method
-    obj.setAge(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>41<!>)
-    <!VAL_REASSIGNMENT!>obj.age<!> = 12
+    obj.setAge(<!ARGUMENT_TYPE_MISMATCH!>41<!>)
+    obj.<!VAL_REASSIGNMENT!>age<!> = 12
     val age = obj.age
 
     obj.setScore(41)

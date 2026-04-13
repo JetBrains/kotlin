@@ -107,15 +107,6 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
      */
     public operator fun <V> get(key: Option<V>): V
 
-    /**
-     * Set the [value] for option specified by [key], overriding any previous value for that option.
-     */
-    @Deprecated(
-        "Build operations will become immutable in an upcoming release. " +
-                "Use `JvmPlatformToolchain.classpathSnapshottingOperationBuilder` to create a mutable builder instead."
-    )
-    public operator fun <V> set(key: Option<V>, value: V)
-
     public companion object {
 
         /**

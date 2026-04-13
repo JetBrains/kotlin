@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.danglingFileAnalysis.AbstractDanglingFileResolutionModeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
@@ -87,10 +88,7 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     ) {
         val singleByPsiInit: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit = { data ->
             val excludeDirs = buildList {
-                if (data.analysisApiMode == AnalysisApiMode.Standalone ||
-                    data.frontend == FrontendKind.Fe10 ||
-                    data.moduleKind == TestModuleKind.LibrarySource
-                ) {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.moduleKind == TestModuleKind.LibrarySource) {
                     add("withTestCompilerPluginEnabled")
                 }
 
@@ -139,6 +137,10 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
 
         test<AbstractNonPhysicalResolveDanglingFileReferenceTest> {
             model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        test<AbstractDanglingFileResolutionModeProviderTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
+            model("danglingFileResolutionModeProvider", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
@@ -204,10 +206,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group(filter = testModuleKindIs(TestModuleKind.SourceLike)) {
         group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
-                if (data.analysisApiMode == AnalysisApiMode.Standalone
-                    || data.frontend == FrontendKind.Fe10
-                    || data.targetPlatform != TargetPlatformEnum.JVM
-                ) {
+                if (data.analysisApiMode == AnalysisApiMode.Standalone || data.targetPlatform != TargetPlatformEnum.JVM) {
                     model(data, path, excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
                 } else {
                     model(data, path)
@@ -450,7 +449,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    // for K1, symbols do not have a proper equality implementation, so the tests are failing
     component("containingDeclarationProvider", filter = frontendIs(FrontendKind.Fir)) {
         test<AbstractContainingDeclarationProviderByPsiTest> {
             model(it, "containingDeclarationByPsi")

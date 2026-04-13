@@ -18,7 +18,7 @@ fun test() {
             val tmp = x.swap()
             x = tmp
         }
-        x<!UNSAFE_CALL!>.<!>plus(1)
+        x.plus(1)
     }
 }
 

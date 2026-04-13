@@ -1,106 +1,109 @@
-/arrayLiteralsInCallsReturningAnnotations.kt:10:15: error: unsupported [Collection literals outside of annotations]
-val foo = Foo(["42"])
-              ^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:24:9: error: unsupported [Collection literals outside of annotations]
-    Foo(["42"])
-        ^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:25:9: error: unsupported [Collection literals outside of annotations]
-    Foo([])
-        ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:27:17: error: unsupported [Collection literals outside of annotations]
-        val x = ["42"]
-                ^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:31:16: error: unsupported [Collection literals outside of annotations]
-    NestedFoo(*[NestedFoo(arr = [NestedFoo()])])
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:31:33: error: unsupported [Collection literals outside of annotations]
-    NestedFoo(*[NestedFoo(arr = [NestedFoo()])])
-                                ^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:33:12: error: unsupported [Collection literals outside of annotations]
-    IntFoo([])
-           ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:34:12: error: unsupported [Collection literals outside of annotations]
-    IntFoo([42])
-           ^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:35:12: error: type mismatch: inferred type is Array<Int> but IntArray was expected
-    IntFoo(run { [42] })
-           ^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:35:18: error: unsupported [Collection literals outside of annotations]
-    IntFoo(run { [42] })
-                 ^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:36:12: error: type mismatch: inferred type is Array<Int> but IntArray was expected
-    IntFoo(run {
-           ^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:37:17: error: unsupported [Collection literals outside of annotations]
-        val x = [42]
-                ^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:41:27: error: unsupported [Collection literals outside of annotations]
-        val x: IntArray = [42]
-                          ^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:45:14: error: unsupported [Collection literals outside of annotations]
-    FooAlias([])
-             ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:46:14: error: unsupported [Collection literals outside of annotations]
-    FooAlias(["42"])
-             ^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:49:15: error: unsupported [Collection literals outside of annotations]
-    Foo(run { [nonConst] })
-              ^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:51:5: error: unsupported [Collection literals outside of annotations]
-    [nonConst].returnFoo([nonConst])
-    ^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:51:26: error: unsupported [Collection literals outside of annotations]
-    [nonConst].returnFoo([nonConst])
-                         ^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:52:5: error: not enough information to infer type variable T
-    [].returnFoo([])
-    ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:52:5: error: unsupported [Collection literals outside of annotations]
-    [].returnFoo([])
-    ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:52:18: error: unsupported [Collection literals outside of annotations]
-    [].returnFoo([])
-                 ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:54:5: error: not enough information to infer type variable T
-    returnFooGeneric([])
-    ^^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:54:22: error: not enough information to infer type variable T
-    returnFooGeneric([])
-                     ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:54:22: error: unsupported [Collection literals outside of annotations]
-    returnFooGeneric([])
-                     ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:55:5: error: not enough information to infer type variable T
-    returnFooGeneric([42])
-    ^^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:55:22: error: unsupported [Collection literals outside of annotations]
-    returnFooGeneric([42])
-                     ^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:56:5: error: not enough information to infer type variable T
-    returnFooGeneric(["42"])
-    ^^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:56:22: error: unsupported [Collection literals outside of annotations]
-    returnFooGeneric(["42"])
-                     ^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:58:5: error: not enough information to infer type variable B
-    returnTypeParam(foo, [])
-    ^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:58:26: error: not enough information to infer type variable T
-    returnTypeParam(foo, [])
-                         ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:58:26: error: unsupported [Collection literals outside of annotations]
-    returnTypeParam(foo, [])
-                         ^^
-/arrayLiteralsInCallsReturningAnnotations.kt:59:5: error: not enough information to infer type variable B
-    returnTypeParam(foo, [1, 2, 3])
-    ^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:59:26: error: unsupported [Collection literals outside of annotations]
-    returnTypeParam(foo, [1, 2, 3])
-                         ^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:60:5: error: not enough information to infer type variable B
-    returnTypeParam(foo, ["1", "2", "3"])
-    ^^^^^^^^^^^^^^^
-/arrayLiteralsInCallsReturningAnnotations.kt:60:26: error: unsupported [Collection literals outside of annotations]
-    returnTypeParam(foo, ["1", "2", "3"])
-                         ^^^^^^^^^^^^^^^
+/arrayLiteralsInCallsReturningAnnotations.kt:(186,192): error: Array literals outside of annotations are unsupported.
 
+/arrayLiteralsInCallsReturningAnnotations.kt:(186,192): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(581,587): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(581,587): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(597,599): error: Argument type mismatch: actual type is 'Array<Any>', but 'Array<String>' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(597,599): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(597,599): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(631,637): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(631,637): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(671,703): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(671,703): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(688,701): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(688,701): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(717,719): error: Argument type mismatch: actual type is 'Array<Any>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(717,719): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(717,719): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(732,736): error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(732,736): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(732,736): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(749,761): error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(755,759): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(755,759): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(774,816): error: Argument type mismatch: actual type is 'Array<Int>', but 'IntArray' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(796,800): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(796,800): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(861,865): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(861,865): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(897,899): error: Argument type mismatch: actual type is 'Array<Any>', but 'Array<String>' was expected.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(897,899): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(897,899): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(914,920): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(914,920): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(961,971): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(961,971): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(980,990): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(980,990): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1001,1011): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1001,1011): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1017,1019): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1017,1019): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1020,1029): error: Candidate 'fun Array<String>.returnFoo(param: Array<String>): Foo' is inapplicable because of a receiver type mismatch.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1030,1032): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1030,1032): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1056,1058): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1056,1058): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1081,1085): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1081,1085): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1108,1114): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1108,1114): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1142,1144): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1142,1144): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1171,1180): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1171,1180): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1207,1222): error: Array literals outside of annotations are unsupported.
+
+/arrayLiteralsInCallsReturningAnnotations.kt:(1207,1222): error: The feature "collection literals" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcollection-literals', but note that no stability guarantees are provided.

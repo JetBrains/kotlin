@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> enum class Test
 
 open class Foo {

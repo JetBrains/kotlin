@@ -158,7 +158,7 @@ private fun createTranslationResult(
     // It might not be the case, but precise tracking seems like an overkill at the moment.
     sirModule.updateImport(SirImport(config.runtimeSupportModuleName))
     if (config.enableCoroutinesSupport) {
-        sirModule.updateImport(SirImport(config.coroutineSupportModuleName))
+        sirModule.updateImport(SirImport(config.coroutineSupportModuleName, SirImport.Mode.Exported))
     }
     sirModule.updateImport(SirImport(config.runtimeModuleName))
 

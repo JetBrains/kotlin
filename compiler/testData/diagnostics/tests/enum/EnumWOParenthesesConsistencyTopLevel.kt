@@ -72,51 +72,51 @@ enum class EnumerationACE(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserK
 }
 
 enum class EnumerationADA(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY;<!>
+    ENTRY;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
 }
 
 enum class EnumerationADB(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2;<!>
+    ENTRY1,
+    ENTRY2;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
 }
 
 enum class EnumerationADC(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
+    ENTRY1,
     ENTRY2();
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
 }
 
 enum class EnumerationADD(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },<!>
+    ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },
     ENTRY2() { override fun abstractFunc() { TODO("Not yet implemented") } };
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     abstract fun abstractFunc()
 }
 
 enum class EnumerationAEA(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY;<!>
+    ENTRY;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
 }
 
 enum class EnumerationAEB(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2;<!>
+    ENTRY1,
+    ENTRY2;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
 }
 
 enum class EnumerationAEC(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
+    ENTRY1,
     ENTRY2();
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
 }
 
 enum class EnumerationAED(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },<!>
+    ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },
     ENTRY2() { override fun abstractFunc() { TODO("Not yet implemented") } };
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
@@ -196,51 +196,51 @@ enum class EnumerationBCE constructor(arg1: UserKlass = UserKlass(), arg2: UserK
 }
 
 enum class EnumerationBDA constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY;<!>
+    ENTRY;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
 }
 
 enum class EnumerationBDB constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2;<!>
+    ENTRY1,
+    ENTRY2;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
 }
 
 enum class EnumerationBDC constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
+    ENTRY1,
     ENTRY2();
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
 }
 
 enum class EnumerationBDD constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },<!>
+    ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },
     ENTRY2() { override fun abstractFunc() { TODO("Not yet implemented") } };
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     abstract fun abstractFunc()
 }
 
 enum class EnumerationBEA constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY;<!>
+    ENTRY;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
 }
 
 enum class EnumerationBEB constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2;<!>
+    ENTRY1,
+    ENTRY2;
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
 }
 
 enum class EnumerationBEC constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
+    ENTRY1,
     ENTRY2();
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
 }
 
 enum class EnumerationBED constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass()) {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },<!>
+    ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },
     ENTRY2() { override fun abstractFunc() { TODO("Not yet implemented") } };
     constructor(arg: UserKlass = UserKlass()) : this(arg, UserKlass())
     constructor() : this(UserKlass(), UserKlass())
@@ -320,27 +320,27 @@ enum class EnumerationCCD {
 }
 
 enum class EnumerationCDA {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY;<!>
+    ENTRY;
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
 }
 
 enum class EnumerationCDB {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2;<!>
+    ENTRY1,
+    ENTRY2;
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
 }
 
 enum class EnumerationCDC {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
+    ENTRY1,
     ENTRY2();
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
 }
 
 enum class EnumerationCDD {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },<!>
+    ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },
     ENTRY2() { override fun abstractFunc() { TODO("Not yet implemented") } };
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
@@ -348,22 +348,22 @@ enum class EnumerationCDD {
 }
 
 enum class EnumerationCEA {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY;<!>
+    ENTRY;
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
     constructor()
 }
 
 enum class EnumerationCEB {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY2;<!>
+    ENTRY1,
+    ENTRY2;
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
     constructor()
 }
 
 enum class EnumerationCEC {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1,<!>
+    ENTRY1,
     ENTRY2();
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())
@@ -371,7 +371,7 @@ enum class EnumerationCEC {
 }
 
 enum class EnumerationCED {
-    <!ENUM_ENTRY_SHOULD_BE_INITIALIZED!>ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },<!>
+    ENTRY1 { override fun abstractFunc() { TODO("Not yet implemented") } },
     ENTRY2() { override fun abstractFunc() { TODO("Not yet implemented") } };
     constructor(arg1: UserKlass = UserKlass(), arg2: UserKlass = UserKlass())
     constructor(arg: UserKlass = UserKlass())

@@ -5,21 +5,21 @@ fun unreachable() {}
 fun a() {
     do {
     } while (true)
-    <!UNREACHABLE_CODE!>unreachable()<!>
+    unreachable()
 }
 
 fun b() {
     while (true) {
     }
-    <!UNREACHABLE_CODE!>unreachable()<!>
+    unreachable()
 }
 
 fun c() {
-    do {} while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!>)
+    do {} while (1 == 1)
 }
 
 fun d() {
-    while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>2 == 2<!>) {}
+    while (2 == 2) {}
 }
 
 fun use(arg: Any) = arg

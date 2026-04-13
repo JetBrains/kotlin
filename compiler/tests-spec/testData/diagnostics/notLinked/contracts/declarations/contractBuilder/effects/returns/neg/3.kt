@@ -15,7 +15,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?): Boolean {
     contract {
-        returns(true) implies (x === <!ERROR_IN_CONTRACT_DESCRIPTION!>EmptyObject<!>) // should be not allowed
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (x === EmptyObject)<!> // should be not allowed
     }
     return x === EmptyObject
 }

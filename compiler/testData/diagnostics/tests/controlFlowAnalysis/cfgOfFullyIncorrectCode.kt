@@ -1,25 +1,25 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-47494
 
-{
+<!SYNTAX!><!>{
 
     try {
         with("",{ {
 
 
-            return
+            <!RETURN_NOT_ALLOWED!>return<!>
 
-        } }
+        } }<!SYNTAX!><!>
 
     }
 
     finally
 
 
-        try {}
+        <!SYNTAX!><!>try {}
 
         finally
 
-}
+<!SYNTAX!><!>}<!SYNTAX!><!>
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral, tryExpression */

@@ -45,7 +45,7 @@ sourceSets {
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5)
 
-    testGenerator("org.jetbrains.kotlin.psi.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.TestGeneratorForPsiImplKt")
 
     testData(project.isolated, "testData")
 

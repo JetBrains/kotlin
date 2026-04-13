@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.contracts.FirErrorContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -20,12 +23,14 @@ import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.mpp.ConstructorSymbolMarker
 import org.jetbrains.kotlin.mpp.FunctionSymbolMarker
 import org.jetbrains.kotlin.mpp.SimpleFunctionSymbolMarker
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
     override val name: Name
@@ -36,13 +41,27 @@ sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: Cal
 
     val resolvedContractDescription: FirResolvedContractDescription?
         get() {
-            lazyResolveToPhase(FirResolvePhase.CONTRACTS)
-            return when (this) {
-                is FirNamedFunctionSymbol -> fir.contractDescription
-                is FirPropertyAccessorSymbol -> fir.contractDescription
-                else -> null
-            } as? FirResolvedContractDescription
+            calculateContractDescription()
+            return (fir as? FirContractDescriptionOwner)?.contractDescription as? FirResolvedContractDescription?
         }
+
+    fun calculateContractDescription() {
+        val fir = fir as? FirContractDescriptionOwner ?: return
+        when (fir.contractDescription) {
+            null, is FirErrorContractDescription, is FirResolvedContractDescription -> {}
+            is FirLegacyRawContractDescription, is FirRawContractDescription -> {
+                lazyResolveToPhase(FirResolvePhase.CONTRACTS)
+                when (val description = fir.contractDescription) {
+                    null, is FirErrorContractDescription, is FirResolvedContractDescription -> {}
+                    is FirLegacyRawContractDescription, is FirRawContractDescription -> {
+                        errorWithAttachment("Expected a resolved contract description, but got: ${description::class.simpleName}") {
+                            withFirEntry("fir", fir)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     val resolvedControlFlowGraphReference: FirControlFlowGraphReference?
         get() {

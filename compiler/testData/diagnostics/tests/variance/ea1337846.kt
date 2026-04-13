@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // https://ea.jetbrains.com/browser/ea_reports/1337846
 
 //interface ComputablePoint<NumberType : Number>

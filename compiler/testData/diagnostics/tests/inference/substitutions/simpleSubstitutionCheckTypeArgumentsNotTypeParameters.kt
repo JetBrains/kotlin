@@ -7,7 +7,7 @@ class A<T> {
 
 fun test1() {
     A<Int>().newA<String>().useT("")
-    A<Int>().newA<String>().useT(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
+    A<Int>().newA<String>().useT(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

@@ -8,7 +8,7 @@ enum class MyEnum
 val entries = "local str"
 
 fun test() {
-    val s: String = entries
+    val s: String = <!DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY!>entries<!>
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, functionDeclaration, localProperty, propertyDeclaration, stringLiteral */

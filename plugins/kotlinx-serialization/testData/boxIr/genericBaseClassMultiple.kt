@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR
-
 // WITH_STDLIB
 
 import kotlinx.serialization.*

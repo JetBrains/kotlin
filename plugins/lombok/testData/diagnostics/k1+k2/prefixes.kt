@@ -22,7 +22,7 @@ public class Prefixes {
 
 fun test() {
     Prefixes().apply {
-        field()
-        <!FUNCTION_EXPECTED, INVISIBLE_MEMBER!>noPrefix<!>()
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>field<!>()
+        <!INVISIBLE_REFERENCE("field noPrefix: String!; private; 'Prefixes'")!>noPrefix<!>()
     }
 }

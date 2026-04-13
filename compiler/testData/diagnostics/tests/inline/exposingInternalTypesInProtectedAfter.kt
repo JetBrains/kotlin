@@ -4,9 +4,9 @@
 
 class C {
     protected inline fun foo(x: Any) {
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Internal<!>()
-        x is Internal
-        Internal::class
+        <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Internal<!>()
+        x is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Internal<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Internal<!>::class
 
         Published()
         x is Published

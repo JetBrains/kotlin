@@ -18,7 +18,7 @@ private object Scope {
     fun <T> materialize(): T = Any() as T
 
     fun test(i: Inv<out Number>) {
-        val p: Int by <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>Scope.Delegate(i)<!>
+        val p: Int by Scope.Delegate(i)
     }
 }
 

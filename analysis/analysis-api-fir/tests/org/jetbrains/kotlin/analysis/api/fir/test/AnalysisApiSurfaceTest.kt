@@ -13,24 +13,22 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirPrimaryConstructorSymbolPointer
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.junit.jupiter.api.Test
-import kotlin.reflect.full.isSubclassOf
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surface") {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+    override val configurator = LLSourceLikeTestConfigurator()
 
     @Test
     fun supertypeIteration(mainFile: KtFile) {
@@ -44,54 +42,6 @@ class AnalysisApiSurfaceTest : AbstractAnalysisApiExecutionTest("testData/surfac
             // Iterate through the sequence multiple times
             assertEquals(allSupertypeSequence.toList(), allSupertypeSequence.toList())
             assertEquals(directSupertypeSequence.toList(), directSupertypeSequence.toList())
-        }
-    }
-
-    @Test
-    fun codeFragmentCopy(mainFile: KtFile, testServices: TestServices) {
-        val assertions = testServices.assertions
-
-        val simpleClass = mainFile.declarations.single() as KtClass
-        val method = simpleClass.declarations.first() as KtNamedFunction
-        assertions.assertEquals("method", method.name)
-
-        val context = simpleClass.declarations.last() as KtNamedFunction
-        assertions.assertEquals("context", context.name)
-
-        val codeFragment = KtPsiFactory(mainFile.project).createExpressionCodeFragment("method()", context)
-        val codeFragmentExpression = codeFragment.getContentElement() as KtCallExpression
-
-        val codeFragmentCopy = codeFragment.copy() as KtExpressionCodeFragment
-        val codeFragmentCopyExpression = codeFragmentCopy.getContentElement() as KtCallExpression
-
-        analyze(codeFragmentExpression) {
-            assertions.assertTrue(useSiteModule::class.isSubclassOf(KaDanglingFileModule::class))
-
-            val callableSymbol = codeFragmentExpression.resolveSymbol()
-            // Check whether the code fragment is configured correctly
-            assertions.assertEquals(method, callableSymbol?.psi)
-
-            // Check whether elements from the original file are analyzable
-            assertions.assertTrue(simpleClass.canBeAnalysed())
-
-            // Elements from the fragment copy are not expected to be analyzable in the context of original
-            // since each code fragment has its own session
-            assertions.assertFalse(codeFragmentCopyExpression.canBeAnalysed())
-        }
-
-        analyze(codeFragmentCopyExpression) {
-            assertions.assertTrue(useSiteModule::class.isSubclassOf(KaDanglingFileModule::class))
-
-            val callableSymbol = codeFragmentCopyExpression.resolveSymbol()
-
-            // Check whether the code fragment copy is configured correctly
-            assertions.assertEquals(method, callableSymbol?.psi)
-
-            // Check whether elements from the original file are analyzable
-            assertions.assertTrue(simpleClass.canBeAnalysed())
-
-            // Elements from the original fragment should be analyzable in the context of copy
-            assertions.assertTrue(codeFragmentExpression.canBeAnalysed())
         }
     }
 

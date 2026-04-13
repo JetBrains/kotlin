@@ -1,9 +1,13 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: OptimizeTLSDataLoads
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+import kotlin.native.Retain
+
 class Wrapper(x: Int)
 
-// CHECK-LABEL: define internal fastcc {{nonnull}} ptr @"kfun:#f(kotlin.Int;kotlin.String){}kotlin.String"
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#f(kotlin.Int;kotlin.String){}kotlin.String"
+@Retain
 fun f(x: Int, s: String): String {
     // https://youtrack.jetbrains.com/issue/KT-64880/K-N-EnterFrame-runtime-function-should-be-always-inlined-in-OPT-mode
     // Remove `|call fastcc void @EnterFrame` below, after KT-64880 is fixed

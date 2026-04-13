@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtBackingField;
 import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub;
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinBackingFieldStubImpl extends KotlinStubBaseImpl<KtBackingField>
@@ -34,5 +35,11 @@ public class KotlinBackingFieldStubImpl extends KotlinStubBaseImpl<KtBackingFiel
                 newParent,
                 hasInitializer
         );
+    }
+
+    @Override
+    public boolean isEquivalentTo(@NotNull KotlinStubElement<?> other) {
+        if (!(other instanceof KotlinBackingFieldStubImpl)) return false;
+        return hasInitializer == ((KotlinBackingFieldStubImpl) other).hasInitializer;
     }
 }

@@ -2,7 +2,7 @@
 // ISSUE: KT-57991
 
 fun foo() {
-    suspend fun() {
+    <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun() {
 
     }
 }

@@ -34,15 +34,15 @@ fun main(a: A<*>, c: C) {
     // Without the last `yield` call, it would be even green in K2
     val x2 = generate {
         predicate(a, this) { x ->
-            <!USELESS_IS_CHECK!>x is <!NO_TYPE_ARGUMENTS_ON_RHS!>B<!><!>
+            x is B
         }
 
         // For Sv we've got an EQUALITY constraint to A<*>
         // Thus not allowing C type here
-        yield(c)
+        yield(<!ARGUMENT_TYPE_MISMATCH!>c<!>)
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("CommonSupertype")!>x2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<*>")!>x2<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

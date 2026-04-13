@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-73102
 
 // FILE: JavaBaseClass.java

@@ -69,7 +69,6 @@ private constructor(
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
     renderer = KaRendererImpl(analysisSessionProvider),
     visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider),
-    originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider),
     typeCreator = KaFirTypeCreator(analysisSessionProvider),
     typeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider),
     analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope),

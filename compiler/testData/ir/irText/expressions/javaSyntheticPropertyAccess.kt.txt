@@ -3,11 +3,9 @@ fun test(j: J) {
   j.setFoo(x = 1)
   { // BLOCK
     val tmp_0: J = j
-    { // BLOCK
-      val tmp_1: Int = tmp_0.getFoo()
-      tmp_0.setFoo(x = tmp_1.inc())
-      tmp_1
-    }
+    val tmp_1: Int = tmp_0.getFoo()
+    tmp_0.setFoo(x = tmp_1.inc())
+    tmp_1
   } /*~> Unit */
   { // BLOCK
     val tmp_2: J = j

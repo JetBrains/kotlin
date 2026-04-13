@@ -9,6 +9,6 @@ object A {
 }
 
 // FILE: 2.kt
-import objectProperties.ObjectWithProps.a
+import objectProperties.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR("ObjectWithProps; A")!>ObjectWithProps<!>.a
 
 /* GENERATED_FIR_TAGS: integerLiteral, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun interface IRunnable {
     fun run()

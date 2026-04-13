@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// FIR_IDENTICAL
 // DUMP_IR
 // DUMP_EXTERNAL_CLASS: StubSerializer
 // FILE: StubElement.java

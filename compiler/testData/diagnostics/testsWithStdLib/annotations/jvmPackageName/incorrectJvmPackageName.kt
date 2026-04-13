@@ -18,7 +18,7 @@ class D
 fun d() {}
 
 // FILE: e.kt
-@file:JvmPackageName(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>)
+@file:JvmPackageName(42)
 package e
 fun e() {}
 

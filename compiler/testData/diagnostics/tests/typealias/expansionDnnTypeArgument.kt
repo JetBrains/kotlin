@@ -14,9 +14,9 @@ fun test1(inv: Inv1<String>) {
 
 fun test2(map: Inv1<String?>) {
     // Well, this K1 behavior doesn't look really correct, but we're not going to change it anymore
-    expectMap(<!TYPE_MISMATCH!>map<!>)
+    expectMap(map)
     val x = map.get("")
-    x<!UNSAFE_CALL!>.<!>length
+    x.length
 }
 
 fun expectMap(x: Inv2<String, String>) {}

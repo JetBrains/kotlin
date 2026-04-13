@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // RENDER_PSI_CLASS_NAME
 
 // MODULE: lib

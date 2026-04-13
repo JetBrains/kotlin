@@ -4,7 +4,7 @@
 import B.<!INVISIBLE_REFERENCE!>foo<!>
 
 fun test() {
-    <!INVISIBLE_MEMBER!>foo<!>
+    <!INVISIBLE_REFERENCE!>foo<!>
 }
 
 // FILE: B.kt

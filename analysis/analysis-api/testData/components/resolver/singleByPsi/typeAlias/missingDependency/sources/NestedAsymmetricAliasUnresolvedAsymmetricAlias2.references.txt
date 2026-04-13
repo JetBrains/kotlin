@@ -1,4 +1,4 @@
-KtNameReferenceExpression(188,193): 'check'
+KtNameReferenceExpression(187,192): 'check'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

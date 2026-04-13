@@ -25,7 +25,7 @@ class B : I
 
 fun case1(){
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
-    <!DEBUG_INFO_CALL("fqName: lib.case1.A.invoke; typeCall: variable&invoke")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
+    <!DEBUG_INFO_CALL("fqName: lib.case1.A.invoke; typeCall: function")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
 }
 
 // FILE: Lib.kt

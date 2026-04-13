@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|foo/Foo|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun testMe([ResolvedTo(STATUS)] f: R|foo/Foo|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=(foo/Arg) -> foo/Arg] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|

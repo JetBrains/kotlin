@@ -9,8 +9,8 @@ class Outer1 {
 
     inner class Inner
 
-    class C5 { val b = <!RESOLUTION_TO_CLASSIFIER!>Inner<!>() }
-    class C6(val b: Any = <!RESOLUTION_TO_CLASSIFIER!>Inner<!>())
+    class C5 { val b = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>Inner<!>() }
+    class C6(val b: Any = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>Inner<!>())
     inner class C7 { val b = Inner() }
     inner class C8(val b: Any = Inner())
 }
@@ -19,7 +19,7 @@ class Outer1 {
 class Outer2 {
     class Nested {
         fun foo() = Outer2()
-        fun bar() = <!RESOLUTION_TO_CLASSIFIER!>Inner<!>()
+        fun bar() = <!INACCESSIBLE_OUTER_CLASS_RECEIVER!>Inner<!>()
     }
     inner class Inner {
         fun foo() = Outer2()

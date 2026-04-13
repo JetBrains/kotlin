@@ -221,8 +221,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+            public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /nullablePropertyWithAnnotatedType], ScriptTopLevelDeclaration=true] val propertyToResolve: R|kotlin/String|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
@@ -249,8 +249,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
-            public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val nullablePropertyWithAnnotatedType: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?|
+            public [ResolvedTo(STATUS)] get(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/String?| { LAZY_BLOCK }
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /nullablePropertyWithAnnotatedType], ScriptTopLevelDeclaration=true] val propertyToResolve: R|kotlin/String|
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
@@ -345,4 +345,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] anonymousFunctionWithAnnotatedParameterOnImplic
                 }
                 ) } ?: String()
             }
-

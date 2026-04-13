@@ -18,7 +18,7 @@ operator fun Int?.inc(): Int? {
     val tmp_0: Int? = <this>
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.inc()
+      else -> tmp_0 /*as Int */.inc()
     }
   }
 }
@@ -28,17 +28,17 @@ operator fun Int?.set(index: Int, value: Int) {
 
 fun testArrayAccess(nc: C?) {
   { // BLOCK
-    val tmp_1: Int? = { // BLOCK
-      val tmp_2: C? = nc
-      when {
-        EQEQ(arg0 = tmp_2, arg1 = null) -> null
-        else -> <get-p>(/* <this> = tmp_2 */)
+    val tmp_1: C? = nc
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> { // BLOCK
+        val tmp_2: Int = <get-p>(/* <this> = tmp_1 /*as C */ */)
+        val tmp_3: Int = 0
+        val tmp_4: Int = get(/* <this> = tmp_2, */ index = tmp_3)
+        set(/* <this> = tmp_2, */ index = tmp_3, value = tmp_4.inc())
+        tmp_4
       }
     }
-    val tmp_3: Int = 0
-    val tmp_4: Int = get(/* <this> = tmp_1, */ index = tmp_3)
-    set(/* <this> = tmp_1, */ index = tmp_3, value = tmp_4.inc())
-    tmp_4
   } /*~> Unit */
 }
 
@@ -48,12 +48,10 @@ fun testProperty(nc: C?) {
     when {
       EQEQ(arg0 = tmp_5, arg1 = null) -> null
       else -> { // BLOCK
-        val tmp_6: C? = tmp_5
-        { // BLOCK
-          val tmp_7: Int = <get-p>(/* <this> = tmp_6 */)
-          <set-p>(/* <this> = tmp_6, */ value = inc(/* <this> = tmp_7 */))
-          tmp_7
-        }
+        val tmp_6: C = tmp_5 /*as C */
+        val tmp_7: Int = <get-p>(/* <this> = tmp_6 */)
+        <set-p>(/* <this> = tmp_6, */ value = tmp_7.inc())
+        tmp_7
       }
     }
   } /*~> Unit */

@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
-fun ignoreIt(<!UNUSED_PARAMETER!>f<!>: () -> Unit) {}
+fun ignoreIt(f: () -> Unit) {}
 
 fun exec(f: () -> Unit) = f()
 

@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
-// FIR_IDENTICAL
 
 var initialized = false
 

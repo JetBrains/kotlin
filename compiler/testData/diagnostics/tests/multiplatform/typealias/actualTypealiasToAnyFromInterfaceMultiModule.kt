@@ -7,17 +7,17 @@ expect interface Marker
 
 // MODULE: lib-platform()()(lib-common)
 // FILE: main.kt
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>Marker<!> = Any
+actual typealias Marker = Any
 
 
 // MODULE: app-common(lib-common)
 
 
 // MODULE: app-platform(lib-platform)()(app-common)
-open class B : <!SUPERTYPE_NOT_INITIALIZED!>Marker<!> {}
-class C : B(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_NOT_INITIALIZED!>Marker<!> {}
+open class B : Marker {}
+class C : B(), Marker {}
 
-interface Marker2: <!INTERFACE_WITH_SUPERCLASS!>Marker<!>
-interface Marker3: Marker2, <!INTERFACE_WITH_SUPERCLASS!>Marker<!>
+interface Marker2: Marker
+interface Marker3: Marker2, Marker
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, typeAliasDeclaration */

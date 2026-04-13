@@ -1,22 +1,22 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(s: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+<!UNSUPPORTED!>context(s: String)<!>
 class C {
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(s: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    <!UNSUPPORTED!>context(s: String)<!>
     constructor() {}
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(s: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(s: String)
     fun f(){}
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(_: String)
     val p: String get() = ""
 }
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(s: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+context(s: String)
 fun f(){}
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+context(_: String)
 val p: String get() = ""
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,

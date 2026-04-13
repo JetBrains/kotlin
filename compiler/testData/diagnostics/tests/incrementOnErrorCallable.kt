@@ -3,7 +3,7 @@ val a: Int
     get() = 10
 
 fun test() {
-    a.<!UNRESOLVED_REFERENCE!>shrek<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>brek<!> <!ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT, DEBUG_INFO_MISSING_UNRESOLVED!>+=<!> 10
+    a.<!UNRESOLVED_REFERENCE!>shrek<!>.<!UNRESOLVED_REFERENCE!>brek<!> += 10
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, getter, integerLiteral, localProperty,

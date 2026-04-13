@@ -9,7 +9,7 @@ object Test1 {
         fun foo(f: suspend () -> Unit) {}
 
         fun test(g: () -> Unit) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!><!COMPATIBILITY_WARNING!>foo<!>(g)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.Scope.foo; typeCall: function")!>foo(g)<!>
         }
     }
 }
@@ -22,8 +22,8 @@ object Test2 {
         fun bar(): String = ""
 
         fun test() {
-            val result = foo(<!COMPATIBILITY_WARNING!>::bar<!>)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+            val result = foo(::bar)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
         }
     }
 }

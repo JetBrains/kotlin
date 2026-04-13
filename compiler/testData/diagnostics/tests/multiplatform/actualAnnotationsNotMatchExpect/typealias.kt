@@ -49,35 +49,35 @@ expect class InnerClassInsideTypealias {
 // FILE: jvm.kt
 class KtTypealiasNotMatchImpl
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>KtTypealiasNotMatch<!> = KtTypealiasNotMatchImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias KtTypealiasNotMatch = KtTypealiasNotMatchImpl
 
 class AnnotationsNotConsideredOnTypealiasImpl
 
 @Ann
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnnotationsNotConsideredOnTypealias<!> = AnnotationsNotConsideredOnTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias AnnotationsNotConsideredOnTypealias = AnnotationsNotConsideredOnTypealiasImpl
 
 class MethodsInsideTypealiasImpl {
     fun foo() {}
 }
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MethodsInsideTypealias<!> = MethodsInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MethodsInsideTypealias = MethodsInsideTypealiasImpl
 
 class ValueInsideTypealiasImpl {
     val value: String = ""
 }
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ValueInsideTypealias<!> = ValueInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ValueInsideTypealias = ValueInsideTypealiasImpl
 
 class ConstructorInsideTypealiasImpl
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ConstructorInsideTypealias<!> = ConstructorInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ConstructorInsideTypealias = ConstructorInsideTypealiasImpl
 
 class MethodWithComplexAnnInsideTypealiasImpl {
     @ComplexAnn("13")
     fun withComplexAnn() {}
 }
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MethodWithComplexAnnInsideTypealias<!> = MethodWithComplexAnnInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MethodWithComplexAnnInsideTypealias = MethodWithComplexAnnInsideTypealiasImpl
 
 class InnerClassInsideTypealiasImpl {
     class Foo {
@@ -85,7 +85,7 @@ class InnerClassInsideTypealiasImpl {
     }
 }
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>InnerClassInsideTypealias<!> = InnerClassInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias InnerClassInsideTypealias = InnerClassInsideTypealiasImpl
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
 primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

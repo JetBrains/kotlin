@@ -26,17 +26,17 @@ public class Wrapper<W> {
 // FILE: test.kt
 
 fun foo(container: Container<*>, wrapper: Wrapper<String>) {
-    container.w = <!TYPE_MISMATCH!>wrapper<!>
-    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
-    container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
+    container.w <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
+    container.setWrapper(<!ARGUMENT_TYPE_MISMATCH!>wrapper<!>)
 
-    container.simple = <!TYPE_MISMATCH_WARNING!>"123"<!>
-    container.setSimple(<!TYPE_MISMATCH!>"123"<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> "123"
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>"123"<!>)
     container.simple = null
     container.setSimple(null)
-    container.simple = <!TYPE_MISMATCH_WARNING!>container.simple<!>
-    container.setSimple(<!TYPE_MISMATCH!>container.getSimple()<!>)
-    container<!UNREACHABLE_CODE!>.simple =<!> null!!
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> container.simple
+    container.setSimple(container.getSimple())
+    container.simple = null!!
 }
 
 fun bar(container: Container<String>, wrapper: Wrapper<String>) {
@@ -48,69 +48,69 @@ fun bar(container: Container<String>, wrapper: Wrapper<String>) {
 }
 
 fun baz(container: Container<Any>, wrapper: Wrapper<String>) {
-    container.wrapper = <!TYPE_MISMATCH!>wrapper<!>
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
     container.simple = "123"
     container.setSimple("123")
 }
 
 fun gau(container: Container<String>, wrapper: Wrapper<Any>, arg: Any) {
-    container.wrapper = <!TYPE_MISMATCH!>wrapper<!>
-    container.simple = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>456<!>
-    container.simple = <!TYPE_MISMATCH!>arg<!>
-    container.simple = <!TYPE_MISMATCH!>x<!>
-    container.simple = <!TYPE_MISMATCH!>O<!>
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 456
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> arg
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> O
     if (arg is String) {
-        container.simple = <!DEBUG_INFO_SMARTCAST!>arg<!>
+        container.simple = arg
     }
 }
 
 fun dif(container: Container<String>, wrapper: Wrapper<Int>) {
-    container.wrapper = <!TYPE_MISMATCH!>wrapper<!>
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
 }
 
 object O
 
 fun out(container: Container<out Any>, wrapper: Wrapper<String>) {
-    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
-    container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>x<!>
-    container.setSimple(<!TYPE_MISMATCH!>x<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>O<!>
-    container.setSimple(<!TYPE_MISMATCH!>O<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>456<!>
-    container.setSimple(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>456<!>)
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
+    container.setWrapper(<!ARGUMENT_TYPE_MISMATCH!>wrapper<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> O
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>O<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 456
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>456<!>)
 }
 
 val x = 456
 
 fun inn(container: Container<in String>, wrapper: Wrapper<Any>, arg: Any) {
-    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
-    container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>x<!>
-    container.setSimple(<!TYPE_MISMATCH!>x<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>O<!>
-    container.setSimple(<!TYPE_MISMATCH!>O<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>456<!>
-    container.setSimple(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>456<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>arg<!>
-    container.setSimple(<!TYPE_MISMATCH!>arg<!>)
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
+    container.setWrapper(<!ARGUMENT_TYPE_MISMATCH!>wrapper<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> O
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>O<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 456
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>456<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> arg
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>arg<!>)
     if (arg is String) {
         container.simple = arg
-        container.setSimple(<!DEBUG_INFO_SMARTCAST!>arg<!>)
+        container.setSimple(arg)
     }
 }
 
 fun <T> generic(container: Container<out T>, wrapper: Wrapper<out T>, arg: T) {
-    <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
-    container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
-    container.simple = <!TYPE_MISMATCH!>x<!>
-    container.setSimple(<!TYPE_MISMATCH!>x<!>)
-    container.simple = <!TYPE_MISMATCH!>O<!>
-    container.setSimple(<!TYPE_MISMATCH!>O<!>)
-    container.simple = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>456<!>
-    container.setSimple(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>456<!>)
-    container.simple = <!TYPE_MISMATCH_WARNING!>arg<!>
-    container.setSimple(<!TYPE_MISMATCH!>arg<!>)
+    container.wrapper <!ASSIGNMENT_TYPE_MISMATCH!>=<!> wrapper
+    container.setWrapper(<!ARGUMENT_TYPE_MISMATCH!>wrapper<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> x
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> O
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>O<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> 456
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>456<!>)
+    container.simple <!ASSIGNMENT_TYPE_MISMATCH!>=<!> arg
+    container.setSimple(<!ARGUMENT_TYPE_MISMATCH!>arg<!>)
 }
 
 /* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, ifExpression, inProjection,

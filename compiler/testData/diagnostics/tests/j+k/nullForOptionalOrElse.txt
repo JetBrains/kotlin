@@ -1,3 +1,0 @@
-package
-
-public fun </*0*/ T> java.util.stream.Stream<T>?.getIfSingle(): T?

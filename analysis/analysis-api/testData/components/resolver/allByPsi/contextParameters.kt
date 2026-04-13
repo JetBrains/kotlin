@@ -43,4 +43,3 @@ fun usageExplicitContextArguments() {
 }
 
 // LANGUAGE: +ContextParameters +ExplicitContextArguments
-// IGNORE_STABILITY_K1: candidates

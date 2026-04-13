@@ -15,20 +15,20 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun comparator (): @[FlexibleNullability] java.util.Comparator<in @[FlexibleNullability] K of java.util.SortedMap?>? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:compute visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean?, out @[EnhancedNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean?, out @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun compute (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] V of java.util.SortedMap?, out @[EnhancedNullability] V of java.util.SortedMap?>): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
-    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean? [fake_override]
+    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, out @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, out @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun computeIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, out @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?>): @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:computeIfPresent visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean, out @[EnhancedNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean, out @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun computeIfPresent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] {V of java.util.SortedMap & Any}, out @[EnhancedNullability] V of java.util.SortedMap?>): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun firstKey (): @[FlexibleNullability] K of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?>): kotlin.Unit declared in java.util.SortedMap
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] K of kotlin.collections.Map, in @[EnhancedNullability] V of kotlin.collections.Map>): kotlin.Unit declared in kotlin.collections.Map
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun lastKey (): @[FlexibleNullability] K of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:merge visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Boolean
       VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] kotlin.Boolean, in @[EnhancedNullability] kotlin.Boolean, out @[EnhancedNullability] kotlin.Boolean?>
       overridden:
@@ -116,8 +116,8 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun putAll (from: kotlin.collections.Map<out @[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>): kotlin.Unit declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:putIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       overridden:
         public open fun putIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT returnType:kotlin.Boolean? [fake_override]
@@ -139,20 +139,20 @@ FILE fqName:<root> fileName:/1.kt
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?, p2: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replaceAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, out @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, out @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun replaceAll (p0: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?, out @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?>): kotlin.Unit declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:subMap visibility:public modality:ABSTRACT returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
@@ -196,7 +196,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract size: kotlin.Int declared in java.util.SortedMap
         public abstract size: kotlin.Int declared in kotlin.collections.Map
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in java.util.SortedMap
@@ -227,20 +227,20 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun comparator (): @[FlexibleNullability] java.util.Comparator<in @[FlexibleNullability] K of java.util.SortedMap?>? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:compute visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean?, out @[EnhancedNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean?, out @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun compute (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] V of java.util.SortedMap?, out @[EnhancedNullability] V of java.util.SortedMap?>): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
-    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean? [fake_override]
+    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, out @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, out @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun computeIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, out @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?>): @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:computeIfPresent visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean, out @[EnhancedNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[EnhancedNullability] kotlin.Boolean, out @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun computeIfPresent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] {V of java.util.SortedMap & Any}, out @[EnhancedNullability] V of java.util.SortedMap?>): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
@@ -267,7 +267,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun firstKey (): @[FlexibleNullability] K of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?>): kotlin.Unit declared in java.util.SortedMap
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] K of kotlin.collections.Map, in @[EnhancedNullability] V of kotlin.collections.Map>): kotlin.Unit declared in kotlin.collections.Map
@@ -308,7 +308,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun lastKey (): @[FlexibleNullability] K of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:merge visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.Boolean
       VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] kotlin.Boolean, in @[EnhancedNullability] kotlin.Boolean, out @[EnhancedNullability] kotlin.Boolean?>
       overridden:
@@ -320,8 +320,8 @@ FILE fqName:<root> fileName:/1.kt
         public abstract fun putAll (from: kotlin.collections.Map<out @[FlexibleNullability] K of java.util.SortedMap?, @[FlexibleNullability] V of java.util.SortedMap?>): kotlin.Unit declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:putIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       overridden:
         public open fun putIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -336,20 +336,20 @@ FILE fqName:<root> fileName:/1.kt
         public open fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?): @[EnhancedNullability] V of java.util.SortedMap? declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
-      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
+      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, p1: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?, p2: @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?): kotlin.Boolean declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:replaceAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, in @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?, out @[EnhancedNullability] @[FlexibleNullability] kotlin.Boolean?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, in @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?, out @[FlexibleNullability] @[EnhancedNullability] kotlin.Boolean?>
       overridden:
         public open fun replaceAll (p0: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] K of java.util.SortedMap?, in @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?, out @[EnhancedNullability] @[FlexibleNullability] V of java.util.SortedMap?>): kotlin.Unit declared in java.util.SortedMap
     FUN FAKE_OVERRIDE name:subMap visibility:public modality:ABSTRACT returnType:@[FlexibleNullability] java.util.SortedMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>? [fake_override]
@@ -410,7 +410,7 @@ FILE fqName:<root> fileName:/1.kt
         public abstract size: kotlin.Int declared in java.util.SortedMap
         public abstract size: kotlin.Int declared in kotlin.collections.Map
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.SortedMap<kotlin.Boolean, kotlin.Boolean>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int declared in java.util.SortedMap

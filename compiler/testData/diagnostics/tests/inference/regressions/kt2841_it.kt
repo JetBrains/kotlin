@@ -12,7 +12,7 @@ public inline fun <T: Closeable, R> T.use(block: (t: T)-> R) : R {
 }
 
 fun test() {
-    C().use {
+    C().<!CANNOT_INFER_PARAMETER_TYPE!>use<!> {
         it.close()
         <!UNRESOLVED_REFERENCE!>x<!>
     }

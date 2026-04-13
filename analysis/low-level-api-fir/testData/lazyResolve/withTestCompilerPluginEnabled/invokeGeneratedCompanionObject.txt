@@ -1,11 +1,11 @@
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] invokeGeneratedCompanionObject.kt
     @R|org/jetbrains/kotlin/plugin/sandbox/CompanionWithFoo|[Types]() public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-        public abstract [ResolvedTo(CONTRACTS)] val bar: R|kotlin/String|
-            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] val bar: R|kotlin/String|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     }
-    public final operator [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|pack/Foo.Companion|.invoke([ResolvedTo(CONTRACTS)] action: R|pack/Foo.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final operator [ResolvedTo(STATUS)] fun [ResolvedTo(STATUS)] R|pack/Foo.Companion|.invoke([ResolvedTo(STATUS)] action: R|pack/Foo.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
         Q|pack/Foo|.R|pack/invoke|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=pack/Foo.() -> kotlin/Unit] Foo@fun [ResolvedTo(BODY_RESOLVE)] R|pack/Foo|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|pack/Foo.bar|

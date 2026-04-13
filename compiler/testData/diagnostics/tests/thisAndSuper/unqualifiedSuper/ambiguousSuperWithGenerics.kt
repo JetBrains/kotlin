@@ -14,7 +14,7 @@ class GenericDerivedClass<T> : GenericBaseClass<T>(), GenericBaseInterface<T> {
     override fun bar(x: T): T = super.bar(x)
 
     override fun ambiguous(x: T): T =
-            <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>(x)
+            <!AMBIGUOUS_SUPER!>super<!>.ambiguous(x)
 }
 
 class SpecializedDerivedClass : GenericBaseClass<Int>(), GenericBaseInterface<String> {
@@ -22,9 +22,9 @@ class SpecializedDerivedClass : GenericBaseClass<Int>(), GenericBaseInterface<St
     override fun bar(x: String): String = super.bar(x)
 
     override fun ambiguous(x: String): String =
-            <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>(x)
+            <!AMBIGUOUS_SUPER!>super<!>.ambiguous(x)
     override fun ambiguous(x: Int): Int =
-            <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>(x)
+            <!AMBIGUOUS_SUPER!>super<!>.ambiguous(x)
 }
 
 class MixedDerivedClass<T> : GenericBaseClass<Int>(), GenericBaseInterface<T> {
@@ -32,9 +32,9 @@ class MixedDerivedClass<T> : GenericBaseClass<Int>(), GenericBaseInterface<T> {
     override fun bar(x: T): T = super.bar(x)
 
     override fun ambiguous(x: Int): Int =
-            <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>(x)
+            <!AMBIGUOUS_SUPER!>super<!>.ambiguous(x)
     override fun ambiguous(x: T): T =
-            <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>ambiguous<!>(x)
+            <!AMBIGUOUS_SUPER!>super<!>.ambiguous(x)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,

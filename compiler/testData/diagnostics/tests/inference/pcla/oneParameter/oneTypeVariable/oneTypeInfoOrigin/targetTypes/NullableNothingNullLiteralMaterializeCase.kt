@@ -28,7 +28,7 @@ fun testMaterialize() {
     val buildee = build {
         shareTypeInfo(null, materialize())
     }
-    checkExactType<Buildee<Nothing?>>(<!TYPE_MISMATCH("Buildee<Nothing?>; Buildee<Nothing>"), TYPE_MISMATCH("Buildee<Nothing>; Buildee<Nothing?>")!>buildee<!>)
+    checkExactType<Buildee<Nothing?>>(buildee)
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localFunction,

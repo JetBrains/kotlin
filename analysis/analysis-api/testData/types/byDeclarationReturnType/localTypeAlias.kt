@@ -1,4 +1,3 @@
-// IGNORE_FE10
 
 fun foo() {
     class LocalClass<T> {

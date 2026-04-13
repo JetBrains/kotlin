@@ -11,7 +11,7 @@ interface B : A {
 
 fun test(a: A) {
     if (a is B) {
-        val x: Int by <!DEBUG_INFO_SMARTCAST!>a<!>
+        val x: Int by a
     }
 }
 

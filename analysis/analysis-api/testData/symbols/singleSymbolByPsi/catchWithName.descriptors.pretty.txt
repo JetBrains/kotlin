@@ -1,1 +1,0 @@
-myException: kotlin.Exception /* = java.lang.Exception */

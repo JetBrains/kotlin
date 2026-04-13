@@ -61,15 +61,15 @@ class JavaMutableChild8 extends KotlinMutableChild8 {}
 
 // FILE: Main.kt
 fun unresolvedReferences() {
-    JavaImmutableChild1().<!UNRESOLVED_REFERENCE!>getData<!>()
-    JavaImmutableChild2().<!UNRESOLVED_REFERENCE!>getData<!>()
-    JavaImmutableChild4().<!UNRESOLVED_REFERENCE!>getData<!>()
-    JavaMutableChild1().<!UNRESOLVED_REFERENCE!>getData<!>()
-    JavaMutableChild1().<!UNRESOLVED_REFERENCE!>setData<!>("")
-    JavaMutableChild6().<!UNRESOLVED_REFERENCE!>getData<!>()
-    JavaMutableChild6().<!UNRESOLVED_REFERENCE!>setData<!>("")
-    JavaMutableChild8().<!UNRESOLVED_REFERENCE!>getData<!>()
-    JavaMutableChild8().<!UNRESOLVED_REFERENCE!>setData<!>("")
+    JavaImmutableChild1().getData()
+    JavaImmutableChild2().getData()
+    JavaImmutableChild4().getData()
+    JavaMutableChild1().getData()
+    JavaMutableChild1().setData("")
+    JavaMutableChild6().getData()
+    JavaMutableChild6().setData("")
+    JavaMutableChild8().getData()
+    JavaMutableChild8().setData("")
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, override,

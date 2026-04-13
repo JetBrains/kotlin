@@ -151,7 +151,7 @@ FILE fqName:<root> fileName:/kt44804.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     ARG arg0: GET_VAR 'val tmp_0: <root>.AbstractInsnNode? declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode? origin=null
                     ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: BREAK label=null loop.label=loop
+                  then: BREAK label=loop loop.label=loop
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val tmp_0: <root>.AbstractInsnNode? declared in <root>.isDeadLineNumber' type=<root>.AbstractInsnNode? origin=null

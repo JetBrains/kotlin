@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Base'
           CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' superQualifier='CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public superTypes:[]' type=kotlin.Int origin=null
-            ARG <this>: GET_VAR '<this>: <root>.Base declared in <root>.Base.hashCode' type=<root>.Base origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Base declared in <root>.Base.hashCode' type=<root>.Base origin=IMPLICIT_ARGUMENT
   CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived
     CONSTRUCTOR visibility:public returnType:<root>.Derived [primary]
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/superCalls.kt
         public open fun foo (): kotlin.Unit declared in <root>.Base
       BLOCK_BODY
         CALL 'public open fun foo (): kotlin.Unit declared in <root>.Base' superQualifier='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
+          ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=IMPLICIT_ARGUMENT
     PROPERTY name:bar visibility:public modality:OPEN [val]
       overridden:
         public open bar: kotlin.String declared in <root>.Base
@@ -73,4 +73,4 @@ FILE fqName:<root> fileName:/superCalls.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.Derived'
             CALL 'public open fun <get-bar> (): kotlin.String declared in <root>.Base' superQualifier='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.String origin=GET_PROPERTY
-              ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-bar>' type=<root>.Derived origin=null
+              ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-bar>' type=<root>.Derived origin=IMPLICIT_ARGUMENT

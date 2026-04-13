@@ -19,7 +19,7 @@ fun test() {
     }
 
     // a destructuring declaration
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         val (_: BaseBuildee<TargetType>, _: BaseBuildee<TargetType>) = this to this
     }
 
@@ -57,7 +57,7 @@ fun test() {
     }
 
     // declaration of a property delegated via getValue/setValue
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         val baseG: BaseBuildee<TargetType> by Delegate(this)
     }
 
@@ -67,7 +67,7 @@ fun test() {
     }
 
     // declaration of a property delegated via provideDelegate
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+    build {
         val baseI: BaseBuildee<TargetType> by DelegateProvider(this)
     }
 

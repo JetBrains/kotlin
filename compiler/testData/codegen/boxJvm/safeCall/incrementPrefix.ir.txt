@@ -81,13 +81,12 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-              CALL 'public final fun <get-cnt> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-            CALL 'public final fun <set-cnt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                ARG <this>: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+            CALL 'public final fun <get-cnt> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+          CALL 'public final fun <set-cnt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+            ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              ARG <this>: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>'
         GET_VAR '<this>: <root>.A? declared in <root>.set' type=<root>.A? origin=null
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
@@ -106,16 +105,16 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=<root>.A? origin=PREFIX_INCR
-                VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.A? [val]
-                  GET_VAR 'val tmp_1: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                BLOCK type=<root>.A? origin=PREFIX_INCR
-                  CALL 'public final fun <set-b> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
-                    ARG <this>: GET_VAR 'val tmp_2: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                    ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                      ARG <this>: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                        ARG <this>: GET_VAR 'val tmp_2: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                  CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                    ARG <this>: GET_VAR 'val tmp_2: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.A [val]
+                  TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_1: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                CALL 'public final fun <set-b> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_2: <root>.A declared in <root>.test' type=<root>.A origin=null
+                  ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                    ARG <this>: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                      ARG <this>: GET_VAR 'val tmp_2: <root>.A declared in <root>.test' type=<root>.A origin=null
+                CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_2: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=<root>.A? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.A? [val]
@@ -131,7 +130,8 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                    ARG <this>: GET_VAR 'val tmp_4: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_4: <root>.A? declared in <root>.test' type=<root>.A? origin=null
           WHEN type=<root>.A? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -141,16 +141,16 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: BLOCK type=<root>.A? origin=PREFIX_INCR
-                VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:<root>.A? [val]
-                  GET_VAR 'val tmp_3: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                BLOCK type=<root>.A? origin=PREFIX_INCR
-                  CALL 'public final fun <set-c> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
-                    ARG <this>: GET_VAR 'val tmp_5: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                    ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                      ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                        ARG <this>: GET_VAR 'val tmp_5: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                  CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                    ARG <this>: GET_VAR 'val tmp_5: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:<root>.A [val]
+                  TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_3: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                CALL 'public final fun <set-c> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_5: <root>.A declared in <root>.test' type=<root>.A origin=null
+                  ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                    ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                      ARG <this>: GET_VAR 'val tmp_5: <root>.A declared in <root>.test' type=<root>.A origin=null
+                CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_5: <root>.A declared in <root>.test' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=<root>.A? origin=PREFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.A? [val]
@@ -166,62 +166,51 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                    ARG <this>: GET_VAR 'val tmp_7: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-          BLOCK type=<root>.A? origin=PREFIX_INCR
-            CALL 'public final fun <set-c> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_6: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_6: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_6: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_7: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          CALL 'public final fun <set-c> (<this>: <root>.A?, v: <root>.A?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PREFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_6: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+            ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+              ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                ARG <this>: GET_VAR 'val tmp_6: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+            ARG <this>: GET_VAR 'val tmp_6: <root>.A? declared in <root>.test' type=<root>.A? origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=<root>.A? origin=PREFIX_INCR
+        BLOCK type=<root>.A? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_8 type:<root>.A? [val]
-            BLOCK type=<root>.A? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:<root>.A? [val]
-                GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              WHEN type=<root>.A? origin=null
-                BRANCH
-                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    ARG arg0: GET_VAR 'val tmp_9: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CONST Null type=kotlin.Nothing? value=null
-                BRANCH
-                  if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+            GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          WHEN type=<root>.A? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR 'val tmp_8: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: BLOCK type=<root>.A? origin=PREFIX_INCR
+                VAR IR_TEMPORARY_VARIABLE name:tmp_9 type:<root>.A? [val]
+                  CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_8: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
+                  CONST Int type=kotlin.Int value=0
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
                     ARG <this>: GET_VAR 'val tmp_9: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=0
-          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_8: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_8: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG i: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                    ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                      ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                        ARG <this>: GET_VAR 'val tmp_9: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                        ARG i: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_9: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                   ARG i: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-          CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-            ARG <this>: GET_VAR 'val tmp_8: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            ARG i: GET_VAR 'val tmp_10: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=<root>.A? origin=PREFIX_INCR
+        BLOCK type=<root>.A? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_11 type:<root>.A? [val]
             BLOCK type=<root>.A? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE name:tmp_12 type:<root>.A? [val]
-                BLOCK type=<root>.A? origin=SAFE_CALL
-                  VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:<root>.A? [val]
-                    GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                  WHEN type=<root>.A? origin=null
-                    BRANCH
-                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        ARG arg0: GET_VAR 'val tmp_13: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                        ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                      then: CONST Null type=kotlin.Nothing? value=null
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                        ARG <this>: GET_VAR 'val tmp_13: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
               WHEN type=<root>.A? origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -230,157 +219,174 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
                   then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                    ARG <this>: GET_VAR 'val tmp_12: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=0
-          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_11: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_11: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_12: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          WHEN type=<root>.A? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR 'val tmp_11: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: BLOCK type=<root>.A? origin=PREFIX_INCR
+                VAR IR_TEMPORARY_VARIABLE name:tmp_13 type:<root>.A? [val]
+                  CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_11: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                VAR IR_TEMPORARY_VARIABLE name:tmp_14 type:kotlin.Int [val]
+                  CONST Int type=kotlin.Int value=0
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                    ARG <this>: GET_VAR 'val tmp_13: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG i: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                    ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                      ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                        ARG <this>: GET_VAR 'val tmp_13: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                        ARG i: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_13: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                   ARG i: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-          CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-            ARG <this>: GET_VAR 'val tmp_11: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            ARG i: GET_VAR 'val tmp_14: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:<root>.A? [val]
+        CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+          ARG <this>: BLOCK type=<root>.A? origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:<root>.A? [val]
+              GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+            WHEN type=<root>.A? origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  ARG arg0: GET_VAR 'val tmp_16: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CONST Null type=kotlin.Nothing? value=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                  ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                    GET_VAR 'val tmp_16: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=<root>.A? origin=PREFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_15 type:<root>.A? [val]
-            CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-              ARG <this>: BLOCK type=<root>.A? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp_16 type:<root>.A? [val]
-                  GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                WHEN type=<root>.A? origin=null
-                  BRANCH
-                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      ARG arg0: GET_VAR 'val tmp_16: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                      ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CONST Null type=kotlin.Nothing? value=null
-                  BRANCH
-                    if: CONST Boolean type=kotlin.Boolean value=true
-                    then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                      ARG <this>: GET_VAR 'val tmp_16: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-          VAR IR_TEMPORARY_VARIABLE name:tmp_17 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=0
-          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+        CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+          ARG <this>: GET_VAR 'val tmp_15: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          ARG i: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+          ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+            ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
               ARG <this>: GET_VAR 'val tmp_15: <root>.A? declared in <root>.test' type=<root>.A? origin=null
               ARG i: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_15: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                  ARG i: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-          CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-            ARG <this>: GET_VAR 'val tmp_15: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            ARG i: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=<root>.A? origin=PREFIX_INCR
+        CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+          ARG <this>: GET_VAR 'val tmp_15: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          ARG i: GET_VAR 'val tmp_17: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        BLOCK type=<root>.A? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_18 type:<root>.A? [val]
-            CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=GET_ARRAY_ELEMENT
-              ARG <this>: BLOCK type=<root>.A? origin=SAFE_CALL
+            GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          WHEN type=<root>.A? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR 'val tmp_18: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: BLOCK type=<root>.A? origin=PREFIX_INCR
                 VAR IR_TEMPORARY_VARIABLE name:tmp_19 type:<root>.A? [val]
-                  GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                WHEN type=<root>.A? origin=null
-                  BRANCH
-                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      ARG arg0: GET_VAR 'val tmp_19: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                      ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CONST Null type=kotlin.Nothing? value=null
-                  BRANCH
-                    if: CONST Boolean type=kotlin.Boolean value=true
-                    then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                      ARG <this>: GET_VAR 'val tmp_19: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: CONST Int type=kotlin.Int value=0
-          VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=0
-          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_18: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: GET_VAR 'val tmp_20: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_18: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                  CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=GET_ARRAY_ELEMENT
+                    ARG <this>: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                      ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                        GET_VAR 'val tmp_18: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG i: CONST Int type=kotlin.Int value=0
+                VAR IR_TEMPORARY_VARIABLE name:tmp_20 type:kotlin.Int [val]
+                  CONST Int type=kotlin.Int value=0
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                    ARG <this>: GET_VAR 'val tmp_19: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG i: GET_VAR 'val tmp_20: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                    ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                      ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                        ARG <this>: GET_VAR 'val tmp_19: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                        ARG i: GET_VAR 'val tmp_20: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_19: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                   ARG i: GET_VAR 'val tmp_20: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-          CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-            ARG <this>: GET_VAR 'val tmp_18: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            ARG i: GET_VAR 'val tmp_20: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=<root>.A? origin=PREFIX_INCR
+        BLOCK type=<root>.A? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_21 type:<root>.A? [val]
-            CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=GET_ARRAY_ELEMENT
-              ARG <this>: BLOCK type=<root>.A? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp_22 type:<root>.A? [val]
-                  BLOCK type=<root>.A? origin=SAFE_CALL
-                    VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:<root>.A? [val]
-                      GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                    WHEN type=<root>.A? origin=null
-                      BRANCH
-                        if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                          ARG arg0: GET_VAR 'val tmp_23: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                          ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                        then: CONST Null type=kotlin.Nothing? value=null
-                      BRANCH
-                        if: CONST Boolean type=kotlin.Boolean value=true
-                        then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                          ARG <this>: GET_VAR 'val tmp_23: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                WHEN type=<root>.A? origin=null
-                  BRANCH
-                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      ARG arg0: GET_VAR 'val tmp_22: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                      ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CONST Null type=kotlin.Nothing? value=null
-                  BRANCH
-                    if: CONST Boolean type=kotlin.Boolean value=true
-                    then: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                      ARG <this>: GET_VAR 'val tmp_22: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: CONST Int type=kotlin.Int value=0
-          VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=0
-          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-              ARG <this>: GET_VAR 'val tmp_21: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_21: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+            BLOCK type=<root>.A? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp_22 type:<root>.A? [val]
+                GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+              WHEN type=<root>.A? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR 'val tmp_22: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_22: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          WHEN type=<root>.A? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR 'val tmp_21: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: BLOCK type=<root>.A? origin=PREFIX_INCR
+                VAR IR_TEMPORARY_VARIABLE name:tmp_23 type:<root>.A? [val]
+                  CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=GET_ARRAY_ELEMENT
+                    ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                      ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                        GET_VAR 'val tmp_21: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG i: CONST Int type=kotlin.Int value=0
+                VAR IR_TEMPORARY_VARIABLE name:tmp_24 type:kotlin.Int [val]
+                  CONST Int type=kotlin.Int value=0
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                    ARG <this>: GET_VAR 'val tmp_23: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG i: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                    ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                      ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                        ARG <this>: GET_VAR 'val tmp_23: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                        ARG i: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+                CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+                  ARG <this>: GET_VAR 'val tmp_23: <root>.A? declared in <root>.test' type=<root>.A? origin=null
                   ARG i: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-          CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-            ARG <this>: GET_VAR 'val tmp_21: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            ARG i: GET_VAR 'val tmp_24: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:<root>.A? [val]
+        CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=GET_ARRAY_ELEMENT
+          ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+            ARG <this>: BLOCK type=<root>.A? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:<root>.A? [val]
+                GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+              WHEN type=<root>.A? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    ARG arg0: GET_VAR 'val tmp_26: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+                    ARG arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
+                    ARG <this>: TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
+                      GET_VAR 'val tmp_26: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          ARG i: CONST Int type=kotlin.Int value=0
+      VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        BLOCK type=<root>.A? origin=PREFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp_25 type:<root>.A? [val]
-            CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=GET_ARRAY_ELEMENT
-              ARG <this>: CALL 'public final fun <get-c> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                ARG <this>: BLOCK type=<root>.A? origin=SAFE_CALL
-                  VAR IR_TEMPORARY_VARIABLE name:tmp_26 type:<root>.A? [val]
-                    GET_VAR 'a: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                  WHEN type=<root>.A? origin=null
-                    BRANCH
-                      if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        ARG arg0: GET_VAR 'val tmp_26: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                        ARG arg1: CONST Null type=kotlin.Nothing? value=null
-                      then: CONST Null type=kotlin.Nothing? value=null
-                    BRANCH
-                      if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public final fun <get-b> (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=GET_PROPERTY
-                        ARG <this>: GET_VAR 'val tmp_26: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-              ARG i: CONST Int type=kotlin.Int value=0
-          VAR IR_TEMPORARY_VARIABLE name:tmp_27 type:kotlin.Int [val]
-            CONST Int type=kotlin.Int value=0
-          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+        CALL 'public final fun set (<this>: <root>.A?, i: kotlin.Int, v: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+          ARG <this>: GET_VAR 'val tmp_25: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          ARG i: GET_VAR 'val tmp_27: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+          ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+            ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
               ARG <this>: GET_VAR 'val tmp_25: <root>.A? declared in <root>.test' type=<root>.A? origin=null
               ARG i: GET_VAR 'val tmp_27: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-              ARG v: CALL 'public final fun inc (<this>: <root>.A?): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                ARG <this>: CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_25: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-                  ARG i: GET_VAR 'val tmp_27: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
-          CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
-            ARG <this>: GET_VAR 'val tmp_25: <root>.A? declared in <root>.test' type=<root>.A? origin=null
-            ARG i: GET_VAR 'val tmp_27: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun get (<this>: <root>.A?, i: kotlin.Int): <root>.A? declared in <root>' type=<root>.A? origin=PREFIX_INCR
+          ARG <this>: GET_VAR 'val tmp_25: <root>.A? declared in <root>.test' type=<root>.A? origin=null
+          ARG i: GET_VAR 'val tmp_27: kotlin.Int declared in <root>.test' type=kotlin.Int origin=null
   PROPERTY name:b visibility:public modality:FINAL [var]
     FUN name:<get-b> visibility:public modality:FINAL returnType:<root>.A?
       VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.A?
@@ -395,13 +401,12 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE name:tmp_28 type:kotlin.Int [val]
-                CALL 'public final fun <get-cnt> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-              CALL 'public final fun <set-cnt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-                ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_28: kotlin.Int declared in <root>.<set-b>' type=kotlin.Int origin=null
-              GET_VAR 'val tmp_28: kotlin.Int declared in <root>.<set-b>' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_28 type:kotlin.Int [val]
+              CALL 'public final fun <get-cnt> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+            CALL 'public final fun <set-cnt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                ARG <this>: GET_VAR 'val tmp_28: kotlin.Int declared in <root>.<set-b>' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_28: kotlin.Int declared in <root>.<set-b>' type=kotlin.Int origin=null
   PROPERTY name:c visibility:public modality:FINAL [var]
     FUN name:<get-c> visibility:public modality:FINAL returnType:<root>.A?
       VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:<root>.A?
@@ -416,10 +421,9 @@ FILE fqName:<root> fileName:/incrementPrefix.kt
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            BLOCK type=kotlin.Int origin=POSTFIX_INCR
-              VAR IR_TEMPORARY_VARIABLE name:tmp_29 type:kotlin.Int [val]
-                CALL 'public final fun <get-cnt> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
-              CALL 'public final fun <set-cnt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
-                ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-                  ARG <this>: GET_VAR 'val tmp_29: kotlin.Int declared in <root>.<set-c>' type=kotlin.Int origin=null
-              GET_VAR 'val tmp_29: kotlin.Int declared in <root>.<set-c>' type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE name:tmp_29 type:kotlin.Int [val]
+              CALL 'public final fun <get-cnt> (): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
+            CALL 'public final fun <set-cnt> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=POSTFIX_INCR
+              ARG <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+                ARG <this>: GET_VAR 'val tmp_29: kotlin.Int declared in <root>.<set-c>' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_29: kotlin.Int declared in <root>.<set-c>' type=kotlin.Int origin=null

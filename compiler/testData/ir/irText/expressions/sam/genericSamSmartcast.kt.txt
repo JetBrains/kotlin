@@ -4,7 +4,7 @@ fun f(x: Any): String {
       return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
         return "OK"
       }
- /*-> @FlexibleNullability I<Nothing>? */) /*!! String */
+ /*-> I<out @FlexibleNullability Any?> */) /*!! String */
     }
   }
   return "Fail"

@@ -8,7 +8,7 @@ public fun foo() {
     if (s == null) {
         return
     }
-    fooNotNull(<!DEBUG_INFO_SMARTCAST!>s<!>)
+    fooNotNull(s)
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, javaProperty,

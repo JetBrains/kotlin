@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.configuration.ComposeLikeConfigurator
 
-abstract class AbstractComposeLikeFirAbstractBlackBoxCodegenTestBase(parser: FirParser): AbstractFirBlackBoxCodegenTestBase(parser) {
+abstract class AbstractComposeLikeFirAbstractBlackBoxCodegenTestBase(parser: FirParser): AbstractJvmBlackBoxCodegenTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -17,15 +17,5 @@ abstract class AbstractComposeLikeFirAbstractBlackBoxCodegenTestBase(parser: Fir
         }
     }
 }
-
-open class AbstractComposeLikeIrBlackBoxCodegenTest(): AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useConfigurators(::ComposeLikeConfigurator)
-        }
-    }
-}
-
 
 open class AbstractComposeLikeFirLightTreeBlackBoxCodegenTest : AbstractComposeLikeFirAbstractBlackBoxCodegenTestBase(FirParser.LightTree)

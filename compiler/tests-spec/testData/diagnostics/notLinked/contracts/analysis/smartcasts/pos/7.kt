@@ -217,67 +217,67 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     case_1_1(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+    value_1.inv()
     case_1_2(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.<!UNREACHABLE_CODE!>inv()<!>
-    <!UNREACHABLE_CODE!>case_1_1(value_1)<!>
-    <!UNREACHABLE_CODE!><!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()<!>
+    value_1.inv()
+    case_1_1(value_1)
+    value_1.inv()
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number?) {
     case_2_1(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte()
+    value_1.<!DEPRECATION_ERROR!>toByte<!>()
     case_2_2(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+    value_1.inv()
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Any?) {
     case_3_1(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
+    value_1.length
     case_3_2(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
+    value_1.length
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     case_4_1(value_1)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>?.toByte()
-    case_4_2(<!DEBUG_INFO_SMARTCAST!>value_1<!>)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte()
-    case_4_3(<!DEBUG_INFO_SMARTCAST!>value_1<!>)
-    <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+    value_1?.toByte()
+    case_4_2(value_1)
+    value_1.toByte()
+    case_4_3(value_1)
+    value_1.inv()
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Int?, value_2: Int?) {
     if (case_5_1(value_1)) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+        value_1.inv()
         if (case_5_2(value_1)) {
-            <!DEBUG_INFO_SMARTCAST!>value_1<!>.<!UNREACHABLE_CODE!>inv()<!>
-            <!UNREACHABLE_CODE!><!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()<!>
+            value_1.inv()
+            value_1.inv()
         }
     }
     if (!case_5_3(value_2)) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()
+        value_2.inv()
         if (!case_5_4(value_2)) {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.<!UNREACHABLE_CODE!>inv()<!>
-            <!UNREACHABLE_CODE!><!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()<!>
+            value_2.inv()
+            value_2.inv()
         }
     }
     if (case_5_5(value_2) != null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()
+        value_2.inv()
         if (case_5_6(value_2) != null) {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.<!UNREACHABLE_CODE!>inv()<!>
-            <!UNREACHABLE_CODE!><!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()<!>
+            value_2.inv()
+            value_2.inv()
         }
     }
     if (case_5_7(value_2) == null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()
+        value_2.inv()
         if (case_5_8(value_2) == null) {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.<!UNREACHABLE_CODE!>inv()<!>
-            <!UNREACHABLE_CODE!><!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()<!>
+            value_2.inv()
+            value_2.inv()
         }
     }
 }
@@ -286,26 +286,26 @@ fun case_5(value_1: Int?, value_2: Int?) {
 fun case_6(value_1: Number?, value_2: Number?) {
     when {
         case_6_1(value_1) -> {
-            <!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte()
-            when { case_6_2(value_1) -> <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv() }
+            value_1.<!DEPRECATION_ERROR!>toByte<!>()
+            when { case_6_2(value_1) -> value_1.inv() }
         }
     }
     when {
         !case_6_3(value_2) -> {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte()
-            when { !case_6_4(value_2) -> <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv() }
+            value_2.<!DEPRECATION_ERROR!>toByte<!>()
+            when { !case_6_4(value_2) -> value_2.inv() }
         }
     }
     when {
         case_6_5(value_2) != null -> {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte()
-            when { case_6_6(value_2) != null -> <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv() }
+            value_2.<!DEPRECATION_ERROR!>toByte<!>()
+            when { case_6_6(value_2) != null -> value_2.inv() }
         }
     }
     when {
         case_6_7(value_2) == null -> {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte()
-            when { case_6_8(value_2) == null -> <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv() }
+            value_2.<!DEPRECATION_ERROR!>toByte<!>()
+            when { case_6_8(value_2) == null -> value_2.inv() }
         }
     }
 }
@@ -313,51 +313,51 @@ fun case_6(value_1: Number?, value_2: Number?) {
 // TESTCASE NUMBER: 7
 fun case_7(value_1: Any?, value_2: Any?) {
     if (case_7_1(value_1)) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
-        if (case_7_2(value_1)) <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
+        value_1.length
+        if (case_7_2(value_1)) value_1.length
     }
     if (!case_7_3(value_2)) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>.length
-        if (!case_7_4(value_2)) <!DEBUG_INFO_SMARTCAST!>value_2<!>.length
+        value_2.length
+        if (!case_7_4(value_2)) value_2.length
     }
     if (case_7_5(value_2) != null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>.length
-        if (case_7_6(value_2) != null) <!DEBUG_INFO_SMARTCAST!>value_2<!>.length
+        value_2.length
+        if (case_7_6(value_2) != null) value_2.length
     }
     if (case_7_7(value_2) == null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>.length
-        if (case_7_8(value_2) == null) <!DEBUG_INFO_SMARTCAST!>value_2<!>.length
+        value_2.length
+        if (case_7_8(value_2) == null) value_2.length
     }
 }
 
 // TESTCASE NUMBER: 8
 fun case_8(value_1: Any?, value_2: Any?) {
     if (case_8_1(value_1)) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>?.toByte()
-        if (case_8_2(<!DEBUG_INFO_SMARTCAST!>value_1<!>)) {
-            <!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte()
-            if (case_8_3(<!DEBUG_INFO_SMARTCAST!>value_1<!>)) <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
+        value_1?.toByte()
+        if (case_8_2(value_1)) {
+            value_1.toByte()
+            if (case_8_3(value_1)) value_1.inv()
         }
     }
     if (!case_8_4(value_2)) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>?.toByte()
-        if (!case_8_5(<!DEBUG_INFO_SMARTCAST!>value_2<!>)) {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte()
-            if (!case_8_6(<!DEBUG_INFO_SMARTCAST!>value_2<!>)) <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()
+        value_2?.toByte()
+        if (!case_8_5(value_2)) {
+            value_2.toByte()
+            if (!case_8_6(value_2)) value_2.inv()
         }
     }
     if (case_8_7(value_2) != null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>?.toByte()
-        if (case_8_8(<!DEBUG_INFO_SMARTCAST!>value_2<!>) != null) {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte()
-            if (case_8_9(<!DEBUG_INFO_SMARTCAST!>value_2<!>) != null) <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()
+        value_2?.toByte()
+        if (case_8_8(value_2) != null) {
+            value_2.toByte()
+            if (case_8_9(value_2) != null) value_2.inv()
         }
     }
     if (case_8_10(value_2) == null) {
-        <!DEBUG_INFO_SMARTCAST!>value_2<!>?.toByte()
-        if (case_8_11(<!DEBUG_INFO_SMARTCAST!>value_2<!>) == null) {
-            <!DEBUG_INFO_SMARTCAST!>value_2<!>.toByte()
-            if (case_8_12(<!DEBUG_INFO_SMARTCAST!>value_2<!>) == null) <!DEBUG_INFO_SMARTCAST!>value_2<!>.inv()
+        value_2?.toByte()
+        if (case_8_11(value_2) == null) {
+            value_2.toByte()
+            if (case_8_12(value_2) == null) value_2.inv()
         }
     }
 }

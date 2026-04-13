@@ -5,7 +5,7 @@ fun foo(y: String?) {
     var x: String? = null
     if (x != null) {
         y?.let { x = it }
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length // not-null or not-null
+        x<!UNSAFE_CALL!>.<!>length // not-null or not-null
     }
 }
 

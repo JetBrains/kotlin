@@ -1,4 +1,3 @@
-// IGNORE_FE10
 class F {
     var a = 1
     fun handleLeftBracketInFragment() {

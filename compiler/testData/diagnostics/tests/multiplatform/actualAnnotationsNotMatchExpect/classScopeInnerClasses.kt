@@ -17,7 +17,7 @@ expect class A {
 actual class A {
     actual class B {
         actual class C {
-            actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>() {}
+            <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun foo() {}
         }
     }
 }

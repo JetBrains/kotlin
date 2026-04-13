@@ -1,4 +1,3 @@
-// IGNORE_FE10
 class F {
     val a = arrayOf(1, 2)
     fun handleLeftBracketInFragment() {

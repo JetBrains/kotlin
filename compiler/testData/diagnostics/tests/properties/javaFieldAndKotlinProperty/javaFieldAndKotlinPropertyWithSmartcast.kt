@@ -10,14 +10,14 @@ public class Jaba {
 
 // FILE: test.kt
 class My : Jaba() {
-    private val a: String = "FAIL"
-    private val b: String = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>a<!>: String = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>b<!>: String = "FAIL"
 }
 
 fun test(j: Any): String {
     if (j is My) {
-        <!DEBUG_INFO_SMARTCAST!>j<!>.b = "K"
-        return <!DEBUG_INFO_SMARTCAST!>j<!>.a + <!DEBUG_INFO_SMARTCAST!>j<!>.b
+        j.<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>b<!> = "K"
+        return j.<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> + j.<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>b<!>
     }
     return "NO SMARTCAST"
 }

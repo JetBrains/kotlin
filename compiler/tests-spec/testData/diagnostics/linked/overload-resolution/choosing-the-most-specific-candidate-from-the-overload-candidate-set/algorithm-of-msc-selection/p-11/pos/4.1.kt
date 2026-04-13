@@ -21,11 +21,11 @@ fun case1(case: Case1) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: boo; typeCall: extension function")!>boo(1)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1)<!>
+    case.boo(1)
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: boo; typeCall: extension function")!>boo(x=1)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(x=1)<!>
+    case.boo(x=1)
 
 }
 
@@ -54,11 +54,11 @@ fun case2(case: Case2) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case2.boo; typeCall: function")!>boo(1, 2)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1, 2)<!>
+    case.boo(1, 2)
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case2.boo; typeCall: function")!>boo(x=1, y=2)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(x=1, y=2)<!>
+    case.boo(x=1, y=2)
 }
 
 // TESTCASE NUMBER: 3
@@ -74,11 +74,11 @@ fun case3(case: Case3) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case3.boo; typeCall: function")!>boo(1, 2)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1, 2)<!>
+    case.boo(1, 2)
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case3.boo; typeCall: function")!>boo(x=1, y=2)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(x=1, y=2)<!>
+    case.boo(x=1, y=2)
 }
 
 // TESTCASE NUMBER: 4
@@ -97,14 +97,14 @@ fun case4(case: Case4) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case4.get; typeCall: operator function")!>get(1)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.get(1)<!>
+    case.get(1)
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case4.get; typeCall: operator function")!>get(x=1)<!>
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.get(x=1)<!>
+    case.get(x=1)
     //as operator call case + 1
     //to (1.1)
-    <!DEBUG_INFO_CALL("fqName: Case4.get; typeCall: operator function")!>case[1]<!>
+    case[1]
     //(1.1) return type is String
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case[1]<!>
+    case[1]
 }

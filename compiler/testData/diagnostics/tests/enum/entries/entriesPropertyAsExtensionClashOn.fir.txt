@@ -1,4 +1,4 @@
-FILE: entriesPropertyAsExtensionClashOn.fir.kt
+FILE: entriesPropertyAsExtensionClashOn.kt
     package pckg
 
     public final enum class A : R|kotlin/Enum<pckg/A>| {

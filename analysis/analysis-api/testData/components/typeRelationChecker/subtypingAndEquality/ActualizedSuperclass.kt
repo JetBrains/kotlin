@@ -1,4 +1,3 @@
-// IGNORE_FE10
 
 // MODULE: common
 // FILE: common.kt

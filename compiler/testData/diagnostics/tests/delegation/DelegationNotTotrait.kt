@@ -3,7 +3,7 @@ open class Foo() {
 
 }
 
-class Barrr() : <!DELEGATION_NOT_TO_INTERFACE!>Foo<!> by Foo() {}
+class Barrr() : <!DELEGATION_NOT_TO_INTERFACE, SUPERTYPE_NOT_INITIALIZED!>Foo<!> by Foo() {}
 
 interface T {}
 

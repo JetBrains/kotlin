@@ -15,7 +15,7 @@ fun take(x: Bar<A>) {}
 
 fun test_1(foo: Foo<A>) {
 //    convert(foo.create())
-    <!DEBUG_INFO_EXPRESSION_TYPE("Bar<A>")!>convert(foo.create())<!>
+    convert(foo.create())
 }
 
 fun test_2(foo: Foo<A>) {

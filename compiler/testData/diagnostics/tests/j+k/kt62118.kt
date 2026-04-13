@@ -20,9 +20,9 @@ fun value(map: HashMap<String, Int>) = map.values
 
 fun test() {
     val map = HashMap<String, Int>()
-    entries(map).add(<!TYPE_MISMATCH, TYPE_MISMATCH!>MyMutableEntry(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)<!>)
+    entries(map).add(<!ARGUMENT_TYPE_MISMATCH!>MyMutableEntry(null, null)<!>)
     entries(map).add(MyMutableEntry("", 1))
-    entries(map).add(<!TYPE_MISMATCH!>MyImmutableEntry("", 1)<!>)
+    entries(map).add(<!ARGUMENT_TYPE_MISMATCH!>MyImmutableEntry("", 1)<!>)
     keys(map).add(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     value(map).add(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 

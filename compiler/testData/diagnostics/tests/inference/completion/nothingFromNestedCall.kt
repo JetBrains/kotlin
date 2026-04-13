@@ -9,7 +9,7 @@ fun <K> invOut(y: K?): Inv<Out<K>> = TODO()
 fun <R> test(x: Inv<Out<R>>): R = TODO()
 
 fun testNothing() {
-    <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>test<!>(invOut(null)) checkType { _<Nothing>() }
+    test(invOut(null)) checkType { _<Nothing>() }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

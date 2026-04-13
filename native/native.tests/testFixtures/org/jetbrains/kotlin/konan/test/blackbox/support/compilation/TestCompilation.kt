@@ -588,10 +588,14 @@ class SwiftCompilation<T : TestCompilationArtifact>(
     expectedArtifact: T,
     swiftExtraOpts: List<String>,
     outputFile: (T) -> File,
+    minOSVersion: String? = null,
 ) : TestCompilation<T>() {
     override val result: TestCompilationResult<out T> by lazy {
         val configs = testRunSettings.configurables as AppleConfigurables
-        val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
+        val effectiveOSVersion = minOSVersion?.let {
+            maxOf(minOSVersion, configs.osVersionMin, compareBy({ it.substringBefore(".").toInt() }, { it.substringAfter(".").toInt() }))
+        } ?: configs.osVersionMin
+        val swiftTarget = configs.targetTriple.withOSVersion(effectiveOSVersion).toString()
 
         val optimizationModeFlags = swiftcOptimizationModeFlags(testRunSettings.get<OptimizationMode>())
 

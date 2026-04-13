@@ -8,7 +8,7 @@ fun <T> T.f(): T = this
 
 fun test(a: A) {
     if (a !is B) return
-    val c = <!DEBUG_INFO_SMARTCAST!>a<!>.f() // type mismatch
+    val c = a.f() // type mismatch
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,

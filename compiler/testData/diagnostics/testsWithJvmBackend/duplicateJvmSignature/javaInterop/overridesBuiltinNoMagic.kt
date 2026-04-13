@@ -147,7 +147,7 @@ public class X implements java.util.List<String> {
 
 class Y : X()
 class Y2 : X() {
-    override <!ACCIDENTAL_OVERRIDE!>fun removeAt(index: Int) = ""<!>
+    override fun <!ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE!>removeAt<!>(index: Int) = ""
 }
 
 fun main() {

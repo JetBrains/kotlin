@@ -119,7 +119,7 @@ fun test9() {
     for (i in 1..10) {
         require(x is String)
         runWithoutContract {
-            x += ""
+            <!SMARTCAST_IMPOSSIBLE!>x<!> += ""
             x.length
         }
     }
@@ -187,8 +187,8 @@ fun test15() {
     for (i in 1..10) {
         require(x is String)
         runWithoutContract {
-            x.length
-            x += ""
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            <!SMARTCAST_IMPOSSIBLE!>x<!> += ""
         }
     }
 }
@@ -255,7 +255,7 @@ fun test21() {
     for (i in 1..10) {
         require(x is String)
         runWithoutContract {
-            x.length
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
         x += ""
     }
@@ -328,8 +328,8 @@ fun test27() {
         require(x is String)
         runWithoutContract {
             for (j in 1..2) {
-                x.length
-                x += ""
+                <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+                <!SMARTCAST_IMPOSSIBLE!>x<!> += ""
             }
         }
     }
@@ -381,7 +381,7 @@ fun test31() {
     var y = x
     exactlyOnce {
         while (y is String) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
             y += ""
         }
     }
@@ -392,7 +392,7 @@ fun test32() {
     var y = x
     atLeastOnce {
         while (y is String) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
             y += ""
         }
     }
@@ -404,7 +404,7 @@ fun test33() {
     runWithoutContract {
         while (y is String) {
             x.<!UNRESOLVED_REFERENCE!>length<!>
-            y += ""
+            y <!UNRESOLVED_REFERENCE!>+=<!> ""
         }
     }
 }
@@ -414,7 +414,7 @@ fun test34() {
     var y = x
     atLeastOnce {
         while (y is Int) {
-            x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+            x.inc()
             y++
         }
     }
@@ -425,7 +425,7 @@ fun test35() {
     var y = x
     atLeastOnce {
         while (y is Int) {
-            x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+            x.inc()
             y++
         }
     }
@@ -436,7 +436,7 @@ fun test36() {
     var y = x
     atLeastOnce {
         while (y is Int) {
-            x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+            x.inc()
             y++
         }
     }
@@ -450,7 +450,7 @@ fun test37() {
     exactlyOnce {
         require(y is String)
         while (true) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
             break
         }
         y += ""
@@ -463,7 +463,7 @@ fun test38() {
     atLeastOnce {
         require(y is String)
         while (true) {
-            x.<!UNRESOLVED_REFERENCE!>length<!>
+            x.length
             break
         }
         y += ""
@@ -479,7 +479,7 @@ fun test39() {
             x.<!UNRESOLVED_REFERENCE!>length<!>
             break
         }
-        y += ""
+        y <!UNRESOLVED_REFERENCE!>+=<!> ""
     }
 }
 
@@ -489,7 +489,7 @@ fun test40() {
     exactlyOnce {
         require(y is Int)
         while (true) {
-            x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+            x.inc()
             break
         }
         y++
@@ -502,7 +502,7 @@ fun test41() {
     atLeastOnce {
         require(y is Int)
         while (true) {
-            x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+            x.inc()
             break
         }
         y++
@@ -515,7 +515,7 @@ fun test42() {
     runWithoutContract {
         require(y is Int)
         while (true) {
-            x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+            x.inc()
             break
         }
         y++

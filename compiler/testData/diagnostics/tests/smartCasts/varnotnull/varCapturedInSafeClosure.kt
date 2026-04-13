@@ -11,7 +11,7 @@ public fun foo() {
     if (s != null) {
         System.out.println(closure())
         // Smart cast is possible, nobody modifies s
-        System.out.println(<!DEBUG_INFO_SMARTCAST!>s<!>.length)
+        System.out.println(s.length)
     }
 }
 

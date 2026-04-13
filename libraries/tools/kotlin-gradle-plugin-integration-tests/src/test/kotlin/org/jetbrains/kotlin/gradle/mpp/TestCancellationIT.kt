@@ -34,7 +34,7 @@ class TestCancellationIT : KGPBaseTest() {
 
         project("kmp-test-timeout", gradleVersion) {
 
-            val kmpTasksThatUseExecHandle =
+            val kmpTasksWithExternalTestProcesses =
                 fetchKmpTestTasksThatUseExecHandle()
 
             buildScriptInjection {
@@ -66,31 +66,37 @@ class TestCancellationIT : KGPBaseTest() {
                 "--configuration-cache",
             ) {
                 assertEquals(
-                    kmpTasksThatUseExecHandle
+                    kmpTasksWithExternalTestProcesses
                         .map { "TestCancellationIT timeout for $it is PT5S" }
                         .sorted()
                         .joinToString("\n"),
                     output.lines()
                         .filter { it.startsWith("TestCancellationIT timeout") }
-                        .filter { kmpTasksThatUseExecHandle.any { task -> "$task " in it } }
+                        .filter { kmpTasksWithExternalTestProcesses.any { task -> "$task " in it } }
                         .sorted()
                         .joinToString("\n"),
-                    message = "The KMP test tasks timeout must be configured for $kmpTasksThatUseExecHandle.",
+                    message = "The KMP test tasks timeout must be configured for $kmpTasksWithExternalTestProcesses.",
                 )
 
-                assertTasksFailed(kmpTasksThatUseExecHandle)
+                assertTasksFailed(kmpTasksWithExternalTestProcesses)
 
-                assertEquals(
-                    kmpTasksThatUseExecHandle
-                        .map { "[ExecAsyncHandle $it] interrupted java.lang.InterruptedException" }
-                        .sorted()
-                        .joinToString("\n"),
-                    output.lines()
-                        .filter { kmpTasksThatUseExecHandle.any { t -> it.startsWith("[ExecAsyncHandle $t] interrupted") } }
-                        .sorted()
-                        .joinToString("\n"),
-                    message = "All KMP tasks that use ExecAsyncHandle must be aborted $kmpTasksThatUseExecHandle.",
-                )
+                // Verify that the test processes were terminated.
+                // Native and WASM/JS tasks use different process execution mechanisms:
+                // - Native/JS/WASM test processes are launched via ProcessBuilder with redirectErrorStream(true),
+                //   and cancelled via Process.destroyForcibly() which logs "destroying test process".
+                // - Dry-run execution still uses ExecAsyncHandle.
+                for (task in kmpTasksWithExternalTestProcesses) {
+                    val hasProcessDestroyed = output.lines().any {
+                        it.contains("[$task] destroying test process")
+                    }
+                    val hasExecHandleInterrupted = output.lines().any {
+                        it.startsWith("[ExecAsyncHandle $task] interrupted")
+                    }
+                    assert(hasProcessDestroyed || hasExecHandleInterrupted) {
+                        "Expected test process for $task to be terminated, but found neither " +
+                                "'destroying test process' nor 'ExecAsyncHandle interrupted' in output."
+                    }
+                }
             }
         }
     }

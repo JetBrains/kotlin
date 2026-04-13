@@ -125,9 +125,9 @@ fun case_8(value_1: Int, value_2: Int) = when {
  * ISSUES: KT-37249
  */
 fun case_9(value_1: Int, value_2: String, value_3: String) = when {
-    value_1 == 1 -> <!IMPLICIT_CAST_TO_ANY!>try { 4 } catch (e: Exception) { 5 }<!>
-    value_1 == 2 -> <!IMPLICIT_CAST_TO_ANY!>try { throw Exception() } catch (e: Exception) { value_2 }<!>
-    else -> <!IMPLICIT_CAST_TO_ANY!>try { throw Exception() } catch (e: Exception) { {value_3} } finally { }<!>
+    value_1 == 1 -> try { 4 } catch (e: Exception) { 5 }
+    value_1 == 2 -> try { throw Exception() } catch (e: Exception) { value_2 }
+    else -> try { throw Exception() } catch (e: Exception) { {value_3} } finally { }
 }
 
 // TESTCASE NUMBER: 10
@@ -176,8 +176,8 @@ fun case_14(value_1: Int, value_2: Int, value_3: Int, value_4: Boolean?) {
     var mutablevalue_3 = value_3
 
     when {
-        value_1 == 1 -> <!UNUSED_CHANGED_VALUE!>mutablevalue_2++<!>
-        value_1 == 2 -> <!UNUSED_CHANGED_VALUE!>mutablevalue_3--<!>
+        value_1 == 1 -> mutablevalue_2++
+        value_1 == 2 -> mutablevalue_3--
         value_1 == 3 -> value_4!!
     }
 }
@@ -287,7 +287,7 @@ fun case_23(value_1: Int) {
     fun r_1() {
         when {
             value_1 == 1 -> return
-            value_1 == 2 -> <!UNREACHABLE_CODE!>return return<!> return
+            value_1 == 2 -> return return return
         }
     }
 

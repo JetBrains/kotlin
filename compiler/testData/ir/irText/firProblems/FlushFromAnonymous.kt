@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // TARGET_BACKEND: JVM_IR
 
 // FILE: Collector.java

@@ -38,11 +38,11 @@ abstract class C : I{
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val explicitDefaultAnnotatedGetter: String = ""
-        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@DemoAnnotation<!> get
+        @DemoAnnotation get
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     var explicitDefaultAnnotatedSetter: String = ""
-        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@DemoAnnotation<!> set
+        @DemoAnnotation set
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     var customSetter: String = ""

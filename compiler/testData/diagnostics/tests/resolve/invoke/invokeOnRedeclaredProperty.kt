@@ -7,7 +7,7 @@ object Foo {
 }
 
 fun main() {
-    Foo.<!FUNCTION_EXPECTED, NONE_APPLICABLE!>x<!>()
+    Foo.<!FUNCTION_EXPECTED!>x<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, objectDeclaration, propertyDeclaration,

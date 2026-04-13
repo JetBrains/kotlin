@@ -36,13 +36,13 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     if (contracts.case_1(value_1)) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.inc()
+        value_1.inc()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     if (contracts.case_2(10, value_1)) {
-        <!DEBUG_INFO_SMARTCAST!>value_1<!>.inc()
+        value_1.inc()
     }
 }

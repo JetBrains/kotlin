@@ -3,11 +3,11 @@
 
 package kt1001
 
-fun foo(<!UNUSED_PARAMETER!>c<!>: Array<Int>) {
+fun foo(c: Array<Int>) {
     return
 
-    <!UNREACHABLE_CODE!>for (i in c) {}<!>
-    <!UNREACHABLE_CODE!>for (i in c) {}<!>
+    for (i in c) {}
+    for (i in c) {}
 }
 
 //more tests
@@ -19,7 +19,7 @@ fun t1() : Int {
     catch (e : Exception) {
         return 2
     }
-    <!UNREACHABLE_CODE!>return 3<!>
+    return 3
 }
 
 fun t2() : Int {
@@ -29,7 +29,7 @@ fun t2() : Int {
     finally {
         doSmth()
     }
-    <!UNREACHABLE_CODE!>return 2<!>
+    return 2
 }
 
 fun doSmth() {}

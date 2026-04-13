@@ -7,7 +7,7 @@ fun checkJump(x: Int?, y: Int?) {
             y!!
         }
         // Ok
-        <!DEBUG_INFO_SMARTCAST!>y<!>.hashCode()
+        y.hashCode()
     }
     // Smart cast here is erroneous: y is nullable
     y<!UNSAFE_CALL!>.<!>hashCode()

@@ -12,8 +12,8 @@ fun main() {
     val number: Int = 5 // doesn't work
 //    val number: Long = 5 // works
 
-    with (WrapperFunctions()) {
-        wrapper <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>greaterEq<!> number
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!> (WrapperFunctions()) {
+        wrapper <!NONE_APPLICABLE!>greaterEq<!> number
     }
 }
 

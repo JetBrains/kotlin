@@ -52,7 +52,7 @@ class Case2() : I3 {
     }
 
     fun case() {
-        <!DEBUG_INFO_CALL("fqName: Case2.invoke; typeCall: operator function")!>invoke(1)<!>
+        <!DEBUG_INFO_CALL("fqName: I3.invoke; typeCall: operator function")!>invoke(1)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>invoke(1)<!>
     }
 }
@@ -60,4 +60,3 @@ class Case2() : I3 {
 interface I3 {
     operator fun invoke(x: Int): String = "print(3)" // (3)
 }
-

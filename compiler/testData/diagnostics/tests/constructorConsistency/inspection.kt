@@ -3,8 +3,8 @@ class First {
     val x: String
 
     init {
-        use(<!DEBUG_INFO_LEAKING_THIS!>this<!>) // NPE! Leaking this
-        x = <!DEBUG_INFO_LEAKING_THIS!>foo<!>() // NPE! Own function
+        use(this) // NPE! Leaking this
+        x = foo() // NPE! Own function
     }
 
     fun foo() = x
@@ -16,9 +16,9 @@ abstract class Second {
     val x: String
 
     init {
-        use(<!DEBUG_INFO_LEAKING_THIS!>this<!>) // Leaking this in non-final
-        x = <!DEBUG_INFO_LEAKING_THIS!>bar<!>() // Own function in non-final
-        <!DEBUG_INFO_LEAKING_THIS!>foo<!>()     // Non-final function call
+        use(this) // Leaking this in non-final
+        x = bar() // Own function in non-final
+        foo()     // Non-final function call
     }
 
     private fun bar() = foo()
@@ -38,7 +38,7 @@ abstract class Third {
     abstract var x: String
 
     constructor() {
-        <!DEBUG_INFO_LEAKING_THIS!>x<!> = "X" // Non-final property access
+        x = "X" // Non-final property access
     }
 }
 
@@ -53,7 +53,7 @@ class Fourth {
     val x: String
         get() = y
 
-    val y = <!DEBUG_INFO_LEAKING_THIS!>x<!> // null!
+    val y = x // null!
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, init, override, propertyDeclaration,

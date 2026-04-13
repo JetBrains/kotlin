@@ -14,13 +14,13 @@ class InvokeComponent {
 }
 
 fun test_1(c: FunctionComponent) {
-    val (<!PROPERTY_AS_OPERATOR!>x<!>) = FunctionComponent()
-    val (<!PROPERTY_AS_OPERATOR!>y<!>) = c
+    val (<!NOT_FUNCTION_AS_OPERATOR!>x<!>) = FunctionComponent()
+    val (<!NOT_FUNCTION_AS_OPERATOR!>y<!>) = c
 }
 
 fun test_2(c: InvokeComponent) {
-    val (<!PROPERTY_AS_OPERATOR!>x<!>) = FunctionComponent()
-    val (<!PROPERTY_AS_OPERATOR!>y<!>) = c
+    val (<!NOT_FUNCTION_AS_OPERATOR!>x<!>) = FunctionComponent()
+    val (<!NOT_FUNCTION_AS_OPERATOR!>y<!>) = c
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, functionalType, lambdaLiteral,

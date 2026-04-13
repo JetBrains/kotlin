@@ -7,7 +7,7 @@ class MyClass1 {
 }
 
 fun main(arg: MyClass1) {
-    arg<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!><!SYNTAX!><!>
+    arg<!UNRESOLVED_REFERENCE!>+<!><!SYNTAX!><!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, operator */

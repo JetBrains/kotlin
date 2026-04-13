@@ -8,12 +8,12 @@ fun doIt() {}
 fun foo(my: My) {
     if (my.x != null) {
         // my.x should be smart-cast
-        if (<!DEBUG_INFO_SMARTCAST!>my.x<!>) doIt()
-        <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>my.x<!>) {
+        if (my.x) doIt()
+        <!NO_ELSE_IN_WHEN!>when<!> (my.x) {
             true -> doIt()
         }
         when {
-            <!DEBUG_INFO_SMARTCAST!>my.x<!> -> doIt()
+            my.x -> doIt()
         }
     }
 }
@@ -21,12 +21,12 @@ fun foo(my: My) {
 fun bar(x: Boolean?) {
     if (x != null) {
         // x should be smart-cast
-        if (<!DEBUG_INFO_SMARTCAST!>x<!>) doIt()
-        <!NO_ELSE_IN_WHEN!>when<!> (<!DEBUG_INFO_SMARTCAST!>x<!>) {
+        if (x) doIt()
+        <!NO_ELSE_IN_WHEN!>when<!> (x) {
             true -> doIt()
         }
         when {
-            <!DEBUG_INFO_SMARTCAST!>x<!> -> doIt()
+            x -> doIt()
         }
     }
 }

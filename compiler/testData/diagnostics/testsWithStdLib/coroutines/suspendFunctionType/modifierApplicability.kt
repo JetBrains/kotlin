@@ -26,14 +26,14 @@ typealias Test15 = (@A() suspend () -> Unit)?
 typealias Test16 = (@A suspend () -> Unit)?
 typealias Test17 = @A suspend RS.() -> Unit
 typealias Test18 = (suspend () -> Unit)?
-typealias Test19 = (@A(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>{ val x: <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>suspend<!> String? = null; "" }()<!>) suspend () -> Unit)?
-typealias Test20 = (@A(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".let { val x: <!WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>suspend<!> String? = null; it }<!>) suspend () -> Unit)?
+typealias Test19 = (@A(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>{ val x: <!WRONG_MODIFIER_TARGET!>suspend<!> String? = null; "" }()<!>) suspend () -> Unit)?
+typealias Test20 = (@A(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"".let { val x: <!WRONG_MODIFIER_TARGET!>suspend<!> String? = null; it }<!>) suspend () -> Unit)?
 
-interface Supertype1 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend () -> Unit<!> {
+interface Supertype1 : suspend () -> Unit {
 
 }
 
-interface Supertype2 : <!SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
+interface Supertype2 : <!SUPERTYPE_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!>suspend String.() -> Unit<!> {
 
 }
 

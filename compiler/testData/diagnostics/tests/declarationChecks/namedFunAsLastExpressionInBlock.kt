@@ -5,20 +5,20 @@ fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
     val x = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named1<!>(x: Int): Int { return 1 }
-    x checkType { _<Function1<Int, Int>>() }
+    x <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Function1<Int, Int><!>>() }
 
-    foo <!TYPE_MISMATCH!>{ <!EXPECTED_TYPE_MISMATCH("() -> Int")!>fun named2(): Int {return 1}<!> }<!>
-    foo(<!TYPE_MISMATCH!>{ <!EXPECTED_TYPE_MISMATCH!>fun named3() = 1<!> }<!>)
+    foo { <!RETURN_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
+    foo({ <!RETURN_TYPE_MISMATCH!>fun named3() = 1<!> })
 
     val x1 =
-    <!INVALID_IF_AS_EXPRESSION!>if<!> (1 == 1)
+    if (1 == 1)
     // TODO: Diagnostic content could be better
     <!SYNTAX!><!>fun named4(): Int {return 1}
     <!SYNTAX!>else<!>
     fun named5() = 1
 
     val x2 =
-    <!INVALID_IF_AS_EXPRESSION!>if<!> (1 == 1) {
+    if (1 == 1) {
         fun named6(): Int {
             return 1
         }
@@ -27,15 +27,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named8<!>(): Int {return 1}
-        else -> fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named9<!>() = 1
+        0 -> fun <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>named8<!>(): Int {return 1}
+        else -> fun <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>named9<!>() = 1
     }
 
     val x31 = when (1) {
         0 -> {
             fun named10(): Int {return 1}
         }
-        else -> fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named11<!>() = 1
+        else -> fun <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>named11<!>() = 1
     }
 
     val x4 = {
@@ -45,7 +45,7 @@ fun test() {
     x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = (fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named15<!>(): Boolean { return true })()
+    val b = (<!UNRESOLVED_REFERENCE!>fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named15<!>(): Boolean { return true }<!>)()
 
     baz(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>named16<!>(){})
 }

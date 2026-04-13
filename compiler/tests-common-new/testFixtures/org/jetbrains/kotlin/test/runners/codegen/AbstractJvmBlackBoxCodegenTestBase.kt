@@ -5,62 +5,63 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
-import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrConstCheckerHandler
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
-import org.jetbrains.kotlin.test.configuration.configureCommonHandlersForBoxTest
-import org.jetbrains.kotlin.test.configuration.configureJvmBoxCodegenSettings
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.BackendFacade
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.ResultingArtifact
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.*
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.jvm.JdkKindBoxTestChecker
+import org.jetbrains.kotlin.test.services.jvm.PureJvmCodegenBoxTestChecker
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 
-abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendOutput<R>>(
-    val targetFrontend: FrontendKind<R>,
+abstract class AbstractJvmBlackBoxCodegenTestBase(
+    val parser: FirParser,
 ) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
-    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
 
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForJvmTest(
-            targetFrontend,
-            frontendFacade,
-            frontendToBackendConverter,
-            backendFacade,
-            additionalSourceProvider = ::MainFunctionForBlackBoxTestsSourceProvider
-        )
-
-        configureClassicFrontendHandlersStep {
-            useHandlers(
-                ::ClassicDiagnosticsHandler
-            )
-        }
+    override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
+        setupJvmPipelineSteps(parser)
 
         configureFirHandlersStep {
-            useHandlers(
+            useHandlersAtFirst(
+                ::FirDumpHandler,
+                ::FirCfgDumpHandler,
+                ::FirResolvedTypesVerifier,
+                ::FirScopeDumpHandler,
                 ::FirDiagnosticsHandler
             )
         }
 
-        configureCommonHandlersForBoxTest()
+        configureIrHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler,
+                ::IrConstCheckerHandler
+            )
+        }
 
-        useAfterAnalysisCheckers(
-            ::BlackBoxCodegenSuppressor,
-        )
+        forTestsMatching("compiler/testData/codegen/*") {
+            useAfterAnalysisCheckers(::PureJvmCodegenBoxTestChecker)
+            useAfterAnalysisCheckers(::JdkKindBoxTestChecker)
+        }
+
+        configureCommonHandlersForBoxTest()
+        configureDumpHandlersForCodegenTest()
+        configureBlackBoxTestSettings()
+
+        useAdditionalSourceProviders(::MainFunctionForBlackBoxTestsSourceProvider)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         configureJvmBoxCodegenSettings(includeAllDumpHandlers = true)
         enableMetaInfoHandler()
     }
 }
+
+open class AbstractFirLightTreeBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.Psi)

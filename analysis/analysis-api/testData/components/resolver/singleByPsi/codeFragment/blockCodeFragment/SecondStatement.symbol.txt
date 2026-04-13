@@ -1,4 +1,4 @@
-KtNameReferenceExpression(142,145): 'bar'
+KtNameReferenceExpression(140,143): 'bar'
   KaSymbolResolutionSuccess:
     symbols = [
       /bar(): kotlin.Unit

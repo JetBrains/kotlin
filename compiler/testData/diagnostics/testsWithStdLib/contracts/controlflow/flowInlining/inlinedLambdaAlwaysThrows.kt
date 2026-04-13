@@ -14,7 +14,7 @@ inline fun myRun(block: () -> Unit): Unit {
 
 fun test() {
     myRun { throw java.lang.IllegalArgumentException() }
-    <!UNREACHABLE_CODE!>val x: Int = 42<!>
+    val x: Int = 42
 }
 
 /* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, integerLiteral,

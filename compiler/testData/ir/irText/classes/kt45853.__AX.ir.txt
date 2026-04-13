@@ -1,9 +1,9 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibility:public superTypes:[<root>.A; <root>.X]
-  thisReceiver: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB kind:DispatchReceiver name:<this> type:<root>.AX
+  thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AX
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public returnType:<root>.AX [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:Regular name:other index:1 type:kotlin.Any?
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.A
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.X
@@ -24,8 +24,8 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:AX modality:ABSTRACT visibili
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:a visibility:public modality:OPEN [val]
     overridden:
       public abstract a: <root>.A? [val] declared in <root>.A
-    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN returnType:@[EnhancedNullability] <root>.AX?
-      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.AX
+    FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:<get-a> visibility:public modality:OPEN returnType:@[EnhancedNullability] <root>.AX?
+      VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.AX
       annotations:
         Override
       correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:a visibility:public modality:OPEN [val]

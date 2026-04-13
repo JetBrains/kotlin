@@ -3,11 +3,11 @@ fun foo() {
     var v: Any = 42
     v.<!UNRESOLVED_REFERENCE!>length<!>()
     v = "abc"
-    <!DEBUG_INFO_SMARTCAST!>v<!>.length
+    v.length
     v = 42
     v.<!UNRESOLVED_REFERENCE!>length<!>()
     v = "abc"
-    <!DEBUG_INFO_SMARTCAST!>v<!>.length
+    v.length
 }
 
 /* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, smartcast,

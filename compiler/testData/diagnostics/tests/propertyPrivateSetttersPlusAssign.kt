@@ -9,10 +9,10 @@ class Test {
 fun main() {
     val test = Test()
 
-    <!INVISIBLE_SETTER!>test.x<!> = 5
-    <!INVISIBLE_SETTER!>test.x<!> -= 5
-    <!INVISIBLE_SETTER!>test.x<!>--
-    --<!INVISIBLE_SETTER!>test.x<!>
+    test.<!INVISIBLE_SETTER!>x<!> = 5
+    test.<!INVISIBLE_SETTER!>x<!> -= 5
+    test.<!INVISIBLE_SETTER!>x<!>--
+    --test.<!INVISIBLE_SETTER!>x<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration,

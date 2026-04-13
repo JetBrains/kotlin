@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.test.diagnostics.baseFirNativeDiagnosticTestCo
 import org.jetbrains.kotlin.konan.test.diagnostics.baseNativeDiagnosticTestConfiguration
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.configuration.configurationForClassicAndFirTestsAlongside
+import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractLLNativeDiagnosticsTestBase : AbstractLLCompilerBasedTest() {
@@ -26,7 +26,10 @@ abstract class AbstractLLNativeDiagnosticsTestBase : AbstractLLCompilerBasedTest
             }
 
             baseFirNativeDiagnosticTestConfiguration()
-            configurationForClassicAndFirTestsAlongside(::ReversedFirIdenticalChecker)
+            useAfterAnalysisCheckers(
+                ::FirFailingTestSuppressor,
+                ::ReversedFirIdenticalChecker,
+            )
         }
     }
 }

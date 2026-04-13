@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun foo(): String = ""
 val x = 42

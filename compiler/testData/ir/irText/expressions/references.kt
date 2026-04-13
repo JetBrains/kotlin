@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 val ok = "OK"
 val ok2 = ok

@@ -12,7 +12,7 @@ fun foo(f1: () -> Unit, f2: () -> Unit) {
 }
 
 fun test() {
-    var s: String? = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>null<!>
+    var s: String? = null
     s = ""
     foo(
         { <!SMARTCAST_IMPOSSIBLE!>s<!>.length }, // unstable since lambda evaluation order is indeterministic
@@ -25,8 +25,8 @@ fun test() {
     )
     s = ""
     foo(
-        { <!SMARTCAST_IMPOSSIBLE!>s<!>.length }, // stable
-        { <!SMARTCAST_IMPOSSIBLE!>s<!>.length }, // stable
+        { s.length }, // stable
+        { s.length }, // stable
     )
     s = null
 }

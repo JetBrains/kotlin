@@ -25,9 +25,9 @@ import JavaClassWithSyntheticProperty
 
 class Derived: JavaClassWithSyntheticProperty() {
     override fun get_(): String {
-        val <!UNDERSCORE_IS_RESERVED!>_<!> : String = "2"
-        <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
-        return <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.`_`
+        val _ : String = "2"
+        super.<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>
+        return super.`_`
     }
 
     override fun foo(`_`: String?): String? {

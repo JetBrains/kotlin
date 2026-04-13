@@ -5,8 +5,8 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
-    companion object
+<!EXPECT_ACTUAL_IR_INCOMPATIBILITY{JVM}!>expect<!> class Foo {
+    companion <!NO_ACTUAL_FOR_EXPECT{JVM}!>object<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)

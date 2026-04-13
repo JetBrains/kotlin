@@ -73,9 +73,9 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
           TYPE_ARG (of class) Y: @[FlexibleNullability] kotlin.Int?
           ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (jxx: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] X of <root>.C?>?) declared in <root>.C' type=<root>.C<@[FlexibleNullability] kotlin.String?> origin=null
             TYPE_ARG (of class) X: @[FlexibleNullability] kotlin.String?
-            ARG jxx: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?
+            ARG jxx: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>
               GET_VAR 'f1: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
-          ARG jxy: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>?
+          ARG jxy: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.Int?>
             GET_VAR 'f2: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
   FUN name:test4 visibility:public modality:FINAL returnType:<root>.Outer.Inner<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.String?>
     VALUE_PARAMETER kind:Regular name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
         CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: @[FlexibleNullability] <root>.J<@[FlexibleNullability] TCtor of <root>.G.<init>?, @[FlexibleNullability] TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<@[FlexibleNullability] kotlin.String?> origin=null
           TYPE_ARG (of class) TClass: @[FlexibleNullability] kotlin.String?
           TYPE_ARG TCtor: @[FlexibleNullability] kotlin.Int?
-          ARG x: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>?
+          ARG x: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>
             GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.Int> declared in <root>.testGenericJavaCtor1' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
   FUN name:testGenericJavaCtor2 visibility:public modality:FINAL returnType:kotlin.Unit
     VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Any
@@ -109,6 +109,6 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
         CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: @[FlexibleNullability] <root>.J<@[FlexibleNullability] TCtor of <root>.G.<init>?, @[FlexibleNullability] TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<@[FlexibleNullability] kotlin.String?> origin=null
           TYPE_ARG (of class) TClass: @[FlexibleNullability] kotlin.String?
           TYPE_ARG TCtor: @[FlexibleNullability] kotlin.Int?
-          ARG x: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>?
+          ARG x: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>
             TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.Int> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.Int>
               GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null

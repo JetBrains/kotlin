@@ -3,24 +3,24 @@
 // IGNORE_FIR_DIAGNOSTICS
 // MODULE: m1-common
 
-expect open class <!NO_ACTUAL_FOR_EXPECT{JVM}!>A<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> open class A
 
-class C : A<!NO_CONSTRUCTOR, NO_CONSTRUCTOR{JVM}!>()<!> {
+class C : <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>A()<!> {
     fun f() {
-        <!RESOLUTION_TO_CLASSIFIER, RESOLUTION_TO_CLASSIFIER{JVM}!>A<!>()
+        <!EXPECT_CLASS_AS_FUNCTION!>A<!>()
     }
 }
 
-expect interface <!NO_ACTUAL_FOR_EXPECT{JVM}!>I<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect<!> interface I
 
 // Make sure the diagnostic for interfaces is preserved, it has another kind
-class E : I<!NO_CONSTRUCTOR, NO_CONSTRUCTOR{JVM}!>()<!>
+class E : I<!NO_CONSTRUCTOR!>()<!>
 
 // MODULE: m1-jvm()()(m1-common)
 
-class D : A<!NO_CONSTRUCTOR!>()<!> {
+class D : <!NO_IMPLICIT_DEFAULT_CONSTRUCTOR_ON_EXPECT_CLASS!>A()<!> {
     fun g() {
-        <!RESOLUTION_TO_CLASSIFIER!>A<!>()
+        <!EXPECT_CLASS_AS_FUNCTION!>A<!>()
     }
 }
 

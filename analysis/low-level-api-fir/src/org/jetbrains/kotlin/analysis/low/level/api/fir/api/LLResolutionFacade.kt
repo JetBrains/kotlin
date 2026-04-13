@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByPsiWithoutDependencies
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.classIdOrError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.utils.classId
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.isLocalClass
@@ -120,10 +123,10 @@ class LLResolutionFacade internal constructor(
     }
 
     /**
-     * @see LLDiagnosticProvider.collectDiagnostics
+     * @see LLDiagnosticProvider.diagnostics
      */
-    internal fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
-        return diagnosticProvider.collectDiagnostics(ktFile, filter)
+    internal fun diagnostics(ktFile: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
+        return diagnosticProvider.diagnostics(ktFile, filter)
     }
 
     internal fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
@@ -141,29 +144,28 @@ class LLResolutionFacade internal constructor(
     }
 
     private fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
-        val targetDeclaration = ktDeclaration.originalDeclaration ?: ktDeclaration
-        val targetModule = getModule(targetDeclaration)
+        val targetModule = getModule(ktDeclaration)
 
         require(getModuleResolutionStrategy(targetModule) == LLModuleResolutionStrategy.LAZY) {
             "Declaration should be resolvable module, instead it had ${targetModule::class}"
         }
 
         // All elements inside a code fragment are local
-        val nonLocalContainer = targetDeclaration.containingKtFile as? KtCodeFragment
-            ?: targetDeclaration.getNonLocalContainingOrThisElement()
+        val nonLocalContainer = ktDeclaration.containingKtFile as? KtCodeFragment
+            ?: ktDeclaration.getNonLocalContainingOrThisElement()
             ?: errorWithAttachment("Declaration should have non-local container") {
-                withPsiEntry("ktDeclaration", targetDeclaration, ::getModule)
+                withPsiEntry("ktDeclaration", ktDeclaration, ::getModule)
                 withEntry("module", targetModule) { it.moduleDescription }
             }
 
-        val firDeclaration = if ((nonLocalContainer as? KtDeclaration) == targetDeclaration) {
+        val firDeclaration = if ((nonLocalContainer as? KtDeclaration) == ktDeclaration) {
             val session = sessionProvider.getResolvableSession(targetModule)
             nonLocalContainer.findSourceNonLocalFirDeclaration(
                 firFileBuilder = session.moduleComponents.firFileBuilder,
                 provider = session.firProvider,
             )
         } else {
-            findSourceFirDeclarationViaResolve(targetDeclaration)
+            findSourceFirDeclarationViaResolve(ktDeclaration)
         }
 
         return firDeclaration.symbol
@@ -251,3 +253,4 @@ class LLResolutionFacade internal constructor(
 fun LLResolutionFacade.getModule(element: PsiElement): KaModule {
     return KotlinProjectStructureProvider.getModule(project, element, useSiteModule)
 }
+

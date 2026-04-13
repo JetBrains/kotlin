@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
+import org.jetbrains.kotlin.ir.backend.js.jsOutputName
 import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -41,20 +42,11 @@ private val IrModuleFragment.outputFileName
 
 abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC
-    abstract fun loadIr(modulesStructure: ModulesStructure): IrModuleInfo
     abstract fun lowerIr(irModuleInfo: IrModuleInfo, mainModule: MainModule, exportedDeclarations: Set<FqName>): LoweredIrWithExtraArtifacts
     abstract fun compileIr(loweredIr: LoweredIrWithExtraArtifacts): List<WasmIrModuleConfiguration>
 }
 
 abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, private val noCrossFileOptimisations: Boolean) : WasmCompilerBase(configuration) {
-    override fun loadIr(modulesStructure: ModulesStructure): IrModuleInfo {
-        return loadIr(
-            modulesStructure = modulesStructure,
-            irFactory = irFactory,
-            loadFunctionInterfacesIntoStdlib = true
-        )
-    }
-
     override fun lowerIr(irModuleInfo: IrModuleInfo, mainModule: MainModule, exportedDeclarations: Set<FqName>): LoweredIrWithExtraArtifacts {
         configuration.wasmDisableCrossFileOptimisations = noCrossFileOptimisations
         return compileToLoweredIr(
@@ -108,9 +100,6 @@ class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, overri
 }
 
 class SingleModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC, val isWasmStdlib: Boolean) : WasmCompilerBase(configuration) {
-    override fun loadIr(modulesStructure: ModulesStructure): IrModuleInfo =
-        loadIrForSingleModule(modulesStructure = modulesStructure, irFactory = irFactory)
-
     override fun lowerIr(
         irModuleInfo: IrModuleInfo,
         mainModule: MainModule,

@@ -9,7 +9,7 @@ fun test() {
         val someProperty = 10
     }
 
-    MyEnum.<!UNINITIALIZED_ENUM_ENTRY!>A<!>.someProperty
+    MyEnum.A.someProperty
 }
 
 enum class MyEnum {

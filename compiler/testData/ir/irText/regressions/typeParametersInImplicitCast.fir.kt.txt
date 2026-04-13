@@ -1,7 +1,0 @@
-fun <T : Any?> problematic(lss: List<List<T>>): List<T> {
-  return flatMap<List<T>, @FlexibleNullability T?>(/* <this> = lss, */ transform = local fun <anonymous>(it: List<T>): Iterable<@FlexibleNullability T?> {
-    return id<@FlexibleNullability T?>(v = it) /*!! @FlexibleMutability MutableList<@FlexibleNullability T?> */
-  }
-)
-}
-

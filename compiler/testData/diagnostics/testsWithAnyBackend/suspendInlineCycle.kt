@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 
 suspend inline fun inlineFun1(p: () -> Unit) {

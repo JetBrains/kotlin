@@ -1,6 +1,5 @@
 // ISSUE: KT-75315
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
-// IGNORE_FIR
 // ^KT-79993
 
 enum class MyEnum {

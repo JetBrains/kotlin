@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-62836
 fun box() {
-    useSuspendFunInt(<!TYPE_MISMATCH!>Test()<!>)
+    useSuspendFunInt(<!ARGUMENT_TYPE_MISMATCH!>Test()<!>)
 }
 
 fun useSuspendFunInt(fn: suspend () -> String): String = ""

@@ -11,6 +11,7 @@ import java.lang.reflect.TypeVariable
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
+import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.AbstractKType
@@ -406,7 +407,7 @@ private fun KType.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug: 
                     "Some parameter types appear non-denotable for type '$this' (${this::class}) which belongs to member '$memberNameForDebug'"
         )
     // Recreating type from classifiers erases mutability (e.g., MutableList becomes List)
-    return classifier.createType(
+    return classifier.createTypeImpl(
         arguments.map { it.copy(type = it.type?.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug)) },
         nullable = false,
         annotations

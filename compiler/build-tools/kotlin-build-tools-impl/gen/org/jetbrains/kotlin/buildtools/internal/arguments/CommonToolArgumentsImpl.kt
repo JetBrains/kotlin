@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 import java.lang.IllegalStateException
 import kotlin.Any
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
+import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
@@ -38,6 +43,11 @@ internal abstract class CommonToolArgumentsImpl(
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
+  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> = mutableListOf()
+
+  internal val restrictedArgViolations: List<RestrictedArgViolation>
+    get() = _restrictedArgViolations
+
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V {
@@ -47,12 +57,16 @@ internal abstract class CommonToolArgumentsImpl(
 
   @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 0)) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
       throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
     }
     optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
+  @Deprecated(
+    message = "This method is no longer useful when compiling with Kotlin compiler 2.3.20 and above, as the arguments instance now contains default values for all arguments.",
+    level = DeprecationLevel.WARNING,
+  )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
@@ -97,6 +111,10 @@ internal abstract class CommonToolArgumentsImpl(
     if (WERROR in this) { arguments.allWarningsAsErrors = get(WERROR)}
     if (WEXTRA in this) { arguments.extraWarnings = get(WEXTRA)}
     return arguments
+  }
+
+  internal open fun collectRestrictedArgViolations(compilerArgs: CommonToolArguments, defaultArgs: CommonToolArguments) {
+    _restrictedArgViolations.clear()
   }
 
   public class CommonToolArgument<V>(

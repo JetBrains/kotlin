@@ -7,14 +7,14 @@ expect class Foo {
     class Inner<T>
 }
 
-expect fun substituted<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><Any>)<!>
-expect fun substitutedIncorrect<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><Any>)<!>
+expect fun substituted(p: Foo.Inner<Any>)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun substitutedIncorrect(p: Foo.Inner<Any>)
 
-expect fun <T> withTypeParam<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><T>)<!>
-expect fun <T, R> withTypeParamIncorrect<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><R>)<!>
+expect fun <T> withTypeParam(p: Foo.Inner<T>)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun <T, R> withTypeParamIncorrect(p: Foo.Inner<R>)
 
-expect fun star<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><*>)<!>
-expect fun starVsNonStar<!NO_ACTUAL_FOR_EXPECT{JVM}!>(p: Foo.<!UNRESOLVED_REFERENCE{JVM}!>Inner<!><*>)<!>
+expect fun star(p: Foo.Inner<*>)
+<!EXPECT_ACTUAL_IR_MISMATCH{JVM}!>expect<!> fun starVsNonStar(p: Foo.Inner<*>)
 
 
 // MODULE: m2-jvm()()(m1-common)
@@ -25,14 +25,14 @@ class FooImpl {
 
 actual typealias Foo = FooImpl
 
-actual fun substituted<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><Any>)<!> {}
-actual fun substitutedIncorrect<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><String>)<!> {}
+actual fun substituted(p: Foo.Inner<Any>) {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>substitutedIncorrect<!>(p: Foo.Inner<String>) {}
 
-actual fun <T> withTypeParam<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><T>)<!> {}
-actual fun <T, R> withTypeParamIncorrect<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><T>)<!> {}
+actual fun <T> withTypeParam(p: Foo.Inner<T>) {}
+actual fun <T, R> <!ACTUAL_WITHOUT_EXPECT!>withTypeParamIncorrect<!>(p: Foo.Inner<T>) {}
 
-actual fun star<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><*>)<!> {}
-actual fun starVsNonStar<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><Any>)<!> {}
+actual fun star(p: Foo.Inner<*>) {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>starVsNonStar<!>(p: Foo.Inner<Any>) {}
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, nullableType, starProjection,
 typeAliasDeclaration, typeParameter */

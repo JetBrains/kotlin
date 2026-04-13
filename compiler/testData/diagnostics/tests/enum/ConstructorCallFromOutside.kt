@@ -7,7 +7,7 @@ enum class A(val c: Int) {
 
 fun createA(): A {
     // Error should be here!
-    return <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_MEMBER!>A<!>(10)<!>
+    return <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>A<!>(10)<!>
 }
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, primaryConstructor,

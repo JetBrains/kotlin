@@ -45,31 +45,31 @@ expect fun onType(param: @Ann Any)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClass<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class OnClass
 
 actual class OnMember {
-    actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onMember<!>() {}
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onMember() {}
 }
 
 class ViaTypealiasImpl
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ViaTypealias<!> = ViaTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias ViaTypealias = ViaTypealiasImpl
 
 class MemberScopeViaTypealiasImpl {
     fun foo() {}
 }
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MemberScopeViaTypealias<!> = MemberScopeViaTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MemberScopeViaTypealias = MemberScopeViaTypealiasImpl
 
 @WithArg("other str")
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun withDifferentArg() {}
 
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inValueParam<!>(arg: String) {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun inValueParam(arg: String) {}
 
-actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inTypeParam<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun <T> inTypeParam() {}
 
-actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetter<!>: String = ""
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val onGetter: String = ""
 
-actual fun onType(param: Any) {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onType(param: Any) {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration, expect,
 functionDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration,

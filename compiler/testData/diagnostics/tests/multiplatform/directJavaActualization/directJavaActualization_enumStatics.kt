@@ -3,17 +3,17 @@
 // LANGUAGE:+DirectJavaActualization
 // MODULE: m1-common
 // FILE: common.kt
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Ok<!> {
+expect enum class Ok {
     ENTRY;
     fun values() // Not to be confused with static values
 }
 
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>NoAnnotation<!> {
+expect enum class NoAnnotation {
     ENTRY;
-    fun values() // Not to be confused with static values
+    fun <!KOTLIN_ACTUAL_ANNOTATION_MISSING{JVM}!>values<!>() // Not to be confused with static values
 }
 
-expect enum class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>ExcessiveAnnotation<!> {
+<!JAVA_DIRECT_ACTUAL_WITHOUT_EXPECT{JVM}!>expect<!> enum class ExcessiveAnnotation {
     ENTRY;
 }
 

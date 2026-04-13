@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.B<R of <root>.B> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-          TYPE_ARG T: @[FlexibleNullability] R of <root>.B?
+          TYPE_ARG T: R of <root>.B
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.B>; <root>.Java3<R of <root>.B>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -226,7 +226,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.E<R of <root>.E> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
-          TYPE_ARG T: @[FlexibleNullability] R of <root>.E?
+          TYPE_ARG T: R of <root>.E
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1<R of <root>.E>; <root>.Java2<R of <root>.E>; <root>.Java3<R of <root>.E>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
@@ -256,7 +256,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3
       BLOCK_BODY
         CALL 'public open fun bar (o: @[FlexibleNullability] T of <root>.Java3?): kotlin.Unit declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit origin=null
-          ARG <this>: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.bar' type=<root>.E<R of <root>.E> origin=null
+          ARG <this>: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.bar' type=<root>.E<R of <root>.E> origin=IMPLICIT_ARGUMENT
           ARG o: GET_VAR 'o: R of <root>.E declared in <root>.E.bar' type=R of <root>.E origin=null
     FUN name:foo visibility:public modality:OPEN returnType:R of <root>.E
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.E<R of <root>.E>
@@ -267,7 +267,7 @@ FILE fqName:<root> fileName:/1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): R of <root>.E declared in <root>.E'
           CALL 'public open fun foo (): @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Java3 modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] R of <root>.E? origin=null
-            ARG <this>: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=null
+            ARG <this>: GET_VAR '<this>: <root>.E<R of <root>.E> declared in <root>.E.foo' type=<root>.E<R of <root>.E> origin=IMPLICIT_ARGUMENT
     PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
       overridden:
         public final a: @[FlexibleNullability] T of <root>.Java3? declared in <root>.Java3

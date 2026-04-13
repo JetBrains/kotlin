@@ -78,10 +78,10 @@ abstract class AbstractTwoStageKotlinCompilerTest {
 
     fun initTestRunners(@TestDataFile filePath: String) {
         val configurationBuilder = TwoPhaseTestConfigurationBuilder().apply(configurationBuilder)
-        nonGroupingRunner = NonGroupingTestRunner(configurationBuilder.firstPhaseBuilder.build(filePath)).also {
+        nonGroupingRunner = NonGroupingTestRunner(configurationBuilder.nonGroupingPhaseBuilder.build(filePath)).also {
             nonGroupingPhaseRunnerInitialized = true
         }
-        groupingPhaseRunner = GroupingTestRunner(configurationBuilder.secondPhaseBuilder.build(filePath)).also {
+        groupingPhaseRunner = GroupingTestRunner(configurationBuilder.groupingPhaseBuilder.build(filePath)).also {
             secondPhaseRunnerInitialized = true
         }
     }

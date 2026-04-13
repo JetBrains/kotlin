@@ -60,7 +60,11 @@ internal abstract class JvmValueClassAbstractLowering(
                         function
                     }
                     constructorWithPotentialMarker.transformChildrenVoid()
-                    return listOfNotNull(constructorWithPotentialMarker, createExposedConstructor(constructorWithPotentialMarker))
+                    return listOfNotNull(
+                        constructorWithPotentialMarker,
+                        createExposedConstructor(constructorWithPotentialMarker),
+                        createExposedNoArgConstructor(constructorWithPotentialMarker),
+                    )
                 }
             }
             function.transformChildrenVoid()
@@ -102,13 +106,15 @@ internal abstract class JvmValueClassAbstractLowering(
 
     // Returns true if not just an annotation exists, but if it is also applicable to the constructor
     private fun IrConstructor.shouldBeExposed(): Boolean =
-        shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+        shouldBeExposedByAnnotationOrFlag(context) &&
                 parameters.any { it.type.isInlineClassType() } &&
                 !constructedClass.isSpecificLoweringLogicApplicable()
 
     abstract fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor?
 
     abstract fun createExposedConstructor(constructor: IrConstructor): IrConstructor?
+
+    abstract fun createExposedNoArgConstructor(constructor: IrConstructor): IrConstructor?
 
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
         replacement.parameters.forEach {
@@ -149,11 +155,11 @@ internal abstract class JvmValueClassAbstractLowering(
         replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
-        if (!(function.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) && !function.isFakeOverride) &&
+        if (!(function.shouldBeExposedByAnnotationOrFlag(context) && !function.isFakeOverride) &&
             (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
         ) {
             return listOf(replacement)
-        } else if (function.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+        } else if (function.shouldBeExposedByAnnotationOrFlag(context) &&
             function.acceptsNullableResultWithoutRenaming()
         ) {
             // Propagate @JvmExposeBoxed annotation
@@ -282,7 +288,7 @@ internal abstract class JvmValueClassAbstractLowering(
     }
 
     private fun IrSimpleFunction.signatureRequiresMangling(): Boolean {
-        if (shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings)) return false
+        if (shouldBeExposedByAnnotationOrFlag(context)) return false
         val includeInline = specificMangle == SpecificMangle.Inline
         val includeMFVC = specificMangle == SpecificMangle.MultiField
         return nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||

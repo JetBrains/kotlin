@@ -53,6 +53,7 @@ enum class LanguageFeature(
     val issue: String,
     private val enabledInProgressiveMode: Boolean = false,
     val forcesPreReleaseBinaries: Boolean = false,
+    val forcesPreReleaseBinariesBefore: LanguageVersion? = null,
     val testOnly: Boolean = false,
     val hintUrl: String? = null,
     val behaviorAfterSinceVersion: LanguageFeatureBehaviorAfterSinceVersion = CannotBeDisabled,
@@ -506,6 +507,7 @@ enum class LanguageFeature(
     AllowInterfaceNestedClassesInJsExport(sinceVersion = KOTLIN_2_4, issue = "KT-84332"),
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
     JsAllowExportingValueClasses(sinceVersion = KOTLIN_2_4, "KT-72198"),
+    DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = KOTLIN_2_4, "KT-64358"),
 
     // 2.5
 
@@ -515,10 +517,15 @@ enum class LanguageFeature(
     ForbidExternalEnumEntriesAndPrimaryConstructorProperties(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-389"),
     ProperSupportOfInnerClassesInCallableReferenceLHS(sinceVersion = KOTLIN_2_5, "KTLC-388"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_5, "KTLC-287"),
+    ReportDeprecationsOfOuterImportedClasses(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-397"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
+    AllowEagerSupertypeAccessibilityChecks(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-398"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
+    ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"), // Do not hesitate to move it to KOTLIN_2_6 once it's introduced
+    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
+    InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
 
     // End of 2.* language features --------------------------------------------------
 
@@ -579,9 +586,8 @@ enum class LanguageFeature(
     ExplicitContextArguments(sinceVersion = null, issue = "KT-81684"),
     JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
-    ImplicitJvmExposeBoxed(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-73466"),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
-    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true),
+    CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5),
     NameBasedDestructuring(sinceVersion = null, "KT-19627"),
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
@@ -591,26 +597,20 @@ enum class LanguageFeature(
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009"),
     JsExportInterfacesInImplementableWay(sinceVersion = null, issue = "KT-65802"),
 
-    // K1 support only; we keep it because we might want to eventually support it in K2 as well
-    UnitConversionsOnArbitraryExpressions(sinceVersion = null, "KT-84393"),
-
     JsAllowImplementingFunctionInterface(sinceVersion = null, NO_ISSUE_SPECIFIED),
     CustomEqualsInValueClasses(sinceVersion = null, "KT-24874"),
     ContractSyntaxV2(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-56127"),
     ReferencesToSyntheticJavaProperties(sinceVersion = null, testOnly = true, issue = "KT-8575"),
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, testOnly = true, issue = "KT-56583"),
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, enabledInProgressiveMode = true, "KT-51221"),
-    IntrinsicConstEvaluation(sinceVersion = null, testOnly = true, issue = "KT-49303"),
+    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303"),
 
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
 
-    DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
     CollectionLiterals(sinceVersion = null, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_3, forcesPreReleaseBinaries = true, issue = "KT-79717"),
-    ForbidUsingSupertypesWithInaccessibleContentInTypeArguments(sinceVersion = null, enabledInProgressiveMode = true, "KT-66691"), // KT-66691, KT-66742
-    AllowEagerSupertypeAccessibilityChecks(sinceVersion = null, enabledInProgressiveMode = true, "KT-73611"),
     UnnamedLocalVariables(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-74809"),
     ContextSensitiveResolutionUsingExpectedType(sinceVersion = null, "KT-16768"),
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, "KT-70722"),
@@ -637,6 +637,10 @@ enum class LanguageFeature(
     init {
         if (testOnly && sinceVersion != null) {
             error("$this: should be enabled by default since version $sinceVersion but is test only")
+        }
+
+        if (!forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore != null) {
+            error("$this: forcesPreReleaseBinariesBefore is not null but forcesPreReleaseBinaries is false")
         }
     }
 
@@ -816,7 +820,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
     override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||
             specificFeatures.any { (feature, state) ->
-                state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()
+                state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)
             }
 
     companion object {
@@ -831,9 +835,9 @@ fun LanguageVersion.isPreRelease(): Boolean {
     return KotlinCompilerVersion.isPreRelease() && this == LanguageVersion.LATEST_STABLE
 }
 
-fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(): Boolean {
+fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(languageVersion: LanguageVersion): Boolean {
     val isFeatureNotReleasedYet = sinceVersion?.isStable != true
-    return isFeatureNotReleasedYet && forcesPreReleaseBinaries
+    return isFeatureNotReleasedYet && forcesPreReleaseBinaries && forcesPreReleaseBinariesBefore.let { it == null || languageVersion <= it }
 }
 
 fun LanguageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures(): Set<LanguageFeature> {

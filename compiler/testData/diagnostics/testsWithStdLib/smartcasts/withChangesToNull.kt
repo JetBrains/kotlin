@@ -6,7 +6,7 @@ fun foo(y: String?) {
             this<!UNSAFE_CALL!>.<!>length
             <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
-        <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+        x<!UNSAFE_CALL!>.<!>length
     }
 }
 

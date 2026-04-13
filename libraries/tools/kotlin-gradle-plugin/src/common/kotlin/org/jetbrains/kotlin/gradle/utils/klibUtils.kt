@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
@@ -23,6 +24,22 @@ internal fun Project.moduleName(
 
 internal fun Project.moduleName(baseName: String = project.name): String =
     if (group.toString().isNotEmpty()) "$group:$baseName" else baseName
+
+/**
+ * A special handling of the JVM compilations module name to accommodate that it could be
+ * compiled with the older Kotlin compiler releases (<2.4.0),
+ * which does not have a KT-82216 sanitizes forbidden filename characters fix. In this case we fall back to the old
+ * behavior of only using the project name.
+ */
+internal fun Project.jvmModuleName(
+    baseName: Provider<String> = baseModuleName(),
+    compilerVersion: Provider<String>,
+): Provider<String> = compilerVersion.flatMap { versionString ->
+    val version = KotlinToolingVersion(versionString)
+    if (version.supportsModuleNameWithGroupPrefix()) moduleName(baseName) else baseName
+}
+
+private fun KotlinToolingVersion.supportsModuleNameWithGroupPrefix(): Boolean = major >= 2 && minor >= 4
 
 /**
  * Loads a single [KotlinLibrary] from the given [location].

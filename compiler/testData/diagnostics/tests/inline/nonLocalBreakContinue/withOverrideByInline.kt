@@ -7,7 +7,7 @@ open class Test {
     open fun bar(block: () -> Unit) = block()
 }
 class Test2: Test(){
-    <!OVERRIDE_BY_INLINE!>override inline fun bar(block: () -> Unit)<!> = block()
+    override inline <!OVERRIDE_BY_INLINE!>fun bar(block: () -> Unit)<!> = block()
 }
 fun test(a: Test, b: Test2){
     for (i in 0..10) {
@@ -16,12 +16,12 @@ fun test(a: Test, b: Test2){
             <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>break<!>
         }
         (a as Test2).bar {
-            <!UNSUPPORTED_FEATURE!>continue<!>
-            <!UNSUPPORTED_FEATURE!>break<!>
+            continue
+            break
         }
         b.bar {
-            <!UNSUPPORTED_FEATURE!>continue<!>
-            <!UNSUPPORTED_FEATURE!>break<!>
+            continue
+            break
         }
     }
 }

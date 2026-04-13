@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 interface A
-interface X: A<!NULLABLE_SUPERTYPE!>?<!><!REDUNDANT_NULLABLE!>?<!> {
+interface X: A?<!NULLABLE_SUPERTYPE, REDUNDANT_NULLABLE!>?<!> {
 
 }
 

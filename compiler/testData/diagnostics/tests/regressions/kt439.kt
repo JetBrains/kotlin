@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // KT-439 Support labeled function literals in call arguments
 
 fun main1(args : Array<String>) {

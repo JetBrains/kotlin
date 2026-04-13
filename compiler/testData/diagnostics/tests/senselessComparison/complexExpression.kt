@@ -2,9 +2,9 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 
 fun String?.repro(): Boolean {
-    return this?.let {
+    return <!SENSELESS_COMPARISON!>this?.let {
         return false
-    } == true
+    } == true<!>
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, lambdaLiteral, nullableType,

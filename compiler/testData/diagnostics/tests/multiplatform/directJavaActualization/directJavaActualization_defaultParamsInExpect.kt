@@ -5,11 +5,11 @@
 
 // MODULE: m1-common
 // FILE: common.kt
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
-    fun foo(a: Int = 1)
+expect class Foo {
+    <!JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION{JVM}!>fun foo(<!JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION{JVM}!>a: Int = 1<!>)<!>
 
-    class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Nested<!> {
-        constructor(b: Int = 2)
+    class Nested {
+        <!JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_ACTUAL_FUNCTION{JVM}!>constructor(<!JAVA_DIRECT_ACTUALIZATION_DEFAULT_PARAMETERS_IN_EXPECT_FUNCTION{JVM}!>b: Int = 2<!>)<!>
     }
 }
 

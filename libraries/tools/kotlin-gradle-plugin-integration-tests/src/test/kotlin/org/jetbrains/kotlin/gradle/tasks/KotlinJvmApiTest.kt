@@ -39,11 +39,10 @@ class KotlinJvmApiTest : KGPBaseTest() {
                         import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
                         KotlinApiPlugin apiPlugin = plugins.apply(KotlinApiPlugin.class)
                                                 
-                        apiPlugin.registerKotlinJvmCompileTask("foo").configure {
+                        apiPlugin.registerKotlinJvmCompileTask("foo", "moduleA").configure {
                             it.source("src/main")
                             it.libraries.from(configurations.compileClasspath)
                             it.multiPlatformEnabled.set(false)
-                            it.moduleName.set("main")
                             it.sourceSetName.set("main")
                             it.useModuleDetection.set(false)
                             it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))
@@ -120,6 +119,8 @@ class KotlinJvmApiTest : KGPBaseTest() {
                 it.replace("id 'org.jetbrains.kotlin.jvm'", "id 'org.jetbrains.kotlin.jvm' apply false") +
                         """
                         import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
+                        import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+                        
                         KotlinApiPlugin apiPlugin = plugins.apply(KotlinApiPlugin.class)
                         
                         File kaptFakeJar = new File(project.projectDir, "kapt.jar")
@@ -131,10 +132,16 @@ class KotlinJvmApiTest : KGPBaseTest() {
                             }
                         )
                         
-                        apiPlugin.registerKaptGenerateStubsTask("foo").configure {
+                        def kotlinJvmCompile = apiPlugin.registerKotlinJvmCompileTask("fooCompile", "moduleA")
+                        
+                        apiPlugin.registerKaptGenerateStubsTask(
+                            "foo",
+                            kotlinJvmCompile,
+                            apiPlugin.getKaptExtension(),
+                            providers.provider { ExplicitApiMode.Disabled }
+                        ).configure {
                             it.source("src/main")
                             it.multiPlatformEnabled.set(false)
-                            it.moduleName.set("main")
                             it.sourceSetName.set("main")
                             it.useModuleDetection.set(false)
                             it.destinationDirectory.fileValue(new File(project.buildDir, "fooOutput"))

@@ -1,4 +1,3 @@
-// IGNORE_FE10
 // KT-70384
 
 // In this test, we have two modules `module1` and `module2` which each depend on a different version of a library which contains a class

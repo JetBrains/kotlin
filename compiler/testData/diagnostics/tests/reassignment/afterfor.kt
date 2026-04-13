@@ -6,7 +6,7 @@ fun foo(k: Int): Int {
     for (j in 1..k) {
         <!VAL_REASSIGNMENT!>i<!> = j
     }
-    i = 6
+    <!VAL_REASSIGNMENT!>i<!> = 6
     return i
 }
 

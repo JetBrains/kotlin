@@ -28,10 +28,10 @@ class Derived : Base() {
 fun main(test: Base) {
     if (test !is Derived) return
 
-    <!INVISIBLE_SETTER!>test.publicGetInDerived<!> = 5
-    <!INVISIBLE_SETTER!>test.publicGetInDerived<!> -= 5
-    <!INVISIBLE_SETTER!>test.publicGetInDerived<!>--
-    --<!INVISIBLE_SETTER!>test.publicGetInDerived<!>
+    test.<!INVISIBLE_SETTER!>publicGetInDerived<!> = 5
+    test.<!INVISIBLE_SETTER!>publicGetInDerived<!> -= 5
+    test.<!INVISIBLE_SETTER!>publicGetInDerived<!>--
+    --test.<!INVISIBLE_SETTER!>publicGetInDerived<!>
 
     test.publicInDerived = 5
     test.publicInDerived -= 5

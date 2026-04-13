@@ -38,4 +38,4 @@ FILE: [ResolvedTo(IMPORTS)] lambdaArguments.kt
         }
         )
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> block([ResolvedTo(CONTRACTS)] obj: R|T|, [ResolvedTo(CONTRACTS)] block: R|(T) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> block([ResolvedTo(STATUS)] obj: R|T|, [ResolvedTo(STATUS)] block: R|(T) -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

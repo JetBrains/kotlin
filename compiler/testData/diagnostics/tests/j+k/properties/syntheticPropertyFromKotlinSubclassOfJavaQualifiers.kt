@@ -20,13 +20,13 @@ class KotlinSubclassOfJavaQualifiers : JavaBaseClass() {
     fun consumeString(x: String) {}
 
     fun testMissingField() {
-        consumeString(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super@KotlinSubclassOfJavaQualifiers<!>.missingField<!>)
-        consumeInt(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super@KotlinSubclassOfJavaQualifiers<!>.missingField)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>super@KotlinSubclassOfJavaQualifiers.missingField<!>)
+        consumeInt(super@KotlinSubclassOfJavaQualifiers.missingField)
     }
 
     fun testPrivateField() {
-        consumeString(super@KotlinSubclassOfJavaQualifiers.<!INVISIBLE_MEMBER!>privateField<!>)
-        consumeInt(<!TYPE_MISMATCH!>super@KotlinSubclassOfJavaQualifiers.<!INVISIBLE_MEMBER!>privateField<!><!>)
+        consumeString(<!ARGUMENT_TYPE_MISMATCH!>super@KotlinSubclassOfJavaQualifiers.privateField<!>)
+        consumeInt(super@KotlinSubclassOfJavaQualifiers.privateField)
     }
 
     fun testPrivateFieldViaInnerClass() {
@@ -41,25 +41,25 @@ class KotlinSubclassOfJavaQualifiers : JavaBaseClass() {
 
     inner class Inner : JavaBaseClass() {
         fun testPrivateField() {
-            consumeString(super@KotlinSubclassOfJavaQualifiers.<!INVISIBLE_MEMBER!>privateField<!>)
-            consumeInt(<!TYPE_MISMATCH!>super@KotlinSubclassOfJavaQualifiers.<!INVISIBLE_MEMBER!>privateField<!><!>)
+            consumeString(<!ARGUMENT_TYPE_MISMATCH!>super@KotlinSubclassOfJavaQualifiers.privateField<!>)
+            consumeInt(super@KotlinSubclassOfJavaQualifiers.privateField)
 
-            consumeString(super@Inner.<!INVISIBLE_MEMBER!>privateField<!>)
-            consumeInt(<!TYPE_MISMATCH!>super@Inner.<!INVISIBLE_MEMBER!>privateField<!><!>)
+            consumeString(<!ARGUMENT_TYPE_MISMATCH!>super@Inner.privateField<!>)
+            consumeInt(super@Inner.privateField)
 
-            consumeString(super.<!INVISIBLE_MEMBER!>privateField<!>)
-            consumeInt(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER!>privateField<!><!>)
+            consumeString(<!ARGUMENT_TYPE_MISMATCH!>super.privateField<!>)
+            consumeInt(super.privateField)
         }
 
         fun testMissingField() {
-            consumeString(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super@KotlinSubclassOfJavaQualifiers<!>.missingField<!>)
-            consumeInt(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super@KotlinSubclassOfJavaQualifiers<!>.missingField)
+            consumeString(<!ARGUMENT_TYPE_MISMATCH!>super@KotlinSubclassOfJavaQualifiers.missingField<!>)
+            consumeInt(super@KotlinSubclassOfJavaQualifiers.missingField)
 
-            consumeString(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super@Inner<!>.missingField<!>)
-            consumeInt(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super@Inner<!>.missingField)
+            consumeString(<!ARGUMENT_TYPE_MISMATCH!>super@Inner.missingField<!>)
+            consumeInt(super@Inner.missingField)
 
-            consumeString(<!TYPE_MISMATCH!><!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField<!>)
-            consumeInt(<!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.missingField)
+            consumeString(<!ARGUMENT_TYPE_MISMATCH!>super.missingField<!>)
+            consumeInt(super.missingField)
         }
     }
 }

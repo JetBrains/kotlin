@@ -2,7 +2,7 @@
 typealias TopLevelInScript = String
 
 class C {
-    <!TOPLEVEL_TYPEALIASES_ONLY!>typealias Nested = String<!>
+    typealias Nested = String
 }
 
 val s1: TopLevelInScript = "TopLevelInScript"

@@ -9,7 +9,7 @@ public class A {
 
 // FILE: B.kt
 open class B : A() {
-    private val f = "FAIL"
+    private val <!PROPERTY_HIDES_JAVA_FIELD!>f<!> = "FAIL"
 }
 
 // FILE: C.java
@@ -17,7 +17,7 @@ public class C extends B {}
 
 // FILE: test.kt
 fun box(): String {
-    return C().f
+    return C().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>f<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,

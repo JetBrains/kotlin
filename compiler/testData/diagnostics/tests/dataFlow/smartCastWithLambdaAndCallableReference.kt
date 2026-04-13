@@ -19,7 +19,7 @@ fun Any.foo() = myApply {
         else -> throw RuntimeException()
     }
 
-    <!UNRESOLVED_REFERENCE!>baz<!>() // Smart cast should work
+    baz() // Smart cast should work
 }
 
 /* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,

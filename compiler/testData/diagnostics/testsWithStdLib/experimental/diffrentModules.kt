@@ -13,8 +13,8 @@ data class DataClass(@property:Marker val x: Int)
 package main
 
 fun test(d: DataClass) {
-    val (x) = d
-    val c = d.component1()
+    val (<!OPT_IN_USAGE_ERROR!>x<!>) = d
+    val c = d.<!OPT_IN_USAGE_ERROR!>component1<!>()
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetProperty, classDeclaration, data,

@@ -36,13 +36,13 @@ public class B<T extends @UnmodifiableView List<String>> {
 
 // FILE: main.kt
 fun main() {
-    takeMutable(<!TYPE_MISMATCH!>J.foo()<!>)
+    takeMutable(<!ARGUMENT_TYPE_MISMATCH!>J.foo()<!>)
     J.foo().<!UNRESOLVED_REFERENCE!>add<!>("")
     J.foo().size
     for (x in J.foo()) {}
 
     J.foo { arg -> arg.<!UNRESOLVED_REFERENCE!>add<!>("") }
-    J.foo <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETER_TYPE_MISMATCH!>arg: MutableList<String><!> -> arg.add("") }<!>
+    J.foo <!ARGUMENT_TYPE_MISMATCH!>{ arg: MutableList<String> -> arg.add("") }<!>
 
     J.foo().toString()
     J.foo().asReversed()

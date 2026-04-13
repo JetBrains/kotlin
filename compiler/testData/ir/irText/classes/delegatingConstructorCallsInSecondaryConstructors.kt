@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 open class Base
 
 class Test : Base {

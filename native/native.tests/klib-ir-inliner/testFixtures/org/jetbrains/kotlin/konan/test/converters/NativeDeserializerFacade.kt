@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.konan.test.converters
 
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
@@ -21,9 +19,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -37,11 +33,12 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput.NativeDeserializedFromKlibBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
@@ -61,12 +58,15 @@ class NativeDeserializerFacade(
         return testServices.defaultsProvider.backendKind == outputKind
     }
 
-    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): NativeDeserializedFromKlibBackendInput? {
+    override fun transform(
+        module: TestModule,
+        inputArtifact: BinaryArtifacts.KLib,
+    ): DeserializedFromKlibBackendInput<NativeLoadedIrArtifact> {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val moduleInfo = loadIrFromKlib(module, configuration)
 
-        return NativeDeserializedFromKlibBackendInput(moduleInfo, klib = inputArtifact.outputFile)
+        return DeserializedFromKlibBackendInput(NativeLoadedIrArtifact(moduleInfo, configuration), klib = inputArtifact.outputFile)
     }
 
     private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): IrModuleInfo {

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: -ProhibitTypealiasAsCallableQualifierInImport
 // ISSUE: KT-65771
 

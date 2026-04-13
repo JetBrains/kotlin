@@ -6,7 +6,7 @@ class MyClass
 val MyClass.isInterface get() = 4
 
 fun usage(type: MyType) {
-    type.<!FUNCTION_EXPECTED, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>isInterface<!>()
+    type.<!FUNCTION_EXPECTED!>isInterface<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, propertyDeclaration,

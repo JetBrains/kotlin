@@ -23,7 +23,7 @@ class Case1() {
 
 fun case1(case: Case1) {
     case.<!DEBUG_INFO_CALL("fqName: Case1.foo; typeCall: function")!>foo(1)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(1)<!>
+    case.foo(1)
 }
 
 // TESTCASE NUMBER: 2
@@ -38,7 +38,7 @@ class Case2() {
 
 fun case2(case: Case2) {
     case.<!DEBUG_INFO_CALL("fqName: Case2.foo; typeCall: function")!>foo(1, 1)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(1, 1)<!>
+    case.foo(1, 1)
 }
 
 // TESTCASE NUMBER: 3
@@ -53,7 +53,7 @@ class Case3() {
 
 fun case3(case: Case3) {
     case.<!DEBUG_INFO_CALL("fqName: Case3.foo; typeCall: function")!>foo(1)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(1)<!>
+    case.foo(1)
 }
 
 
@@ -67,7 +67,7 @@ class Case4() {
         <!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>foo(1)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>foo(1)<!>
         this.<!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>foo(1)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>this.foo(1)<!>
+        this.foo(1)
     }
 }
 
@@ -75,5 +75,5 @@ fun case4(case: Case4) {
     <!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>case foo 1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case foo 1<!>
     case.<!DEBUG_INFO_CALL("fqName: Case4.foo; typeCall: infix function")!>foo( 1)<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo( 1)<!>
+    case.foo( 1)
 }

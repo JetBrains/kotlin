@@ -49,4 +49,4 @@ FILE: [ResolvedTo(IMPORTS)] functionInsideClassLevel2.kt
         }
         )]) <DANGLING MODIFIER: Top level declaration expected>
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> action([ResolvedTo(CONTRACTS)] body: R|() -> T|): R|T| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> action([ResolvedTo(STATUS)] body: R|() -> T|): R|T| { LAZY_BLOCK }

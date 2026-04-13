@@ -34,46 +34,46 @@ fun <T> take(biParam: BiParam<*, In<In<T>>>) {}
 
 fun testEarlyCompletion(derived: Derived, otherDerived: OtherDerived) {
     id<In<In<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<In<Derived>>")!>createDoubleIn(derived)<!>
+        createDoubleIn(derived)
     )
     id<In<In<Out<Base>>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<In<Out<Derived>>>")!>createDoubleInOut1(derived)<!>
+        createDoubleInOut1(derived)
     )
     id<In<Out<In<Base>>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<Out<In<Derived>>>")!>createDoubleInOut2(derived)<!>
+        createDoubleInOut2(derived)
     )
     id<Out<In<In<Base>>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<In<In<Derived>>>")!>createDoubleInOut3(derived)<!>
+        createDoubleInOut3(derived)
     )
     id<BiParam<In<In<Base>>, Out<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<In<In<Derived>>, Out<OtherDerived>>")!>biparamEarly(derived, otherDerived)<!>
+        biparamEarly(derived, otherDerived)
     )
     id<BiParam<In<In<Base>>, Inv<String>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<In<In<Derived>>, Inv<kotlin.String>>")!>biparamEarlyIrrelevantInv(derived, otherDerived)<!>
+        biparamEarlyIrrelevantInv(derived, otherDerived)
     )
     take<Base>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<*, In<In<OtherDerived>>>")!>biparamEarlyStarProjection(derived, otherDerived)<!>
+        biparamEarlyStarProjection(derived, otherDerived)
     )
 }
 
 fun testLateCompletion(derived: Derived, otherDerived: OtherDerived) {
     id<In<Out<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("In<Out<Base>>")!>createInOut(derived)<!>
+        createInOut(derived)
     )
     id<Out<In<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<In<Base>>")!>createOutIn(derived)<!>
+        createOutIn(derived)
     )
     id<Inv<Out<Base>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<Out<Base>>")!>createInvOut(derived)<!>
+        createInvOut(derived)
     )
     id<Out<Inv<In<In<Base>>>>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("Out<Inv<In<In<Base>>>>")!>createOutInvDoubleIn(derived)<!>
+        createOutInvDoubleIn(derived)
     )
     id<BiParam<In<Out<Base>>, OtherDerived>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<In<Out<Base>>, OtherDerived>")!>biparamLateIn(derived, otherDerived)<!>
+        biparamLateIn(derived, otherDerived)
     )
     id<BiParam<Inv<Out<Base>>, OtherDerived>>(
-        <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<Inv<Out<Base>>, OtherDerived>")!>biparamLateInv(derived, otherDerived)<!>
+        biparamLateInv(derived, otherDerived)
     )
 }
 

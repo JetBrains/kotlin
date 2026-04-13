@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // Check that it works with inherited members
 //
 //  DeeperBase  DeeperInterface

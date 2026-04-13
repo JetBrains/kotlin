@@ -95,14 +95,14 @@ interface EW2: E2, W2 {
 }
 
 interface HEW2: EW2, HiddenDeprecated {
-    override fun <!OVERRIDE_DEPRECATION!>f<!>() {
+    override fun f() {
     }
 }
 
 interface ExplicitError: HEW2 {
     @Deprecated("", level = DeprecationLevel.ERROR)
     override fun f() {
-        super.<!DEPRECATION!>f<!>()
+        super.f()
     }
 }
 
@@ -118,25 +118,25 @@ fun use(
     ed.<!DEPRECATION_ERROR!>f<!>()
     hd.<!UNRESOLVED_REFERENCE!>f<!>()
 
-    we.<!DEPRECATION!>f<!>()
-    wh.<!DEPRECATION!>f<!>()
-    eh.<!DEPRECATION_ERROR!>f<!>()
+    we.f()
+    wh.f()
+    eh.f()
 
     nw.f()
     ne.f()
     nh.f()
 
-    weh.<!DEPRECATION!>f<!>()
+    weh.f()
     nweh.f()
 
-    we2.<!DEPRECATION!>f<!>()
+    we2.f()
     nwe2.f()
     nwe3.f()
 
     e2.<!DEPRECATION_ERROR!>f<!>()
     w2.<!DEPRECATION!>f<!>()
-    ew2.<!DEPRECATION!>f<!>()
-    hew2.<!DEPRECATION!>f<!>()
+    ew2.f()
+    hew2.f()
 
     explicitError.<!DEPRECATION_ERROR!>f<!>()
 }

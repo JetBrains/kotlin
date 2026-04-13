@@ -35,8 +35,16 @@ class PhaseEngine<Context : LoggingContext>(
      */
     inline fun <NewContext, R> useContext(newContext: NewContext, action: (PhaseEngine<NewContext>) -> R): R
             where NewContext : DisposableContext,
+                  NewContext : LoggingContext = useContext(newContext, copyState = false, action)
+
+    /**
+     * Switch to a more specific phase engine.
+     */
+    inline fun <NewContext, R> useContext(newContext: NewContext, copyState: Boolean, action: (PhaseEngine<NewContext>) -> R): R
+            where NewContext : DisposableContext,
                   NewContext : LoggingContext {
-        val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
+        val newState = if (copyState) phaserState.copyOf() else phaserState
+        val newEngine = PhaseEngine(phaseConfig, newState, newContext)
         try {
             return action(newEngine)
         } finally {

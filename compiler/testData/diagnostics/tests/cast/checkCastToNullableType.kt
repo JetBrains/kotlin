@@ -25,7 +25,7 @@ public class JavaClass {
 fun <T, S: Any> test(x1: T, x2: T?, y1: S, y2: S?) {
     <!USELESS_IS_CHECK!>x1 is T?<!>
     <!USELESS_IS_CHECK!>x2 is T?<!>
-    <!USELESS_IS_CHECK!>y1 is S<!USELESS_NULLABLE_CHECK!>?<!><!>
+    <!USELESS_IS_CHECK!>y1 is S?<!>
     <!USELESS_IS_CHECK!>y2 is S?<!>
 
     val f1 = JavaClass.foo()
@@ -35,7 +35,7 @@ fun <T, S: Any> test(x1: T, x2: T?, y1: S, y2: S?) {
     <!USELESS_IS_CHECK!>f2 is Int?<!>
 
     val f3 = JavaClass.fooNN()
-    <!USELESS_IS_CHECK!>f3 is Int<!USELESS_NULLABLE_CHECK!>?<!><!>
+    <!USELESS_IS_CHECK!>f3 is Int?<!>
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, isExpression, javaFunction, localProperty, nullableType,

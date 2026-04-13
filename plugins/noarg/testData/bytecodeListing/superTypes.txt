@@ -14,7 +14,7 @@ public interface BaseIntf {
 @kotlin.Metadata
 public final class MyClass {
     // source: 'superTypes.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
@@ -27,13 +27,13 @@ public annotation class NoArg {
 @kotlin.Metadata
 public class Test1 {
     // source: 'superTypes.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
 @kotlin.Metadata
 public final class Test12 {
     // source: 'superTypes.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     public method <init>(p0: int): void
 }

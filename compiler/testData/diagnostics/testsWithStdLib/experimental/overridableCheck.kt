@@ -12,7 +12,7 @@ open class Base<T> {
     @Marker
     open fun foo(): T? = null
 
-    open fun bar(): <!OPT_IN_USAGE_ERROR!>TA<!><T>? = null
+    open fun bar(): <!OPT_IN_USAGE_ERROR!>TA<T><!>? = null
 }
 
 class Derived : Base<String>()

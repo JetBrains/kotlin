@@ -7,7 +7,7 @@ plugins {
 }
 
 kotlin {
-    js(IR) {
+    js {
         nodejs()
     }
 }

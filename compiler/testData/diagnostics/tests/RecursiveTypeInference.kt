@@ -3,23 +3,23 @@
 
 // FILE: a.kt
 package a
-    val foo = bar()
+    val foo = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar()<!>
 
-    fun bar() = <!DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>foo<!>
+    fun bar() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo<!>
 
 // FILE: b.kt
 package b
-    fun foo() = bar()
+    fun foo() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar()<!>
 
-    fun bar() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!><!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()<!>
+    fun bar() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo()<!>
 
 // FILE: c.kt
 package c
-    fun bazz() = bar()
+    fun bazz() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar()<!>
 
-    fun foo() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!><!DEBUG_INFO_MISSING_UNRESOLVED!>bazz<!>()<!>
+    fun foo() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bazz()<!>
 
-    fun bar() = foo()
+    fun bar() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo()<!>
 
 // FILE: d.kt
 

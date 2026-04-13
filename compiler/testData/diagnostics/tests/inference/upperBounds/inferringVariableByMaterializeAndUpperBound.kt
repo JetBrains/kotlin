@@ -11,7 +11,7 @@ class Bar<U : I>(val x: Inv<Out<U>>)
 fun <T> materializeFoo(): Inv<T> = null as Inv<T>
 
 fun main() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Bar<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materializeFoo<!>())
+    <!CANNOT_INFER_PARAMETER_TYPE!>Bar<!>(<!CANNOT_INFER_PARAMETER_TYPE!>materializeFoo<!>())
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, out,

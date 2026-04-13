@@ -14,7 +14,7 @@ import a.Alias
 class Box<B>
 typealias Alias<K> = Box<K>
 
-val a = Alias<<!UPPER_BOUND_VIOLATED_WARNING!>Any<!>>()
+val a = Alias<Any>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration, typeAliasDeclaration,
 typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

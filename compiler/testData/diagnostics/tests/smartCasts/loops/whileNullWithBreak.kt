@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 fun bar(): Boolean { return true }
 
 fun foo(s: String?): Int {

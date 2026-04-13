@@ -5,7 +5,7 @@
 // FILE: test.kt
 
 fun waitTestConnection(res: B<*>) {
-    C.wait(res.toFuture())<!UNSAFE_CALL!>.<!>length
+    C.wait(res.toFuture()).length
 }
 
 // FILE: B.kt

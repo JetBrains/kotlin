@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 // FILE: Super.java
 import org.jspecify.annotations.NullMarked;

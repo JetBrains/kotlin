@@ -16,14 +16,14 @@ fun interface Sam {
 
 // MODULE: c(b)
 // FILE: c.kt
-fun g() = f()
+fun g() = <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>f<!>()
 
-val sam = Sam {}
+val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{}<!>
 
 fun local() {
     val x = f()
 
-    val sam = Sam {}
+    val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{}<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, stringLiteral */

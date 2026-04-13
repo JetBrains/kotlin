@@ -21,8 +21,8 @@ fun case_1(x: Boolean?, y: Boolean?) {
         x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 /*
@@ -36,8 +36,8 @@ fun case_2(x: Boolean?, y: Boolean?) {
         x!!
     } while (true)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 /*
@@ -51,8 +51,8 @@ fun case_3(x: Boolean?, y: Boolean?) {
         x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 /*
@@ -66,15 +66,15 @@ fun case_4(x: Boolean?, y: Boolean?) {
         x!!
     } while (true)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(x: Boolean?, y: Boolean?) {
     while (true) {
-        y.<!UNREACHABLE_CODE!>to(<!>break<!UNREACHABLE_CODE!>)<!>
-        <!UNREACHABLE_CODE!>x!!<!>
+        y.to(break)
+        x!!
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
@@ -84,8 +84,8 @@ fun case_5(x: Boolean?, y: Boolean?) {
 // TESTCASE NUMBER: 6
 fun case_6(x: Boolean?, y: ((x: Nothing) -> Unit)?) {
     while (true) {
-        y!!<!UNREACHABLE_CODE!>(<!>break<!UNREACHABLE_CODE!>)<!>
-        <!UNREACHABLE_CODE!>x!!<!>
+        y!!(break)
+        x!!
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
@@ -114,8 +114,8 @@ fun case_8(x: Boolean?, y: Boolean?) {
         x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?"), DEBUG_INFO_SMARTCAST!>x<!>.not()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
 }
 
 /*
@@ -126,11 +126,11 @@ fun case_8(x: Boolean?, y: Boolean?) {
 fun case_9(x: Int?) {
     val y: Int
     while (true) {
-        <!UNREACHABLE_CODE!>y =<!> break as Int <!UNREACHABLE_CODE!>+ x!!<!>
+        y = break as Int + x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 /*
@@ -141,11 +141,11 @@ fun case_9(x: Int?) {
 fun case_10(x: Int?) {
     val y: Int
     do {
-        break as Int <!UNREACHABLE_CODE!>+ x as Int<!>
-    } while (<!UNREACHABLE_CODE!>true<!>)
+        break as Int + x as Int
+    } while (true)
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 /*
@@ -158,11 +158,11 @@ fun case_11(x: Int?) {
 
     val y: Int
     while (true) {
-        break<!UNREACHABLE_CODE!>(x!!)<!>
+        break(x!!)
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 /*
@@ -175,11 +175,11 @@ fun case_12(x: Int?) {
 
     val y: Int
     while (true) {
-        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>break<!UNREACHABLE_CODE!>[x!!]<!><!>
+        <!CANNOT_INFER_PARAMETER_TYPE!>break[x!!]<!>
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 /*
@@ -188,15 +188,15 @@ fun case_12(x: Int?) {
  * ISSUES: KT-28333
  */
 fun case_13(x: Int?) {
-    operator fun Nothing.set(<!UNUSED_PARAMETER!>x<!>: Int, <!UNUSED_PARAMETER!>y<!>: Int) {}
+    operator fun Nothing.set(x: Int, y: Int) {}
 
     val y: Int
     while (true) {
-        break<!UNREACHABLE_CODE!>[x!!] = 10<!>
+        break[x!!] = 10
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 /*
@@ -205,15 +205,15 @@ fun case_13(x: Int?) {
  * ISSUES: KT-28333
  */
 fun case_14(x: Int?) {
-    operator fun Nothing.set(<!UNUSED_PARAMETER!>x<!>: Int, <!UNUSED_PARAMETER!>y<!>: Int) {}
+    operator fun Nothing.set(x: Int, y: Int) {}
 
     val y: Int
     while (true) {
-        break<!UNREACHABLE_CODE!>[10] = x!!<!>
+        break[10] = x!!
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 // TESTCASE NUMBER: 15
@@ -222,9 +222,9 @@ fun case_15(x: Int?) {
 
     val y: Int
     while (true) {
-        break <!UNREACHABLE_CODE!>{
+        break {
             x!!
-        }<!>
+        }
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>

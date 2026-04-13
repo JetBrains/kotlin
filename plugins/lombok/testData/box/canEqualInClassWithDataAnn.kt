@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-83119
 
 // FILE: TestJava.java

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -34,8 +34,8 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
         val start = matchResult.getConsumed(groupIndex)
         matchResult.setConsumed(groupIndex, startIndex)
 
-        children.forEach {
-            val shift = it.matches(startIndex, testString, matchResult)
+        forEachChildIndexed { _, child ->
+            val shift = child.matches(startIndex, testString, matchResult)
             if (shift >= 0) {
                 return shift
             }
@@ -53,19 +53,11 @@ open internal class NonCapturingJointSet(children: List<AbstractSet>, fSet: FSet
     }
 
     override fun reportOwnProperties(properties: SetProperties) {
-        children.forEach { it.collectProperties(properties, fSet) }
-        // if there are several children nodes, we cannot match if without a backtracking
-        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || children.size > 1
-        properties.tracksConsumption = true
-    }
-
-    /**
-     * If [this] set contains a single child, returns it. Otherwise, returns `null`.
-     */
-    fun getSingleChildOrNull(): AbstractSet? {
-        if (children.size == 1) {
-            return children[0]
+        forEachChildIndexed { _, child ->
+            child.collectProperties(properties, fSet)
         }
-        return null
+        // if there are several children nodes, we cannot match if without a backtracking
+        properties.nonTrivialBacktracking = properties.nonTrivialBacktracking || childrenSize > 1
+        properties.tracksConsumption = true
     }
 }

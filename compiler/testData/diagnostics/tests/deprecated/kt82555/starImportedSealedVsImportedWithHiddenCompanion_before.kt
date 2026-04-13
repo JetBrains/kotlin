@@ -23,7 +23,7 @@ sealed class E {
 }
 
 fun test() {
-    Some
+    <!DEPRECATION_ERROR!>Some<!>
     Some.<!UNRESOLVED_REFERENCE!>foo<!>()
     Some::<!UNRESOLVED_REFERENCE!>foo<!>
     Some::class

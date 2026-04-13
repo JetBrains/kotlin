@@ -20,7 +20,7 @@ fun test(){
     }
 
     val sam : Supplier<String> = Supplier {
-        <!TYPE_MISMATCH!>JavaBox(null).a<!>
+        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam2 = object : Supplier<String> {

@@ -15,7 +15,7 @@ enum class B(x: Int) {
 
     constructor(x: Int, y: Int): this(x+y)
     constructor(x: Double): this(x.toInt(), 1)
-    constructor(x: String): <!DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR!>super<!>(x, 1)
+    constructor(x: String): <!DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>super<!>(x, 1)
 }
 
 enum class C {

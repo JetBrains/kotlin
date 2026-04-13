@@ -19,7 +19,7 @@ interface B {
 class C : A(), B
 
 fun main() {
-    C().<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(42)
+    C().foo(42)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaType */

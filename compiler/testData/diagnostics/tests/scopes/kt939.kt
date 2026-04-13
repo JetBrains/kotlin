@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 package kt939
 
 //KT-939 CommonSupertypes erases scopes associated to types

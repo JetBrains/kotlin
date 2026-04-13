@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -75,7 +75,7 @@ internal val SerializedIrFile.fileMetadata: ByteArray
  * Note: This function returns the list of the deserialized [IrModuleFragment]s that has exactly the same
  * order as the libraries in [klibs].
  */
-fun deserializeDependencies(
+private fun deserializeDependencies(
     klibs: LoadedKlibs,
     irLinker: JsIrLinker,
     filesToLoad: Set<String>?,
@@ -113,7 +113,6 @@ fun deserializeDependencies(
 fun loadIr(
     modulesStructure: ModulesStructure,
     irFactory: IrFactory,
-    filesToLoad: Set<String>? = null,
     loadFunctionInterfacesIntoStdlib: Boolean = false,
 ): IrModuleInfo {
     val mainModule = modulesStructure.mainModule
@@ -135,7 +134,6 @@ fun loadIr(
                 moduleDescriptor = moduleDescriptor,
                 klibs = modulesStructure.klibs,
                 friendModules = friendModules,
-                filesToLoad = filesToLoad,
                 configuration = configuration,
                 symbolTable = symbolTable,
                 messageCollector = messageLogger,
@@ -248,11 +246,10 @@ fun loadIrForSingleModule(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun getIrModuleInfoForKlib(
+private fun getIrModuleInfoForKlib(
     moduleDescriptor: ModuleDescriptor,
     klibs: LoadedKlibs,
     friendModules: Map<String, List<String>>,
-    filesToLoad: Set<String>?,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     messageCollector: MessageCollector,
@@ -282,7 +279,7 @@ fun getIrModuleInfoForKlib(
     val moduleDependencies: IrModuleDependencies = deserializeDependencies(
         klibs = klibs,
         irLinker = irLinker,
-        filesToLoad = filesToLoad,
+        filesToLoad = configuration[JSConfigurationKeys.IC_FILES_TO_LOAD],
         mapping = mapping
     )
     irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(

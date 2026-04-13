@@ -14,16 +14,16 @@ fun test() {
     runSuspend(x) 
     runSuspend(x.takeMe()) 
 
-    val y: suspend () -> Unit = <!TYPE_MISMATCH!>x<!>
+    val y: suspend () -> Unit <!INITIALIZER_TYPE_MISMATCH!>=<!> x
 
-    produceSuspend { <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!> }
-    produceSuspend { <!TYPE_MISMATCH, TYPE_MISMATCH!>x.<!TYPE_MISMATCH!>takeMe()<!><!> }
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>x<!> }
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>x.takeMe()<!> }
 
-    runSuspend(<!TYPE_MISMATCH!>fun() {}<!>)
+    runSuspend(<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>)
     runSuspend((fun() {}).takeMe()) 
-    produceSuspend { <!TYPE_MISMATCH!>fun() {}<!> }
-    produceSuspend(<!TYPE_MISMATCH!>fun () = <!TYPE_MISMATCH!>fun () {}<!><!>)
-    produceSuspend { <!TYPE_MISMATCH, TYPE_MISMATCH!>(fun() {}).<!TYPE_MISMATCH!>takeMe()<!><!> }
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>fun() {}<!> }
+    produceSuspend(fun () = <!RETURN_TYPE_MISMATCH!>fun () {}<!>)
+    produceSuspend { <!RETURN_TYPE_MISMATCH!>(fun() {}).takeMe()<!> }
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,

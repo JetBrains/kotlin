@@ -19,9 +19,8 @@ fun case1(x: Any) {
     fun B1.foo(): kotlin.Int = 2  //(2)
     fun Any.foo(): kotlin.String = "Any"  //(3)
     x.<!DEBUG_INFO_CALL("fqName: case1.foo; typeCall: extension function")!>foo()<!> // to (3)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x.foo()<!>
+    x.foo()
     if (x is B1 && x is A1) {
         x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
     }
 }
-

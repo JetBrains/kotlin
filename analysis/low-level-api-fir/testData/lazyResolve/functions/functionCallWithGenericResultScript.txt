@@ -227,7 +227,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|Foo<kotlin/String>?| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun bar(): R|Foo<kotlin/String>?| { LAZY_BLOCK }
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>?| = R|/bar|()
@@ -254,4 +254,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] functionCallWithGenericResultScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>?| = R|/bar|()
         }
-

@@ -14,79 +14,79 @@ class DslReceiver {
 @Dsl
 class Other
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>DslReceiver<!>)<!>
-fun contextFun()<!> {}
+context(_: DslReceiver)
+fun contextFun() {}
 
 class C
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>C<!>)<!>
-fun contextFun()<!> {}
+context(_: C)
+fun contextFun() {}
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(_: <!DEBUG_INFO_MISSING_UNRESOLVED!>Other<!>)<!>
+context(_: Other)
 fun otherContextFun() {}
 
 fun annotatedFunctionTypeReceiver(f: (@Dsl C).() -> Unit) {}
 fun annotatedFunctionType(f: @Dsl (C.() -> Unit)) {}
-fun annotatedFunctionTypeWithContext(f: @Dsl (context(C) Other.() -> Unit)) {}
+fun annotatedFunctionTypeWithContext(f: <!DSL_MARKER_PROPAGATES_TO_MANY!>@Dsl<!> (context(C) Other.() -> Unit)) {}
 
 fun <A, R> context(context: A, block: context(A) () -> R): R = block(context)
-fun <A, B, R> context(context: A, context2: B, block: <!SUBTYPING_BETWEEN_CONTEXT_RECEIVERS!>context(A, B)<!> () -> R): R = block(context, context2)
+fun <A, B, R> context(context: A, context2: B, block: context(A, B) () -> R): R = block(context, context2)
 
 val contextFunctionTypeVal: context(DslReceiver) () -> Unit = {}
 
 fun test() {
     with(DslReceiver()) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
-        contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+        contextFun()
+        contextFunctionTypeVal()
 
         with(Other()) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
-            contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+            <!DSL_SCOPE_VIOLATION!>contextFunctionTypeVal<!>()
         }
     }
 
     context(DslReceiver()) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
-        contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+        contextFun()
+        contextFunctionTypeVal()
 
         context(Other()) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
-            contextFunctionTypeVal<!NO_VALUE_FOR_PARAMETER!>()<!>
+            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+            <!DSL_SCOPE_VIOLATION!>contextFunctionTypeVal<!>()
         }
     }
 
     annotatedFunctionTypeReceiver {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
+        contextFun()
 
         with(Other()) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
+            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
         }
     }
 
     annotatedFunctionType {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
+        contextFun()
 
         with(Other()) {
-            <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
+            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
         }
     }
 
     annotatedFunctionTypeWithContext {
         // NO DSL_SCOPE_VIOLATION because receiver and context parameter come from the same scope
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
+        <!DSL_SCOPE_VIOLATION!>contextFun<!>()
     }
 
     context(DslReceiver(), Other()) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>contextFun<!>()
-        otherContextFun()
+        <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+        <!DSL_SCOPE_VIOLATION!>otherContextFun<!>()
     }
 }
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(dsl: <!DEBUG_INFO_MISSING_UNRESOLVED!>DslReceiver<!>)<!>
+context(dsl: DslReceiver)
 fun testWithContext() {
-    <!UNRESOLVED_REFERENCE!>dsl<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>memberFun<!>()
+    dsl.memberFun()
     with(Other()) {
-        <!UNRESOLVED_REFERENCE!>dsl<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>memberFun<!>()
+        dsl.memberFun()
     }
 }
 

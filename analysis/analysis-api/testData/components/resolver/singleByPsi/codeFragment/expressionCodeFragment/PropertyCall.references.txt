@@ -1,4 +1,4 @@
-KtNameReferenceExpression(140,143): 'foo'
+KtNameReferenceExpression(138,141): 'foo'
   KtSimpleNameReference:
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false

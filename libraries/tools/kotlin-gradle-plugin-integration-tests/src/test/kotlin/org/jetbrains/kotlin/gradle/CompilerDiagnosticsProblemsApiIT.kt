@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.testbase.assertProblemsReportContainsDiagnost
 
 @DisplayName("Compiler Diagnostics Problems API tests")
 @GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_11, // COMPILER_MESSAGE_RENDERER BTA feature requires Gradle 8.11+
+    minVersion = TestVersions.Gradle.G_8_11, // This test asserts via the HTML problems report, which is available from Gradle 8.11+
     additionalVersions = [
         TestVersions.Gradle.G_8_13
     ]

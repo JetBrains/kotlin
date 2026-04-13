@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] customGenericCollection.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T1> of([ResolvedTo(CONTRACTS)] vararg vals: R|kotlin/Array<out T1>|): R|MyList<T1>| { LAZY_BLOCK }
+            public final operator [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T1> of([ResolvedTo(STATUS)] vararg vals: R|kotlin/Array<out T1>|): R|MyList<T1>| { LAZY_BLOCK }
 
         }
 

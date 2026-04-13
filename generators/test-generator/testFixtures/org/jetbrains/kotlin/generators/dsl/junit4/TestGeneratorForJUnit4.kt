@@ -156,6 +156,9 @@ private class TestGeneratorForJUnit4Instance(
 
                 override val tags: List<String>
                     get() = emptyList()
+
+                override val testKClass: Class<*>
+                    get() = testClassModels.first().testKClass
             }
         }
 

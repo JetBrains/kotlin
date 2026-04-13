@@ -8,21 +8,21 @@ fun test_1(delegate: Delegate) {
     p1 = 10
 
     var p2 by delegate
-    <!UNUSED_CHANGED_VALUE!>p2++<!>
+    p2++
 
     var p3 by delegate
     ++p3
 }
 
 fun test_2() {
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>p1<!> = 0
-    <!UNUSED_VALUE!>p1 =<!> 10
+    var p1 = 0
+    p1 = 10
 
-    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>p2<!>: Int
-    <!UNUSED_VALUE!>p2 =<!> 10
+    var p2: Int
+    p2 = 10
 
     var p3 = 1
-    <!UNUSED_CHANGED_VALUE!>p3++<!>
+    p3++
 
     var p4 = 1
     ++p4

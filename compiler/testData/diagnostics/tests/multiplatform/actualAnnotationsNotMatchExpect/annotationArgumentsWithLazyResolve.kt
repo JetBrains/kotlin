@@ -20,17 +20,17 @@ expect fun withEmptyArguments_positive()
 
 // MODULE: main()()(common)
 actual fun onType_negative(): @Ann("") Any = Any()
-actual fun onType_positive(): @Ann("incorrect") Any = Any()
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onType_positive(): @Ann("incorrect") Any = Any()
 
 @Ann("")
 actual fun onFunction_negative() {}
 @Ann("incorrect")
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onFunction_positive<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onFunction_positive() {}
 
 @Ann
 actual fun withEmptyArguments_negative() {}
 @Ann("incorrect")
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withEmptyArguments_positive<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun withEmptyArguments_positive() {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
 propertyDeclaration, stringLiteral */

@@ -419,7 +419,7 @@ class Klass {
 
     private val value53 = run {
         class LocalA {
-            val valueA = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> a@{
+            val valueA = build a@{
                 class LocalB {
                     val valueB = build b@{
                         class LocalC {
@@ -436,7 +436,7 @@ class Klass {
     }
     private val value54 = run {
         class LocalA {
-            val valueA = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> a@{
+            val valueA = build a@{
                 class LocalB {
                     val valueB = build b@{
                         class LocalC {
@@ -453,7 +453,7 @@ class Klass {
     }
     private val value55 = run {
         class LocalA {
-            val valueA = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> a@{
+            val valueA = build a@{
                 class LocalB {
                     val valueB = build b@{
                         class LocalC {
@@ -471,7 +471,7 @@ class Klass {
     }
     private val value56 = run {
         class LocalA {
-            val valueA = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> a@{
+            val valueA = build a@{
                 class LocalB {
                     val valueB = build b@{
                         class LocalC {
@@ -489,7 +489,7 @@ class Klass {
     }
     private val value57 = run {
         class LocalA {
-            val valueA = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> a@{
+            val valueA = build a@{
                 class LocalB {
                     val valueB = build b@{
                         class LocalC {

@@ -7,7 +7,7 @@ import kotlin.contracts.*
 inline fun <T, R> T.myLet(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsResultOf(block)<!>
+        returnsResultOf(block)
     }
     return block(this)
 }
@@ -25,11 +25,11 @@ fun testIgnorableReferences(s: String) {
 }
 
 fun testNonIgnorableReference(s: String) {
-    s.myLet(String::length)
+    s.<!RETURN_VALUE_NOT_USED!>myLet<!>(String::length)
 }
 
 fun testTopLevelFunctionReferences(s: String) {
-    s.myLet(::nonIgnorableOp)
+    s.<!RETURN_VALUE_NOT_USED!>myLet<!>(::nonIgnorableOp)
     s.myLet(::ignorableOp)
 }
 

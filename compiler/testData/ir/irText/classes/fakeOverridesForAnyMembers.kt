@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 open class A<A_T>
 
 open class B<B_T> : A<B_T>() {

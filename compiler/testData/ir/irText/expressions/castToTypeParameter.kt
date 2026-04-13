@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 
 fun <T> castFun(x: Any) = x as T
 

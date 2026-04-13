@@ -9,14 +9,14 @@ FILE: unreachableConvertTo.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_17I>|.group: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_17I>|.group: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Group_691>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/Group_691>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
@@ -28,23 +28,23 @@ FILE: unreachableConvertTo.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope1 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>|.a: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/Group_691>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/DataFramePropertiesScope1|
 
             }
 
             local abstract class DataFrameOf_17 : R|<local>/DataFrameOf_17I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope1: R|<local>/DataFramePropertiesScope1|
+                    public get(): R|<local>/DataFramePropertiesScope1|
 
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/DataFrameOf_17|
 
@@ -59,20 +59,20 @@ FILE: unreachableConvertTo.kt
 
                 }
 
-                local final class Scope0 : R|kotlin/Any| {
+                local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/ColumnOf_41I>|.a: R|kotlin/Int|
                         public get(): R|kotlin/Int|
 
                     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/ColumnOf_41I>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                         public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                    public constructor(): R|<local>/Scope0|
+                    public constructor(): R|<local>/DataFramePropertiesScope0|
 
                 }
 
                 local abstract class ColumnOf_41 : R|<local>/ColumnOf_41I| {
-                    @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                        public get(): R|<local>/Scope0|
+                    @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                        public get(): R|<local>/DataFramePropertiesScope0|
 
                     public constructor(): R|<local>/ColumnOf_41|
 
@@ -84,7 +84,7 @@ FILE: unreachableConvertTo.kt
         }
         )
         (this@R|/box|, R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|<local>/DataFrameOf_17|, R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/DataFrameOf_17>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<<local>/DataFrameOf_17>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnsResolver<org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>>| <inline=NoInline>  {
-            ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/Scope0.group|
+            ^ (this@R|/box|, this@R|special/anonymous|).R|<local>/DataFramePropertiesScope0.group|
         }
         ).R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/api/Convert<<local>/DataFrameOf_17, org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_00>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/Convert<<local>/DataFrameOf_17, org/jetbrains/kotlinx/dataframe/DataRow<<local>/Group_691>>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/DataFrameOf_00>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameOf_00I : R|kotlin/Any| {
@@ -95,20 +95,20 @@ FILE: unreachableConvertTo.kt
 
             }
 
-            local final class Scope0 : R|kotlin/Any| {
+            local final class DataFramePropertiesScope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameOf_00I>|.group: R|kotlin/Nothing|
                     public get(): R|kotlin/Nothing|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsScope<<local>/DataFrameOf_00I>|.group: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Nothing>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Nothing>|
 
-                public constructor(): R|<local>/Scope0|
+                public constructor(): R|<local>/DataFramePropertiesScope0|
 
             }
 
             local abstract class DataFrameOf_00 : R|<local>/DataFrameOf_00I| {
-                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val scope0: R|<local>/Scope0|
-                    public get(): R|<local>/Scope0|
+                @R|org/jetbrains/kotlinx/dataframe/annotations/ScopeProperty|() public abstract val dataFramePropertiesScope0: R|<local>/DataFramePropertiesScope0|
+                    public get(): R|<local>/DataFramePropertiesScope0|
 
                 public constructor(): R|<local>/DataFrameOf_00|
 
@@ -116,6 +116,6 @@ FILE: unreachableConvertTo.kt
 
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/toInt|<R|<local>/DataFrameOf_17|>()
         }
-        )).R|<local>/Scope0.group|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Nothing|>|(Int(0))
+        )).R|<local>/DataFramePropertiesScope0.group|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataColumn.get: R|kotlin/Nothing|>|(Int(0))
         ^box String(OK)
     }

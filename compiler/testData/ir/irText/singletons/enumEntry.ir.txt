@@ -6,13 +6,13 @@ FILE fqName:<root> fileName:/enumEntry.kt
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Z.ENTRY'
       class: CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.Z]
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Z.ENTRY
-        CLASS CLASS name:A modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
+        CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]
           thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Z.ENTRY.A
           CONSTRUCTOR visibility:public returnType:<root>.Z.ENTRY.A [primary]
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Z.ENTRY
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
+              INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:local [inner] superTypes:[kotlin.Any]' type=kotlin.Unit
           FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
             VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
@@ -30,11 +30,10 @@ FILE fqName:<root> fileName:/enumEntry.kt
             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Z.ENTRY.A
             BLOCK_BODY
               CALL 'public final fun test (): kotlin.Unit declared in <root>.Z.ENTRY' type=kotlin.Unit origin=null
-                ARG <this>: GET_ENUM 'ENUM_ENTRY name:ENTRY' type=<root>.Z.ENTRY
+                ARG <this>: GET_VAR '<this>: <root>.Z.ENTRY declared in <root>.Z.ENTRY' type=<root>.Z.ENTRY origin=IMPLICIT_ARGUMENT
         CONSTRUCTOR visibility:private returnType:<root>.Z.ENTRY [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Z'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Z'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.Z]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.Z>

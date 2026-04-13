@@ -14,7 +14,7 @@ abstract class KotlinIndex : JavaIndex() {
 class MyKotlinIndex : KotlinIndex() {
     // `indexer(1)` call should just request the member function that might be resolved successfully
     // and should not request `indexer` variable (as invoke candidates are anyway less prioritized), thus avoiding TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
-    val INDEXER = <!DEBUG_INFO_LEAKING_THIS!>indexer<!>(1)
+    val INDEXER = indexer(1)
 
     override fun getIndexer() = INDEXER
 }

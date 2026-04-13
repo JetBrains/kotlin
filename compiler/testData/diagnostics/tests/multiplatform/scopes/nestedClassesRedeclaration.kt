@@ -11,7 +11,7 @@ expect class A {
 expect class B {}
 
 expect class C {
-    class N
+    class <!AMBIGUOUS_ACTUALS{JVM}!>N<!>
 }
 
 expect abstract class D()

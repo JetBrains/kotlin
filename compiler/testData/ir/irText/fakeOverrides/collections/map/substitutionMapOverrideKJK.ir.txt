@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/1.kt
     CONSTRUCTOR visibility:public returnType:<root>.A<T of <root>.A> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] T of <root>.A?
+          TYPE_ARG T: T of <root>.A
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[<root>.Java1<T of <root>.A>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
@@ -17,20 +17,20 @@ FILE fqName:<root> fileName:/1.kt
         protected/*protected and package*/ open fun clone (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:compute visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?, in @[EnhancedNullability] T of <root>.A?, out @[EnhancedNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?, in @[EnhancedNullability] T of <root>.A?, out @[EnhancedNullability] T of <root>.A?>
       overridden:
         public open fun compute (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] T of <root>.Java1?, out @[EnhancedNullability] T of <root>.Java1?>): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A? [fake_override]
+    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?, out @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?>
       overridden:
         public open fun computeIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:computeIfPresent visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?, in @[EnhancedNullability] {T of <root>.A & Any}, out @[EnhancedNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?, in @[EnhancedNullability] {T of <root>.A & Any}, out @[EnhancedNullability] T of <root>.A?>
       overridden:
         public open fun computeIfPresent (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] {T of <root>.Java1 & Any}, out @[EnhancedNullability] T of <root>.Java1?>): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?, in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?>
       overridden:
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN returnType:T of <root>.A? [fake_override,operator]
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:merge visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
       VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] {T of <root>.A & Any}
       VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {T of <root>.A & Any}, in @[EnhancedNullability] {T of <root>.A & Any}, out @[EnhancedNullability] T of <root>.A?>
       overridden:
@@ -97,8 +97,8 @@ FILE fqName:<root> fileName:/1.kt
         public open fun putAll (from: kotlin.collections.Map<out @[FlexibleNullability] T of <root>.Java1?, @[FlexibleNullability] T of <root>.Java1?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:putIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
       overridden:
         public open fun putIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:T of <root>.A? [fake_override]
@@ -120,20 +120,20 @@ FILE fqName:<root> fileName:/1.kt
         public open fun remove (key: @[FlexibleNullability] T of <root>.Java1?, value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.A? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
-      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
+      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.A?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p2: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replaceAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.A?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?, in @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?, out @[FlexibleNullability] @[EnhancedNullability] T of <root>.A?>
       overridden:
         public open fun replaceAll (p0: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
@@ -144,7 +144,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.Java1?, @[FlexibleNullability] T of <root>.Java1?>> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-entries> visibility:public modality:ABSTRACT returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.A>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:entries visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-entries> (): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] T of <root>.Java1?, @[FlexibleNullability] T of <root>.Java1?>> declared in <root>.Java1
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open keys: kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN returnType:kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.A?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.A>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.A>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.Java1
@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN returnType:kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.A?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.A?, @[FlexibleNullability] T of <root>.A?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.A>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:entries index:0 type:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<T of <root>.B, T of <root>.B>>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
-          TYPE_ARG T: @[FlexibleNullability] T of <root>.B?
+          TYPE_ARG T: T of <root>.B
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1<T of <root>.B>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
@@ -206,20 +206,20 @@ FILE fqName:<root> fileName:/1.kt
         protected/*protected and package*/ open fun clone (): @[FlexibleNullability] kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:compute visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?, in @[EnhancedNullability] T of <root>.B?, out @[EnhancedNullability] T of <root>.B?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?, in @[EnhancedNullability] T of <root>.B?, out @[EnhancedNullability] T of <root>.B?>
       overridden:
         public open fun compute (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] T of <root>.Java1?, out @[EnhancedNullability] T of <root>.Java1?>): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
-    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B? [fake_override]
+    FUN FAKE_OVERRIDE name:computeIfAbsent visibility:public modality:OPEN returnType:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.Function<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?, out @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?>
       overridden:
         public open fun computeIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] java.util.function.Function<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:computeIfPresent visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?, in @[EnhancedNullability] {T of <root>.B & Any}, out @[EnhancedNullability] T of <root>.B?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?, in @[EnhancedNullability] {T of <root>.B & Any}, out @[EnhancedNullability] T of <root>.B?>
       overridden:
         public open fun computeIfPresent (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] {T of <root>.Java1 & Any}, out @[EnhancedNullability] T of <root>.Java1?>): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:containsKey visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -239,7 +239,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiConsumer<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?, in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?>
       overridden:
         public open fun forEach (p0: @[EnhancedNullability] java.util.function.BiConsumer<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN returnType:T of <root>.B? [fake_override,operator]
@@ -266,7 +266,7 @@ FILE fqName:<root> fileName:/1.kt
         public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:merge visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
       VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] {T of <root>.B & Any}
       VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {T of <root>.B & Any}, in @[EnhancedNullability] {T of <root>.B & Any}, out @[EnhancedNullability] T of <root>.B?>
       overridden:
@@ -278,8 +278,8 @@ FILE fqName:<root> fileName:/1.kt
         public open fun putAll (from: kotlin.collections.Map<out @[FlexibleNullability] T of <root>.Java1?, @[FlexibleNullability] T of <root>.Java1?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:putIfAbsent visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
       overridden:
         public open fun putIfAbsent (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:T of <root>.B? [fake_override]
@@ -301,20 +301,20 @@ FILE fqName:<root> fileName:/1.kt
         public open fun remove (key: @[FlexibleNullability] T of <root>.Java1?, value: @[FlexibleNullability] T of <root>.Java1?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:@[EnhancedNullability] T of <root>.B? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?): @[EnhancedNullability] T of <root>.Java1? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replace visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
-      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[EnhancedNullability] @[FlexibleNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
+      VALUE_PARAMETER kind:Regular name:p2 index:3 type:@[FlexibleNullability] @[EnhancedNullability] T of <root>.B?
       overridden:
         public open fun replace (p0: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p1: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, p2: @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:replaceAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.B?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.BiFunction<in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?, in @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?, out @[FlexibleNullability] @[EnhancedNullability] T of <root>.B?>
       overridden:
         public open fun replaceAll (p0: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, in @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?, out @[EnhancedNullability] @[FlexibleNullability] T of <root>.Java1?>): kotlin.Unit declared in <root>.Java1
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
@@ -334,7 +334,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open keys: kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-keys> visibility:public modality:OPEN returnType:kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.B?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.B>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:keys visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-keys> (): kotlin.collections.MutableSet<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
@@ -342,7 +342,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open size: kotlin.Int declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Map<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.B>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-size> (): kotlin.Int declared in <root>.Java1
@@ -350,7 +350,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open values: kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-values> visibility:public modality:OPEN returnType:kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.B?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] T of <root>.B?, @[FlexibleNullability] T of <root>.B?>
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1<T of <root>.B>
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:values visibility:public modality:OPEN [fake_override,val]
         overridden:
           public open fun <get-values> (): kotlin.collections.MutableCollection<@[FlexibleNullability] T of <root>.Java1?> declared in <root>.Java1

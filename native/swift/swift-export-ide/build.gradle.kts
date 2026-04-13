@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 description = "Integrated Swift Export Environment"
@@ -37,14 +38,22 @@ sourceSets {
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     nativeTestTask(
         "test",
         allowUnsafe = true, // KT-85212
     ) {
-        dependsOn(":dist", ":kotlin-native:distInvalidateStaleCaches")
+        dependsOn(":kotlin-native:distInvalidateStaleCaches")
+        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+            allowFlightRecorder.set(true)
+        }
     }
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
 }
 
 publish()

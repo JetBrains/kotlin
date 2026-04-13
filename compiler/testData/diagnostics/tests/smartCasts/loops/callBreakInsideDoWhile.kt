@@ -1,13 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun bar(): Boolean { return true }
 
-fun gav(arg: Any): String { return if (arg is String) <!DEBUG_INFO_SMARTCAST!>arg<!> else "" }
+fun gav(arg: Any): String { return if (arg is String) arg else "" }
 
 public fun foo(x: String?): Int {
     var y: Any
     do {
         y = ""
-        y = gav(if (x == null) break else <!DEBUG_INFO_SMARTCAST!>x<!>)
+        y = gav(if (x == null) break else x)
     } while (bar())
     y.hashCode()
     // x is null because of the break

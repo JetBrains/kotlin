@@ -92,6 +92,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                         analyzeForTest(ktFile) {
                             val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                             checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
+                            checkDiagnosticsFromSequence(ktFile, diagnosticsFromFile)
                         }
                     }
                 }
@@ -140,7 +141,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitKtElement(element: KtElement) {
                     element
-                        .diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+                        .directDiagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
                         .mapTo(this@buildList) { it.getDiagnosticKey() }
 
                     super.visitKtElement(element)
@@ -152,6 +153,17 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             diagnosticsFromFile,
             diagnosticsFromElements,
             "diagnostics collected from files should be the same as those collected from individual PSI elements."
+        )
+    }
+
+    private fun KaSession.checkDiagnosticsFromSequence(ktFile: KtFile, diagnosticsFromFile: List<DiagnosticKey>) {
+        assertEquals(
+            diagnosticsFromFile,
+            ktFile.diagnostics(KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)
+                .map { it.getDiagnosticKey() }
+                .sorted()
+                .toList(),
+            "diagnostics collected via diagnostics() should be the same as those collected from collectDiagnostics()."
         )
     }
 

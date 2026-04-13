@@ -1,2 +1,1 @@
-val foo: kotlin.String
-  get()
+NO_SYMBOLS

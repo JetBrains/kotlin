@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract c: kotlin.Nothing? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:ABSTRACT returnType:kotlin.Nothing? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-c> (): kotlin.Nothing? declared in <root>.Java1
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract d: kotlin.collections.List<kotlin.Nothing?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:ABSTRACT returnType:kotlin.collections.List<kotlin.Nothing?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-d> (): kotlin.collections.List<kotlin.Nothing?> declared in <root>.Java1
@@ -166,7 +166,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract a: kotlin.Nothing declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:ABSTRACT returnType:kotlin.Nothing [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-a> (): kotlin.Nothing declared in <root>.Java1
@@ -174,7 +174,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract b: kotlin.collections.List<kotlin.Nothing> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:ABSTRACT returnType:kotlin.collections.List<kotlin.Nothing> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-b> (): kotlin.collections.List<kotlin.Nothing> declared in <root>.Java1
@@ -182,7 +182,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract c: kotlin.Nothing? declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-c> visibility:public modality:ABSTRACT returnType:kotlin.Nothing? [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:c visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-c> (): kotlin.Nothing? declared in <root>.Java1
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public abstract d: kotlin.collections.List<kotlin.Nothing?> declared in <root>.Java1
       FUN FAKE_OVERRIDE name:<get-d> visibility:public modality:ABSTRACT returnType:kotlin.collections.List<kotlin.Nothing?> [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Java1
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:d visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-d> (): kotlin.collections.List<kotlin.Nothing?> declared in <root>.Java1

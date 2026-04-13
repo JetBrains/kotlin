@@ -1,4 +1,3 @@
-/kt47986_2.kt:12:13: warning: type parameter for a type argument K can't be inferred into declared upper bounds. Please provide any use-site type information. It will become an error in future releases.
-    val x = buildFoo { // can't infer
-            ^^^^^^^^
+/kt47986_2.kt:(217,225): error: Cannot infer type for type parameter 'K'. Specify it explicitly.
 
+/kt47986_2.kt:(264,267): error: Cannot infer type for type parameter 'L'. Specify it explicitly.

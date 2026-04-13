@@ -10,7 +10,7 @@ class Foo {
 fun main(x: Int) {
     val f = Foo()
     val a: Int
-    <!UNRESOLVED_REFERENCE!>get<!>() = f.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>getValue<!>(null, ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>x<!>) // no exception after fix
+    <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = f.<!CANNOT_INFER_PARAMETER_TYPE!>getValue<!>(null, ::<!UNSUPPORTED!>x<!>) // no exception after fix
     <!UNRESOLVED_REFERENCE!>print<!>(<!UNINITIALIZED_VARIABLE!>a<!>)
 }
 

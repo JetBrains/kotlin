@@ -128,7 +128,7 @@ public class A {
 fun main(a: A, b: A.B, c: A.C) {
     a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
-    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
+    a.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foobar(null, "")<!>.length
     a.foobar("", <!NULL_FOR_NONNULL_TYPE!>null<!>)?.length
@@ -148,7 +148,7 @@ fun main(a: A, b: A.B, c: A.C) {
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo("", <!NULL_FOR_NONNULL_TYPE!>null<!>)<!>.length
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo(null, "")<!>.length
 
-    b.foobar(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
+    b.foobar(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
     b.foobar("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.bar()<!>.length
@@ -164,7 +164,7 @@ fun main(a: A, b: A.B, c: A.C) {
     // c
     c.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     c.foo("", null).length
-    c.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
+    c.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
     <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>c.foobar(null, "")<!>.length
     c.foobar("", null)?.length

@@ -56,7 +56,7 @@ public class PolicyFromNickname {
 
 // FILE: main.kt
 fun main(default: PolicyFromDefault, nickname: PolicyFromNickname) {
-    default.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
+    default.foo(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>).length
     default.foo("hello").length
 
     nickname.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>).length

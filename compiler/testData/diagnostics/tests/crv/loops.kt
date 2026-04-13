@@ -34,10 +34,10 @@ fun inOperator(c: Char, vararg cs: Char) {
 fun forLoop() {
     val cs = listOf('a', 'b', 'c')
     for (c in cs) {
-        c // unused, but OK because it is local
+        <!UNUSED_EXPRESSION!>c<!> // unused, but OK because it is local
     }
     for (i in 1..10) {
-        i + 1
+        i <!RETURN_VALUE_NOT_USED!>+<!> 1
     }
 }
 
@@ -46,8 +46,8 @@ var nonLocal: Int = 0
 fun operators() {
     nonLocal++ // unused, but discardable
     --nonLocal // unused, but discardable
-    -nonLocal // unary minus — unused, should be reported
-    nonLocal + nonLocal // unused, should be reported
+    <!RETURN_VALUE_NOT_USED!>-<!>nonLocal // unary minus — unused, should be reported
+    nonLocal <!RETURN_VALUE_NOT_USED!>+<!> nonLocal // unused, should be reported
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationUseSiteTargetFile, asExpression, assignment,

@@ -5,7 +5,7 @@
 // FILE: common.kt
 
 expect open class Foo {
-    fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
+    fun foo()
 }
 
 // MODULE: m2-jvm()()(m1-common)
@@ -15,7 +15,7 @@ actual open class Foo {
     actual fun foo() {}
 
     context(_: Int)
-    fun <!ACTUAL_MISSING!>foo<!>() {}
+    <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun foo()<!> {}
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext */

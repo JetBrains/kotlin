@@ -170,6 +170,7 @@ private object Predicates {
      * we know that x is A inside the else clause (the full predicate is (!foo(..) & (x is A))).
      * In this case the call to foo(..) can be optimized away after the full if/else clause have been handled.
      */
+    // TODO: When it is safe to do it? KT-85621
     fun optimizeAwayComplexTerms(predicate: Predicate, complexTermsMask: CustomBitSet): Predicate {
         val conjunction = predicate as? Conjunction ?: return predicate
         val terms = conjunction.terms.filterNot { disjunction -> disjunction.terms.intersects(complexTermsMask) }
@@ -547,7 +548,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         createPhantomVariable(variable, createPhantomValueAt(variable, irElement)) // This is basically a phi node.
                 }
                 return VisitorResult(
-                        Predicates.optimizeAwayComplexTerms(cfmpInfo.predicate, complexTermsMask),
+                        cfmpInfo.predicate,
                         cfmpInfo.phiNodeAlias.takeIf { it != multipleValuesMarker }
                 )
             }
@@ -1095,7 +1096,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     VisitorResult(handleDoWhileLoop(loop, data))
 
             fun tryOptimizeTypeCheck(expression: IrTypeOperatorCall, variable: IrValueDeclaration, predicate: Predicate) {
-                val fullPredicate = getFullPredicate(predicate, true, 0)
+                val fullPredicate = getFullPredicate(predicate, false, 0)
                 context.logMultiple {
                     +"TYPE CHECK: ${expression.dump()}"
                     +"    ${fullPredicate.format(leafTerms)}"

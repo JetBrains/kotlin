@@ -3,7 +3,7 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // WITH_STDLIB
 fun main() {
-    <!NONE_APPLICABLE!>println<!>(::<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved<!>)
+    <!NONE_APPLICABLE!>println<!>(::<!UNRESOLVED_REFERENCE!>unresolved<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration */

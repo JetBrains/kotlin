@@ -9,7 +9,7 @@ fun <R> test(x: Inv<Out<R>>) {}
 
 fun main() {
     test<Int>(foo(null)) // type mismatch
-    test<Number>(foo(1 as Int)) // type mismatch
+    test<Number>(foo(1 <!INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL!>as Int<!>)) // type mismatch
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, integerLiteral, nullableType, out,

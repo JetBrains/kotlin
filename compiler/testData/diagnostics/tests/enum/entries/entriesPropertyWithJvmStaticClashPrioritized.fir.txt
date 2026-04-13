@@ -1,4 +1,4 @@
-FILE: entriesPropertyWithJvmStaticClashPrioritized.fir.kt
+FILE: entriesPropertyWithJvmStaticClashPrioritized.kt
     public final enum class A : R|kotlin/Enum<A>| {
         private constructor(): R|A| {
             super<R|kotlin/Enum<A>|>()

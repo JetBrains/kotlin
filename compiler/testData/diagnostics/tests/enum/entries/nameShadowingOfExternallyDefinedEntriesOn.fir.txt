@@ -1,4 +1,4 @@
-FILE: nameShadowingOfExternallyDefinedEntriesOn.fir.kt
+FILE: nameShadowingOfExternallyDefinedEntriesOn.kt
     package pckg
 
     public final val entries: R|kotlin/String| = String(E)

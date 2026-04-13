@@ -42,14 +42,14 @@ fun case_3() {
 
 // TESTCASE NUMBER: 4
 fun case_4() {
-    <!UNREACHABLE_CODE!>checkSubtype<Any>(<!>throw Exception()<!UNREACHABLE_CODE!>)<!>
-    <!UNREACHABLE_CODE!>var z1: Any = return@case_4<!>
-    <!UNREACHABLE_CODE!>while (true) {
+    checkSubtype<Any>(throw Exception())
+    var z1: Any = return@case_4
+    while (true) {
         funWithAnyArg(break)
-    }<!>
-    <!UNREACHABLE_CODE!>checkSubtype<Any>(null!!)<!>
-    <!UNREACHABLE_CODE!>fun z2(): Any = null!!<!>
-    <!UNREACHABLE_CODE!>funWithAnyArg(null!!)<!>
+    }
+    checkSubtype<Any>(null!!)
+    fun z2(): Any = null!!
+    funWithAnyArg(null!!)
 }
 
 // TESTCASE NUMBER: 5
@@ -93,9 +93,9 @@ fun case_9() {
 fun case_10() {
     checkSubtype<Any>(0 + 0.0)
     val z: Any = if (true) "" else '"'
-    label@ <!UNUSED_LAMBDA_EXPRESSION!>{
-        <!UNREACHABLE_CODE!>funWithAnyArg(<!>return@label<!UNREACHABLE_CODE!>)<!>
-    }<!>
+    label@ {
+        funWithAnyArg(return@label)
+    }
 }
 
 // TESTCASE NUMBER: 11

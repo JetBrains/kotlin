@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/nullCheckOnInterfaceDelegation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived'
           CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.A' superQualifier='CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]' type=@[FlexibleNullability] kotlin.String? origin=null
-            ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=null
+            ARG <this>: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.foo' type=<root>.Derived origin=IMPLICIT_ARGUMENT
   CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.IFoo
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]

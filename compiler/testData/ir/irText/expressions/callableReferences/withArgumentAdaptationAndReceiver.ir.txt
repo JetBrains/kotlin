@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/withArgumentAdaptationAndReceiver.kt
                     ARG xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
                       GET_VAR 'p0: kotlin.Int declared in <root>.Host.testImplicitThis.withVararg' type=kotlin.Int origin=null
             FUNCTION_REFERENCE 'local final fun withVararg (receiver: <root>.Host, p0: kotlin.Int): kotlin.Unit declared in <root>.Host.testImplicitThis' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun withVararg (vararg xs: kotlin.Int): kotlin.String declared in <root>.Host
-              ARG receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.testImplicitThis' type=<root>.Host origin=null
+              ARG receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.testImplicitThis' type=<root>.Host origin=IMPLICIT_ARGUMENT
     FUN name:withVararg visibility:public modality:FINAL returnType:kotlin.String
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Host
       VALUE_PARAMETER kind:Regular name:xs index:1 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]

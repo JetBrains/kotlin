@@ -142,8 +142,7 @@ FILE fqName:<root> fileName:/enum.kt
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestEnum3.TEST
         CONSTRUCTOR visibility:private returnType:<root>.TestEnum3.TEST [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.TestEnum3'
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.TestEnum3'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:private superTypes:[<root>.TestEnum3]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.TestEnum3>
@@ -260,9 +259,8 @@ FILE fqName:<root> fileName:/enum.kt
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestEnum4.TEST1
         CONSTRUCTOR visibility:private returnType:<root>.TestEnum4.TEST1 [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.TestEnum4'
-                ARG x: CONST Int type=kotlin.Int value=1
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.TestEnum4'
+              ARG x: CONST Int type=kotlin.Int value=1
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:private superTypes:[<root>.TestEnum4]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.TestEnum4>
@@ -332,14 +330,13 @@ FILE fqName:<root> fileName:/enum.kt
         ANONYMOUS_INITIALIZER isStatic=false
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=null
+              receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=IMPLICIT_ARGUMENT
               value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4.TEST2' type=kotlin.Int origin=GET_PROPERTY
                 ARG <this>: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=IMPLICIT_ARGUMENT
         CONSTRUCTOR visibility:private returnType:<root>.TestEnum4.TEST2 [primary]
           BLOCK_BODY
-            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.TestEnum4'
-                ARG x: CONST Int type=kotlin.Int value=2
+            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.TestEnum4'
+              ARG x: CONST Int type=kotlin.Int value=2
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum4]' type=kotlin.Unit
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.TestEnum4>

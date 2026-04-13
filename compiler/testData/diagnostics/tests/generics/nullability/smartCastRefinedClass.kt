@@ -4,12 +4,12 @@ fun <T : Any?> foo(x: T) {
         x<!UNSAFE_CALL!>.<!>length
 
         if (x != null) {
-            <!DEBUG_INFO_SMARTCAST!>x<!>.length
+            x.length
         }
     }
 
     if (x is String) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 

@@ -252,7 +252,6 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                     { irReplStateObject }, isLocal = false
                 )
                 firReplStateObject.accept(fir2IrVisitor, null)
-                Unit
             }
         } else {
             val irReplStateParent =

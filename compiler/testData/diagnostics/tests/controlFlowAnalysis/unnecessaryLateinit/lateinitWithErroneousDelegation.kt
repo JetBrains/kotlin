@@ -2,7 +2,7 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Foo {
-    <!UNNECESSARY_LATEINIT!>lateinit<!> var x: String
+    lateinit var x: String
 
     constructor() {
         x = "Foo"

@@ -9,15 +9,15 @@ class Derived : Base() {
     fun foo() {
         val x: Int? = null
 
-        super.bar(<!TYPE_MISMATCH!>x<!>)
-        this.baz(<!TYPE_MISMATCH!>x<!>)
+        super.bar(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        this.baz(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
         if (x == null) return
-        super.bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
-        this.baz(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        super.bar(x)
+        this.baz(x)
 
         val y: Int? = null
-        if (y != null) super.bar(this.baz(<!DEBUG_INFO_SMARTCAST!>y<!>))
-        else this.baz(super.bar(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>y<!>))
+        if (y != null) super.bar(this.baz(y))
+        else this.baz(super.bar(<!ARGUMENT_TYPE_MISMATCH!>y<!>))
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.*
@@ -116,7 +117,9 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 },
                 args.destinationAsFile.toPath()
             ).also { compilationOperationBuilder ->
-                compilationOperationBuilder.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
+                // BTA does not support -d configured like a regular argument, it's configured on operation creation
+                args.destination = null // TODO: KT-85394 refactor setting up arguments to avoid this hack
+                compilationOperationBuilder.compilerArguments.applyArgumentStrings(args.toArgumentStrings())
                 compilationOperationBuilder[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
                 compilationOperationBuilder[BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] =
                     workArguments.compilerArgumentsLogLevel.toBtaCompilerArgumentsLogLevel()

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // KT-9620 AssertionError in checkBounds
 
 interface E1<T : D<!TYPE_ARGUMENTS_NOT_ALLOWED!><String><!>, D>

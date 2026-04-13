@@ -21,9 +21,10 @@ internal class JvmPlatformToolchainImpl(
 ) : JvmPlatformToolchain {
     @Deprecated(
         "Use jvmCompilationOperationBuilder instead",
-        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
+        replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),
+        level = DeprecationLevel.HIDDEN
     )
-    override fun createJvmCompilationOperation(
+    fun createJvmCompilationOperation(
         sources: List<Path>,
         destinationDirectory: Path,
     ): JvmCompilationOperation =
@@ -37,9 +38,10 @@ internal class JvmPlatformToolchainImpl(
 
     @Deprecated(
         "Use `classpathSnapshottingOperationBuilder` instead",
-        replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)")
+        replaceWith = ReplaceWith("classpathSnapshottingOperationBuilder(classpathEntry)"),
+        level = DeprecationLevel.HIDDEN
     )
-    override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
+    fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
         return JvmClasspathSnapshottingOperationImpl(classpathEntry)
     }
 

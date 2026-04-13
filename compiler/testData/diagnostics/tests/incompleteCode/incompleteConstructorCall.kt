@@ -16,19 +16,19 @@ class Outer<T> {
     object Obj
 }
 
-val test = <!FUNCTION_CALL_EXPECTED!>Outer<String><!>
+val test = Outer<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><String><!>
 
-val test2 = Outer.<!FUNCTION_CALL_EXPECTED!>Nested<String><!>
+val test2 = Outer.Nested<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><String><!>
 
-val test3 = <!FUNCTION_CALL_EXPECTED!>Outer<Int><!>.<!FUNCTION_CALL_EXPECTED!>Inner<Double><!>
+val test3 = Outer<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Inner<!><!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Double><!>
 
-val test4 = <!FUNCTION_CALL_EXPECTED!>Outer<Int><!>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Obj<!>
+val test4 = Outer<Int>.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Obj<!>
 
 val test5 = Outer
 
 val test6 = Outer.Nested
 
-val test7 = Outer.<!NO_COMPANION_OBJECT!>Inner<!>
+val test7 = Outer.Inner
 
 val test8 = Outer.Obj
 

@@ -79,6 +79,7 @@ open class CommonCompilerArgumentsConfigurator {
     open fun configureLanguageFeatures(
         arguments: CommonCompilerArguments,
         reporter: Reporter,
+        languageVersion: LanguageVersion,
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             configureCommonLanguageFeatures(arguments)
@@ -99,7 +100,7 @@ open class CommonCompilerArgumentsConfigurator {
             // Internal arguments should go last, because it may be useful to override
             // some feature state via -XX (even if some -X flags were passed)
             if (internalArguments.isNotEmpty()) {
-                configureLanguageFeaturesFromInternalArgs(arguments, reporter)
+                configureLanguageFeaturesFromInternalArgs(arguments, reporter, languageVersion)
             }
 
             configureExtraLanguageFeatures(arguments, this, reporter)
@@ -115,7 +116,8 @@ open class CommonCompilerArgumentsConfigurator {
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(
         arguments: CommonCompilerArguments,
-        reporter: Reporter
+        reporter: Reporter,
+        languageVersion: LanguageVersion,
     ) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
         val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
@@ -124,7 +126,7 @@ open class CommonCompilerArgumentsConfigurator {
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
         for ((feature, state) in arguments.internalArguments) {
             put(feature, state)
-            if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
+            if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)) {
                 featuresThatForcePreReleaseBinaries += feature
             }
 
@@ -238,7 +240,7 @@ fun CommonCompilerArguments.toLanguageVersionSettings(
         languageVersion,
         apiVersion,
         configureAnalysisFlags(reporter, languageVersion) + additionalAnalysisFlags,
-        configureLanguageFeatures(reporter)
+        configureLanguageFeatures(reporter, languageVersion)
     )
 
     val reporterWithProperWarningLevels = reporter.withLanguageVersionSettings(languageVersionSettings)
@@ -391,6 +393,9 @@ fun CommonCompilerArguments.configureAnalysisFlags(
     return configurator.configureAnalysisFlags(this, reporter, languageVersion)
 }
 
-fun CommonCompilerArguments.configureLanguageFeatures(reporter: CommonCompilerArgumentsConfigurator.Reporter): MutableMap<LanguageFeature, LanguageFeature.State> {
-    return configurator.configureLanguageFeatures(this, reporter)
+fun CommonCompilerArguments.configureLanguageFeatures(
+    reporter: CommonCompilerArgumentsConfigurator.Reporter,
+    languageVersion: LanguageVersion,
+): MutableMap<LanguageFeature, LanguageFeature.State> {
+    return configurator.configureLanguageFeatures(this, reporter, languageVersion)
 }

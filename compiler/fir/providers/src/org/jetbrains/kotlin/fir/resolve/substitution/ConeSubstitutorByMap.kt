@@ -59,7 +59,6 @@ class ConeSubstitutorByMap private constructor(
         if (type !is ConeTypeParameterType) return null
         return substitution[type.lookupTag.symbol]?.updateNullabilityIfNeeded(type)
             ?.withCombinedAttributesFrom(type)
-            ?: return null
     }
 
     override fun equals(other: Any?): Boolean {

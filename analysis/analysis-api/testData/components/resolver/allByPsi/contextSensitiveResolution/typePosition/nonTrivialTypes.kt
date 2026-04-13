@@ -39,5 +39,3 @@ fun main(mg: MyGeneric<Any>, cs: CharSequence) {
         is Right -> cs.y
     }
 }
-
-// IGNORE_STABILITY_K1: candidates

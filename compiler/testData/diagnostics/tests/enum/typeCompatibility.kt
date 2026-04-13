@@ -60,17 +60,17 @@ fun foo(
     strings == ints
 
     aString == aInt
-    <!EQUALITY_NOT_APPLICABLE!>aOutString == aOutInt<!>
+    aOutString == aOutInt
     aInString == aInInt
-    <!EQUALITY_NOT_APPLICABLE!>aOutString == aInInt<!>
-    <!EQUALITY_NOT_APPLICABLE!>aInString == aOutInt<!>
-    <!EQUALITY_NOT_APPLICABLE!>aOutString == aInt<!>
+    aOutString == aInInt
+    aInString == aOutInt
+    aOutString == aInt
     aInString == aInt
-    <!EQUALITY_NOT_APPLICABLE!>aOutString2 == aOutInt2<!>
+    aOutString2 == aOutInt2
     aInString2 == aInInt2
-    <!EQUALITY_NOT_APPLICABLE!>aOutString2 == aInInt2<!>
-    <!EQUALITY_NOT_APPLICABLE!>aInString2 == aOutInt2<!>
-    <!EQUALITY_NOT_APPLICABLE!>aString == a2<!>
+    aOutString2 == aInInt2
+    aInString2 == aOutInt2
+    aString == a2
 
     bString == bInt
     bOutString == bOutInt

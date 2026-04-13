@@ -13,12 +13,12 @@ public interface Foo<T> extends Base<T> {
 
 // FILE: main.kt
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl<!><E> : Foo<E> {
+class FooImpl<E> : Foo<E> {
     override val E.prop1: String?
         get() = ""
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class FooImpl2<!><E> : Foo<E> {
+class FooImpl2<E> : Foo<E> {
     override val E?.prop1: String?
         get() = ""
 }

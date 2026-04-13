@@ -26,4 +26,3 @@ class C : B {
 fun <T : Any?> eval(f: Function0<T>): T {
   return f.invoke()
 }
-

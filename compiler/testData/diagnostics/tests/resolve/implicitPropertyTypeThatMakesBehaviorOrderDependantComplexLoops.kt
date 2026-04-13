@@ -12,14 +12,14 @@ fun Int.f(): String = "ext func f"
 
 class Foo(val b1: Boolean, val b2: Boolean) {
     fun g() = f()
-    fun f() = if (b1) 42.f() else true
-    val f = if (b2) f() else false
+    fun f() = if (b1) 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() else true
+    val f = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!> else false
 }
 
 class Bar(val b1: Boolean, val b2: Boolean) {
     fun g() = f()
-    val f = if (b2) f() else false
-    fun f() = if (b1) 42.f() else true
+    val f = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!> else false
+    fun f() = if (b1) 42.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() else true
 }
 
 // FILE: twoLoops.kt
@@ -30,11 +30,11 @@ fun Int.f(): String = "ext func f"
 fun Int.g(): String = "ext func g"
 
 class Foo(val b1: Boolean, val b2: Boolean) {
-    fun f() = if (b1) 12.f() else 34.g()
-    val f = if (b2) f() else g()
+    fun f() = if (b1) 12.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>() else 34.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>g<!>()
+    val f = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!> else g()
 
-    fun g() = if (b1) 56.g() else 78.f()
-    val g = if (b2) g() else <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>f()<!>
+    fun g() = if (b1) 56.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>g<!>() else 78.<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>f<!>()
+    val g = if (b2) <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>g()<!> else <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>f()<!>
 }
 
 // FILE: localFunction.kt
@@ -46,12 +46,12 @@ fun String.foo() = ""
 class MyClass {
     fun foo() = run {
         fun localFun() {
-            "".foo()
+            "".<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT, IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>foo<!>()
         }
         ""
     }
 
-    val foo = foo()
+    val foo = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo()<!>
 }
 
 // FILE: localProperty.kt
@@ -64,7 +64,7 @@ class MyClass {
     val foo = foo()
 
     fun foo() = run {
-        val localProp = "".foo()
+        val localProp = "".<!IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT, IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT!>foo<!>()
         ""
     }
 }

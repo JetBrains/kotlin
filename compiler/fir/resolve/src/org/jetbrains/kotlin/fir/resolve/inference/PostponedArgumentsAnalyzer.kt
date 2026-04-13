@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.lastStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPositionWithCoercionToUnit
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -186,11 +187,14 @@ class PostponedArgumentsAnalyzer(
         val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
         val substitutedExpectedType = substitutor.safeSubstitute(topLevelCandidate.csBuilder, atom.expectedType).asCone()
 
+        @OptIn(FirIdeOnly::class) // ConeContextSensitiveAlternativeForQualifierAtom can only be created in IDE mode
         val resolvedShortNameExpression =
-            resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
-                atom.alternative,
-                substitutedExpectedType,
-            )
+            resolutionContext.bodyResolveContext.withReturnTypeCalculator(ReturnTypeCalculator.AlreadyComputedOrError) {
+                resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
+                    atom.alternative,
+                    substitutedExpectedType,
+                )
+            }
 
         atom.originalExpression.appendCSRAlternativeDiagnosticIfNeeded(resolvedShortNameExpression)
         atom.originalExpression.replaceContextSensitiveAlternative(null)

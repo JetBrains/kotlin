@@ -67,7 +67,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
         val moduleStructure = ModulesStructure(
-            project = environmentForJS.project,
             mainModule = mainModule,
             compilerConfiguration = configuration,
             klibs = klibs,

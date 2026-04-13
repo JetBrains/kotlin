@@ -116,6 +116,10 @@ open class AbstractSymbolLightClassesParentingTestBase(
                         declaration.typeParameterList?.accept(this)
                     }
 
+                    if (declaration is PsiRecordHeader) {
+                        declaration.recordComponents.forEach { it.accept(this) }
+                    }
+
                     declaration.action(this)
                 } finally {
                     val removed = declarationStack.removeLast()
@@ -125,7 +129,15 @@ open class AbstractSymbolLightClassesParentingTestBase(
 
             private fun visitPsiMemberDeclaration(member: PsiMember) {
                 val containingClass = member.containingClass
-                val expectedClass = declarationStack.lastOrNull()
+
+                val expectedClass = if (member is PsiRecordComponent) {
+                    // Record components are PsiMembers, but they are contained in a record header, not the class itself,
+                    // so we take the penultimate element from the stack, that should be a class
+                    declarationStack[declarationStack.lastIndex - 1] as PsiClass
+                } else {
+                    declarationStack.lastOrNull()
+                }
+
                 if (expectedClass != null) {
                     assertions.assertEquals(expectedClass, containingClass)
                 }
@@ -135,6 +147,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 val collection = when (memberToCheck) {
                     is PsiMethod -> classToCheck.methods
                     is PsiField -> classToCheck.fields
+                    is PsiRecordComponent -> classToCheck.recordComponents
                     is PsiClass -> classToCheck.innerClasses
                     else -> error("Unexpected member: ${memberToCheck::class}\nElement: $memberToCheck")
                 }
@@ -170,12 +183,28 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 checkParentAndVisitChildren(aClass) { visitor ->
                     annotations.forEach { it.accept(visitor) }
 
+                    recordHeader?.accept(visitor)
                     fields.forEach { it.accept(visitor) }
                     methods.forEach { it.accept(visitor) }
                     innerClasses.forEach { it.accept(visitor) }
 
                     implementsList?.accept(visitor)
                     extendsList?.accept(visitor)
+                }
+            }
+
+            override fun visitRecordHeader(recordHeader: PsiRecordHeader) {
+                val expectedClass = declarationStack.lastOrNull() as? PsiClass
+                if (expectedClass != null) {
+                    assertions.assertEquals(expectedClass, recordHeader.containingClass)
+                }
+
+                checkParentAndVisitChildren(recordHeader)
+            }
+
+            override fun visitRecordComponent(recordComponent: PsiRecordComponent) {
+                checkParentAndVisitChildren(recordComponent) { visitor ->
+                    annotations.forEach { it.accept(visitor) }
                 }
             }
 
@@ -271,7 +300,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
 
                 if (!ignoreDecompiledClasses) {
                     when (psiModifierListOwner) {
-                        is PsiClass, is PsiParameter -> assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
+                        is PsiClass, is PsiParameter, is PsiRecordComponent -> assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
                         is PsiField, is PsiMethod -> assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
                         null -> {}
                         else -> throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class}")

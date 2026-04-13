@@ -8,26 +8,26 @@ FILE fqName:<root> fileName:/MultiList.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:FinalList modality:FINAL visibility:public superTypes:[<root>.SomeList<kotlin.String>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] <root>.Some<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] <root>.Some<kotlin.String>
       overridden:
-        public open fun add (element: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Boolean declared in <root>.SomeList
+        public open fun add (p0: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Boolean declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:element index:2 type:@[EnhancedNullability] <root>.Some<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] <root>.Some<kotlin.String>
       overridden:
-        public open fun add (index: kotlin.Int, element: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Unit declared in <root>.SomeList
+        public open fun add (p0: kotlin.Int, p1: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Unit declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<kotlin.String>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] <root>.Some<kotlin.String>>
       overridden:
-        public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
+        public open fun addAll (p0: @[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:elements index:2 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<kotlin.String>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] <root>.Some<kotlin.String>>
       overridden:
-        public open fun addAll (index: kotlin.Int, elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
+        public open fun addAll (p0: kotlin.Int, p1: @[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
       overridden:
@@ -94,23 +94,23 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun listIterator (): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:listIterator visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] <root>.Some<kotlin.String>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
       overridden:
-        public open fun listIterator (index: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
+        public open fun listIterator (p0: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.Some<kotlin.String>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<<root>.Some<kotlin.String>>
       overridden:
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] <root>.Some<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] <root>.Some<kotlin.String>
       overridden:
-        public open fun remove (element: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Boolean declared in <root>.SomeList
+        public open fun remove (p0: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): kotlin.Boolean declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<kotlin.String>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<kotlin.String>>
       overridden:
-        public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
+        public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN returnType:@[EnhancedNullability] <root>.Some<kotlin.String> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
@@ -134,15 +134,15 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun replaceAll (p0: @[EnhancedNullability] java.util.function.UnaryOperator<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Unit declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<kotlin.String>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<kotlin.String>>
       overridden:
-        public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
+        public open fun retainAll (p0: kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>): kotlin.Boolean declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:set visibility:public modality:OPEN returnType:@[EnhancedNullability] <root>.Some<kotlin.String> [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:element index:2 type:@[EnhancedNullability] <root>.Some<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] <root>.Some<kotlin.String>
       overridden:
-        public open fun set (index: kotlin.Int, element: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): @[EnhancedNullability] <root>.Some<T of <root>.SomeList> declared in <root>.SomeList
+        public open fun set (p0: kotlin.Int, p1: @[EnhancedNullability] <root>.Some<T of <root>.SomeList>): @[EnhancedNullability] <root>.Some<T of <root>.SomeList> declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:sort visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.Comparator<in @[FlexibleNullability] <root>.Some<kotlin.String>?>?
@@ -158,20 +158,20 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.Some<kotlin.String>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:fromIndex index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:toIndex index:2 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:kotlin.Int
       overridden:
-        public open fun subList (fromIndex: kotlin.Int, toIndex: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+        public open fun subList (p0: kotlin.Int, p1: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> declared in <root>.SomeList
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.SomeList
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>? [fake_override]
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.SomeList
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<kotlin.String>>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.FinalList.toArray?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? declared in <root>.SomeList
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? declared in <root>.SomeList
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -297,30 +297,30 @@ FILE fqName:<root> fileName:/MultiList.kt
     CONSTRUCTOR visibility:public returnType:<root>.SomeList<T of <root>.SomeList> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
-          TYPE_ARG E: @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?
+          TYPE_ARG E: <root>.Some<T of <root>.SomeList>
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:SomeList modality:OPEN visibility:public superTypes:[<root>.MyList<T of <root>.SomeList>; java.util.ArrayList<<root>.Some<T of <root>.SomeList>>]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
       overridden:
-        public open fun add (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
+        public open fun add (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:element index:2 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
       overridden:
-        public open fun add (index: kotlin.Int, element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Unit declared in java.util.ArrayList
+        public open fun add (p0: kotlin.Int, p1: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Unit declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
       overridden:
-        public open fun addAll (elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun addAll (p0: @[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:elements index:2 type:@[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
       overridden:
-        public open fun addAll (index: kotlin.Int, elements: @[EnhancedNullability] kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun addAll (p0: kotlin.Int, p1: @[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       overridden:
@@ -334,13 +334,13 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER kind:Regular name:element index:1 type:<root>.Some<T of <root>.SomeList>
       overridden:
         public abstract fun contains (element: <root>.Some<T of <root>.MyList>): kotlin.Boolean declared in <root>.MyList
-        public open fun contains (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
+        public open fun contains (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.List<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<<root>.Some<T of <root>.SomeList>>
       overridden:
         public abstract fun containsAll (elements: kotlin.collections.Collection<<root>.Some<T of <root>.MyList>>): kotlin.Boolean declared in <root>.MyList
-        public open fun containsAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun containsAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:ensureCapacity visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
@@ -351,7 +351,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyList
-        public open fun equals (other: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.ArrayList
+        public open fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?>?
@@ -363,7 +363,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
       overridden:
         public abstract fun get (index: kotlin.Int): <root>.Some<T of <root>.MyList> declared in <root>.MyList
-        public open fun get (index: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
+        public open fun get (p0: kotlin.Int): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -374,7 +374,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER kind:Regular name:element index:1 type:<root>.Some<T of <root>.SomeList>
       overridden:
         public abstract fun indexOf (element: <root>.Some<T of <root>.MyList>): kotlin.Int declared in <root>.MyList
-        public open fun indexOf (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Int declared in java.util.ArrayList
+        public open fun indexOf (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Int declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.List<<root>.Some<T of <root>.SomeList>>
       overridden:
@@ -390,7 +390,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER kind:Regular name:element index:1 type:<root>.Some<T of <root>.SomeList>
       overridden:
         public abstract fun lastIndexOf (element: <root>.Some<T of <root>.MyList>): kotlin.Int declared in <root>.MyList
-        public open fun lastIndexOf (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Int declared in java.util.ArrayList
+        public open fun lastIndexOf (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Int declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:listIterator visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       overridden:
@@ -398,25 +398,25 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun listIterator (): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:listIterator visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
       overridden:
         public abstract fun listIterator (index: kotlin.Int): kotlin.collections.ListIterator<<root>.Some<T of <root>.MyList>> declared in <root>.MyList
-        public open fun listIterator (index: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
+        public open fun listIterator (p0: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableListIterator<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<<root>.Some<T of <root>.SomeList>>
       overridden:
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.Some<T of <root>.MyList>> declared in <root>.MyList
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:element index:1 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
       overridden:
-        public open fun remove (element: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
+        public open fun remove (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
       overridden:
-        public open fun removeAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun removeAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:removeAt visibility:public modality:OPEN returnType:@[EnhancedNullability] <root>.Some<T of <root>.SomeList> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
@@ -440,15 +440,15 @@ FILE fqName:<root> fileName:/MultiList.kt
         public open fun replaceAll (p0: @[EnhancedNullability] java.util.function.UnaryOperator<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Unit declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.collections.Collection<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>>
       overridden:
-        public open fun retainAll (elements: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
+        public open fun retainAll (p0: kotlin.collections.Collection<@[EnhancedNullability] E of java.util.ArrayList>): kotlin.Boolean declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:set visibility:public modality:OPEN returnType:@[EnhancedNullability] <root>.Some<T of <root>.SomeList> [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:element index:2 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:@[EnhancedNullability] <root>.Some<T of <root>.SomeList>
       overridden:
-        public open fun set (index: kotlin.Int, element: @[EnhancedNullability] E of java.util.ArrayList): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
+        public open fun set (p0: kotlin.Int, p1: @[EnhancedNullability] E of java.util.ArrayList): @[EnhancedNullability] E of java.util.ArrayList declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:sort visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.Comparator<in @[FlexibleNullability] <root>.Some<T of <root>.SomeList>?>?
@@ -463,24 +463,24 @@ FILE fqName:<root> fileName:/MultiList.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<<root>.Some<T of <root>.SomeList>>
       overridden:
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] <root>.Some<T of <root>.MyList>> declared in <root>.MyList
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.ArrayList?> declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.Some<T of <root>.SomeList>> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:fromIndex index:1 type:kotlin.Int
-      VALUE_PARAMETER kind:Regular name:toIndex index:2 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
+      VALUE_PARAMETER kind:Regular name:p1 index:2 type:kotlin.Int
       overridden:
         public abstract fun subList (fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<<root>.Some<T of <root>.MyList>> declared in <root>.MyList
-        public open fun subList (fromIndex: kotlin.Int, toIndex: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+        public open fun subList (p0: kotlin.Int, p1: kotlin.Int): @[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] E of java.util.ArrayList> declared in java.util.ArrayList
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
       overridden:
-        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.ArrayList
-    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? [fake_override]
+        public open fun toArray (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in java.util.ArrayList
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>? [fake_override]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.ArrayList<<root>.Some<T of <root>.SomeList>>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of <root>.SomeList.toArray?>?
       overridden:
-        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
+        public open fun toArray <T> (p0: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>?): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] T of java.util.ArrayList.toArray?>? declared in java.util.ArrayList
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:

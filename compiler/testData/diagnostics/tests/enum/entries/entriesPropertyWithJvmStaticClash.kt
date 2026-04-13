@@ -12,13 +12,13 @@ enum class A {
 }
 
 fun test() {
-    A.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable"), DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
+    <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
 
     with(A) {
-        <!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
+        entries
     }
 
-    A.Companion.<!DEBUG_INFO_CALL("fqName: A.Companion.entries; typeCall: variable")!>entries<!>
+    A.Companion.entries
 }
 
 /* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,

@@ -8,10 +8,10 @@ var c2 = 0
 
 class A() {
     var p = 0
-    operator fun divAssign(<!UNUSED_PARAMETER!>a<!> : Int) {
+    operator fun divAssign(a : Int) {
         c1++;
     }
-    operator fun times(<!UNUSED_PARAMETER!>a<!> : Int) : A {
+    operator fun times(a : Int) : A {
         c2++;
         return this;
     }

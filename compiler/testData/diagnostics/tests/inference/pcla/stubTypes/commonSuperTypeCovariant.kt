@@ -35,45 +35,45 @@ fun <E> select4(x: E?, y: Out<E>): E = x!!
 fun test() {
     val ret = build {
         emit("1")
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select1(Test.foo(get()), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select2(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select2(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), getOut())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(get(), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(Test.foo(get()), Test.foo(getOut()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(Test.foo(get()), getOut())<!>
+        select1(get(), getOut())
+        select1(get(), Test.foo(getOut()))
+        select1(Test.foo(get()), Test.foo(getOut()))
+        select1(Test.foo(get()), getOut())
+        select2(get(), getOut())
+        select2(get(), Test.foo(getOut()))
+        select2(Test.foo(get()), Test.foo(getOut()))
+        select2(Test.foo(get()), getOut())
+        select3(get(), getOut())
+        select3(get(), Test.foo(getOut()))
+        select3(Test.foo(get()), Test.foo(getOut()))
+        select3(Test.foo(get()), getOut())
+        select4(get(), getOut())
+        select4(get(), Test.foo(getOut()))
+        select4(Test.foo(get()), Test.foo(getOut()))
+        select4(Test.foo(get()), getOut())
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(id(Test.foo(get())), getOut())<!>
+        select4(id(Test.foo(get())), getOut())
 
-        <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build2<!> {
+        build2 {
             emit(1)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select1(this@build.get(), getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select1(get(), Test.foo(this@build.getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select1(Test.foo(this@build.get()), Test.foo(getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select1(Test.foo(get()), this@build.getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select2(this@build.get(), getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select2(get(), Test.foo(this@build.getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select2(Test.foo(this@build.get()), Test.foo(getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select2(Test.foo(get()), this@build.getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(this@build.get(), getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(get(), Test.foo(this@build.getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(Test.foo(this@build.get()), Test.foo(getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select3(Test.foo(get()), this@build.getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select4(this@build.get(), getOut())<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select4(get(), Test.foo(this@build.getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select4(Test.foo(this@build.get()), Test.foo(getOut()))<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select4(Test.foo(get()), this@build.getOut())<!>
+            select1(this@build.get(), getOut())
+            select1(get(), Test.foo(this@build.getOut()))
+            select1(Test.foo(this@build.get()), Test.foo(getOut()))
+            select1(Test.foo(get()), this@build.getOut())
+            select2(this@build.get(), getOut())
+            select2(get(), Test.foo(this@build.getOut()))
+            select2(Test.foo(this@build.get()), Test.foo(getOut()))
+            select2(Test.foo(get()), this@build.getOut())
+            select3(this@build.get(), getOut())
+            select3(get(), Test.foo(this@build.getOut()))
+            select3(Test.foo(this@build.get()), Test.foo(getOut()))
+            select3(Test.foo(get()), this@build.getOut())
+            select4(this@build.get(), getOut())
+            select4(get(), Test.foo(this@build.getOut()))
+            select4(Test.foo(this@build.get()), Test.foo(getOut()))
+            select4(Test.foo(get()), this@build.getOut())
 
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select4(id(Test.foo(this@build.get())), getOut())<!>
+            select4(id(Test.foo(this@build.get())), getOut())
             ""
         }
         ""

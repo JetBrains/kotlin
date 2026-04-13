@@ -2,7 +2,7 @@
 enum class A(val v: A) {
     A1(<!UNINITIALIZED_ENUM_ENTRY!>A2<!>),
     A2(A1),
-    A3(A3)
+    A3(<!UNINITIALIZED_ENUM_ENTRY!>A3<!>)
 }
 
 enum class D(val x: Int) {
@@ -29,7 +29,7 @@ object Object1 {
 // From KT-6054
 enum class MyEnum {
     A, B;
-    val x = when(<!DEBUG_INFO_LEAKING_THIS!>this<!>) {
+    val x = when(this) {
         <!UNINITIALIZED_ENUM_ENTRY!>A<!> -> 1
         <!UNINITIALIZED_ENUM_ENTRY!>B<!> -> 2
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 3

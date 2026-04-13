@@ -1,0 +1,25 @@
+FILE: pluginInGetter.kt
+    package org.jetbrains.kotlinx.dataframe.annotations
+
+    @R|kotlin/annotation/Retention|(value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE| [evaluated = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|]) @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)]) public final annotation class DisableInterpretation : R|kotlin/Annotation| {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Context : R|kotlin/Any| {
+        public constructor(): R|org/jetbrains/kotlinx/dataframe/annotations/Context| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val peopleDf: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any?>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any?>| {
+                ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(firstName).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(Alice))))))
+            }
+
+        @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() public final val peopleDf1: R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any?>|
+            public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<kotlin/Any?>| {
+                ^ R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(firstName).R|kotlin/to|<R|kotlin/String|, R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|>(R|org/jetbrains/kotlinx/dataframe/api/columnOf|<R|kotlin/String|>(vararg(String(Alice))))))
+            }
+
+    }

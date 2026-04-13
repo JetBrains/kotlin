@@ -1,2 +1,0 @@
-compiler/testData/javaModules/dependencyOnStdlib/namedWithoutExplicitDependency/module-info.java: error: the Kotlin standard library is not found in the module graph. Please ensure you have the 'requires kotlin.stdlib' clause in your module definition
-COMPILATION_ERROR

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 import java.io.Serializable
 
 class A<T> where T : Cloneable, T : Serializable

@@ -7,7 +7,7 @@ class Bar<T : Any?> {
 
   fun test(arg: Any) {
     arg as T /*~> Unit */
-    <this>.useT(t = arg /*as T */)
+    <this>.useT(t = arg /*as (T & Any) */)
   }
 
   fun useT(t: T) {

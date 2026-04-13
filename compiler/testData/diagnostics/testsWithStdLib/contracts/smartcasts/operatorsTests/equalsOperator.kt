@@ -26,7 +26,7 @@ fun testBasicEquals(x: Int?) {
         x<!UNSAFE_CALL!>.<!>inc()
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
     }
 
     x<!UNSAFE_CALL!>.<!>inc()
@@ -36,7 +36,7 @@ fun testBasicNotEquals(x: Int?) {
     x<!UNSAFE_CALL!>.<!>inc()
 
     if (myEqualsNotNull(x)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.inc()
+        x.inc()
     }
     else {
         x<!UNSAFE_CALL!>.<!>inc()

@@ -34,7 +34,7 @@ fun testFunctionType(box: Inv<() -> Any?>) {
 fun <T> noOverloads(box: Inv<T>, value: T) {}
 
 fun testError(box: Inv<String>) {
-    noOverloads(box) <!TYPE_MISMATCH("String; () -> String")!>{ <!TYPE_MISMATCH!>"hello"<!> }<!>
+    noOverloads(box) <!ARGUMENT_TYPE_MISMATCH("() -> ??? (Unknown lambda return type); String"), CANNOT_INFER_IT_PARAMETER_TYPE!>{ "hello" }<!>
 }
 
 fun testOk(box1: Inv<Any>, box2: Inv<() -> Any?>) {
@@ -45,7 +45,7 @@ fun testOk(box1: Inv<Any>, box2: Inv<() -> Any?>) {
 fun <T> twoBoxes(box: Inv<T>, box2: Inv<T>, value: T) {}
 
 fun testContradiction(box1: Inv<Any>, box2: Inv<String>) {
-    twoBoxes(box1, <!TYPE_MISMATCH!>box2<!>) <!TYPE_MISMATCH!>{ <!TYPE_MISMATCH!>""<!> }<!>
+    twoBoxes(box1, <!ARGUMENT_TYPE_MISMATCH!>box2<!>) { "" }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,

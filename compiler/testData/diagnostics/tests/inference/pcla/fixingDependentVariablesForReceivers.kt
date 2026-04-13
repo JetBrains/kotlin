@@ -16,8 +16,8 @@ fun <F2> select(e1: F2, e: F2): F2 = e
 fun main() {
     generate {
         // No non-trivial constraints, thus cannot be semi-fixed
-        get().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
-        get().toString()
+        get().<!UNRESOLVED_REFERENCE!>length<!>
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.toString()
 
         prop.call("")
     }
@@ -33,9 +33,9 @@ fun main() {
     generate {
         prop.call("")
 
-        get().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
+        get().length
 
-        id(get()).<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>length<!>
+        id(get()).length
     }.length
 
     generate {

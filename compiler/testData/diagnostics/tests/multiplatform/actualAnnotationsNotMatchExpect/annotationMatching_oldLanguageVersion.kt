@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 // LANGUAGE: -MultiplatformRestrictions
 // MODULE: m1-common
 // FILE: common.kt

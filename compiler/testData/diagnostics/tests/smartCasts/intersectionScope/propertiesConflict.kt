@@ -14,9 +14,9 @@ interface B: A {
 
 fun test(a: A) {
     if (a is B && a is C) {
-        a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> = ""
-        a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> = null
-        a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
+        a.foo = ""
+        a.foo = null
+        a.foo
     }
 }
 

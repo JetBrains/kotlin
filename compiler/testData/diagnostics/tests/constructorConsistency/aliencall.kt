@@ -16,9 +16,9 @@ class My {
 
     // This extension function also can use our properties,
     // so the call is also dangerous
-    val w = your.<!DEBUG_INFO_LEAKING_THIS!>gav<!>()
+    val w = your.gav()
 
-    val v = Your().<!DEBUG_INFO_LEAKING_THIS!>gav<!>()
+    val v = Your().gav()
 
     val t = your.other()
 

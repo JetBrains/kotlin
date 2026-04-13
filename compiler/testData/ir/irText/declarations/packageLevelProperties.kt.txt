@@ -45,4 +45,3 @@ val test2: Int
   get(): Int {
     return 0
   }
-

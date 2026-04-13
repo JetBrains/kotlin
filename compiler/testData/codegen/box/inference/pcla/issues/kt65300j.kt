@@ -1,7 +1,6 @@
 // ISSUE: KT-65300
 
-// IGNORE_BACKEND_K1: ANY
-// REASON: compile-time failure in K1 (java.lang.NullPointerException @ org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorExportCheckerVisitor.isExported)
+// IGNORE_BACKEND: ANDROID
 
 fun box(): String {
     build {

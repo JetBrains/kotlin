@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// FIR_IDENTICAL
 class Controller<T>
 
 fun <S> generate1(g: suspend (Controller<S>) -> Unit): S = TODO()

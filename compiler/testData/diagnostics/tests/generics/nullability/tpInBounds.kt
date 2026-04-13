@@ -24,17 +24,17 @@ class A<T : CharSequence?, E1 : T, E2: T?> {
         }
 
         if (1 == 1) {
-            t = <!TYPE_MISMATCH!>tN<!>
+            t <!ASSIGNMENT_TYPE_MISMATCH!>=<!> tN
         }
 
-        t = <!TYPE_MISMATCH!>y<!>
+        t <!ASSIGNMENT_TYPE_MISMATCH!>=<!> y
 
         if (y != null) {
-            t = <!DEBUG_INFO_SMARTCAST!>y<!>
+            t = y
         }
 
         if (tN != null) {
-            t = <!DEBUG_INFO_SMARTCAST!>tN<!>
+            t = tN
         }
     }
 }

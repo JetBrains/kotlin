@@ -4,7 +4,7 @@
 
 fun test() {
     val buildee = build {
-        letForTypeVariable <!TYPE_MISMATCH("ConcreteType; Unit")!>{ <!STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY!>it<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, OVERLOAD_RESOLUTION_AMBIGUITY, OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES!>extensionProduceConcreteType<!>() }<!>
+        letForTypeVariable { <!BUILDER_INFERENCE_STUB_RECEIVER!>it<!>.<!NONE_APPLICABLE!>extensionProduceConcreteType<!>() }
         setTypeVariable(TargetType())
     }
     // exact type equality check — turns unexpected compile-time behavior into red code

@@ -4,20 +4,20 @@
 
 private interface Private
 
-inline fun public(arg: Any): Boolean = arg is Private // should be an error
+inline fun public(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!> // should be an error
 
 open class C {
     protected class Protected
 
-    inline fun public(arg: Any): Boolean = arg is Protected // should be an error
-    inline fun public2(): Any = <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE_ERROR!>Protected<!>() // should be an error
+    inline fun public(arg: Any): Boolean = arg is <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Protected<!> // should be an error
+    inline fun public2(): Any = <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE!>Protected<!>() // should be an error
 }
 
 fun <T> ignore() {}
 
 inline fun public() {
-    ignore<Private>() // should be an error
-    Private::class
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>>() // should be an error
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private<!>::class
 }
 
 private class Private2 {
@@ -25,7 +25,7 @@ private class Private2 {
 }
 
 inline fun public2() {
-    ignore<Private2.Obj>() // should be an error
+    ignore<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Private2.Obj<!>>() // should be an error
 }
 
 private fun <T : Private> private1(arg: () -> T) {}
@@ -57,7 +57,7 @@ private class A {
 }
 
 inline fun public4() {
-    A.B.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>()// should be an error
+    A.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>B<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>()// should be an error
 }
 
 class C2 {
@@ -81,9 +81,9 @@ class C3 {
 
     inline fun public() {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>() // already an error, should be an error
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3TA<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3TA<!>
     }
 }
 
@@ -92,7 +92,7 @@ private object O {
 }
 
 inline fun public5() {
-    O.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C<!>()
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C<!>()
 }
 
 private fun interface I {

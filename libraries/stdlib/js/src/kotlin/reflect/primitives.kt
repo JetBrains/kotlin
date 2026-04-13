@@ -8,6 +8,7 @@ package kotlin.reflect.js.internal
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.BigInt
 
+// TODO(KT-85424): Replace each `js` call with the call of `jsClassIntrinsic` after bootstrapping
 @JsName("PrimitiveClasses")
 @UsedFromCompilerGeneratedCode
 internal object PrimitiveClasses {

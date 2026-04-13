@@ -96,7 +96,7 @@ fun test7() {
         x = 1
         x = ""
         runWithoutContract {
-            x.length
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
     }
 }
@@ -156,7 +156,7 @@ fun test12() {
         x = 1
         x = ""
         runWithoutContract {
-            x.length
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         }
     }
 }
@@ -167,7 +167,7 @@ fun test13() {
         require(x is String)
         exactlyOnce {
             x = ""
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
     }
 }
@@ -178,7 +178,7 @@ fun test14() {
         require(x is String)
         atLeastOnce {
             x = ""
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
     }
 }
@@ -189,7 +189,7 @@ fun test15() {
         require(x is String)
         runWithoutContract {
             x = ""
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
     }
 }
@@ -232,7 +232,7 @@ fun test19() {
     for (i in 1..10) {
         require(x is String)
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = ""
         }
     }
@@ -243,7 +243,7 @@ fun test20() {
     for (i in 1..10) {
         require(x is String)
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = ""
         }
     }
@@ -254,7 +254,7 @@ fun test21() {
     for (i in 1..10) {
         require(x is String)
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = ""
         }
     }
@@ -265,7 +265,7 @@ fun test22() {
     for (i in 1..10) {
         require(x is String)
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
             x = materialize()
         }
     }
@@ -276,7 +276,7 @@ fun test23() {
     for (i in 1..10) {
         require(x is String)
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = materialize()
         }
     }
@@ -287,7 +287,7 @@ fun test24() {
     for (i in 1..10) {
         require(x is String)
         runWithoutContract {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.<!UNRESOLVED_REFERENCE!>length<!>
             x = materialize()
         }
     }
@@ -298,7 +298,7 @@ fun test25() {
     for (i in 1..10) {
         require(x is String)
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
         x = ""
     }
@@ -309,7 +309,7 @@ fun test26() {
     for (i in 1..10) {
         require(x is String)
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
         x = ""
     }
@@ -331,7 +331,7 @@ fun test28() {
     for (i in 1..10) {
         require(x is String)
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
         x = materialize()
     }
@@ -342,7 +342,7 @@ fun test29() {
     for (i in 1..10) {
         require(x is String)
         atLeastOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
         x = materialize()
     }
@@ -470,7 +470,7 @@ fun test40() {
     for (i in 1..10) {
         exactlyOnce {
             x = ""
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
     }
 }
@@ -481,7 +481,7 @@ fun test41() {
     for (i in 1..10) {
         atLeastOnce {
             x = ""
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
     }
 }
@@ -492,7 +492,7 @@ fun test42() {
     for (i in 1..10) {
         runWithoutContract {
             x = ""
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
     }
 }

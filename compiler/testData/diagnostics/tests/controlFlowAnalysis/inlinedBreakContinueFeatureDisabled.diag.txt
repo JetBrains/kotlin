@@ -1,37 +1,23 @@
-/inlinedBreakContinueFeatureDisabled.kt:17:15: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        foo { break }
-              ^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:18:15: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        foo { continue }
-              ^^^^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:19:22: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        foo(fun () { break })
-                     ^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:20:22: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        foo(fun () { continue })
-                     ^^^^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:26:14: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        bar({break}, {})
-             ^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:27:14: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        bar({continue}, {})
-             ^^^^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:29:21: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        bar(fun () {break}, fun () {})
-                    ^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:30:21: error: the feature "break continue in inline lambdas" is only available since language version 2.2
-        bar(fun () {continue}, fun () {})
-                    ^^^^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:36:19: error: 'break' or 'continue' jumps across a function or a class boundary
-        bar({}, { break }, { break })
-                  ^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:36:30: error: 'break' or 'continue' jumps across a function or a class boundary
-        bar({}, { break }, { break })
-                             ^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:37:19: error: 'break' or 'continue' jumps across a function or a class boundary
-        bar({}, { continue }, { break })
-                  ^^^^^^^^
-/inlinedBreakContinueFeatureDisabled.kt:37:33: error: 'break' or 'continue' jumps across a function or a class boundary
-        bar({}, { continue }, { break })
-                                ^^^^^
+/inlinedBreakContinueFeatureDisabled.kt:(361,366): error: The feature "break continue in inline lambdas" is disabled
 
+/inlinedBreakContinueFeatureDisabled.kt:(383,391): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(415,420): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(445,453): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(512,517): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(537,545): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(573,578): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(612,620): error: The feature "break continue in inline lambdas" is disabled
+
+/inlinedBreakContinueFeatureDisabled.kt:(694,699): error: 'break' or 'continue' crosses a function or class boundary.
+
+/inlinedBreakContinueFeatureDisabled.kt:(705,710): error: 'break' or 'continue' crosses a function or class boundary.
+
+/inlinedBreakContinueFeatureDisabled.kt:(732,740): error: 'break' or 'continue' crosses a function or class boundary.
+
+/inlinedBreakContinueFeatureDisabled.kt:(746,751): error: 'break' or 'continue' crosses a function or class boundary.

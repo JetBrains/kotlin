@@ -60,23 +60,6 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.objects.KotlinJvmCompilerOptionsDefault(myProject)
     }
 
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(
-        message = "Replaced by compilerJvmOptions",
-        replaceWith = ReplaceWith("createCompilerJvmOptions()"),
-        level = DeprecationLevel.ERROR,
-    )
-    override fun createKotlinJvmOptions(): KotlinJvmOptions {
-        return object : KotlinJvmOptions {
-            @OptIn(org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi::class)
-            @Deprecated(
-                message = org.jetbrains.kotlin.gradle.dsl.KOTLIN_OPTIONS_DEPRECATION_MESSAGE,
-                level = DeprecationLevel.ERROR,
-            )
-            override val options: KotlinJvmCompilerOptions = createCompilerJvmOptions()
-        }
-    }
-
     @Deprecated("Use API to create specific Kotlin extensions such as 'createKotlinJvmExtension()' or 'createKotlinAndroidExtension()'")
     override val kotlinExtension: KotlinProjectExtension by lazy {
         myProject.objects.newInstance(KotlinProjectExtension::class.java, myProject)
@@ -138,10 +121,6 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
                 explicitApiMode,
             )
         )
-        registeredKotlinJvmCompileTask.configure {
-            @Suppress("DEPRECATION_ERROR")
-            it.moduleName.set(taskCompilerOptions.moduleName)
-        }
         return registeredKotlinJvmCompileTask
     }
 

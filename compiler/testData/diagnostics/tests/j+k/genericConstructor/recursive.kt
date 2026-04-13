@@ -9,6 +9,6 @@ public class C {
 
 // FILE: main.kt
 
-fun foo() = C<!NO_VALUE_FOR_PARAMETER!>()<!>
+fun foo() = <!CANNOT_INFER_PARAMETER_TYPE!>C<!><!NO_VALUE_FOR_PARAMETER!>()<!>
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

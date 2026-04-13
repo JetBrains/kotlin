@@ -3,9 +3,9 @@
 
 fun foo(x: Number) {
     if (<!USELESS_IS_CHECK!>(x as Int) is Int<!>) {
-        checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+        checkSubtype<Int>(x)
     }
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
+    checkSubtype<Int>(x)
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

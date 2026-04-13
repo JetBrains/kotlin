@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 /**
@@ -25,4 +26,9 @@ class KotlinFunctionTypeStubImpl(
         parent = newParent,
         abbreviatedType = abbreviatedType,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinFunctionTypeStubImpl &&
+                other.abbreviatedType == abbreviatedType
 }

@@ -55,7 +55,7 @@ fun test() {
 
     withGenericDefaults("")
 
-    <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(<!>null!!<!UNREACHABLE_CODE!>)<!>
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(null!!)
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,

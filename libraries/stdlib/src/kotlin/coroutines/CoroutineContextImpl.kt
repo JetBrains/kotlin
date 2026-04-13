@@ -47,10 +47,17 @@ public abstract class AbstractCoroutineContextElement(public override val key: K
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
+@Deprecated(
+    "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage " +
+            "depending on implementation details. Prefer retrieving the element by its base key and casting " +
+            "it explicitly when needed or introducing a dedicated extension property."
+)
+@DeprecatedSinceKotlin(warningSince = "2.4")
 public abstract class AbstractCoroutineContextKey<B : Element, E : B>(
     baseKey: Key<B>,
     private val safeCast: (element: Element) -> E?
 ) : Key<E> {
+    @Suppress("DEPRECATION")
     private val topmostKey: Key<*> = if (baseKey is AbstractCoroutineContextKey<*, *>) baseKey.topmostKey else baseKey
 
     internal fun tryCast(element: Element): E? = safeCast(element)
@@ -65,7 +72,14 @@ public abstract class AbstractCoroutineContextKey<B : Element, E : B>(
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
+@Deprecated(
+    "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage " +
+            "depending on implementation details. Prefer retrieving the element by its base key and casting " +
+            "it explicitly when needed or introducing a dedicated extension property."
+)
+@DeprecatedSinceKotlin(warningSince = "2.4")
 public fun <E : Element> Element.getPolymorphicElement(key: Key<E>): E? {
+    @Suppress("DEPRECATION")
     if (key is AbstractCoroutineContextKey<*, *>) {
         @Suppress("UNCHECKED_CAST")
         return if (key.isSubKey(this.key)) key.tryCast(this) as? E else null
@@ -76,14 +90,21 @@ public fun <E : Element> Element.getPolymorphicElement(key: Key<E>): E? {
 
 /**
  * Returns empty coroutine context if the element is associated with the given [key] in a polymorphic manner
- * or `null` otherwise.
+ * or `this` otherwise.
  * This method returns empty context if either [Element.key] is equal to the given [key] or if the [key] is associated
  * with [Element.key] via [AbstractCoroutineContextKey].
  * See [AbstractCoroutineContextKey] for the example of usage.
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
+@Deprecated(
+    "Polymorphic coroutine context keys are error-prone, difficult to implement correctly, and can encourage " +
+            "depending on implementation details. Prefer retrieving the element by its base key and casting " +
+            "it explicitly when needed or introducing a dedicated extension property."
+)
+@DeprecatedSinceKotlin(warningSince = "2.4")
 public fun Element.minusPolymorphicKey(key: Key<*>): CoroutineContext {
+    @Suppress("DEPRECATION")
     if (key is AbstractCoroutineContextKey<*, *>) {
         return if (key.isSubKey(this.key) && key.tryCast(this) != null) EmptyCoroutineContext else this
     }

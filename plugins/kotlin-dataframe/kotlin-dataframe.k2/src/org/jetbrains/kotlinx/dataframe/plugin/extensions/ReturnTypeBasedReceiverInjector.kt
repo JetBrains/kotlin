@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -37,7 +36,6 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         )
     }
 
-    @OptIn(SymbolInternals::class)
     override fun addNewImplicitReceivers(
         functionCall: FirFunctionCall,
         sessionHolder: SessionAndScopeSessionHolder,
@@ -53,7 +51,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         return typeArguments
             .mapNotNull {
                 val symbol = (it as? ConeKotlinType)?.toRegularClassSymbol(session)
-                symbol?.takeIf { it.fir.callShapeData != null }
+                symbol?.takeIf { it.callShapeData != null }
             }
             .takeIf { it.size == typeArguments.size }
             .orEmpty()

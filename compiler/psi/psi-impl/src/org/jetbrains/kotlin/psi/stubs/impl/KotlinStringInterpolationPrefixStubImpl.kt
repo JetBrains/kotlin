@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtStringInterpolationPrefix
 import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
+import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 @OptIn(KtImplementationDetail::class)
@@ -22,4 +23,9 @@ class KotlinStringInterpolationPrefixStubImpl(
         parent = newParent,
         dollarSignCount = dollarSignCount,
     )
+
+    @KtImplementationDetail
+    override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
+        other is KotlinStringInterpolationPrefixStubImpl &&
+                other.dollarSignCount == dollarSignCount
 }

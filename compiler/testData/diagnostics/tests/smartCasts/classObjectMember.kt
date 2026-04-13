@@ -15,8 +15,8 @@ class B {
 
 fun test() {
     if (A.x != null) {
-        useInt(<!DEBUG_INFO_SMARTCAST!>A.x<!>)
-        useInt(<!TYPE_MISMATCH!>B.x<!>)
+        useInt(A.x)
+        useInt(<!ARGUMENT_TYPE_MISMATCH!>B.x<!>)
     }
 }
 

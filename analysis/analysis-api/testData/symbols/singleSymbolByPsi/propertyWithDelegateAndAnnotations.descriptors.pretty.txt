@@ -1,3 +1,0 @@
-@PropertyAnnotation
-@ExplicitPropertyAnnotation
-val lazyProperty: kotlin.Int

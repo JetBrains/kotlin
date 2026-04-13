@@ -1,4 +1,4 @@
-KtNameReferenceExpression(160,163): 'bar'
+KtNameReferenceExpression(157,160): 'bar'
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}

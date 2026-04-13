@@ -10,8 +10,8 @@ expect class B()
 expect fun foo(test: String)
 
 fun test() {
-    <!DEPRECATION_ERROR{JVM}!>A<!>()
-    <!UNRESOLVED_REFERENCE{JVM}!>B<!>()
+    A()
+    B()
     foo("")
 }
 
@@ -30,7 +30,7 @@ actual fun foo(test: String) {
 fun main() {
     <!DEPRECATION_ERROR!>A<!>()
     <!UNRESOLVED_REFERENCE!>B<!>()
-    foo("")
+    <!UNRESOLVED_REFERENCE!>foo<!>("")
 }
 
 /* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, stringLiteral */

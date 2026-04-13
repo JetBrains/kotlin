@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 
-@file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
+@file:Suppress(<!ERROR_SUPPRESSION!>"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"<!>)
 
 import kotlin.js.*
 import kotlin.native.concurrent.*

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.io.File
 import java.nio.file.Path
@@ -66,17 +67,9 @@ internal class KotlinWrapperPre2_4_0(
                 base.jvmCompilationOperationBuilder(sources, destinationDirectory)
             )
 
-        @Deprecated(
-            "Use jvmCompilationOperationBuilder instead",
-            replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)")
-        )
-        override fun createJvmCompilationOperation(
-            sources: List<Path>,
-            destinationDirectory: Path,
-        ): JvmCompilationOperation =
-            JvmCompilationOperationWrapper(
-                base.createJvmCompilationOperation(sources, destinationDirectory)
-            )
+        override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
+            throw UnsupportedOperationException("DiscoverScriptExtensionsOperation is available from Kotlin compiler version 2.4.0")
+        }
     }
 
     private class JvmCompilationOperationWrapper(
@@ -100,12 +93,32 @@ internal class KotlinWrapperPre2_4_0(
             sourcesChanges: SourcesChanges,
             dependenciesSnapshotFiles: List<Path>,
         ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
-            return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
+            return snapshotBasedIcConfigurationBuilder(
+                workingDirectory,
+                sourcesChanges,
+                dependenciesSnapshotFiles,
+                workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
+            )
+
+        }
+
+        @Deprecated(
+            "The shrunkClasspathSnapshot parameter is no longer required",
+            replaceWith = ReplaceWith("snapshotBasedIcConfigurationBuilder(workingDirectory, sourcesChanges, dependenciesSnapshotFiles)"),
+            level = DeprecationLevel.WARNING
+        )
+        override fun snapshotBasedIcConfigurationBuilder(
+            workingDirectory: Path,
+            sourcesChanges: SourcesChanges,
+            dependenciesSnapshotFiles: List<Path>,
+            shrunkClasspathSnapshot: Path,
+        ): JvmSnapshotBasedIncrementalCompilationConfiguration.Builder {
+            return JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(
                 base.snapshotBasedIcConfigurationBuilder(
                     workingDirectory,
                     sourcesChanges,
                     dependenciesSnapshotFiles,
-                    workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
+                    shrunkClasspathSnapshot,
                 )
             )
         }
@@ -124,7 +137,30 @@ internal class KotlinWrapperPre2_4_0(
             return JvmCompilationOperationWrapper(base.build())
         }
 
+        @Suppress("DEPRECATION_ERROR")
         private class JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(
+            val base: JvmSnapshotBasedIncrementalCompilationConfiguration,
+        ) : JvmSnapshotBasedIncrementalCompilationConfiguration(
+            base.workingDirectory,
+            base.sourcesChanges,
+            base.dependenciesSnapshotFiles,
+            base.shrunkClasspathSnapshot,
+            base.options
+        ) {
+
+            override fun toBuilder(): Builder = JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(base.toBuilder())
+
+            override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
+                val oldOption = Option<V>(key.id)
+                return base[oldOption]
+            }
+
+            override fun <V> get(key: Option<V>): V {
+                return base[key]
+            }
+        }
+
+        private class JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(
             val base: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
         ) : JvmSnapshotBasedIncrementalCompilationConfiguration.Builder by base {
             override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
@@ -138,7 +174,7 @@ internal class KotlinWrapperPre2_4_0(
             }
 
             override fun build(): JvmSnapshotBasedIncrementalCompilationConfiguration {
-                return base.build()
+                return JvmSnapshotBasedIncrementalCompilationConfigurationWrapper(base.build())
             }
         }
     }
@@ -171,13 +207,7 @@ internal class KotlinWrapperPre2_4_0(
 
         override fun <V> get(key: JvmCompilerArguments.JvmCompilerArgument<V>): V = interceptor[key]
 
-        @Deprecated("Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-        override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) = interceptor.set(key, value)
-
         override fun <V> get(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = interceptor[key]
-
-        @Deprecated("Compiler argument classes will become immutable in an upcoming release. Use a Builder instance to create and modify compiler arguments.")
-        override fun <V> set(key: CommonCompilerArguments.CommonCompilerArgument<V>, value: V) = interceptor.set(key, value)
     }
 
     internal class JvmCompilerArgumentsBuilderWrapper(
@@ -636,7 +666,10 @@ internal class KotlinWrapperPre2_4_0(
                     -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue = value as List<Path>?
-                    val stringValue = listValue?.joinToString(File.pathSeparator) { it.toFile().absolutePath }
+                    val stringValue =
+                        listValue?.map { it.toFile().absolutePath }
+                            ?.also { list -> list.checkNoneContains(File.pathSeparator) }
+                            ?.joinToString(File.pathSeparator)
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
                     delegate[stringKey] = stringValue
@@ -647,7 +680,7 @@ internal class KotlinWrapperPre2_4_0(
                     -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue = value as List<Path>
-                    val arrayValue = listValue.map { it.toFile().absolutePath }.toTypedArray()
+                    val arrayValue = listValue.map { it.toFile().absolutePath }.also { it.checkNoneContains(",") }.toTypedArray()
                     val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue
@@ -695,5 +728,16 @@ internal class KotlinWrapperPre2_4_0(
                 else -> delegate[key] = value
             }
         }
+    }
+}
+
+private fun List<String>.checkNoneContains(other: CharSequence) {
+    val invalidItem = firstOrNull { it.contains(other) }
+    if (invalidItem != null) {
+        throw CompilerArgumentsParseException(
+            "Invalid character '${other}' found in argument '$invalidItem'. " +
+                    "This character is currently not supported in this context. " +
+                    "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
+        )
     }
 }

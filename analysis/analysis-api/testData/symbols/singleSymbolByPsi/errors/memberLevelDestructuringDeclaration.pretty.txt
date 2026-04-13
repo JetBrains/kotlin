@@ -1,1 +1,1 @@
-()
+(`<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values), `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values))

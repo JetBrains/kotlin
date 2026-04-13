@@ -5,11 +5,11 @@ class A
 
 var globalA: A = TODO()
 
-var A.prop get() = this
+<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var A.prop<!> get() = this
 
 var i: Int = TODO()
 
-var A.i: Int
+<!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var A.i: Int<!>
     get() = 0
 
 /* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, propertyDeclaration, propertyWithExtensionReceiver,

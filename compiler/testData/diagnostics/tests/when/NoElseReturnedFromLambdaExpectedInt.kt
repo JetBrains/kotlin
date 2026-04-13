@@ -12,9 +12,9 @@
 
 fun foo(x: Int) {
     r {
-        <!NO_ELSE_IN_WHEN!>when<!> (x) {
+        <!RETURN_TYPE_MISMATCH!>when (x) {
             2 -> 0
-        }
+        }<!>
     }
 }
 

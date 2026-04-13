@@ -7,13 +7,13 @@ open class OpenBase {
 
 class InitOpenViaSuper : OpenBase() {
     init {
-        <!VAL_REASSIGNMENT!>super.x<!> = "error"
+        super.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
 class InitOpenViaThis : OpenBase() {
     init {
-        <!VAL_REASSIGNMENT!>this.x<!> = "error"
+        this.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
@@ -29,13 +29,13 @@ open class GenericOpenBase<T> {
 
 class InitGenericOpenViaSuper : GenericOpenBase<String>() {
     init {
-        <!VAL_REASSIGNMENT!>super.x<!> = "error"
+        super.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
 class InitGenericOpenViaThis : GenericOpenBase<String>() {
     init {
-        <!VAL_REASSIGNMENT!>this.x<!> = "error"
+        this.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
@@ -51,13 +51,13 @@ interface InterfaceBase {
 
 class InitOpenAndInterfaceViaSuper : OpenBase(), InterfaceBase {
     init {
-        <!VAL_REASSIGNMENT!>super.x<!> = "error"
+        super.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 
 class InitOpenAndInterfaceViaThis : OpenBase(), InterfaceBase {
     init {
-        <!VAL_REASSIGNMENT!>this.x<!> = "error"
+        this.<!VAL_REASSIGNMENT!>x<!> = "error"
     }
 }
 

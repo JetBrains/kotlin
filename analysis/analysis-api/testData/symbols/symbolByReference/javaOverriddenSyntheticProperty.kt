@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // FILE: main.kt
 abstract class SomeKotlinClass {
     abstract val String.foo: Int

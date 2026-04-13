@@ -2,7 +2,7 @@
 // FILE: usage.kt
 package first
 
-import third.<!DEPRECATION!>JavaClass<!>.<!DEPRECATION!>NestedJavaClass<!>
+import <!DEPRECATION!>third.JavaClass.NestedJavaClass<!>
 
 // FILE: KotlinAnnotation.kt
 package second

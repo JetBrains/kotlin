@@ -9,11 +9,11 @@ data class A2(val y: String, val z: Int) {
     constructor(x: String): this(x, 0)
 }
 
-data class <!DATA_CLASS_WITHOUT_PARAMETERS, PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>A3<!> {
+data <!DATA_CLASS_WITHOUT_PARAMETERS!>class A3<!> {
     constructor()
 }
 
-data class A4 internal constructor<!DATA_CLASS_WITHOUT_PARAMETERS!>()<!>
+data class A4 <!DATA_CLASS_WITHOUT_PARAMETERS!>internal constructor()<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, integerLiteral, primaryConstructor, propertyDeclaration,
 secondaryConstructor, stringLiteral */

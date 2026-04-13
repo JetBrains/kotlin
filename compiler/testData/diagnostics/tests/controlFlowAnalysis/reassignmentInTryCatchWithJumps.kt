@@ -7,7 +7,7 @@ fun f1(flag: Boolean) {
     val n: Int
     try {
         if (flag) {
-            <!UNUSED_VALUE!>n =<!> 1
+            n = 1
             exc(flag)
             return
         }
@@ -24,7 +24,7 @@ fun f2(flag: Boolean) {
         val n: Int
         try {
             if (flag) {
-                <!UNUSED_VALUE!>n =<!> 1
+                n = 1
                 exc(flag)
                 break
             }
@@ -42,7 +42,7 @@ fun f3(flag: Boolean) {
         val n: Int
         try {
             if (flag) {
-                <!UNUSED_VALUE!>n =<!> 1
+                n = 1
                 exc(flag)
                 continue
             }

@@ -232,10 +232,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
         File testArgsFile = new File(testArgsFilePath);
         List<String> lines = FilesKt.readLines(testArgsFile, Charsets.UTF_8);
-        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile().getAbsolutePath(), tempDir));
+        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile(), tempDir));
     }
 
-    private static String readArg(String arg, @NotNull String testDataDir, @NotNull String tempDir) {
+    private static String readArg(String arg, @NotNull File testDataDir, @NotNull String tempDir) {
         if (arg.isEmpty()) {
             return null;
         }
@@ -268,7 +268,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    public static String replacePathsInBuildXml(@NotNull String argument, @NotNull String testDataDir, @NotNull String tempDir) {
+    public static String replacePathsInBuildXml(@NotNull String argument, @NotNull File testDataDir, @NotNull String tempDir) {
         return createTempFileWithPathsReplaced(argument, BUILD_FILE_ARGUMENT_PREFIX, ".xml", testDataDir, tempDir);
     }
 
@@ -278,7 +278,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull String argument,
             @NotNull String argumentPrefix,
             @NotNull String tempFileSuffix,
-            @NotNull String testDataDir,
+            @NotNull File testDataDir,
             @NotNull String tempDir
     ) {
         String filePath = kotlin.text.StringsKt.substringAfter(argument, argumentPrefix, argument);
@@ -298,10 +298,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         }
     }
 
-    private static String replaceTestPaths(@NotNull String str, @NotNull String testDataDir, @NotNull String tempDir) {
+    private static String replaceTestPaths(@NotNull String str, @NotNull File testDataDir, @NotNull String tempDir) {
         return str
                 .replace("$TEMP_DIR$", tempDir)
-                .replace(TESTDATA_DIR, testDataDir)
+                .replace(TESTDATA_DIR, testDataDir.getAbsolutePath())
                 .replace(
                         "$FOREIGN_ANNOTATIONS_DIR$",
                         new File(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()

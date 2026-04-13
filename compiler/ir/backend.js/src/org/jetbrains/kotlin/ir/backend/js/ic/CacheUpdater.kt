@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsICContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -63,10 +66,21 @@ enum class DirtyFileState(val str: String) {
 interface PlatformDependentICContext {
     fun createIrFactory(): IrFactory
 
+    fun createBackendContext(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration,
+    ): JsCommonBackendContext
+
     /**
      * It is expected that the method implementation creates a backend context and initializes all builtins and intrinsics.
      */
-    fun createCompiler(mainModule: IrModuleFragment, irBuiltIns: IrBuiltIns, configuration: CompilerConfiguration): IrCompilerICInterface
+    fun createCompiler(
+        mainModule: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        configuration: CompilerConfiguration,
+        context: JsCommonBackendContext,
+    ): IrCompilerICInterface
 
     fun createSrcFileArtifact(srcFilePath: String, fragments: IrICProgramFragments?, astArtifact: File? = null): SrcFileArtifact
 
@@ -704,14 +718,17 @@ class CacheUpdater(
         val dirtyFileExports = updater.collectExportedSymbolsForDirtyFiles(modifiedFiles)
         val stubbedSignatures = updater.collectStubbedSignatures()
 
+        val mainLibrary = updater.orderedLibraries.lastOrNull() ?: notFoundIcError("main library")
+
         stopwatch.startNext("Modified files - loading and linking IR")
         val jsIrLinkerLoader = JsIrLinkerLoader(
             compilerConfiguration = compilerConfiguration,
             orderedLibraries = updater.orderedLibraries,
             mainModuleFriends = updater.mainModuleFriendLibraries,
-            irFactory = icContext.createIrFactory(),
+            icContext = icContext,
             stubbedSignatures = stubbedSignatures,
             loadBodiesOnlyForMainModule = loadBodiesOnlyForMainModule,
+            mainLibrary = mainLibrary,
         )
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
@@ -749,12 +766,10 @@ class CacheUpdater(
             loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
         }
 
-        stopwatch.startNext("Processing IR - initializing backend context")
+        stopwatch.startNext("Processing IR - initializing the compiler")
         val mainModuleFragment = loadedIr.orderedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
-
-        // Load declarations referenced during `context` initialization
-        loadedIr.loadUnboundSymbols()
+        val compilerContext = icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
+        val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration, compilerContext)
 
         val dirtyFiles = dirtyFileExports.entries.associateTo(newHashMapWithExpectedSize(dirtyFileExports.size)) {
             it.key to HashSet(it.value.keys)
@@ -827,7 +842,6 @@ fun rebuildCacheForDirtyFiles(
     configuration: CompilerConfiguration,
     orderedLibraries: List<KotlinLibrary>,
     dirtyFiles: Collection<String>?,
-    irFactory: IrFactory,
     exportedDeclarations: Set<FqName>,
     mainArguments: List<String>?,
 ): Pair<IrModuleFragment, List<Pair<IrFile, IrICProgramFragments>>> {
@@ -843,7 +857,8 @@ fun rebuildCacheForDirtyFiles(
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), irFactory, emptySet(), false)
+    val icContext = JsICContext(mainArguments, granularity = JsGenerationGranularity.PER_MODULE, exportedDeclarations)
+    val jsIrLoader = JsIrLinkerLoader(configuration, orderedLibraries, emptyList(), icContext, emptySet(), false, library)
     val loadedIr = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = loadedIr.orderedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
@@ -852,17 +867,9 @@ fun rebuildCacheForDirtyFiles(
         currentIrModule.files.memoryOptimizedFilter { irFile -> irFile.fileEntry.name in files }
     } ?: currentIrModule.files
 
-    val compilerWithIC = JsIrCompilerWithIC(
-        currentIrModule,
-        loadedIr.irBuiltIns,
-        mainArguments,
-        configuration,
-        JsGenerationGranularity.PER_MODULE,
-        exportedDeclarations,
-    )
+    val backendContext = icContext.createBackendContext(currentIrModule, loadedIr.irBuiltIns, configuration)
+    val compilerWithIC = icContext.createCompiler(currentIrModule, loadedIr.irBuiltIns, configuration, backendContext)
 
-    // Load declarations referenced during `context` initialization
-    loadedIr.loadUnboundSymbols()
     irInterner.reset()
 
     val fragments = compilerWithIC.compile(loadedIr.orderedFragments.values, dirtyIrFiles).memoryOptimizedMap { it() }

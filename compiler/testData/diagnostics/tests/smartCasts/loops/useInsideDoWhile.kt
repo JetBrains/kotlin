@@ -4,9 +4,9 @@ public fun foo(p: String?, y: String?): Int {
         // After this !!, y. should be smartcasted in loop as well as outside
         y!!.length
         if (p == null) break
-        <!DEBUG_INFO_SMARTCAST!>y<!>.length
+        y.length
     } while (true)
-    return <!DEBUG_INFO_SMARTCAST!>y<!>.length
+    return y.length
 }
 
 /* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,

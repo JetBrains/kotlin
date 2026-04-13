@@ -4,36 +4,30 @@ fun one(): Int {
 
 fun test1(): Int {
   while (true) { // BLOCK
-    { // BLOCK
-      val tmp_0: Int = one()
-      when {
-        EQEQ(arg0 = tmp_0, arg1 = 1) -> { // BLOCK
-          { // BLOCK
-            val tmp_1: Int = two()
-            when {
-              EQEQ(arg0 = tmp_1, arg1 = 2) -> return 2
-            }
-          }
+    val tmp_0: Int = one()
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = 1) -> { // BLOCK
+        val tmp_1: Int = two()
+        when {
+          EQEQ(arg0 = tmp_1, arg1 = 2) -> return 2
         }
-        else -> return 3
       }
+      else -> return 3
     }
   }
 }
 
 fun test2(): Int {
   while (true) { // BLOCK
-    { // BLOCK
-      val tmp_2: Int = one()
-      when {
-        EQEQ(arg0 = tmp_2, arg1 = 1) -> { // BLOCK
-          val tmp_3: Int = two()
-          when {
-            EQEQ(arg0 = tmp_3, arg1 = 2) -> return 2
-          }
+    val tmp_2: Int = one()
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = 1) -> { // BLOCK
+        val tmp_3: Int = two()
+        when {
+          EQEQ(arg0 = tmp_3, arg1 = 2) -> return 2
         }
-        else -> return 3
       }
+      else -> return 3
     }
   }
 }
@@ -41,4 +35,3 @@ fun test2(): Int {
 fun two(): Int {
   return 2
 }
-

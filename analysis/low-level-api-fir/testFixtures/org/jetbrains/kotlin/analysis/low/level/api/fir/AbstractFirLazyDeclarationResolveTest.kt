@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.api.analyzeCopy
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProviderBase
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionModeProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclarationResolveTestCase.Directives.LAZY_MODE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
@@ -24,7 +28,9 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.testFederation.SmokeTest
 
+@SmokeTest
 abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + Directives
@@ -82,15 +88,39 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
             }
         }
 
-        doLazyResolveTest(fileToTest, testServices, OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { resolutionFacade ->
-            findFirDeclarationToResolve(
-                ktFile = fileToTest,
-                testServices = testServices,
-                resolutionFacade = resolutionFacade,
-                fileWithCaret = mainFile,
-            )
+        wrapWithAnalyzeCopyIfNeeded(fileToTest, danglingFileResolutionMode) {
+            doLazyResolveTest(fileToTest, testServices, OutputRenderingMode.ALL_FILES_FROM_ALL_MODULES) { resolutionFacade ->
+                findFirDeclarationToResolve(
+                    ktFile = fileToTest,
+                    testServices = testServices,
+                    resolutionFacade = resolutionFacade,
+                    fileWithCaret = mainFile,
+                )
+            }
         }
     }
+
+    /**
+     * This logic is needed due to the presence of [KaDanglingFileResolutionModeProvider]
+     * in [KotlinProjectStructureProviderBase.computeDefaultDanglingFileResolutionMode].
+     * If no dangling file resolution mode is provided for a file, it might set [KaDanglingFileResolutionMode.PREFER_SELF]
+     * for lazy resolve tests with [KaDanglingFileResolutionMode.IGNORE_SELF] mode if the copy file differs from the original one.
+     * That's why we need to use outer [analyzeCopy] call to manually set the dangling file resolution mode.
+     */
+    private inline fun <R> wrapWithAnalyzeCopyIfNeeded(
+        file: KtFile,
+        danglingFileResolutionMode: KaDanglingFileResolutionMode?,
+        crossinline action: () -> R
+    ) {
+        if (file.copyOrigin != null && danglingFileResolutionMode != null) {
+            analyzeCopy(file, danglingFileResolutionMode) {
+                action()
+            }
+        } else {
+            action()
+        }
+    }
+
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)

@@ -10,7 +10,7 @@ public class J {
 // FILE: Test.kt
 fun isCast() {
     if (J.staticFinalJava is String) {
-        <!DEBUG_INFO_SMARTCAST!>J.staticFinalJava<!>.length
+        J.staticFinalJava.length
         (J.staticFinalJava <!USELESS_CAST!>as String<!>).length
     }
 
@@ -22,7 +22,7 @@ fun isCast() {
 
 fun asCast() {
     J.staticFinalJava as String
-    <!DEBUG_INFO_SMARTCAST!>J.staticFinalJava<!>.length
+    J.staticFinalJava.length
 
     J.staticNonFinalJava as String
     <!SMARTCAST_IMPOSSIBLE!>J.staticNonFinalJava<!>.length

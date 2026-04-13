@@ -25,12 +25,12 @@ class C {
     protected object O : I
 
     internal <!NOTHING_TO_INLINE!>inline<!> fun bar() {
-        C.foo() // should be yellow
-        foo() // should be yellow
-        extensionFoo() // should be yellow
-        with(O) {
+        C.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>() // should be yellow
+        <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>() // should be yellow
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>extensionFoo<!>() // should be yellow
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>with<!>(<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>) <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>{
             extensionFoo()
-        }
+        }<!>
     }
 }
 
@@ -45,12 +45,12 @@ private object O {
 }
 
 internal <!NOTHING_TO_INLINE!>inline<!> fun inlineFun() {
-    O
-    O.<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
-    <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
-    Super.foo() // should be yellow
+    <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>O<!>
+    O.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // should be yellow
+    Super.<!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>foo<!>() // should be yellow
     Sub.foo() // should be green
-    fooSuper() // should be yellow
+    <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_WARNING!>fooSuper<!>() // should be yellow
     fooSub() // should be green
 }
 

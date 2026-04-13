@@ -12,4 +12,4 @@ FILE: [ResolvedTo(IMPORTS)] logicalOperators.kt
         R|/consume|(R|<local>/flag| || R|<local>/another|)
         consume#(flag#.xor#(another#))
     }
-    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] a: R|kotlin/Boolean|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun consume([ResolvedTo(STATUS)] a: R|kotlin/Boolean|): R|kotlin/Unit| { LAZY_BLOCK }

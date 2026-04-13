@@ -16,9 +16,10 @@ import javax.xml.transform.stream.StreamResult
 
 /**
  * Parses pom.xml, applies modifications via [block], and writes it back.
+ * Use [relativePomPath] to target a submodule's pom (e.g. "app/pom.xml").
  */
-fun MavenTestProject.modifyPomXml(block: Document.() -> Unit) {
-    val pomFile = workDir.resolve("pom.xml").toFile()
+fun MavenTestProject.modifyPomXml(relativePomPath: String = "pom.xml", block: Document.() -> Unit) {
+    val pomFile = workDir.resolve(relativePomPath).toFile()
     val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(pomFile)
     doc.block()
     val transformer = TransformerFactory.newInstance().newTransformer()
@@ -84,11 +85,79 @@ fun Element.appendXmlFragment(xmlFragment: String) {
 /**
  * Adds XML content to the plugin-level `<configuration>` of kotlin-maven-plugin.
  */
-fun MavenTestProject.addPluginLevelConfiguration(xmlFragment: String) {
-    modifyPomXml {
+fun MavenTestProject.addPluginLevelConfiguration(xmlFragment: String, relativePomPath: String = "pom.xml") {
+    modifyPomXml(relativePomPath) {
         val plugin = findKotlinPlugin()
         val config = plugin.getOrCreateChild("configuration")
         config.appendXmlFragment(xmlFragment)
+    }
+}
+
+/**
+ * Configures `<jdkToolchain>` on kotlin-maven-plugin to select a specific JDK version from toolchains.xml.
+ */
+fun MavenTestProject.configureJdkToolchain(version: String, relativePomPath: String = "pom.xml") {
+    addPluginLevelConfiguration("<jdkToolchain><version>$version</version></jdkToolchain>", relativePomPath)
+}
+
+/**
+ * Changes the JDK version in an existing `maven-toolchains-plugin` configuration.
+ */
+fun MavenTestProject.modifyMavenToolchainsPluginJdkVersion(newVersion: String, relativePomPath: String = "pom.xml") {
+    modifyPomXml(relativePomPath) {
+        val plugins = getElementsByTagName("plugin")
+        val toolchainsPlugin = (0 until plugins.length)
+            .map { plugins.item(it) as Element }
+            .firstOrNull { it.getElementsByTagName("artifactId").item(0)?.textContent == "maven-toolchains-plugin" }
+            ?: error("maven-toolchains-plugin not found in pom.xml")
+        val jdkVersionNodes = toolchainsPlugin.getElementsByTagName("version")
+        val jdkVersion = (0 until jdkVersionNodes.length)
+            .map { jdkVersionNodes.item(it) }
+            .first { it.parentNode.nodeName == "jdk" }
+        jdkVersion.textContent = newVersion
+    }
+}
+
+/**
+ * Adds `maven-toolchains-plugin` to select a JDK toolchain.
+ * When [profileId] is null, adds to `<build><plugins>` directly.
+ * When [profileId] is set, wraps in a `<profile>` activated via `-P`.
+ */
+fun MavenTestProject.addMavenToolchainsPlugin(version: String, profileId: String? = null, relativePomPath: String = "pom.xml") {
+    val pluginXml = """
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-toolchains-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                    <goals><goal>toolchain</goal></goals>
+                </execution>
+            </executions>
+            <configuration>
+                <toolchains>
+                    <jdk>
+                        <version>$version</version>
+                    </jdk>
+                </toolchains>
+            </configuration>
+        </plugin>
+    """.trimIndent()
+
+    modifyPomXml(relativePomPath) {
+        if (profileId != null) {
+            val profiles = documentElement.getOrCreateChild("profiles")
+            profiles.appendXmlFragment("""
+                <profile>
+                    <id>$profileId</id>
+                    <build><plugins>$pluginXml</plugins></build>
+                </profile>
+            """.trimIndent())
+        } else {
+            val build = documentElement.getOrCreateChild("build")
+            val plugins = build.getOrCreateChild("plugins")
+            plugins.appendXmlFragment(pluginXml)
+        }
     }
 }
 

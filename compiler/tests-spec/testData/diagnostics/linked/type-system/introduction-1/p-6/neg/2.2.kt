@@ -22,7 +22,7 @@ fun case_2(x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
-    <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!>x<!UNREACHABLE_CODE!>)<!>
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(x)
 }
 
 // TESTCASE NUMBER: 4
@@ -54,10 +54,10 @@ class Case8 {
 fun case_9(): Any = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
 // TESTCASE NUMBER: 10
-fun case_10(x: Int, y: Boolean): Any = <!TYPE_MISMATCH, TYPE_MISMATCH!>if (y) x else null<!>
+fun case_10(x: Int, y: Boolean): Any = <!RETURN_TYPE_MISMATCH!>if (y) x else null<!>
 
 // TESTCASE NUMBER: 11
-fun case_11(x: Int, y: Boolean): Any = <!TYPE_MISMATCH, TYPE_MISMATCH!>if (y) x else null<!>
+fun case_11(x: Int, y: Boolean): Any = <!RETURN_TYPE_MISMATCH!>if (y) x else null<!>
 
 // TESTCASE NUMBER: 12
 class Case12 {

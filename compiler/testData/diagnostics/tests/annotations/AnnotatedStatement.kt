@@ -17,36 +17,36 @@ public @interface JavaAnnWithTarget {}
 annotation class KotlinAnn
 
 fun foo(list: MutableList<Int>, arr: Array<String>) {
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     when { else -> {} }
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     while (true) { break }
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     for (i in list) {}
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     if (true) {}
 
-    var x = <!VARIABLE_WITH_REDUNDANT_INITIALIZER!>1<!>
+    var x = 1
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     x = 2
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     x += 2
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     list += 2
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     arr[0] = ""
 
-    @JavaAnnWithTarget @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn <!WRONG_ANNOTATION_TARGET!>@KotlinAnn<!>
     arr[1] += "*"
 
-    <!WRONG_ANNOTATION_TARGET!>@JavaAnnWithTarget<!> @JavaAnn @KotlinAnn
+    @JavaAnnWithTarget @JavaAnn @KotlinAnn
     { bar() }
 }
 

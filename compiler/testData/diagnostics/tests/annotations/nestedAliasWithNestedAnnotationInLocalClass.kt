@@ -7,8 +7,8 @@ fun foo() {
     class OriginalClass<T> {
         val prop = 0
 
-        <!TOPLEVEL_TYPEALIASES_ONLY!>@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"alias $prop"<!>)
-        typealias NestedTypeAlias <@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"type param $prop"<!>) A : <!BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED!>@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"bound $prop"<!>) Number<!>> = @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"type $prop"<!>) OriginalClass<A><!>
+        @Anno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"alias $<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>prop<!>"<!>)
+        typealias NestedTypeAlias <@Anno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"type param $<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>prop<!>"<!>) A : <!BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED!>@Anno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"bound $<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>prop<!>"<!>) Number<!>> = @Anno(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"type $<!INACCESSIBLE_OUTER_CLASS_RECEIVER!>prop<!>"<!>) OriginalClass<A>
     }
 }
 

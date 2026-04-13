@@ -11,7 +11,7 @@ enum class En : Enum<En> {
     val tmp_0: Any? = <get-n>()
     when {
       EQEQ(arg0 = tmp_0, arg1 = null) -> null
-      else -> tmp_0.toString()
+      else -> tmp_0 /*as Any */.toString()
     }
   })
 
@@ -29,4 +29,3 @@ enum class En : Enum<En> {
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
-

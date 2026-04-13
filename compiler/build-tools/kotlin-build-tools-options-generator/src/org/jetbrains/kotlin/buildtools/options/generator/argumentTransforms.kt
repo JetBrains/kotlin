@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.buildtools.options.generator
@@ -12,12 +12,25 @@ import org.jetbrains.kotlin.arguments.description.removed.removedCommonCompilerA
 import org.jetbrains.kotlin.arguments.description.removed.removedJvmCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.options.generator.BtaCompilerArgument.CustomCompilerArgument
 import org.jetbrains.kotlin.buildtools.options.generator.BtaCompilerArgument.SSoTCompilerArgument
+import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 
 sealed interface ArgumentTransform {
     object NoOp : ArgumentTransform
     object Drop : ArgumentTransform
+
+    /**
+     * Like [Drop], the argument is not exposed in the public API.
+     * Additionally, attempts to set this argument via [applyArgumentStrings][org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.applyArgumentStrings]
+     * will produce a warning (starting from [warningSince]) or an error (starting from [errorSince], if specified).
+     */
+    class Restrict(
+        val reason: String? = null,
+        val warningSince: KotlinReleaseVersion,
+        val errorSince: KotlinReleaseVersion? = null,
+    ) : ArgumentTransform
     class CustomArgument(val argument: CustomCompilerArgument) : ArgumentTransform
     class Override(val argument: CustomCompilerArgument) : ArgumentTransform
 //    data class Rename(val to: String) : ArgumentTransform // possible future operations
@@ -27,7 +40,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     put(actualCommonCompilerArguments.name, buildMap {
         with(actualCommonCompilerArguments) {
             drop("script")
-            drop("Xrepl")
+            restrict("Xrepl", warningSince = KotlinReleaseVersion.v2_4_0, errorSince = KotlinReleaseVersion.v2_5_0)
             drop("Xstdlib-compilation")
             drop("Xallow-kotlin-package")
             drop("P")
@@ -36,7 +49,12 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xcompiler-plugin-order")
             drop("Xintellij-plugin-root")
             drop("Xcommon-sources")
-            drop("Xenable-incremental-compilation")
+            restrict(
+                "Xenable-incremental-compilation",
+                reason = "Configure it via the JvmCompilationOperation.INCREMENTAL_COMPILATION option instead.",
+                warningSince = KotlinReleaseVersion.v2_4_0,
+                errorSince = KotlinReleaseVersion.v2_5_0
+            ) // managed by BTA, conflicts with its IC handling
             custom(CustomCompilerArguments.compilerPlugins)
             override("Xwarning-level", CustomCompilerArguments.warningLevel)
 
@@ -63,16 +81,34 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     })
     put(actualMetadataArguments.name, buildMap {
         with(actualMetadataArguments) {
-            drop("d") // destination is configured explicitly when instantiating operations
+            restrict(
+                "d",
+                reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
+                warningSince = KotlinReleaseVersion.v2_4_0,
+                errorSince = KotlinReleaseVersion.v2_5_0
+            ) // configured explicitly when instantiating operations
             drop("Xlegacy-metadata-jar-k2")
         }
     })
     put(actualJvmCompilerArguments.name, buildMap {
         with(actualJvmCompilerArguments) {
-            drop("d") // destination is configured explicitly when instantiating operations
-            drop("expression")
-            drop("include-runtime") // we're only considering building into directories for now (not jars)
-            drop("Xbuild-file")
+            restrict(
+                "d",
+                reason = "The destination is configured via the destinationDirectory parameter of jvmCompilationOperationBuilder.",
+                warningSince = KotlinReleaseVersion.v2_4_0,
+                errorSince = KotlinReleaseVersion.v2_5_0
+            ) // configured explicitly when instantiating operations
+            restrict("expression", warningSince = KotlinReleaseVersion.v2_4_0, errorSince = KotlinReleaseVersion.v2_5_0)
+            restrict(
+                "include-runtime",
+                warningSince = KotlinReleaseVersion.v2_4_0,
+                errorSince = KotlinReleaseVersion.v2_5_0
+            ) // we're only considering building into directories for now (not jars)
+            restrict(
+                "Xbuild-file",
+                warningSince = KotlinReleaseVersion.v2_4_0,
+                errorSince = KotlinReleaseVersion.v2_5_0
+            ) // breaks incremental compilation (KT-75540)
             override("Xprofile", CustomCompilerArguments.profileCompilerCommandArgumentFactory)
             override("Xnullability-annotations", CustomCompilerArguments.nullabilityAnnotationFactory)
             override("Xjsr305", CustomCompilerArguments.jsr305Factory)
@@ -89,6 +125,17 @@ context(level: KotlinCompilerArgumentsLevel)
 private fun MutableMap<String, ArgumentTransform>.drop(name: String) {
     require(level.arguments.any { it.name == name }) { "Argument $name is not found in level $level" }
     put(name, ArgumentTransform.Drop)
+}
+
+context(level: KotlinCompilerArgumentsLevel)
+private fun MutableMap<String, ArgumentTransform>.restrict(
+    name: String,
+    reason: String? = null,
+    warningSince: KotlinReleaseVersion,
+    errorSince: KotlinReleaseVersion? = null,
+) {
+    require(level.arguments.any { it.name == name }) { "Argument $name is not found in level $level" }
+    put(name, ArgumentTransform.Restrict(reason, warningSince, errorSince))
 }
 
 context(level: KotlinCompilerArgumentsLevel)
@@ -120,7 +167,8 @@ internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompi
     val transformedArguments = arguments.mapNotNull { argument ->
         when (argument.transform()) {
             is ArgumentTransform.NoOp -> SSoTCompilerArgument(argument)
-            is ArgumentTransform.Drop, is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
+            is ArgumentTransform.Drop, is ArgumentTransform.Restrict,
+            is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
         }
     }
 
@@ -130,10 +178,57 @@ internal fun KotlinCompilerArgumentsLevel.transformApiArguments(): List<BtaCompi
 internal fun KotlinCompilerArgumentsLevel.transformImplArguments(): List<BtaCompilerArgument<*>> {
     val transformedArguments = arguments.mapNotNull { argument ->
         when (argument.transform()) {
-            is ArgumentTransform.NoOp, is ArgumentTransform.Drop -> SSoTCompilerArgument(argument)
+            is ArgumentTransform.NoOp, is ArgumentTransform.Drop, is ArgumentTransform.Restrict -> SSoTCompilerArgument(argument)
             is ArgumentTransform.CustomArgument, is ArgumentTransform.Override -> null
         }
     }
 
     return transformedArguments + generateCustomArguments() + generateOverriddenArguments()
+}
+
+internal data class RestrictedArgInfo(
+    val fieldName: String,
+    val primaryCli: String,
+    val shortName: String?,
+    val deprecatedName: String?,
+    val reason: String?,
+    val warningSince: KotlinReleaseVersion,
+    val errorSince: KotlinReleaseVersion?,
+)
+
+/**
+ * Collects metadata for restricted arguments defined directly at [level] (not including ancestors).
+ */
+internal fun collectRestrictedArgInfo(level: KotlinCompilerArgumentsLevel): List<RestrictedArgInfo> {
+    val transforms = levelsToArgumentTransforms[level.name] ?: return emptyList()
+    val result = mutableListOf<RestrictedArgInfo>()
+    for ((argName, transform) in transforms) {
+        if (transform !is ArgumentTransform.Restrict) continue
+        val arg = level.arguments.find { it.name == argName } ?: continue
+        result.add(
+            RestrictedArgInfo(
+                fieldName = arg.calculateName(),
+                primaryCli = "-${arg.name}",
+                shortName = arg.shortName?.let { "-$it" },
+                deprecatedName = arg.deprecatedName?.let { "-$it" },
+                reason = transform.reason,
+                warningSince = transform.warningSince,
+                errorSince = transform.errorSince,
+            )
+        )
+    }
+    return result
+}
+
+/**
+ * Returns all levels on the path from the root down to [targetLevel] (inclusive),
+ * or `null` if [targetLevel] is not reachable from this level.
+ */
+private fun KotlinCompilerArgumentsLevel.findAncestorsTo(targetLevel: KotlinCompilerArgumentsLevel): List<KotlinCompilerArgumentsLevel>? {
+    if (name == targetLevel.name) return listOf(this)
+    for (nested in nestedLevels) {
+        val path = nested.findAncestorsTo(targetLevel)
+        if (path != null) return listOf(this) + path
+    }
+    return null
 }

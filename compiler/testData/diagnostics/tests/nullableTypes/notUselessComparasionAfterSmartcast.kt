@@ -8,9 +8,9 @@ fun test(a: String?, b: String?) {
         }
     }
 
-    <!DEBUG_INFO_SMARTCAST!>a<!>.length // should be an error
-    if (<!SENSELESS_COMPARISON!>a == null<!> || a == "bar") { // comparasion to null is not useless
-        <!DEBUG_INFO_SMARTCAST!>a<!>.length
+    a<!UNSAFE_CALL!>.<!>length // should be an error
+    if (a == null || a == "bar") { // comparasion to null is not useless
+        a<!UNSAFE_CALL!>.<!>length
     }
 }
 

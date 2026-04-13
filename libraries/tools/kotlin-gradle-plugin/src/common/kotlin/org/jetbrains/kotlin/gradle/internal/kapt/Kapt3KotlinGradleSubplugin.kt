@@ -153,7 +153,7 @@ class Kapt3GradleSubplugin @Inject internal constructor() :
 
         @Suppress("UNCHECKED_CAST")
         val kotlinCompile: TaskProvider<KotlinCompile>
-            // Can't use just kotlinCompilation.compileKotlinTaskProvider, as the latter is not statically-known to be KotlinCompile
+            // Can't use just kotlinCompilation.compileTaskProvider, as the latter is not statically-known to be KotlinCompile
             get() = kotlinCompilation.compileTaskProvider as TaskProvider<KotlinCompile>
     }
 
@@ -425,7 +425,7 @@ internal fun buildKaptSubpluginOptions(
     pluginOptions += FilesSubpluginOption("classes", generatedClassesDir)
     pluginOptions += FilesSubpluginOption("incrementalData", incrementalDataDir)
 
-    @Suppress("DEPRECATION_ERROR") val annotationProcessors = kaptExtension.processors
+    val annotationProcessors = kaptExtension.processors
     if (annotationProcessors.isNotEmpty()) {
         pluginOptions += SubpluginOption("processors", annotationProcessors)
     }

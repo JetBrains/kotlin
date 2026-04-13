@@ -30,10 +30,12 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isElseBranch
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
+import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Handle
@@ -70,6 +72,12 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
         val code: Int,
         val originalBranchCondition: IrExpression
     )
+
+    private enum class ConditionKind {
+        NULL_CHECK,
+        INSTANCEOF,
+        INSTANCEOF_NULLABLE,
+    }
 
     /**
      * Data required for the transformation of a single original 'when'.
@@ -114,13 +122,20 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
         fun isInstanceof(condition: IrExpression): Boolean =
             condition is IrTypeOperatorCall && condition.operator == IrTypeOperator.INSTANCEOF && isSubjectCandidate(condition.argument)
 
-        fun isIneligibleTypeForTypeSwitch(type: IrType) =
-            type.isReifiedTypeParameter || TypeIntrinsics.isIntrinsicRequiredForInstanceOf(type.toIrBasedKotlinType())
+        fun getInstanceofConditionFromInstanceofNullable(condition: IrExpression) =
+            (condition as? IrWhen)?.branches?.mapNotNull {
+                when {
+                    isInstanceof(it.condition) -> it.condition
+                    isInstanceof(it.result) -> it.result
+                    else -> null
+                }
+            }?.firstOrNull()
+                ?: throw IllegalStateException("Unexpected IR for when condition of INSTANCEOF_NULLABLE kind: $condition")
 
-        // extracts potential 'when' subject from the given condition
-        fun getSubject(condition: IrExpression): IrGetValue = when {
-            isInstanceof(condition) -> unwrapSubject((condition as IrTypeOperatorCall).argument)
-            isEqualsToNull(condition) -> {
+        // extracts potential 'when' subject from the given condition of the known supported kind
+        fun getSubject(condition: IrExpression, kind: ConditionKind): IrGetValue = when(kind) {
+            ConditionKind.INSTANCEOF -> unwrapSubject((condition as IrTypeOperatorCall).argument)
+            ConditionKind.NULL_CHECK -> {
                 val arguments = (condition as IrCall).arguments
                 when {
                     arguments[0]?.isNullConst() ?: false -> unwrapSubject(arguments[1])
@@ -128,10 +143,28 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
                     else -> throw IllegalStateException("Unexpected arguments for EqualsToNull condition: $arguments")
                 }
             }
-            else -> throw IllegalStateException("Unexpected condition: $condition")
+            ConditionKind.INSTANCEOF_NULLABLE ->
+                getSubject(getInstanceofConditionFromInstanceofNullable(condition), ConditionKind.INSTANCEOF)
         }
 
-        val nonElseBranches = whenExpression.branches.filterNot(::isElseBranch)
+        fun isInstanceofNullable(condition: IrExpression): Boolean {
+            if (condition !is IrWhen || condition.branches.size != 2 || !condition.type.isBoolean()) return false
+            if (!condition.branches.all { it.condition.isTrueConst() || it.result.isTrueConst() }) return false
+
+            val actualConditions = condition.branches.map { if (it.condition.isTrueConst()) it.result else it.condition}
+            val instanceOfCondition = actualConditions.find { isInstanceof(it) } ?: return false
+            val equalsNullCondition = actualConditions.find { isEqualsToNull(it) } ?: return false
+
+            val instanceOfSubject = getSubject(instanceOfCondition, ConditionKind.INSTANCEOF)
+            val equalsNullSubject = getSubject(equalsNullCondition, ConditionKind.NULL_CHECK)
+            return instanceOfSubject.symbol == equalsNullSubject.symbol
+        }
+
+        fun isIneligibleTypeForTypeSwitch(type: IrType) =
+            type.isReifiedTypeParameter || TypeIntrinsics.isIntrinsicRequiredForInstanceOf(type.toIrBasedKotlinType())
+
+
+        val nonElseBranches = whenExpression.branches.filterNot{ isElseBranch(it) }
 
         var whenSubject: IrGetValue? = null
         val orderedCheckedTypes = arrayListOf<IrType>()
@@ -140,27 +173,36 @@ internal class TypeSwitchLowering(val context: JvmBackendContext) : FileLowering
         var hasNullChecks = false
 
         for (branch in nonElseBranches) {
-            val conditions = IrWhenUtils.matchConditions(irBuiltins.ororSymbol, branch.condition)
-            { isInstanceof(it) || isEqualsToNull(it) }
-                ?: return null
-
+            val conditions = IrWhenUtils.matchConditions(irBuiltins.ororSymbol, branch.condition) { true } ?: return null
             for (condition in conditions) {
-                val conditionSubject = getSubject(condition)
-                // found non-matching subject in this branch, can't use typeSwitch
+                val kind = when {
+                    isEqualsToNull(condition) -> ConditionKind.NULL_CHECK
+                    isInstanceof(condition) -> ConditionKind.INSTANCEOF
+                    isInstanceofNullable(condition) -> ConditionKind.INSTANCEOF_NULLABLE
+                    else -> return null
+                }
+                val conditionSubject = getSubject(condition, kind)
+                // if found non-matching subject, can't use typeSwitch
                 if (whenSubject != null && whenSubject.symbol != conditionSubject.symbol) return null
                 whenSubject = conditionSubject
 
                 // in some cases (e.g. for WHEN_COMMA), several switch codes (corresponding to a type or null) may be matched
                 // to a single original branch
                 val switchConditions = branchToSwitchConditions.getOrPut(branch) { arrayListOf() }
-                if (isInstanceof(condition)) {
-                    val type = (condition as IrTypeOperatorCall).typeOperand
+
+                if (kind == ConditionKind.INSTANCEOF || kind == ConditionKind.INSTANCEOF_NULLABLE) {
+                    val instanceofCondition = if (kind == ConditionKind.INSTANCEOF)
+                        condition
+                    else
+                        getInstanceofConditionFromInstanceofNullable(condition)
+
+                    val type = (instanceofCondition as IrTypeOperatorCall).typeOperand
                     if (isIneligibleTypeForTypeSwitch(type)) return null
 
                     switchConditions.add(SwitchCondition(nextTypeIndex++, condition))
                     orderedCheckedTypes += type
-                } else {
-                    assert(isEqualsToNull(condition))
+                }
+                if (kind == ConditionKind.NULL_CHECK || kind == ConditionKind.INSTANCEOF_NULLABLE) {
                     switchConditions.add(SwitchCondition(TYPE_SWITCH_CODE_FOR_NULL, condition))
                     hasNullChecks = true
                 }

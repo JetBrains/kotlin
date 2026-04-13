@@ -20,8 +20,8 @@ class Foo<in T> : Base<<!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>>() {
     private val flex = foo()
 
     fun bar(f: Foo<Bar>) {
-        val dnn = f.<!INVISIBLE_MEMBER!>dnn<!>
-        val flex = f.<!INVISIBLE_MEMBER!>flex<!>
+        val dnn = f.<!INVISIBLE_REFERENCE!>dnn<!>
+        val flex = f.<!INVISIBLE_REFERENCE!>flex<!>
     }
 }
 

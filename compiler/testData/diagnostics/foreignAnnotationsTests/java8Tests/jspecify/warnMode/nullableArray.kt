@@ -13,4 +13,4 @@ public interface J {
 // FILE: test.kt
 package p;
 
-fun go(j: J): Any = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j.maybeInts()<!>
+fun go(j: J): Any = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>j.maybeInts()<!>

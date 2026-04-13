@@ -14,12 +14,12 @@ class Example {
 
     public fun foo(): String {
         // Smart cast is not possible if property is delegated
-        return if (p != null) <!SMARTCAST_IMPOSSIBLE!>p<!> else ""
+        return <!RETURN_TYPE_MISMATCH!>if (p != null) p else ""<!>
     }
 
     public fun bar(): String {
         // But is possible for non-delegated value property even if it's public
-        return if (r != null) <!DEBUG_INFO_SMARTCAST!>r<!> else ""
+        return if (r != null) r else ""
     }
 }
 

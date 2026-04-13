@@ -1,19 +1,11 @@
-/diagnosticMessages.kt:5:43: error: type parameter has cyclic upper bounds
-class A1<T0, F0, E0> where T0 : F0?, F0 : E0, E0 : F0
-                                          ^^
-/diagnosticMessages.kt:5:52: error: type parameter has cyclic upper bounds
-class A1<T0, F0, E0> where T0 : F0?, F0 : E0, E0 : F0
-                                                   ^^
-/diagnosticMessages.kt:7:47: error: type parameter has cyclic upper bounds
-class A2<T1, F1, E1, K1> where T1 : F1?, F1 : E1, E1 : F1, E1 : K1, K1 : E1
-                                              ^^
-/diagnosticMessages.kt:7:56: error: type parameter has cyclic upper bounds
-class A2<T1, F1, E1, K1> where T1 : F1?, F1 : E1, E1 : F1, E1 : K1, K1 : E1
-                                                       ^^
-/diagnosticMessages.kt:7:65: error: type parameter has cyclic upper bounds
-class A2<T1, F1, E1, K1> where T1 : F1?, F1 : E1, E1 : F1, E1 : K1, K1 : E1
-                                                                ^^
-/diagnosticMessages.kt:7:74: error: type parameter has cyclic upper bounds
-class A2<T1, F1, E1, K1> where T1 : F1?, F1 : E1, E1 : F1, E1 : K1, K1 : E1
-                                                                         ^^
+/diagnosticMessages.kt:(106,108): error: Type parameter has cyclic upper bounds: F0, E0.
 
+/diagnosticMessages.kt:(115,117): error: Type parameter has cyclic upper bounds: F0, E0.
+
+/diagnosticMessages.kt:(165,167): error: Type parameter has cyclic upper bounds: F1, E1.
+
+/diagnosticMessages.kt:(174,176): error: Type parameter has cyclic upper bounds: F1, E1.
+
+/diagnosticMessages.kt:(183,185): error: Type parameter has cyclic upper bounds: E1, K1.
+
+/diagnosticMessages.kt:(192,194): error: Type parameter has cyclic upper bounds: E1, K1.

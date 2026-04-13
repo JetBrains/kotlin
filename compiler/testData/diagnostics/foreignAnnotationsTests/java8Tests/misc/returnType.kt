@@ -32,34 +32,34 @@ fun <K: Any> takeArrayOfNotNullK(x: Array<K>) {}
 fun <K> takeArrayOfNullableK(x: Array<K?>) {}
 
 fun <R> main(rt: ReturnType<R>) {
-    val x1 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.Nullable R?>..ReturnType.A<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.Nullable R?>?)")!>rt.foo1()<!>
-    takeNotNullStringAndKNullable(<!TYPE_MISMATCH("ReturnType.A<String, TypeVariable(K)?>; ReturnType.A<String?, R?>!")!>x1<!>)
+    val x1 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@Nullable() kotlin.String?, @Nullable() R?>..ReturnType.A<@Nullable() kotlin.String?, @Nullable() R?>?)")!>rt.foo1()<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNotNullStringAndKNullable<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String?, R? (of fun <R> main)>!; ReturnType.A<String, uninferred K (of fun <K> takeNotNullStringAndKNullable)>")!>x1<!>)
     takeNullableStringAndKNullable(x1)
-    takeNotNullStringAndNotNullK(<!TYPE_MISMATCH("ReturnType.A<String, TypeVariable(K)>; ReturnType.A<String?, R?>!")!>x1<!>)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH("Any; R?")!>x1<!>)
-    takeNotNullString(<!TYPE_MISMATCH("String; String?")!>rt.foo41.foo411<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNotNullStringAndNotNullK<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String?, R? (of fun <R> main)>!; ReturnType.A<String, uninferred K (of fun <K : Any> takeNotNullStringAndNotNullK)>")!>x1<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNullableStringAndNotNullK<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String?, R? (of fun <R> main)>!; ReturnType.A<String?, uninferred K (of fun <K : Any> takeNullableStringAndNotNullK)>")!>x1<!>)
+    takeNotNullString(<!ARGUMENT_TYPE_MISMATCH("String?; String")!>rt.foo41.foo411<!>)
 
-    val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.NotNull R & Any>..ReturnType.A<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.NotNull R & Any>?)")!>rt.foo2()<!>
-    takeNotNullStringAndKNullable(<!TYPE_MISMATCH("ReturnType.A<String, TypeVariable(K)?>; ReturnType.A<String?, R & Any>!")!>x2<!>)
-    takeNullableStringAndKNullable(<!TYPE_MISMATCH("ReturnType.A<String?, TypeVariable(K)?>; ReturnType.A<String?, R & Any>!")!>x2<!>)
-    takeNotNullStringAndNotNullK(<!TYPE_MISMATCH("ReturnType.A<String, TypeVariable(K)>; ReturnType.A<String?, R & Any>!")!>x2<!>)
+    val x2 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@Nullable() kotlin.String?, @NotNull() R & Any>..ReturnType.A<@Nullable() kotlin.String?, @NotNull() R & Any>?)")!>rt.foo2()<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNotNullStringAndKNullable<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String?, R (of fun <R> main) & Any>!; ReturnType.A<String, uninferred K (of fun <K> takeNotNullStringAndKNullable)>")!>x2<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNullableStringAndKNullable<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String?, R (of fun <R> main) & Any>!; ReturnType.A<String?, uninferred K (of fun <K> takeNullableStringAndKNullable)>")!>x2<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNotNullStringAndNotNullK<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String?, R (of fun <R> main) & Any>!; ReturnType.A<String, uninferred K (of fun <K : Any> takeNotNullStringAndNotNullK)>")!>x2<!>)
     takeNullableStringAndNotNullK(x2)
 
-    val x3 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@org.jetbrains.annotations.NotNull kotlin.String, @org.jetbrains.annotations.NotNull R & Any>..ReturnType.A<@org.jetbrains.annotations.NotNull kotlin.String, @org.jetbrains.annotations.NotNull R & Any>?)")!>rt.foo3<!>
-    takeNotNullStringAndKNullable(<!TYPE_MISMATCH("ReturnType.A<String, TypeVariable(K)?>; ReturnType.A<String, R & Any>!")!>x3<!>)
-    takeNullableStringAndKNullable(<!TYPE_MISMATCH("ReturnType.A<String?, TypeVariable(K)?>; ReturnType.A<String, R & Any>!")!>x3<!>)
+    val x3 = <!DEBUG_INFO_EXPRESSION_TYPE("(ReturnType.A<@NotNull() kotlin.String, @NotNull() R & Any>..ReturnType.A<@NotNull() kotlin.String, @NotNull() R & Any>?)")!>rt.foo3<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNotNullStringAndKNullable<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String, R (of fun <R> main) & Any>!; ReturnType.A<String, uninferred K (of fun <K> takeNotNullStringAndKNullable)>")!>x3<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNullableStringAndKNullable<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String, R (of fun <R> main) & Any>!; ReturnType.A<String?, uninferred K (of fun <K> takeNullableStringAndKNullable)>")!>x3<!>)
     takeNotNullStringAndNotNullK(x3)
-    takeNullableStringAndNotNullK(<!TYPE_MISMATCH("ReturnType.A<String?, TypeVariable(K)>; ReturnType.A<String, R & Any>!")!>x3<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeNullableStringAndNotNullK<!>(<!ARGUMENT_TYPE_MISMATCH("ReturnType.A<String, R (of fun <R> main) & Any>!; ReturnType.A<String?, uninferred K (of fun <K : Any> takeNullableStringAndNotNullK)>")!>x3<!>)
 
-    val x4 = <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<@org.jetbrains.annotations.NotNull R & Any>..kotlin.Array<out @org.jetbrains.annotations.NotNull R & Any>?)")!>rt.foo4<!>
-    takeArrayOfNotNullString(<!TYPE_MISMATCH("Array<String>; Array<(out) R & Any>!")!>x4<!>)
-    takeArrayOfNullableString(<!TYPE_MISMATCH("Array<String?>; Array<(out) R & Any>!")!>x4<!>)
+    val x4 = <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<@NotNull() R & Any>..kotlin.Array<out @NotNull() R & Any>?)")!>rt.foo4<!>
+    takeArrayOfNotNullString(<!ARGUMENT_TYPE_MISMATCH("Array<(out) R (of fun <R> main) & Any>!; Array<String>")!>x4<!>)
+    takeArrayOfNullableString(<!ARGUMENT_TYPE_MISMATCH("Array<(out) R (of fun <R> main) & Any>!; Array<String?>")!>x4<!>)
     takeArrayOfNotNullK(x4)
-    takeArrayOfNullableK(<!TYPE_MISMATCH("Array<TypeVariable(K)?>; Array<(out) R & Any>!")!>x4<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeArrayOfNullableK<!>(<!ARGUMENT_TYPE_MISMATCH("Array<(out) R (of fun <R> main) & Any>!; Array<uninferred K (of fun <K> takeArrayOfNullableK)>")!>x4<!>)
 
-    val x5 = <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<@org.jetbrains.annotations.Nullable kotlin.String?>..kotlin.Array<out @org.jetbrains.annotations.Nullable kotlin.String?>?)")!>rt.foo5()<!>
-    takeArrayOfNotNullString(<!TYPE_MISMATCH("Array<String>; Array<(out) String?>!")!>x5<!>)
+    val x5 = <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Array<@Nullable() kotlin.String?>..kotlin.Array<out @Nullable() kotlin.String?>?)")!>rt.foo5()<!>
+    takeArrayOfNotNullString(<!ARGUMENT_TYPE_MISMATCH("Array<(out) String?>!; Array<String>")!>x5<!>)
     takeArrayOfNullableString(x5)
-    takeArrayOfNotNullK(<!TYPE_MISMATCH("Any; String?")!>x5<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeArrayOfNotNullK<!>(<!ARGUMENT_TYPE_MISMATCH("Array<(out) String?>!; Array<uninferred K (of fun <K : Any> takeArrayOfNotNullK)>")!>x5<!>)
     takeArrayOfNullableK(x5)
 }

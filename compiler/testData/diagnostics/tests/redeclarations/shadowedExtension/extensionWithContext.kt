@@ -4,16 +4,16 @@
 interface Foo {
     fun foo(i: Int): Int
 
-    <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+    context(c: String)
     fun bar(i: Int): Int
 }
 
-<!CONFLICTING_OVERLOADS!>fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int)<!> = i
+fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int) = i
 
-<!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
-fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int)<!> = i
+context(c: String)
+<!CONTEXTUAL_OVERLOAD_SHADOWED!>fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(i: Int)<!> = i
 
-<!CONTEXT_PARAMETERS_UNSUPPORTED!>context(c: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
+context(c: String)
 fun Foo.<!EXTENSION_SHADOWED_BY_MEMBER!>bar<!>(i: Int) = i
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,

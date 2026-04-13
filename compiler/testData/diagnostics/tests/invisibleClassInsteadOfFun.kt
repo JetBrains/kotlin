@@ -19,7 +19,7 @@ import pagind.QueryPagingSource
 
 fun test() {
     QueryPagingSource<Int>(10)
-    <!INVISIBLE_MEMBER!>QueryPagingSource<!><Int, String>()
+    <!INVISIBLE_REFERENCE!>QueryPagingSource<!><Int, String>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, typeConstraint, typeParameter */

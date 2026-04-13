@@ -9,9 +9,9 @@ fun test_0(b: Boolean): String = when (b) {
 }
 
 // Deprecated
-fun test_1(b: Boolean): String = when (b) {
-    (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!>) -> "true"
-    (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>"" != ""<!>) -> "false"
+fun test_1(b: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> (b) {
+    (1 == 1) -> "true"
+    ("" != "") -> "false"
 }
 
 const val TRUE = true

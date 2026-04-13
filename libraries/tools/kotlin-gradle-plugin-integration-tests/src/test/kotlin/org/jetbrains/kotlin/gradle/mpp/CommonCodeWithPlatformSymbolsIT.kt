@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
@@ -186,6 +185,6 @@ class CommonCodeWithPlatformSymbolsJsIT() : CommonCodeWithPlatformSymbolsITBase(
     platformType = KotlinPlatformType.js,
     taskToExecute = ":compileKotlinJs",
     setupBuildScript = {
-        kotlinMultiplatform.js(KotlinJsCompilerType.IR)
+        kotlinMultiplatform.js()
     }
 )

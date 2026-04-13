@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76426
-// FIR_IDENTICAL
 // FILE: MyInterface.java
 public interface MyInterface {
     int MY_STATIC_FIELD = 1000;

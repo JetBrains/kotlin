@@ -103,7 +103,7 @@ fun case_12(value_1: Int, value_2: Int, value_3: Int, value_4: Int?) {
     var mutableValue2 = value_3
 
     when (value_1) {
-        <!UNUSED_CHANGED_VALUE!>mutableValue1++<!>, <!UNUSED_CHANGED_VALUE!>mutableValue2--<!>, value_4!! -> {}
+        mutableValue1++, mutableValue2--, value_4!! -> {}
     }
 }
 
@@ -184,7 +184,7 @@ class A {
 // TESTCASE NUMBER: 20
 fun case_20(value_1: Nothing) {
     when (value_1) {
-        <!UNREACHABLE_CODE!>throw Exception(), throw throw throw Exception() -> {}<!>
+        throw Exception(), throw throw throw Exception() -> {}
     }
 }
 
@@ -192,13 +192,13 @@ fun case_20(value_1: Nothing) {
 fun case_21(value_1: Nothing) {
     fun f1() {
         when (value_1) {
-            <!UNREACHABLE_CODE!>return, return return return -> 2<!>
+            return, return return return -> 2
         }
     }
 
     fun f2(): List<Int>? {
         when (value_1) {
-            <!UNREACHABLE_CODE!>return listOf(0, 1, 2), return null -> 2<!>
+            return listOf(0, 1, 2), return null -> 2
         }
     }
 }
@@ -208,7 +208,7 @@ fun case_22(value_1: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
             when (value_1) {
-                <!UNREACHABLE_CODE!>continue@loop1, continue@loop2 -> 2<!>
+                continue@loop1, continue@loop2 -> 2
             }
         }
     }
@@ -219,17 +219,17 @@ fun case_23(value_1: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
             when (value_1) {
-                <!UNREACHABLE_CODE!>break@loop1, break@loop2 -> 2<!>
+                break@loop1, break@loop2 -> 2
             }
         }
     }
 }
 
 // TESTCASE NUMBER: 24
-fun case_24(value_1: Nothing?) = when (<!DEBUG_INFO_CONSTANT!>value_1<!>) {
-    throw Exception()<!UNREACHABLE_CODE!><!>, <!UNREACHABLE_CODE!>return ""<!> -> <!UNREACHABLE_CODE!>""<!>
-    <!UNREACHABLE_CODE!>null, return return return "", throw throw throw Exception() -> ""<!>
-    <!UNREACHABLE_CODE!>else -> ""<!>
+fun case_24(value_1: Nothing?) = when (value_1) {
+    <!SENSELESS_COMPARISON!>throw Exception()<!>, <!SENSELESS_COMPARISON!><!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> ""<!> -> ""
+    <!SENSELESS_COMPARISON!>null<!>, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> "", throw throw throw Exception() -> ""
+    <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> ""
 }
 
 /*
@@ -239,8 +239,8 @@ fun case_24(value_1: Nothing?) = when (<!DEBUG_INFO_CONSTANT!>value_1<!>) {
  */
 fun case_25(value_1: Boolean) = when (value_1) {
     true -> {}
-    throw Exception()<!UNREACHABLE_CODE!><!>, <!UNREACHABLE_CODE!>return<!> -> <!UNREACHABLE_CODE!>{}<!>
-    <!UNREACHABLE_CODE!>false, return return return, throw throw throw Exception() -> {}<!>
+    throw Exception(), <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> -> {}
+    false, <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!>, throw throw throw Exception() -> {}
 }
 
 /*
@@ -250,7 +250,7 @@ fun case_25(value_1: Boolean) = when (value_1) {
  */
 fun case_26(value_1: Int?, value_2: Class, value_3: Class?) {
     when (value_1) {
-        value_2.prop_1, <!DUPLICATE_LABEL_IN_WHEN!>value_3?.prop_1<!> -> {}
+        value_2.prop_1, value_3?.prop_1 -> {}
         10 -> {}
     }
 }

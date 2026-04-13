@@ -8,7 +8,7 @@ annotation class MyDsl
 fun main() {
     demo {
         scopedField = {
-            <!DSL_SCOPE_VIOLATION!>touchOuterScope<!>()
+            touchOuterScope()
         }
     }
 }

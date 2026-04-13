@@ -12,13 +12,13 @@ fun test() {
         // ScopeOwner <: PNTv <: OTv
 
         // should fix OTv := PNTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultA<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultA<!>
 
     // ISSUE: KT-72030
     val resultB = pcla { otvOwner ->
@@ -33,7 +33,7 @@ fun test() {
         //       PNTv <:
 
         // should fix PNTv := ScopeOwner for scope navigation
-        pntvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        pntvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
 
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)
@@ -54,13 +54,13 @@ fun test() {
         // ScopeOwner <: PNTv <: OTv
 
         // should fix OTv := PNTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().function()
 
         // expected: Interloper </: ScopeOwner
-        otvOwner.constrain(Interloper)
+        otvOwner.constrain(<!ARGUMENT_TYPE_MISMATCH("Interloper; ScopeOwner")!>Interloper<!>)
     }
     // expected: ScopeOwner
-    <!DEBUG_INFO_EXPRESSION_TYPE("BaseType")!>resultC<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("ScopeOwner")!>resultC<!>
 
     // ISSUE: KT-72030
     val resultD = pcla { otvOwner ->
@@ -75,7 +75,7 @@ fun test() {
         //       PNTv <:
 
         // should fix PNTv := ScopeOwner for scope navigation
-        pntvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        pntvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
 
         // expected: Interloper <: OTv
         otvOwner.constrain(Interloper)

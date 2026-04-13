@@ -19,13 +19,13 @@ val String?.safeLengthExt: Int get() = this?.length ?: 0
 
 fun samConversionNullable() {
     Use.run<String?> { x ->
-        x.length
+        x<!UNSAFE_CALL!>.<!>length
     }
 }
 
 fun samConstructorNullable() {
     val j = J<String?> { x ->
-        x.length
+        x<!UNSAFE_CALL!>.<!>length
     }
 }
 

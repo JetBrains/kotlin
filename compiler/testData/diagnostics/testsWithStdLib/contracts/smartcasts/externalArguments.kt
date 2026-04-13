@@ -6,7 +6,7 @@ import kotlin.reflect.KProperty
 fun testLambdaArgumentSmartCast(foo: Int?) {
     val v = run {
         if (foo != null)
-            return@run <!DEBUG_INFO_SMARTCAST!>foo<!>
+            return@run foo
         15
     }
 }
@@ -17,13 +17,13 @@ class D {
 
 fun testSmartCastInDelegate(d: D?) {
     if (d == null) return
-    val v: Int by <!DEBUG_INFO_SMARTCAST!>d<!>
+    val v: Int by d
 }
 
 fun testFunctionCallSmartcast(fn: (() -> Unit)?) {
     if (fn == null) return
 
-    <!DEBUG_INFO_SMARTCAST!>fn<!>()
+    fn()
 }
 
 fun testCallableRefernceSmartCast() {
@@ -33,7 +33,7 @@ fun testCallableRefernceSmartCast() {
     if (refernece == null)
         return
 
-    <!DEBUG_INFO_SMARTCAST!>refernece<!>()
+    refernece()
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, equalityExpression, functionDeclaration, functionalType,

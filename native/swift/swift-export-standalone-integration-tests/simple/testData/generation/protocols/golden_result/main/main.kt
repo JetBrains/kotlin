@@ -213,29 +213,29 @@ public fun __root___SomeBazzable_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___foo__TypesOfArguments__anyU20main_ContainerProtocol__")
-public fun __root___foo__TypesOfArguments__anyU20main_ContainerProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___foo__TypesOfArgumentsE__anyU20main_ContainerProtocol__")
+public fun __root___foo__TypesOfArgumentsE__anyU20main_ContainerProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ContainerProtocol
     val _result = run { __receiver.foo() }
     return run { _result; true }
 }
 
-@ExportedBridge("__root___foo__TypesOfArguments__main___ContainerProtocol_NestedProtocol_NestedClass__")
-public fun __root___foo__TypesOfArguments__main___ContainerProtocol_NestedProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___foo__TypesOfArgumentsE__main___ContainerProtocol_NestedProtocol_NestedClass__")
+public fun __root___foo__TypesOfArgumentsE__main___ContainerProtocol_NestedProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ContainerProtocol.NestedProtocol.NestedClass
     val _result = run { __receiver.foo() }
     return run { _result; true }
 }
 
-@ExportedBridge("__root___foo__TypesOfArguments__main__SiblingProtocol_NestedClass__")
-public fun __root___foo__TypesOfArguments__main__SiblingProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___foo__TypesOfArgumentsE__main__SiblingProtocol_NestedClass__")
+public fun __root___foo__TypesOfArgumentsE__main__SiblingProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as SiblingProtocol.NestedClass
     val _result = run { __receiver.foo() }
     return run { _result; true }
 }
 
-@ExportedBridge("__root___foo__TypesOfArguments__anyU20main__ContainerProtocol_NestedProtocol__")
-public fun __root___foo__TypesOfArguments__anyU20main__ContainerProtocol_NestedProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___foo__TypesOfArgumentsE__anyU20main__ContainerProtocol_NestedProtocol__")
+public fun __root___foo__TypesOfArgumentsE__anyU20main__ContainerProtocol_NestedProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as ContainerProtocol.NestedProtocol
     val _result = run { __receiver.foo() }
     return run { _result; true }
@@ -392,29 +392,29 @@ public fun packagewithprotocols_SiblingProtocol_NestedClass_init_initialize__Typ
     return run { _result; true }
 }
 
-@ExportedBridge("packagewithprotocols_foo__TypesOfArguments__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__")
-public fun packagewithprotocols_foo__TypesOfArguments__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__")
+public fun packagewithprotocols_foo__TypesOfArgumentsE__anyU20ExportedKotlinPackages_packagewithprotocols_ContainerProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.ContainerProtocol
     val _result = run { __receiver.packagewithprotocols_foo() }
     return run { _result; true }
 }
 
-@ExportedBridge("packagewithprotocols_foo__TypesOfArguments__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__")
-public fun packagewithprotocols_foo__TypesOfArguments__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__")
+public fun packagewithprotocols_foo__TypesOfArgumentsE__main___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass
     val _result = run { __receiver.packagewithprotocols_foo() }
     return run { _result; true }
 }
 
-@ExportedBridge("packagewithprotocols_foo__TypesOfArguments__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__")
-public fun packagewithprotocols_foo__TypesOfArguments__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__")
+public fun packagewithprotocols_foo__TypesOfArgumentsE__main__ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.SiblingProtocol.NestedClass
     val _result = run { __receiver.packagewithprotocols_foo() }
     return run { _result; true }
 }
 
-@ExportedBridge("packagewithprotocols_foo__TypesOfArguments__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__")
-public fun packagewithprotocols_foo__TypesOfArguments__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("packagewithprotocols_foo__TypesOfArgumentsE__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__")
+public fun packagewithprotocols_foo__TypesOfArgumentsE__anyU20main__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol__(`receiver`: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as packagewithprotocols.ContainerProtocol.NestedProtocol
     val _result = run { __receiver.packagewithprotocols_foo() }
     return run { _result; true }

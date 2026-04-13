@@ -1,4 +1,4 @@
-FILE: enumConstructor.fir.kt
+FILE: enumConstructor.kt
     @R|kotlin/RequiresOptIn|() public final annotation class O : R|kotlin/Annotation| {
         public constructor(): R|O| {
             super<R|kotlin/Any|>()

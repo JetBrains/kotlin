@@ -5,7 +5,7 @@ public class X {
         if (x != null)
             // Smartcast is possible because it's value property with default getter
             // used in the same module
-            return <!DEBUG_INFO_SMARTCAST!>x<!>.length
+            return x.length
         else
             return 0
     }

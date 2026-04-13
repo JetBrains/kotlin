@@ -9,13 +9,13 @@ abstract class SubIntWrong : (String, String) -> Int
 
 fun test1(s: SubInt, sWrong: SubIntWrong) {
     foo(s)
-    foo(<!TYPE_MISMATCH!>sWrong<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>sWrong<!>)
 
     val a = "foo"
-    foo(<!TYPE_MISMATCH!>a<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 
     a <!CAST_NEVER_SUCCEEDS!>as<!> (Int, String) -> String
-    foo(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    foo(a)
 }
 
 fun <T> test2(x: T) where T : (Int, String) -> Int, T : (Double) -> Int {

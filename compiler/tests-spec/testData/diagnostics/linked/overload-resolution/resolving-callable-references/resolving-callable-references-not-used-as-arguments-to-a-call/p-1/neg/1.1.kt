@@ -26,12 +26,11 @@ class Case1() {
 
 }
 fun case1() {
-    val y0: (String)-> Case1 = ::<!NONE_APPLICABLE!>foo<!>
-    val y1: (String)-> Case1 = Case1.Companion::<!NONE_APPLICABLE!>foo<!>
-    val y2: (String)-> Case1 = (Case1)::<!NONE_APPLICABLE!>foo<!>
+    val y0: (String)-> Case1 = ::foo
+    val y1: (String)-> Case1 = Case1.Companion::foo
+    val y2: (String)-> Case1 = (Case1)::foo
 }
 
-fun case1_0() : (String)-> Case1 = ::<!NONE_APPLICABLE!>foo<!>
-fun case1_1() : (String)-> Case1 = (Case1)::<!NONE_APPLICABLE!>foo<!>
-fun case1_2(): (String)-> Case1 = Case1.Companion::<!NONE_APPLICABLE!>foo<!>
-
+fun case1_0() : (String)-> Case1 = ::foo
+fun case1_1() : (String)-> Case1 = (Case1)::foo
+fun case1_2(): (String)-> Case1 = Case1.Companion::foo

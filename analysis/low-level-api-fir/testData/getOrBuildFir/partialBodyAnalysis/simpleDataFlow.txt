@@ -46,4 +46,4 @@ FILE: [ResolvedTo(IMPORTS)] simpleDataFlow.kt
         R|/consume|<R|kotlin/String|>(R|<local>/obj|)
         obj#.toString#()
     }
-    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T : R|kotlin/CharSequence|> consume([ResolvedTo(CONTRACTS)] obj: R|T|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> consume([ResolvedTo(STATUS)] obj: R|T|): R|kotlin/Unit| { LAZY_BLOCK }

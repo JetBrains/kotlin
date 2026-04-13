@@ -10,7 +10,7 @@ fun <E> assertThat(actual: Collection<E>): AbstractCollectionAssert<*, E> = TODO
 fun main(strings: Collection<String>) {
     assertThat(strings)
         .describedAs("2-length strings")
-        .anyMatch { it.<!UNRESOLVED_REFERENCE!>length<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> 2 }
+        .anyMatch { it.length == 2 }
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, equalityExpression, functionDeclaration, functionalType,

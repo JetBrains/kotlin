@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun foo() {
     when {}
     val x = 0

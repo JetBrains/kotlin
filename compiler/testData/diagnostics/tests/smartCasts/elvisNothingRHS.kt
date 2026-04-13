@@ -8,7 +8,7 @@ fun test(a: C?, nn: () -> Nothing?) {
     a<!UNSAFE_CALL!>.<!>foo()
 
     a ?: return
-    <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
+    a.foo()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, nullableType, smartcast */

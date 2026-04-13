@@ -22,10 +22,10 @@ internal typealias InternalTypealias = InternalInterface
 import a.*
 
 private fun test(i: <!INVISIBLE_REFERENCE!>InternalInterface<!>): <!INVISIBLE_REFERENCE!>InternalTypealias<!> {
-    PublicClass().<!INVISIBLE_MEMBER!>internalMemberFun<!>()
-    PublicClass.<!INVISIBLE_MEMBER!>Companion<!>
+    PublicClass().<!INVISIBLE_REFERENCE!>internalMemberFun<!>()
+    PublicClass.<!INVISIBLE_REFERENCE!>Companion<!>
 
-    <!INVISIBLE_MEMBER!>internalFun<!>(<!INVISIBLE_MEMBER!>internalVal<!>)
+    <!INVISIBLE_REFERENCE!>internalFun<!>(<!INVISIBLE_REFERENCE!>internalVal<!>)
 
     return i
 }

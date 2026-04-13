@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// FIR_IDENTICAL
 // ISSUE: KT-77401
 
 fun test1(lambda: Int.(String) -> Unit) {

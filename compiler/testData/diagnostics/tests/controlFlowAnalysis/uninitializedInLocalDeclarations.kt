@@ -22,7 +22,7 @@ fun test2() {
 }
 
 fun test3() {
-    val <!UNUSED_VARIABLE!>f<!> = {
+    val f = {
         val a : Int
         doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
     }

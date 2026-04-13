@@ -18,24 +18,24 @@ class A<E>() : C(), T {
         super<C>.bar()
         super<T>@A.foo()
         super<C>@A.bar()
-        super<<!NOT_A_SUPERTYPE!>E<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
-        super<<!NOT_A_SUPERTYPE!>E<!>>@A.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
-        super<<!NOT_A_SUPERTYPE!>Int<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
-        super<<!SYNTAX!><!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
-        super<<!NOT_A_SUPERTYPE!>() -> Unit<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
-        super<<!NOT_A_SUPERTYPE!>Unit<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><T><!UNRESOLVED_REFERENCE!>@B<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>super<!><C><!UNRESOLVED_REFERENCE!>@B<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
+        super<<!NOT_A_SUPERTYPE!>E<!>>.bar()
+        super<<!NOT_A_SUPERTYPE!>E<!>>@A.bar()
+        super<<!NOT_A_SUPERTYPE!>Int<!>>.foo()
+        super<<!SYNTAX!><!>>.<!UNRESOLVED_REFERENCE!>foo<!>()
+        super<<!NOT_A_SUPERTYPE!>() -> Unit<!>>.foo()
+        super<<!NOT_A_SUPERTYPE!>Unit<!>>.foo()
+        super<T><!UNRESOLVED_LABEL!>@B<!>.foo()
+        super<C><!UNRESOLVED_LABEL!>@B<!>.bar()
     }
 
     inner class B : T {
         fun test() {
             super<T>.foo();
-            super<<!NOT_A_SUPERTYPE!>C<!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
+            super<<!NOT_A_SUPERTYPE!>C<!>>.bar()
             super<C>@A.bar()
             super<T>@A.foo()
             super<T>@B.foo()
-            super<<!NOT_A_SUPERTYPE!>C<!>>@B.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
+            super<<!NOT_A_SUPERTYPE!>C<!>>@B.foo()
             super.foo()
             <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
             <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
@@ -51,8 +51,8 @@ class CG : G<Int> {
     fun test() {
         super<G>.foo() // OK
         super<G<!TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER!><Int><!>>.foo() // Warning
-        super<<!NOT_A_SUPERTYPE!>G<<!UNRESOLVED_REFERENCE!>E<!>><!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>() // Error
-        super<<!NOT_A_SUPERTYPE!>G<String><!>>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>() // Error
+        super<<!NOT_A_SUPERTYPE!>G<E><!>>.foo() // Error
+        super<<!NOT_A_SUPERTYPE!>G<String><!>>.foo() // Error
     }
 }
 
@@ -60,7 +60,7 @@ class CG : G<Int> {
 class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
 
     fun test() {
-        super.<!UNRESOLVED_REFERENCE!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>super<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
     }
 }
 

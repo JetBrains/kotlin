@@ -3,8 +3,8 @@
 // CHECK_TYPE_WITH_EXACT
 
 fun test() {
-    val outerBuildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> outerBuild@ {
-        val middleBuildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> middleBuild@ {
+    val outerBuildee = build outerBuild@ {
+        val middleBuildee = build middleBuild@ {
             val innerBuildee = build innerBuild@ {
                 this@outerBuild.setTypeVariable(TargetType())
                 this@middleBuild.setTypeVariable(TargetType())
@@ -16,11 +16,11 @@ fun test() {
         }
         // exact type equality check — turns unexpected compile-time behavior into red code
         // considered to be non-user-reproducible code for the purposes of these tests
-        checkExactType<Buildee<TargetType>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>middleBuildee<!>)
+        checkExactType<Buildee<TargetType>>(middleBuildee)
     }
     // exact type equality check — turns unexpected compile-time behavior into red code
     // considered to be non-user-reproducible code for the purposes of these tests
-    checkExactType<Buildee<TargetType>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>outerBuildee<!>)
+    checkExactType<Buildee<TargetType>>(outerBuildee)
 }
 
 

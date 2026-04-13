@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_FE10
 
 // MODULE: main
 // FILE: main.kt

@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
-fun test(<!REDECLARATION, REDECLARATION!>a<!>: Int, <!REDECLARATION, REDECLARATION!>a<!>: String) {}
+fun test(<!REDECLARATION!>a<!>: Int, <!REDECLARATION!>a<!>: String) {}
 
 fun test2(block: (Int, String) -> Unit) { }
 
 fun main() {
-    test2 { <!REDECLARATION, REDECLARATION!>b<!>, <!REDECLARATION, REDECLARATION!>b<!> -> ; }
+    test2 { <!REDECLARATION!>b<!>, <!REDECLARATION!>b<!> -> ; }
 
     val func: (Int, Int) -> Int = fun(_, _): Int { return 42 }
 }

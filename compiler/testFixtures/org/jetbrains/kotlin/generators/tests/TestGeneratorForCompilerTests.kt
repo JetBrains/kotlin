@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUni
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.jvm.compiler.AbstractCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
-import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
-import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.test.TargetBackend
 
@@ -22,14 +20,6 @@ fun main(args: Array<String>) {
         testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractModuleXmlParserTest> {
                 model("modules.xml", extension = "xml")
-            }
-
-            testClass<AbstractKDocLexerTest> {
-                model("lexer/kdoc")
-            }
-
-            testClass<AbstractKotlinLexerTest> {
-                model("lexer/kotlin")
             }
 
             testClass<AbstractCompileJavaAgainstKotlinTest> {

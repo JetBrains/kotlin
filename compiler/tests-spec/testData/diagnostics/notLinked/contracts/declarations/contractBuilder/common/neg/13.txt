@@ -1,3 +1,0 @@
-package
-
-public fun case_1(/*0*/ value_1: kotlin.Any?, /*1*/ block: () -> kotlin.Unit): kotlin.Unit

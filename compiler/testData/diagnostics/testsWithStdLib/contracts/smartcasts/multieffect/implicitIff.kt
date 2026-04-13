@@ -33,7 +33,7 @@ fun trueAndFalse(b: Boolean): Boolean {
 
 fun useOnlyTrueInTrueBranch(x: Any?) {
     if (onlyTrue(x is String)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -65,13 +65,13 @@ fun useOnlyFalseInFalseBranch(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 
 fun useTrueAndFalseInTrueBranch(x: Any?) {
     if (trueAndFalse(x is String)) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -83,7 +83,7 @@ fun useTrueAndFalseInFalseBranch(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+        x.length
     }
 }
 

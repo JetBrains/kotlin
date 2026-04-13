@@ -4,7 +4,7 @@ class A {
 }
 
 fun Any.test() {
-    (this as A).b += 1 <!USELESS_CAST!>as Int<!>
+    (this as A).b += 1 <!INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL!>as Int<!>
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, funWithExtensionReceiver,

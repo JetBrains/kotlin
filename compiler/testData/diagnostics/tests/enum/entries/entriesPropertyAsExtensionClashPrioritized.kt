@@ -14,7 +14,7 @@ enum class A {
 val A.Companion.entries: Int get() = 0
 
 fun test() {
-    A.<!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>entries<!>
+    A.entries
     A.Companion.entries
 
     with(A) {

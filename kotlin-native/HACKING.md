@@ -347,8 +347,25 @@ kotlinc-native main.kt -Xsave-llvm-ir-after=<PhaseName> -Xsave-llvm-ir-directory
 `<PATH>/out.<PhaseName>.ll` will contain LLVM IR after given phase.
 
 Passing `Codegen` phase allows to get LLVM IR right after translation from Kotlin Backend IR, and
-`BitcodeOptimization` phase allows to see the result of LLVM optimization pipeline. The list of phases that support LLVM IR dumping is constantly changing, so check out compiler sources
+`LTOBitcodeOptimization` phase allows to see the result of LLVM optimization pipeline. The list of phases that support LLVM IR dumping is constantly changing, so check out compiler sources
 if you want to get the full list of such phases.
+
+It's also possible to dump LLVM IR after LLVM passes. Use `<PhaseName>:<LLVMPassName>` to dump after `LLVMPassName` while executing `PhaseName`
+in Kotlin compiler. For example,
+
+```shell script
+mkdir llvm-ir
+kotlinc-native main.kt -Xsave-llvm-ir-after=ModuleBitcodeOptimization:always-inline -Xsave-llvm-ir-directory=llvm-ir/
+```
+
+will dump LLVM IR in `llvm-ir/ModuleBitcodeOptimization/<...>-module-AlwaysInlinerPass-after.ll`.
+
+Important: only use this when running the CLI compiler; the implementation sets up global variables in the shared llvm library,
+which can lead to data races, if the compiler is running inside Gradle daemon.
+
+The output logic and file naming differs from the compiler, but it matches `opt -print-after=...` exactly:
+for example, if a pass is a function pass, there will be `n` files created with each of the `n` functions
+on which the pass ran.
 
 ## Running Clang the same way Kotlin/Native compiler does
 

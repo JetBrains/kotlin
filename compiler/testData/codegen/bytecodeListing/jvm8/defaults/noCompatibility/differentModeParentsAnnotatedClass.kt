@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JVM_IR
 
 // Check that methods are generated if module with class is compiled in NO-COMPATIBILITY mode,
 // but the class iteself is annotated with @JvmDefaultWithCompatibility,

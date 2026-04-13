@@ -1,0 +1,126 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_4(): Boolean?
+        [L|Contract description] { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun case_4(): Boolean?
+        [L|Contract description] { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun case_4(): Boolean?
+        [L|Contract description] { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun case_4(): Boolean?
+        [L|Contract description] { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun case_4(): Boolean?
+        [L|Contract description] { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun case_4(): R|kotlin/Boolean?|
+        [L|Contract description] { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun case_4(): R|kotlin/Boolean?|
+        [L|Contract description] { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun case_4(): R|kotlin/Boolean?|
+        [L|Contract description] { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] fun case_4(): R|kotlin/Boolean?| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun case_4(): R|kotlin/Boolean?| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun case_4(): R|kotlin/Boolean?| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun case_4(): R|kotlin/Boolean?| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] recursiveContract2.kt
+    @FILE:OptIn[Unresolved](LAZY_EXPRESSION)
+    public? final? inline [ResolvedTo(RAW_FIR)] fun nonLocalCase([ResolvedTo(RAW_FIR)] block: ( () -> Unit ) = LAZY_EXPRESSION): Boolean
+        [L|Contract description] { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun case_4(): R|kotlin/Boolean?| {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: implies> <inline=Unknown>  {
+            ^ <Unresolved name: returns>#(Null(null)).<Unresolved name: implies>#(<Unresolved name: case_1>#())
+        }
+        )
+        ^case_4 Boolean(true)
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] recursiveContract2.kt
+    @FILE:R|kotlin/OptIn|[Types](markerClass = vararg(<getClass>(Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: ExperimentalContracts>#)) [evaluated = vararg(<getClass>(Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: ExperimentalContracts>#))])
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun nonLocalCase([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=() -> kotlin/Unit] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+    ): R|kotlin/Boolean| {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {
+            ^ <Unresolved name: callsInPlace>#(R|<local>/block|, <Unresolved name: InvocationKind>#.<Unresolved name: EXACTLY_ONCE>#)
+        }
+        )
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        ^nonLocalCase Boolean(true)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun case_4(): R|kotlin/Boolean?| {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: implies> <inline=Unknown>  {
+            ^ <Unresolved name: returns>#(Null(null)).<Unresolved name: implies>#(<Unresolved name: case_1>#())
+        }
+        )
+        ^case_4 Boolean(true)
+    }

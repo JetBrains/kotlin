@@ -10,9 +10,9 @@ fun foo(o: Any) {
 
 fun foo1(o: Any) {
     if (o is String) {
-        <!DEBUG_INFO_SMARTCAST!>o<!>.length
+        o.length
         val s = o
-        <!DEBUG_INFO_SMARTCAST!>s<!>.length
+        s.length
     }
 }
 

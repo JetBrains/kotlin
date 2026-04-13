@@ -4,7 +4,7 @@ package test
 fun use() {
     Default.create()
 
-    Explicit.<!INVISIBLE_MEMBER!>create<!>()
+    Explicit.<!INVISIBLE_REFERENCE!>create<!>()
 }
 
 private class Default {

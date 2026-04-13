@@ -16,10 +16,10 @@ public class ClassWithExternalAnnotatedMembers {
 fun test() {
     val instance = ClassWithExternalAnnotatedMembers()
     val i: Int? = null
-    instance.method(<!TYPE_MISMATCH!>i<!>)
+    instance.method(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
 
     val s: String? = null
-    instance.method(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>s<!>)
+    instance.method(<!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>s<!>)
 
     val b: Boolean? = null
     instance.method(b)

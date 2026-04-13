@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.maven
 import org.jetbrains.kotlin.maven.test.*
 import org.junit.jupiter.api.DisplayName
 
+@DisplayName("Smart defaults")
 class SmartDefaultsIT : KotlinMavenTestBase() {
 
     @MavenTest
@@ -171,6 +172,115 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
                     executedSecond = "org.apache.maven.plugins:maven-compiler-plugin", goalSecond = ":testCompile",
                 )
                 assertTestsPassed(2)
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("KAPT applied properly for mixed Kotlin+Java project with smart defaults enabled")
+    fun testSmartDefaultsInMixedProjectWithKapt(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-smart-defaults-kapt", mavenVersion, buildOptions) {
+            build("verify") {
+                assertSmartDefaultsEnabled()
+
+                assertJarExistsAndNotEmpty("app/target/app-1.0-SNAPSHOT.jar")
+
+                // KAPT ran and generated a Java source file from @Anno on KotlinService
+                assertFileExists(
+                    "app/target/generated-sources/kapt/compile/app/KotlinServiceGenerated.java"
+                ) { "KAPT-generated Java source file was not found" }
+
+                // KAPT ran and generated a Kotlin extension file from @Anno on KotlinService
+                assertFileExists(
+                    "app/target/generated-sources/kaptKotlin/compile/KotlinServiceExtensions.kt"
+                ) { "KAPT-generated Kotlin extension file was not found" }
+
+                // 2 tests in the `KotlinServiceTest`
+                assertTestsPassed(2)
+                // 3 tests in the `JavaConsumerTest`
+                assertTestsPassed(3)
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("Execution-level source dirs override smart defaults")
+    fun testExecutionLevelSourceDirsOverrides(mavenVersion: TestVersions.Maven) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-smart-defaults-execution-source-dirs", mavenVersion, buildOptions) {
+            build("compile", "test-compile") {
+                assertSmartDefaultsEnabled()
+
+                // compile should use only explicitly specified execution-level sourceDirs if present
+                assertFileExists("target/classes/sample/CustomMain.class")
+                assertFileDoesNotExist("target/classes/sample/DefaultMain.class") {
+                    "Default main source root was compiled unexpectedly"
+                }
+
+                // test-compile should use only explicitly specified execution-level sourceDirs if present
+                assertFileExists("target/test-classes/sample/CustomTest.class")
+                assertFileDoesNotExist("target/test-classes/sample/DefaultTest.class") {
+                    "Default test source root was compiled unexpectedly"
+                }
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("Empty execution-level source dirs fallback to smart defaults")
+    fun testEmptyExecutionLevelSourceDirsFallbacks(
+        mavenVersion: TestVersions.Maven,
+    ) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-smart-defaults-empty-execution-source-dirs", mavenVersion, buildOptions) {
+            build("compile", "test-compile") {
+                assertSmartDefaultsEnabled()
+
+                // empty explicit execution-level sourceDirs should be treated as absent
+                assertFileExists("target/classes/sample/DefaultMain.class")
+                assertFileExists("target/test-classes/sample/DefaultTest.class")
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("Execution-level source dirs do not produce 'duplicate source root' warnings")
+    fun testExecutionLevelSourceDirsWarnings(
+        mavenVersion: TestVersions.Maven,
+    ) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-smart-defaults-execution-source-dirs-no-duplicates", mavenVersion, buildOptions) {
+            build("compile", "test-compile") {
+                assertSmartDefaultsEnabled()
+                assertBuildLogDoesNotContain("Duplicate source root")
+
+                // compile should include all explicitly configured source directories
+                assertFileExists("target/classes/sample/CustomMain.class")
+                assertFileExists("target/classes/sample/DefaultMain.class")
+
+                // test-compile should include all explicitly configured test source directories
+                assertFileExists("target/test-classes/sample/CustomTest.class")
+                assertFileExists("target/test-classes/sample/DefaultTest.class")
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("Execution-level source dirs still compile additional compile source roots")
+    fun testExecutionLevelSourceDirsRespectCompileSourceRoots(
+        mavenVersion: TestVersions.Maven,
+    ) {
+        val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
+        testProject("test-smart-defaults-execution-source-dirs-compile-source-roots", mavenVersion, buildOptions) {
+            build("package") {
+                assertSmartDefaultsEnabled()
+
+                assertFileExists("app/target/classes/sample/CustomMain.class")
+                assertFileExists("app/target/classes/sample/GeneratedByPlugin.class")
+                assertFileDoesNotExist("app/target/classes/sample/DefaultMain.class") {
+                    "Default main source root was compiled unexpectedly"
+                }
             }
         }
     }

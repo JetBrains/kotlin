@@ -1,5 +1,5 @@
 module1 - main1.kt:
-  KtNameReferenceExpression(121,124): 'foo'
+  KtNameReferenceExpression(120,123): 'foo'
     KaApplicableCallCandidate:
       candidate = KaSimpleFunctionCall:
         contextArgumentMapping = {}
@@ -21,7 +21,7 @@ module1 - main1.kt:
       isInBestCandidates = true
 
 module2 - main2.kt:
-  KtNameReferenceExpression(129,132): 'bar'
+  KtNameReferenceExpression(128,131): 'bar'
     KaApplicableCallCandidate:
       candidate = KaSimpleFunctionCall:
         contextArgumentMapping = {}

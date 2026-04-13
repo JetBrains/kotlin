@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/main.kt
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:@[RawType] <root>.A<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A<@[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:t index:1 type:@[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?
       overridden:
         public abstract fun foo (t: @[FlexibleNullability] @[RawType] <root>.Inv<kotlin.Any?>?): kotlin.Unit declared in <root>.B

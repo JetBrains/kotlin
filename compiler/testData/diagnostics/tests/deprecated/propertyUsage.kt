@@ -27,8 +27,8 @@ class PropertyHolder {
     @Deprecated("text")
     var name = "String"
 
-    val valDelegate by <!DEPRECATION!>Delegate()<!>
-    var varDelegate by <!DEPRECATION, DEPRECATION!>Delegate()<!>
+    val valDelegate by <!DEPRECATION!>Delegate<!>()
+    var varDelegate by <!DEPRECATION, DEPRECATION!>Delegate<!>()
 
     // no deprecation caused by access to itself
     @Deprecated("text")

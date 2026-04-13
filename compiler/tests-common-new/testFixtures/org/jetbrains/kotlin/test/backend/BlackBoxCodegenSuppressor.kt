@@ -30,7 +30,7 @@ class BlackBoxCodegenSuppressor(
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val suppressionChecker = testServices.codegenSuppressionChecker
         val moduleStructure = testServices.moduleStructure
-        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.first()) ?: return failedAssertions
+        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.firstOrNull()) ?: return failedAssertions
         return suppressionChecker.processAllDirectives(ignoreDirectives) { directive, suppressionResult ->
             listOfNotNull(
                 suppressionChecker.processMutedTest(
@@ -47,7 +47,8 @@ class BlackBoxCodegenSuppressor(
         private val customIgnoreDirective: ValueDirective<TargetBackend>?,
         private val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
     ) : TestService {
-        fun extractIgnoreDirectives(module: TestModule): List<ValueDirective<TargetBackend>>? {
+        fun extractIgnoreDirectives(module: TestModule?): List<ValueDirective<TargetBackend>>? {
+            if (module == null) return null
             val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
             val ignoreDirective = extractIgnoredDirectiveForTargetBackend(testServices, module, targetBackend, customIgnoreDirective)
             return additionalIgnoreDirectives?.let { it + listOfNotNull(ignoreDirective) } ?: ignoreDirective?.let { listOf(it) }

@@ -6,7 +6,7 @@ public fun fooNotNull(s: String) {
 public fun foo() {
     var s: String? = "not null"
     if (s != null)
-        fooNotNull(<!DEBUG_INFO_SMARTCAST!>s<!>)
+        fooNotNull(s)
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, javaProperty,

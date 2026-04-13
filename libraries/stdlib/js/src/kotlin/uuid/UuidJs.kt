@@ -11,12 +11,10 @@ internal actual fun secureRandomBytes(destination: ByteArray): Unit {
     js("crypto").getRandomValues(destination)
 }
 
-@ExperimentalUuidApi
 internal actual fun serializedUuid(uuid: Uuid): Any =
     throw UnsupportedOperationException("Serialization is supported only in Kotlin/JVM")
 
 // Avoid bitwise operations with Longs in JS
-@ExperimentalUuidApi
 @OptIn(BoxedLongApi::class)  // Long constructor is intrinsified when BigInt-backed Longs are enabled.
 internal actual fun ByteArray.getLongAt(index: Int): Long {
     return Long(
@@ -33,7 +31,6 @@ private fun ByteArray.getIntAt(index: Int): Int {
 }
 
 // Avoid bitwise operations with Longs in JS
-@ExperimentalUuidApi
 @OptIn(BoxedLongApi::class) // Long's `high` and `low` properties are intrinsified when BigInt-backed Longs are enabled.
 internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) {
     var dstIndex = dstOffset
@@ -60,7 +57,6 @@ private fun Int.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int,
 }
 
 // Avoid bitwise operations with Longs in JS
-@ExperimentalUuidApi
 @OptIn(BoxedLongApi::class) // Long's `high` and `low` properties are intrinsified when BigInt-backed Longs are enabled.
 internal actual fun ByteArray.setLongAt(index: Int, value: Long) {
     setIntAt(index, value.high)
@@ -76,7 +72,6 @@ private fun ByteArray.setIntAt(index: Int, value: Int) {
 }
 
 // Avoid bitwise operations with Longs in JS
-@ExperimentalUuidApi
 internal actual fun uuidParseHexDash(hexDashString: String): Uuid {
     return uuidParseHexDash(hexDashString) { inputString, errorDescription, errorIndex ->
         uuidThrowUnexpectedCharacterException(inputString, errorDescription, errorIndex)
@@ -91,7 +86,6 @@ internal actual fun uuidParseHexDashOrNull(hexDashString: String): Uuid? {
     }
 }
 
-@ExperimentalUuidApi
 internal inline fun uuidParseHexDash(
     hexDashString: String,
     onError: (inputString: String, errorDescription: String, errorIndex: Int) -> Nothing
@@ -126,7 +120,6 @@ internal inline fun uuidParseHexDash(
 }
 
 // Avoid bitwise operations with Longs in JS
-@ExperimentalUuidApi
 internal actual fun uuidParseHex(hexString: String): Uuid {
     return uuidParseHex(hexString) { inputString, errorDescription, errorIndex ->
         uuidThrowUnexpectedCharacterException(inputString, errorDescription, errorIndex)
@@ -141,7 +134,6 @@ internal actual fun uuidParseHexOrNull(hexString: String): Uuid? {
     }
 }
 
-@ExperimentalUuidApi
 private inline fun uuidParseHex(
     hexString: String,
     onError: (inputString: String, errorDescription: String, errorIndex: Int) -> Nothing

@@ -1,4 +1,3 @@
-// DO_NOT_REQUIRE_SYMBOL_RESTORATION_K1
 // LANGUAGE: +ContextParameters
 // MODULE: lib
 // MODULE_KIND: LibraryBinary

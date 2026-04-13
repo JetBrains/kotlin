@@ -20,14 +20,14 @@ class A {
         checkSubtype<KFunction0<Unit>>(x)
 
         expectFunction0Unit(x)
-        expectFunction0String(<!TYPE_MISMATCH!>x<!>)
-        expectFunction1Unit(<!TYPE_MISMATCH!>x<!>)
-        expectFunction1String(<!TYPE_MISMATCH!>x<!>)
+        expectFunction0String(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        expectFunction1Unit(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+        expectFunction1String(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
         expectFunction0Unit(::foo)
         expectFunction0String(::foo)
-        expectFunction1Unit(<!TYPE_MISMATCH!>::foo<!>)
-        expectFunction1String(<!TYPE_MISMATCH!>::foo<!>)
+        expectFunction1Unit(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
+        expectFunction1String(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
     }
 }
 

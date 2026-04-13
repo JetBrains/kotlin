@@ -58,7 +58,7 @@ internal abstract class NativeDistributionCommonizerTask
 
     @get:Internal
     internal val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
-        project.collectAllSharedCommonizerTargetsFromBuild()
+        project.collectAllSharedCommonizerTargetsFromProject()
     }
 
     @get:Classpath
@@ -182,14 +182,6 @@ internal abstract class NativeDistributionCommonizerTask
             }
             commonizerCache.isUpToDate(commonizerTargets)
         }
-    }
-}
-
-private fun Project.collectAllSharedCommonizerTargetsFromBuild(): Set<SharedCommonizerTarget> {
-    return if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
-        collectAllSharedCommonizerTargetsFromProject()
-    } else {
-        allprojects.flatMap { project -> project.collectAllSharedCommonizerTargetsFromProject() }.toSet()
     }
 }
 

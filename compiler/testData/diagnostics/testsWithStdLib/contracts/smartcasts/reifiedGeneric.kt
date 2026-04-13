@@ -23,12 +23,12 @@ inline fun <reified T> cast(value: Any?): T {
 
 fun test_1(x: Any) {
     requireIsInstance<String>(x)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 fun test_2(x: Any) {
     val s: String = cast(x)
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    x.length
 }
 
 /* GENERATED_FIR_TAGS: asExpression, contractConditionalEffect, contracts, functionDeclaration, ifExpression, inline,

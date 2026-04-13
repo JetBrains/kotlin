@@ -7,7 +7,7 @@ import kotlin.contracts.*
 fun <T> T.alsoIf(condition: Boolean, block: (T) -> Unit): T {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-        <!ERROR_IN_CONTRACT_DESCRIPTION!>condition holdsIn block<!>
+        condition holdsIn block
     }
     if (condition) block(this)
     return this

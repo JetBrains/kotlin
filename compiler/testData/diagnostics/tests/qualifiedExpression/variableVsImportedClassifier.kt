@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 // SKIP_TXT
 // FILE: test/W.java
 package test;

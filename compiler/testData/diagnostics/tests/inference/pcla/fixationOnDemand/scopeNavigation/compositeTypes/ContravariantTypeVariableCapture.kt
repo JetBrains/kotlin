@@ -5,9 +5,9 @@ fun test() {
     val resultA = pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
         // expected: CapturedType(in ScopeOwner)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>otvOwner.provide()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(in BaseType)")!>otvOwner.provide()<!>
         // should fix OTv := ScopeOwner for scope navigation
-        otvOwner.provide().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>function<!>()
+        otvOwner.provide().<!UNRESOLVED_REFERENCE!>function<!>()
         // expected: Interloper </: ScopeOwner
         otvOwner.constrain(Interloper)
     }

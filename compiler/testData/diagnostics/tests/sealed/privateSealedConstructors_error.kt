@@ -8,17 +8,17 @@ sealed class SealedBase(x: Int) {
 
     class SealedNested : SealedBase("nested")
 }
-class SealedOuter : <!INVISIBLE_MEMBER!>SealedBase<!>("outer")
+class SealedOuter : <!INVISIBLE_REFERENCE!>SealedBase<!>("outer")
 
 abstract class RegularBase(x: Int) {
     private constructor(y: String) : this(y.length)
 
     class RegularNested : RegularBase("nested")
 }
-class RegularOuter : <!INVISIBLE_MEMBER!>RegularBase<!>("outer")
+class RegularOuter : <!INVISIBLE_REFERENCE!>RegularBase<!>("outer")
 
 // FILE: derived.kt
 
-class SealedOuterInDifferentFile : <!INVISIBLE_MEMBER!>SealedBase<!>("other file")
+class SealedOuterInDifferentFile : <!INVISIBLE_REFERENCE!>SealedBase<!>("other file")
 
 /* GENERATED_FIR_TAGS: classDeclaration, nestedClass, primaryConstructor, sealed, secondaryConstructor, stringLiteral */

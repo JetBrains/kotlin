@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND: ANDROID
 // LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm
 // Verifies that property is called when name-based destructuring uses '_' as name
 

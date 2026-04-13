@@ -12,7 +12,7 @@ expect class Foo: @Ann I
 // FILE: jvm.kt
 typealias ITypealias = I
 
-actual class Foo : ITypealias
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> class Foo : ITypealias
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, interfaceDeclaration,
 typeAliasDeclaration */

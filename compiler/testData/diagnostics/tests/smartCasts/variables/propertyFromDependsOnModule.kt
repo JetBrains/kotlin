@@ -41,90 +41,90 @@ class Same(
 
 fun isCast(s: Same, d: Direct, t: Transitive) {
     if (s.finalConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>s.finalConstructorProperty<!>.length
+        s.finalConstructorProperty.length
     }
 
     if (d.finalConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>d.finalConstructorProperty<!>.length
+        d.finalConstructorProperty.length
     }
 
     if (t.finalConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>t.finalConstructorProperty<!>.length
+        t.finalConstructorProperty.length
     }
 
     if (s.annotatedConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>s.annotatedConstructorProperty<!>.length
+        s.annotatedConstructorProperty.length
     }
 
     if (d.annotatedConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>d.annotatedConstructorProperty<!>.length
+        d.annotatedConstructorProperty.length
     }
 
     if (t.annotatedConstructorProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>t.annotatedConstructorProperty<!>.length
+        t.annotatedConstructorProperty.length
     }
 
     if (s.finalClassProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>s.finalClassProperty<!>.length
+        s.finalClassProperty.length
     }
 
     if (d.finalClassProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>d.finalClassProperty<!>.length
+        d.finalClassProperty.length
     }
 
     if (t.finalClassProperty is String) {
-        <!DEBUG_INFO_SMARTCAST!>t.finalClassProperty<!>.length
+        t.finalClassProperty.length
     }
 
     if (s.annotatedClassProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>s.annotatedClassProperty<!>.length
+        s.annotatedClassProperty.length
     }
 
     if (d.annotatedClassProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
+        d.annotatedClassProperty.length
     }
 
     if (t.annotatedClassProperty is String) {
-        <!SMARTCAST_IMPOSSIBLE!>t.annotatedClassProperty<!>.length
+        t.annotatedClassProperty.length
     }
 }
 
 fun asCast(s: Same, d: Direct, t: Transitive) {
     s.finalConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>s.finalConstructorProperty<!>.length
+    s.finalConstructorProperty.length
 
     d.finalConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>d.finalConstructorProperty<!>.length
+    d.finalConstructorProperty.length
 
     t.finalConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>t.finalConstructorProperty<!>.length
+    t.finalConstructorProperty.length
 
     s.annotatedConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>s.annotatedConstructorProperty<!>.length
+    s.annotatedConstructorProperty.length
 
     d.annotatedConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>d.annotatedConstructorProperty<!>.length
+    d.annotatedConstructorProperty.length
 
     t.annotatedConstructorProperty as String
-    <!DEBUG_INFO_SMARTCAST!>t.annotatedConstructorProperty<!>.length
+    t.annotatedConstructorProperty.length
 
     s.finalClassProperty as String
-    <!DEBUG_INFO_SMARTCAST!>s.finalClassProperty<!>.length
+    s.finalClassProperty.length
 
     d.finalClassProperty as String
-    <!DEBUG_INFO_SMARTCAST!>d.finalClassProperty<!>.length
+    d.finalClassProperty.length
 
     t.finalClassProperty as String
-    <!DEBUG_INFO_SMARTCAST!>t.finalClassProperty<!>.length
+    t.finalClassProperty.length
 
     s.annotatedClassProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>s.annotatedClassProperty<!>.length
+    s.annotatedClassProperty.length
 
     d.annotatedClassProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
+    d.annotatedClassProperty.length
 
     t.annotatedClassProperty as String
-    <!SMARTCAST_IMPOSSIBLE!>t.annotatedClassProperty<!>.length
+    t.annotatedClassProperty.length
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, asExpression, classDeclaration,

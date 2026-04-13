@@ -125,7 +125,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
               VALUE_PARAMETER kind:ExtensionReceiver name:$this$countIssues index:0 type:<root>.ArgumentsBuilder
               BLOCK_BODY
-                CALL 'public final fun unaryPlus (<this>: <root>.Expression): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=UPLUS
+                CALL 'public final fun unaryPlus (<this>: <root>.Expression): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
                   ARG <this>(index:0): GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
                   ARG <this>(index:1): CALL 'public final fun lessEq <T> (<this>: <root>.Column, t: T of <root>.lessEq): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     TYPE_ARG T: kotlin.Int
@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                     ARG t: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                       ARG <this>: CONST Int type=kotlin.Int value=2
                       ARG other: CONST Int type=kotlin.Int value=60
-                CALL 'public final fun unaryPlus (<this>: <root>.Expression): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=UPLUS
+                CALL 'public final fun unaryPlus (<this>: <root>.Expression): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
                   ARG <this>(index:0): GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
                   ARG <this>(index:1): CALL 'public final fun lessEq <T> (<this>: <root>.Column, t: T of <root>.lessEq): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     TYPE_ARG T: kotlin.Int
@@ -143,7 +143,7 @@ FILE fqName:<root> fileName:/timesInBuilder.kt
                       ARG arg: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                         ARG <this>: CONST Int type=kotlin.Int value=2
                         ARG other: CONST Int type=kotlin.Int value=60
-                CALL 'public final fun unaryPlus (<this>: <root>.Expression): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=UPLUS
+                CALL 'public final fun unaryPlus (<this>: <root>.Expression): kotlin.Unit declared in <root>.ArgumentsBuilder' type=kotlin.Unit origin=null
                   ARG <this>(index:0): GET_VAR '$this$countIssues: <root>.ArgumentsBuilder declared in <root>.test.<anonymous>' type=<root>.ArgumentsBuilder origin=IMPLICIT_ARGUMENT
                   ARG <this>(index:1): CALL 'public final fun select <T> (<this>: <root>.Column, t: T of <root>.select, r: T of <root>.select): <root>.Expression declared in <root>' type=<root>.Expression origin=null
                     TYPE_ARG T: kotlin.Long

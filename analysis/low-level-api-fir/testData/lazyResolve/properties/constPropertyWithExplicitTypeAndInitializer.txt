@@ -72,9 +72,9 @@ FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] constPropertyWithExplicitTypeAndInitializer.kt
-    public final const [ResolvedTo(CONTRACTS)] var simple: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit|
+    public final const [ResolvedTo(STATUS)] var simple: R|kotlin/Int| = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
     public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val withConstInitializer: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(5)).R|kotlin/Int.plus|(R|/simple|)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 

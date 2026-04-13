@@ -1,0 +1,11 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval result: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.computeMulti*s<CS errors: /JavaHelper.computeMulti>#|<R|kotlin/String!|, R|kotlin/Throwable!|, <ERROR TYPE REF: Cannot infer argument for type parameter E2>>(<L> = SAM(computeMulti@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ))
+        lval result2: R|kotlin/String| = Q|JavaHelper|.R|/JavaHelper.computeMixed*s|<R|kotlin/String!|, R|kotlin/Throwable!|, R|{kotlin/Exception=} java/lang/Exception!|>(SAM(computeMixed@fun <anonymous>(): R|kotlin/String!| <inline=NoInline>  {
+            ^ String(hello)
+        }
+        ), <getClass>(Q|kotlin/Exception|).R|kotlin/jvm/java|<R|{kotlin/Exception=} java/lang/Exception|>)
+    }

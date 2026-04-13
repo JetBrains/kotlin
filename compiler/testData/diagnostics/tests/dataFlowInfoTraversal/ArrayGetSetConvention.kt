@@ -7,24 +7,24 @@ interface G {
 }
 
 fun foo1(a: Int?, b: G) {
-    b[a!!, a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>] = <!DEBUG_INFO_SMARTCAST!>a<!>
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    b[a!!, a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>] = a
+    checkSubtype<Int>(a)
 }
 
 fun foo2(a: Int?, b: G) {
-    b[0, a!!] = <!DEBUG_INFO_SMARTCAST!>a<!>
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    b[0, a!!] = a
+    checkSubtype<Int>(a)
 }
 
 fun foo3(a: Int?, b: G) {
-    val r = b[a!!, <!DEBUG_INFO_SMARTCAST!>a<!>]
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    val r = b[a!!, a]
+    checkSubtype<Int>(a)
     checkSubtype<Int>(r)
 }
 
 fun foo4(a: Int?, b: G) {
     val r = b[0, a!!]
-    checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>a<!>)
+    checkSubtype<Int>(a)
     checkSubtype<Int>(r)
 }
 

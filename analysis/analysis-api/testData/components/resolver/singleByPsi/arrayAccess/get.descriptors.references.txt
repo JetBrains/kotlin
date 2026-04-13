@@ -1,7 +1,0 @@
-KtArrayAccessExpression(70,77): 'list[0]'
-  KtArrayAccessReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in kotlin.collections.MutableList) operator fun get(index: kotlin.Int): E

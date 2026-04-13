@@ -1,8 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -ExplicitBackingFields
 class A {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val number: Number<!>
-        <!EXPLICIT_BACKING_FIELDS_UNSUPPORTED!>field = 1<!>
+    val number: Number
+        <!UNSUPPORTED_FEATURE!>field = 1<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, integerLiteral, propertyDeclaration */

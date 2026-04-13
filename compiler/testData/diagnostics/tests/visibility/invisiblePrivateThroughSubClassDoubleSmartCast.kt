@@ -5,16 +5,16 @@
 abstract class A {
     fun foo(a: Any) {
         if (a is A) {
-            <!DEBUG_INFO_SMARTCAST!>a<!>.prv()
+            a.prv()
             if (a is B) {
-                <!DEBUG_INFO_SMARTCAST!>a<!>.prv()
+                a.<!INVISIBLE_REFERENCE!>prv<!>()
             }
         }
 
         if (a is B) {
-            <!DEBUG_INFO_SMARTCAST!>a<!>.<!INVISIBLE_MEMBER!>prv<!>()
+            a.<!INVISIBLE_REFERENCE!>prv<!>()
             if (<!USELESS_IS_CHECK!>a is A<!>) {
-                <!DEBUG_INFO_SMARTCAST!>a<!>.<!INVISIBLE_MEMBER!>prv<!>()
+                a.<!INVISIBLE_REFERENCE!>prv<!>()
             }
         }
     }

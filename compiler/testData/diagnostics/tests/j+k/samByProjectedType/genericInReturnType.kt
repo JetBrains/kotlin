@@ -34,7 +34,7 @@ fun main() {
     }
 
     A.baz {
-        x -> <!TYPE_MISMATCH, TYPE_MISMATCH!>x.hashCode()<!>
+        x -> <!RETURN_TYPE_MISMATCH!>x.hashCode()<!>
     }
 
     val block: (String) -> Any? = {
@@ -45,10 +45,10 @@ fun main() {
     A.bar(block)
 
     val block2: (String) -> CharSequence? = {
-        x -> x.toString()
+        x -> x.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
     }
 
-    A.baz(<!TYPE_MISMATCH!>block<!>)
+    A.baz(<!ARGUMENT_TYPE_MISMATCH!>block<!>)
     A.baz(block2)
 }
 

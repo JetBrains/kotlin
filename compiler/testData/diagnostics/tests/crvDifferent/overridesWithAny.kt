@@ -33,17 +33,17 @@ class C {
 class D
 
 fun t(a: A, b: B) {
-    a.hashCode()
-    a.toString()
-    b.hashCode()
-    b.toString()
+    a.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    a.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    b.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    b.<!RETURN_VALUE_NOT_USED!>toString<!>()
 }
 
 fun t(c: C, d: D) {
-    c.hashCode()
-    c.toString()
-    d.hashCode()
-    d.toString()
+    c.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    c.<!RETURN_VALUE_NOT_USED!>toString<!>()
+    d.<!RETURN_VALUE_NOT_USED!>hashCode<!>()
+    d.<!RETURN_VALUE_NOT_USED!>toString<!>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, stringLiteral */

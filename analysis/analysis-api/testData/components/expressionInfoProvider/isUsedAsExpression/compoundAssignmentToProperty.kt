@@ -16,6 +16,5 @@ fun main() {
     println(C().property)
 }
 
-// IGNORE_FE10
 // FE1.0 `isUsedAsExpression` considers built-in postfix inc/dec and
 // compound assignments as used, always.

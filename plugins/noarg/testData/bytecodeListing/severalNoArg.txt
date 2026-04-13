@@ -15,6 +15,6 @@ public annotation class NoArg2 {
 @kotlin.Metadata
 public final class Test {
     // source: 'severalNoArg.kt'
-    public method <init>(): void
+    public deprecated @kotlin.Deprecated(message="No-arg constructor is hidden from direct usage", level=HIDDEN) @java.lang.Deprecated method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }

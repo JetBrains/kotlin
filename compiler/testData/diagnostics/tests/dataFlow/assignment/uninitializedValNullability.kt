@@ -1,13 +1,13 @@
 // RUN_PIPELINE_TILL: FRONTEND
 fun test(a: Any?, flag: Boolean, x: Any?) {
     if (a == null) return
-    <!DEBUG_INFO_SMARTCAST!>a<!>.hashCode()
+    a.hashCode()
 
     val b: Any?
 
     if (flag) {
         b = a
-        <!DEBUG_INFO_SMARTCAST!>b<!>.hashCode()
+        b.hashCode()
     }
     else {
         b = x

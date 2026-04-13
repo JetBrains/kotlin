@@ -63,7 +63,7 @@ fun case4() {
 
 // TESTCASE NUMBER: 5
 fun case5(nothing: Nothing?) {
-    <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>nothing<!>
-    val y = <!ALWAYS_NULL!>nothing<!>!!
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>nothing<!>
+    val y = nothing!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>y<!>
 }

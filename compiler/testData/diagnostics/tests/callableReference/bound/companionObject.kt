@@ -28,17 +28,17 @@ fun test() {
     val r4 = test.C.Companion::foo
     checkSubtype<() -> String>(r4)
 
-    val r5 = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(C)<!>::foo
-    checkSubtype<() -> String>(r5)
+    val r5 = (C)::foo
+    checkSubtype<() -> String>(<!ARGUMENT_TYPE_MISMATCH!>r5<!>)
 
-    val r6 = <!PARENTHESIZED_COMPANION_LHS_DEPRECATION!>(test.C)<!>::foo
-    checkSubtype<() -> String>(r6)
+    val r6 = (test.C)::foo
+    checkSubtype<() -> String>(<!ARGUMENT_TYPE_MISMATCH!>r6<!>)
 
     val c = C.Companion
     val r7 = c::foo
     checkSubtype<() -> String>(r7)
 
-    <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>C::bar<!>
+    C::bar
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,

@@ -4,7 +4,7 @@
 fun basic(): String {
     var current: String? = null
     current = if (current == null) "bar" else current
-    return <!DEBUG_INFO_SMARTCAST!>current<!>
+    return current
 }
 
 fun foo(flag: Boolean) {
@@ -14,7 +14,7 @@ fun foo(flag: Boolean) {
         x = if (flag) "34" else "12"
     }
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
 }
 
 fun bar(flag: Boolean) {
@@ -27,7 +27,7 @@ fun bar(flag: Boolean) {
         }
     }
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
 }
 
 fun baz(flag: Boolean) {
@@ -41,7 +41,7 @@ fun baz(flag: Boolean) {
         }
     }
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
 }
 
 fun gav(flag: Boolean, arg: String?) {
@@ -55,7 +55,7 @@ fun gav(flag: Boolean, arg: String?) {
         }
     }
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
 }
 
 fun gau(flag: Boolean, arg: String?) {
@@ -69,7 +69,7 @@ fun gau(flag: Boolean, arg: String?) {
         }
     }
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
+    x.hashCode()
 }
 
 /* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, functionDeclaration, ifExpression, localProperty,

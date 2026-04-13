@@ -1,14 +1,14 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-69632
 // MODULE: common
-expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>class Common<!>
+expect class Common
 
 expect fun commonFun(a: Common)
 expect var commonProp: Common
 
 //MODULE: intermediate()()(common)
 expect class Intermediate
-actual typealias <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>Common<!> = Intermediate
+actual typealias Common = Intermediate
 
 expect fun intermediateFun(a: Common, b: Intermediate)
 expect var intermediateProp: Intermediate

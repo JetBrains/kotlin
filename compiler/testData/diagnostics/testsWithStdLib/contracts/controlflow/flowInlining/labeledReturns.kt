@@ -43,7 +43,7 @@ fun threeLevelsReturnNoInitialization(x: Int?): Int? {
             }
         }
         // Possible to report unreachable here
-        <!UNREACHABLE_CODE!>y = 54<!>
+        <!VAL_REASSIGNMENT!>y<!> = 54
     }
     return <!UNINITIALIZED_VARIABLE!>y<!>.inc()
 }
@@ -73,7 +73,7 @@ fun threeLevelsReturnWithUnknown(x: Int?): Int? {
         unknownRun middle@ {
             x.myLet inner@ {
                 if (it == null) {
-                    <!CAPTURED_VAL_INITIALIZATION!>y<!> = 42
+                    y = 42
                     return@outer Unit
                 }
                 else {

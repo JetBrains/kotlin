@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 val foo = iterator {
     yield(0)
     val nullable: String? = null

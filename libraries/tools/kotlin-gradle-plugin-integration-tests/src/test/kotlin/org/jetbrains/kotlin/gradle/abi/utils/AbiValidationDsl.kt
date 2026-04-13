@@ -42,6 +42,13 @@ internal fun GradleProject.referenceJvmDumpFile(): File {
 }
 
 /**
+ * Gets the reference dump file for all Klib targets in a Kotlin Multiplatform project.
+ */
+internal fun GradleProject.referenceKlibDumpFile(): File {
+    return projectPath.resolve("api").resolve("$projectName.klib.api").toFile()
+}
+
+/**
  * Gets the reference dump file for the JVM target in a Kotlin Multiplatform project with a mix of JVM and Android targets.
  */
 internal fun GradleProject.referenceMixedJvmDumpFile(): File {

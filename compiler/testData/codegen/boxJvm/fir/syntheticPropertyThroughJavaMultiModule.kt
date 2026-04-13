@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
+// LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter
 // ISSUE: KT-59550 (related)
 // MODULE: m1
 // FILE: Base.kt

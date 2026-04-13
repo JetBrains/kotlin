@@ -24,21 +24,11 @@ operator fun A.remAssign(s: String) {
 }
 
 fun testProperty() {
-  { // BLOCK
-    plusAssign(/* <this> = <get-p>(), */ s = "+=")
-  }
-  { // BLOCK
-    minusAssign(/* <this> = <get-p>(), */ s = "-=")
-  }
-  { // BLOCK
-    timesAssign(/* <this> = <get-p>(), */ s = "*=")
-  }
-  { // BLOCK
-    divAssign(/* <this> = <get-p>(), */ s = "/=")
-  }
-  { // BLOCK
-    remAssign(/* <this> = <get-p>(), */ s = "%=")
-  }
+  plusAssign(/* <this> = <get-p>(), */ s = "+=")
+  minusAssign(/* <this> = <get-p>(), */ s = "-=")
+  timesAssign(/* <this> = <get-p>(), */ s = "*=")
+  divAssign(/* <this> = <get-p>(), */ s = "/=")
+  remAssign(/* <this> = <get-p>(), */ s = "%=")
 }
 
 fun testVariable() {

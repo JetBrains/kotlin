@@ -9,7 +9,7 @@ fun main() {
     ::<!UNRESOLVED_REFERENCE!>A<!>
     ::<!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B<!>
     ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>C<!>   // KT-3465
-    ::<!INVISIBLE_MEMBER!>D<!>
+    ::<!INVISIBLE_REFERENCE!>D<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, enumDeclaration, functionDeclaration,

@@ -1,5 +1,0 @@
-package
-
-public fun </*0*/ K> id(/*0*/ x: K): K
-public fun main(): kotlin.Unit
-public fun </*0*/ T> select(/*0*/ vararg x: T /*kotlin.Array<out T>*/): T

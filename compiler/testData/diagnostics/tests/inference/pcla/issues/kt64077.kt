@@ -15,7 +15,7 @@ fun test() {
         set("")
         build2 {
             set(1)
-            consumeInt(<!TYPE_MISMATCH!>this@build.get()<!>) // K1 red ARGUMENT_TYPE_MISMATCH, runtime crash K2
+            consumeInt(<!ARGUMENT_TYPE_MISMATCH!>this@build.get()<!>) // K1 red ARGUMENT_TYPE_MISMATCH, runtime crash K2
         }
         Unit // This unit is essential!!!
     }
