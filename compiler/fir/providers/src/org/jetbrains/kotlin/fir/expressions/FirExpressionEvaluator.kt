@@ -569,7 +569,7 @@ object FirExpressionEvaluator {
             if (result.resolvedType.isSubtypeOf(typeOperatorCall.resolvedType, session)) {
                 return result.wrap()
             }
-            return typeOperatorCall.wrap()
+            return NotConst
         }
 
         override fun visitEnumEntryDeserializedAccessExpression(
