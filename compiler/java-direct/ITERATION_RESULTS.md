@@ -436,6 +436,33 @@ Counter data identified further candidates for future iterations:
 
 ---
 
+## Iteration 63: Resolution Performance — findLocalClass Cache + Lazy classifierQualifiedName - 2026-04-13
+
+### Root Cause Analysis
+After Iterations 61–62 addressed the BFS and tryResolve hotspots, counter data showed two remaining sources of redundant work:
+
+1. **`findLocalClass` called 19,352 times** with 46,579 `findInnerClassFromSupertypes` calls (2.4 per call). Each walks the supertype hierarchy looking for inherited inner classes. For protobuf files, the vast majority of type names are NOT local/inner classes — they resolve via imports or same-package — so these walks almost always return null. The same name within the same containing class always produces the same result, but no caching existed.
+
+2. **`classifierQualifiedName` is `get()` not `lazy`** — called 1,493 times, each re-invoking `findLocalClass` + `rawTypeName.split('.')`. Since the property value never changes for a given type instance, all but the first call are wasted.
+
+### Fix
+**Two changes:**
+
+1. **`JavaResolutionContext.kt`** — Added `findLocalClassCache: HashMap<Name, Any?>` constructor parameter with a sentinel for cached-null results. `findLocalClass` checks the cache before delegating to `findLocalClassUncached`. The cache is **shared** across contexts created via `withTypeParameters()` / `withInheritedTypeParameters()` (same containing class → same results) and **fresh** for `withContainingClass()` (different containing class → results may differ).
+
+2. **`JavaTypeOverAst.kt`** — Changed `classifierQualifiedName` from `get() { ... }` to `by lazy { ... }`, caching the result after first access.
+
+### Test Results
+- Box: 1168/1168, Phased: 1454/1456, Total failing: 2 (no change — same 2 won't-fix)
+- Performance test (`testMetadata_new_jvm`): passes
+
+### Key Learnings
+- `findLocalClass` result depends on `containingClassProvider` and `localClassProvider`, NOT on `typeParametersInScope`. So the cache is valid across `withTypeParameters()` calls.
+- `classifierQualifiedName` was the only non-lazy computed property on `JavaClassifierTypeOverAst` — `classifier`, `isRaw`, `typeArguments`, `isTriviallyFlexibleHint` are all `by lazy`.
+- HashMap sentinel pattern (`FIND_LOCAL_CLASS_NULL`) is needed because `HashMap.get()` returns null for both "not present" and "present with null value".
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown

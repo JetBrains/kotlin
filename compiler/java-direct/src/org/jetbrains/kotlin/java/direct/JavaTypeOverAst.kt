@@ -161,42 +161,41 @@ class JavaClassifierTypeOverAst(
         false
     }
 
-    override val classifierQualifiedName: String
-        get() {
-            val parts = rawTypeName.split('.')
+    override val classifierQualifiedName: String by lazy {
+        val parts = rawTypeName.split('.')
 
-            // 1. Check type parameters - return name as-is (FIR handles type params specially)
-            if (parts.size == 1 && resolutionContext.findTypeParameter(parts[0]) != null) {
-                return rawTypeName
-            }
-
-            // 2. Check local scope (same compilation unit)
-            val localBase = resolutionContext.findLocalClass(Name.identifier(parts[0]))
-            if (localBase != null) {
-                var current: JavaClass? = localBase
-                for (i in 1 until parts.size) {
-                    current = current?.findInnerClass(Name.identifier(parts[i]))
-                }
-                return current?.fqName?.asString() ?: rawTypeName
-            }
-
-            // 3. Check explicit single-type imports
-            // Only use import resolution if the target is a known Java class (source or binary).
-            // This matches PSI behavior where classifierQualifiedName uses canonicalText, which
-            // only returns the FQN when PSI can resolve the class through its indexes.
-            // For non-Java classes (e.g., Kotlin builtins), PSI returns just the raw reference text.
-            val qualified = resolutionContext.getSimpleImport(parts[0])
-            if (qualified != null && resolutionContext.isImportTargetAvailableAsJavaClass(parts[0])) {
-                var result = qualified.asString()
-                for (i in 1 until parts.size) {
-                    result += "." + parts[i]
-                }
-                return result
-            }
-
-            // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang types)
-            return rawTypeName
+        // 1. Check type parameters - return name as-is (FIR handles type params specially)
+        if (parts.size == 1 && resolutionContext.findTypeParameter(parts[0]) != null) {
+            return@lazy rawTypeName
         }
+
+        // 2. Check local scope (same compilation unit)
+        val localBase = resolutionContext.findLocalClass(Name.identifier(parts[0]))
+        if (localBase != null) {
+            var current: JavaClass? = localBase
+            for (i in 1 until parts.size) {
+                current = current?.findInnerClass(Name.identifier(parts[i]))
+            }
+            return@lazy current?.fqName?.asString() ?: rawTypeName
+        }
+
+        // 3. Check explicit single-type imports
+        // Only use import resolution if the target is a known Java class (source or binary).
+        // This matches PSI behavior where classifierQualifiedName uses canonicalText, which
+        // only returns the FQN when PSI can resolve the class through its indexes.
+        // For non-Java classes (e.g., Kotlin builtins), PSI returns just the raw reference text.
+        val qualified = resolutionContext.getSimpleImport(parts[0])
+        if (qualified != null && resolutionContext.isImportTargetAvailableAsJavaClass(parts[0])) {
+            var result = qualified.asString()
+            for (i in 1 until parts.size) {
+                result += "." + parts[i]
+            }
+            return@lazy result
+        }
+
+        // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang types)
+        rawTypeName
+    }
 
     override val presentableText: String get() = node.text
 

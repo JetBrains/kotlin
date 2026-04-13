@@ -38,6 +38,16 @@ class JavaResolutionContext private constructor(
      * priority over inner class names.
      */
     private val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
+    /**
+     * Cache for [findLocalClass] results. Shared across contexts that have the same
+     * [containingClassProvider] and [localClassProvider] (i.e., contexts created via
+     * [withTypeParameters] / [withInheritedTypeParameters]). A new cache is created
+     * when [withContainingClass] changes the containing class.
+     *
+     * Uses [Any] value type with a sentinel to distinguish "not yet looked up" from
+     * "looked up, result was null".
+     */
+    private val findLocalClassCache: HashMap<Name, Any?> = HashMap(),
 ) {
     /**
      * Finds a class by simple name. Checks:
@@ -48,6 +58,16 @@ class JavaResolutionContext private constructor(
      * 5. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
+        val cached = findLocalClassCache[name]
+        if (cached != null) return if (cached === FIND_LOCAL_CLASS_NULL) null else cached as JavaClass
+        if (findLocalClassCache.containsKey(name)) return null // explicit null entry
+
+        val result = findLocalClassUncached(name)
+        findLocalClassCache[name] = result ?: FIND_LOCAL_CLASS_NULL
+        return result
+    }
+
+    private fun findLocalClassUncached(name: Name): JavaClass? {
         val containingClass = containingClassProvider?.invoke()
         // First check inner classes of the containing class
         containingClass?.findInnerClass(name)?.let { return it }
@@ -227,7 +247,9 @@ class JavaResolutionContext private constructor(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, newScope, containingClassProvider, classFinderProvider, inheritedTypeParametersInScope
+            packageFqName, simpleImports, starImports, localClassProvider, newScope,
+            containingClassProvider, classFinderProvider, inheritedTypeParametersInScope,
+            findLocalClassCache, // share cache — containingClass unchanged
         )
     }
 
@@ -240,7 +262,9 @@ class JavaResolutionContext private constructor(
         if (typeParams.isEmpty()) return this
         val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope, containingClassProvider, classFinderProvider, newInherited
+            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
+            containingClassProvider, classFinderProvider, newInherited,
+            findLocalClassCache, // share cache — containingClass unchanged
         )
     }
 
@@ -253,7 +277,8 @@ class JavaResolutionContext private constructor(
             packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
             containingClassProvider = { containingClass },
             classFinderProvider = classFinderProvider,
-            inheritedTypeParametersInScope = inheritedTypeParametersInScope
+            inheritedTypeParametersInScope = inheritedTypeParametersInScope,
+            // new cache — containingClass changed, findLocalClass results may differ
         )
     }
 
@@ -697,6 +722,9 @@ class JavaResolutionContext private constructor(
     }
 
     companion object {
+        /** Sentinel for [findLocalClassCache]: "looked up, result was null". */
+        private val FIND_LOCAL_CLASS_NULL = Any()
+
         fun create(
             root: JavaSyntaxNode,
             classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null
