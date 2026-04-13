@@ -601,11 +601,11 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             "nounwind"
     )
 
+    // TODO: Figure out naming.
     val llvmKotlinAllocArr = llvmIntrinsic(
-            "llvm.kotlin.alloc.arr",
+            "kotlin.alloc.arr",
             functionType(pointerType, isVarArg = false, pointerType, int32Type, pointerType),
             returnsObjectType = true,
-            "nounwind"
     )
 
     var tlsCount = 0

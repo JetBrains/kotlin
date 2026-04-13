@@ -141,12 +141,12 @@ struct KotlinAlloc : PassInfoMixin<KotlinAlloc> {
     bool Changed = false;
     for (auto &BB : F) {
       for (auto &I : BB) {
-        if (auto *CI = dyn_cast<CallInst>(&I)) {
+        if (auto *CI = dyn_cast<CallBase>(&I)) {
           if (auto *Callee = CI->getCalledFunction()) {
             if (Callee->getName() == "llvm.kotlin.alloc.obj") {
               CI->setCalledFunction(AllocInstance);
               Changed = true;
-            } else if (Callee->getName() == "llvm.kotlin.alloc.arr") {
+            } else if (Callee->getName() == "kotlin.alloc.arr") {
               CI->setCalledFunction(AllocArrayInstance);
               Changed = true;
             }
