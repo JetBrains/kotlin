@@ -13,6 +13,11 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.BINARY)
 internal annotation class ExcludedFromCodegen
 
+// Exclude declaration or file from code generation when stack switching coroutines mode is not enabled
+@Target(FILE, CLASS, FUNCTION, CONSTRUCTOR, PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class WasmStackSwitchingOnly
+
 @Target(CLASS)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class WasmArrayOf(

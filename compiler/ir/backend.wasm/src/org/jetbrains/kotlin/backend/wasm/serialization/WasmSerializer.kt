@@ -235,6 +235,7 @@ class WasmSerializer(outputStream: OutputStream) {
             is GcHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_GC_TYPE) { serializeIdSignature(type.type) }
             is VTableHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_VT_TYPE) { serializeIdSignature(type.type) }
             is FunctionHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_FUNC_TYPE) { serializeIdSignature(type.type) }
+            is ContHeapTypeSymbol -> withTag(HeapTypeTags.HEAP_CONT_TYPE) { serializeInt(type.arity) }
             WasmHeapType.Simple.Cont -> setTag(HeapTypeTags.CONT)
             WasmHeapType.Simple.NoCont -> setTag(HeapTypeTags.NO_CONT)
             else -> error("Unknown heap type:${type::class.simpleName}")
