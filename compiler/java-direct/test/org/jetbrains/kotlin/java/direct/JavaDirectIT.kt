@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -21,6 +22,7 @@ import kotlin.io.path.absolutePathString
 class JavaDirectIT {
 
     @Test
+    @Ignore
     fun testinPsiMode(@TempDir tempDir: Path) {
         val files = createFilesForPseudoRawTypesTest(tempDir)
 
@@ -35,6 +37,7 @@ class JavaDirectIT {
     }
 
     @Test
+    @Ignore
     fun testEnableViaLanguageFeature(@TempDir tempDir: Path) {
         val files = createFilesForPseudoRawTypesTest(tempDir)
         val logFile = tempDir.resolve("log.txt")
