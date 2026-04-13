@@ -16,6 +16,8 @@ import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
 
@@ -299,12 +301,30 @@ public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipan
 
     static boolean hasMavenBuildSourceDirectoryOverride(MavenProject project) {
         String sourceDir = project.getBuild().getSourceDirectory();
-        return sourceDir != null && !sourceDir.endsWith("src/main/java");
+        if (sourceDir == null) return false;
+
+        Path configured = Paths.get(sourceDir);
+        if (!configured.isAbsolute()) {
+            configured = Paths.get(project.getBasedir().getPath()).resolve(configured);
+        }
+
+        Path expected = Paths.get(project.getBasedir().getPath(), "src", "main", "java");
+
+        return !configured.normalize().equals(expected.normalize());
     }
 
     static boolean hasMavenBuildTestSourceDirectoryOverride(MavenProject project) {
         String testSourceDir = project.getBuild().getTestSourceDirectory();
-        return testSourceDir != null && !testSourceDir.endsWith("src/test/java");
+        if (testSourceDir == null) return false;
+
+        Path configured = Paths.get(testSourceDir);
+        if (!configured.isAbsolute()) {
+            configured = Paths.get(project.getBasedir().getPath()).resolve(configured);
+        }
+
+        Path expected = Paths.get(project.getBasedir().getPath(), "src", "test", "java");
+
+        return !configured.normalize().equals(expected.normalize());
     }
 
     private boolean hasUserDefinedSourceDirs(Plugin plugin, String goal) {
