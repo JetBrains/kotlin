@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.objcinterop.isObjCForwardDeclaration
-import org.jetbrains.kotlin.ir.objcinterop.isObjCMetaClass
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -181,8 +179,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     private fun IrClass.canBeAssignedTo(expectedClass: IrClass) =
             this.isNothing() || expectedClass == anyClass /* A workaround for plugins emitting classes with empty superTypes */
                     || (expectedClass.isCompanion && expectedClass.parentAsClass.isObjCClass()) // TODO: a workaround for CMP-9000.
-                    // TODO: roll back once MapLibre is fixed (KT-85358).
-                    || (expectedClass.isObjCClass() && expectedClass.name.asString() == "MLNScaleBar")
                     || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
@@ -204,8 +200,34 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                         // conservatively insert type check for them (due to unsafe casts).
                         && actualClass?.canBeAssignedTo(erasedExpectedType.getClass()!!) != true
                         && actualType.getInlinedClassNative() == null
-                        && !erasedExpectedClass.isObjCForwardDeclaration()
-                        && !erasedExpectedClass.isObjCMetaClass() // See KT-65260 for details.
+                        /*
+                        Objective-C is tricky.
+
+                        First of all, it is common to use "duck typing" in Objective-C:
+                        e.g., if an Obj-C method has an Obj-C class or protocol as the return type, the return value doesn't need to
+                        actually be of that type: it is enough to respond to the same method calls.
+                        Such mismatches happen even in Apple's own frameworks, e.g. in KT-85508.
+
+                        Next, there are forward declarations, and a cast to one shouldn't be generated as we don't have enough information
+                        for that.
+
+                        Another kind of problem is when the target type can't be found by the linker, like in KT-84678.
+
+                        Finally, sometimes cinterop translates Objective-C types wrong, e.g. in KT-56860.
+                        So, even if the Objective-C code returns a real instance of the declared type, Kotlin can get the latter wrong.
+
+                        In other words, in many cases, casts to Obj-C types shouldn't be generated here.
+                        On the other hand, we won't lose much if we don't generate casts to Obj-C types here at all:
+                        most usages of Obj-C objects in Kotlin go through dynamic Objective-C method dispatch. So, having the wrong type
+                        won't lead to heap corruption. Instead, a method call can fail with "unrecognized selector sent to instance", which
+                        is close enough to a `TypeCastException`.
+                        There are also `objc_direct` methods that use direct dispatch (and thus could lead to heap corruption if the type is
+                        wrong), but they are not widely used.
+
+                        All in all, it is safe and easier to not generate casts to Obj-C types here.
+                        Improving this is tracked in KT-85681.
+                         */
+                        && !erasedExpectedClass.isObjCClass()
                 -> {
                     this.checkedCast(actualType, erasedExpectedType)
                 }

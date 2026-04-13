@@ -1,9 +1,6 @@
 // TARGET_BACKEND: NATIVE
 // WITH_PLATFORM_LIBS
 // DISABLE_NATIVE: isAppleTarget=false
-
-// KT-85508
-// DISABLE_NATIVE: isAppleTarget=true
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import platform.Network.NW_PARAMETERS_DISABLE_PROTOCOL
