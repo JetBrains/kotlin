@@ -26,7 +26,7 @@ class JKlibCliPipeline(
                     JKlibKlibSerializationPhase
 
         return if (arguments.compileIr) {
-            phases then JKlibIrCompilationPhase()
+            phases then JKlibIrCompilationPhase
         } else {
             phases
         }

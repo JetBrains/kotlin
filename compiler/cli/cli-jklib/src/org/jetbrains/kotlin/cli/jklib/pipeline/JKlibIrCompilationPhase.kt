@@ -72,7 +72,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class JKlibIrCompilationPhase :
+object JKlibIrCompilationPhase :
     PipelinePhase<JKlibSerializationArtifact, JKlibIrCompilationArtifact>(
         name = "JKlibIrCompilationPhase",
         postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
@@ -86,6 +86,36 @@ class JKlibIrCompilationPhase :
         val projectEnvironment = input.projectEnvironment
 
         val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS) + klib.absolutePath
+
+        var runtimeModule: ModuleDescriptor? = null
+        val _descriptors: MutableMap<KotlinLibrary, ModuleDescriptorImpl> = mutableMapOf()
+
+        fun getModuleDescriptor(
+            current: KotlinLibrary,
+            klibFactories: KlibMetadataFactories,
+            storageManager: StorageManager,
+            configuration: CompilerConfiguration,
+        ): ModuleDescriptorImpl {
+            if (current in _descriptors) {
+                return _descriptors.getValue(current)
+            }
+
+            val isBuiltIns = current.unresolvedDependencies.isEmpty()
+
+            val lookupTracker = LookupTracker.DO_NOTHING
+            val md = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                current,
+                configuration.languageVersionSettings,
+                storageManager,
+                runtimeModule?.builtIns,
+                lookupTracker = lookupTracker,
+            )
+            if (isBuiltIns) runtimeModule = md
+
+            _descriptors[current] = md
+
+            return md
+        }
 
         val projectContext = ProjectContext(projectEnvironment.project, "TopDownAnalyzer for JKlib")
         val storageManager = projectContext.storageManager
@@ -249,35 +279,9 @@ class JKlibIrCompilationPhase :
         return dependenciesContext.module
     }
 
-    private var runtimeModule: ModuleDescriptor? = null
-    private val _descriptors: MutableMap<KotlinLibrary, ModuleDescriptorImpl> = mutableMapOf()
 
-    private fun getModuleDescriptor(
-        current: KotlinLibrary,
-        klibFactories: KlibMetadataFactories,
-        storageManager: StorageManager,
-        configuration: CompilerConfiguration,
-    ): ModuleDescriptorImpl {
-        if (current in _descriptors) {
-            return _descriptors.getValue(current)
-        }
 
-        val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
-        val lookupTracker = LookupTracker.DO_NOTHING
-        val md = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
-            current,
-            configuration.languageVersionSettings,
-            storageManager,
-            runtimeModule?.builtIns,
-            lookupTracker = lookupTracker,
-        )
-        if (isBuiltIns) runtimeModule = md
-
-        _descriptors[current] = md
-
-        return md
-    }
 
     private fun loadLibraries(klibFiles: List<String>, collector: MessageCollector): List<KotlinLibrary> {
         val loadingResult = KlibLoader { libraryPaths(klibFiles) }.load()
