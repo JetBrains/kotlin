@@ -501,7 +501,7 @@ object FirExpressionEvaluator {
                 FirOperation.LT_EQ -> intResult <= 0
                 FirOperation.GT -> intResult > 0
                 FirOperation.GT_EQ -> intResult >= 0
-                else -> error("Unsupported comparison operation type \"${comparisonExpression.operation.name}\"")
+                else -> NotConst
             }
             return compareToResult.adjustTypeAndConvertToLiteral(comparisonExpression)
         }
@@ -527,7 +527,7 @@ object FirExpressionEvaluator {
             val result = when (equalityOperatorCall.operation) {
                 FirOperation.EQ -> opr1Value == opr2Value
                 FirOperation.NOT_EQ -> opr1Value != opr2Value
-                else -> error("Operation \"${equalityOperatorCall.operation}\" is not supported in compile time evaluation")
+                else -> NotConst
             }
 
             return result.toConstExpression(ConstantValueKind.Boolean, equalityOperatorCall).wrap()
