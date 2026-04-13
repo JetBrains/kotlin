@@ -351,6 +351,56 @@ This exception was caught by the test infrastructure and reported alongside the 
 
 ---
 
+## Iteration 61: Resolution Performance — Cached Inherited Inner Classes - 2026-04-13
+
+### Root Cause Analysis
+The java-direct performance test (`testMetadata_new_jvm`) showed 2-3x analysis time regression vs the PSI-based `testKotlin_metadata_jvm` (6.0s vs 5.2s total, with analysis time being the main delta). The module under test contains large protobuf-generated Java files.
+
+Profiler data showed `JavaResolutionContext.resolve()` at **850ms total**, dominated by:
+- `resolveInheritedInnerClassToClassId` BFS: **650ms** (walking supertype hierarchies)
+- `collectInheritedInnerClasses` (ambiguity check): **110ms**
+- `resolveNestedClassToClassIdWithoutInheritance`: **540ms** (called from BFS)
+- `CombinedJavaClassFinder.findClass`: **680ms** (tryResolve callbacks from BFS)
+
+Diagnostic counters revealed the root cause:
+- `resolveSimpleNameToClassId` called **17,646 times** per compilation
+- **Every call** triggered `collectInheritedInnerClasses` (no caching) AND the BFS
+- The BFS returned **null 100% of the time** — no inherited inner classes were ever found
+- This generated **2.4M `tryResolve` callbacks** to the FIR symbol provider
+- **505K+ nested resolution calls** inside the BFS, all wasted
+
+The problem: for protobuf classes with hundreds of type references within the same containing class, the supertype hierarchy was walked hundreds of times redundantly, and the BFS was invoked for every simple name even though the name was never an inherited inner class.
+
+### Fix
+**Two coordinated changes:**
+
+1. **`JavaClassFinderOverAstImpl.kt`**: Added `inheritedInnerClassesCache: ConcurrentHashMap<ClassId, Map<String, Set<ClassId>>>` to memoize `collectInheritedInnerClasses`. The result depends only on the source index (immutable after `buildIndex()`), so the cache is safe. Returns immutable snapshot via `mapValues { it.value.toSet() }`.
+
+2. **`JavaResolutionContext.kt`**: Replaced step 2b in `resolveSimpleNameToClassId` to use the cached inherited inner class map for **both** ambiguity detection **and** resolution:
+   - Walks the containing class + all outer classes (matching the BFS scope)
+   - 2+ candidates → ambiguous, return null
+   - 1 candidate → use ClassId directly (verify with `tryResolve`)
+   - 0 candidates → skip BFS entirely for source supertypes; only fall back to BFS when `getSupertypeClassIds` callback is available (for non-source/Kotlin supertypes)
+
+### Counter Results (before/after)
+| Counter | Before | After | Reduction |
+|---------|--------|-------|-----------|
+| `inheritedBfsCalls` | 17,646 | 12 | 99.93% |
+| `resolveNestedWithoutInheritanceCalls` | 505,308 | 24 | 99.995% |
+| `resolveSimpleWithoutInheritanceCalls` | 521,934 | 24 | 99.995% |
+| `tryResolveCalls` | 2,388,676 | 79,416 | 96.7% |
+
+### Test Results
+- Box: 1168/1168, Phased: 1454/1456, Total failing: 2 (no change — same 2 won't-fix)
+- Performance test (`testMetadata_new_jvm`): passes
+
+### Key Learnings
+- `collectInheritedInnerClasses` only covers same-package source supertypes (via `resolveSupertypeReference` which resolves simple same-package refs). For cross-package/non-source supertypes, the BFS with `getSupertypeClassIds` callback is still needed as fallback.
+- The BFS is only invoked when `getSupertypeClassIds != null` AND the cached map has 0 candidates — this covers the rare case of inner classes inherited from Kotlin/binary supertypes.
+- `AtomicLong` counters + JVM shutdown hook writing to a temp file is a reliable diagnostic technique for Gradle test workers (stderr is swallowed, but file output persists).
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown

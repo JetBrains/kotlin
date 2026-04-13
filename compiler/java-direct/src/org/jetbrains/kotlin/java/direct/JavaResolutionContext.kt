@@ -364,22 +364,52 @@ class JavaResolutionContext private constructor(
         // 2b. Inherited inner classes from supertypes (cross-file, e.g., Kotlin classes)
         // JLS 6.5.2: inherited member types are in scope
         //
-        // Before step 2b, check cross-file Java ambiguity via classFinderProvider.
-        // This prevents resolving a transitively-ambiguous inner class.
-        // Example: y extends x, implements i2 where both x and i (via i2) declare inner class Z.
-        // resolveInheritedInnerClassToClassId only checks direct supertypes and would miss i2->i.Z,
-        // incorrectly resolving Z to x.Z instead of detecting the ambiguity.
-        val containingClassForAmbiguity = containingClassProvider?.invoke() as? JavaClassOverAst
-        if (containingClassForAmbiguity != null && classFinderProvider != null) {
-            val fqNameForAmbiguity = containingClassForAmbiguity.fqName
-            if (fqNameForAmbiguity != null) {
-                val containingClassId = fqNameToClassId(fqNameForAmbiguity)
-                val inheritedInners = classFinderProvider.invoke().collectInheritedInnerClasses(containingClassId)
-                val candidates = inheritedInners[simpleName] ?: emptySet()
-                if (candidates.size > 1) return null // Ambiguously inherited – don't resolve
+        // Use the cached collectInheritedInnerClasses map for BOTH ambiguity detection AND
+        // as a fast path for inherited inner class resolution. This replaces the expensive BFS
+        // in resolveInheritedInnerClassToClassId for the common case where the class finder is
+        // available. The cache covers same-package source supertypes; for non-source supertypes
+        // (Kotlin/binary classes), fall back to the BFS with getSupertypeClassIds callback.
+        val containingClassForInherited = containingClassProvider?.invoke() as? JavaClassOverAst
+        if (containingClassForInherited != null && classFinderProvider != null) {
+            val classFinder = classFinderProvider.invoke()
+
+            // Collect inherited inner classes for the containing class and all outer classes,
+            // matching the scope that resolveInheritedInnerClassToClassId would walk.
+            val allCandidates = mutableSetOf<ClassId>()
+            var currentForInherited: JavaClass? = containingClassForInherited
+            while (currentForInherited != null) {
+                val jdClass = currentForInherited as? JavaClassOverAst
+                val fqn = jdClass?.fqName
+                if (fqn != null) {
+                    val cid = fqNameToClassId(fqn)
+                    val inheritedInners = classFinder.collectInheritedInnerClasses(cid)
+                    val candidates = inheritedInners[simpleName] ?: emptySet()
+                    allCandidates.addAll(candidates)
+                }
+                currentForInherited = currentForInherited.outerClass
             }
+
+            when {
+                allCandidates.size > 1 -> return null // Ambiguously inherited – don't resolve
+                allCandidates.size == 1 -> {
+                    val candidateClassId = allCandidates.first()
+                    if (tryResolve(candidateClassId)) return candidateClassId
+                }
+                // allCandidates.isEmpty(): name is not an inherited source-level inner class.
+                // Still need to check non-source supertypes (Kotlin/binary) via BFS Phase 2,
+                // but only if getSupertypeClassIds callback is available.
+                else -> {
+                    if (getSupertypeClassIds != null) {
+                        val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+                        if (inheritedResult != null) return inheritedResult
+                    }
+                }
+            }
+        } else {
+            // No class finder available — use the full BFS as fallback
+            val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+            if (inheritedResult != null) return inheritedResult
         }
-        resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)?.let { return it }
 
         // 3. Same package
         val samePackageClassId = ClassId(packageFqName, Name.identifier(simpleName))

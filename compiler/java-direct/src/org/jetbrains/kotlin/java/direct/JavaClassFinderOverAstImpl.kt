@@ -169,6 +169,9 @@ class JavaClassFinderOverAstImpl(
     // Cache: ClassId -> list of supertype ClassIds (direct only)
     private val supertypeCache: MutableMap<ClassId, List<ClassId>> = ConcurrentHashMap()
 
+    // Cache: ClassId -> Map<simpleName, Set<ClassId>> for inherited inner classes
+    private val inheritedInnerClassesCache: MutableMap<ClassId, Map<String, Set<ClassId>>> = ConcurrentHashMap()
+
     private val debugLogFile: File? = debugLogFilePath?.toFile()
 
     init {
@@ -509,6 +512,8 @@ class JavaClassFinderOverAstImpl(
      * Returns Map<simpleName, Set<ClassId>> to detect ambiguities.
      */
     internal fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> {
+        inheritedInnerClassesCache[classId]?.let { return it }
+
         val result = mutableMapOf<String, MutableSet<ClassId>>()
         val visited = mutableSetOf<ClassId>()
 
@@ -537,7 +542,9 @@ class JavaClassFinderOverAstImpl(
         }
 
         collectRecursive(classId, emptySet())
-        return result
+        val immutableResult: Map<String, Set<ClassId>> = result.mapValues { it.value.toSet() }
+        inheritedInnerClassesCache[classId] = immutableResult
+        return immutableResult
     }
 
     private fun findFilesForClass(classId: ClassId): List<FileEntry> {
