@@ -137,7 +137,7 @@ class KotlinCompilationNpmResolver(
             val importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
                 it.npmRootDir.set(nodeJsRoot.rootPackageDirectory)
                 it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
-                it.packageJson.fileProvider(packageJsonTaskHolder.flatMap { it.packageJson })
+                it.inputDirectory.set(npmProject.dir)
                 it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
                 it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
             }

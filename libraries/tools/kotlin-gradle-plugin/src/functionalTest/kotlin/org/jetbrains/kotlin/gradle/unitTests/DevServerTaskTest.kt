@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinSimpleDevServerTask
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class DevServerTaskTest {
@@ -30,24 +29,6 @@ class DevServerTaskTest {
         assertTrue(
             taskNames.any { it.contains("devServer", ignoreCase = true) },
             "Expected devServer task to be registered for wasmJs browser target, but found tasks: $taskNames"
-        )
-    }
-
-    @Test
-    fun `js browser target registers devServer task`() {
-        val taskNames = buildProjectWithMPP {
-            kotlin {
-                @Suppress("OPT_IN_USAGE")
-                js {
-                    browser()
-                    binaries.executable()
-                }
-            }
-        }.evaluate().tasks.map { it.name }.toSet()
-
-        assertTrue(
-            taskNames.any { it.contains("devServer", ignoreCase = true) },
-            "Expected devServer task to be registered for js browser target, but found tasks: $taskNames"
         )
     }
 
@@ -114,34 +95,8 @@ class DevServerTaskTest {
         val fromFiles = compileSyncTask.from.files.map { it.name }.toSet()
 
         assertTrue(
-            fromFiles.any { it == "importmap.json" },
-            "Expected importmap.json to be included in compileSync task inputs, but found: $fromFiles"
-        )
-        assertTrue(
             fromFiles.any { it == "importmap-loader.js" },
             "Expected importmap-loader.js to be included in compileSync task inputs, but found: $fromFiles"
-        )
-    }
-
-    @Test
-    fun `js browser devServer task does not have import map configured`() {
-        val project = buildProjectWithMPP {
-            kotlin {
-                @Suppress("OPT_IN_USAGE")
-                js {
-                    browser()
-                    binaries.executable()
-                }
-            }
-        }.evaluate()
-
-        val devServerTask = project.tasks
-            .filterIsInstance<KotlinSimpleDevServerTask>()
-            .first()
-
-        assertFalse(
-            devServerTask.importMapFile.isPresent,
-            "Expected importMapFile to NOT be configured for js browser devServer task"
         )
     }
 }

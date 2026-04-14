@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.nio.file.LinkOption
+import java.nio.file.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 
 @DisableCachingByDefault
 abstract class KotlinImportMapGenerateTask : DefaultTask() {
@@ -25,8 +29,8 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val installArtifacts: ConfigurableFileCollection
 
-    @get:InputFile
-    abstract val packageJson: RegularFileProperty
+    @get:InputDirectory
+    abstract val inputDirectory: DirectoryProperty
 
     @get:Internal
     abstract val npmRootDir: DirectoryProperty
@@ -41,21 +45,18 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     fun generate() {
         val importMap = mutableMapOf<String, String>()
 
-        val packageJsonFile = packageJson.getFile()
-        val inputDirectory = packageJsonFile.parentFile
+        val npmRootDirFile = npmRootDir.getFile()
+        val nodeModulesDir = npmRootDirFile.resolve(NODE_MODULES)
 
         val modules = NpmProjectModules(
-            inputDirectory,
+            inputDirectory.getFile(),
             packageJsonEntries = listOf("module", "main"),
             indexFileSuffixes = listOf(JS_SUFFIX, ".mjs")
         )
 
-        val packageJsonContent = packageJsonFile.readText()
-        val packageJsonObject = JsonParser.parseString(packageJsonContent).asJsonObject
-        val dependencies = packageJsonObject.getAsJsonObject("dependencies") ?: JsonObject()
-
-        dependencies.keySet().forEach { moduleName ->
-            importMap[moduleName] = modulePath(modules, moduleName)
+        collectModuleNames(nodeModulesDir.toPath()).forEach { moduleName ->
+            val resolvedPath = modulePath(modules, moduleName)
+            importMap[moduleName] = resolvedPath
         }
 
         val result = mapOf("imports" to importMap)
@@ -71,6 +72,25 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
             |document.currentScript.after(script);
             """.trimMargin()
         )
+    }
+
+    private fun collectModuleNames(nodeModulesDir: Path): List<String> {
+        if (!nodeModulesDir.isDirectory()) return emptyList()
+
+        return nodeModulesDir.listDirectoryEntries()
+            // no follow symlinks because in node_modules we have installed workspaces, we don't need to resolve them
+            .filter { it.isDirectory(LinkOption.NOFOLLOW_LINKS) }
+            .flatMap { entry ->
+                if (entry.name.startsWith("@")) {
+                    if (entry.name.startsWith("@types")) return@flatMap emptyList()
+
+                    entry.listDirectoryEntries()
+                        .filter { it.isDirectory() }
+                        .map { "${entry.name}/${it.name}" }
+                } else {
+                    listOf(entry.name)
+                }
+            }
     }
 
     private fun modulePath(
