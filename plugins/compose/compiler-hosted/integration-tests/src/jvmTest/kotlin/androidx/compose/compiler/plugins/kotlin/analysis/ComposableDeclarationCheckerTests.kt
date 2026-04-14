@@ -31,9 +31,9 @@ class ComposableDeclarationCheckerTests(
         @JvmStatic
         @Parameterized.Parameters(name = "lv = {0}")
         fun parameters() = arrayOf(
-            LanguageVersion.KOTLIN_1_9,
             LanguageVersion.KOTLIN_2_0,
             LanguageVersion.KOTLIN_2_1,
+            LanguageVersion.KOTLIN_2_2,
             LanguageVersion.LATEST_STABLE
         )
     }
