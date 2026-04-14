@@ -56,7 +56,7 @@ public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Opt
             }
         }
     }
-    val _result = run { kotlinx.coroutines.flow.FlowCollector(__function) }
+    val _result = run { kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>(__function) }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

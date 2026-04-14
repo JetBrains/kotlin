@@ -37,6 +37,8 @@ void * _Nullable Producer_produce(void * self);
 
 NSString * StringProducer_produce(void * self);
 
+void * __root___A();
+
 void * __root___AnyConsumer_init_allocate();
 
 _Bool __root___AnyConsumer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

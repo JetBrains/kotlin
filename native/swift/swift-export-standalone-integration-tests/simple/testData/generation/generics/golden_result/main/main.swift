@@ -294,6 +294,9 @@ public final class TripleBox: main.Box {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
+public func a() -> any main.A {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___A()) as! any main.A
+}
 public func bar(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
     param2: (any KotlinRuntimeSupport._KotlinBridgeable)?
