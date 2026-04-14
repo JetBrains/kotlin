@@ -9,8 +9,9 @@ import kotlin.coroutines.Continuation
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
+// Is replaced by Stack Switching implementation when -Xwasm-coroutines-stack-switching passed
 @PublishedApi
 @DoNotInlineOnFirstStage
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnStateMachine(block: (Continuation<T>) -> Any?): T =
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
