@@ -2,6 +2,8 @@
 // Not a real LL divergence, it's just tiered runners reporting errors from `BACKEND`
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: BACKEND
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+// More context at line 60
 // MODULE: m1-common
 // FILE: common.kt
 annotation class Ann<T>
@@ -57,6 +59,7 @@ annotation class NestedWithSameTypeArgument<T>(
 )
 
 @NestedWithSameTypeArgument<A>(
+    // Compiler infers out-of-scope NestedWithSameTypeArgument.<T> instead of <A> for vararg of this constructor call.
     NestedWithSameTypeArgument()
 )
 expect fun explicitVsInfered()
