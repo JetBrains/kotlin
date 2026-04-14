@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
@@ -194,6 +192,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         projectPathContribution = projectPath,
                     )
 
+                    val sharedCheckoutDir = provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier)
+
                     val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
                         identifier = packageResolvedSynchronizationIdentifier,
                         aggregationService = aggregationService,
@@ -202,6 +202,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
                         identifier = packageResolvedSynchronizationIdentifier,
                         aggregationService = aggregationService,
+                        checkOutDir = sharedCheckoutDir,
                         actualGeneratedClaimer = actualGeneratedClaimer,
                         isMacOSHost = isMacOSHost,
                     )
@@ -479,6 +480,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
 private fun Project.locateOrRegisterUmbrellaFetchTask(
     identifier: String,
     aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
+    checkOutDir : Provider<Directory>,
     actualGeneratedClaimer: String?,
     isMacOSHost: Boolean,
 ): String? {
@@ -495,11 +497,15 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
     if (!isFetchClaimed) return actualFetchClaimer
 
     val aggregatedTransitiveDependencies = getAggregatedTransitiveDependenciesProvider()
+
+
     locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
         it.syntheticImportProjectRoot.set(provideIdentifierPackageRoot(identifier))
         it.dependsOn(actualGeneratedClaimer)
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
+        it.swiftPMDependenciesCheckout.set(checkOutDir)
+        it.gitIgnoreCheckoutDir.set(true)
     }
 
     return actualFetchClaimer
@@ -813,12 +819,20 @@ private fun Project.providePersistedPackageResolved(): RegularFile {
     }
 }
 
-private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
+private fun Project.providerIdentifierRoot(identifier: String): Provider<Directory> =
     layout.dir(
         provider {
-            rootDirFile().resolve(".swiftpm-locks/$identifier/swiftImport")
+            rootDirFile().resolve(".swiftpm-locks/$identifier")
         }
     )
+
+private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
+    providerIdentifierRoot(identifier).map { it.dir("swiftImport") }
+
+private fun Project.provideIdentifierCheckoutDir(identifier: String) : Provider<Directory> {
+    return providerIdentifierRoot(identifier).map { it.dir("swiftPMCheckout") }
+}
+
 
 internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeModel> =
     project.hasDirectOrTransitiveSwiftPMDependencies().map { hasDirectOrTransitiveSwiftPMDependencies ->
