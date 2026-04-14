@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.*
 
@@ -53,9 +52,7 @@ class FirCallableReferenceLhsResolver(
             return null
         }
 
-        val resultForType = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsType) { expression ->
-            resolveTypeOnLHS(expression)
-        }
+        val resultForType = doubleColonExpression.explicitReceiver?.let { resolveTypeOnLHS(it) }
 
         return resultForType?.takeUnless {
             // If we skipped an object expression result before and the type result is the same, this means that
@@ -78,27 +75,9 @@ class FirCallableReferenceLhsResolver(
         }
     }
 
-    private fun FirExpression.canBeConsideredProperType(): Boolean {
-        return when {
-            this is FirFunctionCall &&
-                    explicitReceiver?.canBeConsideredProperType() != false -> false
-            this is FirQualifiedAccessExpression &&
-                    explicitReceiver?.canBeConsideredProperType() != false &&
-                    calleeReference is FirNamedReference -> true
-            this is FirResolvedQualifier -> true
-            this is FirSmartCastExpression -> originalExpression.canBeConsideredProperType()
-            else -> false
-        }
-    }
-
     private fun shouldTryResolveLHSAsExpression(expression: FirCallableReferenceAccess): Boolean {
         val lhs = expression.explicitReceiver ?: return false
         return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarkAtLHS
-    }
-
-    private fun shouldTryResolveLHSAsType(expression: FirCallableReferenceAccess): Boolean {
-        val lhs = expression.explicitReceiver
-        return lhs != null && lhs.canBeConsideredProperType()
     }
 
     /**
