@@ -198,7 +198,7 @@ private class JvmCompilationOperationV1Adapter private constructor(
             compilationService,
             sources,
             destinationDirectory,
-            JvmCompilerArgumentsImpl().also { it.applyArgumentStrings(compilerArguments.toArgumentStrings()) })
+            compilerArguments.deepCopy())
     }
 
     override fun snapshotBasedIcConfigurationBuilder(
