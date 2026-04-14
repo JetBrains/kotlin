@@ -17,8 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformTests(useFir) {
@@ -398,24 +396,7 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
     }
 
     @Test
-    fun testBasicTransformConstantFoldingK1() {
-        // K1 does not constant fold.
-        assumeFalse(useFir)
-        assertTransform(
-            """
-            """,
-            """
-                fun A() {
-                    print(3 + 4)
-                }
-            """
-        )
-    }
-
-    @Test
     fun testBasicTransformConstantFoldingK2() {
-        // K2 constant folds.
-        assumeTrue(useFir)
         assertTransform(
             """
             """,

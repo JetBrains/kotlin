@@ -425,7 +425,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
 
     @Test
     fun testAbstractDefaultParamOnInterface() {
-        assumeTrue(useFir)
         defaultParams(
             unchecked = """""",
             checked = """
@@ -529,7 +528,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
 
     @Test
     fun testAbstractDefaultParamOverrideExtensionReceiver() {
-        assumeTrue(useFir)
         defaultParams(
             unchecked = "",
             checked = """
@@ -598,7 +596,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
 
     @Test
     fun testAbstractDefaultParamComposableLambda() {
-        assumeTrue(useFir)
         defaultParams(
             unchecked = """
             @Composable fun Text(value: String) {}
@@ -682,7 +679,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
 
     @Test
     fun callingOtherMethodWithDefault() {
-        assumeTrue(useFir)
         defaultParams(
             unchecked = "",
             checked = """

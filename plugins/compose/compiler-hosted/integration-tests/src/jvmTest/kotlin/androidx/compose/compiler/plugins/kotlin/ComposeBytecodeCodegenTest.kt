@@ -17,8 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.testFederation.SmokeTest
-import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.experimental.categories.Category
 import kotlin.test.assertEquals
@@ -357,25 +355,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     }
 
     @Test
-    fun testLambdaWithArgs() {
-        // FIR does not support named lambda arguments
-        // We will deprecate this in Compose, see b/281677454
-        assumeFalse(useFir)
-        testCompile(
-            """
-        import androidx.compose.runtime.*
-
-        class Test(var content: @Composable (x: Int) -> Unit) {
-            @Composable
-            operator fun invoke() {
-                content(x=123)
-            }
-        }
-        """
-        )
-    }
-
-    @Test
     fun testLocalMethod() {
         testCompile(
             """
@@ -629,7 +608,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun testDefaultParametersInAbstractFunctions() {
-        assumeTrue(useFir)
         validateBytecode(
             """
             import androidx.compose.runtime.*
@@ -660,7 +638,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun testDefaultParametersInOpenFunctions() {
-        assumeTrue(useFir)
         validateBytecode(
             """
             import androidx.compose.runtime.*
@@ -980,7 +957,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun testFunctionReferenceInline() {
-        assumeTrue(useFir)
         validateBytecode(
             """
                 import androidx.compose.runtime.*
@@ -1010,7 +986,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun testFunctionReferenceInlineAdapted() {
-        assumeTrue(useFir)
         validateBytecode(
             """
                 import androidx.compose.runtime.*
@@ -1040,7 +1015,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun testNonRestartableFunctionReference() {
-        assumeTrue(useFir)
         testCompile(
             """
                 import androidx.compose.runtime.*
@@ -1159,7 +1133,6 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
 
     @Test
     fun composableLambdaAsTheFunctionReferenceOwner() {
-        assumeTrue(useFir)
         validateBytecode(
             """
                 import androidx.compose.runtime.Composable

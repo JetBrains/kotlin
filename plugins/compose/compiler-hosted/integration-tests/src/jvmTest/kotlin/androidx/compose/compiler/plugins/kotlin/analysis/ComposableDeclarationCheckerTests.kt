@@ -18,8 +18,6 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import org.jetbrains.kotlin.config.*
-import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runners.Parameterized
 
@@ -55,38 +53,7 @@ class ComposableDeclarationCheckerTests(
     }
 
     @Test
-    fun testComposableFunctionReferencesK1() {
-        assumeFalse(useFir)
-        check(
-            """
-                import androidx.compose.runtime.Composable
-    
-                @Composable fun A() {}
-                
-                val aCallable: () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-                val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>
-                val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
-                
-                fun doSomething(fn: () -> Unit) { print(fn) }
-                
-                @Composable fun B(content: @Composable () -> Unit) {
-                    content()
-                    doSomething(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
-                    doSomething(aCallable)
-                    doSomething(<!TYPE_MISMATCH!>bCallable<!>)
-                    doSomething(cCallable)
-                    B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
-                    B(<!TYPE_MISMATCH!>aCallable<!>)
-                    B(bCallable)
-                    B(<!TYPE_MISMATCH!>cCallable<!>)
-                }
-            """
-        )
-    }
-
-    @Test
     fun testComposableFunctionReferencesK2() {
-        assumeTrue(useFir)
         check(
             """
                 import androidx.compose.runtime.Composable
@@ -115,39 +82,7 @@ class ComposableDeclarationCheckerTests(
     }
 
     @Test
-    fun testNonComposableFunctionReferencesK1() {
-        assumeFalse(useFir)
-        check(
-            """
-            
-            import androidx.compose.runtime.Composable
-
-            fun A() {}
-                
-            val aCallable: () -> Unit = ::A
-            val bCallable: @Composable () -> Unit = <!TYPE_MISMATCH!>::A<!>
-            val cCallable = ::A
-            
-            fun doSomething(fn: () -> Unit) { print(fn) }
-            
-            @Composable fun B(content: @Composable () -> Unit) {
-                content()
-                doSomething(::A)
-                doSomething(aCallable)
-                doSomething(<!TYPE_MISMATCH!>bCallable<!>)
-                doSomething(cCallable)
-                B(<!TYPE_MISMATCH!>::A<!>)
-                B(<!TYPE_MISMATCH!>aCallable<!>)
-                B(bCallable)
-                B(<!TYPE_MISMATCH!>cCallable<!>)
-            }
-        """
-        )
-    }
-
-    @Test
     fun testNonComposableFunctionReferencesK2() {
-        assumeTrue(useFir)
         check(
             """
             import androidx.compose.runtime.Composable

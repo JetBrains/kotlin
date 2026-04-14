@@ -5,17 +5,9 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Test
 
 class FunctionReferenceTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
-
-    @Before
-    fun setUp() {
-        assumeTrue(useFir)
-    }
-
     @Test
     fun reference() = verifyGoldenComposeIrTransform(
         extra = """

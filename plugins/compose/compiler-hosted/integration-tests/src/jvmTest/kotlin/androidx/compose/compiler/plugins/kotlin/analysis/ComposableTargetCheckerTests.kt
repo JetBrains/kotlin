@@ -499,7 +499,6 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
 
     @Test
     fun testDifferentWrapperTypes() {
-        assumeTrue(useFir)
         check(
             """
             import androidx.compose.runtime.*

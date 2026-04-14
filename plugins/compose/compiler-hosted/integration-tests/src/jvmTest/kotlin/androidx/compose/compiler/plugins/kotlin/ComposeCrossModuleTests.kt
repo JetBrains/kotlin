@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -1227,7 +1226,6 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun defaultParametersInFakeOverrideOpenComposableFunctions() {
-        assumeTrue(useFir)
         compile(
             mapOf(
                 "Base" to mapOf(
@@ -1283,7 +1281,6 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     // regression test for https://issuetracker.google.com/issues/461766771
     @Test
     fun testLegacyOpenFunctionWithDefaultFalsePositives() {
-        assumeTrue(useFir)
         compile(
             mapOf(
                 "Base" to mapOf(
@@ -1458,7 +1455,6 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     // Regression test for b/397855145
     @Test
     fun testB397855145() {
-        assumeTrue(useFir)
         compile(
             mapOf(
                 "lib" to mapOf(
@@ -1506,7 +1502,6 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
 
     @Test
     fun testOpenProtected() {
-        assumeTrue(useFir)
         compile(
             mapOf(
                 "lib" to mapOf(

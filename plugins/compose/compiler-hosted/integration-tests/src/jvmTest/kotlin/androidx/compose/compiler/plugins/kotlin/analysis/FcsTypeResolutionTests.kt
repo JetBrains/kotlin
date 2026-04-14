@@ -199,41 +199,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
     )
 
     @Test
-    fun testMissingAttributes() {
-        // Fails on K2 because of KT-57471. We cannot have named composable lambda arguments
-        // until the upstream bug is fixed.
-        assumeFalse(useFir)
-        check(
-            """
-                import androidx.compose.runtime.*
-
-                data class Foo(val value: Int)
-
-                @Composable fun A(x: Foo) { println(x) }
-
-                // NOTE: It's important that the diagnostic be only over the call target, and not the
-                // entire element so that a single error doesn't end up making a huge part of an
-                // otherwise correct file "red".
-                @Composable fun Test(F: @Composable (x: Foo) -> Unit) {
-                    // NOTE: constructor attributes and fn params get a "missing parameter" diagnostic
-                    A<!NO_VALUE_FOR_PARAMETER!>()<!>
-
-                    // local
-                    F<!NO_VALUE_FOR_PARAMETER!>()<!>
-
-                    val x = Foo(123)
-
-                A(x)
-                F(x)
-                A(x=x)
-                F(<!NAMED_ARGUMENTS_NOT_ALLOWED!>x<!>=x)
-            }
-
-            """.trimIndent()
-        )
-    }
-
-    @Test
     fun testDuplicateAttributes() = check(
         """
             import androidx.compose.runtime.*
