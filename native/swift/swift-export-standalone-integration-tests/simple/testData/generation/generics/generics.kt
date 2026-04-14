@@ -108,6 +108,10 @@ fun takeBoxUpperBoundClosure(box: () -> Box<Any?>): Unit = TODO()
 
 fun produceBox(box: (Box<String>) -> Unit): Unit = TODO() // unsupported input generic
 
+fun produceExtBox(box: Box<String>.() -> Unit): Unit = TODO() // unsupported input generic
+
+fun produceCtxBox(box: context(Box<String>) () -> Unit): Unit = TODO() // unsupported input generic
+
 fun produceBoxUpperBound(box: (Box<Any?>) -> Unit): Unit = TODO()
 
 typealias BFun = (B<*>) -> Unit
