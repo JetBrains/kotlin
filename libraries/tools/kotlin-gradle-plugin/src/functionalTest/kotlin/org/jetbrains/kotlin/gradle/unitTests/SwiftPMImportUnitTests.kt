@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.AddPathsToGitInfoExclude
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPackageDependencyInputFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResol
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.swiftPMDependenciesForLockFilesResolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import java.nio.file.Files
@@ -36,9 +39,11 @@ import org.junit.jupiter.api.assertThrows
 import java.io.FileNotFoundException
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
+import kotlin.test.assertTrue
 
 class SwiftPMImportUnitTests {
 
@@ -636,6 +641,103 @@ class SwiftPMImportUnitTests {
         assertDoesNotThrow {
             umbrellaTask.taskDependencies.getDependencies(umbrellaTask)
         }
+    }
+
+    @Test
+    fun `test addPathsToGitInfoExclude is registered with correct configuration`() {
+        val identifier = "common"
+        val project = swiftPMImportProject(
+            swiftPMDependencies = { layout ->
+                packageResolvedSynchronization = identifier(identifier)
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("my-custom-pkg"),
+                    products = listOf("ManifestPackage"),
+                )
+            }
+        ).evaluate()
+
+        val fetchTask = project.tasks.findByName(
+            FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)
+        )
+        val addPathsTask = project.tasks.findByName(
+            AddPathsToGitInfoExclude.addPathsToGitInfoExcludeTaskName(
+                lowerCamelCaseName(
+                    "umbrellaCheckoutDirFor",
+                    identifier
+                )
+            )
+        )
+
+        assertNotNull(fetchTask, "Umbrella fetch task should be registered")
+        assertNotNull(addPathsTask, "AddPathsToGitInfoExclude task should be registered")
+        assertIs<AddPathsToGitInfoExclude>(addPathsTask)
+
+        assertTrue(
+            fetchTask.finalizedBy.getDependencies(fetchTask).contains(addPathsTask),
+            "Expected $fetchTask to be finalized by $addPathsTask"
+
+        )
+
+        assertEquals(
+            project.rootProject.projectDir.resolve(".git/info/exclude"),
+            addPathsTask.excludeFile.get().asFile,
+            "excludeFile should default to root .git/info/exclude"
+        )
+
+        assertTrue(
+            addPathsTask.paths.files.contains(
+                project.rootProject.layout.projectDirectory.dir(".swiftpm-locks/$identifier/swiftPMCheckout").asFile
+            ),
+            "paths should contain the umbrella checkout dir"
+        )
+    }
+
+    @Test
+    fun `test addPathsToGitInfoExclude is registered separately per identifier with isolated paths`() {
+        val fuzzIdentifier = "fuzzLock"
+        val buzzIdentifier = "buzzLock"
+        val rootProject = buildProject { configureRepositoriesForTests() }
+
+        val fuzzProject = swiftPMImportProject(
+            projectBuilder = { withParent(rootProject); withName("fuzz") },
+            swiftPMDependencies = { layout ->
+                packageResolvedSynchronization = identifier(fuzzIdentifier)
+                localSwiftPackage(directory = layout.projectDirectory.dir("fuzz-pkg"), products = listOf("FuzzPackage"))
+            }
+        ).evaluate()
+
+        val buzzProject = swiftPMImportProject(
+            projectBuilder = { withParent(rootProject); withName("buzz") },
+            swiftPMDependencies = { layout ->
+                packageResolvedSynchronization = identifier(buzzIdentifier)
+                localSwiftPackage(directory = layout.projectDirectory.dir("buzz-pkg"), products = listOf("BuzzPackage"))
+            }
+        ).evaluate()
+
+        val fuzzAddPathsTask = fuzzProject.tasks.findByName(
+            AddPathsToGitInfoExclude.addPathsToGitInfoExcludeTaskName(lowerCamelCaseName(
+                    "umbrellaCheckoutDirFor",
+                    fuzzIdentifier)
+            )
+        )
+        val buzzAddPathsTask = buzzProject.tasks.findByName(
+            AddPathsToGitInfoExclude.addPathsToGitInfoExcludeTaskName(lowerCamelCaseName(
+                    "umbrellaCheckoutDirFor",
+                    buzzIdentifier)
+            )
+        )
+
+        assertNotNull(fuzzAddPathsTask)
+        assertNotNull(buzzAddPathsTask)
+        assertIs<AddPathsToGitInfoExclude>(fuzzAddPathsTask)
+        assertIs<AddPathsToGitInfoExclude>(buzzAddPathsTask)
+        assertNotSame(fuzzAddPathsTask, buzzAddPathsTask, "Each identifier must have its own task instance")
+
+        val fuzzCheckoutDir = rootProject.layout.projectDirectory.dir(".swiftpm-locks/$fuzzIdentifier/swiftPMCheckout").asFile
+        val buzzCheckoutDir = rootProject.layout.projectDirectory.dir(".swiftpm-locks/$buzzIdentifier/swiftPMCheckout").asFile
+
+        assertEquals(setOf(fuzzCheckoutDir), fuzzAddPathsTask.paths.files, "Fuzz task should only contain fuzz checkout dir")
+        assertEquals(setOf(buzzCheckoutDir), buzzAddPathsTask.paths.files, "Buzz task should only contain buzz checkout dir")
     }
 }
 

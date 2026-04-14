@@ -194,6 +194,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         projectPathContribution = projectPath,
                     )
 
+                    val sharedCheckoutDir = provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier)
+
                     val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
                         identifier = packageResolvedSynchronizationIdentifier,
                         aggregationService = aggregationService,
@@ -202,6 +204,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
                         identifier = packageResolvedSynchronizationIdentifier,
                         aggregationService = aggregationService,
+                        checkOutDir = sharedCheckoutDir,
                         actualGeneratedClaimer = actualGeneratedClaimer,
                         isMacOSHost = isMacOSHost,
                     )
@@ -212,6 +215,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                             persistedPackageResolved.asFile.exists()
                         }
                     }
+                }
+                fetchSyntheticImportProjectPackages.configure {
+                    it.swiftPMDependenciesCheckout.set(provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier))
                 }
             }
             // If none, after resolution in synthetic we sync back to persisted location.
@@ -414,7 +420,7 @@ private fun Project.getKonanTargetsForUmbrellaPackageProvider(): Provider<Set<Ko
             .toSet()
     }
 
-
+//        ./gradlew install -PdeployVersion=2.4.255-berkay-1
 private fun Project.getAggregatedTransitiveDependenciesProvider(): Provider<TransitiveSwiftPMDependencies> =
     getIdentifierLockFilesMetadataProvider().map { lockFilesMetadata ->
         val merged = linkedMapOf<SwiftPMDependencyIdentifier, SwiftPMImportMetadata>()
@@ -479,6 +485,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
 private fun Project.locateOrRegisterUmbrellaFetchTask(
     identifier: String,
     aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
+    checkOutDir : Provider<Directory>,
     actualGeneratedClaimer: String?,
     isMacOSHost: Boolean,
 ): String? {
@@ -495,11 +502,30 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
     if (!isFetchClaimed) return actualFetchClaimer
 
     val aggregatedTransitiveDependencies = getAggregatedTransitiveDependenciesProvider()
-    locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
+
+    val addPathsToGitInfoExclude = locateOrRegisterTask<AddPathsToGitInfoExclude>(
+        AddPathsToGitInfoExclude.addPathsToGitInfoExcludeTaskName(lowerCamelCaseName(
+                "umbrellaCheckoutDirFor",
+                identifier
+            ))
+    ){
+        it.rootDirectory.set(rootProject.layout.projectDirectory)
+    }
+
+    val sharedUmbrellaFetchTask = locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
         it.syntheticImportProjectRoot.set(provideIdentifierPackageRoot(identifier))
         it.dependsOn(actualGeneratedClaimer)
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
+        it.swiftPMDependenciesCheckout.set(checkOutDir)
+        it.finalizedBy(addPathsToGitInfoExclude)
+    }
+
+    addPathsToGitInfoExclude.configure {
+        taskProvider ->
+        taskProvider.paths.from(
+            sharedUmbrellaFetchTask.map { it.swiftPMDependenciesCheckout }
+        )
     }
 
     return actualFetchClaimer
@@ -813,12 +839,20 @@ private fun Project.providePersistedPackageResolved(): RegularFile {
     }
 }
 
-private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
+private fun Project.providerIdentifierRoot(identifier: String): Provider<Directory> =
     layout.dir(
         provider {
-            rootDirFile().resolve(".swiftpm-locks/$identifier/swiftImport")
+            rootDirFile().resolve(".swiftpm-locks/$identifier")
         }
     )
+
+private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
+    providerIdentifierRoot(identifier).map { it.dir("swiftImport") }
+
+private fun Project.provideIdentifierCheckoutDir(identifier: String) : Provider<Directory> {
+    return providerIdentifierRoot(identifier).map { it.dir("swiftPMCheckout") }
+}
+
 
 internal fun Project.swiftPMImportIdeModelProvider(): Provider<SwiftPMImportIdeModel> =
     project.hasDirectOrTransitiveSwiftPMDependencies().map { hasDirectOrTransitiveSwiftPMDependencies ->

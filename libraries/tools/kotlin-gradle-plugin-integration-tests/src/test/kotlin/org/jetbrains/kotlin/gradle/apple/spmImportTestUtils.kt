@@ -432,15 +432,10 @@ internal fun TestProject.initSwiftPmProject(
         project.tasks
             .withType(FetchSyntheticImportProjectPackages::class.java)
             .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
                 task.additionalSwiftPackageResolveArgs.set(
                     listOf(
                         "--resolver-fingerprint-checking", "warn",
+                        "--cache-path", cacheDirFile.path,
                     )
                 )
             }
@@ -534,6 +529,19 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     assertEquals(
         gitCheckoutTag, version, "Project directory Package.resolved should still have the same version as the tag"
     )
+}
+
+internal fun assertGitExcludeContains(
+    gitExclude: Path,
+    vararg paths : String
+) {
+    val lines = gitExclude.toFile().readLines().map(String::trim)
+    paths.forEach { path ->
+        assertTrue(
+            lines.contains(path),
+            "Expected '$path' to be present in git exclude file at $gitExclude"
+        )
+    }
 }
 
 
