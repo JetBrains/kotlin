@@ -165,7 +165,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             parents += qualifiedAccessExpressionBuilder
             defaultNull("explicitReceiver")
             defaultNoReceivers()
-            defaultFalse("hasQuestionMarkAtLHS")
+            defaultFalse("hasQuestionMarkAtLhs")
         }
 
         builder(componentCall) {
@@ -435,13 +435,13 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultFalse("isNullableLhsForCallableReference", "isFullyQualified", "canBeValue")
             defaultNull("resolvedSymbolOrigin")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultFalse("isNullableLhsForCallableReference", "isFullyQualified", "canBeValue")
             defaultNull("resolvedSymbolOrigin")
         }
 

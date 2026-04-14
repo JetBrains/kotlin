@@ -616,7 +616,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertCallableReferenceExpression(callableReferenceExpression: LighterASTNode): FirCallableReferenceAccess {
         var isReceiver = true
-        var hasQuestionMarkAtLHS = false
+        var hasQuestionMarkAtLhs = false
         var firReceiverExpression: FirExpression? = null
         lateinit var namedReference: FirNamedReference
         var errorArgumentListNode: LighterASTNode? = null
@@ -625,7 +625,7 @@ class LightTreeRawFirExpressionBuilder(
             if (child == null) break
             when (child.tokenType) {
                 COLONCOLON -> isReceiver = false
-                QUEST -> hasQuestionMarkAtLHS = true
+                QUEST -> hasQuestionMarkAtLhs = true
 
                 // In invalid code like `::foo(args)`, the argument list is parsed
                 // inside an ERROR_ELEMENT child of the callable reference expression
@@ -652,7 +652,7 @@ class LightTreeRawFirExpressionBuilder(
             source = callableReferenceExpression.toFirSourceElement()
             calleeReference = namedReference
             explicitReceiver = firReceiverExpression
-            this.hasQuestionMarkAtLHS = hasQuestionMarkAtLHS
+            this.hasQuestionMarkAtLhs = hasQuestionMarkAtLhs
             errorArgumentListNode?.let {
                 errorArgumentList = buildArgumentList {
                     source = it.toFirSourceElement()

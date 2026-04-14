@@ -398,7 +398,7 @@ internal object ArgumentCheckingProcessor {
 
     private fun ArgumentContext.preprocessCallableReference(atom: ConeResolutionAtomWithPostponedChild) {
         val expression = atom.callableReferenceExpression
-        val lhs = context.bodyResolveComponents.callableReferenceLhsResolver.resolveDoubleColonLHS(expression)
+        val lhs = context.bodyResolveComponents.callableReferenceLhsResolver.resolveDoubleColonLhs(expression)
         val postponedAtom = ConeResolvedCallableReferenceAtom(
             expression, expectedType, lhs, context.session,
             anonymousFunctionIfReturnExpression,

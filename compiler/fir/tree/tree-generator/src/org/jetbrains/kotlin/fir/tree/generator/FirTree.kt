@@ -1204,7 +1204,7 @@ object FirTree : AbstractFirTreeBuilder() {
         parent(qualifiedAccessExpression)
 
         +field("calleeReference", namedReference, withReplace = true, withTransform = true)
-        +field("hasQuestionMarkAtLHS", boolean, withReplace = true)
+        +field("hasQuestionMarkAtLhs", boolean, withReplace = true)
         +field("errorArgumentList", argumentList, nullable = true, withReplace = true, withTransform = true) {
             kDoc = """
                 The erroneous argument list that may be present after the callable reference.
@@ -1342,8 +1342,8 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("classId", classIdType, nullable = true)
         +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
         +field("explicitParent", resolvedQualifier, nullable = true)
-        +field("isNullableLHSForCallableReference", boolean, withReplace = true)
-        +field("resolvedLHSTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
+        +field("isNullableLhsForCallableReference", boolean, withReplace = true)
+        +field("resolvedLhsTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
         +field("resolvedToCompanionObject", boolean, withReplace = true)
         +field("canBeValue", boolean, withReplace = true) {
             kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."

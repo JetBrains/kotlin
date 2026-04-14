@@ -230,7 +230,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         elvisExpression.transformLhs(
             transformer,
             // should be` expectedType.makeNullable()` or ResolutionMode.ContextDependent since LV >= 2.1
-            computeResolutionModeForElvisLHS(data)
+            computeResolutionModeForElvisLhs(data)
         )
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
 
@@ -297,7 +297,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     private fun ConeInferenceContext.isFlexibleWithNotNullable(rhsResolvedType: ConeKotlinType): Boolean =
         rhsResolvedType is ConeFlexibleType && !rhsResolvedType.lowerBound.isNullableType()
 
-    private fun computeResolutionModeForElvisLHS(
+    private fun computeResolutionModeForElvisLhs(
         data: ResolutionMode,
     ): ResolutionMode {
         val expectedType = data.expectedType

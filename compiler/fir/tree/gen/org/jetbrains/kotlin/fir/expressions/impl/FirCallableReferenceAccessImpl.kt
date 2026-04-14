@@ -37,7 +37,7 @@ internal class FirCallableReferenceAccessImpl(
     override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var calleeReference: FirNamedReference,
-    override var hasQuestionMarkAtLHS: Boolean,
+    override var hasQuestionMarkAtLhs: Boolean,
     override var errorArgumentList: FirArgumentList?,
 ) : FirCallableReferenceAccess() {
 
@@ -148,8 +148,8 @@ internal class FirCallableReferenceAccessImpl(
         replaceCalleeReference(newCalleeReference)
     }
 
-    override fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean) {
-        hasQuestionMarkAtLHS = newHasQuestionMarkAtLHS
+    override fun replaceHasQuestionMarkAtLhs(newHasQuestionMarkAtLhs: Boolean) {
+        hasQuestionMarkAtLhs = newHasQuestionMarkAtLhs
     }
 
     override fun replaceErrorArgumentList(newErrorArgumentList: FirArgumentList?) {

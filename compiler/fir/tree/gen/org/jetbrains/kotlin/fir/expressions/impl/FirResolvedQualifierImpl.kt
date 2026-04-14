@@ -42,8 +42,8 @@ internal class FirResolvedQualifierImpl(
     override var relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var explicitParent: FirResolvedQualifier?,
-    override var isNullableLHSForCallableReference: Boolean,
-    override var resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?,
+    override var isNullableLhsForCallableReference: Boolean,
+    override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?,
     override var resolvedToCompanionObject: Boolean,
     override var canBeValue: Boolean,
     override val isFullyQualified: Boolean,
@@ -91,12 +91,12 @@ internal class FirResolvedQualifierImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
-    override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean) {
-        isNullableLHSForCallableReference = newIsNullableLHSForCallableReference
+    override fun replaceIsNullableLhsForCallableReference(newIsNullableLhsForCallableReference: Boolean) {
+        isNullableLhsForCallableReference = newIsNullableLhsForCallableReference
     }
 
-    override fun replaceResolvedLHSTypeForCallableReferenceOrNull(newResolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?) {
-        resolvedLHSTypeForCallableReferenceOrNull = newResolvedLHSTypeForCallableReferenceOrNull
+    override fun replaceResolvedLhsTypeForCallableReferenceOrNull(newResolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?) {
+        resolvedLhsTypeForCallableReferenceOrNull = newResolvedLhsTypeForCallableReferenceOrNull
     }
 
     override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean) {

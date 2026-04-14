@@ -1492,15 +1492,15 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         callableReferenceAccess.transformAnnotations(transformer, data)
         callableReferenceAccess.transformErrorArgumentList(transformer, ContextIndependent)
         val explicitReceiver = callableReferenceAccess.explicitReceiver
-        val transformedLHS = explicitReceiver
+        val transformedLhs = explicitReceiver
             ?.transformAsExplicitReceiver(ResolutionMode.ReceiverResolution.ForCallableReference, false)
             .apply {
-                if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLHS) {
-                    replaceIsNullableLHSForCallableReference(true)
+                if (this is FirResolvedQualifier && callableReferenceAccess.hasQuestionMarkAtLhs) {
+                    replaceIsNullableLhsForCallableReference(true)
                 }
             }
 
-        transformedLHS?.let { callableReferenceAccess.replaceExplicitReceiver(transformedLHS) }
+        transformedLhs?.let { callableReferenceAccess.replaceExplicitReceiver(transformedLhs) }
 
         return if (data is ResolutionMode.ContextDependent) {
             context.storeCallableReferenceContext(callableReferenceAccess)

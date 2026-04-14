@@ -48,8 +48,8 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val classId: ClassId?
     abstract override val symbol: FirClassLikeSymbol<*>?
     abstract override val explicitParent: FirResolvedQualifier?
-    abstract override val isNullableLHSForCallableReference: Boolean
-    abstract override val resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?
+    abstract override val isNullableLhsForCallableReference: Boolean
+    abstract override val resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?
     abstract override val resolvedToCompanionObject: Boolean
     /**
      * If true, the qualifier is resolved to an object or companion object and can be used as an expression.
@@ -74,9 +74,9 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
-    abstract override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)
+    abstract override fun replaceIsNullableLhsForCallableReference(newIsNullableLhsForCallableReference: Boolean)
 
-    abstract override fun replaceResolvedLHSTypeForCallableReferenceOrNull(newResolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?)
+    abstract override fun replaceResolvedLhsTypeForCallableReferenceOrNull(newResolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?)
 
     abstract override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 

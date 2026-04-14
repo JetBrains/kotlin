@@ -37,7 +37,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessExpressionBuilder, F
     override var source: KtSourceElement? = null
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     lateinit var calleeReference: FirNamedReference
-    var hasQuestionMarkAtLHS: Boolean = false
+    var hasQuestionMarkAtLhs: Boolean = false
     var errorArgumentList: FirArgumentList? = null
 
     override fun build(): FirCallableReferenceAccess {
@@ -52,7 +52,7 @@ class FirCallableReferenceAccessBuilder : FirQualifiedAccessExpressionBuilder, F
             source,
             nonFatalDiagnostics.toMutableOrEmpty(),
             calleeReference,
-            hasQuestionMarkAtLHS,
+            hasQuestionMarkAtLhs,
             errorArgumentList,
         )
     }

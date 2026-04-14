@@ -1099,7 +1099,7 @@ class FirRenderer(
             annotationRenderer?.render(callableReferenceAccess)
             contextArgumentRenderer?.renderContextArguments(callableReferenceAccess)
             callableReferenceAccess.explicitReceiver?.accept(this)
-            if (callableReferenceAccess.hasQuestionMarkAtLHS && callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
+            if (callableReferenceAccess.hasQuestionMarkAtLhs && callableReferenceAccess.explicitReceiver !is FirResolvedQualifier) {
                 print("?")
             }
             print("::")

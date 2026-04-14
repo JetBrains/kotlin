@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-sealed class DoubleColonLHS {
+sealed class DoubleColonLhs {
     /**
      * [type] is always non-error type, errors/deprecation errors are stored in [diagnostic].
      */
-    class Type(val type: ConeKotlinType, val diagnostic: ConeDiagnostic?) : DoubleColonLHS()
+    class Type(val type: ConeKotlinType, val diagnostic: ConeDiagnostic?) : DoubleColonLhs()
 }
 
 /**
@@ -27,12 +27,12 @@ sealed class DoubleColonLHS {
  * Such expressions are always treated as objects. Hence, the callable reference is always bound.
  *
  * Note that this type is marked private: it is only used internally by [FirCallableReferenceLhsResolver].
- * Outside of [FirCallableReferenceLhsResolver], only [DoubleColonLHS.Type] (or `null`) is possible.
+ * Outside of [FirCallableReferenceLhsResolver], only [DoubleColonLhs.Type] (or `null`) is possible.
  */
 private class ExpressionDoubleColonLhs(
     val type: ConeKotlinType,
     val isObjectQualifier: Boolean,
-) : DoubleColonLHS()
+) : DoubleColonLhs()
 
 class FirCallableReferenceLhsResolver(
     private val components: BodyResolveComponents,
@@ -45,18 +45,18 @@ class FirCallableReferenceLhsResolver(
      * Note, however, that this does not necessarily mean that the reference will be unbound because it can refer to
      * a member / extension of a companion object.
      */
-    fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS.Type? {
+    fun resolveDoubleColonLhs(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLhs.Type? {
         val lhsExpression = doubleColonExpression.explicitReceiver ?: return null
 
-        val resultForExpr = runUnless(doubleColonExpression.hasQuestionMarkAtLHS) {
-            resolveExpressionOnLHS(lhsExpression)
+        val resultForExpr = runUnless(doubleColonExpression.hasQuestionMarkAtLhs) {
+            resolveExpressionOnLhs(lhsExpression)
         }
 
         if (resultForExpr != null && !resultForExpr.isObjectQualifier) {
             return null
         }
 
-        val resultForType = resolveTypeOnLHS(lhsExpression)
+        val resultForType = resolveTypeOnLhs(lhsExpression)
 
         return resultForType?.takeUnless {
             // If we skipped an object expression result before and the type result is the same, this means that
@@ -77,7 +77,7 @@ class FirCallableReferenceLhsResolver(
         return fir as? FirRegularClass
     }
 
-    private fun resolveExpressionOnLHS(expression: FirExpression): ExpressionDoubleColonLhs? {
+    private fun resolveExpressionOnLhs(expression: FirExpression): ExpressionDoubleColonLhs? {
         val type = expression.resolvedType
 
         val expressionWithoutSmartCast = expression.unwrapSmartcastExpression()
@@ -92,13 +92,13 @@ class FirCallableReferenceLhsResolver(
         return ExpressionDoubleColonLhs(type, isObjectQualifier = false)
     }
 
-    private fun resolveTypeOnLHS(
+    private fun resolveTypeOnLhs(
         expression: FirExpression
-    ): DoubleColonLHS.Type? {
+    ): DoubleColonLhs.Type? {
         val resolvedExpression = expression.unwrapSmartcastExpression() as? FirResolvedQualifier
             ?: return null
 
-        return session.typeResolver.resolveTypeOnDoubleColonLHS(
+        return session.typeResolver.resolveTypeOnDoubleColonLhs(
             resolvedExpression,
             TypeResolutionConfiguration(
                 components.createCurrentScopeList(),

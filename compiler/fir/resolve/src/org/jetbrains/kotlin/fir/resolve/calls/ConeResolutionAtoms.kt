@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lastExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLhs
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
@@ -293,7 +293,7 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
 class ConeResolvedCallableReferenceAtom(
     override val expression: FirCallableReferenceAccess,
     private val initialExpectedType: ConeKotlinType?,
-    val lhs: DoubleColonLHS.Type?,
+    val lhs: DoubleColonLhs.Type?,
     private val session: FirSession,
     anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
 ) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), PostponedCallableReferenceMarker {

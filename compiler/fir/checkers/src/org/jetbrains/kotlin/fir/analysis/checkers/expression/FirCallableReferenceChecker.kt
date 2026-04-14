@@ -36,7 +36,7 @@ object FirCallableReferenceChecker : FirQualifiedAccessExpressionChecker(MppChec
     override fun check(expression: FirQualifiedAccessExpression) {
         if (expression !is FirCallableReferenceAccess) return
 
-        if (expression.hasQuestionMarkAtLHS && expression.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier) {
+        if (expression.hasQuestionMarkAtLhs && expression.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier) {
             reporter.reportOn(expression.source, FirErrors.SAFE_CALLABLE_REFERENCE_CALL)
         }
 

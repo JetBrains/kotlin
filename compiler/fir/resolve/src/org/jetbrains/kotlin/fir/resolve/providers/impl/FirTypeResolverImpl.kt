@@ -398,7 +398,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         )
     }
 
-    private fun FirTypeProjection.toConeTypeProjectionInLHS(): ConeTypeProjection = when (this) {
+    private fun FirTypeProjection.toConeTypeProjectionInLhs(): ConeTypeProjection = when (this) {
         is FirTypeProjectionWithVariance -> typeRef.coneType.toTypeProjection(variance)
 
         is FirPlaceholderProjection, // reported separately in the checker
@@ -408,11 +408,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
     private fun MutableList<ConeTypeProjection>.addOwnTypeArguments(qualifier: FirResolvedQualifier) {
         for (typeArgument in qualifier.ownTypeArguments) {
-            add(typeArgument.toConeTypeProjectionInLHS())
+            add(typeArgument.toConeTypeProjectionInLhs())
         }
     }
 
-    private fun matchQualifierPartsAndClassesForLHS(
+    private fun matchQualifierPartsAndClassesForLhs(
         qualifier: FirResolvedQualifier,
         classSymbol: FirClassLikeSymbol<*>,
     ): Pair<List<ConeTypeProjection>, ConeDiagnostic?> {
@@ -428,7 +428,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                         currentClass.ownTypeParameterSymbols.size,
                         currentClass,
                         currentQualifier.source!!,
-                        isDeprecationErrorForCallableReferenceLHS = true,
+                        isDeprecationErrorForCallableReferenceLhs = true,
                     )
                 }
 
@@ -446,7 +446,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return arguments to diagnostic
     }
 
-    private fun computeSubstitutorForLHS(
+    private fun computeSubstitutorForLhs(
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
     ): ConeSubstitutor? {
@@ -467,10 +467,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return result
     }
 
-    override fun resolveTypeOnDoubleColonLHS(
+    override fun resolveTypeOnDoubleColonLhs(
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
-    ): DoubleColonLHS.Type? {
+    ): DoubleColonLhs.Type? {
         val classSymbol = qualifier.symbol ?: return null
 
         val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
@@ -484,7 +484,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
             classSymbol.typeParameterSymbols.forEachIndexed { index, typeParameter ->
                 val typeArgumentOrNull = qualifier.typeArguments.getOrNull(index)
-                val coneTypeArgument = typeArgumentOrNull?.toConeTypeProjectionInLHS()
+                val coneTypeArgument = typeArgumentOrNull?.toConeTypeProjectionInLhs()
                     ?: typeParameter.defaultType.takeIf {
                         classSymbol.isLocal && typeParameter.containingDeclarationSymbol !is FirClassLikeSymbol
                     }
@@ -492,15 +492,15 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 allTypeArguments.add(coneTypeArgument)
             }
 
-            val (_, diagnosticFromMatching) = matchQualifierPartsAndClassesForLHS(qualifier, classSymbol)
+            val (_, diagnosticFromMatching) = matchQualifierPartsAndClassesForLhs(qualifier, classSymbol)
             if (diagnostic == null) diagnostic = diagnosticFromMatching
         } else {
-            matchQualifierPartsAndClassesForLHS(qualifier, classSymbol).let { (arguments, diagnosticFromMatching) ->
+            matchQualifierPartsAndClassesForLhs(qualifier, classSymbol).let { (arguments, diagnosticFromMatching) ->
                 allTypeArguments.addAll(arguments)
                 diagnostic = diagnosticFromMatching
             }
             if (allTypeArguments.size != classSymbol.typeParameterSymbols.size) {
-                val substitutor = computeSubstitutorForLHS(qualifier, configuration)
+                val substitutor = computeSubstitutorForLhs(qualifier, configuration)
                 allTypeArguments.addImplicitTypeArguments(
                     classSymbol,
                     configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
@@ -511,11 +511,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        return DoubleColonLHS.Type(
+        return DoubleColonLhs.Type(
             ConeClassLikeTypeImpl(
                 classSymbol.toLookupTag(),
                 allTypeArguments.take(classSymbol.typeParameterSymbols.size).toTypedArray(),
-                qualifier.isNullableLHSForCallableReference,
+                qualifier.isNullableLhsForCallableReference,
             ),
             diagnostic,
         )

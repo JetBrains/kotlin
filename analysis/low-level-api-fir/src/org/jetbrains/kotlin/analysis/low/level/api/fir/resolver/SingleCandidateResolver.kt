@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLhs
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
@@ -126,7 +126,7 @@ class ResolutionParameters(
     val explicitReceiver: FirExpression? = null,
     /** THIS IS UNSAFE TO PASS ORIGINAL ARGUMENTS. THEY HAVE TO BE COPIED TO AVOID MUTABILITY ISSUES */
     val argumentList: FirArgumentList = FirEmptyArgumentList,
-    val callableReferenceLHS: DoubleColonLHS.Type? = null,
+    val callableReferenceLHS: DoubleColonLhs.Type? = null,
     val typeArgumentList: List<FirTypeProjection> = emptyList(),
     val allowUnsafeCall: Boolean = false,
     val allowUnstableSmartCast: Boolean = false,

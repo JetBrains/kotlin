@@ -3870,7 +3870,7 @@ open class PsiRawFirBuilder(
                     name = expression.callableReference.getReferencedNameAsName()
                 }
                 explicitReceiver = expression.receiverExpression?.toFirExpression("Incorrect receiver expression")
-                hasQuestionMarkAtLHS = expression.hasQuestionMarks
+                hasQuestionMarkAtLhs = expression.hasQuestionMarks
 
                 expression.errorValueArgumentList?.let {
                     errorArgumentList = buildArgumentList {

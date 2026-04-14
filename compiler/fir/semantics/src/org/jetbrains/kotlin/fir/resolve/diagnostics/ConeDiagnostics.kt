@@ -297,7 +297,7 @@ class ConeWrongNumberOfTypeArgumentsError(
      * In case [org.jetbrains.kotlin.config.LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS] is on, only
      * diagnostics *with* this flag are left in LHSs.
      */
-    val isDeprecationErrorForCallableReferenceLHS: Boolean = false,
+    val isDeprecationErrorForCallableReferenceLhs: Boolean = false,
 ) : ConeDiagnosticWithSource(source), ConeUnmatchedTypeArgumentsError {
     override val reason: String get() = "Wrong number of type arguments"
 }

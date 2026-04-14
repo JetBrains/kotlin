@@ -30,10 +30,10 @@ abstract class FirTypeResolver : FirSessionComponent {
         expandTypeAliases: Boolean = true,
     ): FirTypeResolutionResult
 
-    abstract fun resolveTypeOnDoubleColonLHS(
+    abstract fun resolveTypeOnDoubleColonLhs(
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
-    ): DoubleColonLHS.Type?
+    ): DoubleColonLhs.Type?
 }
 
 class TypeResolutionConfiguration private constructor(

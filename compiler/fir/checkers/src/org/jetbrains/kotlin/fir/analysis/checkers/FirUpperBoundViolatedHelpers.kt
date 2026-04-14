@@ -135,7 +135,7 @@ fun checkUpperBoundViolatedInLhsOfGetClass(
         fallbackSource,
         isInsideTypeOperatorOrParameterBounds = false,
         mustRelaxDueToArgumentInteractionsBug = false,
-        isTypeAliasExpansionInLHSOfGetClass = true,
+        isTypeAliasExpansionInLhsOfGetClass = true,
         isTypealiasExpansion = true,
     )
 }
@@ -155,7 +155,7 @@ fun checkUpperBoundViolated(
      * See [LanguageFeature.ReportUpperBoundViolatedInCallArgumentInteractions].
      */
     mustRelaxDueToArgumentInteractionsBug: Boolean = false,
-    isTypeAliasExpansionInLHSOfGetClass: Boolean = false,
+    isTypeAliasExpansionInLhsOfGetClass: Boolean = false,
     isTypealiasExpansion: Boolean,
 ) {
     val count = minOf(typeParameters.size, typeArguments.size)
@@ -181,7 +181,7 @@ fun checkUpperBoundViolated(
                 else -> FirErrors.UPPER_BOUND_VIOLATED
             }
             val typealiasDiagnostic = when {
-                isTypeAliasExpansionInLHSOfGetClass -> FirErrors.UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING
+                isTypeAliasExpansionInLhsOfGetClass -> FirErrors.UPPER_BOUND_VIOLATED_IN_LHS_OF_CLASS_LITERAL_WARNING
                 mustRelax -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING
                 else -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
             }

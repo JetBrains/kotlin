@@ -813,9 +813,9 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.resolvedType)
         val finalType = finallySubstituteOrSelf(initialType)
 
-        subCandidate.ifLHSResolvedToType { lhs ->
+        subCandidate.ifLhsResolvedToType { lhs ->
             (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
-                ?.replaceResolvedLHSTypeForCallableReferenceOrNull(lhs.type)
+                ?.replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
         }
 
         callableReferenceAccess.replaceConeTypeOrNull(finalType)
@@ -1546,7 +1546,7 @@ internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(
 
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
     val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
-    candidate.ifLHSResolvedToType { lhs ->
+    candidate.ifLhsResolvedToType { lhs ->
         lhs.diagnostic?.let { newNonFatalDiagnostics.add(it) }
     }
 
@@ -1581,7 +1581,7 @@ fun FirResolvedQualifier.appendNonFatalDiagnostics(vararg newDiagnostics: ConeDi
     }
 }
 
-internal inline fun Candidate.ifLHSResolvedToType(block: (DoubleColonLHS.Type) -> Unit) {
+internal inline fun Candidate.ifLhsResolvedToType(block: (DoubleColonLhs.Type) -> Unit) {
     val callableReferenceInfo = callInfo as? CallableReferenceInfo ?: return
     callableReferenceInfo.lhs?.let {
         block(it)

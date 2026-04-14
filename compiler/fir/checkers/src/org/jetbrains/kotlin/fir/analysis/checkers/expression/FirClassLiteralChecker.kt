@@ -67,11 +67,11 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         val markedNullable = source.getChild(QUEST, depth = 1) != null
         val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType()
         val isNullable = markedNullable ||
-                (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
+                (argument as? FirResolvedQualifier)?.isNullableLhsForCallableReference == true ||
                 resolvedFullyExpandedType.isMarkedNullable ||
-                resolvedFullyExpandedType.isNullableTypeParameter(isExpression = !argument.canBeDoubleColonLHSAsType)
+                resolvedFullyExpandedType.isNullableTypeParameter(isExpression = !argument.canBeDoubleColonLhsAsType)
         if (isNullable) {
-            if (argument.canBeDoubleColonLHSAsType) {
+            if (argument.canBeDoubleColonLhsAsType) {
                 reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS)
             } else {
                 reporter.reportOn(
@@ -83,7 +83,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             return
         }
 
-        if (!argument.canBeDoubleColonLHSAsType &&
+        if (!argument.canBeDoubleColonLhsAsType &&
             LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isDisabled() &&
             resolvedFullyExpandedType.toTypeParameterSymbol()?.isReified == true &&
             !resolvedFullyExpandedType.isMarkedNullable &&
@@ -115,7 +115,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 (!typeParameter.isReified || isExpression && LanguageFeature.ForbidClassLiteralWithPotentiallyNullableReifiedLhs.isEnabled())
     }
 
-    private val FirExpression.canBeDoubleColonLHSAsType: Boolean
+    private val FirExpression.canBeDoubleColonLhsAsType: Boolean
         get() {
             return this is FirResolvedQualifier ||
                     this is FirResolvedReifiedParameterReference ||

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLhs
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -181,7 +181,7 @@ private class KaFirCompletionExtensionCandidateChecker(
                 val components = resolver.bodyResolveComponents
                 val context = components.context
                 context.withFile(firOriginalFile, components) {
-                    components.callableReferenceLhsResolver.resolveDoubleColonLHS(callableReferenceFir)
+                    components.callableReferenceLhsResolver.resolveDoubleColonLhs(callableReferenceFir)
                 }
             } else {
                 null
@@ -219,7 +219,7 @@ private class KaFirCompletionExtensionCandidateChecker(
 
     private data class ExplicitReceiverInfo(
         val receiverExpression: FirExpression?,
-        val callableReferenceLHS: DoubleColonLHS.Type? = null
+        val callableReferenceLHS: DoubleColonLhs.Type? = null
     )
 }
 

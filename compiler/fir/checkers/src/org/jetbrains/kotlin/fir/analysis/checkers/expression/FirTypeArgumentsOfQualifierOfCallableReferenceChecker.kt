@@ -57,7 +57,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
                     val positioning =
-                        if (diagnostic.isDeprecationErrorForCallableReferenceLHS) {
+                        if (diagnostic.isDeprecationErrorForCallableReferenceLhs) {
                             SourceElementPositioningStrategies.TYPE_ARGUMENT_LIST_OR_WITHOUT_RECEIVER
                         } else {
                             // here, `desiredCount` corresponds to the number of type parameters for all parts of the qualifier altogether,
@@ -65,7 +65,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                             SourceElementPositioningStrategies.DEFAULT
                         }
 
-                    if (diagnostic.isDeprecationErrorForCallableReferenceLHS && !innerClassesProperlySupported) {
+                    if (diagnostic.isDeprecationErrorForCallableReferenceLhs && !innerClassesProperlySupported) {
                         if (classSymbol.isLocal) {
                             reporter.reportOn(
                                 diagnostic.source,
@@ -114,7 +114,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
     override fun check(expression: FirCallableReferenceAccess) {
         val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
         val correspondingDeclaration = lhs.symbol ?: return
-        val lhsType = lhs.resolvedLHSTypeForCallableReferenceOrNull ?: return
+        val lhsType = lhs.resolvedLhsTypeForCallableReferenceOrNull ?: return
 
         for (argument in lhs.typeArguments) {
             val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue

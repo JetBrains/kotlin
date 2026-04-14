@@ -33,7 +33,7 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
         val symbol = expression.calleeReference.toResolvedCallableSymbol()
         if (symbol == null) {
             val explicitReceiver = expression.explicitReceiver
-            val resolvedType = (explicitReceiver as? FirResolvedQualifier)?.resolvedLHSTypeForCallableReferenceOrNull
+            val resolvedType = (explicitReceiver as? FirResolvedQualifier)?.resolvedLhsTypeForCallableReferenceOrNull
                 ?: explicitReceiver?.resolvedType
             val receiverType = resolvedType?.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType()
 

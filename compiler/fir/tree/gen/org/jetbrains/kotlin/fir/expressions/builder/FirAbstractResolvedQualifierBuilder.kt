@@ -34,8 +34,8 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var classId: ClassId?
     abstract var symbol: FirClassLikeSymbol<*>?
     abstract var explicitParent: FirResolvedQualifier?
-    abstract var isNullableLHSForCallableReference: Boolean
-    abstract var resolvedLHSTypeForCallableReferenceOrNull: ConeKotlinType?
+    abstract var isNullableLhsForCallableReference: Boolean
+    abstract var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?
     abstract var resolvedToCompanionObject: Boolean
     abstract var canBeValue: Boolean
     abstract var isFullyQualified: Boolean

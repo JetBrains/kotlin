@@ -34,7 +34,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override val source: KtSourceElement?
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val calleeReference: FirNamedReference
-    abstract val hasQuestionMarkAtLHS: Boolean
+    abstract val hasQuestionMarkAtLhs: Boolean
     /**
      * The erroneous argument list that may be present after the callable reference.
      * This syntax is invalid (`::foo(args)`).
@@ -71,7 +71,7 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
-    abstract fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean)
+    abstract fun replaceHasQuestionMarkAtLhs(newHasQuestionMarkAtLhs: Boolean)
 
     abstract fun replaceErrorArgumentList(newErrorArgumentList: FirArgumentList?)
 
