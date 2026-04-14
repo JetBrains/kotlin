@@ -463,6 +463,57 @@ After Iterations 61–62 addressed the BFS and tryResolve hotspots, counter data
 
 ---
 
+## Iteration 64: Performance — Lazy Properties + node.text Caching + findInnerClass Cache - 2026-04-14
+
+### Root Cause Analysis
+Diagnostic counters (AtomicLong + JVM shutdown hook) across the java-direct test suite (2,664 tests) revealed that:
+
+1. **`node.text` was creating a new String on every access** — 13,089 calls, each invoking `source.subSequence(startOffset, endOffset).toString()`. Many nodes have their text read multiple times (e.g., IDENTIFIER text used by `name`, `fqName`, `findInnerClass`, type resolution).
+
+2. **Class/member properties were `get()` not `by lazy`** — `fqName`, `supertypes`, `methods`, `fields`, `constructors`, `innerClassNames`, `annotations`, `modifierList`, `isInterface`, `isEnum`, etc. Each access re-traversed AST children and re-created wrapper objects. Property-level counters: fqName=32, supertypes=79, methods=41, fields=41, constructors=58, innerClassNames=107, findInnerClass=107, annotations(class)=65 — low per-test but scales linearly with class count in self-compilation.
+
+3. **`findInnerClass` re-created `JavaClassOverAst` + resolution context on every call** — 107 calls in the test suite, each allocating a new class instance with a new resolution context even when the same inner class was looked up repeatedly.
+
+4. **All `by lazy` used default `SYNCHRONIZED` mode** — adds unnecessary lock overhead since all computations are side-effect-free AST reads that are safe to repeat under `PUBLICATION` mode.
+
+### Fix
+**Five changes across 5 files:**
+
+1. **`utils.kt`** — `JavaSyntaxNode.text`: `get()` → `by lazy(PUBLICATION)`. Caches the String after first access, eliminating redundant `subSequence().toString()` allocations.
+
+2. **`JavaClassOverAst.kt`** — Made properties lazy with `PUBLICATION` mode:
+   - `fqName`, `modifierList`, `supertypes`, `innerClassNames`, `isInterface`, `isAnnotationType`, `isEnum`, `isRecord`, `isSealed`, `methods`, `fields`, `constructors`, `recordComponents`, `annotations`
+   - Added `innerClassCache: HashMap<Name, JavaClass?>` for `findInnerClass` — caches results, avoiding repeated `JavaClassOverAst` + resolution context creation.
+
+3. **`JavaMemberOverAst.kt`** — Made properties lazy with `PUBLICATION` mode:
+   - Base class: `modifierList`, `annotations`
+   - `JavaFieldOverAst`: `isEnumEntry`, `type`
+   - `JavaMethodOverAst`: `valueParameters`, `returnType`, `modifierList`
+   - `JavaConstructorOverAst`: `valueParameters`
+
+4. **`JavaTypeOverAst.kt`** — Changed all existing `by lazy` to `by lazy(LazyThreadSafetyMode.PUBLICATION)`.
+
+5. **`JavaAnnotationOverAst.kt`** — Changed existing `by lazy` to `by lazy(LazyThreadSafetyMode.PUBLICATION)`.
+
+### Counter Results (before/after on java-direct test suite, 2,664 tests)
+| Counter | Before | After | Reduction |
+|---------|--------|-------|-----------|
+| `findChildByType` calls | 27,093 | 25,371 | 6.4% (−1,722) |
+| `getChildrenByType` calls | 16,728 | 16,598 | 0.8% (−130) |
+| `node.text` String allocations | 13,089 | 7,085 | **45.9%** (−6,004) |
+
+### Test Results
+- Box: 1168/1168, Phased: 1442/1453, Total failing: 11 (no change — same pre-existing failures)
+- Zero regressions
+
+### Key Learnings
+- `KotlinFullPipelineTestsGenerated` does NOT exercise java-direct significantly — those tests compile Kotlin against binary JDK/library classes, not Java source files. Only 53 `findChildByType` calls across 415 tests. The java-direct test suite is the right benchmark.
+- `LazyThreadSafetyMode.PUBLICATION` is safe for all java-direct lazy properties because they are pure computations over immutable AST structures — repeated computation produces identical results with no side effects.
+- The `findChildByType`/`getChildrenByType` reduction is modest in the test suite (small Java files, each property accessed ~1 time per class), but scales with class count × member count × access frequency in self-compilation.
+- The `node.text` caching is the most impactful single change — nearly half of all String allocations eliminated. Each AST node's text is now computed at most once.
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown

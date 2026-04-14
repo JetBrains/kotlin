@@ -68,7 +68,7 @@ class JavaClassifierTypeOverAst(
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
 
-    private val rawTypeName: String by lazy {
+    private val rawTypeName: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // Extract the type name from AST structure, excluding annotations.
         // For "java.util.List" → collect IDENTIFIERs: ["java", "util", "List"]
         // For "@NotNull Object" → skip ANNOTATION, get IDENTIFIER: "Object"
@@ -101,7 +101,7 @@ class JavaClassifierTypeOverAst(
         }
     }
 
-    override val classifier: JavaClassifier? by lazy {
+    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val parts = rawTypeName.split('.')
 
         if (parts.size == 1) {
@@ -139,7 +139,7 @@ class JavaClassifierTypeOverAst(
      * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
      * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
      */
-    override val isTriviallyFlexibleHint: Boolean by lazy {
+    override val isTriviallyFlexibleHint: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
         if (classifier != null) return@lazy false // local lookup found it — handled by isTriviallyFlexible()
         val parts = rawTypeName.split('.')
 
@@ -161,7 +161,7 @@ class JavaClassifierTypeOverAst(
         false
     }
 
-    override val classifierQualifiedName: String by lazy {
+    override val classifierQualifiedName: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val parts = rawTypeName.split('.')
 
         // 1. Check type parameters - return name as-is (FIR handles type params specially)
@@ -199,7 +199,7 @@ class JavaClassifierTypeOverAst(
 
     override val presentableText: String get() = node.text
 
-    override val isRaw: Boolean by lazy {
+    override val isRaw: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // A type is raw if it has no type arguments but the class has type parameters.
         // Also raw if fewer args than params (javac treats wrong-arity as error).
         // Note: REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children).
@@ -211,7 +211,7 @@ class JavaClassifierTypeOverAst(
         explicitArgCount == 0 || explicitArgCount < typeParamCount
     }
 
-    override val typeArguments: List<JavaType> by lazy {
+    override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.
         // This handles both flat ("A<T>.B<U>" → [<T>, <U>] as direct children) and
         // nested ("A<T>.B<U>" → child JAVA_CODE_REF("A<T>") + sibling REFPARAMLIST(<U>)) structures.
@@ -304,7 +304,7 @@ class JavaClassifierTypeOverAst(
             return false
         }
 
-    override val containingClassIds: List<ClassId> by lazy {
+    override val containingClassIds: List<ClassId> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         resolutionContext.getContainingClassIds()
     }
 
@@ -542,7 +542,7 @@ class JavaTypeParameterOverAst(
     override val name: Name
         get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
 
-    override val upperBounds: Collection<JavaClassifierType> by lazy {
+    override val upperBounds: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val extendsList = node.findChildByType("EXTENDS_BOUND_LIST") ?: return@lazy emptyList()
         // Bounds may be TYPE nodes (with annotations like "T extends @NotNull Object") or bare
         // JAVA_CODE_REFERENCE nodes. Matches TreeBasedTypeParameter.upperBounds behavior.

@@ -27,8 +27,7 @@ abstract class JavaMemberOverAst(
     override val name: Name
         get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
 
-    private val modifierList: JavaSyntaxNode?
-        get() = node.findChildByType("MODIFIER_LIST")
+    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType("MODIFIER_LIST") }
 
     protected fun hasModifier(modifier: String): Boolean {
         return modifierList?.children?.any { it.type.toString() == modifier } ?: false
@@ -39,18 +38,21 @@ abstract class JavaMemberOverAst(
     override val isFinal: Boolean get() = hasModifier("FINAL_KEYWORD")
 
     override val visibility: Visibility
-        get() = when {
-            containingClass.isInterface -> Visibilities.Public
-            hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
-            hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
-            hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
-            else -> JavaVisibilities.PackageVisibility
+        get() {
+            return when {
+                containingClass.isInterface -> Visibilities.Public
+                hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
+                hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
+                hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
+                else -> JavaVisibilities.PackageVisibility
+            }
         }
 
-    override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.getChildrenByType("ANNOTATION")
+    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        modifierList?.getChildrenByType("ANNOTATION")
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
+    }
 
     // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
@@ -63,19 +65,18 @@ class JavaFieldOverAst(
     node: JavaSyntaxNode,
     containingClass: JavaClassOverAst
 ) : JavaMemberOverAst(node, containingClass), JavaField {
-    override val isEnumEntry: Boolean get() = node.type.toString() == "ENUM_CONSTANT"
+    override val isEnumEntry: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.type.toString() == "ENUM_CONSTANT" }
 
     // Enum constants are implicitly public (JLS 8.9.3)
     override val visibility: Visibility get() = if (isEnumEntry) Visibilities.Public else super.visibility
 
-    override val type: JavaType
-        get() {
-            // For enum constants, the type is the containing enum class itself
-            if (isEnumEntry) {
-                return JavaClassifierTypeForEnumEntry(containingClass)
-            }
-            return createJavaType(node, resolutionContext)
+    override val type: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        // For enum constants, the type is the containing enum class itself
+        if (isEnumEntry) {
+            return@lazy JavaClassifierTypeForEnumEntry(containingClass)
         }
+        createJavaType(node, resolutionContext)
+    }
 
     /**
      * The initializer expression node, if present.
@@ -208,7 +209,7 @@ class JavaMethodOverAst(
     containingClass: JavaClassOverAst
 ) : JavaMemberOverAst(node, containingClass), JavaMethod {
 
-    override val typeParameters: List<JavaTypeParameter> by lazy {
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeTypeParameters(node, containingClass.memberResolutionContext)
     }
 
@@ -216,27 +217,24 @@ class JavaMethodOverAst(
      * Resolution context including both class and method type parameters.
      * Method's own type parameters shadow class type parameters with the same name.
      */
-    override val resolutionContext: JavaResolutionContext by lazy {
+    override val resolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
         containingClass.memberResolutionContext.withTypeParameters(typeParameters)
     }
 
-    override val valueParameters: List<JavaValueParameter>
-        get() {
-            val parameterList = node.findChildByType("PARAMETER_LIST") ?: return emptyList()
-            return parameterList.getChildrenByType("PARAMETER")
-                .map { JavaValueParameterOverAst(it, resolutionContext) }
-        }
+    override val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val parameterList = node.findChildByType("PARAMETER_LIST") ?: return@lazy emptyList()
+        parameterList.getChildrenByType("PARAMETER")
+            .map { JavaValueParameterOverAst(it, resolutionContext) }
+    }
 
-    override val returnType: JavaType
-        get() {
-            val typeNode = node.findChildByType("TYPE")
-                ?: return JavaPrimitiveTypeOverAst(node, resolutionContext)
-            // TYPE_USE annotations appear in the method modifier list but belong to the return type
-            return createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
-        }
+    override val returnType: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val typeNode = node.findChildByType("TYPE")
+            ?: return@lazy JavaPrimitiveTypeOverAst(node, resolutionContext)
+        // TYPE_USE annotations appear in the method modifier list but belong to the return type
+        createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
+    }
 
-    private val modifierList: JavaSyntaxNode?
-        get() = node.findChildByType("MODIFIER_LIST")
+    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType("MODIFIER_LIST") }
 
     // Interface methods are abstract unless they have 'default' or 'static' keyword.
     // Note: in Java, a non-default interface method body is a compile error, but we still see
@@ -286,23 +284,22 @@ class JavaConstructorOverAst(
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
 
-    override val typeParameters: List<JavaTypeParameter> by lazy {
+    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeTypeParameters(node, containingClass.memberResolutionContext)
     }
 
     /**
      * Resolution context including both class and constructor type parameters.
      */
-    override val resolutionContext: JavaResolutionContext by lazy {
+    override val resolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
         containingClass.memberResolutionContext.withTypeParameters(typeParameters)
     }
 
-    override val valueParameters: List<JavaValueParameter>
-        get() {
-            val parameterList = node.findChildByType("PARAMETER_LIST") ?: return emptyList()
-            return parameterList.getChildrenByType("PARAMETER")
-                .map { JavaValueParameterOverAst(it, resolutionContext) }
-        }
+    override val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val parameterList = node.findChildByType("PARAMETER_LIST") ?: return@lazy emptyList()
+        parameterList.getChildrenByType("PARAMETER")
+            .map { JavaValueParameterOverAst(it, resolutionContext) }
+    }
 
     override val isFromSource: Boolean get() = true
 }

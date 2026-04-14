@@ -341,7 +341,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
      *
      * Returns a pair of (className, memberName) if the static import is found, null otherwise.
      */
-    private val staticImportResolution: Pair<String, String>? by lazy {
+    private val staticImportResolution: Pair<String, String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val text = refNode.text
         if (text.contains('.')) return@lazy null // Not a bare identifier
         val importedFqn = resolutionContext.getSimpleImport(text) ?: return@lazy null

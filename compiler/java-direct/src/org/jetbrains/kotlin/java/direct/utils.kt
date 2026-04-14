@@ -19,7 +19,7 @@ class JavaSyntaxNode(
     val endOffset: Int,
     var parent: JavaSyntaxNode? = null
 ) {
-    val text: String get() = source.subSequence(startOffset, endOffset).toString()
+    val text: String by lazy(LazyThreadSafetyMode.PUBLICATION) { source.subSequence(startOffset, endOffset).toString() }
 
     fun dump(indent: String = ""): String {
         val sb = StringBuilder()
