@@ -24,6 +24,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.checkPhaseConditions = from.checkPhaseConditions
     to.collectionLiterals = from.collectionLiterals
     to.commonSources = from.commonSources.copyOf()
+    to.companionBlocksAndExtensions = from.companionBlocksAndExtensions
     to.consistentDataClassCopyVisibility = from.consistentDataClassCopyVisibility
     to.contextParameters = from.contextParameters
     to.contextReceivers = from.contextReceivers

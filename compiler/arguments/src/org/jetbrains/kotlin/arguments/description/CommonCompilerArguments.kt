@@ -1326,4 +1326,19 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
+
+    compilerArgument {
+        name = "Xcompanion-blocks-and-extensions"
+        description = """
+            Enables companion blocks and extensions.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.CompanionBlocksAndExtensions),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
 }

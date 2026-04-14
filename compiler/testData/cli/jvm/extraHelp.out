@@ -162,6 +162,8 @@ where advanced options include:
   -Xcollection-literals      Enable experimental language support for collection literals.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.
+  -Xcompanion-blocks-and-extensions
+                             Enables companion blocks and extensions.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
   -Xcompiler-plugin-order=<pluginId1>><pluginId2>

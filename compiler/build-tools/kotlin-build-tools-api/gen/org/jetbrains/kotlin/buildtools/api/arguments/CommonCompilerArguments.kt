@@ -185,6 +185,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_COLLECTION_LITERALS", KotlinReleaseVersion(2, 4, 0))
 
     /**
+     * Enables companion blocks and extensions.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_COMPANION_BLOCKS_AND_EXTENSIONS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_COMPANION_BLOCKS_AND_EXTENSIONS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

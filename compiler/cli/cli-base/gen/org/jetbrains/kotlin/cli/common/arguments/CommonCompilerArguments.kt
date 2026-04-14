@@ -227,6 +227,17 @@ They should be a subset of sources passed as free arguments.""",
         }
 
     @Argument(
+        value = "-Xcompanion-blocks-and-extensions",
+        description = "Enables companion blocks and extensions.",
+    )
+    @Enables(LanguageFeature.CompanionBlocksAndExtensions)
+    var companionBlocksAndExtensions: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xcompiler-plugin",
         valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]",
         description = "Register a compiler plugin.",

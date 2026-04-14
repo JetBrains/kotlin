@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_CHECK_PHASE_CONDITIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COLLECTION_LITERALS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COMMON_SOURCES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COMPANION_BLOCKS_AND_EXTENSIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COMPILER_PLUGIN
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_COMPILER_PLUGIN_ORDER
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY
@@ -202,6 +203,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
     if (X_COLLECTION_LITERALS in this) { arguments.collectionLiterals = get(X_COLLECTION_LITERALS)}
     if (X_COMMON_SOURCES in this) { arguments.commonSources = get(X_COMMON_SOURCES) ?: emptyArray()}
+    if (X_COMPANION_BLOCKS_AND_EXTENSIONS in this) { arguments.companionBlocksAndExtensions = get(X_COMPANION_BLOCKS_AND_EXTENSIONS)}
     if (X_COMPILER_PLUGIN in this) { arguments.pluginConfigurations = get(X_COMPILER_PLUGIN) ?: emptyArray()}
     if (X_COMPILER_PLUGIN_ORDER in this) { arguments.pluginOrderConstraints = get(X_COMPILER_PLUGIN_ORDER) ?: emptyArray()}
     if (X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY in this) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)}
@@ -308,6 +310,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {  }
     try { this[X_COLLECTION_LITERALS] = arguments.collectionLiterals } catch (_: NoSuchMethodError) {  }
     try { this[X_COMMON_SOURCES] = arguments.commonSources } catch (_: NoSuchMethodError) {  }
+    try { this[X_COMPANION_BLOCKS_AND_EXTENSIONS] = arguments.companionBlocksAndExtensions } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILER_PLUGIN] = arguments.pluginConfigurations } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILER_PLUGIN_ORDER] = arguments.pluginOrderConstraints } catch (_: NoSuchMethodError) {  }
     try { this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility } catch (_: NoSuchMethodError) {  }
@@ -413,6 +416,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_CHECK_PHASE_CONDITIONS in this) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)}
     if (X_COLLECTION_LITERALS in this) { arguments.collectionLiterals = get(X_COLLECTION_LITERALS)}
     if (X_COMMON_SOURCES in this) { arguments.commonSources = get(X_COMMON_SOURCES) ?: emptyArray()}
+    if (X_COMPANION_BLOCKS_AND_EXTENSIONS in this) { arguments.companionBlocksAndExtensions = get(X_COMPANION_BLOCKS_AND_EXTENSIONS)}
     if (X_COMPILER_PLUGIN in this) { arguments.pluginConfigurations = get(X_COMPILER_PLUGIN) ?: emptyArray()}
     if (X_COMPILER_PLUGIN_ORDER in this) { arguments.pluginOrderConstraints = get(X_COMPILER_PLUGIN_ORDER) ?: emptyArray()}
     if (X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY in this) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)}
@@ -552,6 +556,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_COMMON_SOURCES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_COMMON_SOURCES")
+
+    public val X_COMPANION_BLOCKS_AND_EXTENSIONS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_COMPANION_BLOCKS_AND_EXTENSIONS")
 
     public val X_COMPILER_PLUGIN: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_COMPILER_PLUGIN")
