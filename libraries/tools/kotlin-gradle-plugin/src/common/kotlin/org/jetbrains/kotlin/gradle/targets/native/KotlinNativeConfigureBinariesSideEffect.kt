@@ -149,10 +149,10 @@ private fun Project.createLinkTask(binary: NativeBinary) {
                 }
             )
             .disallowChanges()
+        KotlinNativeCacheMetrics.collectMetrics(this, task.disableCache)
     }
 
     NativeLinkTaskMetrics.collectMetrics(this)
-    KotlinNativeCacheMetrics.collectMetrics(this, linkTask.flatMap { it.disableCache })
 
     if (binary !is TestExecutable) {
         tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(linkTask)

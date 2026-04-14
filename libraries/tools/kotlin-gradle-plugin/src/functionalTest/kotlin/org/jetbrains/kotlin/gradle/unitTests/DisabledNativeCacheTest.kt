@@ -268,6 +268,9 @@ class DisabledNativeCacheTest {
 
             evaluate()
 
+            //init task to ensure configuration time metrics are collected
+            tasks.named(LINUX_X64_LINK_DEBUG_TASK_NAME, KotlinNativeLink::class.java).get()
+
             assertNotNull(
                 collectedFusConfigurationTimeMetrics.booleanMetrics.entries.singleOrNull {
                     it.key == BooleanMetrics.KOTLIN_NATIVE_CACHE_DISABLED && it.value
