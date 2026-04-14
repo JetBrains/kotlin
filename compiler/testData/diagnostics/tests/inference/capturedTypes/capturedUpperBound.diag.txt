@@ -1,9 +1,9 @@
-/test.kt:(117,137): error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)> value)' must be subtype of 'CapturedType(*)', but actual: 'BodySpec<List<*>, *>'. Consider removing the explicit type arguments.
+/test.kt:14:13: error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)> value)' must be subtype of 'CapturedType(*)', but actual: 'BodySpec<List<*>, *>'. Consider removing the explicit type arguments.
 
-/test.kt:(153,167): error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)> value)' must be subtype of 'CapturedType(*)', but actual: 'BodySpec<*, *>'. Consider removing the explicit type arguments.
+/test.kt:15:13: error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)> value)' must be subtype of 'CapturedType(*)', but actual: 'BodySpec<*, *>'. Consider removing the explicit type arguments.
 
-/test.kt:(183,199): error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)> value)' must be subtype of 'CapturedType(*)', but actual: 'BodySpec<Int, *>'. Consider removing the explicit type arguments.
+/test.kt:16:13: error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)> value)' must be subtype of 'CapturedType(*)', but actual: 'BodySpec<Int, *>'. Consider removing the explicit type arguments.
 
-/test.kt:(228,238): error: Type argument is not within its bounds: type parameter 'K (of fun <K : CapturedType(*) & Any> bar)' must be subtype of 'CapturedType(*) & Any', but actual: 'WithDnn<*>'. Consider removing the explicit type arguments.
+/test.kt:19:11: error: Type argument is not within its bounds: type parameter 'K (of fun <K : CapturedType(*) & Any> bar)' must be subtype of 'CapturedType(*) & Any', but actual: 'WithDnn<*>'. Consider removing the explicit type arguments.
 
-/test.kt:(267,281): error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)!> value)' must be subtype of 'CapturedType(*)!', but actual: 'JavaClass<*, *>!'. Consider removing the explicit type arguments.
+/test.kt:22:13: error: Type argument is not within its bounds: type parameter 'T (of fun <T : CapturedType(*)!> value)' must be subtype of 'CapturedType(*)!', but actual: 'JavaClass<*, *>!'. Consider removing the explicit type arguments.

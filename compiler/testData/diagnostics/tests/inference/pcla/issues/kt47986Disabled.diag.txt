@@ -1,3 +1,3 @@
-/kt47986Disabled.kt:(278,286): error: Cannot infer type for type parameter 'K'. Specify it explicitly.
+/kt47986Disabled.kt:11:13: error: Cannot infer type for type parameter 'K'. Specify it explicitly.
 
-/kt47986Disabled.kt:(297,300): error: Cannot infer type for type parameter 'K'. Specify it explicitly.
+/kt47986Disabled.kt:12:9: error: Cannot infer type for type parameter 'K'. Specify it explicitly.

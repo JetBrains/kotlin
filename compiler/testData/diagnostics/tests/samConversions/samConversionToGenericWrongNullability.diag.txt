@@ -1,40 +1,40 @@
-/test.kt:(417,454): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
+/test.kt:49:9: warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
 
-/test.kt:(823,824): warning: Expression is unused.
+/test.kt:65:13: warning: Expression is unused.
 
-/test.kt:(857,861): warning: Expression is unused.
+/test.kt:67:13: warning: Expression is unused.
 
-/test.kt:(1434,1456): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
+/test.kt:99:9: warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
 
-/test.kt:(1539,1561): error: Return type mismatch: expected 'String', actual 'String?'.
+/test.kt:104:30: error: Return type mismatch: expected 'String', actual 'String?'.
 
-/test.kt:(1539,1561): error: Return type mismatch: expected 'String', actual 'String?'.
+/test.kt:104:30: error: Return type mismatch: expected 'String', actual 'String?'.
 
-/test.kt:(1653,1752): error: Return type mismatch: expected 'String!', actual '() -> String'.
+/test.kt:110:9: error: Return type mismatch: expected 'String!', actual '() -> String'.
 
-/test.kt:(1653,1752): error: Return type mismatch: expected 'String!', actual '() -> String'.
+/test.kt:110:9: error: Return type mismatch: expected 'String!', actual '() -> String'.
 
-/test.kt:(1698,1720): error: Return type mismatch: expected 'String', actual 'String?'.
+/test.kt:111:30: error: Return type mismatch: expected 'String', actual 'String?'.
 
-/test.kt:(1950,2050): error: Return type mismatch: expected 'String!', actual '() -> String?'.
+/test.kt:124:9: error: Return type mismatch: expected 'String!', actual '() -> String?'.
 
-/test.kt:(1950,2050): error: Return type mismatch: expected 'String!', actual '() -> String?'.
+/test.kt:124:9: error: Return type mismatch: expected 'String!', actual '() -> String?'.
 
-/test.kt:(2216,2223): error: Return type of 'fun get(): String?' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '<anonymous>'.
+/test.kt:136:29: error: Return type of 'fun get(): String?' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '<anonymous>'.
 
-/test.kt:(2309,2312): error: Return type of 'fun get(): String?' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '<anonymous>'.
-/edge-cases.kt:(279,329): error: Return type mismatch: expected 'String!', actual 'Unit'.
+/test.kt:140:22: error: Return type of 'fun get(): String?' is not a subtype of the return type of the overridden member 'fun get(): String' defined in '<anonymous>'.
+/edge-cases.kt:179:9: error: Return type mismatch: expected 'String!', actual 'Unit'.
 
-/edge-cases.kt:(368,429): error: Return type mismatch: expected 'String!', actual 'Unit'.
+/edge-cases.kt:185:9: error: Return type mismatch: expected 'String!', actual 'Unit'.
 
-/edge-cases.kt:(397,419): error: Return type mismatch: expected 'Unit', actual 'String?'.
+/edge-cases.kt:186:24: error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(397,419): error: Return type mismatch: expected 'Unit', actual 'String?'.
+/edge-cases.kt:186:24: error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(468,534): error: Return type mismatch: expected 'String!', actual 'Unit'.
+/edge-cases.kt:191:9: error: Return type mismatch: expected 'String!', actual 'Unit'.
 
-/edge-cases.kt:(502,524): error: Return type mismatch: expected 'Unit', actual 'String?'.
+/edge-cases.kt:192:24: error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(502,524): error: Return type mismatch: expected 'Unit', actual 'String?'.
+/edge-cases.kt:192:24: error: Return type mismatch: expected 'Unit', actual 'String?'.
 
-/edge-cases.kt:(581,645): error: Return type mismatch: expected 'String!', actual 'Unit'.
+/edge-cases.kt:197:9: error: Return type mismatch: expected 'String!', actual 'Unit'.

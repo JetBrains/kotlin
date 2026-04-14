@@ -1,1 +1,1 @@
-/kt32545.kt:(203,231): error: Return type mismatch: expected 'T (of fun <T> f)', actual 'Any?'.
+/kt32545.kt:6:23: error: Return type mismatch: expected 'T (of fun <T> f)', actual 'Any?'.

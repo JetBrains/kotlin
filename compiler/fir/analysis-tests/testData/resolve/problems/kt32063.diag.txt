@@ -1,1 +1,1 @@
-/kt32063.kt:(255,258): error: Return type of 'fun baz(): Int' is not a subtype of the return type of the overridden member 'fun baz(): String' defined in 'Baz'.
+/kt32063.kt:8:25: error: Return type of 'fun baz(): Int' is not a subtype of the return type of the overridden member 'fun baz(): String' defined in 'Baz'.

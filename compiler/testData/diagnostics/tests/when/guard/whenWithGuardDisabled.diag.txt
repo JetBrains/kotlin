@@ -1,23 +1,23 @@
-/whenWithGuardDisabled.kt:(392,402): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:15:26: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(435,491): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:16:25: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(513,533): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:18:14: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(679,689): error: Guard statements are only allowed in 'when' with subject.
+/whenWithGuardDisabled.kt:26:28: error: Guard statements are only allowed in 'when' with subject.
 
-/whenWithGuardDisabled.kt:(679,689): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:26:28: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(761,776): error: Guard statements are only allowed in 'when' with subject.
+/whenWithGuardDisabled.kt:28:14: error: Guard statements are only allowed in 'when' with subject.
 
-/whenWithGuardDisabled.kt:(761,776): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:28:14: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(932,942): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:36:27: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(932,942): error: Use of comma in 'when' condition with guard statement is not allowed.
+/whenWithGuardDisabled.kt:36:27: error: Use of comma in 'when' condition with guard statement is not allowed.
 
-/whenWithGuardDisabled.kt:(1039,1043): error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.
+/whenWithGuardDisabled.kt:42:12: error: 'when' expression must be exhaustive. Add the 'False' branch or an 'else' branch.
 
-/whenWithGuardDisabled.kt:(1091,1101): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:44:18: error: The feature "when guards" is disabled
 
-/whenWithGuardDisabled.kt:(1226,1236): error: The feature "when guards" is disabled
+/whenWithGuardDisabled.kt:51:18: error: The feature "when guards" is disabled

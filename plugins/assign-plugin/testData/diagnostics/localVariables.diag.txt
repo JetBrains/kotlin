@@ -1,13 +1,13 @@
-/localVariables.kt:(400,408): error: 'val' cannot be reassigned.
+/localVariables.kt:18:5: error: 'val' cannot be reassigned.
 
-/localVariables.kt:(409,410): error: Assignment type mismatch: actual type is 'String', but 'StringProperty' was expected.
+/localVariables.kt:18:14: error: Assignment type mismatch: actual type is 'String', but 'StringProperty' was expected.
 
-/localVariables.kt:(520,528): error: 'val' cannot be reassigned.
+/localVariables.kt:23:5: error: 'val' cannot be reassigned.
 
-/localVariables.kt:(670,671): error: Assignment type mismatch: actual type is 'String', but 'StringProperty' was expected.
+/localVariables.kt:28:14: error: Assignment type mismatch: actual type is 'String', but 'StringProperty' was expected.
 
-/localVariables.kt:(916,924): error: 'val' cannot be reassigned.
+/localVariables.kt:38:9: error: 'val' cannot be reassigned.
 
-/localVariables.kt:(925,926): error: Assignment type mismatch: actual type is 'String', but 'StringProperty' was expected.
+/localVariables.kt:38:18: error: Assignment type mismatch: actual type is 'String', but 'StringProperty' was expected.
 
-/localVariables.kt:(994,1002): error: 'val' cannot be reassigned.
+/localVariables.kt:42:9: error: 'val' cannot be reassigned.

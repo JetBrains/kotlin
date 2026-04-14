@@ -1,143 +1,143 @@
-/constants.kt:(98,104): warning: Use 'toInt' to give the type explicitly.
+/constants.kt:5:7: warning: Use 'toInt' to give the type explicitly.
 
-/constants.kt:(111,118): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:6:7: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(125,133): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:7:7: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(140,147): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:8:7: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(154,156): warning: This cast can never succeed.
+/constants.kt:9:7: warning: This cast can never succeed.
 
-/constants.kt:(168,177): warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
+/constants.kt:10:7: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:(184,192): warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
+/constants.kt:11:7: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
-/constants.kt:(202,208): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:13:9: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(217,224): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:14:9: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(233,241): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:15:9: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(250,257): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:16:9: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(266,268): warning: This cast can never succeed.
+/constants.kt:17:9: warning: This cast can never succeed.
 
-/constants.kt:(282,291): warning: No cast needed.
+/constants.kt:18:9: warning: No cast needed.
 
-/constants.kt:(300,308): warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
+/constants.kt:19:9: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
-/constants.kt:(317,323): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:21:8: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(331,338): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:22:8: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(346,354): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:23:8: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(362,369): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:24:8: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(377,379): warning: This cast can never succeed.
+/constants.kt:25:8: warning: This cast can never succeed.
 
-/constants.kt:(392,401): warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
+/constants.kt:26:8: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:(409,417): warning: No cast needed.
+/constants.kt:27:8: warning: No cast needed.
 
-/constants.kt:(442,449): warning: Use 'toInt' to give the type explicitly.
+/constants.kt:31:7: warning: Use 'toInt' to give the type explicitly.
 
-/constants.kt:(456,464): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:32:7: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(471,480): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:33:7: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(487,495): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:34:7: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(502,505): warning: This cast can never succeed.
+/constants.kt:35:7: warning: This cast can never succeed.
 
-/constants.kt:(517,527): warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
+/constants.kt:36:7: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:(534,543): warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
+/constants.kt:37:7: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
-/constants.kt:(553,560): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:39:9: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(569,577): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:40:9: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(586,595): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:41:9: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(604,612): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:42:9: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(621,624): warning: This cast can never succeed.
+/constants.kt:43:9: warning: This cast can never succeed.
 
-/constants.kt:(638,648): warning: No cast needed.
+/constants.kt:44:9: warning: No cast needed.
 
-/constants.kt:(657,666): warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
+/constants.kt:45:9: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
-/constants.kt:(675,682): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:47:8: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(690,698): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:48:8: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(706,715): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:49:8: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(723,731): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:50:8: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(739,742): warning: This cast can never succeed.
+/constants.kt:51:8: warning: This cast can never succeed.
 
-/constants.kt:(755,765): warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
+/constants.kt:52:8: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:(773,782): warning: No cast needed.
+/constants.kt:53:8: warning: No cast needed.
 
-/constants.kt:(806,812): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:57:8: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(820,827): warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
+/constants.kt:58:8: warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
 
-/constants.kt:(835,843): warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
+/constants.kt:59:8: warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
 
-/constants.kt:(851,858): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:60:8: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(866,874): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:61:8: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(882,889): warning: No cast needed.
+/constants.kt:62:8: warning: No cast needed.
 
-/constants.kt:(897,899): warning: This cast can never succeed.
+/constants.kt:63:8: warning: This cast can never succeed.
 
-/constants.kt:(912,921): warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
+/constants.kt:64:8: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:(929,937): warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
+/constants.kt:65:8: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
-/constants.kt:(965,971): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:69:8: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(979,986): warning: Use 'toUInt' to give the type explicitly.
+/constants.kt:70:8: warning: Use 'toUInt' to give the type explicitly.
 
-/constants.kt:(994,1002): warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
+/constants.kt:71:8: warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
 
-/constants.kt:(1010,1017): warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
+/constants.kt:72:8: warning: This cast can never succeed. Use 'toByte' to perform numeric conversion.
 
-/constants.kt:(1025,1033): warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
+/constants.kt:73:8: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:(1041,1048): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:74:8: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
 
-/constants.kt:(1056,1058): warning: This cast can never succeed.
+/constants.kt:75:8: warning: This cast can never succeed.
 
-/constants.kt:(1071,1080): warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
+/constants.kt:76:8: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:(1088,1096): warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
+/constants.kt:77:8: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
-/constants.kt:(1106,1113): warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
+/constants.kt:79:9: warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
 
-/constants.kt:(1122,1130): warning: This cast can never succeed. Use 'toUByte' to perform numeric conversion.
+/constants.kt:80:9: warning: This cast can never succeed. Use 'toUByte' to perform numeric conversion.
 
-/constants.kt:(1139,1148): warning: This cast can never succeed. Use 'toUShort' to perform numeric conversion.
+/constants.kt:81:9: warning: This cast can never succeed. Use 'toUShort' to perform numeric conversion.
 
-/constants.kt:(1157,1165): warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
+/constants.kt:82:9: warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
 
-/constants.kt:(1173,1180): warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
+/constants.kt:83:8: warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
 
-/constants.kt:(1188,1196): warning: This cast can never succeed. Use 'toUByte' to perform numeric conversion.
+/constants.kt:84:8: warning: This cast can never succeed. Use 'toUByte' to perform numeric conversion.
 
-/constants.kt:(1204,1213): warning: This cast can never succeed. Use 'toUShort' to perform numeric conversion.
+/constants.kt:85:8: warning: This cast can never succeed. Use 'toUShort' to perform numeric conversion.
 
-/constants.kt:(1221,1229): warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
+/constants.kt:86:8: warning: This cast can never succeed. Use 'toULong' to perform numeric conversion.
 
-/constants.kt:(1239,1246): warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
+/constants.kt:88:9: warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
 
-/constants.kt:(1255,1263): warning: No cast needed.
+/constants.kt:89:9: warning: No cast needed.
 
-/constants.kt:(1272,1278): warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
+/constants.kt:90:9: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
-/constants.kt:(1287,1294): warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.
+/constants.kt:91:9: warning: This cast can never succeed. Use 'toLong' to perform numeric conversion.

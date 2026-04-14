@@ -1,9 +1,9 @@
-/projectedOutTypeMismatch.kt:(160,162): error: Receiver type 'MutableList<out Number>' contains out projection which prohibits the use of 'fun add(element: E): Boolean'.
+/projectedOutTypeMismatch.kt:5:14: error: Receiver type 'MutableList<out Number>' contains out projection which prohibits the use of 'fun add(element: E): Boolean'.
 
-/projectedOutTypeMismatch.kt:(177,179): error: Receiver type 'MutableList<out Number>' contains out projection which prohibits the use of 'fun <T> MutableList<T>.bar(t: T): Unit'.
+/projectedOutTypeMismatch.kt:6:14: error: Receiver type 'MutableList<out Number>' contains out projection which prohibits the use of 'fun <T> MutableList<T>.bar(t: T): Unit'.
 
-/projectedOutTypeMismatch.kt:(213,215): error: Receiver type 'MutableList<out Number>' contains out projection which prohibits the use of 'fun <T> MutableList<T>.foo(t: T): Unit'.
+/projectedOutTypeMismatch.kt:9:18: error: Receiver type 'MutableList<out Number>' contains out projection which prohibits the use of 'fun <T> MutableList<T>.foo(t: T): Unit'.
 
-/projectedOutTypeMismatch.kt:(245,247): error: Receiver type 'Consumer<*>' contains star projection which prohibits the use of 'fun consume(t: T): Unit'.
+/projectedOutTypeMismatch.kt:12:22: error: Receiver type 'Consumer<*>' contains star projection which prohibits the use of 'fun consume(t: T): Unit'.
 
-/projectedOutTypeMismatch.kt:(401,403): error: Receiver type 'T (of fun <T : MutableList<out Number>> test2)' contains out projection which prohibits the use of 'fun add(element: E): Boolean'.
+/projectedOutTypeMismatch.kt:22:11: error: Receiver type 'T (of fun <T : MutableList<out Number>> test2)' contains out projection which prohibits the use of 'fun add(element: E): Boolean'.

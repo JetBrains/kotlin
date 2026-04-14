@@ -1,23 +1,23 @@
-/inlinedBreakContinueFeatureDisabled.kt:(361,366): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:16:15: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(383,391): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:17:15: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(415,420): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:18:22: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(445,453): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:19:22: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(512,517): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:25:14: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(537,545): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:26:14: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(573,578): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:28:21: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(612,620): error: The feature "break continue in inline lambdas" is disabled
+/inlinedBreakContinueFeatureDisabled.kt:29:21: error: The feature "break continue in inline lambdas" is disabled
 
-/inlinedBreakContinueFeatureDisabled.kt:(694,699): error: 'break' or 'continue' crosses a function or class boundary.
+/inlinedBreakContinueFeatureDisabled.kt:35:19: error: 'break' or 'continue' crosses a function or class boundary.
 
-/inlinedBreakContinueFeatureDisabled.kt:(705,710): error: 'break' or 'continue' crosses a function or class boundary.
+/inlinedBreakContinueFeatureDisabled.kt:35:30: error: 'break' or 'continue' crosses a function or class boundary.
 
-/inlinedBreakContinueFeatureDisabled.kt:(732,740): error: 'break' or 'continue' crosses a function or class boundary.
+/inlinedBreakContinueFeatureDisabled.kt:36:19: error: 'break' or 'continue' crosses a function or class boundary.
 
-/inlinedBreakContinueFeatureDisabled.kt:(746,751): error: 'break' or 'continue' crosses a function or class boundary.
+/inlinedBreakContinueFeatureDisabled.kt:36:33: error: 'break' or 'continue' crosses a function or class boundary.

@@ -1,19 +1,19 @@
-/expansionToCompilerRequiredAnnotation.kt:(104,121): error: Typealias to a compiler-required annotation 'kotlin.Deprecated' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:5:26: error: Typealias to a compiler-required annotation 'kotlin.Deprecated' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(143,167): error: Typealias to a compiler-required annotation 'kotlin.annotation.Target' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:6:22: error: Typealias to a compiler-required annotation 'kotlin.annotation.Target' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(193,220): error: Typealias to a compiler-required annotation 'java.lang.annotation.Target' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:7:26: error: Typealias to a compiler-required annotation 'java.lang.annotation.Target' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(243,261): error: Typealias to a compiler-required annotation 'kotlin.jvm.JvmName' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:8:23: error: Typealias to a compiler-required annotation 'kotlin.jvm.JvmName' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(298,326): error: Typealias to a compiler-required annotation 'kotlin.DeprecatedSinceKotlin' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:9:37: error: Typealias to a compiler-required annotation 'kotlin.DeprecatedSinceKotlin' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(353,371): error: Typealias to a compiler-required annotation 'kotlin.SinceKotlin' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:10:27: error: Typealias to a compiler-required annotation 'kotlin.SinceKotlin' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(401,421): error: Typealias to a compiler-required annotation 'java.lang.Deprecated' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:11:30: error: Typealias to a compiler-required annotation 'java.lang.Deprecated' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(446,466): error: Typealias to a compiler-required annotation 'kotlin.jvm.JvmRecord' is not allowed. Remove the typealias and use the annotation directly.
+/expansionToCompilerRequiredAnnotation.kt:12:25: error: Typealias to a compiler-required annotation 'kotlin.jvm.JvmRecord' is not allowed. Remove the typealias and use the annotation directly.
 
-/expansionToCompilerRequiredAnnotation.kt:(837,853): error: 'public' typealias exposes 'internal' in expanded type 'JvmPackageName'.
+/expansionToCompilerRequiredAnnotation.kt:19:11: error: 'public' typealias exposes 'internal' in expanded type 'JvmPackageName'.
 
-/expansionToCompilerRequiredAnnotation.kt:(867,881): error: Cannot access 'annotation class JvmPackageName : Annotation': it is internal in file.
+/expansionToCompilerRequiredAnnotation.kt:19:41: error: Cannot access 'annotation class JvmPackageName : Annotation': it is internal in file.

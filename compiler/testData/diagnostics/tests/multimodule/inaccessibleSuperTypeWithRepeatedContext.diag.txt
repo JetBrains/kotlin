@@ -1,11 +1,11 @@
-/c.kt:(91,110): error: Cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies.
+/c.kt:24:14: error: Cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies.
 
-/c.kt:(115,117): warning: Expression is unused.
+/c.kt:25:5: warning: Expression is unused.
 
-/c.kt:(132,144): error: Cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies.
+/c.kt:27:14: error: Cannot access 'MissedInterface' which is a supertype of 'Implementation'. Check your module classpath for missing or conflicting dependencies.
 
-/c.kt:(132,144): warning: Cannot access 'MissedInterface' which is a supertype of 'Intermediate'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
+/c.kt:27:14: warning: Cannot access 'MissedInterface' which is a supertype of 'Intermediate'. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.
 
-/c.kt:(132,144): error: Cannot access class 'MissedInterface'. Check your module classpath for missing or conflicting dependencies.
+/c.kt:27:14: error: Cannot access class 'MissedInterface'. Check your module classpath for missing or conflicting dependencies.
 
-/c.kt:(149,151): warning: Expression is unused.
+/c.kt:28:5: warning: Expression is unused.

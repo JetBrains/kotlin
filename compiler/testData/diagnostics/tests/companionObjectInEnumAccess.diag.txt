@@ -1,1 +1,1 @@
-/companionObjectInEnumAccess.kt:(157,168): error: Companion object of enum class 'MyEnum' is uninitialized here.
+/companionObjectInEnumAccess.kt:10:17: error: Companion object of enum class 'MyEnum' is uninitialized here.

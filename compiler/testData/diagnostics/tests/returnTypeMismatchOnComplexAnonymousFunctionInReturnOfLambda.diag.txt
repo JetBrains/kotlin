@@ -1,13 +1,13 @@
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(329,330): error: Initializer type mismatch: expected 'String', actual '() -> String'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:12:21: error: Initializer type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(349,448): error: Return type mismatch: expected 'String', actual '() -> String'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:13:9: error: Return type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(349,448): error: Return type mismatch: expected 'String', actual '() -> String'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:13:9: error: Return type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(394,416): error: Return type mismatch: expected 'String', actual 'String?'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:14:30: error: Return type mismatch: expected 'String', actual 'String?'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(463,464): error: Assignment type mismatch: actual type is '() -> String', but 'String' was expected.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:18:9: error: Assignment type mismatch: actual type is '() -> String', but 'String' was expected.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(483,574): error: Return type mismatch: expected 'String', actual '() -> String'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:19:9: error: Return type mismatch: expected 'String', actual '() -> String'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:(483,574): error: Return type mismatch: expected 'String', actual '() -> String'.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt:19:9: error: Return type mismatch: expected 'String', actual '() -> String'.

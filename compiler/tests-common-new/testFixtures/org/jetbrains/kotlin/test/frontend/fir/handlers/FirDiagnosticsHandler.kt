@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -105,7 +106,7 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
         testServices.assertions.assertEqualsToFile(expectedFile, resultDump)
     }
 
-    fun storeFullDiagnosticRender(module: TestModule, diagnostics: List<KtDiagnostic>, file: TestFile) {
+    fun storeFullDiagnosticRender(module: TestModule, diagnostics: List<KtDiagnostic>, file: TestFile, testServices: TestServices) {
         if (directive !in module.directives) return
         if (diagnostics.isEmpty()) return
 
@@ -124,9 +125,15 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
             }
             .sortedWith(compareBy<DiagnosticData> { it.textRanges.first().startOffset }.thenBy { it.message })
 
-        dumper.builderForModule(module).appendLine(reportedDiagnostics.joinToString(separator = "\n\n") {
-            "/${file.name}:${it.textRanges.first()}: ${it.severity}: ${it.message}"
-        })
+        val rendered = testServices.sourceFileProvider.getContentOfSourceFile(file).byteInputStream().reader().use {
+            val finder = SequentialPositionFinder(it)
+            reportedDiagnostics.joinToString(separator = "\n\n") { diagnostic ->
+                val position = finder.findNextPosition(diagnostic.textRanges.first().startOffset, withLineContents = false)
+                "/${file.name}:${position.line}:${position.column}: ${diagnostic.severity}: ${diagnostic.message}"
+            }
+        }
+
+        dumper.builderForModule(module).appendLine(rendered)
     }
 }
 
@@ -181,7 +188,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
                 collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-                fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file)
+                fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics.map { it.diagnostic }, file, testServices)
             }
         }
     }

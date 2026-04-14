@@ -1,21 +1,21 @@
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(273,276): error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:10:9: error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(311,331): error: Return type mismatch: expected 'String', actual '(String) -> ??? (Unknown lambda return type)'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:13:9: error: Return type mismatch: expected 'String', actual '(String) -> ??? (Unknown lambda return type)'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(366,378): error: Return type mismatch: expected 'String', actual '(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type)'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:16:9: error: Return type mismatch: expected 'String', actual '(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type)'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(368,370): error: Cannot infer type for value parameter 'it'. Specify it explicitly.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:16:11: error: Cannot infer type for value parameter 'it'. Specify it explicitly.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(421,424): error: Return type mismatch: expected 'String', actual '() -> Unit'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:19:9: error: Return type mismatch: expected 'String', actual '() -> Unit'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(467,487): error: Return type mismatch: expected 'String', actual '(String) -> String'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:22:9: error: Return type mismatch: expected 'String', actual '(String) -> String'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(530,542): error: Return type mismatch: expected 'String', actual '(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type)'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:25:9: error: Return type mismatch: expected 'String', actual '(??? (Unknown lambda parameter type)) -> ??? (Unknown lambda return type)'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(532,534): error: Cannot infer type for value parameter 'it'. Specify it explicitly.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:25:11: error: Cannot infer type for value parameter 'it'. Specify it explicitly.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(587,590): error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:28:19: error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(587,590): error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:28:19: error: Return type mismatch: expected 'String', actual '() -> ??? (Unknown lambda return type)'.
 
-/returnTypeMismatchOnLambdaInReturnOfLambda.kt:(653,656): error: Return type mismatch: expected 'String', actual '() -> Unit'.
+/returnTypeMismatchOnLambdaInReturnOfLambda.kt:31:27: error: Return type mismatch: expected 'String', actual '() -> Unit'.

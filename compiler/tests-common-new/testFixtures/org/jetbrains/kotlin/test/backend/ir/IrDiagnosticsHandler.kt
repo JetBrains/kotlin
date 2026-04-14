@@ -44,7 +44,7 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
                             lightTreeEnabled, lightTreeComparingModeEnabled
                         )
                     globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
-                    fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics, file)
+                    fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics, file, testServices)
                 }
             }
         }

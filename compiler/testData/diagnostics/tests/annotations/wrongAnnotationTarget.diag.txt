@@ -1,5 +1,5 @@
-/wrongAnnotationTarget.kt:(145,159): error: This annotation is not applicable to target 'top level property with backing field' and use-site target '@property'. Applicable targets: function
+/wrongAnnotationTarget.kt:9:1: error: This annotation is not applicable to target 'top level property with backing field' and use-site target '@property'. Applicable targets: function
 
-/wrongAnnotationTarget.kt:(169,174): error: This annotation is not applicable to target 'type usage'. Applicable targets: class, annotation class, property, field, local variable, value parameter, constructor, function, getter, setter, backing field
+/wrongAnnotationTarget.kt:10:10: error: This annotation is not applicable to target 'type usage'. Applicable targets: class, annotation class, property, field, local variable, value parameter, constructor, function, getter, setter, backing field
 
-/wrongAnnotationTarget.kt:(175,180): error: This annotation is not applicable to target 'type usage'. Applicable targets: function
+/wrongAnnotationTarget.kt:10:16: error: This annotation is not applicable to target 'type usage'. Applicable targets: function
