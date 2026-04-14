@@ -22,7 +22,7 @@
 
 /constants.kt:17:9: warning: This cast can never succeed.
 
-/constants.kt:18:9: warning: No cast needed.
+/constants.kt:18:9: warning: Cast is redundant.
 
 /constants.kt:19:9: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
@@ -38,7 +38,7 @@
 
 /constants.kt:26:8: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:27:8: warning: No cast needed.
+/constants.kt:27:8: warning: Cast is redundant.
 
 /constants.kt:31:7: warning: Use 'toInt' to give the type explicitly.
 
@@ -64,7 +64,7 @@
 
 /constants.kt:43:9: warning: This cast can never succeed.
 
-/constants.kt:44:9: warning: No cast needed.
+/constants.kt:44:9: warning: Cast is redundant.
 
 /constants.kt:45:9: warning: This cast can never succeed. Use 'toFloat' to perform numeric conversion.
 
@@ -80,7 +80,7 @@
 
 /constants.kt:52:8: warning: This cast can never succeed. Use 'toDouble' to perform numeric conversion.
 
-/constants.kt:53:8: warning: No cast needed.
+/constants.kt:53:8: warning: Cast is redundant.
 
 /constants.kt:57:8: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 
@@ -92,7 +92,7 @@
 
 /constants.kt:61:8: warning: This cast can never succeed. Use 'toShort' to perform numeric conversion.
 
-/constants.kt:62:8: warning: No cast needed.
+/constants.kt:62:8: warning: Cast is redundant.
 
 /constants.kt:63:8: warning: This cast can never succeed.
 
@@ -136,7 +136,7 @@
 
 /constants.kt:88:9: warning: This cast can never succeed. Use 'toUInt' to perform numeric conversion.
 
-/constants.kt:89:9: warning: No cast needed.
+/constants.kt:89:9: warning: Cast is redundant.
 
 /constants.kt:90:9: warning: This cast can never succeed. Use 'toInt' to perform numeric conversion.
 

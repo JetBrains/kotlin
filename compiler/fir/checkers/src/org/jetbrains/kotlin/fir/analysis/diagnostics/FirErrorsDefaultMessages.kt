@@ -3339,7 +3339,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SAFE_CAST_RELYING_ON_NULL, "This cast always returns null, even when it succeeds.")
         val castNeverSucceedsMessage = "This cast can never succeed."
         map.put(CAST_NEVER_SUCCEEDS, castNeverSucceedsMessage)
-        map.put(USELESS_CAST, "No cast needed.")
+        map.put(USELESS_CAST, "Cast is redundant.")
         map.put(UNCHECKED_CAST, "Unchecked cast of ''{0}'' to ''{1}''.", RENDER_TYPE, RENDER_TYPE)
         val toNumberCallTemplate = "''to{0}''"
         map.put(
