@@ -777,35 +777,31 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         files.file("internal.h", """
         #import <Foundation/Foundation.h>
 
-        #if !defined(SWIFT_ENUM)
-        # define SWIFT_ENUM(_type, _name, _extensibility) enum _name : _type _extensibility
-        #endif
+        #pragma clang attribute push(__attribute__((external_source_symbol(language="Swift", defined_in="DatadogInternal",generated_declaration))), apply_to=any(function,enum,objc_interface,objc_category,objc_protocol))
 
-        typedef SWIFT_ENUM(NSInteger, DDCoreLoggerLevel, closed) {
-            DDCoreLoggerLevelNone = 0,
-            DDCoreLoggerLevelDebug = 1,
-            DDCoreLoggerLevelWarn = 2,
-            DDCoreLoggerLevelError = 3,
-            DDCoreLoggerLevelCritical = 4,
+        typedef enum DDCoreLoggerLevel : NSInteger DDCoreLoggerLevel; enum __attribute__((enum_extensibility(closed))) DDCoreLoggerLevel : NSInteger {
+          DDCoreLoggerLevelNone = 0,
+          DDCoreLoggerLevelDebug = 1,
+          DDCoreLoggerLevelWarn = 2,
+          DDCoreLoggerLevelError = 3,
+          DDCoreLoggerLevelCritical = 4,
         };
 
         void internalConsume(enum DDCoreLoggerLevel level);
+        
+        #pragma clang attribute pop
     """.trimIndent())
 
         files.file("core.h", """
         #import <Foundation/Foundation.h>
 
-        #if !defined(SWIFT_ENUM_FWD_DECL)
-        # if __has_feature(objc_fixed_enum)
-        #  define SWIFT_ENUM_FWD_DECL(_type, _name) enum _name : _type;
-        # else
-        #  define SWIFT_ENUM_FWD_DECL(_type, _name) typedef _type _name;
-        # endif
-        #endif
-
-        SWIFT_ENUM_FWD_DECL(NSInteger, DDCoreLoggerLevel)
+        #pragma clang attribute push(__attribute__((external_source_symbol(language="Swift", defined_in="DatadogCore",generated_declaration))), apply_to=any(function,enum,objc_interface,objc_category,objc_protocol))
+        
+        enum DDCoreLoggerLevel : NSInteger;
 
         void coreConsume(enum DDCoreLoggerLevel level);
+        
+        #pragma clang attribute pop
     """.trimIndent())
 
         val def = files.file("dup_enum.def", """
