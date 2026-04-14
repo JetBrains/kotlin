@@ -13,7 +13,7 @@ import org.junit.runners.JUnit4
 import kotlin.test.Test
 
 @RunWith(JUnit4::class)
-class ComposeLambdaClassCodegenTest : AbstractIrTransformTest(useFir = true) {
+class ComposeLambdaClassCodegenTest : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(JVMConfigurationKeys.LAMBDAS, JvmClosureGenerationScheme.CLASS)
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)

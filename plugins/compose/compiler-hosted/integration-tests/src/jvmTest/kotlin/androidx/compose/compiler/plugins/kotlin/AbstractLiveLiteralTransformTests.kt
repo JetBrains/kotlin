@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.junit.Assert.assertEquals
 
-abstract class AbstractLiveLiteralTransformTests(
-    useFir: Boolean,
-) : AbstractIrTransformTest(useFir) {
+abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
     @OptIn(ExperimentalCompilerApi::class)
     private fun computeKeys(files: List<SourceFile>): List<String> {
         var builtKeys = mutableSetOf<String>()

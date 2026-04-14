@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.junit.Assert.assertEquals
 
-abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+abstract class AbstractMetricsTransformTest : AbstractIrTransformTest() {
     @OptIn(ExperimentalCompilerApi::class)
     private fun verifyMetrics(
         source: String,

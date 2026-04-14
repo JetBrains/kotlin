@@ -81,7 +81,7 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
     }
 
 @RunWith(JUnit4::class)
-abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFir = true) {
+abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
     @JvmField
     @Rule
     val sourceDirectory = TemporaryFolder()

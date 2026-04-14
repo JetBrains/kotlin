@@ -25,7 +25,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import java.io.File
 
-abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
+abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
     protected fun check(
         @Language("kotlin")
         expectedText: String,

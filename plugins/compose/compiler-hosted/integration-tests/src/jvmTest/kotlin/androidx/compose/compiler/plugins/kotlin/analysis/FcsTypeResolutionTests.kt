@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import org.junit.Test
 
-class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
+class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     @Test
     fun testImplicitlyPassedReceiverScope1() = check(
         """

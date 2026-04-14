@@ -41,7 +41,7 @@ import java.io.File
 import java.net.URLClassLoader
 
 @RunWith(Parameterized::class)
-abstract class AbstractCompilerTest(val useFir: Boolean) {
+abstract class AbstractCompilerTest {
     companion object {
         fun isCI() = env("CI")
 

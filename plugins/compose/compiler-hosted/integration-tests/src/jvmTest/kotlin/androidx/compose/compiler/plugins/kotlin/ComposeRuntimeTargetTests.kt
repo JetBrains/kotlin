@@ -11,7 +11,7 @@ import org.junit.runners.JUnit4
 import kotlin.test.Test
 
 @RunWith(JUnit4::class)
-class ComposeRuntimeTargetTests : AbstractIrTransformTest(useFir = true) {
+class ComposeRuntimeTargetTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.TARGET_RUNTIME_VERSION_KEY,

@@ -23,7 +23,7 @@ import org.junit.runners.Parameterized
 
 class ComposableDeclarationCheckerTests(
     private val languageVersion: LanguageVersion
-) : AbstractComposeDiagnosticsTest(languageVersion.usesK2) {
+) : AbstractComposeDiagnosticsTest() {
 
     companion object {
         @JvmStatic

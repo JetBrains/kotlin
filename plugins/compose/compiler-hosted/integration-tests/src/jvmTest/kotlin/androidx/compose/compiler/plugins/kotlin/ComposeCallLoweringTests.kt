@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
 
-class ComposeCallLoweringTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class ComposeCallLoweringTests : AbstractCodegenTest() {
 
     @Test
     fun testVarargs() {

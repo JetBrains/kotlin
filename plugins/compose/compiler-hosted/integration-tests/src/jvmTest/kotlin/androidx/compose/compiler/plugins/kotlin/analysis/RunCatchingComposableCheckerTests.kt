@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class RunCatchingComposableCheckerTests : AbstractComposeDiagnosticsTest(useFir = true) {
+class RunCatchingComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     @Test
     fun testTryCatchReporting001() {
         check(

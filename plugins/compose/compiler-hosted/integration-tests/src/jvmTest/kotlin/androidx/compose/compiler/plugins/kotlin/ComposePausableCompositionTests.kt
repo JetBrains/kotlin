@@ -21,9 +21,8 @@ import org.junit.runners.Parameterized
 import kotlin.test.Test
 
 class ComposePausableCompositionTests(
-    useFir: Boolean,
     private val pausableEnabled: Boolean
-) : AbstractControlFlowTransformTests(useFir) {
+) : AbstractControlFlowTransformTests() {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "useFir = {0}, pausableEnabled = {1}")

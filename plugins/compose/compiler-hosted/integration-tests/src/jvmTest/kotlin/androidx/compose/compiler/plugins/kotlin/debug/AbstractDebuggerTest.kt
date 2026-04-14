@@ -46,7 +46,7 @@ private const val MAIN_METHOD = "main"
 private const val CONTENT_METHOD = "content"
 private const val TEST_CLASS = "TestKt"
 
-abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
+abstract class AbstractDebuggerTest : AbstractCodegenTest() {
     companion object {
         private lateinit var testServerProcess: Process
         lateinit var virtualMachine: VirtualMachine

@@ -24,7 +24,7 @@ import java.io.File
 
 var uniqueNumber = 0
 
-abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
+abstract class AbstractCodegenTest : AbstractCompilerTest() {
     private fun dumpClasses(loader: GeneratedClassLoader) {
         for (
         file in loader.allGeneratedFiles.filter {

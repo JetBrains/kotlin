@@ -18,9 +18,8 @@ import org.junit.runners.Parameterized
 import kotlin.test.Test
 
 class GroupAnalysisCompilerTest(
-    useFir: Boolean,
     private val validateMapping: Boolean
-) : AbstractCompilerTest(useFir) {
+) : AbstractCompilerTest() {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "useFir={0},mapping={1}")

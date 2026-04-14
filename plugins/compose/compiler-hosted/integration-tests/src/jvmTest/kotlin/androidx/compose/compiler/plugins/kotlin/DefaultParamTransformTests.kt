@@ -20,7 +20,7 @@ import org.intellij.lang.annotations.Language
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 
-class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class DefaultParamTransformTests : AbstractIrTransformTest() {
     private fun defaultParams(
         @Language("kotlin")
         unchecked: String,

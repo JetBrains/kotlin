@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class RunComposableTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class RunComposableTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         setupLanguageVersionSettings(K2JVMCompilerArguments().apply {
             // enabling multiPlatform to use expect/actual declarations

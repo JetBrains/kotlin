@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class ComposerParamTransformTests : AbstractIrTransformTest() {
     private fun composerParam(
         @Language("kotlin")
         source: String,

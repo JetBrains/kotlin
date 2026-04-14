@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.junit.Test
 
-class StabilityPropagationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class StabilityPropagationTransformTests : AbstractIrTransformTest() {
     private fun stabilityPropagation(
         @Language("kotlin")
         unchecked: String,

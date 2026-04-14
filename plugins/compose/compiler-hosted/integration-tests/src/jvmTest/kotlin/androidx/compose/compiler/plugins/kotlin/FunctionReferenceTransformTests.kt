@@ -7,7 +7,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
 
-class FunctionReferenceTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class FunctionReferenceTransformTests : AbstractIrTransformTest() {
     @Test
     fun reference() = verifyGoldenComposeIrTransform(
         extra = """

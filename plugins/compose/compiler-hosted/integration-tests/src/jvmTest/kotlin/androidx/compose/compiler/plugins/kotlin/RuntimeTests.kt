@@ -23,29 +23,21 @@ private const val RUNTIME_TEST_ROOT = "plugins/compose/compiler-hosted/runtime-t
 /**
  * Takes Compose tests from runtime-tests module and runs them on compiler + plugin built from source.
  */
-@RunWith(RuntimeTestsK1.RuntimeTestRunner::class)
-class RuntimeTestsK1 {
-    class RuntimeTestRunner(cls: Class<*>) : Suite(
-        cls,
-        createRuntimeRunners(useFir = false)
-    )
-}
-
 @RunWith(RuntimeTestsK2.RuntimeTestRunner::class)
 class RuntimeTestsK2 {
     class RuntimeTestRunner(cls: Class<*>) : Suite(
         cls,
-        createRuntimeRunners(useFir = true)
+        createRuntimeRunners()
     )
 }
 
-private fun createRuntimeRunners(useFir: Boolean): List<Runner> {
+private fun createRuntimeRunners(): List<Runner> {
     AbstractCompilerTest.setSystemProperties()
     val compilers = mutableListOf(
-        RuntimeTestCompiler(useFir, sourceInformation = false, optimizeNonSkippingGroups = false),
-        RuntimeTestCompiler(useFir, sourceInformation = true, optimizeNonSkippingGroups = false),
-        RuntimeTestCompiler(useFir, sourceInformation = false, optimizeNonSkippingGroups = true),
-        RuntimeTestCompiler(useFir, sourceInformation = true, optimizeNonSkippingGroups = true)
+        RuntimeTestCompiler(sourceInformation = false, optimizeNonSkippingGroups = false),
+        RuntimeTestCompiler(sourceInformation = true, optimizeNonSkippingGroups = false),
+        RuntimeTestCompiler(sourceInformation = false, optimizeNonSkippingGroups = true),
+        RuntimeTestCompiler(sourceInformation = true, optimizeNonSkippingGroups = true)
     )
 
     val iterator = compilers.iterator()
@@ -71,10 +63,9 @@ private val runtimeTestFiles = runtimeTestSourceRoot.walk().toSet()
 
 @Ignore
 private class RuntimeTestCompiler(
-    useFir: Boolean,
     private val sourceInformation: Boolean,
     private val optimizeNonSkippingGroups: Boolean,
-) : AbstractCodegenTest(useFir) {
+) : AbstractCodegenTest() {
     val description: String = "[source=$sourceInformation][groupOptimized=$optimizeNonSkippingGroups]"
 
     override fun CompilerConfiguration.updateConfiguration() {

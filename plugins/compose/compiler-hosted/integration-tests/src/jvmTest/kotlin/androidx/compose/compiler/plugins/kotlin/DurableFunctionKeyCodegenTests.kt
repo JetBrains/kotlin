@@ -21,7 +21,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 /* ktlint-disable max-line-length */
-class DurableFunctionKeyCodegenTests(useFir: Boolean) : AbstractCodegenSignatureTest(useFir) {
+class DurableFunctionKeyCodegenTests : AbstractCodegenSignatureTest() {
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY, true)

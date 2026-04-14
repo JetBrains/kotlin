@@ -27,9 +27,8 @@ import org.junit.runners.Parameterized
 import java.io.File
 
 class StrongSkippingModeTransformTests(
-    useFir: Boolean,
     private val intrinsicRememberEnabled: Boolean,
-) : AbstractIrTransformTest(useFir) {
+) : AbstractIrTransformTest() {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "useFir = {0}, intrinsicRemember = {1}")

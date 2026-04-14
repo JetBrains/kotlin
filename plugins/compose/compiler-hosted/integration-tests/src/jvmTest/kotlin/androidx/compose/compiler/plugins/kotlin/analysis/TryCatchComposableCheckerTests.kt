@@ -23,7 +23,7 @@ import org.junit.Test
  * We're strongly considering supporting try-catch-finally blocks in the future.
  * If/when we do support them, these tests should be deleted.
  */
-class TryCatchComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
+class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     @Test
     fun testTryCatchReporting001() {
         check(

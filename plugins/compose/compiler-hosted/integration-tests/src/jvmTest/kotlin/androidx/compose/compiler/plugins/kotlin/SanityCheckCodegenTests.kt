@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
-class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class SanityCheckCodegenTests : AbstractCodegenTest() {
     @Test
     fun testCallAbstractSuperWithTypeParameters() {
         testCompile(
@@ -144,7 +144,7 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     }
 }
 
-class SanityCheckGroupOptimizationCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class SanityCheckGroupOptimizationCodegenTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.FEATURE_FLAGS,

@@ -27,7 +27,7 @@ import org.junit.runners.Parameterized
 import kotlin.test.assertFalse
 
 @RunWith(Parameterized::class)
-class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class ComposeCrossModuleTests : AbstractCodegenTest() {
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "useFir = {0}")

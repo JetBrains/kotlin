@@ -20,9 +20,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
-abstract class FunctionBodySkippingTransformTestsBase(
-    useFir: Boolean,
-) : AbstractIrTransformTest(useFir) {
+abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest() {
     protected fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
@@ -53,9 +51,7 @@ abstract class FunctionBodySkippingTransformTestsBase(
     )
 }
 
-class FunctionBodySkippingTransformTests(
-    useFir: Boolean,
-) : FunctionBodySkippingTransformTestsBase(useFir) {
+class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBase() {
     @Test
     fun testIfInLambda(): Unit = comparisonPropagation(
         """
@@ -1351,9 +1347,7 @@ class FunctionBodySkippingTransformTests(
 
 }
 
-class FunctionBodySkippingTransformTestsNoSource(
-    useFir: Boolean,
-) : FunctionBodySkippingTransformTestsBase(useFir) {
+class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransformTestsBase() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)

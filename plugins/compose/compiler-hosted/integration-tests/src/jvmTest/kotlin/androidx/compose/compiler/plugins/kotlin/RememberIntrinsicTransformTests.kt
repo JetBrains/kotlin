@@ -20,7 +20,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
-class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(
@@ -793,9 +793,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
     )
 }
 
-class RememberIntrinsicTransformTestsStrongSkipping(
-    useFir: Boolean,
-) : AbstractIrTransformTest(useFir) {
+class RememberIntrinsicTransformTestsStrongSkipping : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(

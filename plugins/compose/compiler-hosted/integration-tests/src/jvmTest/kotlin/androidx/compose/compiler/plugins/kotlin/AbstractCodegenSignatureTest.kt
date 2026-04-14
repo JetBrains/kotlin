@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Rule
 import java.io.File
 
-abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
+abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
     private fun OutputFile.printApi(): String {
         return printPublicApi(asText(), relativePath)
     }

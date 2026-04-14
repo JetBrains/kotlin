@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class CodegenMetadataTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class CodegenMetadataTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
     }

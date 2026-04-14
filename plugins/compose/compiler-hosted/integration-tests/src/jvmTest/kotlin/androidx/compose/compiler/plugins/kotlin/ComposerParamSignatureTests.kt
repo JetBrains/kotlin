@@ -21,7 +21,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /* ktlint-disable max-line-length */
-class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTest(useFir) {
+class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testParameterlessChildrenLambdasReused() = checkApi(
         """

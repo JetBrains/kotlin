@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 
 /* ktlint-disable max-line-length */
 @Category(SmokeTest::class)
-class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class ComposeBytecodeCodegenTest : AbstractCodegenTest() {
 
     @Test
     fun testEmptyComposeFunction() {

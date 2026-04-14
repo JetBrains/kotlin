@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
 
-class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(

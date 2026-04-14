@@ -27,7 +27,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
 
-class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class StaticExpressionDetectionTests : AbstractIrTransformTest() {
     @Test
     fun testKnownUnstableTypesAreNeverStatic() = assertUncertain(
         expression = "Any()",

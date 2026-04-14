@@ -25,7 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /* ktlint-disable max-line-length */
-class FunctionKeyMetaAnnotationsTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+class FunctionKeyMetaAnnotationsTests : AbstractCodegenTest() {
 
     @JvmField
     @Rule

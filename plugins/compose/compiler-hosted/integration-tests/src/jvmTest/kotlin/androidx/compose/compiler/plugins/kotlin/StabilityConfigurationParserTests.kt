@@ -137,7 +137,7 @@ class StabilityConfigurationParserTests {
 
 private const val PATH_TO_CONFIG_FILES = "$TEST_RESOURCES_ROOT/testStabilityConfigFiles"
 
-class SingleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class SingleStabilityConfigurationTest : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
@@ -168,7 +168,7 @@ class SingleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformTes
     )
 }
 
-class MultipleStabilityConfigurationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+class MultipleStabilityConfigurationTest : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,

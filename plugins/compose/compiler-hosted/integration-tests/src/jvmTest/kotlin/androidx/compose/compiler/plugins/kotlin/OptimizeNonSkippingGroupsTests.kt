@@ -11,7 +11,7 @@ import kotlin.test.Test
 
 class OptimizeNonSkippingGroupsTests(
     private val optimizeNonSkippingGroups: Boolean
-) : AbstractControlFlowTransformTests(useFir = true) {
+) : AbstractControlFlowTransformTests() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(ComposeConfiguration.FEATURE_FLAGS, listOf(FeatureFlag.OptimizeNonSkippingGroups.name(optimizeNonSkippingGroups)))

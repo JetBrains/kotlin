@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
 
-class ComposeMultiplatformCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
+class ComposeMultiplatformCheckerTests : AbstractComposeDiagnosticsTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersionSettings.languageVersion,

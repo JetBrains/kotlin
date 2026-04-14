@@ -26,7 +26,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 
 @RunWith(JUnit4::class)
-class ContextParametersTransformTests : AbstractIrTransformTest(true) {
+class ContextParametersTransformTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         languageVersionSettings = LanguageVersionSettingsImpl(
