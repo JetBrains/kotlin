@@ -408,7 +408,7 @@ kotlin {
                 optIn("kotlin.io.path.ExperimentalPathApi")
             }
             dependencies {
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/test")
             kotlin.srcDir("jdk7/test")
@@ -417,14 +417,14 @@ kotlin {
 
         val jvmLongRunningTest by getting {
             dependencies {
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin.srcDir("jvm/testLongRunning")
         }
 
         val jvmRecursiveDeletionTest by getting {
             dependencies {
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin.srcDir("jdk7/recursiveDeletionTest")
         }

@@ -42,7 +42,7 @@ kotlin {
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 runtimeOnly(libs.junit.platform.launcher)
-                api(kotlinTest("junit"))
+                implementation(kotlinTest("junit"))
             }
             kotlin {
                 srcDir("jvm/test")
