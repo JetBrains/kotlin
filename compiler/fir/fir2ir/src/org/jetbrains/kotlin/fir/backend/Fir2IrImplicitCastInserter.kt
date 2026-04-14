@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
+class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by c {
 
     /**
      * Currently, it's a bit vaguely defined how implicit casts differ from conversion (e.g., SAM or suspend ones).
@@ -64,7 +64,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
             }
             expandedValueType is ConeDynamicType -> {
                 if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
-                    generateImplicitCast(this, expandedExpectedType.toIrType(ConversionTypeOrigin.DEFAULT))
+                    generateImplicitCast(this, expandedExpectedType.toIrType(conversionScope.defaultConversionTypeOrigin()))
                 } else {
                     this
                 }
@@ -138,7 +138,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
         // That's why we insert a seemingly redundant cast to the argumentType (not the expected type) here.
         // See plugins/kotlin-dataframe/testData/box/groupByAdd.kt and plugins/kotlin-dataframe/testData/box/wrongReceiver.kt.
         // TODO(KT-77691) Remove when fixed on the plugin side.
-            ?: implicitCastOrExpression(this, argumentType)
+            ?: implicitCastOrExpression(this, argumentType, conversionScope.defaultConversionTypeOrigin())
     }
 
     internal fun IrExpression.insertCastForIntersectionTypeOrSelf(
@@ -170,7 +170,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
 
         return argumentTypeLowerBound.intersectedTypes
             .firstOrNull { it.isSubtypeOf(approximatedExpectedType, session) }
-            ?.let { generateImplicitCast(this, it.toIrType()) }
+            ?.let { generateImplicitCast(this, it.toIrType(conversionScope.defaultConversionTypeOrigin())) }
     }
 
     fun implicitCastOrExpression(

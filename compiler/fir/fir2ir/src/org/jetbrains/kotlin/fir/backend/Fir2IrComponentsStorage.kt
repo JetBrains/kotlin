@@ -74,5 +74,5 @@ class Fir2IrComponentsStorage(
     override val annotationsFromPluginRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar = Fir2IrIrGeneratedDeclarationsRegistrar(this)
 
     override val adapterGenerator: AdapterGenerator = AdapterGenerator(this, conversionScope)
-    override val implicitCastInserter: Fir2IrImplicitCastInserter = Fir2IrImplicitCastInserter(this)
+    override val implicitCastInserter: Fir2IrImplicitCastInserter = Fir2IrImplicitCastInserter(this, conversionScope)
 }

@@ -1,5 +1,4 @@
 // ISSUE: KT-85698
-// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
 
 import kotlin.reflect.KMutableProperty
 
