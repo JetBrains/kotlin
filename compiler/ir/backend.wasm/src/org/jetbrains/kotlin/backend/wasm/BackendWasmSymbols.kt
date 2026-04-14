@@ -270,7 +270,7 @@ class BackendWasmSymbols(
         if (configuration.wasmCoroutinesStackSwitching)
             CallableIds.suspendCoroutineUninterceptedOrReturnStackSwitching.functionSymbol()
         else
-            CallableIds.suspendCoroutineUninterceptedOrReturnStateMachine.functionSymbol()
+            CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
 
     // KProperty implementations
     val kLocalDelegatedPropertyImpl: IrClassSymbol = ClassIds.KLocalDelegatedPropertyImpl.classSymbol()
@@ -535,7 +535,7 @@ private object CallableIds {
     val startCoroutineUninterceptedOrReturnIntrinsics2 = "startCoroutineUninterceptedOrReturnIntrinsic2".wasmCallableId
 
     val suspendCoroutineUninterceptedOrReturnStackSwitching = "suspendCoroutineUninterceptedOrReturnStackSwitching".wasmCallableId
-    val suspendCoroutineUninterceptedOrReturnStateMachine = "suspendCoroutineUninterceptedOrReturnStateMachine".wasmCallableId
+    val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".wasmCallableId
 
     val suspendFunctionToContref = (0..2).map { "suspendFunction${it}ToContref".wasmCallableId }
     val suspendFunctionToContrefImpl = (0..2).map { "suspendFunction${it}ToContrefImpl".wasmCallableId }
