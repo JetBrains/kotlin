@@ -378,6 +378,33 @@ public func retunsListOfSuspend() async throws -> [() async throws -> Swift.Void
         }
     }()
 }
+public func returnSuspendGeneric() async throws -> any KotlinRuntimeSupport._KotlinBridgeable {
+    try await {
+        try Task.checkCancellation()
+        var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
+        return try await withTaskCancellationHandler {
+            try await withUnsafeThrowingContinuation { nativeContinuation in
+                withUnsafeCurrentTask { currentTask in
+                    let continuation: (any KotlinRuntimeSupport._KotlinBridgeable) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
+                    let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
+                        nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                    }
+                    cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
+
+                    let _: Bool = __root___returnSuspendGeneric({
+                        let originalBlock = continuation
+                        return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: arg0)); return true }() }
+                    }(), {
+                        let originalBlock = exception
+                        return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
+                    }(), cancellation.__externalRCRef())
+                }
+            }
+        } onCancel: {
+            cancellation?.cancelExternally()
+        }
+    }()
+}
 public func returnSuspendUnit() -> () async throws -> Swift.Void {
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___returnSuspendUnit(), options: .asBestFittingWrapper)!

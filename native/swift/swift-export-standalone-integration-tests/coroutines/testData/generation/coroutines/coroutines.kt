@@ -47,6 +47,8 @@ fun flowOfNullableUnit(): Flow<Unit?> = TODO()
 
 fun mutableStateFlowOfUnit(): MutableStateFlow<Unit> = TODO()
 
+suspend fun <T: Any> returnSuspendGeneric(): T = TODO()
+
 // FILE: coroutines_extra.kt
 
 suspend fun returnsList(): List<String> = emptyList()

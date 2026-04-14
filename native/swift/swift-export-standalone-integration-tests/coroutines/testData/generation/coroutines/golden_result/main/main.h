@@ -41,6 +41,8 @@ _Bool __root___produce_suspend_function_typealias(_Bool (^continuation)(void *),
 
 _Bool __root___retunsListOfSuspend(_Bool (^continuation)(NSArray<id> *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
+_Bool __root___returnSuspendGeneric(_Bool (^continuation)(void *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
 void * __root___returnSuspendUnit();
 
 _Bool __root___returnUnit(_Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
