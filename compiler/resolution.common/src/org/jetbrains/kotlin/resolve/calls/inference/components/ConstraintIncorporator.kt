@@ -35,6 +35,7 @@ class ConstraintIncorporator(
 
     interface Context : TypeSystemInferenceExtensionContext {
         val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
+        val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
 
         fun getVariablesWithConstraintsContainingGivenTypeVariable(
             variableConstructorMarker: TypeConstructorMarker,
@@ -196,9 +197,15 @@ class ConstraintIncorporator(
         otherConstraint: Constraint,
     ) {
         if (causeOfIncorporationVariable in otherConstraint.derivedFrom ||
+            // Soon the constraint will be used to fix the variable as EQUALITY constraints are the most prioritized (with a few exceptions),
+            // so we can wait with the constraint incorporation to avoid constraint explosion, as described in KT-66469
             causeOfIncorporationConstraint.kind == ConstraintKind.EQUALITY &&
+            // We don't want to block variable fixation at all
             originalConstraint.position.initialConstraint.position !is FixVariableConstraintPosition<*> &&
-            !causeOfIncorporationConstraint.type.contains { it.isTypeVariableType() }
+            // To be used in variable fixation, the constraint must have a proper type
+            causeOfIncorporationConstraint.type.isProperTypeForFixation(c.notFixedTypeVariables.keys) { t ->
+                !t.contains { c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
+            }
         ) {
             return
         }

@@ -569,6 +569,8 @@ class ConstraintInjector(
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
             get() = c.notFixedTypeVariables.values
+        override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+            get() = c.notFixedTypeVariables
 
         override val approximatorCaches: TypeApproximatorCachesPerConfiguration
             get() = c.approximatorCaches
