@@ -130,14 +130,8 @@ internal open class SirFunctionFromKtSymbol(
             } ?: ""
             val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
             val argumentsString = actualArgs.joinToString()
-            val castSuffix = (ktSymbol.returnType is KaTypeParameterType && ktSymbol.isTopLevel)
-                .takeIf { it }
-                ?.let {
-                    val fqName = typeNamer.kotlinFqName(this@SirFunctionFromKtSymbol.returnType, KotlinNameType.FQN)
-                    " as? $fqName"
-                } ?: ""
 
-            buildCall("$typesAsString($argumentsString)$castSuffix")
+            buildCall("$typesAsString($argumentsString)")
         }.orEmpty()
     }
 
