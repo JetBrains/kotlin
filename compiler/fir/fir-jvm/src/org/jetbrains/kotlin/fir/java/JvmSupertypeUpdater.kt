@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.isMetadataCompilation
 import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater.DelegatedConstructorCallTransformer.Companion.recordType
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -38,6 +39,8 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         if (firClass !is FirRegularClass || !firClass.isData ||
             !firClass.hasAnnotationUltraSafe(JvmStandardClassIds.Annotations.JvmRecord)
         ) return
+        // java.lang.Record is inaccessible for the Common platform; in pre-17 JDKs we still add the supertype to report relevant errors
+        if (session.isMetadataCompilation && recordType.lookupTag.toRegularClassSymbol(session) == null) return
         var anyFound = false
         var hasExplicitSuperClass = false
         val newSuperTypeRefs = firClass.superTypeRefs.mapTo(mutableListOf()) {

@@ -5,7 +5,7 @@
 // JVM_TARGET: 17
 
 @kotlin.jvm.JvmRecord
-data <!MISSING_DEPENDENCY_SUPERCLASS("java.lang.Record; Vector")!>class Vector<!>(
-    <!MISSING_DEPENDENCY_SUPERCLASS("java.lang.Record; Vector")!>val x: Float<!>,
-    <!MISSING_DEPENDENCY_SUPERCLASS!>val y: Float<!>,
+data class Vector(
+    val x: Float,
+    val y: Float,
 )
