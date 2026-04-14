@@ -6,7 +6,9 @@
 package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
+import org.jetbrains.kotlin.analysis.api.components.builtinTypes
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
+import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -121,6 +124,10 @@ internal open class SirFunctionFromKtSymbol(
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         bridgeProxy?.createSirBridges {
+            val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
+            val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
+                it.render(position = Variance.INVARIANT)
+            } ?: ""
             val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
             val argumentsString = actualArgs.joinToString()
             val castSuffix = (ktSymbol.returnType is KaTypeParameterType && ktSymbol.isTopLevel)
@@ -130,7 +137,7 @@ internal open class SirFunctionFromKtSymbol(
                     " as? $fqName"
                 } ?: ""
 
-            buildCall("($argumentsString)$castSuffix")
+            buildCall("$typesAsString($argumentsString)$castSuffix")
         }.orEmpty()
     }
 

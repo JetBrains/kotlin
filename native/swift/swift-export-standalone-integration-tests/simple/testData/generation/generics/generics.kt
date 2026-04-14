@@ -58,6 +58,8 @@ interface A <T> {
     val foo: T
 }
 
+fun <T> A(): A<T> = TODO()
+
 interface B <T> {
     val foo: T
 }

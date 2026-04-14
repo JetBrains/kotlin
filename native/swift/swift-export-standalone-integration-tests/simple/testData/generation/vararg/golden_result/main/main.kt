@@ -76,7 +76,7 @@ public fun __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMuta
 @ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___")
 public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __x = interpretObjCPointer<kotlin.collections.List<kotlin.Number>>(x).toTypedArray()
-    val _result = run { asNumberList(*__x) }
+    val _result = run { asNumberList<kotlin.Number>(*__x) }
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 

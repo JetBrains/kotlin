@@ -180,7 +180,7 @@ public fun __root___fooD(): kotlin.native.internal.NativePtr {
 @OptIn(InternalLibApi::class)
 public fun __root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInterface__(a: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as InternalLibInterface
-    val _result = run { genericFunction(__a) }
+    val _result = run { genericFunction<InternalLibInterface>(__a) }
     return _result.objcPtr()
 }
 
