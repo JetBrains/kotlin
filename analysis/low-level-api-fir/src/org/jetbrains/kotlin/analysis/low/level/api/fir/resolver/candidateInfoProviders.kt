@@ -121,7 +121,7 @@ class CheckCallableReferenceForCompletionCandidateInfoProvider(
                 containingFile = firFile,
                 session = firSession,
                 expectedType = null,
-                lhs = resolutionParameters.callableReferenceLHS,
+                lhsAsType = resolutionParameters.callableReferenceLhsAsType,
                 hasSyntheticOuterCall = false,
                 callKind = callKind(),
             )

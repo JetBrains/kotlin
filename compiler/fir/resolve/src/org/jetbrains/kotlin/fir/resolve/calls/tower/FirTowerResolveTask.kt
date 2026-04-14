@@ -314,10 +314,10 @@ internal open class FirTowerResolveTask(
         }
 
         if (resolvedQualifier.symbol != null) {
-            if (info is CallableReferenceInfo && info.lhs != null) {
+            if (info is CallableReferenceInfo && info.lhsAsType != null) {
                 val stubReceiver = buildExpressionStub {
                     source = info.explicitReceiver?.source
-                    this.coneTypeOrNull = info.lhs.type
+                    this.coneTypeOrNull = info.lhsAsType.type
                 }
 
                 val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)

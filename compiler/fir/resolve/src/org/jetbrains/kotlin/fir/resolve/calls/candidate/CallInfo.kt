@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLhs
+import org.jetbrains.kotlin.fir.resolve.CallableReferenceLhsAsType
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
@@ -127,7 +127,7 @@ class CallableReferenceInfo(
     containingDeclarations: List<FirDeclaration>,
 
     val expectedType: ConeKotlinType?,
-    val lhs: DoubleColonLhs.Type?,
+    val lhsAsType: CallableReferenceLhsAsType?,
     val hasSyntheticOuterCall: Boolean,
 
     origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
@@ -156,7 +156,7 @@ class CallableReferenceInfo(
         return CallableReferenceInfo(
             callSite, name, explicitReceiver,
             session, containingFile, containingDeclarations,
-            expectedType, lhs, hasSyntheticOuterCall, origin, callKind
+            expectedType, lhsAsType, hasSyntheticOuterCall, origin, callKind
         )
     }
 }

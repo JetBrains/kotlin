@@ -33,7 +33,7 @@ abstract class FirTypeResolver : FirSessionComponent {
     abstract fun resolveTypeOnDoubleColonLhs(
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
-    ): DoubleColonLhs.Type?
+    ): CallableReferenceLhsAsType?
 }
 
 class TypeResolutionConfiguration private constructor(

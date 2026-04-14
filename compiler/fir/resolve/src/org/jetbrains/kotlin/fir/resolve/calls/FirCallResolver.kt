@@ -582,7 +582,7 @@ class FirCallResolver(
         val containingCallCS = containingCallCandidate.csBuilder
         val callableReferenceAccess = resolvedCallableReferenceAtom.expression
         val calleeReference = callableReferenceAccess.calleeReference
-        val lhs = resolvedCallableReferenceAtom.lhs
+        val lhs = resolvedCallableReferenceAtom.lhsAsType
         val coneSubstitutor = containingCallCS.buildCurrentSubstitutor().asCone()
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
@@ -871,7 +871,7 @@ class FirCallResolver(
 
     private fun createCallableReferencesInfoForLHS(
         callableReferenceAccess: FirCallableReferenceAccess,
-        lhs: DoubleColonLhs.Type?,
+        lhsAsType: CallableReferenceLhsAsType?,
         expectedType: ConeKotlinType?,
         hasSyntheticOuterCall: Boolean,
     ): CallInfo {
@@ -884,7 +884,7 @@ class FirCallResolver(
             transformer.components.containingDeclarations,
             // Additional things for callable reference resolve
             expectedType,
-            lhs,
+            lhsAsType,
             hasSyntheticOuterCall,
         )
     }

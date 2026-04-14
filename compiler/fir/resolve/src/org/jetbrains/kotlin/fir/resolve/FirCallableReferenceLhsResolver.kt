@@ -15,24 +15,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
-sealed class DoubleColonLhs {
-    /**
-     * [type] is always non-error type, errors/deprecation errors are stored in [diagnostic].
-     */
-    class Type(val type: ConeKotlinType, val diagnostic: ConeDiagnostic?) : DoubleColonLhs()
-}
-
 /**
- * [isObjectQualifier] is true iff the LHS of a callable reference is a qualified expression that references a named object.
- * Such expressions are always treated as objects. Hence, the callable reference is always bound.
- *
- * Note that this type is marked private: it is only used internally by [FirCallableReferenceLhsResolver].
- * Outside of [FirCallableReferenceLhsResolver], only [DoubleColonLhs.Type] (or `null`) is possible.
+ * [type] is always non-error type, errors/deprecation errors are stored in [diagnostic].
  */
-private class ExpressionDoubleColonLhs(
-    val type: ConeKotlinType,
-    val isObjectQualifier: Boolean,
-) : DoubleColonLhs()
+class CallableReferenceLhsAsType(val type: ConeKotlinType, val diagnostic: ConeDiagnostic?)
 
 class FirCallableReferenceLhsResolver(
     private val components: BodyResolveComponents,
@@ -45,10 +31,10 @@ class FirCallableReferenceLhsResolver(
      * Note, however, that this does not necessarily mean that the reference will be unbound because it can refer to
      * a member / extension of a companion object.
      *
-     * TODO: Also see KT-85641: we return [DoubleColonLhs.Type] here, but eventually create bound callable reference
+     * TODO: Also see KT-85641: we return [CallableReferenceLhsAsType] here, but eventually create bound callable reference
      *  for nullable-marked object qualifiers.
      */
-    fun resolveDoubleColonLhs(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLhs.Type? {
+    fun resolveLhsAsType(doubleColonExpression: FirCallableReferenceAccess): CallableReferenceLhsAsType? {
         val lhsExpression = doubleColonExpression.explicitReceiver ?: return null
 
         val resultForExpr = runUnless(doubleColonExpression.hasQuestionMarkAtLhs) {
@@ -80,24 +66,36 @@ class FirCallableReferenceLhsResolver(
         return fir as? FirRegularClass
     }
 
-    private fun resolveExpressionOnLhs(expression: FirExpression): ExpressionDoubleColonLhs? {
+    /**
+     * [isObjectQualifier] is true iff the LHS of a callable reference is a qualified expression that references a named object.
+     * Such expressions are always treated as objects. Hence, the callable reference is always bound.
+     *
+     * Note that this type is marked private: it is only used internally by [FirCallableReferenceLhsResolver].
+     * Outside of [FirCallableReferenceLhsResolver], only [CallableReferenceLhsAsType] (or `null`) is possible.
+     */
+    private class ExpressionCallableReferenceLhs(
+        val type: ConeKotlinType,
+        val isObjectQualifier: Boolean,
+    )
+
+    private fun resolveExpressionOnLhs(expression: FirExpression): ExpressionCallableReferenceLhs? {
         val type = expression.resolvedType
 
         val expressionWithoutSmartCast = expression.unwrapSmartcastExpression()
         if (expressionWithoutSmartCast is FirResolvedQualifier) {
             val firClass = expressionWithoutSmartCast.expandedRegularClassIfAny() ?: return null
             if (firClass.classKind == ClassKind.OBJECT) {
-                return ExpressionDoubleColonLhs(type, isObjectQualifier = true)
+                return ExpressionCallableReferenceLhs(type, isObjectQualifier = true)
             }
             return null
         }
 
-        return ExpressionDoubleColonLhs(type, isObjectQualifier = false)
+        return ExpressionCallableReferenceLhs(type, isObjectQualifier = false)
     }
 
     private fun resolveTypeOnLhs(
         expression: FirExpression
-    ): DoubleColonLhs.Type? {
+    ): CallableReferenceLhsAsType? {
         val resolvedExpression = expression.unwrapSmartcastExpression() as? FirResolvedQualifier
             ?: return null
 

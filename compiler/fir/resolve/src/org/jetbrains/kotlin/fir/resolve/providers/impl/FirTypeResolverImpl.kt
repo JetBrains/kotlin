@@ -470,7 +470,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     override fun resolveTypeOnDoubleColonLhs(
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
-    ): DoubleColonLhs.Type? {
+    ): CallableReferenceLhsAsType? {
         val classSymbol = qualifier.symbol ?: return null
 
         val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
@@ -511,7 +511,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
-        return DoubleColonLhs.Type(
+        return CallableReferenceLhsAsType(
             ConeClassLikeTypeImpl(
                 classSymbol.toLookupTag(),
                 allTypeArguments.take(classSymbol.typeParameterSymbols.size).toTypedArray(),
