@@ -8,80 +8,86 @@ package org.jetbrains.kotlin.maven
 import org.apache.maven.model.Build
 import org.apache.maven.model.Model
 import org.apache.maven.project.MavenProject
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Path
 import kotlin.test.*
 
 
 class KotlinLifecycleParticipantSourceDirsTest {
     // Check <sourceDirectory>
     @Test
-    fun `hasMavenBuildSourceDirectoryOverride - returns false when source dir is default`() {
-        val basedir = File("/project")
-        val project = projectWithSourceDirectory(File(basedir, "src/main/java").absolutePath, basedir)
+    fun `hasMavenBuildSourceDirectoryOverride - returns false when source dir is default`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val sourceDir = tempDir.resolve("src").resolve("main").resolve("java").toFile()
+        val project = projectWithSourceDirectory(sourceDir.absolutePath, baseDir)
         assertFalse(KotlinLifecycleParticipant.hasMavenBuildSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildSourceDirectoryOverride - returns true when source dir is custom`() {
-        val basedir = File("/project")
-        val project = projectWithSourceDirectory(File(basedir, "src/customMain/kotlin").absolutePath, basedir)
+    fun `hasMavenBuildSourceDirectoryOverride - returns true when source dir is custom`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val sourceDir = tempDir.resolve("src").resolve("customMain").resolve("kotlin").toFile()
+        val project = projectWithSourceDirectory(sourceDir.absolutePath, baseDir)
         assertTrue(KotlinLifecycleParticipant.hasMavenBuildSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildSourceDirectoryOverride - returns false when source dir is null`() {
-        val basedir = File("/project")
-        val project = projectWithSourceDirectory(null, basedir)
+    fun `hasMavenBuildSourceDirectoryOverride - returns false when source dir is null`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val project = projectWithSourceDirectory(null, baseDir)
         assertFalse(KotlinLifecycleParticipant.hasMavenBuildSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildSourceDirectoryOverride - handles relative paths`() {
-        val basedir = File("/project")
-        val project = projectWithSourceDirectory("src/customMain/kotlin", basedir)
+    fun `hasMavenBuildSourceDirectoryOverride - handles relative paths`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val project = projectWithSourceDirectory("src/customMain/kotlin", baseDir)
         assertTrue(KotlinLifecycleParticipant.hasMavenBuildSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildSourceDirectoryOverride - relative default path returns false`() {
-        val basedir = File("/project")
-        val project = projectWithSourceDirectory("src/main/java", basedir)
+    fun `hasMavenBuildSourceDirectoryOverride - relative default path returns false`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val project = projectWithSourceDirectory("src/main/java", baseDir)
         assertFalse(KotlinLifecycleParticipant.hasMavenBuildSourceDirectoryOverride(project))
     }
 
     // Check <testSourceDirectory>
     @Test
-    fun `hasMavenBuildTestSourceDirectoryOverride - returns false when test source dir is default`() {
-        val basedir = File("/project")
-        val project = projectWithTestSourceDirectory(File(basedir, "src/test/java").absolutePath, basedir)
+    fun `hasMavenBuildTestSourceDirectoryOverride - returns false when test source dir is default`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val sourceDir = tempDir.resolve("src").resolve("test").resolve("java").toFile()
+        val project = projectWithTestSourceDirectory(sourceDir.absolutePath, baseDir)
         assertFalse(KotlinLifecycleParticipant.hasMavenBuildTestSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildTestSourceDirectoryOverride - returns true when test source dir is custom`() {
-        val basedir = File("/project")
-        val project = projectWithTestSourceDirectory(File(basedir, "src/customTest/kotlin").absolutePath, basedir)
+    fun `hasMavenBuildTestSourceDirectoryOverride - returns true when test source dir is custom`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val sourceDir = tempDir.resolve("src").resolve("customTest").resolve("kotlin").toFile()
+        val project = projectWithTestSourceDirectory(sourceDir.absolutePath, baseDir)
         assertTrue(KotlinLifecycleParticipant.hasMavenBuildTestSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildTestSourceDirectoryOverride - returns false when test source dir is null`() {
-        val basedir = File("/project")
-        val project = projectWithTestSourceDirectory(null, basedir)
+    fun `hasMavenBuildTestSourceDirectoryOverride - returns false when test source dir is null`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val project = projectWithTestSourceDirectory(null, baseDir)
         assertFalse(KotlinLifecycleParticipant.hasMavenBuildTestSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildTestSourceDirectoryOverride - handles relative paths`() {
-        val basedir = File("/project")
-        val project = projectWithTestSourceDirectory("src/customTest/kotlin", basedir)
+    fun `hasMavenBuildTestSourceDirectoryOverride - handles relative paths`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val project = projectWithTestSourceDirectory("src/customTest/kotlin", baseDir)
         assertTrue(KotlinLifecycleParticipant.hasMavenBuildTestSourceDirectoryOverride(project))
     }
 
     @Test
-    fun `hasMavenBuildTestSourceDirectoryOverride - relative default path returns false`() {
-        val basedir = File("/project")
-        val project = projectWithTestSourceDirectory("src/test/java", basedir)
+    fun `hasMavenBuildTestSourceDirectoryOverride - relative default path returns false`(@TempDir tempDir: Path) {
+        val baseDir = tempDir.toFile()
+        val project = projectWithTestSourceDirectory("src/test/java", baseDir)
         assertFalse(KotlinLifecycleParticipant.hasMavenBuildTestSourceDirectoryOverride(project))
     }
 
