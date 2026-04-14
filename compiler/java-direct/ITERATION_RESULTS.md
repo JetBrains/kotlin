@@ -514,6 +514,55 @@ Diagnostic counters (AtomicLong + JVM shutdown hook) across the java-direct test
 
 ---
 
+## Iteration 65: Performance — CombinedFinder Index Check + Aggregated Inherited Inner Class Cache - 2026-04-14
+
+### Root Cause Analysis
+After enabling java-direct in `KotlinFullPipelineTestsGenerated` (110 modules with Java sources, 2,077 Java files), comprehensive counters revealed two major hotspots:
+
+1. **`findClass` on source finder: 106,382 calls, 50% index misses** — `CombinedJavaClassFinder` always called `sourceFinder.findClass()` first, even for classes not in the source index (JDK, libraries). Each miss did an index lookup + method call overhead for nothing — the source finder would just return null.
+
+2. **`collectInheritedInnerClasses`: 1,528,663 calls** — For every type reference resolution (`resolveSimpleNameToClassId`), the code walked the containing class chain (containing class + all outer classes) calling `collectInheritedInnerClasses` for each. Within a single class body, all type references share the same containing class chain, so this walk was repeated identically for every type reference.
+
+Full counter data (pre-optimization, aggregated across 110 modules):
+| Counter | Calls | Cache hits | Hit rate |
+|---------|-------|------------|----------|
+| `findClass` | 106,382 | 48,711 | 45.8% |
+| `findLocalClass` | 933,729 | 927,970 | 99.4% |
+| `collectInheritedInner` | 1,528,663 | 1,527,717 | 99.9% |
+| `findInnerClass` | 9,972 | 1,854 | 18.6% |
+| `findChildByType` | 661,676 | — | — |
+| `getChildrenByType` | 166,419 | — | — |
+| `resolve` | 70,496 | — | — |
+
+### Fix
+**Two changes:**
+
+1. **`CombinedJavaClassFinder.kt`** — Added `isClassInIndex` check before calling source finder in `findClass`/`findClasses`. If the top-level class is not in the source index, skip the source finder entirely and go directly to the binary finder. Changed `sourceFinder` type from `JavaClassFinder` to `JavaClassFinderOverAstImpl` to access `isClassInIndex`.
+
+2. **`JavaResolutionContext.kt`** — Added `aggregatedInheritedInnerClassesHolder` (shared mutable `Array<Map?>`). The holder is computed lazily on first access by walking the containing class chain once, collecting all inherited inner classes from `collectInheritedInnerClasses` across the chain, and merging into a single `Map<String, Set<ClassId>>`. Subsequent lookups are a simple map get. The holder is shared across contexts created via `withTypeParameters`/`withInheritedTypeParameters` (same containing class) and fresh for `withContainingClass` (different containing class).
+
+### Counter Results (before/after, aggregated across 110 modules)
+| Counter | Before | After | Reduction |
+|---------|--------|-------|-----------|
+| `findClass` (source finder) | 106,382 | 53,246 | **−50%** |
+| `collectInheritedInner` | 1,528,663 | 5,602 | **−99.6%** |
+| `findChildByType` | 661,676 | 654,036 | −1.2% |
+| `getChildrenByType` | 166,419 | 164,850 | −0.9% |
+| `nodeTextMaterializations` | 81,955 | 76,278 | −6.9% |
+
+### Test Results
+- java-direct: 2664 tests, 11 failed (no change — same pre-existing failures)
+- Pipeline: 415 tests, 5 failed (no change)
+- Zero regressions
+
+### Key Learnings
+- **Classloader isolation breaks AtomicLong counters**: The java-direct plugin JAR is loaded in its own classloader per compilation. Static `object` counters in the plugin's classes are isolated per classloader — a shutdown hook registered from the test JVM sees a different `object` instance. File-based `appendText` logging is the only reliable cross-classloader diagnostic technique.
+- **`CombinedJavaClassFinder.isClassInIndex` gate**: A simple boolean check on the package→className index avoids entering `findClass`→`findClasses`→index lookup chain entirely for classes not in source. This is the most common case (JDK, library classes).
+- **Per-context aggregation vs per-call caching**: Even when individual `collectInheritedInnerClasses` calls are 99.9% cache hits, calling it 1.5M times (once per type reference × outer class depth) has measurable overhead from the sheer volume of HashMap lookups. Aggregating the result once per context and reusing it eliminates 99.6% of those calls.
+- **Remaining bottleneck**: `findLocalClass` at 933K calls (99.4% cache hit) is now the dominant call by volume. The cache is effective, but the call volume itself (driven by the number of type references across all Java files) means ~933K HashMap lookups. Further optimization would require reducing the number of call sites or restructuring the resolution flow.
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown

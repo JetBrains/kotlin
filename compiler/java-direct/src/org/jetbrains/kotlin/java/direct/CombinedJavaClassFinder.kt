@@ -21,13 +21,18 @@ import org.jetbrains.kotlin.name.FqName
  * binary dependencies through the existing platform infrastructure.
  */
 class CombinedJavaClassFinder(
-    private val sourceFinder: JavaClassFinder,
+    private val sourceFinder: JavaClassFinderOverAstImpl,
     private val binaryFinder: JavaClassFinder,
 ) : JavaClassFinder {
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
-        val fromSource = sourceFinder.findClass(request)
-        if (fromSource != null) return fromSource
+        // Fast path: skip source finder entirely if the class's top-level name
+        // is not in the source index. This avoids ~50% of source finder calls
+        // that would just do an index lookup and return null.
+        if (sourceFinder.isClassInIndex(request.classId)) {
+            val fromSource = sourceFinder.findClass(request)
+            if (fromSource != null) return fromSource
+        }
         val fromBinary = binaryFinder.findClass(request)
 
         // TODO: recheck this place, the reasonin is suspicious
@@ -47,8 +52,10 @@ class CombinedJavaClassFinder(
     }
 
     override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> {
-        val fromSources = sourceFinder.findClasses(request)
-        if (fromSources.isNotEmpty()) return fromSources
+        if (sourceFinder.isClassInIndex(request.classId)) {
+            val fromSources = sourceFinder.findClasses(request)
+            if (fromSources.isNotEmpty()) return fromSources
+        }
 
         return binaryFinder.findClasses(request)
     }

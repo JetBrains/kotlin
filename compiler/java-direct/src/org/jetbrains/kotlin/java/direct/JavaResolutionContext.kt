@@ -48,7 +48,39 @@ class JavaResolutionContext private constructor(
      * "looked up, result was null".
      */
     private val findLocalClassCache: HashMap<Name, Any?> = HashMap(),
+    /**
+     * Lazily computed aggregated inherited inner classes for the entire containing class chain.
+     * Maps simpleName -> Set<ClassId> across the containing class and all its outer classes.
+     * Cached to avoid re-walking the outer class chain on every [resolveSimpleNameToClassId] call.
+     * Shared across contexts with the same containing class (via [withTypeParameters] / [withInheritedTypeParameters]).
+     * Array of size 1 used as a mutable holder so it can be shared by reference.
+     */
+    @Suppress("ArrayInDataClass")
+    private val aggregatedInheritedInnerClassesHolder: Array<Map<String, Set<ClassId>>?> = arrayOfNulls(1),
 ) {
+    private fun getAggregatedInheritedInnerClasses(): Map<String, Set<ClassId>>? {
+        aggregatedInheritedInnerClassesHolder[0]?.let { return it }
+        val containingClass = containingClassProvider?.invoke() as? JavaClassOverAst ?: return null
+        val classFinder = classFinderProvider?.invoke() ?: return null
+
+        val merged = mutableMapOf<String, MutableSet<ClassId>>()
+        var current: JavaClass? = containingClass
+        while (current != null) {
+            val jdClass = current as? JavaClassOverAst
+            val fqn = jdClass?.fqName
+            if (fqn != null) {
+                val cid = fqNameToClassId(fqn)
+                val inheritedInners = classFinder.collectInheritedInnerClasses(cid)
+                for ((name, classIds) in inheritedInners) {
+                    merged.getOrPut(name) { mutableSetOf() }.addAll(classIds)
+                }
+            }
+            current = current.outerClass
+        }
+        val result: Map<String, Set<ClassId>> = merged.mapValues { it.value.toSet() }
+        aggregatedInheritedInnerClassesHolder[0] = result
+        return result
+    }
     /**
      * Finds a class by simple name. Checks:
      * 1. Inner classes of the containing class (if any)
@@ -250,6 +282,7 @@ class JavaResolutionContext private constructor(
             packageFqName, simpleImports, starImports, localClassProvider, newScope,
             containingClassProvider, classFinderProvider, inheritedTypeParametersInScope,
             findLocalClassCache, // share cache — containingClass unchanged
+            aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
         )
     }
 
@@ -265,6 +298,7 @@ class JavaResolutionContext private constructor(
             packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
             containingClassProvider, classFinderProvider, newInherited,
             findLocalClassCache, // share cache — containingClass unchanged
+            aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
         )
     }
 
@@ -397,30 +431,12 @@ class JavaResolutionContext private constructor(
         // 2b. Inherited inner classes from supertypes (cross-file, e.g., Kotlin classes)
         // JLS 6.5.2: inherited member types are in scope
         //
-        // Use the cached collectInheritedInnerClasses map for BOTH ambiguity detection AND
-        // as a fast path for inherited inner class resolution. This replaces the expensive BFS
-        // in resolveInheritedInnerClassToClassId for the common case where the class finder is
-        // available. The cache covers same-package source supertypes; for non-source supertypes
-        // (Kotlin/binary classes), fall back to the BFS with getSupertypeClassIds callback.
-        val containingClassForInherited = containingClassProvider?.invoke() as? JavaClassOverAst
-        if (containingClassForInherited != null && classFinderProvider != null) {
-            val classFinder = classFinderProvider.invoke()
-
-            // Collect inherited inner classes for the containing class and all outer classes,
-            // matching the scope that resolveInheritedInnerClassToClassId would walk.
-            val allCandidates = mutableSetOf<ClassId>()
-            var currentForInherited: JavaClass? = containingClassForInherited
-            while (currentForInherited != null) {
-                val jdClass = currentForInherited as? JavaClassOverAst
-                val fqn = jdClass?.fqName
-                if (fqn != null) {
-                    val cid = fqNameToClassId(fqn)
-                    val inheritedInners = classFinder.collectInheritedInnerClasses(cid)
-                    val candidates = inheritedInners[simpleName] ?: emptySet()
-                    allCandidates.addAll(candidates)
-                }
-                currentForInherited = currentForInherited.outerClass
-            }
+        // Use the aggregated inherited inner classes map (cached per context) for BOTH
+        // ambiguity detection AND as a fast path. The map covers the containing class chain
+        // and is computed once per context, avoiding repeated outer-class-chain walks.
+        val aggregatedInherited = getAggregatedInheritedInnerClasses()
+        if (aggregatedInherited != null) {
+            val allCandidates = aggregatedInherited[simpleName] ?: emptySet()
 
             when {
                 allCandidates.size > 1 -> return null // Ambiguously inherited – don't resolve
