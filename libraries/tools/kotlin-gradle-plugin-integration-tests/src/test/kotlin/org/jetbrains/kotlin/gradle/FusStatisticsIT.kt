@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -830,6 +831,30 @@ class FusStatisticsIT : KGPBaseTest() {
             rounds
         }
         return expectedFiles
+    }
+
+    @DisplayName("FUS should not break project configuration for included build")
+    @GradleTest
+    @MppGradlePluginTests
+    fun testProjectConfiguration(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            val included = project("empty", gradleVersion) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        iosSimulatorArm64()
+                    }
+                }
+            }
+            includeBuild(included)
+
+            build("help", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertOutputDoesNotContainFusErrors()
+            }
+        }
     }
 
     private fun TestProject.applyDokka(version: String) {
