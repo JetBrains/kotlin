@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class StringConcatMode(
             stabilizedVersion = KotlinReleaseVersion.v1_4_20,
         )
     ),
+
     @SerialName("indy")
     INDY(
         modeName = "indy",
@@ -33,6 +33,7 @@ enum class StringConcatMode(
             stabilizedVersion = KotlinReleaseVersion.v1_4_20,
         )
     ),
+
     @SerialName("inline")
     INLINE(
         modeName = "inline",
@@ -45,5 +46,3 @@ enum class StringConcatMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias StringConcatModeWithReleaseVersions = @Contextual StringConcatMode

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class SourceMapEmbedSources(
             stabilizedVersion = KotlinReleaseVersion.v1_1_4,
         )
     ),
+
     @SerialName("never")
     NEVER(
         modeName = "never",
@@ -33,6 +33,7 @@ enum class SourceMapEmbedSources(
             stabilizedVersion = KotlinReleaseVersion.v1_1_4,
         )
     ),
+
     @SerialName("inlining")
     INLINING(
         modeName = "inlining",
@@ -45,5 +46,3 @@ enum class SourceMapEmbedSources(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias SourceMapEmbedSourcesWithReleaseVersions = @Contextual SourceMapEmbedSources

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class NameBasedDestructuringMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+
     @SerialName("name-mismatch")
     NAME_MISMATCH(
         modeName = "name-mismatch",
@@ -31,6 +31,7 @@ enum class NameBasedDestructuringMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
+
     @SerialName("complete")
     COMPLETE(
         modeName = "complete",
@@ -42,5 +43,3 @@ enum class NameBasedDestructuringMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias NameBasedDestructuringModeWithReleaseVersions = @Contextual NameBasedDestructuringMode

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class JvmDefaultMode(
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
+
     @SerialName("no-compatibility")
     NO_COMPATIBILITY(
         modeName = "no-compatibility",
@@ -33,6 +33,7 @@ enum class JvmDefaultMode(
             stabilizedVersion = KotlinReleaseVersion.v2_2_0,
         )
     ),
+
     @SerialName("disable")
     DISABLE(
         modeName = "disable",
@@ -45,5 +46,3 @@ enum class JvmDefaultMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias JvmDefaultModeWithReleaseVersions = @Contextual JvmDefaultMode

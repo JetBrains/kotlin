@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class SamConversionsMode(
             stabilizedVersion = KotlinReleaseVersion.v1_5_0,
         )
     ),
+
     @SerialName("indy")
     INDY(
         modeName = "indy",
@@ -37,5 +37,3 @@ enum class SamConversionsMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias SamConversionsModeWithReleaseVersions = @Contextual SamConversionsMode

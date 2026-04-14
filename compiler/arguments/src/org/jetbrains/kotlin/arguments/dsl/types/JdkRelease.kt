@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v2_0_0,
         )
     ),
+
     @SerialName("1.7")
     JDK_1_7(
         releaseName = "1.7",
@@ -33,6 +33,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v2_0_0,
         )
     ),
+
     @SerialName("1.8")
     JDK_1_8(
         releaseName = "1.8",
@@ -41,6 +42,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("6")
     JDK_6(
         releaseName = "6",
@@ -49,6 +51,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("7")
     JDK_7(
         releaseName = "7",
@@ -57,6 +60,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("8")
     JDK_8(
         releaseName = "8",
@@ -65,6 +69,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("9")
     JDK_9(
         releaseName = "9",
@@ -73,6 +78,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("10")
     JDK_10(
         releaseName = "10",
@@ -81,6 +87,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("11")
     JDK_11(
         releaseName = "11",
@@ -89,6 +96,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("12")
     JDK_12(
         releaseName = "12",
@@ -97,6 +105,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("13")
     JDK_13(
         releaseName = "13",
@@ -105,6 +114,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("14")
     JDK_14(
         releaseName = "14",
@@ -113,6 +123,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("15")
     JDK_15(
         releaseName = "15",
@@ -121,6 +132,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("16")
     JDK_16(
         releaseName = "16",
@@ -129,6 +141,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("17")
     JDK_17(
         releaseName = "17",
@@ -137,6 +150,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("18")
     JDK_18(
         releaseName = "18",
@@ -145,6 +159,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("19")
     JDK_19(
         releaseName = "19",
@@ -153,6 +168,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("20")
     JDK_20(
         releaseName = "20",
@@ -161,6 +177,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("21")
     JDK_21(
         releaseName = "21",
@@ -169,6 +186,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("22")
     JDK_22(
         releaseName = "22",
@@ -177,6 +195,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("23")
     JDK_23(
         releaseName = "23",
@@ -185,6 +204,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("24")
     JDK_24(
         releaseName = "24",
@@ -193,6 +213,7 @@ enum class JdkRelease(
             stabilizedVersion = KotlinReleaseVersion.v1_7_0,
         )
     ),
+
     @SerialName("25")
     JDK_25(
         releaseName = "25",
@@ -205,5 +226,3 @@ enum class JdkRelease(
     override val stringRepresentation: String
         get() = releaseName
 }
-
-typealias JdkReleaseWithReleaseVersions = @Contextual JdkRelease

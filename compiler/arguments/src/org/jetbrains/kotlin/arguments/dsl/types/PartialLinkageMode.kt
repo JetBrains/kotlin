@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class PartialLinkageMode(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+
     @SerialName("disable")
     DISABLE(
         modeName = "disable",
@@ -35,5 +35,3 @@ enum class PartialLinkageMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias PartialLinkageModeWithReleaseVersions = @Contextual PartialLinkageMode

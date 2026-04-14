@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class JspecifyAnnotationsMode(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
     ),
+
     @SerialName("strict")
     STRICT(
         modeName = "strict",
@@ -31,6 +31,7 @@ enum class JspecifyAnnotationsMode(
             introducedVersion = KotlinReleaseVersion.v1_4_30,
         )
     ),
+
     @SerialName("warn")
     WARN(
         modeName = "warn",
@@ -42,5 +43,3 @@ enum class JspecifyAnnotationsMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias JspecifyAnnotationsModeWithReleaseVersions = @Contextual JspecifyAnnotationsMode

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class CompatqualAnnotationsMode(
             stabilizedVersion = KotlinReleaseVersion.v1_2_20,
         )
     ),
+
     @SerialName("disable")
     DISABLE(
         modeName = "disable",
@@ -37,5 +37,3 @@ enum class CompatqualAnnotationsMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias CompatqualAnnotationsModeWithReleaseVersions = @Contextual CompatqualAnnotationsMode

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class WhenExpressionsMode(
             stabilizedVersion = KotlinReleaseVersion.v2_2_20,
         )
     ),
+
     @SerialName("inline")
     INLINE(
         modeName = "inline",
@@ -37,5 +37,3 @@ enum class WhenExpressionsMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias WhenExpressionsModeWithReleaseVersions = @Contextual WhenExpressionsMode

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class WasmTarget(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     ),
+
     @SerialName("wasm-wasi")
     WASM_WASI(
         targetName = "wasm-wasi",
@@ -35,5 +35,3 @@ enum class WasmTarget(
     override val stringRepresentation: String
         get() = targetName
 }
-
-typealias WasmTargetWithReleaseVersions = @Contextual WasmTarget

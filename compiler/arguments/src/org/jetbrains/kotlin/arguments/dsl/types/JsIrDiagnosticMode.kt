@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class JsIrDiagnosticMode(
             introducedVersion = KotlinReleaseVersion.v1_5_0,
         )
     ),
+
     @SerialName("exception")
     EXCEPTION(
         modeName = "exception",
@@ -35,5 +35,3 @@ enum class JsIrDiagnosticMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias JsIrDiagnosticModeWithReleaseVersions = @Contextual JsIrDiagnosticMode

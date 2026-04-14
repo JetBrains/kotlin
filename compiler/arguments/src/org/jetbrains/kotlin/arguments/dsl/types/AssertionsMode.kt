@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class AssertionsMode(
             introducedVersion = KotlinReleaseVersion.v1_2_60,
         )
     ),
+
     @SerialName("always-disable")
     ALWAYS_DISABLE(
         modeName = "always-disable",
@@ -31,6 +31,7 @@ enum class AssertionsMode(
             introducedVersion = KotlinReleaseVersion.v1_2_60,
         )
     ),
+
     @SerialName("jvm")
     JVM(
         modeName = "jvm",
@@ -38,6 +39,7 @@ enum class AssertionsMode(
             introducedVersion = KotlinReleaseVersion.v1_2_60,
         )
     ),
+
     @SerialName("legacy")
     LEGACY(
         modeName = "legacy",
@@ -49,5 +51,3 @@ enum class AssertionsMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias AssertionsModeWithReleaseVersions = @Contextual AssertionsMode

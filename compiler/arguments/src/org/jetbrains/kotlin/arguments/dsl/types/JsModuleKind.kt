@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+
     @SerialName("amd")
     AMD(
         kindName = "amd",
@@ -33,6 +33,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+
     @SerialName("commonjs")
     COMMONJS(
         kindName = "commonjs",
@@ -41,6 +42,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+
     @SerialName("umd")
     UMD(
         kindName = "umd",
@@ -49,6 +51,7 @@ enum class JsModuleKind(
             stabilizedVersion = KotlinReleaseVersion.v1_0_4,
         )
     ),
+
     @SerialName("es")
     ES(
         kindName = "es",
@@ -61,5 +64,3 @@ enum class JsModuleKind(
     override val stringRepresentation: String
         get() = kindName
 }
-
-typealias JsModuleKindWithReleaseVersions = @Contextual JsModuleKind

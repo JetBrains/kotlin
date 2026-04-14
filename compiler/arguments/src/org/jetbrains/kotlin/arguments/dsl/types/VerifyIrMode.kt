@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class VerifyIrMode(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+
     @SerialName("warning")
     WARNING(
         modeName = "warning",
@@ -31,6 +31,7 @@ enum class VerifyIrMode(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+
     @SerialName("error")
     ERROR(
         modeName = "error",
@@ -42,5 +43,3 @@ enum class VerifyIrMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias VerifyIrModeWithReleaseVersions = @Contextual VerifyIrMode

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.SerializersModuleBuilder
@@ -22,114 +23,114 @@ import kotlin.reflect.KClass
 @Serializable
 class AllKotlinArgumentTypes {
     @Serializable
-    val kotlinVersions: TypeWithEntries<KotlinVersionWithReleaseVersions> = KotlinVersionType::class with KotlinVersion.entries.toSet()
+    val kotlinVersions: TypeWithEntries<@Contextual KotlinVersion> = KotlinVersionType::class with KotlinVersion.entries.toSet()
 
     @Serializable
-    val jvmTargets: TypeWithEntries<JvmTargetWithReleaseVersions> =
+    val jvmTargets: TypeWithEntries<@Contextual JvmTarget> =
         KotlinJvmTargetType::class with JvmTarget.entries.toSet()
 
     @Serializable
-    val explicitApiModes: TypeWithEntries<ExplicitApiModeWithReleaseVersions> =
+    val explicitApiModes: TypeWithEntries<@Contextual ExplicitApiMode> =
         KotlinExplicitApiModeType::class with ExplicitApiMode.entries.toSet()
 
     @Serializable
-    val returnValueCheckerMode: TypeWithEntries<ReturnValueCheckerModeWithReleaseVersions> =
+    val returnValueCheckerMode: TypeWithEntries<@Contextual ReturnValueCheckerMode> =
         ReturnValueCheckerModeType::class with ReturnValueCheckerMode.entries.toSet()
 
     @Serializable
-    val klibIrInlinerMode: TypeWithEntries<KlibIrInlinerModeWithReleaseVersions> =
+    val klibIrInlinerMode: TypeWithEntries<@Contextual KlibIrInlinerMode> =
         KlibIrInlinerModeType::class with KlibIrInlinerMode.entries.toSet()
 
     @Serializable
-    val jvmDefaultMode: TypeWithEntries<JvmDefaultModeWithReleaseVersions> =
+    val jvmDefaultMode: TypeWithEntries<@Contextual JvmDefaultMode> =
         JvmDefaultModeType::class with JvmDefaultMode.entries.toSet()
 
     @Serializable
-    val abiStabilityMode: TypeWithEntries<AbiStabilityModeWithReleaseVersions> =
+    val abiStabilityMode: TypeWithEntries<@Contextual AbiStabilityMode> =
         AbiStabilityModeType::class with AbiStabilityMode.entries.toSet()
 
     @Serializable
-    val assertionsMode: TypeWithEntries<AssertionsModeWithReleaseVersions> =
+    val assertionsMode: TypeWithEntries<@Contextual AssertionsMode> =
         AssertionsModeType::class with AssertionsMode.entries.toSet()
 
     @Serializable
-    val jspecifyAnnotationsMode: TypeWithEntries<JspecifyAnnotationsModeWithReleaseVersions> =
+    val jspecifyAnnotationsMode: TypeWithEntries<@Contextual JspecifyAnnotationsMode> =
         JspecifyAnnotationsModeType::class with JspecifyAnnotationsMode.entries.toSet()
 
     @Serializable
-    val lambdasMode: TypeWithEntries<LambdasModeWithReleaseVersions> =
+    val lambdasMode: TypeWithEntries<@Contextual LambdasMode> =
         LambdasModeType::class with LambdasMode.entries.toSet()
 
     @Serializable
-    val samConversionsMode: TypeWithEntries<SamConversionsModeWithReleaseVersions> =
+    val samConversionsMode: TypeWithEntries<@Contextual SamConversionsMode> =
         SamConversionsModeType::class with SamConversionsMode.entries.toSet()
 
     @Serializable
-    val stringConcatMode: TypeWithEntries<StringConcatModeWithReleaseVersions> =
+    val stringConcatMode: TypeWithEntries<@Contextual StringConcatMode> =
         StringConcatModeType::class with StringConcatMode.entries.toSet()
 
     @Serializable
-    val compatqualAnnotationsMode: TypeWithEntries<CompatqualAnnotationsModeWithReleaseVersions> =
+    val compatqualAnnotationsMode: TypeWithEntries<@Contextual CompatqualAnnotationsMode> =
         CompatqualAnnotationsModeType::class with CompatqualAnnotationsMode.entries.toSet()
 
     @Serializable
-    val whenExpressionsMode: TypeWithEntries<WhenExpressionsModeWithReleaseVersions> =
+    val whenExpressionsMode: TypeWithEntries<@Contextual WhenExpressionsMode> =
         WhenExpressionsModeType::class with WhenExpressionsMode.entries.toSet()
 
     @Serializable
-    val jdkRelease: TypeWithEntries<JdkReleaseWithReleaseVersions> =
+    val jdkRelease: TypeWithEntries<@Contextual JdkRelease> =
         JdkReleaseType::class with JdkRelease.entries.toSet()
 
     @Serializable
-    val annotationDefaultTarget: TypeWithEntries<AnnotationDefaultTargetModeWithReleaseVersions> =
+    val annotationDefaultTarget: TypeWithEntries<@Contextual AnnotationDefaultTargetMode> =
         AnnotationDefaultTargetModeType::class with AnnotationDefaultTargetMode.entries.toSet()
 
     @Serializable
-    val nameBasedDestructuring: TypeWithEntries<NameBasedDestructuringModeWithReleaseVersions> =
+    val nameBasedDestructuring: TypeWithEntries<@Contextual NameBasedDestructuringMode> =
         NameBasedDestructuringModeType::class with NameBasedDestructuringMode.entries.toSet()
 
     @Serializable
-    val verifyIrMode: TypeWithEntries<VerifyIrModeWithReleaseVersions> =
+    val verifyIrMode: TypeWithEntries<@Contextual VerifyIrMode> =
         VerifyIrModeType::class with VerifyIrMode.entries.toSet()
 
     @Serializable
-    val partialLinkageMode: TypeWithEntries<PartialLinkageModeWithReleaseVersions> =
+    val partialLinkageMode: TypeWithEntries<@Contextual PartialLinkageMode> =
         PartialLinkageModeType::class with PartialLinkageMode.entries.toSet()
 
     @Serializable
-    val partialLinkageLogLevel: TypeWithEntries<PartialLinkageLogLevelWithReleaseVersions> =
+    val partialLinkageLogLevel: TypeWithEntries<@Contextual PartialLinkageLogLevel> =
         PartialLinkageLogLevelType::class with PartialLinkageLogLevel.entries.toSet()
 
     @Serializable
-    val duplicatedUniqueNameStrategy: TypeWithEntries<DuplicatedUniqueNameStrategyWithReleaseVersions> =
+    val duplicatedUniqueNameStrategy: TypeWithEntries<@Contextual DuplicatedUniqueNameStrategy> =
         DuplicatedUniqueNameStrategyType::class with DuplicatedUniqueNameStrategy.entries.toSet()
 
     @Serializable
-    val jsEcmaVersion: TypeWithEntries<JsEcmaVersionWithReleaseVersions> =
+    val jsEcmaVersion: TypeWithEntries<@Contextual JsEcmaVersion> =
         JsEcmaVersionType::class with JsEcmaVersion.entries.toSet()
 
     @Serializable
-    val jsModuleKind: TypeWithEntries<JsModuleKindWithReleaseVersions> =
+    val jsModuleKind: TypeWithEntries<@Contextual JsModuleKind> =
         JsModuleKindType::class with JsModuleKind.entries.toSet()
 
     @Serializable
-    val jsIrDiagnosticMode: TypeWithEntries<JsIrDiagnosticModeWithReleaseVersions> =
+    val jsIrDiagnosticMode: TypeWithEntries<@Contextual JsIrDiagnosticMode> =
         JsIrDiagnosticModeType::class with JsIrDiagnosticMode.entries.toSet()
 
     @Serializable
-    val jsMainCallMode: TypeWithEntries<JsMainCallModeWithReleaseVersions> =
+    val jsMainCallMode: TypeWithEntries<@Contextual JsMainCallMode> =
         JsMainCallModeType::class with JsMainCallMode.entries.toSet()
 
     @Serializable
-    val sourceMapEmbedSources: TypeWithEntries<SourceMapEmbedSourcesWithReleaseVersions> =
+    val sourceMapEmbedSources: TypeWithEntries<@Contextual SourceMapEmbedSources> =
         SourceMapEmbedSourcesType::class with SourceMapEmbedSources.entries.toSet()
 
     @Serializable
-    val sourceMapNamesPolicy: TypeWithEntries<SourceMapNamesPolicyWithReleaseVersions> =
+    val sourceMapNamesPolicy: TypeWithEntries<@Contextual SourceMapNamesPolicy> =
         SourceMapNamesPolicyType::class with SourceMapNamesPolicy.entries.toSet()
 
     @Serializable
-    val wasmTarget: TypeWithEntries<WasmTargetWithReleaseVersions> =
+    val wasmTarget: TypeWithEntries<@Contextual WasmTarget> =
         WasmTargetType::class with WasmTarget.entries.toSet()
 
 }
@@ -140,40 +141,40 @@ class TypeWithEntries<T>(
     val values: Set<T>,
 )
 
-infix fun <T> KClass<out EnumType<T>>.with(entries: Set<T>) where T : Enum<T>, T : WithStringRepresentation =
+private infix fun <T> KClass<out EnumType<T>>.with(entries: Set<T>) where T : Enum<T>, T : WithStringRepresentation =
     TypeWithEntries(this.java.name, entries)
 
-val allKotlinTypeSerializersModule = SerializersModule {
-    contextualSerializerWithVersions<KotlinVersionWithReleaseVersions>()
-    contextualSerializerWithVersions<JvmTargetWithReleaseVersions>()
-    contextualSerializerWithVersions<ExplicitApiModeWithReleaseVersions>()
-    contextualSerializerWithVersions<ReturnValueCheckerModeWithReleaseVersions>()
-    contextualSerializerWithVersions<KlibIrInlinerModeWithReleaseVersions>()
-    contextualSerializerWithVersions<JvmDefaultModeWithReleaseVersions>()
-    contextualSerializerWithVersions<AbiStabilityModeWithReleaseVersions>()
-    contextualSerializerWithVersions<AssertionsModeWithReleaseVersions>()
-    contextualSerializerWithVersions<JspecifyAnnotationsModeWithReleaseVersions>()
-    contextualSerializerWithVersions<LambdasModeWithReleaseVersions>()
-    contextualSerializerWithVersions<SamConversionsModeWithReleaseVersions>()
-    contextualSerializerWithVersions<StringConcatModeWithReleaseVersions>()
-    contextualSerializerWithVersions<CompatqualAnnotationsModeWithReleaseVersions>()
-    contextualSerializerWithVersions<WhenExpressionsModeWithReleaseVersions>()
-    contextualSerializerWithVersions<JdkReleaseWithReleaseVersions>()
-    contextualSerializerWithVersions<AnnotationDefaultTargetModeWithReleaseVersions>()
-    contextualSerializerWithVersions<NameBasedDestructuringModeWithReleaseVersions>()
-    contextualSerializerWithVersions<VerifyIrModeWithReleaseVersions>()
-    contextualSerializerWithVersions<PartialLinkageModeWithReleaseVersions>()
-    contextualSerializerWithVersions<PartialLinkageLogLevelWithReleaseVersions>()
-    contextualSerializerWithVersions<DuplicatedUniqueNameStrategyWithReleaseVersions>()
-    contextualSerializerWithVersions<JsEcmaVersionWithReleaseVersions>()
-    contextualSerializerWithVersions<JsModuleKindWithReleaseVersions>()
-    contextualSerializerWithVersions<JsIrDiagnosticModeWithReleaseVersions>()
-    contextualSerializerWithVersions<JsMainCallModeWithReleaseVersions>()
-    contextualSerializerWithVersions<SourceMapEmbedSourcesWithReleaseVersions>()
-    contextualSerializerWithVersions<SourceMapNamesPolicyWithReleaseVersions>()
-    contextualSerializerWithVersions<WasmTargetWithReleaseVersions>()
+internal val allKotlinTypeSerializersModule = SerializersModule {
+    contextualSerializerWithVersions<KotlinVersion>()
+    contextualSerializerWithVersions<JvmTarget>()
+    contextualSerializerWithVersions<ExplicitApiMode>()
+    contextualSerializerWithVersions<ReturnValueCheckerMode>()
+    contextualSerializerWithVersions<KlibIrInlinerMode>()
+    contextualSerializerWithVersions<JvmDefaultMode>()
+    contextualSerializerWithVersions<AbiStabilityMode>()
+    contextualSerializerWithVersions<AssertionsMode>()
+    contextualSerializerWithVersions<JspecifyAnnotationsMode>()
+    contextualSerializerWithVersions<LambdasMode>()
+    contextualSerializerWithVersions<SamConversionsMode>()
+    contextualSerializerWithVersions<StringConcatMode>()
+    contextualSerializerWithVersions<CompatqualAnnotationsMode>()
+    contextualSerializerWithVersions<WhenExpressionsMode>()
+    contextualSerializerWithVersions<JdkRelease>()
+    contextualSerializerWithVersions<AnnotationDefaultTargetMode>()
+    contextualSerializerWithVersions<NameBasedDestructuringMode>()
+    contextualSerializerWithVersions<VerifyIrMode>()
+    contextualSerializerWithVersions<PartialLinkageMode>()
+    contextualSerializerWithVersions<PartialLinkageLogLevel>()
+    contextualSerializerWithVersions<DuplicatedUniqueNameStrategy>()
+    contextualSerializerWithVersions<JsEcmaVersion>()
+    contextualSerializerWithVersions<JsModuleKind>()
+    contextualSerializerWithVersions<JsIrDiagnosticMode>()
+    contextualSerializerWithVersions<JsMainCallMode>()
+    contextualSerializerWithVersions<SourceMapEmbedSources>()
+    contextualSerializerWithVersions<SourceMapNamesPolicy>()
+    contextualSerializerWithVersions<WasmTarget>()
 }
 
-inline fun <reified T> SerializersModuleBuilder.contextualSerializerWithVersions() where T : WithKotlinReleaseVersionsMetadata, T : Enum<T>, T : WithStringRepresentation {
+private inline fun <reified T> SerializersModuleBuilder.contextualSerializerWithVersions() where T : WithKotlinReleaseVersionsMetadata, T : Enum<T>, T : WithStringRepresentation {
     contextual(allNamedTypeSerializerWithVersions<T>())
 }

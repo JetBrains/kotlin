@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class PartialLinkageLogLevel(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     ),
+
     @SerialName("info")
     INFO(
         levelName = "info",
@@ -31,6 +31,7 @@ enum class PartialLinkageLogLevel(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+
     @SerialName("warning")
     WARNING(
         levelName = "warning",
@@ -38,6 +39,7 @@ enum class PartialLinkageLogLevel(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     ),
+
     @SerialName("error")
     ERROR(
         levelName = "error",
@@ -49,5 +51,3 @@ enum class PartialLinkageLogLevel(
     override val stringRepresentation: String
         get() = levelName
 }
-
-typealias PartialLinkageLogLevelWithReleaseVersions = @Contextual PartialLinkageLogLevel

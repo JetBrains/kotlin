@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class DuplicatedUniqueNameStrategy(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
     ),
+
     @SerialName("allow-all-with-warning")
     ALLOW_ALL_WITH_WARNING(
         strategyName = "allow-all-with-warning",
@@ -31,6 +31,7 @@ enum class DuplicatedUniqueNameStrategy(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
     ),
+
     @SerialName("allow-first-with-warning")
     ALLOW_FIRST_WITH_WARNING(
         strategyName = "allow-first-with-warning",
@@ -42,5 +43,3 @@ enum class DuplicatedUniqueNameStrategy(
     override val stringRepresentation: String
         get() = strategyName
 }
-
-typealias DuplicatedUniqueNameStrategyWithReleaseVersions = @Contextual DuplicatedUniqueNameStrategy

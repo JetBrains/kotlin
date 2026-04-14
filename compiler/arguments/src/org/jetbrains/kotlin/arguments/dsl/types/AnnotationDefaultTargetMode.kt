@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class AnnotationDefaultTargetMode(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     ),
+
     @SerialName("first-only-warn")
     FIRST_ONLY_WARN(
         modeName = "first-only-warn",
@@ -31,6 +31,7 @@ enum class AnnotationDefaultTargetMode(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
     ),
+
     @SerialName("param-property")
     PARAM_PROPERTY(
         modeName = "param-property",
@@ -42,5 +43,3 @@ enum class AnnotationDefaultTargetMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias AnnotationDefaultTargetModeWithReleaseVersions = @Contextual AnnotationDefaultTargetMode

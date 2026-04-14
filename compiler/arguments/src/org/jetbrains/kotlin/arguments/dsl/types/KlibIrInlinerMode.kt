@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -24,6 +23,7 @@ enum class KlibIrInlinerMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         ),
     ),
+
     @SerialName("full")
     full(
         modeState = "full",
@@ -31,6 +31,7 @@ enum class KlibIrInlinerMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         ),
     ),
+
     @SerialName("disabled")
     disabled(
         modeState = "disabled",
@@ -38,6 +39,7 @@ enum class KlibIrInlinerMode(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
         ),
     ),
+
     @SerialName("default")
     default(
         modeState = "default",
@@ -50,5 +52,3 @@ enum class KlibIrInlinerMode(
     override val stringRepresentation: String
         get() = modeState
 }
-
-typealias KlibIrInlinerModeWithReleaseVersions = @Contextual KlibIrInlinerMode

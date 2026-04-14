@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class SourceMapNamesPolicy(
             stabilizedVersion = KotlinReleaseVersion.v1_8_20,
         )
     ),
+
     @SerialName("simple-names")
     SIMPLE_NAMES(
         policyName = "simple-names",
@@ -33,6 +33,7 @@ enum class SourceMapNamesPolicy(
             stabilizedVersion = KotlinReleaseVersion.v1_8_20,
         )
     ),
+
     @SerialName("fully-qualified-names")
     FULLY_QUALIFIED_NAMES(
         policyName = "fully-qualified-names",
@@ -45,5 +46,3 @@ enum class SourceMapNamesPolicy(
     override val stringRepresentation: String
         get() = policyName
 }
-
-typealias SourceMapNamesPolicyWithReleaseVersions = @Contextual SourceMapNamesPolicy

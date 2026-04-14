@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
@@ -25,6 +24,7 @@ enum class JsMainCallMode(
             stabilizedVersion = KotlinReleaseVersion.v1_0_0,
         )
     ),
+
     @SerialName("noCall")
     NO_CALL(
         modeName = "noCall",
@@ -37,5 +37,3 @@ enum class JsMainCallMode(
     override val stringRepresentation: String
         get() = modeName
 }
-
-typealias JsMainCallModeWithReleaseVersions = @Contextual JsMainCallMode
