@@ -44,7 +44,7 @@ import java.util.*
 
 fun IrElement.dumpSrc(useFir: Boolean = false): String {
     val sb = StringBuilder()
-    accept(IrSourcePrinterVisitor(sb, "%tab%", useFir), null)
+    accept(IrSourcePrinterVisitor(sb, "%tab%"), null)
     return sb
         .toString()
         // replace tabs at beginning of line with white space
@@ -68,7 +68,6 @@ class Scope(
 class IrSourcePrinterVisitor(
     out: Appendable,
     indentUnit: String = "  ",
-    private val useFir: Boolean = false,
 ) : IrVisitorVoid() {
     private val printer = Printer(out, indentUnit)
     private var currentScope: Scope = Scope()
@@ -841,7 +840,7 @@ class IrSourcePrinterVisitor(
         // or a delegated property setter. The latter have a superfluous "return" in K1.
         val returnTarget = expression.returnTargetSymbol.owner
         if (returnTarget !is IrFunction ||
-            (!returnTarget.isLambda && (useFir || !returnTarget.isDelegatedPropertySetter)) ||
+            !returnTarget.isLambda ||
             !expression.isLastStatementIn(returnTarget)
         ) {
             val suffix = returnTargetToCall[returnTarget.symbol]?.let {
@@ -1586,8 +1585,6 @@ class IrSourcePrinterVisitor(
             origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR -> "<iterator>"
             // $anonymous$parameter$x vs $unused$var$x
             origin == IrDeclarationOrigin.UNDERSCORE_PARAMETER -> "<unused var>"
-            !useFir && name.asString().endsWith("_elvis_lhs") -> "<elvis>"
-            !useFir && name.asString() == "\$this\$null" -> "<this>"
             else -> name.asString()
         }
 

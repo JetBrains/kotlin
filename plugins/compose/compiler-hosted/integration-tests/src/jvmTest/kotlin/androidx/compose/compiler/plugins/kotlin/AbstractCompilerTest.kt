@@ -104,13 +104,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
         updateConfiguration = {
-            val enableFir = if (forcedFirSetting != null) forcedFirSetting else this@AbstractCompilerTest.useFir
-            val languageVersion =
-                if (enableFir) {
-                    LanguageVersion.LATEST_STABLE
-                } else {
-                    LanguageVersion.KOTLIN_1_9
-                }
+            val languageVersion = LanguageVersion.LATEST_STABLE
             // For tests, allow unstable artifacts compiled with a pre-release compiler
             // as input to stable compilations.
             val analysisFlags: Map<AnalysisFlag<*>, Any?> = mapOf(

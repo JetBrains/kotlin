@@ -90,20 +90,16 @@ private class RuntimeTestCompiler(
         }
     }
 
-    fun File.filterK2Only() = useFir || useLines { it.first() } != "// K2_ONLY"
-
     fun compileRuntimeClasses() =
         compileRuntimeTestClasses(
             runtimeTestSourceRoot,
             runtimeTestFiles.filter {
                 !it.isDirectory &&
-                        it.absolutePath.startsWith(runtimeTestSourceRoot.commonSourceRoot()) &&
-                        it.filterK2Only()
+                        it.absolutePath.startsWith(runtimeTestSourceRoot.commonSourceRoot())
             },
             runtimeTestFiles.filter {
                 !it.isDirectory &&
-                        it.absolutePath.startsWith(runtimeTestSourceRoot.jvmSourceRoot()) &&
-                        it.filterK2Only()
+                        it.absolutePath.startsWith(runtimeTestSourceRoot.jvmSourceRoot())
             }
         )
 

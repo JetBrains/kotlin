@@ -566,10 +566,10 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
         """
     )
 
-    private fun firEnd() = if (useFir) "<!>" else ""
-    private fun psiEnd() = if (!useFir) "<!>" else ""
-    private fun firMisStart() = if (useFir) "<!COMPOSE_APPLIER_CALL_MISMATCH!>" else ""
-    private fun psiParStart() = if (!useFir) "<!COMPOSE_APPLIER_PARAMETER_MISMATCH!>" else ""
-    private fun firDecStart() = if (useFir) "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>" else ""
-    private fun psiDecStart() = if (!useFir) "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>" else ""
+    private fun firEnd() = "<!>"
+    private fun psiEnd() = ""
+    private fun firMisStart() = "<!COMPOSE_APPLIER_CALL_MISMATCH!>"
+    private fun psiParStart() = ""
+    private fun firDecStart() = "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>"
+    private fun psiDecStart() = ""
 }

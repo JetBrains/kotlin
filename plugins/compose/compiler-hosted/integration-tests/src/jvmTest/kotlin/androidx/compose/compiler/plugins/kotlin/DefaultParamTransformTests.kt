@@ -29,9 +29,6 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
         supportsK1: Boolean = true,
         dumpTree: Boolean = false,
     ) {
-        if (!supportsK1) {
-            assumeTrue(useFir)
-        }
         verifyGoldenComposeIrTransform(
             """
             import androidx.compose.runtime.*

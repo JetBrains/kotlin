@@ -123,7 +123,7 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
         val actualTransformed = irModule
             .files[0]
             .validate()
-            .dumpSrc(useFir)
+            .dumpSrc(true)
             .replace('$', '%')
             // replace source keys for start group calls
             .replace(

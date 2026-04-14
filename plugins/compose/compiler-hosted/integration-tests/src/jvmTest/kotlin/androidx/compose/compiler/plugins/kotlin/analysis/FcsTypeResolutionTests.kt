@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
@@ -52,7 +51,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testSmartCastsAndPunning() {
-        val typeMismatch = if (useFir) "ARGUMENT_TYPE_MISMATCH" else "TYPE_MISMATCH"
+        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
             import androidx.compose.runtime.*
@@ -254,7 +253,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testGenerics() {
-        val typeMismatch = if (useFir) "ARGUMENT_TYPE_MISMATCH" else "TYPE_MISMATCH"
+        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
                 import androidx.compose.runtime.*
@@ -293,7 +292,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testUnresolvedAttributeValueResolvedTarget() {
-        val typeMismatch = if (useFir) "ARGUMENT_TYPE_MISMATCH" else "TYPE_MISMATCH"
+        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
                 import androidx.compose.runtime.*
@@ -353,12 +352,8 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testMismatchedAttributes() {
-        val typeMismatch = if (useFir) "ARGUMENT_TYPE_MISMATCH" else "TYPE_MISMATCH"
-        val constantTypeMismatch = if (useFir) {
-            "ARGUMENT_TYPE_MISMATCH"
-        } else {
-            "CONSTANT_EXPECTED_TYPE_MISMATCH"
-        }
+        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
+        val constantTypeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
                 import androidx.compose.runtime.*
@@ -413,11 +408,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testUnresolvedQualifiedTag() {
-        val functionExpected = if (useFir) {
-            "FUNCTION_EXPECTED"
-        } else {
-            "UNRESOLVED_REFERENCE_WRONG_RECEIVER"
-        }
+        val functionExpected = "FUNCTION_EXPECTED"
         check(
             """
                 import androidx.compose.runtime.*
@@ -494,38 +485,8 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                 @Composable
                 fun MultiChildren(c: @Composable (x: Int, y: Int) -> Unit = { x, y ->println(x + y) }) { c(1,1) }
         """.trimIndent()
-        if (!useFir) {
-            check(
-                """
-                $declarations
-
-                @Composable fun Test() {
-                    ChildrenRequired2 {}
-                    ChildrenRequired2<!NO_VALUE_FOR_PARAMETER!>()<!>
-
-                    ChildrenOptional3 {}
-                    ChildrenOptional3()
-
-                    NoChildren2 <!TOO_MANY_ARGUMENTS!>{}<!>
-                    NoChildren2()
-
-                    <!OVERLOAD_RESOLUTION_AMBIGUITY!>MultiChildren<!> {}
-                    MultiChildren { x ->
-                        println(x)
-                    }
-                    MultiChildren { x, y ->
-                        println(x + y)
-                    }
-                    <!NONE_APPLICABLE!>MultiChildren<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!>,
-                    <!CANNOT_INFER_PARAMETER_TYPE!>y<!>, <!CANNOT_INFER_PARAMETER_TYPE!>z<!> ->
-                        println(x + y + z)
-                    }
-                }
-            """.trimIndent()
-            )
-        } else {
-            check(
-                """
+        check(
+            """
                 $declarations
 
                 @Composable fun Test() {
@@ -552,8 +513,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                         println(x + y + z)
                     }
                 }
-            """.trimIndent()
-            )
-        }
+        """.trimIndent()
+        )
     }
 }

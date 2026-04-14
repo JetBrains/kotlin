@@ -151,30 +151,7 @@ class ComposableDeclarationCheckerTests(
     @Test
     fun testSuspendComposable() {
         check(
-            if (!useFir) {
-                """
-            import androidx.compose.runtime.Composable
-
-            @Composable suspend fun <!COMPOSABLE_SUSPEND_FUN!>Foo<!>() {}
-
-            fun acceptSuspend(fn: suspend () -> Unit) { print(fn) }
-            fun acceptComposableSuspend(fn: <!COMPOSABLE_SUSPEND_FUN!>@Composable suspend () -> Unit<!>) { print(fn.hashCode()) }
-
-            val foo: suspend () -> Unit = <!TYPE_MISMATCH!>@Composable {}<!>
-            val bar: suspend () -> Unit = {}
-            fun Test() {
-                val composableLambda = @Composable {}
-                acceptSuspend <!TYPE_MISMATCH!>@Composable {}<!>
-                acceptComposableSuspend @Composable {}
-                acceptComposableSuspend(composableLambda)
-                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN,TYPE_MISMATCH!>@Composable suspend fun() { }<!>)
-            }
-        """
-            } else {
-                // In K2, the frontend forbids function types with multiple kinds, so
-                // `@Composable suspend` function types get turned into error types. This is the
-                // reason for the additional ARGUMENT_TYPE_MISMATCH errors.
-                """
+            """
             import androidx.compose.runtime.Composable
 
             @Composable suspend fun <!COMPOSABLE_SUSPEND_FUN!>Foo<!>() {}
@@ -191,8 +168,7 @@ class ComposableDeclarationCheckerTests(
                 acceptComposableSuspend(composableLambda)
                 acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!><!ARGUMENT_TYPE_MISMATCH!>@Composable <!ANONYMOUS_SUSPEND_FUNCTION!>suspend<!> fun()<!> { }<!>)
             }
-        """
-            }
+    """
         )
     }
 
@@ -229,43 +205,8 @@ class ComposableDeclarationCheckerTests(
 
     @Test
     fun testMissingComposableOnOverride() {
-        // In K1, we report the `CONFLICTING_OVERLOADS` error on properties as well as property
-        // accessors. In K2 we only report the error on property accessors.
         check(
-            if (!useFir) {
-                """
-            import androidx.compose.runtime.Composable
-
-            interface Foo {
-                @Composable
-                fun composableFunction(param: Boolean): Boolean
-                fun nonComposableFunction(param: Boolean): Boolean
-                val nonComposableProperty: Boolean
-            }
-
-            object FakeFoo : Foo {
-                <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
-            }
-
-            interface Bar {
-                @Composable
-                fun composableFunction(param: Boolean): Boolean
-                @get:Composable val composableProperty: Boolean
-                fun nonComposableFunction(param: Boolean): Boolean
-                val nonComposableProperty: Boolean
-            }
-
-            object FakeBar : Bar {
-                <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> = true
-                <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
-            }
             """
-            } else {
-                """
             import androidx.compose.runtime.Composable
 
             interface Foo {
@@ -295,8 +236,7 @@ class ComposableDeclarationCheckerTests(
                 @Composable override <!CONFLICTING_OVERLOADS!>fun nonComposableFunction(param: Boolean)<!> = true
                 override val nonComposableProperty: Boolean @Composable <!CONFLICTING_OVERLOADS!>get()<!> = true
             }
-            """
-            }
+        """
         )
     }
 
@@ -409,21 +349,7 @@ class ComposableDeclarationCheckerTests(
     @Test
     fun testOverrideWithoutComposeAnnotation() {
         check(
-            if (!useFir) {
-                """
-                import androidx.compose.runtime.Composable
-                interface Base {
-                    fun compose(content: () -> Unit)
-                }
-
-                class Impl : Base {
-                    <!CONFLICTING_OVERLOADS!>override fun compose(content: @Composable () -> Unit)<!> {}
-                }
             """
-            } else {
-                // In K2, the `@Composable` type is part of the function signature, so the `override`
-                // does not match the `compose` function in `Base`.
-                """
                 import androidx.compose.runtime.Composable
                 interface Base {
                     fun compose(content: () -> Unit)
@@ -432,8 +358,7 @@ class ComposableDeclarationCheckerTests(
                 class Impl : Base {
                     override fun compose(content: @Composable () -> Unit) {}
                 }
-            """
-            }
+        """
         )
     }
 
@@ -474,7 +399,7 @@ class ComposableDeclarationCheckerTests(
                 import androidx.compose.runtime.Composable
 
                 class Impl : @Composable () -> Unit {
-                    ${if (!useFir) "<!CONFLICTING_OVERLOADS!>override fun invoke()<!> {}" else "override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
+                    ${"override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                 }
             """
         )
@@ -487,7 +412,7 @@ class ComposableDeclarationCheckerTests(
                 import androidx.compose.runtime.Composable
 
                 class Impl : () -> Unit {
-                    ${if (!useFir) "<!CONFLICTING_OVERLOADS!>@Composable override fun invoke()<!> {}" else "@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
+                    ${"@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                 }
             """
         )
@@ -500,7 +425,7 @@ class ComposableDeclarationCheckerTests(
                 import androidx.compose.runtime.Composable
 
                 class Impl : () -> Unit, @Composable (Int) -> Unit {
-                    ${if (!useFir) "<!CONFLICTING_OVERLOADS!>@Composable override fun invoke()<!> {}" else "@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
+                    ${"@Composable override <!CONFLICTING_OVERLOADS!>fun invoke()<!> {}"}
                     @Composable override fun invoke(p0: Int) {}
                 }
             """

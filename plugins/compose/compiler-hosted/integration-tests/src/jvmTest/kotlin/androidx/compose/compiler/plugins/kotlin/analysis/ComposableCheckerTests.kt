@@ -1,7 +1,6 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
@@ -552,11 +551,11 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         }
 
         fun initializerTypeMismatch(text: String): String {
-            return if (useFir) wrapDiagnostic("INITIALIZER_TYPE_MISMATCH", text) else text
+            return wrapDiagnostic("INITIALIZER_TYPE_MISMATCH", text)
         }
 
         fun typeMismatch(text: String): String {
-            return if (!useFir) wrapDiagnostic("TYPE_MISMATCH", text) else text
+            return text
         }
 
         check(
@@ -750,11 +749,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             }
         """
         )
-        val initializer = if (useFir) {
-            "<!INITIALIZER_TYPE_MISMATCH!>=<!> v"
-        } else {
-            "= <!TYPE_MISMATCH!>v<!>"
-        }
+        val initializer = "<!INITIALIZER_TYPE_MISMATCH!>=<!> v"
 
         check(
             """
@@ -839,11 +834,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         """
         )
 
-        val initializer = if (useFir) {
-            "<!INITIALIZER_TYPE_MISMATCH!>=<!> identity (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"
-        } else {
-            "= <!TYPE_MISMATCH!>identity (<!TYPE_MISMATCH!>f<!>)<!>"
-        }
+        val initializer = "<!INITIALIZER_TYPE_MISMATCH!>=<!> identity (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"
 
         check(
             """
@@ -1651,13 +1642,13 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         // Type mismatch is reported by K1 because it matches the annotation on type with inferred one.
         // K2 uses annotation to infer function kind instead, so no error is reported.
         fun typeMismatch(expression: String) =
-            if (!useFir) "<!TYPE_MISMATCH!>$expression<!>" else expression
+            expression
 
         // Since `ResolveTopLevelLambdasAsSyntheticCallArgument`, the initializer's type is
         // now transformed to a proper `ComposableFunction0`, but the property type is not
         // because it's not an explicit `FirFunctionTypeRef`, which is itself an error.
         fun initializerTypeMismatch(expression: String) =
-            if (useFir) "<!INITIALIZER_TYPE_MISMATCH!>$expression<!>" else expression
+            "<!INITIALIZER_TYPE_MISMATCH!>$expression<!>"
 
         check(
             """

@@ -1578,7 +1578,7 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                 it.value,
                 listOf(classesDirectory.root),
                 dumpClasses,
-                if (flipLibraryFirSetting) !useFir else useFir
+                !flipLibraryFirSetting
             ).allGeneratedFiles.also { outputFiles ->
                 // Write the files to the class directory so they can be used by the next module
                 // and the application
