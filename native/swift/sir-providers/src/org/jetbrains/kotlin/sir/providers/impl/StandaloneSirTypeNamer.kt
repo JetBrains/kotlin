@@ -83,9 +83,14 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType, is SirTupleType -> null
     } ?: kotlinFqName(type)
 
+    @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let { (protocol, _) ->
-        if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) "kotlin.Any"
-        else protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+        if (protocol == KotlinRuntimeSupportModule.kotlinBridgeable) return@let "kotlin.Any"
+        val symbol = protocol.kaSymbolOrNull<KaClassLikeSymbol>()!!
+        val fqName = symbol.classId!!.asFqNameString()
+        // Generics aren't supported yet, so we don't have the actual typeArguments, fallback to the upperbound
+        val typeArgs = symbol.typeParameters.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { "*" } ?: ""
+        "$fqName$typeArgs"
     }
 
     @OptIn(KaExperimentalApi::class)

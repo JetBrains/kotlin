@@ -3,6 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
+public typealias BFun = (any main.B) -> Swift.Void
 public typealias BoxFun = () -> main.Box
 public typealias BoxFunIn = (main.Box) -> Swift.Int32
 public protocol A: KotlinRuntime.KotlinBase {
@@ -330,6 +331,12 @@ public func produceBoxUpperBound(
         let originalBlock = box
         return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(main.Box.__createClassWrapper(externalRCRef: arg0)); return true }() }
     }()); return () }()
+}
+public func returnBFun() -> main.BFun {
+    return {
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___returnBFun(), options: .asBestFittingWrapper)!
+        return { _1 in return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_B__(pointerToBlock.__externalRCRef()!, _1.__externalRCRef()); return () }() }
+    }()
 }
 public func returnBoxFun() -> main.BoxFun {
     return {

@@ -97,6 +97,8 @@ void * _Nullable __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRunt
 
 _Bool __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
 
+void * __root___returnBFun();
+
 void * __root___returnBoxFun();
 
 _Bool __root___takeBoxStarProjection__TypesOfArguments__main_Box__(void * box);
@@ -104,6 +106,8 @@ _Bool __root___takeBoxStarProjection__TypesOfArguments__main_Box__(void * box);
 _Bool __root___takeBoxUpperBound__TypesOfArguments__main_Box__(void * box);
 
 _Bool __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(void * (^box)(void));
+
+_Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_B__(void * pointerToBlock, void * _1);
 
 void * main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToBlock);
 

@@ -110,6 +110,10 @@ fun produceBox(box: (Box<String>) -> Unit): Unit = TODO() // unsupported input g
 
 fun produceBoxUpperBound(box: (Box<Any?>) -> Unit): Unit = TODO()
 
+typealias BFun = (B<*>) -> Unit
+
+fun returnBFun(): BFun = TODO()
+
 // MODULE: f_bounded_type
 // EXPORT_TO_SWIFT
 // FILE: f_bounded_type.kt
