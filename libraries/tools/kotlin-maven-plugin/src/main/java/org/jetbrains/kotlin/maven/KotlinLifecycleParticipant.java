@@ -18,8 +18,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipant implements LogEnabled {
     private static final String KOTLIN_MAVEN_PLUGIN_GROUP_ID = "org.jetbrains.kotlin";
@@ -31,6 +30,9 @@ public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipan
 
     private static final String MAVEN_COMPILER_PLUGIN_GROUP_ID = "org.apache.maven.plugins";
     private static final String MAVEN_COMPILER_PLUGIN_ARTIFACT_ID = "maven-compiler-plugin";
+
+    private static final String GOAL_KAPT = "kapt";
+    private static final String GOAL_TEST_KAPT = "test-kapt";
 
     /** Minimum supported Java version for Kotlin's jvmTarget. */
     private static final int MIN_SUPPORTED_JAVA_VERSION = 8;
@@ -74,9 +76,57 @@ public class KotlinLifecycleParticipant extends AbstractMavenLifecycleParticipan
             logger.info("Kotlin smart defaults are enabled for " + project.getArtifactId());
         }
 
+        configureLifecycleBindings(kotlinMavenPlugin);
         addSourceRoots(project, kotlinMavenPlugin);
         addStdlibDependency(project, kotlinMavenPlugin.getVersion());
         configureJvmTarget(project, kotlinMavenPlugin);
+    }
+
+    /**
+     * Dynamically binds Kotlin goals to the default lifecycle, replacing the static
+     * {@code components.xml} lifecycle mapping that caused duplicate compilations when a
+     * parent POM (e.g. {@code spring-boot-starter-parent}) already declared its own
+     * {@code compile} / {@code test-compile} executions with different IDs.
+     *
+     * <p>Only goals that are not yet covered by an existing execution are added, so
+     * executions inherited from parent POMs or declared explicitly in the project take
+     * precedence and are never duplicated.
+     *
+     * <p>KAPT goals ({@code kapt}, {@code test-kapt}) are bound only when
+     * {@code annotationProcessorPaths} is present in the plugin's global configuration,
+     * avoiding unnecessary KAPT phases for projects that do not use annotation processing.
+     */
+    private void configureLifecycleBindings(Plugin kotlinMavenPlugin) {
+        Set<String> boundGoals = new HashSet<>();
+        List<PluginExecution> existingExecutions = kotlinMavenPlugin.getExecutions();
+        if (existingExecutions != null) {
+            for (PluginExecution execution : existingExecutions) {
+                if (execution.getGoals() != null) {
+                    boundGoals.addAll(execution.getGoals());
+                }
+            }
+        }
+
+        if (hasAnnotationProcessorPaths(kotlinMavenPlugin)) {
+            addMissingExecution(kotlinMavenPlugin, boundGoals, GOAL_KAPT, "process-sources");
+            addMissingExecution(kotlinMavenPlugin, boundGoals, GOAL_TEST_KAPT, "process-test-sources");
+        }
+        addMissingExecution(kotlinMavenPlugin, boundGoals, COMPILE_GOAL, "compile");
+        addMissingExecution(kotlinMavenPlugin, boundGoals, TEST_COMPILE_GOAL, "test-compile");
+    }
+
+    private static boolean hasAnnotationProcessorPaths(Plugin plugin) {
+        return configContains(plugin.getConfiguration(), "annotationProcessorPaths");
+    }
+
+    private static void addMissingExecution(Plugin plugin, Set<String> boundGoals, String goal, String phase) {
+        if (boundGoals.contains(goal)) return;
+
+        PluginExecution execution = new PluginExecution();
+        execution.setId("default-" + goal);
+        execution.setPhase(phase);
+        execution.setGoals(Collections.singletonList(goal));
+        plugin.addExecution(execution);
     }
 
     // -------------------------------------------------------------------------

@@ -42,6 +42,27 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
+    @DisplayName("Smart defaults supports bidirectional Kotlin↔Java cross-references without manual configuration")
+    fun testSmartDefaultsBidirectionalKotlinJava(mavenVersion: TestVersions.Maven) {
+        testProject("test-smart-defaults-kotlin-java-bidirectional", mavenVersion) {
+            build(
+                "package",
+                expectedToFail = false
+            ) {
+                assertSmartDefaultsEnabled()
+                // Kotlin production code compiled successfully — it references Java source
+                // (smart defaults passes src/main/java via project.getCompileSourceRoots())
+                assertFileExists("target/classes/sample/KotlinWrapperKt.class")
+                // Java production code compiled successfully — it references compiled Kotlin
+                // (Kotlin compiled first within the compile phase)
+                assertFileExists("target/classes/sample/JavaConsumer.class")
+                // Runtime test verifies the full bidirectional call chain
+                assertTestsPassed(2)
+            }
+        }
+    }
+
+    @MavenTest
     @DisplayName("KT-84163: Smart defaults respects Maven <sourceDirectory> and <testSourceDirectory> overrides")
     fun testSmartDefaultsBuildSourceDirOverrides(mavenVersion: TestVersions.Maven) {
         testProject("test-smart-defaults-build-source-dirs", mavenVersion) {
@@ -173,6 +194,30 @@ class SmartDefaultsIT : KotlinMavenTestBase() {
                     "target/test-smart-defaults-stdlib-scope-1.0-lambda.zip",
                     "lib/kotlin-stdlib-${context.kotlinVersion}.jar"
                 )
+            }
+        }
+    }
+
+    @MavenTest
+    @DisplayName("KT-84162: No duplicate compilation when parent POM already binds compile/test-compile")
+    fun testNoDuplicateCompilationWithExistingExecutions(mavenVersion: TestVersions.Maven) {
+        testProject("test-smart-defaults-no-duplicate-compilation", mavenVersion) {
+            build(
+                "compile", "test-compile", "-X",
+                expectedToFail = false
+            ) {
+                assertSmartDefaultsEnabled()
+                assertStdlibAutoAdded()
+
+                // Compilation actually happened
+                assertFileExists("target/classes/sample/Main.class")
+                assertFileExists("target/test-classes/sample/MainTest.class")
+
+                // Each Kotlin goal must appear exactly once in the build plan —
+                // smart defaults must not add a second execution when the parent
+                // already declares one with a different ID.
+                assertGoalPlanCount("kotlin-maven-plugin", "compile", 1)
+                assertGoalPlanCount("kotlin-maven-plugin", "test-compile", 1)
             }
         }
     }

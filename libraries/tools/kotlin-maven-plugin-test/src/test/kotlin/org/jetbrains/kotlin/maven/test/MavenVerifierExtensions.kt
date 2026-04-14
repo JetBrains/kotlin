@@ -334,6 +334,30 @@ fun Verifier.assertGoalOrderInBuildPlan(
     }
 }
 
+/**
+ * Asserts that the Maven build plan (from `-X` debug output) contains exactly [expectedCount]
+ * planned executions of [goal] for the plugin identified by [pluginArtifactId].
+ *
+ * Use this to verify that smart-defaults deduplication prevents a goal from appearing
+ * more than once when a parent POM already declares the same goal with a different execution ID.
+ */
+fun Verifier.assertGoalPlanCount(pluginArtifactId: String, goal: String, expectedCount: Int) {
+    val goalLines = mutableListOf<String>()
+    forEachBuildLogLine { line ->
+        if ("[DEBUG] Goal:" in line) goalLines.add(line)
+    }
+
+    assertTrue(goalLines.isNotEmpty()) {
+        "No '[DEBUG] Goal:' lines found in build log. Was the build run with -X?"
+    }
+
+    val matchCount = goalLines.count { pluginArtifactId in it && ":$goal " in it }
+    assertEquals(expectedCount, matchCount) {
+        "Expected $expectedCount planned execution(s) of $pluginArtifactId:$goal but found $matchCount.\n" +
+                "All Goal: lines:\n${goalLines.joinToString("\n")}"
+    }
+}
+
 private fun goalNotFoundMessage(plugin: String, goalFilter: String?, allGoalLines: List<String>): String {
     val pluginLines = allGoalLines.filter { plugin in it }
     return if (pluginLines.isNotEmpty() && goalFilter != null) {
