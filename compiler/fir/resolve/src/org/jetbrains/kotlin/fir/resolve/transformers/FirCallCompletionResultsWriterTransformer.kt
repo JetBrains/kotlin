@@ -1583,7 +1583,7 @@ fun FirResolvedQualifier.appendNonFatalDiagnostics(vararg newDiagnostics: ConeDi
 
 internal inline fun Candidate.ifLHSResolvedToType(block: (DoubleColonLHS.Type) -> Unit) {
     val callableReferenceInfo = callInfo as? CallableReferenceInfo ?: return
-    (callableReferenceInfo.lhs as? DoubleColonLHS.Type)?.let {
+    callableReferenceInfo.lhs?.let {
         block(it)
     }
 }

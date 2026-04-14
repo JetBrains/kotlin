@@ -45,11 +45,8 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         val expectedType = candidate.callInfo.expectedType
         if (candidate.symbol !is FirCallableSymbol<*>) return
 
-        val resultingReceiverType = when (candidate.callInfo.lhs) {
-            is DoubleColonLHS.Type -> candidate.callInfo.lhs.type.takeIf {
-                candidate.callInfo.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier
-            }
-            else -> null
+        val resultingReceiverType = candidate.callInfo.lhs?.type.takeIf {
+            candidate.callInfo.explicitReceiver?.unwrapSmartcastExpression() !is FirResolvedQualifier
         }
 
         val fir: FirCallableDeclaration = candidate.symbol.fir as FirCallableDeclaration

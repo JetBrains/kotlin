@@ -315,7 +315,7 @@ internal open class FirTowerResolveTask(
         }
 
         if (resolvedQualifier.symbol != null) {
-            if (info is CallableReferenceInfo && info.lhs is DoubleColonLHS.Type) {
+            if (info is CallableReferenceInfo && info.lhs != null) {
                 val stubReceiver = buildExpressionStub {
                     source = info.explicitReceiver?.source
                     this.coneTypeOrNull = info.lhs.type

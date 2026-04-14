@@ -190,7 +190,7 @@ private class KaFirCompletionExtensionCandidateChecker(
         val refinedReceiverExpression =
             if (containingCallableReference != null &&
                 receiverExpressionFir is FirResolvedQualifier &&
-                callableReferenceLHS is DoubleColonLHS.Type
+                callableReferenceLHS != null
             ) {
                 /**
                  * If it's a callable reference completion and the LHS is a regular name reference,
@@ -219,7 +219,7 @@ private class KaFirCompletionExtensionCandidateChecker(
 
     private data class ExplicitReceiverInfo(
         val receiverExpression: FirExpression?,
-        val callableReferenceLHS: DoubleColonLHS? = null
+        val callableReferenceLHS: DoubleColonLHS.Type? = null
     )
 }
 

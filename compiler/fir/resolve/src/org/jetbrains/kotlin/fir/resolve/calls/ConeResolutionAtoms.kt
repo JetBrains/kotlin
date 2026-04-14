@@ -293,7 +293,7 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
 class ConeResolvedCallableReferenceAtom(
     override val expression: FirCallableReferenceAccess,
     private val initialExpectedType: ConeKotlinType?,
-    val lhs: DoubleColonLHS?,
+    val lhs: DoubleColonLHS.Type?,
     private val session: FirSession,
     anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
 ) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), PostponedCallableReferenceMarker {

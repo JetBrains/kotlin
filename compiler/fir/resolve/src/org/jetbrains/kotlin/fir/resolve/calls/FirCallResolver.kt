@@ -871,7 +871,7 @@ class FirCallResolver(
 
     private fun createCallableReferencesInfoForLHS(
         callableReferenceAccess: FirCallableReferenceAccess,
-        lhs: DoubleColonLHS?,
+        lhs: DoubleColonLHS.Type?,
         expectedType: ConeKotlinType?,
         hasSyntheticOuterCall: Boolean,
     ): CallInfo {

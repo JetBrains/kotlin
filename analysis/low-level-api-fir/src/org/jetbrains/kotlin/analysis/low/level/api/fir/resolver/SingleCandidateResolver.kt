@@ -126,7 +126,7 @@ class ResolutionParameters(
     val explicitReceiver: FirExpression? = null,
     /** THIS IS UNSAFE TO PASS ORIGINAL ARGUMENTS. THEY HAVE TO BE COPIED TO AVOID MUTABILITY ISSUES */
     val argumentList: FirArgumentList = FirEmptyArgumentList,
-    val callableReferenceLHS: DoubleColonLHS? = null,
+    val callableReferenceLHS: DoubleColonLHS.Type? = null,
     val typeArgumentList: List<FirTypeProjection> = emptyList(),
     val allowUnsafeCall: Boolean = false,
     val allowUnstableSmartCast: Boolean = false,

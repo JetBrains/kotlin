@@ -127,7 +127,7 @@ class CallableReferenceInfo(
     containingDeclarations: List<FirDeclaration>,
 
     val expectedType: ConeKotlinType?,
-    val lhs: DoubleColonLHS?,
+    val lhs: DoubleColonLHS.Type?,
     val hasSyntheticOuterCall: Boolean,
 
     origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
