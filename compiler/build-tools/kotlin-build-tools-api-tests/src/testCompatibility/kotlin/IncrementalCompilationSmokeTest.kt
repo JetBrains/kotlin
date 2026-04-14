@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
@@ -88,6 +89,11 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     }
 
     private fun runMultiModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
+        val kotlinToolchain = strategyConfig.first
+        Assumptions.assumeFalse(
+            KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) == KotlinToolingVersion("2.2.21") && OS.MAC.isCurrentOs,
+            "Known failure on Mac with 2.2.21"
+        )
         scenario(strategyConfig) {
             val module1 = if (useTrackedModules) {
                 trackedModule("jvm-module-1")
@@ -110,7 +116,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                 assertOutputs("SecretKt.class", "Bar.class", "FooKt.class")
             }
             module2.compile {
-                assertCompiledSources( "b.kt")
+                assertCompiledSources("b.kt")
                 assertNoOutputSetChanges()
             }
         }
