@@ -26,7 +26,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.assertFalse
 
-@RunWith(Parameterized::class)
 class ComposeCrossModuleTests : AbstractCodegenTest() {
     @Test
     fun testInlineFunctionDefaultArgument() {

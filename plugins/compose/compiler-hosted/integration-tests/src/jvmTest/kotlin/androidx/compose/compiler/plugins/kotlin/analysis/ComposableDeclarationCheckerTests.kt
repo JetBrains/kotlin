@@ -19,8 +19,10 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import org.jetbrains.kotlin.config.*
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@RunWith(Parameterized::class)
 class ComposableDeclarationCheckerTests(
     private val languageVersion: LanguageVersion
 ) : AbstractComposeDiagnosticsTest() {

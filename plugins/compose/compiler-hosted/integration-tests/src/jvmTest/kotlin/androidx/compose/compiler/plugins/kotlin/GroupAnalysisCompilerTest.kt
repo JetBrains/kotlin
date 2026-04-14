@@ -14,9 +14,11 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
 import org.junit.Rule
+import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
 
+@RunWith(Parameterized::class)
 class GroupAnalysisCompilerTest(
     private val validateMapping: Boolean
 ) : AbstractCompilerTest() {

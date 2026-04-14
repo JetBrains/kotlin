@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
 
+@RunWith(Parameterized::class)
 class StrongSkippingModeTransformTests(
     private val intrinsicRememberEnabled: Boolean,
 ) : AbstractIrTransformTest() {

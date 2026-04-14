@@ -6,9 +6,11 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
 
+@RunWith(Parameterized::class)
 class OptimizeNonSkippingGroupsTests(
     private val optimizeNonSkippingGroups: Boolean
 ) : AbstractControlFlowTransformTests() {
