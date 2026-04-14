@@ -1,3 +1,6 @@
+// KT-85683
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.*
