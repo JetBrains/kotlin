@@ -148,7 +148,7 @@ private fun Project.registerDsymArchiveTask(
     dsymPath: Provider<File>?,
     dwarfDsymFolderPath: String?,
     action: XcodeEnvironment.Action?,
-    isStatic: Boolean,
+    isStatic: Provider<Boolean>,
 ): TaskProvider<*> {
     return locateOrRegisterTask<CopyDsymDuringArchiving>(
         lowerCamelCaseName(
@@ -156,7 +156,7 @@ private fun Project.registerDsymArchiveTask(
             frameworkCopyTaskName
         )
     ) { task ->
-        task.onlyIf { action == XcodeEnvironment.Action.install && !isStatic }
+        task.onlyIf { action == XcodeEnvironment.Action.install && !isStatic.get() }
         dwarfDsymFolderPath?.let { task.dwarfDsymFolderPath.set(it) }
         dsymPath?.let { task.dsymPath.set(it) }
     }
@@ -329,7 +329,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             dsymPath = assembleTask.dsymPath,
             dwarfDsymFolderPath = environment.dwarfDsymFolderPath,
             action = environment.action,
-            isStatic = framework.isStatic,
+            isStatic = provider { framework.isStatic },
         )
         // FIXME: KT-71720
         // Dsym copy task must execute after symbolic link task because symbolic link task does clean up for KT-68257 and dSYM is copied to the same location
