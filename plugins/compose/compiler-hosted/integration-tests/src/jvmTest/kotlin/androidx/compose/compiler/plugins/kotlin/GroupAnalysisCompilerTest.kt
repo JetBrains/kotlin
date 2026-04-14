@@ -22,11 +22,10 @@ class GroupAnalysisCompilerTest(
 ) : AbstractCompilerTest() {
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "useFir={0},mapping={1}")
+        @Parameterized.Parameters(name = "mapping={0}")
         fun data() = arrayOf<Any>(
-            arrayOf(true, true),
-            arrayOf(true, false),
-            arrayOf(false, false)
+            arrayOf(true),
+            arrayOf(false),
         )
     }
 

@@ -28,12 +28,6 @@ import kotlin.test.assertFalse
 
 @RunWith(Parameterized::class)
 class ComposeCrossModuleTests : AbstractCodegenTest() {
-    companion object {
-        @JvmStatic
-        @Parameterized.Parameters(name = "useFir = {0}")
-        fun data() = arrayOf<Any>(false, true)
-    }
-
     @Test
     fun testInlineFunctionDefaultArgument() {
         compile(
