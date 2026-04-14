@@ -135,14 +135,14 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
 
-        if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.JavaDirect) || (arguments as? K2JVMCompilerArguments)?.javaDirect == true) {
+//        if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.JavaDirect) || (arguments as? K2JVMCompilerArguments)?.javaDirect == true) {
             val kotlinPaths = paths ?: PathUtil.kotlinPathsForCompiler
             val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
             val jarPath = File(libPath, PathUtil.KOTLIN_JAVA_DIRECT_COMPILER_PLUGIN_JAR).takeIf { it.exists() }
             if (jarPath != null) {
                 pluginConfigurations.add(jarPath.canonicalPath)
             }
-        }
+//        }
 
         PluginCliParser.loadPluginsSafe(
             pluginClasspaths,
