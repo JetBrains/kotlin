@@ -43,7 +43,7 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val samResolver: FirSamResolver
     abstract val callResolver: FirCallResolver
     abstract val callCompleter: FirCallCompleter
-    abstract val doubleColonExpressionResolver: FirDoubleColonExpressionResolver
+    abstract val callableReferenceLhsResolver: FirCallableReferenceLhsResolver
     abstract val syntheticCallGenerator: FirSyntheticCallGenerator
     abstract val dataFlowAnalyzer: FirDataFlowAnalyzer
     abstract val outerClassManager: FirOuterClassManager

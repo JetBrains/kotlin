@@ -148,8 +148,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
 
         override val syntheticCallGenerator: FirSyntheticCallGenerator by lazy(LazyThreadSafetyMode.NONE) { FirSyntheticCallGenerator(this) }
-        override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver by lazy(LazyThreadSafetyMode.NONE) {
-            FirDoubleColonExpressionResolver(this, context)
+        override val callableReferenceLhsResolver: FirCallableReferenceLhsResolver by lazy(LazyThreadSafetyMode.NONE) {
+            FirCallableReferenceLhsResolver(this, context)
         }
 
         override val outerClassManager: FirOuterClassManager by lazy(LazyThreadSafetyMode.NONE) {

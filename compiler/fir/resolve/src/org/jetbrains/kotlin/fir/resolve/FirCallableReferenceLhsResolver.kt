@@ -17,31 +17,56 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.*
 
-sealed class DoubleColonLHS(val type: ConeKotlinType) {
-    /**
-     * [isObjectQualifier] is true iff the LHS of a callable reference is a qualified expression which references a named object.
-     * Note that such LHS can be treated both as a type and as an expression, so special handling may be required.
-     *
-     * For example, if `Obj` is an object:
-     *
-     *     Obj::class         // object qualifier
-     *     test.Obj::class    // object qualifier
-     *     (Obj)::class       // not an object qualifier (can only be treated as an expression, not as a type)
-     *     { Obj }()::class   // not an object qualifier
-     */
-    class Expression(type: ConeKotlinType, val isObjectQualifier: Boolean) : DoubleColonLHS(type)
-
+sealed class DoubleColonLHS {
     /**
      * [type] is always non-error type, errors/deprecation errors are stored in [diagnostic].
      */
-    class Type(type: ConeKotlinType, val diagnostic: ConeDiagnostic?) : DoubleColonLHS(type)
+    class Type(val type: ConeKotlinType, val diagnostic: ConeDiagnostic?) : DoubleColonLHS()
 }
 
-class FirDoubleColonExpressionResolver(
+/**
+ * [isObjectQualifier] is true iff the LHS of a callable reference is a qualified expression that references a named object.
+ * Such expressions are always treated as objects. Hence, the callable reference is always bound.
+ *
+ * Note that this type is marked private: it is only used internally by [FirCallableReferenceLhsResolver].
+ * Outside of [FirCallableReferenceLhsResolver], only [DoubleColonLHS.Type] (or `null`) is possible.
+ */
+private class ExpressionDoubleColonLhs(
+    val type: ConeKotlinType,
+    val isObjectQualifier: Boolean,
+) : DoubleColonLHS()
+
+class FirCallableReferenceLhsResolver(
     private val components: BodyResolveComponents,
     private val context: BodyResolveContext,
 ) {
     private val session = components.session
+
+    /**
+     * Returns not-`null` iff LHS of callable reference _can be_ non-expression, i.e., resolved qualifier to a non-object.
+     * Note, however, that this does not necessarily mean that the reference will be unbound because it can refer to
+     * a member / extension of a companion object.
+     */
+    fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS.Type? {
+        val resultForExpr = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
+        if (resultForExpr != null && !resultForExpr.isObjectQualifier) {
+            return null
+        }
+
+        val resultForType = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsType) { expression ->
+            resolveTypeOnLHS(expression)
+        }
+
+        return resultForType?.takeUnless {
+            // If we skipped an object expression result before and the type result is the same, this means that
+            // there was no other classifier except that object that could win.
+            // We prefer to treat the LHS as an expression here, to have a bound callable reference / class literal
+            // TODO: KT-84336
+            //  Qualifier with type arguments always has type `Unit`, but that might be generic typealias to `Unit` in which case
+            //  `resultForType` should be preferred.
+            resultForExpr != null && resultForType.type.equalTypes(resultForExpr.type, session)
+        }
+    }
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
     // which contains such call expression as one of its parts.
@@ -76,34 +101,6 @@ class FirDoubleColonExpressionResolver(
         return lhs != null && lhs.canBeConsideredProperType()
     }
 
-    fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS? {
-        val resultForExpr = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
-        if (resultForExpr != null && !resultForExpr.isObjectQualifier) {
-            return resultForExpr
-        }
-
-        val resultForType = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsType) { expression ->
-            resolveTypeOnLHS(expression)
-        }
-
-        if (resultForType != null) {
-            if (resultForExpr != null && resultForType.type.equalTypes(resultForExpr.type, session)) {
-                // If we skipped an object expression result before and the type result is the same, this means that
-                // there was no other classifier except that object that could win.
-                // We prefer to treat the LHS as an expression here, to have a bound callable reference / class literal
-                // TODO: KT-84336
-                //  Qualifier with type arguments always has type `Unit`, but that might be generic typealias to `Unit` in which case
-                //  `resultForType` should be preferred.
-                return resultForExpr
-            }
-            return resultForType
-        }
-
-        // If the LHS could be resolved neither as an expression nor as a type, we should still type-check it to allow all diagnostics
-        // to be reported and references to be resolved. For that, we commit one of the applicable traces here, preferring the expression
-        return resultForExpr
-    }
-
     /**
      * Returns null if the LHS is definitely not an expression. Returns a non-null result if a resolution was attempted and led to
      * either a successful result or not.
@@ -128,19 +125,19 @@ class FirDoubleColonExpressionResolver(
         return fir as? FirRegularClass
     }
 
-    private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
+    private fun resolveExpressionOnLHS(expression: FirExpression): ExpressionDoubleColonLhs? {
         val type = expression.resolvedType
 
         val expressionWithoutSmartCast = expression.unwrapSmartcastExpression()
         if (expressionWithoutSmartCast is FirResolvedQualifier) {
             val firClass = expressionWithoutSmartCast.expandedRegularClassIfAny() ?: return null
             if (firClass.classKind == ClassKind.OBJECT) {
-                return DoubleColonLHS.Expression(type, isObjectQualifier = true)
+                return ExpressionDoubleColonLhs(type, isObjectQualifier = true)
             }
             return null
         }
 
-        return DoubleColonLHS.Expression(type, isObjectQualifier = false)
+        return ExpressionDoubleColonLhs(type, isObjectQualifier = false)
     }
 
     private fun resolveTypeOnLHS(

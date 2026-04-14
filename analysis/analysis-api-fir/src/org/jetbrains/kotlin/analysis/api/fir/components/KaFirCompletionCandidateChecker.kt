@@ -181,7 +181,7 @@ private class KaFirCompletionExtensionCandidateChecker(
                 val components = resolver.bodyResolveComponents
                 val context = components.context
                 context.withFile(firOriginalFile, components) {
-                    components.doubleColonExpressionResolver.resolveDoubleColonLHS(callableReferenceFir)
+                    components.callableReferenceLhsResolver.resolveDoubleColonLHS(callableReferenceFir)
                 }
             } else {
                 null
