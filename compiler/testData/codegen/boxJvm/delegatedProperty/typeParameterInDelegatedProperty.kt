@@ -6,6 +6,9 @@
 // KT-85488
 // IGNORE_BACKEND: ANDROID
 
+// KT-85683
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+
 package test
 
 import kotlin.reflect.KProperty

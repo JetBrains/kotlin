@@ -1,3 +1,6 @@
+// ISSUE: KT-85683
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+
 class Value<T>(var value: T = null as T, var text: String? = null)
 
 val <T> Value<T>.additionalText by DVal(Value<T>::text)
