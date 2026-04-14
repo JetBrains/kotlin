@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 sealed class DoubleColonLHS {
     /**
@@ -47,12 +48,17 @@ class FirCallableReferenceLhsResolver(
      * a member / extension of a companion object.
      */
     fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS.Type? {
-        val resultForExpr = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
+        val lhsExpression = doubleColonExpression.explicitReceiver ?: return null
+
+        val resultForExpr = runUnless(doubleColonExpression.hasQuestionMarkAtLHS) {
+            resolveExpressionOnLHS(lhsExpression)
+        }
+
         if (resultForExpr != null && !resultForExpr.isObjectQualifier) {
             return null
         }
 
-        val resultForType = doubleColonExpression.explicitReceiver?.let { resolveTypeOnLHS(it) }
+        val resultForType = resolveTypeOnLHS(lhsExpression)
 
         return resultForType?.takeUnless {
             // If we skipped an object expression result before and the type result is the same, this means that
@@ -63,37 +69,6 @@ class FirCallableReferenceLhsResolver(
             //  `resultForType` should be preferred.
             resultForExpr != null && resultForType.type.equalTypes(resultForExpr.type, session)
         }
-    }
-
-    // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
-    // which contains such call expression as one of its parts.
-    // In this case it's pointless to attempt to type check an expression on the LHS in "A<B>::class", since "A<B>" certainly means a type.
-    private fun FirExpression.canBeConsideredProperExpression(): Boolean {
-        return when {
-            this is FirQualifiedAccessExpression && explicitReceiver?.canBeConsideredProperExpression() != true -> false
-            else -> true
-        }
-    }
-
-    private fun shouldTryResolveLHSAsExpression(expression: FirCallableReferenceAccess): Boolean {
-        val lhs = expression.explicitReceiver ?: return false
-        return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarkAtLHS
-    }
-
-    /**
-     * Returns null if the LHS is definitely not an expression. Returns a non-null result if a resolution was attempted and led to
-     * either a successful result or not.
-     */
-    private fun <T : DoubleColonLHS> tryResolveLHS(
-        doubleColonExpression: FirCallableReferenceAccess,
-        criterion: (FirCallableReferenceAccess) -> Boolean,
-        resolve: (FirExpression) -> T?
-    ): T? {
-        val expression = doubleColonExpression.explicitReceiver ?: return null
-
-        if (!criterion(doubleColonExpression)) return null
-
-        return resolve(expression)
     }
 
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
