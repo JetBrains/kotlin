@@ -21,28 +21,25 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
     internal interface DevServerWorkParameters : WorkParameters {
         val contentDirectory: DirectoryProperty
+        val rootDirectory: DirectoryProperty
         val host: Property<String>
         val port: Property<Int>
-        val npmRootDirectory: DirectoryProperty
-        val importMapModuleDirectories: SetProperty<File>
     }
 
     private val logger = Logging.getLogger(DevServerWorkAction::class.java.name)
 
     override fun execute() {
-        val rootDir = parameters.contentDirectory.getFile()
+        val contentDir = parameters.contentDirectory.getFile()
+        val rootDir = parameters.rootDirectory.getFile()
         val serverHost = parameters.host.get()
         val serverPort = parameters.port.get()
-        val npmRootDir = parameters.npmRootDirectory.getFile()
-        val importMapModuleDirectories = parameters.importMapModuleDirectories.get()
 
         val server = HttpServer.create(InetSocketAddress(serverHost, serverPort), 0)
         server.createContext("/") { exchange ->
             handleRequest(
                 exchange,
+                contentDir,
                 rootDir,
-                npmRootDir,
-                importMapModuleDirectories
             )
         }
 
@@ -55,10 +52,7 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
 
         server.start()
         logger.lifecycle("Development server started at http://$serverHost:$serverPort")
-        logger.lifecycle("Serving files from: $rootDir")
-        if (importMapModuleDirectories.isNotEmpty()) {
-            logger.lifecycle("Serving ${importMapModuleDirectories.size} node_modules from import map")
-        }
+        logger.lifecycle("Serving files from: $contentDir and $rootDir")
 
         try {
             Thread.currentThread().join()
@@ -71,16 +65,14 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
     private fun handleRequest(
         exchange: HttpExchange,
         contentRootDir: File,
-        npmRootDir: File,
-        importMapModuleDirectories: Set<File>,
+        rootDir: File,
     ) {
         val path = exchange.requestURI.path.trimStart('/')
 
         val file = resolveFile(
             path,
             contentRootDir,
-            npmRootDir,
-            importMapModuleDirectories
+            rootDir,
         )
 
         if (file == null || !file.exists() || !file.isFile) {
@@ -102,25 +94,23 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
     private fun resolveFile(
         path: String,
         contentRootDir: File,
-        npmRootDir: File,
-        importMapModuleDirectories: Set<File>,
+        rootDir: File,
     ): File? {
         if (path.isEmpty()) {
             return File(contentRootDir, "index.html")
         }
 
-        contentRootDir.resolve(path)
-            .takeIf { it.normalize().startsWith(contentRootDir.normalize()) }
-            ?.takeIf { it.exists() }
+        (contentRootDir.tryToResolveWith(path)
+            ?: rootDir.tryToResolveWith(path))
             ?.let { return it }
-
-        importMapModuleDirectories.forEach { moduleDir ->
-            val resolvedFile = npmRootDir.resolve(path)
-            if (resolvedFile.startsWith(moduleDir)) return resolvedFile
-        }
 
         return null
     }
+
+    private fun File.tryToResolveWith(path: String): File? = resolve(path)
+        .takeIf { it.normalize().startsWith(this.normalize()) }
+        ?.takeIf { it.exists() }
+        ?.let { return it }
 
     private fun addCorsHeaders(exchange: HttpExchange) {
         exchange.responseHeaders.set("Cross-Origin-Opener-Policy", "same-origin")

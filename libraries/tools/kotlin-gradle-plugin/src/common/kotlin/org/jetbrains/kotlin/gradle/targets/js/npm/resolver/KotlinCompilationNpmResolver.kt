@@ -21,7 +21,6 @@ import org.gradle.util.Path
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
@@ -135,7 +134,8 @@ class KotlinCompilationNpmResolver(
 
         if (compilation.wasmTarget != null) {
             val importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
-                it.npmRootDir.set(nodeJsRoot.rootPackageDirectory)
+                it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
+                it.rootDirectory.set(project.rootDir)
                 it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
                 it.inputDirectory.set(npmProject.dir)
                 it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))

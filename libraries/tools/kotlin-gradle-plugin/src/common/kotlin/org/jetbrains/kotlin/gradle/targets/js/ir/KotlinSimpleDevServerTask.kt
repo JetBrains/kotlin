@@ -28,6 +28,9 @@ internal abstract class KotlinSimpleDevServerTask
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val contentDirectory: DirectoryProperty
 
+    @get:Internal
+    abstract val rootDirectory: DirectoryProperty
+
     @get:Input
     @get:Optional
     abstract val port: Property<Int>
@@ -35,60 +38,18 @@ internal abstract class KotlinSimpleDevServerTask
     @get:Input
     abstract val host: Property<String>
 
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val importMapFile: RegularFileProperty
-
-    @get:Internal
-    abstract val npmRootDirectory: DirectoryProperty
-
     @TaskAction
     fun start() {
         val serverPort = port.getOrElse(findFreePort())
-
-        val importMapModuleDirectories = parseImportMapModuleDirectories()
 
         val workQueue = workerExecutor.processIsolation()
 
         workQueue.submit(DevServerWorkAction::class.java) { params ->
             params.contentDirectory.set(contentDirectory)
+            params.rootDirectory.set(rootDirectory)
             params.host.set(host)
             params.port.set(serverPort)
-            params.npmRootDirectory.set(npmRootDirectory)
-            params.importMapModuleDirectories.set(importMapModuleDirectories)
         }
-    }
-
-    /**
-     * Parses the import map file and returns a mapping from module name to its directory on disk.
-     *
-     * The import map contains entries like `"moduleName": "node_modules/moduleName/main.js"`.
-     * The paths are relative to [npmRootDirectory].
-     */
-    private fun parseImportMapModuleDirectories(): Set<File> {
-        val mapFile = importMapFile.getFile()
-
-        val npmRoot = npmRootDirectory.getFile()
-        val importMapContent = mapFile.readText()
-        val importMapObject = JsonParser.parseString(importMapContent).asJsonObject
-        val imports = importMapObject.getAsJsonObject("imports") ?: error("No imports in import map $mapFile")
-
-        return imports.entrySet()
-            .map { (_, path) ->
-                val relativePath = path.asString.trimStart('/')
-                val moduleMainFile = npmRoot.resolve(relativePath)
-                moduleMainFile.resolveModuleDirectory()
-            }.distinct()
-            .toSet()
-    }
-
-    private fun File.resolveModuleDirectory(): File {
-        var packageJsonCandidate = resolveSibling(PACKAGE_JSON)
-        while (!packageJsonCandidate.exists()) {
-            packageJsonCandidate = packageJsonCandidate.parentFile.resolveSibling(PACKAGE_JSON)
-        }
-
-        return packageJsonCandidate.parentFile
     }
 
     fun findFreePort(startPort: Int = 8080): Int {

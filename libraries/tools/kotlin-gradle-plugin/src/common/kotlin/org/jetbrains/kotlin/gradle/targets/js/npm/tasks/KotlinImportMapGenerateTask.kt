@@ -12,7 +12,6 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -33,7 +32,10 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     abstract val inputDirectory: DirectoryProperty
 
     @get:Internal
-    abstract val npmRootDir: DirectoryProperty
+    abstract val rootDirectory: DirectoryProperty
+
+    @get:Internal
+    abstract val nodeModulesDirectory: DirectoryProperty
 
     @get:OutputFile
     abstract val importMapFile: RegularFileProperty
@@ -45,8 +47,7 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     fun generate() {
         val importMap = mutableMapOf<String, String>()
 
-        val npmRootDirFile = npmRootDir.getFile()
-        val nodeModulesDir = npmRootDirFile.resolve(NODE_MODULES)
+        val nodeModulesDir = nodeModulesDirectory.getFile()
 
         val modules = NpmProjectModules(
             inputDirectory.getFile(),
@@ -98,7 +99,7 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
         moduleName: String,
     ): String {
         val resolvedFile = modules.resolve(moduleName) ?: error("Module $moduleName not found")
-        val relativePath = resolvedFile.relativeTo(npmRootDir.getFile()).path
+        val relativePath = resolvedFile.relativeTo(rootDirectory.getFile()).path
         return "/$relativePath"
     }
 

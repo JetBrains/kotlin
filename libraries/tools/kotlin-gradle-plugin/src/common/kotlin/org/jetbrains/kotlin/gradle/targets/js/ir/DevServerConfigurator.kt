@@ -7,15 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
-import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
-import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class DevServerConfigurator(
     private val subTarget: KotlinJsIrSubTarget,
@@ -50,30 +44,17 @@ internal class DevServerConfigurator(
                         linkSyncTask.flatMap { it.destinationDirectory }
                     )
 
-                    task.host.convention("localhost")
+                    task.rootDirectory.set(
+                        project.rootDir
+                    )
 
-                    configureImportMap(task, compilation)
+                    task.host.convention("localhost")
 
                     runTaskConfigurations.all {
                         it.execute(task)
                     }
                 }
             }
-    }
-
-    private fun configureImportMap(task: KotlinSimpleDevServerTask, compilation: KotlinJsIrCompilation) {
-        if (compilation.wasmTarget == null) return
-
-        val importMapTaskName = compilation.npmProject.generateImportMapTaskName
-        val importMapTask = project.tasks.named<KotlinImportMapGenerateTask>(importMapTaskName)
-
-        task.importMapFile.set(importMapTask.flatMap { it.importMapFile })
-
-        val nodeJsRoot = subTarget.target.webTargetVariant(
-            { project.rootProject.kotlinNodeJsRootExtension },
-            { project.rootProject.wasmKotlinNodeJsRootExtension },
-        )
-        task.npmRootDirectory.set(nodeJsRoot.rootPackageDirectory)
     }
 
     override fun configureBuild(body: Action<KotlinSimpleDevServerTask>) {
