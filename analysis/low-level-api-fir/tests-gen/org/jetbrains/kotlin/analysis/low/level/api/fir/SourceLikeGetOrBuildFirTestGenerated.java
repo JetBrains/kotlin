@@ -2600,6 +2600,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("multiSnippetClassReferenceViaReplSnippet.repl.kts")
+    public void testMultiSnippetClassReferenceViaReplSnippet_repl() {
+      run("multiSnippetClassReferenceViaReplSnippet.repl.kts");
+    }
+
+    @Test
+    @TestMetadata("multiSnippetClassReference.repl.kts")
+    public void testMultiSnippetClassReference_repl() {
+      run("multiSnippetClassReference.repl.kts");
+    }
+
+    @Test
     @TestMetadata("resultPropertyExpression.repl.kts")
     public void testResultPropertyExpression_repl() {
       run("resultPropertyExpression.repl.kts");

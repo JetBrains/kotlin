@@ -1,0 +1,30 @@
+BODY_RESOLVE:
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] object Snippet_001_repl : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val x: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|Snippet_001_repl.A|
+
+    }
+
+    public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit|
+
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] snippet_002.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-snippet_002.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object Snippet_002_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] Snippet_002_repl.constructor(): R|Snippet_002_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl property initializer: /Snippet_002_repl.a> = Q|Snippet_001_repl|
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val a: R|Snippet_001_repl| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Snippet_002_repl] get(): R|Snippet_001_repl|
+
+        }

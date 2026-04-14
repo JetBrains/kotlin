@@ -1,0 +1,20 @@
+BODY_RESOLVE:
+TARGET: public final [ResolvedTo(BODY_RESOLVE)] object ReplState : R|java/util/HashMap<`Unable to load type parameter 0`, `Unable to load type parameter 1`>| {
+}
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] snippet_002.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-snippet_002.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object Snippet_002_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] Snippet_002_repl.constructor(): R|Snippet_002_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl property initializer: /Snippet_002_repl.a> = Q|ReplState|
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val a: R|ReplState| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Snippet_002_repl] get(): R|ReplState|
+
+        }

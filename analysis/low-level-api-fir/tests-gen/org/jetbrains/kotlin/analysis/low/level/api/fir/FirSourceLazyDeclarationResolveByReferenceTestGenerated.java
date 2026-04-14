@@ -100,9 +100,21 @@ public class FirSourceLazyDeclarationResolveByReferenceTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("multiSnippetClassReferenceViaReplSnippet.repl.kts")
+  public void testMultiSnippetClassReferenceViaReplSnippet_repl() {
+    run("multiSnippetClassReferenceViaReplSnippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("object.kt")
   public void testObject() {
     run("object.kt");
+  }
+
+  @Test
+  @TestMetadata("replState.repl.kts")
+  public void testReplState_repl() {
+    run("replState.repl.kts");
   }
 
   @Test
