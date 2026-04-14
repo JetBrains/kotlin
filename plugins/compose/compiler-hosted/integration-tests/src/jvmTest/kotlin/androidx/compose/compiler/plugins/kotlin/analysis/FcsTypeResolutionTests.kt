@@ -51,7 +51,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testSmartCastsAndPunning() {
-        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
             import androidx.compose.runtime.*
@@ -61,7 +60,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
             @Composable
             fun test(bar: String?) {
-                Foo(<!$typeMismatch!>bar<!>)
+                Foo(<!${"ARGUMENT_TYPE_MISMATCH"}!>bar<!>)
                 if (bar != null) {
                     Foo(bar)
                     Foo(bar=bar)
@@ -253,7 +252,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testGenerics() {
-        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
                 import androidx.compose.runtime.*
@@ -277,12 +275,12 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     Bar(
                       x=1,
                       value=A(),
-                      f=<!$typeMismatch!>fb<!>
+                      f=<!${"ARGUMENT_TYPE_MISMATCH"}!>fb<!>
                     )
                     Bar(
                       x=1,
                       value=B(),
-                      f=<!$typeMismatch!>fa<!>
+                      f=<!${"ARGUMENT_TYPE_MISMATCH"}!>fa<!>
                     )
                 }
 
@@ -292,7 +290,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testUnresolvedAttributeValueResolvedTarget() {
-        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
                 import androidx.compose.runtime.*
@@ -317,8 +314,8 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     )
 
                     Fam(
-                      bar=<!$typeMismatch!>""<!>,
-                      x=<!$typeMismatch!>""<!>
+                      bar=<!${"ARGUMENT_TYPE_MISMATCH"}!>""<!>,
+                      x=<!${"ARGUMENT_TYPE_MISMATCH"}!>""<!>
                     )
                 }
 
@@ -352,8 +349,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testMismatchedAttributes() {
-        val typeMismatch = "ARGUMENT_TYPE_MISMATCH"
-        val constantTypeMismatch = "ARGUMENT_TYPE_MISMATCH"
         check(
             """
                 import androidx.compose.runtime.*
@@ -371,7 +366,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     Foo(
                         x=A(),
                         y=A(),
-                        z=<!$typeMismatch!>A()<!>
+                        z=<!${"ARGUMENT_TYPE_MISMATCH"}!>A()<!>
                     )
                     Foo(
                         x=B(),
@@ -379,9 +374,9 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                         z=B()
                     )
                     Foo(
-                        x=<!$constantTypeMismatch!>1<!>,
-                        y=<!$constantTypeMismatch!>1<!>,
-                        z=<!$constantTypeMismatch!>1<!>
+                        x=<!${"ARGUMENT_TYPE_MISMATCH"}!>1<!>,
+                        y=<!${"ARGUMENT_TYPE_MISMATCH"}!>1<!>,
+                        z=<!${"ARGUMENT_TYPE_MISMATCH"}!>1<!>
                     )
                 }
 
@@ -408,7 +403,6 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testUnresolvedQualifiedTag() {
-        val functionExpected = "FUNCTION_EXPECTED"
         check(
             """
                 import androidx.compose.runtime.*
@@ -451,7 +445,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                     MyNamespace.<!UNRESOLVED_REFERENCE!>Qoo<!> {
                     }
 
-                    MyNamespace.<!$functionExpected!>someString<!> {
+                    MyNamespace.<!${"FUNCTION_EXPECTED"}!>someString<!> {
                     }
 
                     <!UNRESOLVED_REFERENCE!>SomethingThatDoesntExist<!>.Foo {

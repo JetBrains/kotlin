@@ -546,18 +546,6 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         """
         )
 
-        fun wrapDiagnostic(diagnostic: String, text: String): String {
-            return "<!$diagnostic!>$text<!>"
-        }
-
-        fun initializerTypeMismatch(text: String): String {
-            return wrapDiagnostic("INITIALIZER_TYPE_MISMATCH", text)
-        }
-
-        fun typeMismatch(text: String): String {
-            return text
-        }
-
         check(
             """
             import androidx.compose.runtime.*;
@@ -566,7 +554,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             fun Leaf() {}
 
             fun foo() {
-                val myVariable: ()->Unit ${initializerTypeMismatch("=")} ${typeMismatch("@Composable { Leaf() }")}
+                val myVariable: ()->Unit ${"<!INITIALIZER_TYPE_MISMATCH!>=<!>"} ${"@Composable { Leaf() }"}
                 System.out.println(myVariable)
             }
         """
@@ -749,14 +737,13 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             }
         """
         )
-        val initializer = "<!INITIALIZER_TYPE_MISMATCH!>=<!> v"
 
         check(
             """
             import androidx.compose.runtime.*;
 
             fun foo(v: @Composable ()->Unit) {
-                val myVariable: ()->Unit $initializer
+                val myVariable: ()->Unit ${"<!INITIALIZER_TYPE_MISMATCH!>=<!> v"}
                 myVariable()
             }
         """
@@ -834,8 +821,6 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
         """
         )
 
-        val initializer = "<!INITIALIZER_TYPE_MISMATCH!>=<!> identity (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"
-
         check(
             """
             import androidx.compose.runtime.*;
@@ -844,7 +829,7 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
             @Composable
             fun test(f: @Composable ()->Unit) {
-                val f2: @Composable ()->Unit $initializer;
+                val f2: @Composable ()->Unit ${"<!INITIALIZER_TYPE_MISMATCH!>=<!> identity (<!ARGUMENT_TYPE_MISMATCH!>f<!>)"};
                 f2()
             }
         """
@@ -1639,17 +1624,6 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
     @Test
     fun testComposableTypes() {
-        // Type mismatch is reported by K1 because it matches the annotation on type with inferred one.
-        // K2 uses annotation to infer function kind instead, so no error is reported.
-        fun typeMismatch(expression: String) =
-            expression
-
-        // Since `ResolveTopLevelLambdasAsSyntheticCallArgument`, the initializer's type is
-        // now transformed to a proper `ComposableFunction0`, but the property type is not
-        // because it's not an explicit `FirFunctionTypeRef`, which is itself an error.
-        fun initializerTypeMismatch(expression: String) =
-            "<!INITIALIZER_TYPE_MISMATCH!>$expression<!>"
-
         check(
             """
                 import androidx.compose.runtime.Composable
@@ -1666,10 +1640,10 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
                 }
 
                 fun Test() {
-                    val a: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> A = ${typeMismatch("A()")}
-                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B ${initializerTypeMismatch("=")} {}
+                    val a: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> A = ${"A()"}
+                    val b: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> B ${"<!INITIALIZER_TYPE_MISMATCH!>${"="}<!>"} {}
                     val c: @Composable () -> Unit = {}
-                    val s: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> String = ${typeMismatch("\"\"")}
+                    val s: <!COMPOSABLE_INAPPLICABLE_TYPE!>@Composable<!> String = ${"\"\""}
                     
                     println(a)
                     println(b)

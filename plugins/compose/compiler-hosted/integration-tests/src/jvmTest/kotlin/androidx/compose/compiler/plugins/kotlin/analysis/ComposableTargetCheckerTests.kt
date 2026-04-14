@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.compiler.plugins.kotlin.Classpath
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 
 class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
@@ -223,8 +222,8 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
             W {
                 N()
             }
-            ${psiParStart()}W${psiEnd()} {
-                ${firMisStart()}M${firEnd()}()
+            W {
+                ${"<!COMPOSE_APPLIER_CALL_MISMATCH!>"}M${"<!>"}()
             }
         }
         """
@@ -437,7 +436,7 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
         }
 
         class Invalid : Base() {
-          ${psiDecStart()}@Composable @ComposableTarget("M") override fun ${firDecStart()}Compose${firEnd()}() { }${psiEnd()}
+          @Composable @ComposableTarget("M") override fun ${"<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>"}Compose${"<!>"}() { }
         }
 
         class Valid : Base () {
@@ -538,8 +537,8 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
              
             @Composable fun T() {
                 MWrapper {
-                    ${firMisStart()}NWrapper${firEnd()} {
-                        ${firMisStart()}N${firEnd()}()
+                    ${"<!COMPOSE_APPLIER_CALL_MISMATCH!>"}NWrapper${"<!>"} {
+                        ${"<!COMPOSE_APPLIER_CALL_MISMATCH!>"}N${"<!>"}()
                     }
                 }
             }
@@ -565,11 +564,4 @@ class ComposableTargetCheckerTests(useFir: Boolean) : AbstractComposeDiagnostics
         }
         """
     )
-
-    private fun firEnd() = "<!>"
-    private fun psiEnd() = ""
-    private fun firMisStart() = "<!COMPOSE_APPLIER_CALL_MISMATCH!>"
-    private fun psiParStart() = ""
-    private fun firDecStart() = "<!COMPOSE_APPLIER_DECLARATION_MISMATCH!>"
-    private fun psiDecStart() = ""
 }
