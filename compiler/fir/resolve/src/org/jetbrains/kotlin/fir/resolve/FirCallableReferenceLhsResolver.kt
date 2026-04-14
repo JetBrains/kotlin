@@ -44,6 +44,9 @@ class FirCallableReferenceLhsResolver(
      * Returns not-`null` iff LHS of callable reference _can be_ non-expression, i.e., resolved qualifier to a non-object.
      * Note, however, that this does not necessarily mean that the reference will be unbound because it can refer to
      * a member / extension of a companion object.
+     *
+     * TODO: Also see KT-85641: we return [DoubleColonLhs.Type] here, but eventually create bound callable reference
+     *  for nullable-marked object qualifiers.
      */
     fun resolveDoubleColonLhs(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLhs.Type? {
         val lhsExpression = doubleColonExpression.explicitReceiver ?: return null
