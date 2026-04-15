@@ -32,6 +32,8 @@ class CliScriptConfigurationsProvider(
         getScriptDefinitionProvider()
     }
 
+    var reportSink: ScriptReportSink? = null
+
     @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile)) instead")
     override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = cacheLock.read {
         calculateRefinedConfiguration(KtFileScriptSource(file), null)
@@ -69,7 +71,7 @@ class CliScriptConfigurationsProvider(
                     )
 
                 if (source is VirtualFileScriptSource) {
-                    project.getService(ScriptReportSink::class.java)?.attachReports(source.virtualFile, result.reports)
+                    (reportSink ?: project.getService(ScriptReportSink::class.java))?.attachReports(source.virtualFile, result.reports)
                 }
 
                 cacheLock.write {

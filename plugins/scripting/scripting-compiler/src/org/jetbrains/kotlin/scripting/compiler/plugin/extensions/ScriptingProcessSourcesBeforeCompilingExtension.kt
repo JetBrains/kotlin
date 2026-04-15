@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.cli.CliDiagnostics
-import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
@@ -202,7 +198,7 @@ class KotlinScriptExpressionExplainTransformer(
 }
 
 
-class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenerationExtension {
+class ScriptingIrExplainGenerationExtension : IrGenerationExtension {
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         for (file in moduleFragment.files) {
@@ -215,7 +211,7 @@ class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenera
     }
 }
 
-class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : ProcessSourcesBeforeCompilingExtension {
+class ScriptingProcessSourcesBeforeCompilingExtension : ProcessSourcesBeforeCompilingExtension {
 
     override fun processSources(sources: Collection<KtFile>, configuration: CompilerConfiguration): Collection<KtFile> {
         val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull() }
