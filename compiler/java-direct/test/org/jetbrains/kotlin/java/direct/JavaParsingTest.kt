@@ -2511,6 +2511,35 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testMultiFieldModifiers() {
+        val source = """
+            public class Foo {
+                public final static int
+                    ERROR = -1,
+                    EOF = 0,
+                    EOL = 1;
+            }
+        """.trimIndent()
+        val javaClass = parseFirstClass(source)
+        val errorField = javaClass.fields.find { it.name.asString() == "ERROR" }!!
+        val eofField = javaClass.fields.find { it.name.asString() == "EOF" }!!
+        val eolField = javaClass.fields.find { it.name.asString() == "EOL" }!!
+
+        // All fields in a multi-field declaration share the same modifiers
+        for (field in listOf(errorField, eofField, eolField)) {
+            assert(field.isStatic) { "${field.name} should be static" }
+            assert(field.isFinal) { "${field.name} should be final" }
+            assert(field.visibility == org.jetbrains.kotlin.descriptors.Visibilities.Public) {
+                "${field.name} should be public, got ${field.visibility}"
+            }
+        }
+
+        // All fields share the same type (int)
+        assert(eofField.type is JavaPrimitiveType) { "EOF type should be primitive, got ${eofField.type::class.simpleName}" }
+        assert(eolField.type is JavaPrimitiveType) { "EOL type should be primitive, got ${eolField.type::class.simpleName}" }
+    }
+
+    @Test
     fun testLightweightScannerAnnotationType(@TempDir tempDir: Path) {
         val file = tempDir.resolve("MyAnnotation.java")
         file.writeText("""

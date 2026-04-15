@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-15 (iter 67)
+**Last Updated**: 2026-04-15 (iter 68)
 
 ---
 
@@ -17,7 +17,7 @@
 | `implDocs/archive/ITERATIONS_27_36_DETAILS.md` | 27–36 | 1150/1167 → 1157/1168 box, **79 combined failing** |
 | `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37–51 | 1157/1168 → 1165/1168 box, **17 combined failing** |
 | (inline below) | 52–65 | 1165/1168 → 1168/1168 box, 1454/1456 phased, **2 won't-fix** |
-| (inline below) | 66–67 | Cross-package inherited inner classes + binary supertype BFS |
+| (inline below) | 66–68 | Cross-package inherited inner classes + binary supertype BFS + multi-field declarations |
 
 ---
 
@@ -625,6 +625,44 @@ The `getResolvedSupertypeClassIds` callback is invoked from `resolveInheritedInn
 - `FirJavaClass` has two distinct origins: `Java.Source` (parsed from source, lazy supertypes) and `Java.Library` (deserialized from .class files, pre-populated supertypes). The premature-resolution guard must distinguish between them.
 - Binary Java supertype hierarchies (JDK, library classes) are common in real-world compilation — the descriptors module has deep Java class hierarchies (`CallableMemberDescriptor → MemberDescriptor → DeclarationDescriptorWithVisibility → ...`) that all need walking.
 - The fix is a single-line origin check change, but the impact is significant: without it, any inherited inner class from a binary Java supertype hierarchy is invisible to java-direct.
+
+---
+
+## Iteration 68: Multi-Field Declaration Modifier/Type Inheritance - 2026-04-15
+
+### Root Cause Analysis
+The `testJs_parser` pipeline test failed with `UNRESOLVED_REFERENCE` errors for `TokenStream.EOF`. The `TokenStream.java` file declares fields using multi-field syntax:
+```java
+public static final int ERROR = -1, EOF = 0, EOL = 1;
+```
+
+The KMP Java parser only attaches `MODIFIER_LIST` and `TYPE` nodes to the **first** FIELD node in such declarations. Subsequent FIELD nodes (EOF, EOL) have no `MODIFIER_LIST` or `TYPE` children — they only contain the IDENTIFIER and initializer. As a result, `JavaFieldOverAst` reported EOF and EOL as non-static, non-final, package-private, with no type — making them invisible to Kotlin code expecting `TokenStream.EOF` as a public static int constant.
+
+### Fix
+**File**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt`
+
+Added modifier/type inheritance for multi-field declarations in `JavaFieldOverAst`:
+
+1. **`leadingFieldNode`** (lazy) — walks backward through sibling FIELD nodes to find the first one that carries `MODIFIER_LIST` or `TYPE`. Returns null if the current node already has its own modifiers.
+
+2. **`effectiveModifierList`** (lazy) — returns the node's own `MODIFIER_LIST`, or falls back to the leading field's `MODIFIER_LIST`.
+
+3. **`hasFieldModifier()`** — checks the effective modifier list for a given keyword (e.g., `STATIC_KEYWORD`, `FINAL_KEYWORD`, `PUBLIC_KEYWORD`).
+
+4. Updated `isStatic`, `isFinal`, `visibility`, `annotations`, and `type` to use the effective (possibly inherited) modifier list and type node. For `type`, if the current node has no `TYPE` child, it delegates to the leading field node for type creation.
+
+### Test Results
+- `testJs_parser`: PASSES
+- `testDescriptors_jvm`: PASSES
+- Full `:kotlin-java-direct:test` suite: zero regressions
+
+### Caching Verification
+All new properties (`leadingFieldNode`, `effectiveModifierList`) use `by lazy(LazyThreadSafetyMode.PUBLICATION)` — computed at most once per field instance. The backward sibling walk in `leadingFieldNode` is O(n) in the number of fields in the declaration but only executes once due to lazy caching. No hot-path concerns: multi-field declarations are rare in practice (most Java fields are declared individually).
+
+### Key Learnings
+- The KMP Java parser's AST structure for multi-field declarations differs from javac/PSI: modifiers and type are NOT duplicated per field — they exist only on the first FIELD node as siblings under the parent CLASS_BODY or similar node.
+- PSI handles this transparently via `PsiField.getModifierList()` which walks up to the `PsiDeclarationStatement` parent. Java-direct must implement the same backward-sibling walk manually.
+- `TokenStream.java` (from GWT/Rhino) is a real-world example with extensive multi-field declarations — `public static final int ERROR = -1, EOF = 0, EOL = 1, ...` with dozens of constants on a single line.
 
 ---
 

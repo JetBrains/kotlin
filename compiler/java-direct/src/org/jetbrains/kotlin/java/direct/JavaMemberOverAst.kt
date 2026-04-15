@@ -67,15 +67,65 @@ class JavaFieldOverAst(
 ) : JavaMemberOverAst(node, containingClass), JavaField {
     override val isEnumEntry: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.type.toString() == "ENUM_CONSTANT" }
 
+    /**
+     * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
+     * the parser only attaches MODIFIER_LIST and TYPE to the first FIELD node.
+     * Subsequent fields (B, C) have no MODIFIER_LIST or TYPE of their own.
+     * This property finds the leading FIELD sibling that carries the shared modifiers/type.
+     */
+    private val leadingFieldNode: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (node.findChildByType("MODIFIER_LIST") != null || node.findChildByType("TYPE") != null) {
+            null // this node already has its own modifiers/type
+        } else {
+            val parent = node.parent ?: return@lazy null
+            val siblings = parent.children
+            val myIndex = siblings.indexOf(node)
+            // Walk backwards to find the nearest FIELD sibling with a MODIFIER_LIST or TYPE
+            (myIndex - 1 downTo 0)
+                .map { siblings[it] }
+                .firstOrNull { it.type.toString() == "FIELD" && (it.findChildByType("MODIFIER_LIST") != null || it.findChildByType("TYPE") != null) }
+        }
+    }
+
+    /**
+     * Effective modifier list: own if present, otherwise inherited from the leading field
+     * in a multi-field declaration.
+     */
+    private val effectiveModifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        node.findChildByType("MODIFIER_LIST") ?: leadingFieldNode?.findChildByType("MODIFIER_LIST")
+    }
+
+    private fun hasFieldModifier(modifier: String): Boolean {
+        return effectiveModifierList?.children?.any { it.type.toString() == modifier } ?: false
+    }
+
     // Enum constants are implicitly public (JLS 8.9.3)
-    override val visibility: Visibility get() = if (isEnumEntry) Visibilities.Public else super.visibility
+    override val visibility: Visibility
+        get() {
+            if (isEnumEntry) return Visibilities.Public
+            return when {
+                containingClass.isInterface -> Visibilities.Public
+                hasFieldModifier("PUBLIC_KEYWORD") -> Visibilities.Public
+                hasFieldModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
+                hasFieldModifier("PRIVATE_KEYWORD") -> Visibilities.Private
+                else -> JavaVisibilities.PackageVisibility
+            }
+        }
+
+    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        effectiveModifierList?.getChildrenByType("ANNOTATION")
+            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+            ?: emptyList()
+    }
 
     override val type: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // For enum constants, the type is the containing enum class itself
         if (isEnumEntry) {
             return@lazy JavaClassifierTypeForEnumEntry(containingClass)
         }
-        createJavaType(node, resolutionContext)
+        // For multi-field declarations, the TYPE node is on the leading field
+        val typeSourceNode = if (node.findChildByType("TYPE") != null) node else leadingFieldNode ?: node
+        createJavaType(typeSourceNode, resolutionContext)
     }
 
     /**
@@ -200,8 +250,9 @@ class JavaFieldOverAst(
 
     // Interface fields are implicitly public static final
     // Enum constants are also implicitly public static final
-    override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || super.isStatic
-    override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || super.isFinal
+    // For multi-field declarations, hasFieldModifier checks the effective (possibly inherited) modifier list
+    override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier("STATIC_KEYWORD")
+    override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier("FINAL_KEYWORD")
 }
 
 class JavaMethodOverAst(
