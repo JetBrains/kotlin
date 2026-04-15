@@ -146,12 +146,11 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                              * }
                              */
                             val delegate = declaration.delegate
-                                ?: error("Local delegated property ${declaration.render()} has not delegate")
 
                             declaration.delegate = null
                             localDeclarationsToPopUp += declaration
 
-                            return delegate
+                            return delegate ?: IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType)
                         }
 
                         override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
