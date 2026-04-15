@@ -65,10 +65,10 @@ private abstract class CommonToolArgumentPre2_4_0ValueAdapter : CommonToolArgume
 private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolArgumentPre2_4_0ValueAdapter(),
     CommonCompilerArgumentValueAdapter {
     override fun <V, T> mapFrom(value: T, key: CommonCompilerArgument<V>): V =
-        when (key) {
-            CommonCompilerArguments.KOTLIN_HOME,
-            CommonCompilerArguments.X_DUMP_DIRECTORY,
-            CommonCompilerArguments.X_DUMP_PERF,
+        when (key.id) {
+            CommonCompilerArgumentsImpl.KOTLIN_HOME.id,
+            CommonCompilerArgumentsImpl.X_DUMP_DIRECTORY.id,
+            CommonCompilerArgumentsImpl.X_DUMP_PERF.id,
                 -> {
                 if (value == null) return null as V
 
@@ -76,16 +76,16 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 pathValue.absolutePathStringOrThrow() as V
             }
 
-            CommonCompilerArguments.X_PHASES_TO_DUMP,
-            CommonCompilerArguments.X_PHASES_TO_DUMP_BEFORE,
-            CommonCompilerArguments.X_PHASES_TO_DUMP_AFTER,
-            CommonCompilerArguments.X_PHASES_TO_VALIDATE,
-            CommonCompilerArguments.X_PHASES_TO_VALIDATE_BEFORE,
-            CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER,
-            CommonCompilerArguments.X_DISABLE_PHASES,
-            CommonCompilerArguments.X_VERBOSE_PHASES,
-            CommonCompilerArguments.X_SUPPRESS_WARNING,
-            CommonCompilerArguments.OPT_IN,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_DUMP.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_DUMP_BEFORE.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_DUMP_AFTER.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_VALIDATE.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_VALIDATE_BEFORE.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_VALIDATE_AFTER.id,
+            CommonCompilerArgumentsImpl.X_DISABLE_PHASES.id,
+            CommonCompilerArgumentsImpl.X_VERBOSE_PHASES.id,
+            CommonCompilerArgumentsImpl.X_SUPPRESS_WARNING.id,
+            CommonCompilerArgumentsImpl.OPT_IN.id,
                 -> {
                 if (value == null) return emptyArray<String>() as V
 
@@ -93,28 +93,28 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 listValue.toTypedArray() as V
             }
 
-            CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
+            CommonCompilerArgumentsImpl.X_ANNOTATION_DEFAULT_TARGET.id -> {
                 if (value == null) return null as V
 
                 val mode = value as AnnotationDefaultTargetMode
                 mode.stringValue as V
             }
 
-            CommonCompilerArguments.X_NAME_BASED_DESTRUCTURING -> {
+            CommonCompilerArgumentsImpl.X_NAME_BASED_DESTRUCTURING.id -> {
                 if (value == null) return null as V
 
                 val mode = value as NameBasedDestructuringMode
                 mode.stringValue as V
             }
 
-            CommonCompilerArguments.X_VERIFY_IR -> {
+            CommonCompilerArgumentsImpl.X_VERIFY_IR.id -> {
                 if (value == null) return null as V
 
                 val mode = value as VerifyIrMode
                 mode.stringValue as V
             }
 
-            CommonCompilerArguments.X_WARNING_LEVEL -> {
+            CommonCompilerArgumentsImpl.X_WARNING_LEVEL.id -> {
                 if (value == null) return emptyArray<String>() as V
 
                 val listValue: List<WarningLevel> = value as List<WarningLevel>
@@ -127,10 +127,10 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
         }
 
     override fun <T, V> mapTo(value: V, key: CommonCompilerArgument<V>): T =
-        when (key) {
-            CommonCompilerArguments.KOTLIN_HOME,
-            CommonCompilerArguments.X_DUMP_DIRECTORY,
-            CommonCompilerArguments.X_DUMP_PERF,
+        when (key.id) {
+            CommonCompilerArgumentsImpl.KOTLIN_HOME.id,
+            CommonCompilerArgumentsImpl.X_DUMP_DIRECTORY.id,
+            CommonCompilerArgumentsImpl.X_DUMP_PERF.id,
                 -> {
                 if (value == null) return null as T
 
@@ -138,16 +138,16 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 Path(stringValue) as T
             }
 
-            CommonCompilerArguments.X_PHASES_TO_DUMP,
-            CommonCompilerArguments.X_PHASES_TO_DUMP_BEFORE,
-            CommonCompilerArguments.X_PHASES_TO_DUMP_AFTER,
-            CommonCompilerArguments.X_PHASES_TO_VALIDATE,
-            CommonCompilerArguments.X_PHASES_TO_VALIDATE_BEFORE,
-            CommonCompilerArguments.X_PHASES_TO_VALIDATE_AFTER,
-            CommonCompilerArguments.X_DISABLE_PHASES,
-            CommonCompilerArguments.X_VERBOSE_PHASES,
-            CommonCompilerArguments.X_SUPPRESS_WARNING,
-            CommonCompilerArguments.OPT_IN,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_DUMP.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_DUMP_BEFORE.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_DUMP_AFTER.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_VALIDATE.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_VALIDATE_BEFORE.id,
+            CommonCompilerArgumentsImpl.X_PHASES_TO_VALIDATE_AFTER.id,
+            CommonCompilerArgumentsImpl.X_DISABLE_PHASES.id,
+            CommonCompilerArgumentsImpl.X_VERBOSE_PHASES.id,
+            CommonCompilerArgumentsImpl.X_SUPPRESS_WARNING.id,
+            CommonCompilerArgumentsImpl.OPT_IN.id,
                 -> {
                 if (value == null) return emptyList<String>() as T
 
@@ -155,7 +155,7 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 arrayValue.toList() as T
             }
 
-            CommonCompilerArguments.X_ANNOTATION_DEFAULT_TARGET -> {
+            CommonCompilerArgumentsImpl.X_ANNOTATION_DEFAULT_TARGET.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -163,7 +163,7 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                     ?: throw CompilerArgumentsParseException("Unknown -Xannotation-default-target value: $stringValue")
             }
 
-            CommonCompilerArguments.X_NAME_BASED_DESTRUCTURING -> {
+            CommonCompilerArgumentsImpl.X_NAME_BASED_DESTRUCTURING.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -171,7 +171,7 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                     ?: throw CompilerArgumentsParseException("Unknown -Xname-based-destructuring value: $stringValue")
             }
 
-            CommonCompilerArguments.X_VERIFY_IR -> {
+            CommonCompilerArgumentsImpl.X_VERIFY_IR.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -179,7 +179,7 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                     ?: throw CompilerArgumentsParseException("Unknown -Xverify-ir value: $stringValue")
             }
 
-            CommonCompilerArguments.X_WARNING_LEVEL -> {
+            CommonCompilerArgumentsImpl.X_WARNING_LEVEL.id -> {
                 if (value == null) return emptyList<WarningLevel>() as T
 
                 val arrayValue = value as Array<String>
@@ -206,15 +206,15 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
     override fun <V, T> mapFrom(
         value: T,
         key: JvmCompilerArguments.JvmCompilerArgument<V>,
-    ): V = when (key) {
-        JvmCompilerArguments.JDK_HOME -> {
+    ): V = when (key.id) {
+        JvmCompilerArgumentsImpl.JDK_HOME.id -> {
             if (value == null) return null as V
 
             val pathValue = value as Path
             pathValue.absolutePathStringOrThrow() as V
         }
 
-        JvmCompilerArguments.X_PROFILE -> {
+        JvmCompilerArgumentsImpl.X_PROFILE.id -> {
             if (value == null) return null as V
 
             val profileCompilerCommand = value as ProfileCompilerCommand
@@ -226,79 +226,79 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             } as V
         }
 
-        JvmCompilerArguments.JVM_DEFAULT -> {
+        JvmCompilerArgumentsImpl.JVM_DEFAULT.id -> {
             if (value == null) return null as V
 
             val mode = value as JvmDefaultMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_ABI_STABILITY -> {
+        JvmCompilerArgumentsImpl.X_ABI_STABILITY.id -> {
             if (value == null) return null as V
 
             val mode = value as AbiStabilityMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_ASSERTIONS -> {
+        JvmCompilerArgumentsImpl.X_ASSERTIONS.id -> {
             if (value == null) return null as V
 
             val mode = value as AssertionsMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_JSPECIFY_ANNOTATIONS -> {
+        JvmCompilerArgumentsImpl.X_JSPECIFY_ANNOTATIONS.id -> {
             if (value == null) return null as V
 
             val mode = value as JspecifyAnnotationsMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_LAMBDAS -> {
+        JvmCompilerArgumentsImpl.X_LAMBDAS.id -> {
             if (value == null) return null as V
 
             val mode = value as LambdasMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_SAM_CONVERSIONS -> {
+        JvmCompilerArgumentsImpl.X_SAM_CONVERSIONS.id -> {
             if (value == null) return null as V
 
             val mode = value as SamConversionsMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_STRING_CONCAT -> {
+        JvmCompilerArgumentsImpl.X_STRING_CONCAT.id -> {
             if (value == null) return null as V
 
             val mode = value as StringConcatMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS -> {
+        JvmCompilerArgumentsImpl.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS.id -> {
             if (value == null) return null as V
 
             val mode = value as CompatqualAnnotationsMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
+        JvmCompilerArgumentsImpl.X_WHEN_EXPRESSIONS.id -> {
             if (value == null) return null as V
 
             val mode = value as WhenExpressionsMode
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.X_JDK_RELEASE -> {
+        JvmCompilerArgumentsImpl.X_JDK_RELEASE.id -> {
             if (value == null) return null as V
 
             val mode = value as JdkRelease
             mode.stringValue as V
         }
 
-        JvmCompilerArguments.CLASSPATH,
-        JvmCompilerArguments.X_KLIB,
-        JvmCompilerArguments.X_MODULE_PATH,
+        JvmCompilerArgumentsImpl.CLASSPATH.id,
+        JvmCompilerArgumentsImpl.X_KLIB.id,
+        JvmCompilerArgumentsImpl.X_MODULE_PATH.id,
             -> {
             if (value == null) return null as V
 
@@ -306,8 +306,8 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             listValue.joinToString(File.pathSeparator) { it.absolutePathStringOrThrow() } as V
         }
 
-        JvmCompilerArguments.X_FRIEND_PATHS,
-        JvmCompilerArguments.X_JAVA_SOURCE_ROOTS,
+        JvmCompilerArgumentsImpl.X_FRIEND_PATHS.id,
+        JvmCompilerArgumentsImpl.X_JAVA_SOURCE_ROOTS.id,
             -> {
             if (value == null) return emptyArray<String>() as V
 
@@ -315,10 +315,10 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             listValue.map { it.absolutePathStringOrThrow() }.toTypedArray() as V
         }
 
-        JvmCompilerArguments.X_ADD_MODULES,
-        JvmCompilerArguments.SCRIPT_TEMPLATES,
-        JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT,
-        JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
+        JvmCompilerArgumentsImpl.X_ADD_MODULES.id,
+        JvmCompilerArgumentsImpl.SCRIPT_TEMPLATES.id,
+        JvmCompilerArgumentsImpl.X_SCRIPT_RESOLVER_ENVIRONMENT.id,
+        JvmCompilerArgumentsImpl.X_IGNORED_ANNOTATIONS_FOR_BRIDGES.id,
             -> {
             if (value == null) return emptyArray<String>() as V
 
@@ -326,14 +326,14 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
             listValue.toTypedArray() as V
         }
 
-        JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
+        JvmCompilerArgumentsImpl.X_NULLABILITY_ANNOTATIONS.id -> {
             if (value == null) return emptyArray<String>() as V
 
             val listValue = value as List<NullabilityAnnotation>
             listValue.map { item -> "${item.annotationFqName}:${item.mode.stringValue}" }.toTypedArray() as V
         }
 
-        JvmCompilerArguments.X_JSR305 -> {
+        JvmCompilerArgumentsImpl.X_JSR305.id -> {
             if (value == null) return emptyArray<String>() as V
 
             val listValue = value as List<Jsr305>
@@ -353,15 +353,15 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
         value: V,
         key: JvmCompilerArguments.JvmCompilerArgument<V>,
     ): T =
-        when (key) {
-            JvmCompilerArguments.JDK_HOME -> {
+        when (key.id) {
+            JvmCompilerArgumentsImpl.JDK_HOME.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
                 Path(stringValue) as T
             }
 
-            JvmCompilerArguments.X_PROFILE -> {
+            JvmCompilerArgumentsImpl.X_PROFILE.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -370,7 +370,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as T
             }
 
-            JvmCompilerArguments.JVM_DEFAULT -> {
+            JvmCompilerArgumentsImpl.JVM_DEFAULT.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -378,7 +378,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $stringValue")
             }
 
-            JvmCompilerArguments.X_ABI_STABILITY -> {
+            JvmCompilerArgumentsImpl.X_ABI_STABILITY.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -386,7 +386,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $stringValue")
             }
 
-            JvmCompilerArguments.X_ASSERTIONS -> {
+            JvmCompilerArgumentsImpl.X_ASSERTIONS.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -394,7 +394,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $stringValue")
             }
 
-            JvmCompilerArguments.X_JSPECIFY_ANNOTATIONS -> {
+            JvmCompilerArgumentsImpl.X_JSPECIFY_ANNOTATIONS.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -402,7 +402,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $stringValue")
             }
 
-            JvmCompilerArguments.X_LAMBDAS -> {
+            JvmCompilerArgumentsImpl.X_LAMBDAS.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -410,7 +410,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $stringValue")
             }
 
-            JvmCompilerArguments.X_SAM_CONVERSIONS -> {
+            JvmCompilerArgumentsImpl.X_SAM_CONVERSIONS.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -418,7 +418,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $stringValue")
             }
 
-            JvmCompilerArguments.X_STRING_CONCAT -> {
+            JvmCompilerArgumentsImpl.X_STRING_CONCAT.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -426,7 +426,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $stringValue")
             }
 
-            JvmCompilerArguments.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS -> {
+            JvmCompilerArgumentsImpl.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -434,7 +434,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $stringValue")
             }
 
-            JvmCompilerArguments.X_WHEN_EXPRESSIONS -> {
+            JvmCompilerArgumentsImpl.X_WHEN_EXPRESSIONS.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -442,7 +442,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $stringValue")
             }
 
-            JvmCompilerArguments.X_JDK_RELEASE -> {
+            JvmCompilerArgumentsImpl.X_JDK_RELEASE.id -> {
                 if (value == null) return null as T
 
                 val stringValue = value as String
@@ -450,9 +450,9 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                     ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $stringValue")
             }
 
-            JvmCompilerArguments.CLASSPATH,
-            JvmCompilerArguments.X_KLIB,
-            JvmCompilerArguments.X_MODULE_PATH,
+            JvmCompilerArgumentsImpl.CLASSPATH.id,
+            JvmCompilerArgumentsImpl.X_KLIB.id,
+            JvmCompilerArgumentsImpl.X_MODULE_PATH.id,
                 -> {
                 if (value == null) return null as T
 
@@ -460,8 +460,8 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 stringValue.split(File.pathSeparator).map { Path(it) } as T
             }
 
-            JvmCompilerArguments.X_FRIEND_PATHS,
-            JvmCompilerArguments.X_JAVA_SOURCE_ROOTS,
+            JvmCompilerArgumentsImpl.X_FRIEND_PATHS.id,
+            JvmCompilerArgumentsImpl.X_JAVA_SOURCE_ROOTS.id,
                 -> {
                 if (value == null) return emptyList<Path>() as T
 
@@ -469,10 +469,10 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 arrayValue.also { array -> array.asList().checkNoneContains(",") }.map { Path(it) } as T
             }
 
-            JvmCompilerArguments.X_ADD_MODULES,
-            JvmCompilerArguments.SCRIPT_TEMPLATES,
-            JvmCompilerArguments.X_SCRIPT_RESOLVER_ENVIRONMENT,
-            JvmCompilerArguments.X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
+            JvmCompilerArgumentsImpl.X_ADD_MODULES.id,
+            JvmCompilerArgumentsImpl.SCRIPT_TEMPLATES.id,
+            JvmCompilerArgumentsImpl.X_SCRIPT_RESOLVER_ENVIRONMENT.id,
+            JvmCompilerArgumentsImpl.X_IGNORED_ANNOTATIONS_FOR_BRIDGES.id,
                 -> {
                 if (value == null) return emptyList<String>() as T
 
@@ -480,7 +480,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 arrayValue.toList() as T
             }
 
-            JvmCompilerArguments.X_NULLABILITY_ANNOTATIONS -> {
+            JvmCompilerArgumentsImpl.X_NULLABILITY_ANNOTATIONS.id -> {
                 if (value == null) return emptyList<NullabilityAnnotation>() as T
 
                 val arrayValue = value as Array<String>
@@ -495,7 +495,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 } as T
             }
 
-            JvmCompilerArguments.X_JSR305 -> {
+            JvmCompilerArgumentsImpl.X_JSR305.id -> {
                 if (value == null) return emptyList<Jsr305>() as T
 
                 val arrayValue = value as Array<String>
