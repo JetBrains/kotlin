@@ -1,3 +1,22 @@
+## 2.3.21-RC2
+
+### Compiler
+
+- [`KT-85626`](https://youtrack.jetbrains.com/issue/KT-85626)  `@JvmRecord` in commonMain breaks compileCommonMainKotlinMetadata with "Cannot access 'java.lang.Record'"
+
+### Native. C and ObjC Import
+
+- [`KT-85508`](https://youtrack.jetbrains.com/issue/KT-85508) K/N: TypeCastException when using nw_parameters_create_secure_tcp block parameter on 2.3.20
+
+### Tools. Scripts
+
+- [`KT-85105`](https://youtrack.jetbrains.com/issue/KT-85105) Scripts: JVM backend internal error (IR lowering) when scratch file contains anonymous object
+- [`KT-85103`](https://youtrack.jetbrains.com/issue/KT-85103) Exception while generating code when explain destructuring decls
+
+### Tools. Statistics (FUS)
+
+- [`KT-85628`](https://youtrack.jetbrains.com/issue/KT-85628) KGP: composite build FUS metrics fail on access of 'configurationTimeMetrics'
+
 ## 2.3.21-RC
 
 ### Backend. Wasm
