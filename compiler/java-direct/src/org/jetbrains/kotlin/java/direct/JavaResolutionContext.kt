@@ -111,11 +111,12 @@ class JavaResolutionContext private constructor(
         containingClass?.let { cls ->
             findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
         }
-        // Also check inner classes of outer classes' supertypes
-        // This handles nested inner class cases like: class Y extends X { class D { z ref; } }
-        // where z is an inner class of X (Y's supertype)
+        // Also check inner classes of outer classes and their supertypes.
+        // Walk the full outer class chain: for deeply nested classes like
+        // Outer { Inner1 { Inner2 { ... } } }, Inner2 must see siblings of Outer.
         var outer = containingClass?.outerClass
         while (outer != null) {
+            outer.outerClass?.findInnerClass(name)?.let { return it }
             findInnerClassFromSupertypes(name, outer, mutableSetOf())?.let { return it }
             outer = outer.outerClass
         }
@@ -187,6 +188,43 @@ class JavaResolutionContext private constructor(
         return allFound.firstOrNull()
     }
 
+    /**
+     * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with [nestedName].
+     * Uses both the [getSupertypeClassIds] callback (for Kotlin/binary classes) and the class finder's
+     * [JavaClassFinderOverAstImpl.collectInheritedInnerClasses] (for same-package Java source classes).
+     */
+    private fun findInheritedNestedClass(
+        outerClassId: ClassId,
+        nestedName: String,
+        tryResolve: (ClassId) -> Boolean,
+        getSupertypeClassIds: (ClassId) -> List<ClassId>,
+        visited: MutableSet<ClassId>,
+    ): ClassId? {
+        if (outerClassId in visited) return null
+        visited.add(outerClassId)
+
+        for (supertypeId in getSupertypeClassIds(outerClassId)) {
+            val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
+            if (tryResolve(candidateId)) return candidateId
+            // Recurse into supertype's supertypes
+            findInheritedNestedClass(supertypeId, nestedName, tryResolve, getSupertypeClassIds, visited)
+                ?.let { return it }
+        }
+
+        // Also check via the class finder for same-package Java source supertypes
+        val classFinder = classFinderProvider?.invoke()
+        if (classFinder != null) {
+            val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
+            val candidates = inheritedInners[nestedName]
+            if (candidates != null && candidates.size == 1) {
+                val candidateClassId = candidates.first()
+                if (tryResolve(candidateClassId)) return candidateClassId
+            }
+        }
+
+        return null
+    }
+
     /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
     fun findTypeParameter(name: String): JavaTypeParameter? = typeParametersInScope[name]
 
@@ -194,6 +232,13 @@ class JavaResolutionContext private constructor(
     fun findInheritedTypeParameter(name: String): JavaTypeParameter? = inheritedTypeParametersInScope[name]
 
     fun getSimpleImport(simpleName: String): FqName? = simpleImports[simpleName]
+
+    /**
+     * Returns the parsed imports (simple + star) from this context.
+     * Used by [JavaClassFinderOverAstImpl.getDirectSupertypes] on the fast path
+     * to avoid re-extracting imports from the AST root.
+     */
+    internal fun getImports(): Pair<Map<String, FqName>, List<FqName>> = Pair(simpleImports, starImports)
 
     /**
      * Returns true if the import target for [simpleName] is resolvable as a Java class.
@@ -341,7 +386,7 @@ class JavaResolutionContext private constructor(
         }
         // Handle nested class references like "Map.Entry"
         if (name.contains('.')) {
-            return resolveNestedClassToClassId(name, cachedTryResolve)
+            return resolveNestedClassToClassId(name, cachedTryResolve, getSupertypeClassIds)
         }
         return resolveSimpleNameToClassId(name, cachedTryResolve, getSupertypeClassIds)
     }
@@ -359,7 +404,11 @@ class JavaResolutionContext private constructor(
      * we try Q.Id as a nested class. If that fails or Q doesn't resolve, we fall back
      * to trying Q.Id as a fully qualified name.
      */
-    private fun resolveNestedClassToClassId(name: String, tryResolve: (ClassId) -> Boolean): ClassId? {
+    private fun resolveNestedClassToClassId(
+        name: String,
+        tryResolve: (ClassId) -> Boolean,
+        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
+    ): ClassId? {
         val parts = name.split('.')
 
         // Try resolving increasing prefixes as outer classes using normal resolution rules
@@ -370,7 +419,7 @@ class JavaResolutionContext private constructor(
 
             // Resolve the outer class using normal resolution (same package, imports, etc.)
             val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassId(outerParts.joinToString("."), tryResolve)
+                resolveNestedClassToClassId(outerParts.joinToString("."), tryResolve, getSupertypeClassIds)
             } else {
                 // For single-part outer name, use resolveSimpleNameToClassId which
                 // checks same-package, java.lang, imports - the normal resolution order
@@ -384,6 +433,37 @@ class JavaResolutionContext private constructor(
                 )
                 val nestedClassId = ClassId(outerClassId.packageFqName, nestedClassName, isLocal = false)
                 if (tryResolve(nestedClassId)) return nestedClassId
+
+                // Nested class not directly declared — search supertypes for inherited inner classes.
+                // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
+                // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
+                if (nestedParts.size == 1 && getSupertypeClassIds != null) {
+                    val inherited = findInheritedNestedClass(
+                        outerClassId, nestedParts[0], tryResolve, getSupertypeClassIds, mutableSetOf()
+                    )
+                    if (inherited != null) return inherited
+                }
+            }
+        }
+
+        // Also try inherited inner class resolution via the aggregated map from the class finder.
+        // This covers same-package source supertypes that the getSupertypeClassIds callback
+        // might not see (Java class supertypes are excluded from the callback to avoid premature resolution).
+        if (getSupertypeClassIds == null) {
+            val aggregatedInherited = getAggregatedInheritedInnerClasses()
+            if (aggregatedInherited != null && parts.size == 2) {
+                val outerClassId = resolveSimpleNameToClassId(parts[0], tryResolve)
+                if (outerClassId != null) {
+                    val classFinder = classFinderProvider?.invoke()
+                    if (classFinder != null) {
+                        val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
+                        val candidates = inheritedInners[parts[1]]
+                        if (candidates != null && candidates.size == 1) {
+                            val candidateClassId = candidates.first()
+                            if (tryResolve(candidateClassId)) return candidateClassId
+                        }
+                    }
+                }
             }
         }
 
@@ -446,12 +526,12 @@ class JavaResolutionContext private constructor(
                 }
                 // allCandidates.isEmpty(): name is not an inherited source-level inner class.
                 // Still need to check non-source supertypes (Kotlin/binary) via BFS Phase 2,
-                // but only if getSupertypeClassIds callback is available.
+                // regardless of whether getSupertypeClassIds callback is available.
+                // The BFS Phase 1 can walk Java source supertypes via the class finder,
+                // and Phase 2 uses the callback for non-source (Kotlin/binary) supertypes.
                 else -> {
-                    if (getSupertypeClassIds != null) {
-                        val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
-                        if (inheritedResult != null) return inheritedResult
-                    }
+                    val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+                    if (inheritedResult != null) return inheritedResult
                 }
             }
         } else {
@@ -521,7 +601,6 @@ class JavaResolutionContext private constructor(
             initialSupertypes.addAll(currentClass.supertypes)
             currentClass = currentClass.outerClass
         }
-
         val visited = mutableSetOf<ClassId>()
         var foundClassId: ClassId? = null
 
@@ -775,7 +854,7 @@ class JavaResolutionContext private constructor(
             return if (packageName != null) FqName(packageName) else FqName.ROOT
         }
 
-        private fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
+        internal fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
             val simpleImports = mutableMapOf<String, FqName>()
             val starImports = mutableListOf<FqName>()
 

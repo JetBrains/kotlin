@@ -434,10 +434,13 @@ private fun resolveTypeName(
  */
 private fun getResolvedSupertypeClassIds(classId: ClassId, session: FirSession): List<ClassId> {
     val firClass = classId.toLookupTag().toRegularClassSymbol(session)?.fir ?: return emptyList()
-    // Only read supertypes from non-Java classes. Java class supertypes are walked
+    // Only read supertypes from non-Java-source classes. Java SOURCE class supertypes are walked
     // via the class finder in Phase 1 of resolveInheritedInnerClassToClassId.
-    // Accessing FirJavaClass.superTypeRefs here could trigger premature lazy resolution.
-    if (firClass is FirJavaClass) return emptyList()
+    // Accessing FirJavaClass.superTypeRefs for source classes could trigger premature lazy resolution
+    // (it calls javaClass.supertypes which may circle back into type conversion).
+    // Binary Java classes (Java.Library) have pre-populated nonEnhancedSuperTypes, so accessing
+    // their superTypeRefs is safe and necessary for walking binary supertype hierarchies.
+    if (firClass is FirJavaClass && firClass.origin == FirDeclarationOrigin.Java.Source) return emptyList()
     return firClass.superTypeRefs.mapNotNull { ref ->
         (ref as? FirResolvedTypeRef)?.coneType?.classId
     }

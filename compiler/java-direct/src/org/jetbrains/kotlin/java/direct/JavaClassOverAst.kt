@@ -129,29 +129,76 @@ class JavaClassOverAst(
     private fun findInnerClassUncached(name: Name): JavaClass? {
         val innerClassNode = node.children.find {
             it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
-        } ?: return null
+        }
 
-        // Check if the inner class is effectively static:
-        // - Explicitly marked with 'static' keyword
-        // - Is an interface (interfaces are implicitly static in Java)
-        // - Is an enum (enums are implicitly static in Java)
-        val hasStaticKeyword = innerClassNode.findChildByType("MODIFIER_LIST")
-            ?.children?.any { it.type.toString() == "STATIC_KEYWORD" } ?: false
-        val isInterface = innerClassNode.findChildByType("INTERFACE_KEYWORD") != null
-        val isEnum = innerClassNode.findChildByType("ENUM_KEYWORD") != null
-        val innerIsEffectivelyStatic = hasStaticKeyword || isInterface || isEnum
+        if (innerClassNode != null) {
+            // Check if the inner class is effectively static:
+            // - Explicitly marked with 'static' keyword
+            // - Is an interface (interfaces are implicitly static in Java)
+            // - Is an enum (enums are implicitly static in Java)
+            val hasStaticKeyword = innerClassNode.findChildByType("MODIFIER_LIST")
+                ?.children?.any { it.type.toString() == "STATIC_KEYWORD" } ?: false
+            val isInterface = innerClassNode.findChildByType("INTERFACE_KEYWORD") != null
+            val isEnum = innerClassNode.findChildByType("ENUM_KEYWORD") != null
+            val innerIsEffectivelyStatic = hasStaticKeyword || isInterface || isEnum
 
-        // Non-static inner classes get outer type params as OWN (high priority, can't be shadowed
-        // by inner class names) via memberResolutionContext.
-        // Static nested types (interfaces/enums/static classes) get outer type params as INHERITED
-        // (low priority, can be shadowed by inner class names of the static nested type itself).
-        // This matches Java's scoping rules where static nested types see outer type params but
-        // inner class names of the nested type shadow them.
-        val contextForInner = if (innerIsEffectivelyStatic)
-            resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
-        else
-            memberResolutionContext
-        return JavaClassOverAst(innerClassNode, contextForInner, outerClass = this)
+            // Non-static inner classes get outer type params as OWN (high priority, can't be shadowed
+            // by inner class names) via memberResolutionContext.
+            // Static nested types (interfaces/enums/static classes) get outer type params as INHERITED
+            // (low priority, can be shadowed by inner class names of the static nested type itself).
+            // This matches Java's scoping rules where static nested types see outer type params but
+            // inner class names of the nested type shadow them.
+            val contextForInner = if (innerIsEffectivelyStatic)
+                resolutionContext.withContainingClass(this).withInheritedTypeParameters(typeParameters)
+            else
+                memberResolutionContext
+            return JavaClassOverAst(innerClassNode, contextForInner, outerClass = this)
+        }
+
+        // Inner class not directly declared — search supertypes (JLS 8.5: inherited member types).
+        // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
+        // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
+        return findInnerClassInSupertypes(name, mutableSetOf())
+    }
+
+    /**
+     * Searches for an inner class in the supertypes of this class.
+     * Uses raw supertype reference names from the AST to avoid triggering full type resolution
+     * (which would cause infinite recursion via classifier → findLocalClass → findInnerClass).
+     * Resolves supertype names via [JavaResolutionContext.findLocalClass] to find same-unit classes.
+     */
+    private fun findInnerClassInSupertypes(name: Name, visited: MutableSet<String>): JavaClass? {
+        val myId = fqName?.asString() ?: return null
+        if (myId in visited) return null
+        visited.add(myId)
+
+        val supertypeRefNames = mutableListOf<String>()
+        node.findChildByType("EXTENDS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach { ref ->
+            supertypeRefNames.add(ref.text.substringBefore('<').trim())
+        }
+        node.findChildByType("IMPLEMENTS_LIST")?.getChildrenByType("JAVA_CODE_REFERENCE")?.forEach { ref ->
+            supertypeRefNames.add(ref.text.substringBefore('<').trim())
+        }
+
+        for (supertypeRef in supertypeRefNames) {
+            // Use only the first part (simple name) to find the supertype class locally
+            val simpleName = supertypeRef.substringBefore('.')
+            val supertypeClass = resolutionContext.findLocalClass(Name.identifier(simpleName))
+                    as? JavaClassOverAst ?: continue
+
+            // Check if the supertype directly declares this inner class
+            val directInner = supertypeClass.node.children.find {
+                it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == name.asString()
+            }
+            if (directInner != null) {
+                // Found the inner class — return it properly constructed
+                return supertypeClass.findInnerClass(name)
+            }
+
+            // Recursively check the supertype's supertypes
+            supertypeClass.findInnerClassInSupertypes(name, visited)?.let { return it }
+        }
+        return null
     }
 
     override val isInterface: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType("INTERFACE_KEYWORD") != null }

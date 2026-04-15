@@ -2348,6 +2348,169 @@ class JavaParsingTest {
     }
 
     @Test
+    fun testInheritedInnerClassResolution() {
+        // Reproduces the FunctionDescriptor/SimpleFunctionDescriptor/FunctionDescriptorImpl hierarchy:
+        // - FunctionDescriptor declares inner interface CopyBuilder
+        // - SimpleFunctionDescriptor extends FunctionDescriptor (inherits CopyBuilder)
+        // - FunctionDescriptorImpl.CopyConfiguration implements SimpleFunctionDescriptor.CopyBuilder
+        //   (where CopyBuilder is inherited, not directly declared in SimpleFunctionDescriptor)
+        val source = """
+            public class TestInheritedInner {
+                public interface FunctionDescriptor {
+                    interface CopyBuilder<D> {}
+                }
+                
+                public interface SimpleFunctionDescriptor extends FunctionDescriptor {
+                    // CopyBuilder is inherited from FunctionDescriptor, NOT declared here
+                }
+                
+                public abstract class FunctionDescriptorImpl implements FunctionDescriptor {
+                    // CopyConfiguration references SimpleFunctionDescriptor.CopyBuilder
+                    // which is inherited, not directly declared
+                    public class CopyConfiguration implements SimpleFunctionDescriptor.CopyBuilder<FunctionDescriptor> {
+                    }
+                }
+            }
+        """.trimIndent()
+        val outerClass = parseFirstClass(source)
+
+        // Find FunctionDescriptorImpl
+        val implClass = outerClass.findInnerClass(Name.identifier("FunctionDescriptorImpl"))
+        assert(implClass != null) { "Expected to find FunctionDescriptorImpl" }
+
+        // Find CopyConfiguration
+        val copyConfig = implClass!!.findInnerClass(Name.identifier("CopyConfiguration"))
+        assert(copyConfig != null) { "Expected to find CopyConfiguration" }
+
+        // CopyConfiguration should have SimpleFunctionDescriptor.CopyBuilder as a supertype
+        val supertypes = copyConfig!!.supertypes.toList()
+        assert(supertypes.isNotEmpty()) { "CopyConfiguration should have supertypes" }
+
+        // First verify that findInnerClass on SimpleFunctionDescriptor finds CopyBuilder
+        val simpleFuncDesc = outerClass.findInnerClass(Name.identifier("SimpleFunctionDescriptor"))
+        assert(simpleFuncDesc != null) { "Expected to find SimpleFunctionDescriptor" }
+        val inheritedCopyBuilder = simpleFuncDesc!!.findInnerClass(Name.identifier("CopyBuilder"))
+        assert(inheritedCopyBuilder != null) {
+            "SimpleFunctionDescriptor.findInnerClass('CopyBuilder') should find inherited inner class. " +
+            "innerClassNames=${simpleFuncDesc.innerClassNames}"
+        }
+
+        // Now check the supertype resolution in the actual type reference
+        val allQualifiedNames = supertypes.map { it.classifierQualifiedName }
+        val copyBuilderSupertype = supertypes.find { it.classifierQualifiedName.contains("CopyBuilder") }
+        assert(copyBuilderSupertype != null) {
+            "Expected a supertype containing 'CopyBuilder', got supertypes: $allQualifiedNames"
+        }
+
+        val supertypeQualified = copyBuilderSupertype!!.classifierQualifiedName
+        // Check classifierQualifiedName resolves the FQN properly
+        assert(supertypeQualified != "SimpleFunctionDescriptor.CopyBuilder") {
+            "classifierQualifiedName should resolve to the actual FQN, not raw text. " +
+            "Got '$supertypeQualified'. This means classifierQualifiedName did not resolve via findInnerClass."
+        }
+
+        // Critical: the classifier should actually resolve (not be null)
+        val classifier = copyBuilderSupertype.classifier
+        assert(classifier != null) {
+            "Expected supertype classifier to resolve for SimpleFunctionDescriptor.CopyBuilder " +
+            "(inherited inner class). classifierQualifiedName='$supertypeQualified'"
+        }
+    }
+
+    @Test
+    fun testInheritedInnerClassResolutionCrossFile(@TempDir tempDir: Path) {
+        // Cross-file version: all classes in same package, separate files.
+        // The class finder indexes all files so cross-file resolution works via collectInheritedInnerClasses.
+        val pkgDir = tempDir.resolve("test")
+        pkgDir.toFile().mkdirs()
+
+        pkgDir.resolve("FunctionDescriptor.java").writeText("""
+            package test;
+            public interface FunctionDescriptor {
+                interface CopyBuilder<D> {}
+            }
+        """.trimIndent())
+
+        pkgDir.resolve("SimpleFunctionDescriptor.java").writeText("""
+            package test;
+            public interface SimpleFunctionDescriptor extends FunctionDescriptor {
+                // CopyBuilder inherited from FunctionDescriptor
+            }
+        """.trimIndent())
+
+        pkgDir.resolve("FunctionDescriptorImpl.java").writeText("""
+            package test;
+            public abstract class FunctionDescriptorImpl implements FunctionDescriptor {
+                public class CopyConfiguration implements SimpleFunctionDescriptor.CopyBuilder<FunctionDescriptor> {
+                }
+            }
+        """.trimIndent())
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+
+        // Verify inherited inner class detection works cross-file
+        val simpleDescId = ClassId(FqName("test"), Name.identifier("SimpleFunctionDescriptor"))
+        val inherited = finder.collectInheritedInnerClasses(simpleDescId)
+        assert("CopyBuilder" in inherited) {
+            "Expected CopyBuilder in inherited inner classes of SimpleFunctionDescriptor, got ${inherited.keys}"
+        }
+
+        // Verify the inner class is found via the class finder's resolution
+        val copyBuilderId = inherited["CopyBuilder"]!!.first()
+        assert(copyBuilderId.asString() == "test/FunctionDescriptor.CopyBuilder") {
+            "Expected CopyBuilder to be from FunctionDescriptor, got $copyBuilderId"
+        }
+    }
+
+    @Test
+    fun testInheritedInnerClassCrossPackage(@TempDir tempDir: Path) {
+        // Reproduces the UserDataKey issue: CallableDescriptor (in package "base") declares
+        // inner interface UserDataKey. FunctionDescriptor (in "base") extends CallableDescriptor.
+        // FunctionDescriptorImpl (in "base.impl") implements FunctionDescriptor via star import.
+        // Code in FunctionDescriptorImpl should be able to see UserDataKey through inheritance.
+        val basePkgDir = tempDir.resolve("base")
+        basePkgDir.toFile().mkdirs()
+        val implPkgDir = tempDir.resolve("base/impl")
+        implPkgDir.toFile().mkdirs()
+
+        basePkgDir.resolve("CallableDescriptor.java").writeText("""
+            package base;
+            public interface CallableDescriptor {
+                interface UserDataKey<V> {}
+            }
+        """.trimIndent())
+
+        basePkgDir.resolve("FunctionDescriptor.java").writeText("""
+            package base;
+            public interface FunctionDescriptor extends CallableDescriptor {
+                // UserDataKey inherited from CallableDescriptor
+            }
+        """.trimIndent())
+
+        implPkgDir.resolve("FunctionDescriptorImpl.java").writeText("""
+            package base.impl;
+            import base.*;
+            public abstract class FunctionDescriptorImpl implements FunctionDescriptor {
+                // UserDataKey should be accessible through FunctionDescriptor -> CallableDescriptor
+            }
+        """.trimIndent())
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+
+        // Verify inherited inner class detection works cross-package
+        val funcDescImplId = ClassId(FqName("base.impl"), Name.identifier("FunctionDescriptorImpl"))
+        val inherited = finder.collectInheritedInnerClasses(funcDescImplId)
+        assert("UserDataKey" in inherited) {
+            "Expected UserDataKey in inherited inner classes of FunctionDescriptorImpl, got ${inherited.keys}"
+        }
+
+        val userDataKeyId = inherited["UserDataKey"]!!.first()
+        assert(userDataKeyId.asString() == "base/CallableDescriptor.UserDataKey") {
+            "Expected UserDataKey to be from CallableDescriptor, got $userDataKeyId"
+        }
+    }
+
+    @Test
     fun testLightweightScannerAnnotationType(@TempDir tempDir: Path) {
         val file = tempDir.resolve("MyAnnotation.java")
         file.writeText("""

@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-03-27 (iter 60)
+**Last Updated**: 2026-04-15 (iter 67)
 
 ---
 
@@ -16,6 +16,8 @@
 | `implDocs/archive/ITERATIONS_24_26_DETAILS.md` | 24–26 | 1150/1167 → same, phased 300 → 1374/1442 |
 | `implDocs/archive/ITERATIONS_27_36_DETAILS.md` | 27–36 | 1150/1167 → 1157/1168 box, **79 combined failing** |
 | `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37–51 | 1157/1168 → 1165/1168 box, **17 combined failing** |
+| (inline below) | 52–65 | 1165/1168 → 1168/1168 box, 1454/1456 phased, **2 won't-fix** |
+| (inline below) | 66–67 | Cross-package inherited inner classes + binary supertype BFS |
 
 ---
 
@@ -560,6 +562,69 @@ Full counter data (pre-optimization, aggregated across 110 modules):
 - **`CombinedJavaClassFinder.isClassInIndex` gate**: A simple boolean check on the package→className index avoids entering `findClass`→`findClasses`→index lookup chain entirely for classes not in source. This is the most common case (JDK, library classes).
 - **Per-context aggregation vs per-call caching**: Even when individual `collectInheritedInnerClasses` calls are 99.9% cache hits, calling it 1.5M times (once per type reference × outer class depth) has measurable overhead from the sheer volume of HashMap lookups. Aggregating the result once per context and reusing it eliminates 99.6% of those calls.
 - **Remaining bottleneck**: `findLocalClass` at 933K calls (99.4% cache hit) is now the dominant call by volume. The cache is effective, but the call volume itself (driven by the number of type references across all Java files) means ~933K HashMap lookups. Further optimization would require reducing the number of call sites or restructuring the resolution flow.
+
+---
+
+## Iteration 66: Cross-Package Inherited Inner Class Resolution - 2026-04-15
+
+### Root Cause Analysis
+When a Java class in package `derived` extends an interface from package `base`, and that interface declares inner classes (e.g., `FunctionDescriptor.CopyBuilder`), the inner class could not be resolved from the derived class. This caused `MISSING_DEPENDENCY_CLASS` errors for types like `UserDataKey` when compiling classes that inherit from interfaces in different packages.
+
+The root cause was in `JavaClassFinderOverAstImpl.getDirectSupertypes()` — it only resolved supertype references within the same package. Cross-package supertypes specified via imports (e.g., `import base.FunctionDescriptor`) were not found, so the supertype hierarchy walk stopped at the package boundary. Additionally, `resolveNestedClassToClassId` did not search supertypes for inherited inner classes when the nested class wasn't directly declared on the outer class.
+
+### Fix
+**Three coordinated changes:**
+
+1. **`JavaClassFinderOverAstImpl.kt`** — Added `findFileRoot()` and `extractImportsLightweight()` helpers to extract imports from the file's AST root node. Updated `getDirectSupertypes()` to pass both explicit imports and star imports through `extractSupertypeRefsFromNode()` to `resolveSupertypeReference()`. Extended `resolveSupertypeReference()` to check explicit imports and star imports after same-package lookup fails.
+
+2. **`JavaResolutionContext.kt`** — Added `findInheritedNestedClass()` method that searches the supertype hierarchy of an outer class for inherited nested classes using both the `getSupertypeClassIds` callback (for Kotlin/binary classes) and `collectInheritedInnerClasses` (for same-package Java source classes). Updated `resolveNestedClassToClassId()` to call this method when a nested class isn't directly declared on the resolved outer class. Also added a fallback path using the aggregated inherited inner class map for cases without the `getSupertypeClassIds` callback.
+
+3. **`JavaResolutionContext.kt`** — Fixed `findLocalClassUncached()` to walk the full outer class chain, checking siblings of each outer class (not just the immediate outer). This handles deeply nested classes like `Outer { Inner1 { Inner2 { ... } } }` where `Inner2` must see siblings of `Outer`.
+
+### Test Results
+- Box: 1168/1168, Phased: 1454/1456, Total failing: 2 (same 2 won't-fix)
+- `testInheritedInnerClassCrossPackage` (new test): PASSES
+- Full `:kotlin-java-direct:test` suite: zero regressions
+
+### Caching Verification
+All new code paths use existing caches:
+- `getDirectSupertypes()` results cached via `supertypeCache` — `extractImportsLightweight()` is only called on cache miss
+- `findInheritedNestedClass()` calls `collectInheritedInnerClasses()` which is cached via `inheritedInnerClassesCache`
+- `resolveNestedClassToClassId()` fallback uses `getAggregatedInheritedInnerClasses()` which is cached via `aggregatedInheritedInnerClassesHolder`
+
+### Key Learnings
+- `getDirectSupertypes()` was the only place that resolved supertype references without considering imports — all other resolution paths (type references, `classifierQualifiedName`) already used imports
+- The `resolveNestedClassToClassId` path (`Map.Entry`, `SimpleFunctionDescriptor.CopyBuilder`) is distinct from `resolveSimpleNameToClassId` — inherited inner class resolution must be implemented in both
+- The aggregated inherited inner class map only covers same-package source supertypes; the `getSupertypeClassIds` callback is still needed for cross-package/binary/Kotlin supertypes
+
+---
+
+## Iteration 67: Binary Java Supertype Hierarchy Walking for testDescriptors_jvm - 2026-04-15
+
+### Root Cause Analysis
+The `testDescriptors_jvm` pipeline test failed with `MISSING_DEPENDENCY_CLASS` errors for `UserDataKey` — an inner class declared in `CallableDescriptor` (a binary Java class from the descriptors module). The resolution failed because `getResolvedSupertypeClassIds()` in `JavaTypeConversion.kt` skipped ALL `FirJavaClass` instances, including binary Java classes (`FirDeclarationOrigin.Java.Library`). This prevented Phase 2 BFS from walking binary Java supertype hierarchies like `CallableMemberDescriptor → CallableDescriptor → UserDataKey`.
+
+Binary Java classes have pre-populated `nonEnhancedSuperTypes` (set during deserialization), so accessing their `superTypeRefs` is safe — unlike Java SOURCE classes where `superTypeRefs` is lazy and accessing it can trigger premature resolution cycles.
+
+### Fix
+**File**: `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaTypeConversion.kt`
+
+Changed `getResolvedSupertypeClassIds()` to only skip `FirJavaClass` with `FirDeclarationOrigin.Java.Source` origin (not `Java.Library`). This allows Phase 2 BFS to walk binary Java supertype hierarchies while still preventing premature lazy resolution of Java source class supertypes.
+
+### Test Results
+- `testDescriptors_jvm`: PASSES
+- Full `:kotlin-java-direct:test` suite: zero regressions (2664 tests, same 2 won't-fix)
+
+### Caching Verification
+The `getResolvedSupertypeClassIds` callback is invoked from `resolveInheritedInnerClassToClassId` Phase 2 BFS, which is already gated by:
+- Iteration 61's `aggregatedInheritedInnerClassesHolder` cache (eliminates 99.6% of BFS calls)
+- Iteration 62's per-resolve `tryResolve` cache (eliminates 82% of duplicate ClassId lookups)
+- The BFS itself uses a `visited` set to prevent re-walking the same ClassId
+
+### Key Learnings
+- `FirJavaClass` has two distinct origins: `Java.Source` (parsed from source, lazy supertypes) and `Java.Library` (deserialized from .class files, pre-populated supertypes). The premature-resolution guard must distinguish between them.
+- Binary Java supertype hierarchies (JDK, library classes) are common in real-world compilation — the descriptors module has deep Java class hierarchies (`CallableMemberDescriptor → MemberDescriptor → DeclarationDescriptorWithVisibility → ...`) that all need walking.
+- The fix is a single-line origin check change, but the impact is significant: without it, any inherited inner class from a binary Java supertype hierarchy is invisible to java-direct.
 
 ---
 

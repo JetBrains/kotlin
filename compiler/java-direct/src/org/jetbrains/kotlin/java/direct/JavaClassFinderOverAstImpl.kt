@@ -453,9 +453,10 @@ class JavaClassFinderOverAstImpl(
     }
 
     /**
-     * Returns the direct supertype [ClassId]s for a class (only same-package source classes).
+     * Returns the direct supertype [ClassId]s for a class.
      * Prefers the cached [JavaClass] instance to avoid re-parsing. Falls back to file parsing
      * only when the class hasn't been cached yet.
+     * Resolves cross-package supertypes via imports from the file.
      */
     internal fun getDirectSupertypes(classId: ClassId): List<ClassId> {
         return supertypeCache.getOrPut(classId) {
@@ -467,7 +468,8 @@ class JavaClassFinderOverAstImpl(
             // via findInnerClassFromSupertypes → collectInheritedInnerClasses.
             val cachedClass = classCache[classId]
             if (cachedClass is JavaClassOverAst) {
-                return@getOrPut extractSupertypeRefsFromNode(cachedClass.node, packageFqName)
+                val (simpleImports, starImports) = cachedClass.resolutionContext.getImports()
+                return@getOrPut extractSupertypeRefsFromNode(cachedClass.node, packageFqName, simpleImports, starImports)
             }
 
             // Slow path: parse the file (should be rare after indexing improvements)
@@ -479,28 +481,37 @@ class JavaClassFinderOverAstImpl(
             val builder = parseJavaToSyntaxTreeBuilder(source, 0)
             val root = buildSyntaxTree(builder, source)
 
+            // Assuming this is a rare case, when we need to get import before `parseTopLevelClassFromFile`, which extracts imports too
+            // TODO: check if this is rare enore
+            val (simpleImports, starImports) = JavaResolutionContext.extractImports(root)
             val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
-            extractSupertypeRefsFromNode(classNode, packageFqName)
+            extractSupertypeRefsFromNode(classNode, packageFqName, simpleImports, starImports)
         }
     }
+
 
     /**
      * Extracts supertype [ClassId]s from extends/implements clauses of an AST node.
      * Uses raw text from JAVA_CODE_REFERENCE nodes — no type resolution involved.
      */
-    private fun extractSupertypeRefsFromNode(classNode: JavaSyntaxNode, packageFqName: FqName): List<ClassId> {
+    private fun extractSupertypeRefsFromNode(
+        classNode: JavaSyntaxNode,
+        packageFqName: FqName,
+        simpleImports: Map<String, FqName> = emptyMap(),
+        starImports: List<FqName> = emptyList(),
+    ): List<ClassId> {
         val supertypes = mutableListOf<ClassId>()
         classNode.findChildByType("EXTENDS_LIST")
             ?.getChildrenByType("JAVA_CODE_REFERENCE")
             ?.forEach { ref ->
-                resolveSupertypeReference(ref.text, packageFqName)?.let {
+                resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
                     supertypes.add(it)
                 }
             }
         classNode.findChildByType("IMPLEMENTS_LIST")
             ?.getChildrenByType("JAVA_CODE_REFERENCE")
             ?.forEach { ref ->
-                resolveSupertypeReference(ref.text, packageFqName)?.let {
+                resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
                     supertypes.add(it)
                 }
             }
@@ -568,13 +579,35 @@ class JavaClassFinderOverAstImpl(
         return currentNode
     }
 
-    private fun resolveSupertypeReference(ref: String, packageFqName: FqName): ClassId? {
+    private fun resolveSupertypeReference(
+        ref: String,
+        packageFqName: FqName,
+        simpleImports: Map<String, FqName> = emptyMap(),
+        starImports: List<FqName> = emptyList(),
+    ): ClassId? {
         val simpleName = ref.substringBefore('<').trim()
 
         if (!simpleName.contains('.')) {
-            val samePackageId = ClassId(packageFqName, Name.identifier(simpleName))
+            // 1. Same-package lookup
             if (index[packageFqName]?.containsKey(simpleName) == true) {
-                return samePackageId
+                return ClassId(packageFqName, Name.identifier(simpleName))
+            }
+
+            // 2. Explicit import lookup (e.g., import base.FunctionDescriptor)
+            val explicitFqName = simpleImports[simpleName]
+            if (explicitFqName != null) {
+                val importPkg = explicitFqName.parent()
+                val importName = explicitFqName.shortName().asString()
+                if (index[importPkg]?.containsKey(importName) == true) {
+                    return ClassId(importPkg, Name.identifier(importName))
+                }
+            }
+
+            // 3. Star import lookup (e.g., import base.*)
+            for (starPkg in starImports) {
+                if (index[starPkg]?.containsKey(simpleName) == true) {
+                    return ClassId(starPkg, Name.identifier(simpleName))
+                }
             }
         }
 
