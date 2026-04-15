@@ -5,19 +5,27 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import com.google.gson.JsonParser
 import org.gradle.api.Action
+import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.distsDirectory
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.io.File
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class DevServerConfigurator(
@@ -33,8 +41,29 @@ internal class DevServerConfigurator(
 
     private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinSimpleDevServerTask>>()
 
+    private lateinit var importMapTaskHolder: TaskProvider<KotlinImportMapGenerateTask>
+
+    private fun importMapTask(compilation: KotlinJsIrCompilation): TaskProvider<KotlinImportMapGenerateTask> {
+        if (::importMapTaskHolder.isInitialized) return importMapTaskHolder
+
+        val npmProject = compilation.npmProject
+
+        importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
+            it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
+            it.rootDirectory.set(project.rootDir)
+            it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
+            it.inputDirectory.set(npmProject.dir)
+            it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
+            it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
+        }
+
+        return importMapTaskHolder
+    }
+
     override fun setupBuild(compilation: KotlinJsIrCompilation) {
         val npmProject = compilation.npmProject
+
+        val importMapTaskHolder = importMapTask(compilation)
 
         compilation.binaries
             .withType<Executable>()
@@ -67,22 +96,60 @@ internal class DevServerConfigurator(
                         it.exclude("importmap-loader.js")
                     }
                     copy.from(importMapDistTaskHolder.map { it.importMapLoaderFile })
+                    val rootDir = project.rootDir
+                    copy.from(
+                        importMapTaskHolder.map { task ->
+                            task.importMapFile.map { importMapFile ->
+                                parseImportMapModuleDirectories(importMapFile.asFile, rootDir)
+                            }
+                        }
+                    ) {
+                        it.includeEmptyDirs = false
+                        it.into(VENDORS_FOLDER)
+                        it.eachFile { file ->
+                            file.path = File(VENDORS_FOLDER).resolve(file.file.relativeTo(file.file.closestNodeModules())).path
+                        }
+                    }
                     copy.into(binary.distribution.outputDirectory)
                 }
             }
     }
 
-    override fun setupRun(compilation: KotlinJsIrCompilation) {
-        val npmProject = compilation.npmProject
+    private fun parseImportMapModuleDirectories(importMapFile: File, rootDir: File): Set<File> {
+        val importMapContent = importMapFile.readText()
+        val importMapObject = JsonParser.parseString(importMapContent).asJsonObject
+        val imports = importMapObject.getAsJsonObject("imports") ?: error("No imports in import map $importMapFile")
 
-        val importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
-            it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
-            it.rootDirectory.set(project.rootDir)
-            it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
-            it.inputDirectory.set(npmProject.dir)
-            it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
-            it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
+        return imports.entrySet()
+            .map { (_, path) ->
+                val relativePath = path.asString.trimStart('/')
+                val moduleMainFile = rootDir.resolve(relativePath)
+                moduleMainFile.resolveModuleDirectory()
+            }.distinct()
+            .toSet()
+    }
+
+    private fun File.resolveModuleDirectory(): File {
+        var packageJsonCandidate = resolveSibling(PACKAGE_JSON)
+        while (!packageJsonCandidate.exists()) {
+            packageJsonCandidate = packageJsonCandidate.parentFile.resolveSibling(PACKAGE_JSON)
         }
+
+        return packageJsonCandidate.parentFile
+    }
+
+    private fun File.closestNodeModules(): File {
+        var packageJsonCandidate = this
+        while (packageJsonCandidate.name != NODE_MODULES) {
+            packageJsonCandidate = packageJsonCandidate.parentFile
+        }
+
+        return packageJsonCandidate
+    }
+
+    override fun setupRun(compilation: KotlinJsIrCompilation) {
+
+        val importMapTaskHolder = importMapTask(compilation)
 
         compilation.binaries
             .withType<Executable>()
@@ -131,5 +198,6 @@ internal class DevServerConfigurator(
 
     companion object {
         const val DEV_SERVER_TASK_NAME = "devServer"
+        private const val VENDORS_FOLDER = "vendors"
     }
 }

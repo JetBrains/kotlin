@@ -31,7 +31,7 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val installArtifacts: ConfigurableFileCollection
 
-    @get:InputDirectory
+    @get:Internal
     abstract val inputDirectory: DirectoryProperty
 
     @get:Internal
