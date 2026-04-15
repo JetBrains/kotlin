@@ -6,5 +6,8 @@ import kotlin.experimental.ExperimentalObjCEnum
 @OptIn(kotlin.experimental.ExperimentalObjCEnum::class)
 @ObjCEnum("OBJCFoo", swiftName="SwiftFoo")
 enum class MyKotlinEnum {
-    ALPHA, COPY, BAR_FOO
+    ALPHA,
+    COPY,
+    @ObjCEnum.EntryName("renamed")
+    ORIGINAL
 }
