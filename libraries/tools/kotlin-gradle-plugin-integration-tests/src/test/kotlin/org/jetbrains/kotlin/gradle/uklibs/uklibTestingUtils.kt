@@ -105,7 +105,7 @@ fun TestProject.publishReturn(
     repositoryIdentifier: String,
 ): ReturnFromBuildScriptAfterExecution<PublishedProject> {
     buildScriptInjection {
-        if (project.hasProperty(repositoryIdentifier)) {
+        if (project.providers.gradleProperty(repositoryIdentifier).isPresent) {
             project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
         }
     }
