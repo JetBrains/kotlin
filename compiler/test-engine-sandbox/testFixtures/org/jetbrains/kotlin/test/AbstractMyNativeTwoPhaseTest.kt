@@ -92,7 +92,10 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
 
             // Because of package escaping various dumps for grouping mode would be different from
             // the regular one, so we don't want all the frontend handlers to be set up, only some specific ones.
-            setupStepsForNativeFirstStageUpToSerialization(includeFirHandlers = false)
+            setupStepsForNativeFirstStageUpToSerialization(
+                includeBasicFirHandlers = false,
+                includeDumpFirHandlers = false
+            )
 
             configureFirHandlersStep {
                 useHandlers(::FirDiagnosticsHandler, ::NoFirCompilationErrorsHandler)

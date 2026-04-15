@@ -34,9 +34,11 @@ import org.jetbrains.kotlin.utils.bind
 
 fun TestConfigurationBuilder.commonConfigurationForNativeFirstStageUpToSerialization(
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+    includeBasicFirHandlers: Boolean = true,
+    includeDumpFirHandlers: Boolean = true
 ) {
     commonConfigurationForNativeCodegenTest(customIgnoreDirective = customIgnoreDirective)
-    setupStepsForNativeFirstStageUpToSerialization()
+    setupStepsForNativeFirstStageUpToSerialization(includeBasicFirHandlers, includeDumpFirHandlers)
 }
 
 /**
@@ -77,18 +79,23 @@ fun TestConfigurationBuilderBase<*, *>.commonConfigurationForNativeCodegenTest(
  * Also, sets up corresponding handlers steps for each facade step.
  */
 fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(
-    includeFirHandlers: Boolean = true,
+    includeBasicFirHandlers: Boolean = true,
+    includeDumpFirHandlers: Boolean = true
 ) {
     facadeStep(::FirCliNativeFacade)
     firHandlersStep {
         commonFirHandlersForCodegenTest()
-        if (includeFirHandlers) {
+        if (includeBasicFirHandlers) {
             useHandlers(
-                ::FirDumpHandler,
-                ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
                 ::FirResolvedTypesVerifier,
                 ::FirDiagnosticsHandler,
+            )
+        }
+        if (includeDumpFirHandlers) {
+            useHandlers(
+                ::FirDumpHandler,
+                ::FirCfgDumpHandler,
             )
         }
     }

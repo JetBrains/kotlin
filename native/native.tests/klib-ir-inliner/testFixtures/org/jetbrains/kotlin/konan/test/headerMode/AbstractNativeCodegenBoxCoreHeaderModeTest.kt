@@ -45,7 +45,6 @@ abstract class AbstractNativeCodegenBoxCoreHeaderModeTest : AbstractNativeCoreTe
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
-        configureFirParser(FirParser.LightTree)
         useAdditionalService(::LibraryProvider)
         useConfigurators(
             ::CommonEnvironmentConfigurator,
@@ -64,12 +63,9 @@ abstract class AbstractNativeCodegenBoxCoreHeaderModeTest : AbstractNativeCoreTe
         facadeStep(::ObjCInteropFacade)
 
         commonConfigurationForNativeFirstStageUpToSerialization(
-            IGNORE_HEADER_MODE
+            customIgnoreDirective = IGNORE_HEADER_MODE,
+            includeDumpFirHandlers = false
         )
-        // Don't compare FIR and CFG dumps. Header-mode outputs can be different.
-        firHandlersStep {
-            removeHandlers(::FirCfgDumpHandler, ::FirDumpHandler)
-        }
         facadeStep(::KlibSerializerNativeCliFacade)
         klibArtifactsHandlersStep()
 
