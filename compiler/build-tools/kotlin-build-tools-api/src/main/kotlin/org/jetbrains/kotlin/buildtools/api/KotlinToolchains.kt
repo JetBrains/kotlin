@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_3_20
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_0
+import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_20
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.net.URLClassLoader
 import java.nio.file.Path
@@ -162,6 +163,9 @@ public interface KotlinToolchains {
             }
             if (kotlinCompilerVersion < KotlinCompilerVersion(2, 4, 0, "snapshot")) {
                 baseImplementation = KotlinWrapperPre2_4_0(baseImplementation)
+            }
+            if (kotlinCompilerVersion < KotlinCompilerVersion(2, 4, 20, "snapshot")) {
+                baseImplementation = KotlinWrapperPre2_4_20(baseImplementation)
             }
 
             baseImplementation

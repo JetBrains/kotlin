@@ -668,7 +668,6 @@ internal class KotlinWrapperPre2_4_0(
                     val listValue = value as List<Path>?
                     val stringValue =
                         listValue?.map { it.toFile().absolutePath }
-                            ?.also { list -> list.checkNoneContains(File.pathSeparator) }
                             ?.joinToString(File.pathSeparator)
                     val stringKey = JvmCompilerArguments.JvmCompilerArgument<String?>(key.id, key.availableSinceVersion)
 
@@ -680,7 +679,7 @@ internal class KotlinWrapperPre2_4_0(
                     -> {
                     @Suppress("UNCHECKED_CAST")
                     val listValue = value as List<Path>
-                    val arrayValue = listValue.map { it.toFile().absolutePath }.also { it.checkNoneContains(",") }.toTypedArray()
+                    val arrayValue = listValue.map { it.toFile().absolutePath }.toTypedArray()
                     val arrayKey = JvmCompilerArguments.JvmCompilerArgument<Array<String>?>(key.id, key.availableSinceVersion)
 
                     delegate[arrayKey] = arrayValue
@@ -728,16 +727,5 @@ internal class KotlinWrapperPre2_4_0(
                 else -> delegate[key] = value
             }
         }
-    }
-}
-
-private fun List<String>.checkNoneContains(other: CharSequence) {
-    val invalidItem = firstOrNull { it.contains(other) }
-    if (invalidItem != null) {
-        throw CompilerArgumentsParseException(
-            "Invalid character '${other}' found in argument '$invalidItem'. " +
-                    "This character is currently not supported in this context. " +
-                    "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
-        )
     }
 }
