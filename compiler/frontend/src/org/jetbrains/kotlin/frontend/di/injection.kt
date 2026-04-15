@@ -160,7 +160,7 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<OptInUsageChecker.ClassifierUsage>()
 
     useImpl<ContractDeserializerImpl>()
-    useImpl<JvmCompilerDeserializationConfiguration>()
+    useImpl<CommonCompilerDeserializationConfiguration>()
 
     useImpl<ClassicTypeSystemContextForCS>()
     useImpl<ClassicConstraintSystemUtilContext>()

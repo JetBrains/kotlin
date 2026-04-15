@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
-import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -65,7 +65,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
 
 fun GenerationState.loadCompiledModule(): ModuleMapping? {
     val moduleMappingData = incrementalCacheForThisTarget?.getModuleMappingData() ?: return null
-    val deserializationConfiguration = JvmCompilerDeserializationConfiguration(config.languageVersionSettings)
+    val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.languageVersionSettings)
     return ModuleMapping.loadModuleMapping(moduleMappingData, "<incremental>", deserializationConfiguration) { version ->
         throw IllegalStateException("Version of the generated module cannot be incompatible: $version")
     }

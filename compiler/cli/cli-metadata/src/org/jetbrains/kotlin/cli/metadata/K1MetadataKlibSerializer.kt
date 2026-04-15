@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFa
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -191,7 +191,7 @@ private class KlibMetadataDependencyContainer(
             customMetadataProtoLoader = null,
             storageManager = LockBasedStorageManager("KlibMetadataPackageFragmentProvider"),
             moduleDescriptor = libraryModuleDescriptor,
-            configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
+            configuration = CommonCompilerDeserializationConfiguration(languageVersionSettings),
             compositePackageFragmentAddend = null,
             lookupTracker = LookupTracker.DO_NOTHING
         ).also {

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
-import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.PrintStream
@@ -28,7 +28,7 @@ class JvmPackagePartProvider(
     languageVersionSettings: LanguageVersionSettings,
     private val scope: GlobalSearchScope
 ) : JvmPackagePartProviderBase<VirtualFile>() {
-    override val deserializationConfiguration = JvmCompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration = CommonCompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<VirtualFile>> = SmartList()
 
@@ -66,7 +66,7 @@ fun tryLoadModuleMapping(
     getModuleBytes: () -> ByteArray,
     debugName: String,
     modulePath: String,
-    deserializationConfiguration: JvmCompilerDeserializationConfiguration,
+    deserializationConfiguration: CommonCompilerDeserializationConfiguration,
     configuration: CompilerConfiguration
 ): ModuleMapping? = try {
     ModuleMapping.loadModuleMapping(getModuleBytes(), debugName, deserializationConfiguration) { incompatibleVersion ->

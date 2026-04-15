@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -55,7 +55,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             customMetadataProtoLoader = null,
             storageManager = storageManager,
             moduleDescriptor = moduleDescriptor,
-            configuration = KlibCompilerDeserializationConfiguration(languageVersionSettings),
+            configuration = CommonCompilerDeserializationConfiguration(languageVersionSettings),
             compositePackageFragmentAddend = runIf(library.isAnyPlatformStdlib) {
                 functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
             },

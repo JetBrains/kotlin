@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
-import org.jetbrains.kotlin.resolve.JvmCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import kotlin.script.experimental.jvm.util.forAllMatchingFiles
 
 class PackagePartFromClassLoaderProvider(
@@ -19,7 +19,7 @@ class PackagePartFromClassLoaderProvider(
     languageVersionSettings: LanguageVersionSettings,
     configuration: CompilerConfiguration,
 ) : JvmPackagePartProviderBase<String>() {
-    override val deserializationConfiguration = JvmCompilerDeserializationConfiguration(languageVersionSettings)
+    override val deserializationConfiguration = CommonCompilerDeserializationConfiguration(languageVersionSettings)
 
     override val loadedModules: MutableList<ModuleMappingInfo<String>> = SmartList()
 

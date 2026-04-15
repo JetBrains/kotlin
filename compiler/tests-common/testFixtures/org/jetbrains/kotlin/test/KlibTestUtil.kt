@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeMetadata
-import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
 import java.nio.file.Path
@@ -210,7 +210,7 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
         customMetadataProtoLoader = null,
         storageManager = projectContext.storageManager,
         moduleDescriptor = stdlibCommonDescriptor,
-        configuration = KlibCompilerDeserializationConfiguration(environment.configuration.languageVersionSettings),
+        configuration = CommonCompilerDeserializationConfiguration(environment.configuration.languageVersionSettings),
         compositePackageFragmentAddend = null,
         lookupTracker = LookupTracker.DO_NOTHING,
     )
