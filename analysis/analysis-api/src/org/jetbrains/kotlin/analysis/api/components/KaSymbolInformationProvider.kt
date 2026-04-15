@@ -131,6 +131,21 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     public val KaSymbol.importableFqName: FqName?
 
     /**
+     * A set of annotation targets matching for the given symbol, or `null` if the symbol cannot be annotated.
+     * Annotations with one of targets from the returned set can be placed on the [KaSymbol] without an explicit use-site target.
+     *
+     * Such as, annotations with [KaAnnotationTarget.PROPERTY] or [KaAnnotationTarget.VALUE_PARAMETER] can be directly placed on
+     * a 'val' value parameter, while annotations for [KaAnnotationTarget.PROPERTY_GETTER] and [KaAnnotationTarget.PROPERTY_SETTER]
+     * can only be applied using the `@set:AnnotationName` syntax.
+     *
+     * Check the [Annotation use-site targets](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) documentation
+     * for additional information.
+     */
+    @KaIdeApi
+    @KaExperimentalApi
+    public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
+
+    /**
      * The return value status of the function (should it be used, or can it be ignored).
      * See the [KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0412-unused-return-value-checker.md) for details.
      */
@@ -337,6 +352,25 @@ public val KaKotlinPropertySymbol.isInline: Boolean
 context(session: KaSession)
 public val KaSymbol.importableFqName: FqName?
     get() = with(session) { importableFqName }
+
+/**
+ * A set of annotation targets matching for the given symbol, or `null` if the symbol cannot be annotated.
+ * Annotations with one of targets from the returned set can be placed on the [KaSymbol] without an explicit use-site target.
+ *
+ * Such as, annotations with [KaAnnotationTarget.PROPERTY] or [KaAnnotationTarget.VALUE_PARAMETER] can be directly placed on
+ * a 'val' value parameter, while annotations for [KaAnnotationTarget.PROPERTY_GETTER] and [KaAnnotationTarget.PROPERTY_SETTER]
+ * can only be applied using the `@set:AnnotationName` syntax.
+ *
+ * Check the [Annotation use-site targets](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) documentation
+ * for additional information.
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaIdeApi
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
+    get() = with(session) { defaultAnnotationTargets }
 
 /**
  * The return value status of the function (should it be used, or can it be ignored).

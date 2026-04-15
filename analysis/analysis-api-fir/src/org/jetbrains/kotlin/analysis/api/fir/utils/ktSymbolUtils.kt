@@ -58,11 +58,3 @@ internal fun KaSymbol.getContainingKtModule(resolutionFacade: LLResolutionFacade
     is KaReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(resolutionFacade)
     else -> TODO("${this::class}")
 }
-
-@KaImplementationDetail
-context(session: KaSession)
-fun KaSymbol.getActualAnnotationTargets(): List<KotlinTarget>? {
-    val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
-    val firSession = (session as? KaFirSession)?.firSession ?: return null
-    return getActualTargetList(firSymbol, firSession).defaultTargets
-}

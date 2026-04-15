@@ -1,0 +1,4 @@
+Symbol:
+  KaNamedClassSymbol
+Default annotation targets:
+  CLASS
