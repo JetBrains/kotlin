@@ -113,7 +113,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             resolveIdeDependencies {
                 it["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
-                    unresolvedDependenciesDiagnosticMatcher(dependencyName = "com.example.thirdparty:third-party-lib"),
+                    unresolvedDependenciesDiagnosticMatcher(dependencyName = "com.example.thirdparty:third-party-lib:1.0"),
                 )
                 it["jvmAndJsMain"].assertMatches(
                     kotlinStdlibDependencies,

@@ -56,7 +56,7 @@ class IdeTransformedMetadataDependencyResolverTest {
 
         project.evaluate()
 
-        val unresolvedDependenciesDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.arkivanov.mvikotlin:mvikotlin")
+        val unresolvedDependenciesDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
 
         // Expected to be unresolved in all intermediate main & test source sets
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
