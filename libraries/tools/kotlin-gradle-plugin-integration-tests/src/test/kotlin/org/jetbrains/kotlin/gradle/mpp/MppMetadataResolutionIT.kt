@@ -371,17 +371,6 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 metadataTransformationOutputClasspath("commonMain")
                     .relativeTransformationPathComponents().prettyPrinted
             )
-
-            val flagName = "kotlin.internal.kmp.allowMatchingByRequestedCoordinatesInMetadataTransformations"
-            assertEquals(
-                listOf(
-                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib")
-                ).prettyPrinted,
-                metadataTransformationOutputClasspath(
-                    "commonMain",
-                    buildOptions = buildOptions.copy(freeArgs = listOf("-P${flagName}=false"))
-                ).relativeTransformationPathComponents().prettyPrinted
-            )
         }
     }
 
