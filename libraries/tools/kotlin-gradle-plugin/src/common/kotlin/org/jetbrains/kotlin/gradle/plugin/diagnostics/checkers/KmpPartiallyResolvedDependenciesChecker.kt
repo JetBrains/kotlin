@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ComponentSelector
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.result.UnresolvedDependencyResult
 import org.gradle.api.tasks.StopExecutionException
@@ -22,10 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KmpMultiVariantModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.kmpMultiVariantModuleIdentifier
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -209,17 +208,17 @@ internal fun partiallyUnresolvedPlatformDependencies(
     metadataConfiguration: LazyResolvedConfigurationComponent,
 ): List<KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.UnresolvedKmpDependency> {
     val unresolvedDependenciesMap:
-            MutableMap<KmpMultiVariantModuleIdentifier, UnresolvedKmpDependency> = mutableMapOf()
+            MutableMap<ComponentSelector, UnresolvedKmpDependency> = mutableMapOf()
     dependingPlatformCompilations.forEach { platformCompilation ->
         val directUnresolvedDependencies = platformCompilation.resolvedDependenciesConfiguration
             .root.dependencies.filterIsInstance<UnresolvedDependencyResult>()
 
-        val visitedDependencies = mutableSetOf<KmpMultiVariantModuleIdentifier>()
+        val visitedDependencies = mutableSetOf<ComponentSelector>()
         directUnresolvedDependencies.forEach { unresolvedDependency ->
-            val kmpIdentifier = unresolvedDependency.attempted.kmpMultiVariantModuleIdentifier()
+            val kmpIdentifier = unresolvedDependency.attempted
             if (visitedDependencies.add(kmpIdentifier)) {
                 unresolvedDependenciesMap.getOrPut(
-                    unresolvedDependency.attempted.kmpMultiVariantModuleIdentifier(),
+                    unresolvedDependency.attempted,
                 ) { UnresolvedKmpDependency() }.unresolvedComponents.add(
                     UnresolvedKmpDependency.UnresolvedComponent(
                         targetName = platformCompilation.targetName,
@@ -238,20 +237,11 @@ internal fun partiallyUnresolvedPlatformDependencies(
         configuration: LazyResolvedConfigurationComponent,
         action: (UnresolvedKmpDependency, ResolvedDependencyResult) -> Unit,
     ) {
-        val visitedDependencies = mutableSetOf<KmpMultiVariantModuleIdentifier>()
+        val visitedDependencies = mutableSetOf<ComponentSelector>()
         configuration.allResolvedDependencies.forEach { resolvedDependency ->
-            val selectedKmpIdentifier = resolvedDependency.selected.id.kmpMultiVariantModuleIdentifier()
+            val selectedKmpIdentifier = resolvedDependency.requested
             if (visitedDependencies.add(selectedKmpIdentifier)) {
                 unresolvedDependenciesMap[selectedKmpIdentifier]?.let {
-                    action(it, resolvedDependency)
-                }
-            }
-            /**
-             * Handle dependency substitution since in this case selected and attempted above are guaranteed to be different
-             */
-            val requestedKmpIdentifier = resolvedDependency.requested.kmpMultiVariantModuleIdentifier()
-            if (visitedDependencies.add(requestedKmpIdentifier)) {
-                unresolvedDependenciesMap[requestedKmpIdentifier]?.let {
                     action(it, resolvedDependency)
                 }
             }
@@ -279,7 +269,7 @@ internal fun partiallyUnresolvedPlatformDependencies(
         (it.value.resolvedMetadataComponentIdentifier != null) || it.value.resolvedVariants.isNotEmpty()
     }.map { unresolvedKmpDependency ->
         KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.UnresolvedKmpDependency(
-            displayName = unresolvedKmpDependency.key.displayCoordinate,
+            displayName = unresolvedKmpDependency.key.displayName,
             resolvedMetadataComponentIdentifier = unresolvedKmpDependency.value.resolvedMetadataComponentIdentifier,
             unresolvedComponents = unresolvedKmpDependency.value.unresolvedComponents,
             resolvedVariants = unresolvedKmpDependency.value.resolvedVariants,

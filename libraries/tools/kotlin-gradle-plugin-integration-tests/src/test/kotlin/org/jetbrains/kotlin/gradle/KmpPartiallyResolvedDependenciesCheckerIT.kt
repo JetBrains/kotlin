@@ -86,7 +86,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         ) { container ->
             container["commonMain"].assertMatches(
                 kotlinStdlibDependencies,
-                unresolvedDependenciesDiagnosticMatcher(dependencyName = "foo:empty"),
+                unresolvedDependenciesDiagnosticMatcher(dependencyName = "foo:empty:1.0"),
             )
         }
     }
