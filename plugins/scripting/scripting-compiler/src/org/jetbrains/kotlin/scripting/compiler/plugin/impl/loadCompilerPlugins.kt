@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import kotlin.script.experimental.jvm.util.forAllMatchingFiles
 
@@ -23,7 +22,6 @@ private const val SCRIPT_COMPILATION_DISABLE_COMMANDLINE_PROCESSORS_PROPERTY = "
 
 private val scriptCompilationDisabledPlugins =
     listOf(
-        ScriptingCompilerConfigurationComponentRegistrar::class.java.name,
         ScriptingK2CompilerPluginRegistrar::class.java.name
     )
 

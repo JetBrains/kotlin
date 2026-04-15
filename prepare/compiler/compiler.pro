@@ -72,9 +72,6 @@
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreter
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
 
-# The appropriate jar is either loaded separately or added explicitly to the classpath then needed
--dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
-
 # Ignore generated Gradle DSL types
 # They will be added separately on generating Gradle DSL for compiler options
 -dontwarn org.jetbrains.kotlin.cli.common.arguments.DefaultValues$*
