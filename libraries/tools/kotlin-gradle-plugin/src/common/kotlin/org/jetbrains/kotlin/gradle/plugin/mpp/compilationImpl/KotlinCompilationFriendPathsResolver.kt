@@ -31,10 +31,13 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
                 friendsFromAssociatedCompilations.from(it.output.classesDirs)
                 // Adding classes that could be produced to non-default destination for JVM target
                 // Check KotlinSourceSetProcessor for details
-                @Suppress("UNCHECKED_CAST")
-                val compileTaskOutput = (it.compileTaskProvider as TaskProvider<KotlinCompileTool>)
-                    .flatMap { task -> task.destinationDirectory }
-                friendsFromAssociatedCompilations.from(compileTaskOutput)
+                // FIXME: KT-85759 Track compile task outputs correctly in the KotlinWithJavaCompilation outputs
+                if (it is KotlinWithJavaCompilation<*, *>) {
+                    @Suppress("UNCHECKED_CAST")
+                    val compileTaskOutput = (it.compileTaskProvider as TaskProvider<KotlinCompileTool>)
+                        .flatMap { task -> task.destinationDirectory }
+                    friendsFromAssociatedCompilations.from(compileTaskOutput)
+                }
             }
             add(friendsFromAssociatedCompilations)
             add(friendArtifactResolver.resolveFriendArtifacts(compilation))
