@@ -1,0 +1,4 @@
+Symbol:
+  KaValueParameterSymbol
+Default annotation targets:
+  VALUE_PARAMETER
