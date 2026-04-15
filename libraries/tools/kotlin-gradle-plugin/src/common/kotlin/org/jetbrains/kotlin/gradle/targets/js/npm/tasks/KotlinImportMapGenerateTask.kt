@@ -10,11 +10,14 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.File
 import java.nio.file.LinkOption
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
@@ -42,6 +45,14 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
     @get:OutputFile
     abstract val importMapLoaderFile: RegularFileProperty
+
+    @get:Input
+    @get:Optional
+    abstract val flattenPaths: Property<Boolean>
+
+    @get:Input
+    @get:Optional
+    abstract val pathPrefix: Property<String>
 
     @TaskAction
     fun generate() {
@@ -99,8 +110,20 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
         moduleName: String,
     ): String {
         val resolvedFile = modules.resolve(moduleName) ?: error("Module $moduleName not found")
-        val relativePath = resolvedFile.relativeTo(rootDirectory.getFile()).path
-        return "/$relativePath"
+        val relativeFile = if (flattenPaths.getOrElse(false)) {
+            val nodeModulesDir = resolvedFile.nearestNodeModules()
+            resolvedFile.relativeTo(nodeModulesDir)
+        } else resolvedFile.relativeTo(rootDirectory.getFile())
+        return "${pathPrefix.getOrElse("")}/${relativeFile.path}"
+    }
+
+    private fun File.nearestNodeModules(): File {
+        var current: File = this
+        while (current.name != NODE_MODULES) {
+            current = current.parentFile
+        }
+
+        return current
     }
 
     companion object {

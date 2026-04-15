@@ -113,7 +113,10 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 
     val generateImportMapTaskName: String
-        get() = compilation.disambiguateName(KotlinImportMapGenerateTask.NAME)
+        get() = compilation.disambiguateName(KotlinImportMapGenerateTask.NAME + "Server")
+
+    val generateImportMapDistTaskName: String
+        get() = compilation.disambiguateName(KotlinImportMapGenerateTask.NAME + "Dist")
 
     internal val modules by lazy {
         NpmProjectModules(dir.getFile())

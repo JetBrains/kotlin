@@ -27,13 +27,11 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -130,25 +128,6 @@ class KotlinCompilationNpmResolver(
                 publicPackageJsonConfiguration.name,
                 publicPackageJsonTaskHolder.map { it.packageJsonFile },
             )
-        }
-
-        if (compilation.wasmTarget != null) {
-            val importMapTaskHolder = project.registerTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapTaskName) {
-                it.nodeModulesDirectory.set(npmProject.nodeModulesDir)
-                it.rootDirectory.set(project.rootDir)
-                it.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
-                it.inputDirectory.set(npmProject.dir)
-                it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
-                it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
-            }
-
-            compilation.binaries
-                .withType(JsIrBinary::class.java)
-                .configureEach { binary ->
-                    binary.linkSyncTask.configure { syncTask ->
-                        syncTask.from.from(importMapTaskHolder.map { it.importMapLoaderFile })
-                    }
-                }
         }
     }
 
