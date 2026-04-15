@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.nativeEnvironmentConfigurator
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.native.pipeline.NativeFir2IrArtifact
@@ -80,7 +80,7 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
                     KotlinLibraryVersioning(
                         compilerVersion = KotlinCompilerVersion.getVersion(),
                         abiVersion = configuration.klibAbiVersionForManifest(),
-                        metadataVersion = configuration.klibMetadataVersionOrDefault(),
+                        metadataVersion = configuration.metadataVersion(),
                     )
                 )
                 platformAndTargets(BuiltInsPlatform.NATIVE, testServices.nativeEnvironmentConfigurator.getNativeTarget(module).name)

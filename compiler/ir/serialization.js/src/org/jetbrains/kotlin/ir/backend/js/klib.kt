@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
+import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
@@ -401,7 +401,7 @@ fun serializeModuleIntoKlib(
     val versions = KotlinLibraryVersioning(
         compilerVersion = KotlinCompilerVersion.VERSION,
         abiVersion = configuration.klibAbiVersionForManifest(),
-        metadataVersion = configuration.klibMetadataVersionOrDefault()
+        metadataVersion = configuration.metadataVersion()
     )
 
     val properties = Properties().also { p ->

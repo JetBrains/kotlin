@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.util.jvmMetadataVersion
+import org.jetbrains.kotlin.util.metadataVersion
 
 class JvmBackendConfig(configuration: CompilerConfiguration) {
     val languageVersionSettings: LanguageVersionSettings = configuration.languageVersionSettings
@@ -87,7 +87,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val disableOptimization: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_OPTIMIZATION)
 
-    val metadataVersion: BinaryVersion = configuration.jvmMetadataVersion()
+    val metadataVersion: BinaryVersion = configuration.metadataVersion()
 
     val abiStability: JvmAbiStability? = configuration.get(JVMConfigurationKeys.ABI_STABILITY)
 

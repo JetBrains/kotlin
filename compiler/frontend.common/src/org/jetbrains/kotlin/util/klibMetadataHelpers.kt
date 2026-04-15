@@ -5,18 +5,9 @@
 
 package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.metadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-
-fun CompilerConfiguration.klibMetadataVersionOrDefault(
-    languageVersion: LanguageVersion = languageVersionSettings.languageVersion
-): MetadataVersion {
-    return this.metadataVersion as? MetadataVersion ?: languageVersion.toMetadataVersion()
-}
 
 fun KlibAbiCompatibilityLevel.toCInteropKlibMetadataVersion(): MetadataVersion =
     LanguageVersion.fromVersionString("$major.$minor")?.toMetadataVersion() ?: error("Cannot convert $this to MetadataVersion")
