@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.util.toKlibMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 import java.io.File
 
 /**
@@ -157,7 +157,7 @@ fun <SourceFile> serializeModuleIntoKlib(
         .sortedBy { it.first }
         .unzip()
 
-    val metadataVersion = configuration.languageVersionSettings.languageVersion.toKlibMetadataVersion().toArray()
+    val metadataVersion = configuration.languageVersionSettings.languageVersion.toMetadataVersion().toArray()
 
     val serializedMetadata = SerializedMetadata(
         module = header,

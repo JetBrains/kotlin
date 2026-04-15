@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.toJvmMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.jvm.ClassLoaderByConfiguration
 
@@ -70,7 +70,7 @@ class PackageFragmentFromClassLoaderProviderExtension(
             makeDeserializationComponentsForJava(
                 module, storageManager, notFoundClasses, lazyJavaPackageFragmentProvider,
                 reflectKotlinClassFinder, deserializedDescriptorResolver, RuntimeErrorReporter,
-                languageVersionSettings.languageVersion.toJvmMetadataVersion()
+                languageVersionSettings.languageVersion.toMetadataVersion()
             )
 
         deserializedDescriptorResolver.setComponents(deserializationComponentsForJava)

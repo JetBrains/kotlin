@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.util.toJvmMetadataVersion
-import org.jetbrains.kotlin.util.toKlibMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 
 abstract class CommonCompilerDeserializationConfiguration(
     protected val languageVersionSettings: LanguageVersionSettings,
@@ -34,9 +33,8 @@ abstract class CommonCompilerDeserializationConfiguration(
         languageVersionSettings.supportsFeature(LanguageFeature.ReadDeserializedContracts)
 }
 
-// TODO KT-76195 Consider replacing the following classes with `CommonCompilerDeserializationConfiguration` in version 2.4
 class JvmCompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) :
-    CommonCompilerDeserializationConfiguration(languageVersionSettings, LanguageVersion::toJvmMetadataVersion)
+    CommonCompilerDeserializationConfiguration(languageVersionSettings, LanguageVersion::toMetadataVersion)
 
 class KlibCompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) :
-    CommonCompilerDeserializationConfiguration(languageVersionSettings, LanguageVersion::toKlibMetadataVersion)
+    CommonCompilerDeserializationConfiguration(languageVersionSettings, LanguageVersion::toMetadataVersion)

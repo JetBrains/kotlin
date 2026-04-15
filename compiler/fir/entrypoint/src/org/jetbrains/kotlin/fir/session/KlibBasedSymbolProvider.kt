@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
-import org.jetbrains.kotlin.util.toKlibMetadataVersion
+import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -40,7 +40,7 @@ class KlibBasedSymbolProvider(
     defaultDeserializationOrigin,
     metadataProvider = { it.metadata },
 ) {
-    private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toKlibMetadataVersion()
+    private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
 
     private val KotlinLibrary.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
         get() {
