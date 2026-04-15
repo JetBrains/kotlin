@@ -11,10 +11,8 @@ import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
-import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -460,4 +458,69 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `KT-84533_project_dependency_replaces_module`(
+        gradleVersion: GradleVersion,
+    ) {
+        val producer = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "producer"
+            }
+
+            buildScriptInjection {
+                project.group = "foo"
+                project.version = "2.0"
+
+                project.applyMultiplatform {
+                    jvm()
+                    linuxX64()
+
+                    if (project.providers.gradleProperty("enableIosArm64OnProducer").isPresent) {
+                        iosArm64()
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+        }
+
+        val publishedProducer = producer.publish(
+            "-PenableIosArm64OnProducer",
+            publisherConfiguration = PublisherConfiguration(group = "foo", version = "1.0"),
+        )
+
+        val consumer = project("empty", gradleVersion) {
+            addPublishedProjectToRepositories(publishedProducer)
+            include(producer, "producer")
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                    iosArm64()
+
+                    sourceSets.commonMain.dependencies {
+                        api(publishedProducer.rootCoordinate)
+                    }
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    sourceSets.iosArm64Main.dependencies {
+                        api(project(":producer"))
+                    }
+                }
+            }
+        }
+
+        consumer.build("compileKotlinIosArm64", "-PenableIosArm64OnProducer") {
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+
+        consumer.buildAndFail("compileKotlinIosArm64") {
+            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+    }
 }
