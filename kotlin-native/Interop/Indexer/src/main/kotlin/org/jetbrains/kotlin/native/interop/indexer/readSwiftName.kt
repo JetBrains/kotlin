@@ -11,3 +11,7 @@ import kotlinx.cinterop.*
 internal fun readSwiftName(cursor: CValue<CXCursor>): String? {
     return clang_Cursor_getSwiftName(cursor).convertAndDispose()
 }
+
+internal fun readObjcInterfaceRuntimeName(cursor: CValue<CXCursor>): String? {
+    return clang_Cursor_getObjCInterfaceRuntimeName(cursor).convertAndDispose()
+}

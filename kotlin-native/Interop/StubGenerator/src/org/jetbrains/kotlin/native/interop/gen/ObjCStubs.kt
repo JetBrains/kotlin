@@ -541,6 +541,16 @@ internal abstract class ObjCContainerStubBuilder(
 
     protected fun buildClassStub(origin: StubOrigin, companion: ClassStub.Companion? = null): ClassStub {
         val (properties, methods) = buildBody()
+        val annotations = mutableListOf<AnnotationStub>()
+        annotations.add(externalObjCAnnotation)
+        if (origin is StubOrigin.ObjCClass) {
+            annotations.add(
+                    AnnotationStub.ObjC.IdeInfo(
+                            origin.clazz.swiftName ?: "",
+                            origin.clazz.moduleName ?: "",
+                    )
+            )
+        }
         return ClassStub.Simple(
                 classifier,
                 properties = properties,
@@ -548,7 +558,7 @@ internal abstract class ObjCContainerStubBuilder(
                 constructors = methods.filterIsInstance<ConstructorStub>(),
                 origin = origin,
                 modality = modality,
-                annotations = listOf(externalObjCAnnotation),
+                annotations = annotations,
                 interfaces = interfaces,
                 companion = companion
         )

@@ -70,6 +70,9 @@ CString clang_Cursor_getSwiftName(CXCursor cursor);
 void clang_disposeCString(CString str);
 
 CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor);
+CString clang_Cursor_getObjCInterfaceRuntimeName(CXCursor cursor);
+
+CString clang_Cursor_getDefinedIn(CXCursor cursor);
 
 unsigned clang_visitObjectLikeMacroDefinitions(
   CXTranslationUnit translationUnit,

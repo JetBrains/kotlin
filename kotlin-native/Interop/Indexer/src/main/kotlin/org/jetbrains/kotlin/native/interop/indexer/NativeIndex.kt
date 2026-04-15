@@ -272,6 +272,7 @@ sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclar
     abstract val isForwardDeclaration: Boolean
     abstract val binaryName: String?
     open val swiftName: String? get() = null
+    open val moduleName: String? get() = null
 }
 
 data class ObjCMethod(

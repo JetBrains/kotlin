@@ -488,6 +488,9 @@ class StubIrTextEmitter(
                 else -> "($protocolGetter, $binaryName)"
             }
         }
+        is AnnotationStub.ObjC.IdeInfo -> {
+            "@IdeInfo(\"${annotationStub.swiftName}\", \"${annotationStub.moduleName}\"})"
+        }
         AnnotationStub.CCall.CString ->
             "@CCall.CString"
         AnnotationStub.CCall.WCString ->

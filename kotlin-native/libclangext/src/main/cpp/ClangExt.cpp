@@ -190,14 +190,37 @@ extern "C" {
 
   CString clang_Cursor_getObjCProtocolRuntimeName(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
-    if (cursor.kind == CXCursor_ObjCProtocolDecl) {
-      if (const ObjCProtocolDecl *decl = dyn_cast_or_null<ObjCProtocolDecl>(getCursorDecl(cursor))) {
+      if (cursor.kind == CXCursor_ObjCProtocolDecl) {
+        if (const ObjCProtocolDecl *decl = dyn_cast_or_null<ObjCProtocolDecl>(getCursorDecl(cursor))) {
+          return createCString(decl->getObjCRuntimeNameAsString());
+        }
+      }
+#endif
+      return nullCString();
+  }
+
+      CString clang_Cursor_getObjCInterfaceRuntimeName(CXCursor cursor) {
+        #if LIBCLANGEXT_ENABLE
+        if (cursor.kind == CXCursor_ObjCInterfaceDecl) {
+      if (const ObjCInterfaceDecl *decl = dyn_cast_or_null<ObjCInterfaceDecl>(getCursorDecl(cursor))) {
         return createCString(decl->getObjCRuntimeNameAsString());
       }
     }
-#endif
-    return nullCString();
-  }
+         #endif
+          return nullCString();
+      }
+
+    CString clang_Cursor_getDefinedIn(CXCursor cursor) {
+    #if LIBCLANGEXT_ENABLE
+        if (const NamedDecl *decl = dyn_cast_or_null<NamedDecl>(getCursorDecl(cursor))) {
+            if (auto *attr = decl->getExternalSourceSymbolAttr()) {
+                return createCString(attr->getDefinedIn());
+            }
+            return nullCString();
+        }
+    #endif
+        return nullCString();
+    }
 
   unsigned clang_Cursor_isObjCInitMethod(CXCursor cursor) {
 #if LIBCLANGEXT_ENABLE
