@@ -23,6 +23,12 @@ fun box(): String {
         if (expected3[index++] != i) return "failed: expected ${expected3[index - 1]}, but got $i"
     }
     if (index != expected3.size) return "failed: expected ${expected3.size} elements, but got $index"
+    val seq4 = sequenceOf(7, 8, 9, 0).take(3).map { 1 / it }.take(2)
+    val expected4 = listOf(0, 0)
+    index = 0
+    for (i in seq4) {
+        if (expected4[index++] != i) return "failed: expected ${expected4[index - 1]}, but got $i"
+    }
     return "OK"
 }
 

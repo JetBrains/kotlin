@@ -1,6 +1,9 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
+// 0 iterator
+// 0 LOOKUPSWITCH
+// 1 TABLESWITCH
 fun test(x: Int): Int {
     return x * 2
 }

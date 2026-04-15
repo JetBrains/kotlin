@@ -3,8 +3,8 @@
 // CHECK_BYTECODE_TEXT
 // 0 iterator
 // 0 LOOKUPSWITCH
-// 0 TABLESWITCH
 fun box(): String {
-    val seq = sequenceOf(0).map { it / 0 }
+    val seq = sequenceOf(0).take(0).map { it / 0 }
+    for (i in seq){}
     return "OK"
 }

@@ -1,5 +1,8 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 1 TABLESWITCH
+// 0 LOOKUPSWITCH
 fun testFunctionArgument(seq: Sequence<Int>): Boolean {
     val seq2 = seq.map { it + 1 }.filter { it % 2 == 0 }.map { it * 2 }
     for (item in seq2) {
@@ -43,8 +46,8 @@ fun testGenerateSequence(): Boolean {
 }
 
 fun testAsSequence(): Boolean {
-    val seq2 = listOf(1, 2, 3).asSequence().map { it + 1 }.filter { it % 2 == 0 }.map { it * 2 }
-    for (item in seq2) {
+    val seq = listOf(1, 2, 3).asSequence().map { it + 1 }.filter { it % 2 == 0 }.map { it * 2 }
+    for (item in seq) {
         return true
     }
     return false

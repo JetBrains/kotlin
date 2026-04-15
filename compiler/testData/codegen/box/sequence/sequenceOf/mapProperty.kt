@@ -1,6 +1,9 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
+// 0 iterator
+// 0 LOOKUPSWITCH
+// 1 TABLESWITCH
 fun box(): String {
     val seq = sequenceOf("abc", "bc", "a")
     val list = listOf(3, 2, 1)

@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_TEXT
 
+// 0 iterator
+// 0 LOOKUPSWITCH
+// 5 TABLESWITCH
 fun testMaps(): Boolean {
     val seq = sequenceOf(1, 2, 3).map { it * 3 }
     val seq2 = seq.map { it + 1 }

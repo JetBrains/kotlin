@@ -1,6 +1,9 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
+// 0 iterator
+// 0 LOOKUPSWITCH
+// 1 TABLESWITCH
 fun box(): String {
     val k = 2
     val seq = sequenceOf<(Int) -> Int>({ it * k }, { it * 3 }, { it * 4 }).map<(Int) -> Int, Int> { it(3) }

@@ -1,5 +1,8 @@
 // WITH_STDLIB
 
+// CHECK_BYTECODE_TEXT
+// 0 LOOKUPSWITCH
+// 1 TABLESWITCH
 class TestException(message: String) : Exception(message)
 
 fun box(): String {

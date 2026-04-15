@@ -1,6 +1,9 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
+// 0 iterator
+// 0 LOOKUPSWITCH
+// 2 TABLESWITCH
 fun box(): String {
     val sequence = sequenceOf(1, 2, 3).map { it - 1 }.filter { it > 0 }.map { it + 3 }
     val expected = listOf(4, 5)
