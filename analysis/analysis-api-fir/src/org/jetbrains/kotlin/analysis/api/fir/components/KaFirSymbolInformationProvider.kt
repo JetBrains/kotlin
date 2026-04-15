@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
@@ -22,12 +23,15 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseDeprecation
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSymbolInformationProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.components.toKaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.impl.base.components.toKaLevel
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.klibFileAnnotations
@@ -216,6 +220,14 @@ internal class KaFirSymbolInformationProvider(
 
                 else -> null
             }
+        }
+
+    override val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
+        get() = withValidityAssertion {
+            val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
+            return getActualTargetList(firSymbol, rootModuleSession)
+                .defaultTargets
+                .mapNotNullTo(mutableSetOf()) { it.toKaAnnotationTarget() }
         }
 
     override val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
