@@ -21,6 +21,7 @@ import kotlin.io.path.absolutePathString
 
 class JavaDirectIT {
 
+/*
     @Test
     @Ignore
     fun testinPsiMode(@TempDir tempDir: Path) {
@@ -57,6 +58,7 @@ class JavaDirectIT {
         assertTrue(logText.contains("java.util.Collection"))
     }
 }
+*/
 
 private fun createFilesForPseudoRawTypesTest(tempDir: Path): List<File> {
     val javaUtilDir = tempDir.resolve("java/util").toFile().also { it.mkdirs() }
@@ -99,4 +101,5 @@ private fun createFilesForPseudoRawTypesTest(tempDir: Path): List<File> {
         },
     )
     return files
+}
 }
