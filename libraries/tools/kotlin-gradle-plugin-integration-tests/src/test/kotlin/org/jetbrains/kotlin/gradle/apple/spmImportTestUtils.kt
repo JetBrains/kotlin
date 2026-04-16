@@ -527,7 +527,7 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     ).trim()
 
     assertEquals(
-        gitCheckoutTag, version, "Project directory Package.resolved should still have the same version as the tag"
+        version, gitCheckoutTag, "Project directory Package.resolved should still have the same version as the tag"
     )
 }
 
