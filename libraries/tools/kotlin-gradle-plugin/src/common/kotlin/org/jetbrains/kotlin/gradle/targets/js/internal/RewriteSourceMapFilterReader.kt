@@ -9,7 +9,7 @@ import java.io.*
 import kotlin.math.min
 
 open class RewriteSourceMapFilterReader(
-    val input: Reader
+    val input: Reader,
 ) : FilterReader(input) {
     // This implementation works only when source map contents starts
     // with prolog `{"version":3,"file":"...","sources":[...],"sourcesContent":...`
@@ -150,7 +150,11 @@ open class RewriteSourceMapFilterReader(
             .resolve(value)
             .normalize().absoluteFile
 
-        val transformedPath = sourceFileResolved.relativeToOrNull(File(targetSourceRoot))?.path ?: return sourceFileResolved.path
+        val transformedPath = sourceFileResolved
+            .takeIf { it.exists() }
+            ?.relativeToOrNull(File(targetSourceRoot))
+            ?.path
+            ?: return value
 
         return if (File.separatorChar == '\\') {
             transformedPath.replace('\\', '/')
