@@ -117,24 +117,14 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         val root = checkoutDir.parentFile
         val exclude = root.resolve(".gitignore")
 
-        exclude.parentFile.mkdirs()
-        exclude.createNewFile()
-
-        val existing = exclude.readLines()
-            .map { it.trim() }
-            .filterNot { it.isEmpty() || it.startsWith("#") }
-            .toSet()
+        if(!exclude.exists()) {
+            exclude.parentFile.mkdirs()
+            exclude.createNewFile()
+        }
 
         val entry = "${checkoutDir.name}/"
 
-        if (entry !in existing) {
-            exclude.appendText(
-                buildString {
-                    if (exclude.length() > 0L) appendLine()
-                    appendLine(entry)
-                }
-            )
-        }
+        exclude.writeText(entry)
     }
 
     private fun checkoutSwiftPMDependencies() {

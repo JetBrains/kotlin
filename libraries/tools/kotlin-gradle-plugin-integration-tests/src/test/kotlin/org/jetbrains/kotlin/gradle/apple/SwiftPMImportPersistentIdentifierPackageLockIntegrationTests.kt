@@ -101,7 +101,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -126,7 +126,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -214,7 +214,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         "Projects without SwiftPM dependencies must not be included in umbrella Package.swift"
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -300,7 +300,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -323,7 +323,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             commonRepo to "1.0.1",
                         ),
                     )
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -405,7 +405,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -429,7 +429,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -456,7 +456,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -480,7 +480,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -581,7 +581,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -612,7 +612,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -726,7 +726,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnoreFuzz,
                         "swiftPMCheckout/",
                     )
@@ -753,7 +753,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnoreBuzz,
                         "swiftPMCheckout/",
                     )

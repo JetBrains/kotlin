@@ -531,17 +531,17 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     )
 }
 
-internal fun assertGitIgnoreContains(
-    gitExclude: Path,
-    vararg paths : String
+internal fun assertGitIgnoreEquals(
+    gitIgnorePath: Path,
+    expectedGitIgnoreContent: String
 ) {
-    val lines = gitExclude.toFile().readLines().map(String::trim)
-    paths.forEach { path ->
-        assertTrue(
-            lines.contains(path),
-            "Expected '$path' to be present in git exclude file at $gitExclude"
-        )
-    }
+    val actualGitIgnoreContent = gitIgnorePath.toFile().readText()
+
+    assertEquals(
+        expectedGitIgnoreContent,
+        actualGitIgnoreContent,
+        "The git ignore content of $gitIgnorePath should be equal to expected"
+    )
 }
 
 

@@ -90,7 +90,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -115,7 +115,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -190,7 +190,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         "Projects without SwiftPM dependencies must not be included in umbrella Package.swift"
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -265,7 +265,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -288,7 +288,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -360,7 +360,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -384,7 +384,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -411,7 +411,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -435,7 +435,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -529,7 +529,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
@@ -560,7 +560,67 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitIgnoreContains(
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `default identifier synchronization overwrites identifier gitignore with checkout dir`(
+        version: GradleVersion,
+    ) {
+        val identifier = "default"
+        val fuzzProjectName = "fuzz"
+        val fuzzRepoName = "FuzzPackage"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val fuzzRepo = repoRef(fuzzRepoName).also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {}
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
+
+                val fuzzProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(fuzzRepo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(fuzzRepo.name)),
+                            )
+                        }
+                    }
+                }
+
+                include(fuzzProject, fuzzProjectName)
+
+
+                build(":$fuzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+                    assertFileExists(
+                        identifierGitIgnore,
+                        ".gitignore should be generated at $identifierGitIgnore"
+                    )
+
+                    assertGitIgnoreEquals(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
+                    )
+                }
+
+                build(":$fuzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+                    assertFileExists(
+                        identifierGitIgnore,
+                        "Umbrella Package.swift should be generated"
+                    )
+
+                    assertGitIgnoreEquals(
                         identifierGitIgnore,
                         "swiftPMCheckout/",
                     )
