@@ -60,6 +60,29 @@ both implementations.
 
 Note: Since the Analysis Api implementation is WIP yet, this test can be used for debugging, but is not fully implemented yet.
 
+### Running a single K1 test locally
+
+On some local setups, running a single `testK1` test needs a few extra Gradle flags:
+
+```bash
+./gradlew \
+  --no-configure-on-demand \
+  -Pkotlin.native.enabled=true \
+  -PdisableBreakpad \
+  :native:objcexport-header-generator:testK1 \
+  --tests "org.jetbrains.kotlin.backend.konan.tests.ObjCExportHeaderGeneratorTest.test - classWithKDoc"
+```
+
+What each flag fixes:
+- `--no-configure-on-demand`: avoids Gradle configuration issues in this repository
+- `-Pkotlin.native.enabled=true`: enables Kotlin/Native test dependencies required by ObjC export tests
+- `-PdisableBreakpad`: avoids unrelated local breakpad build failures in `:kotlin-native:runtime`
+- `--tests "...classWithKDoc"`: runs only the selected test instead of the full `testK1` suite
+
+Together, these flags make it possible to run a single ObjC export K1 test locally without triggering the configuration-on-demand failure, missing Kotlin/Native test classpath entries, or unrelated breakpad runtime build errors.
+
+Replace the value passed to `--tests` to run a different single test.
+
 ### How tests work on TC
 
 On TC all tests are called by `./gradlew check`. ObjCExport module has 2 groups of tests:

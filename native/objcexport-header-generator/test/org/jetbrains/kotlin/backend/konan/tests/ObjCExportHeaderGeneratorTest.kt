@@ -319,6 +319,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - simple data class with KDocs`() {
+        doTest(headersTestDataDir.resolve("simpleDataClassWithKDocs"))
+    }
+
+    @Test
     fun `test - special function names`() {
         doTest(headersTestDataDir.resolve("specialFunctionNames"))
     }
