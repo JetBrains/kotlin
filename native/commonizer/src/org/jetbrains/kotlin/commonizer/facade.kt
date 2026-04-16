@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import kotlinx.metadata.klib.ChunkedKlibModuleFragmentWriteStrategy
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.commonizer.mergedtree.CirRootNode
 import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializer
+import org.jetbrains.kotlin.commonizer.repository.CommonizerSupportLibraryRepository
 import org.jetbrains.kotlin.commonizer.transformer.InlineTypeAliasCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer
 import org.jetbrains.kotlin.commonizer.transformer.ReApproximationCirNodeTransformer.SignatureBuildingContextProvider
@@ -55,25 +57,29 @@ internal fun commonizeTarget(
     if (availableTrees.size == 0) return null
 
     parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
+        val supportExpectClassSupplier = SupportExpectClassSupplier(availableTrees.targets, parameters.supportLibraryModulesProvider)
         val classifiers = CirKnownClassifiers(
             classifierIndices = availableTrees.mapValue(::CirClassifierIndex),
             targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(allowedDuplicates = allowedDuplicates),
-            commonDependencies = parameters.dependencyClassifiers(output)
+            commonDependencies = parameters.dependencyClassifiers(output),
+            supportExpectClassSupplier = supportExpectClassSupplier,
         )
 
-        val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees, parameters.settings)
+        val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees, parameters.settings, supportExpectClassSupplier)
 
-        InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers, parameters.settings).invoke(mergedTree)
+        InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers, parameters.settings, supportExpectClassSupplier).invoke(mergedTree)
 
         ReApproximationCirNodeTransformer(
             parameters.storageManager, classifiers, parameters.settings,
-            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = false)
+            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = false),
+            supportExpectClassSupplier,
         ).invoke(mergedTree)
 
         ReApproximationCirNodeTransformer(
             parameters.storageManager, classifiers, parameters.settings,
-            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true)
+            SignatureBuildingContextProvider(classifiers, typeAliasInvariant = true, skipArguments = true),
+            supportExpectClassSupplier,
         ).invoke(mergedTree)
 
         mergedTree.accept(CommonizationVisitor(mergedTree), Unit)

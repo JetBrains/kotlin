@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -79,14 +78,8 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
 
-fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata {
-    val module = InlineSourceBuilder.ModuleBuilder().apply {
-        this.name = name
-        source(content = "", "empty.kt")
-    }.build()
-
-    return createModule(module, disposable).second.metadata
-}
+fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata =
+    createModule(createEmptyInlineSourceModule(name), disposable).second.metadata
 
 fun createModule(
     module: InlineSourceBuilder.Module,

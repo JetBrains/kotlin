@@ -98,13 +98,22 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             LeafCommonizerTarget("c") to targetCRoot
         )
 
+        val supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable)
+
         val classifiers = CirKnownClassifiers(
             classifierIndices = roots.mapValue(::CirClassifierIndex),
             targetDependencies = targetDependencies,
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            commonDependencies = commonDependencies
+            commonDependencies = commonDependencies,
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable),
         ).also { classifiers ->
-            mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings)
+            mergeCirTree(
+                LockBasedStorageManager.NO_LOCKS,
+                classifiers = classifiers,
+                roots = roots,
+                settings = DefaultCommonizerSettings,
+                supportExpectClassSupplier = supportExpectClassSupplier,
+            )
         }
 
         return TypeCommonizer(classifiers, DefaultCommonizerSettings)

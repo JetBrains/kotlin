@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
+import org.jetbrains.kotlin.commonizer.utils.buildDummySupportLibraryModulesProvider
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
@@ -106,6 +107,7 @@ class CommonizerFacadeTest {
             return CommonizerParameters(
                 outputTargets = setOf(sharedTarget),
                 dependenciesProvider = TargetDependent(sharedTarget.withAllLeaves()) { null },
+                supportLibraryModulesProvider = buildDummySupportLibraryModulesProvider(sharedTarget.withAllLeaves(), disposable),
                 manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
                 targetProviders = targetDependentModuleNames.map { target, moduleNames ->
                     TargetProvider(

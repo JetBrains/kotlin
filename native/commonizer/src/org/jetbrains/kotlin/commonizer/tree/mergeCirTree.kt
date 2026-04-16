@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.tree
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.Companion.ParentNode
 import org.jetbrains.kotlin.commonizer.mergedtree.CirNodeRelationship.ParentNode
@@ -19,7 +20,8 @@ internal data class TargetBuildingContext(
     val classifiers: CirKnownClassifiers,
     val memberContext: CirMemberContext = CirMemberContext.empty,
     val commonizerSettings: CommonizerSettings,
-    val targets: Int, val targetIndex: Int
+    val targets: Int, val targetIndex: Int,
+    val supportExpectClassSupplier: SupportExpectClassSupplier,
 ) {
     fun withMemberContextOf(clazz: CirClass) = copy(memberContext = memberContext.withContextOf(clazz))
 }
@@ -29,6 +31,7 @@ internal fun mergeCirTree(
     classifiers: CirKnownClassifiers,
     roots: TargetDependent<CirTreeRoot>,
     settings: CommonizerSettings,
+    supportExpectClassSupplier: SupportExpectClassSupplier,
 ): CirRootNode {
     val node = buildRootNode(storageManager, classifiers.commonDependencies, roots.size)
     roots.targets.withIndex().forEach { [targetIndex, target] ->
@@ -40,7 +43,8 @@ internal fun mergeCirTree(
                 memberContext = CirMemberContext.empty,
                 commonizerSettings = settings,
                 targets = roots.size,
-                targetIndex = targetIndex
+                targetIndex = targetIndex,
+                supportExpectClassSupplier,
             ), roots[target].modules
         )
     }

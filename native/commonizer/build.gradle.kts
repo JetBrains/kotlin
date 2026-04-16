@@ -19,6 +19,11 @@ configurations {
     }
 }
 
+val supportLibKlibs by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
 dependencies {
     embedded(project(":kotlinx-metadata-klib")) { isTransitive = false }
     embedded(project(":kotlin-metadata")) { isTransitive = false }
@@ -59,6 +64,8 @@ dependencies {
 
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+
+    supportLibKlibs(project(":commonizer-support-library", configuration = "commonizerKlibs"))
 }
 
 val runCommonizer by tasks.registering(JavaExec::class) {

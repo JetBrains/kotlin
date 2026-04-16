@@ -233,6 +233,15 @@ tasks.register("distStdlib", Sync) {
     into(nativeDistribution.map { it.stdlib })
 }
 
+tasks.register("distCommonizerSupportLibrary", Sync) {
+    from(project(":commonizer-support-library")
+            .tasks
+            .named("build")
+            .map { it.project.layout.buildDirectory.dir("classes/kotlin") }
+    )
+    into(nativeDistribution.map { it.commonizerSupportLibrary })
+}
+
 tasks.register("distNativeLibs", DeletingSync) {
     from(configurations.nativeLibs)
     into(nativeDistribution.map { it.nativeLibs })
@@ -396,7 +405,8 @@ tasks.register("dist") {
             "distRuntime",
             "distDef",
             "distStdlib",
-            "distStdlibCache"
+            "distStdlibCache",
+            "distCommonizerSupportLibrary"
 }
 
 tasks.register("crossDist") {
@@ -404,7 +414,8 @@ tasks.register("crossDist") {
             "crossDistRuntime",
             "distDef",
             "distStdlib",
-            "crossDistStdlibCache"
+            "crossDistStdlibCache",
+            "distCommonizerSupportLibrary"
 }
 
 tasks.register("distInvalidateStaleCaches", InvalidateStaleCaches) {
