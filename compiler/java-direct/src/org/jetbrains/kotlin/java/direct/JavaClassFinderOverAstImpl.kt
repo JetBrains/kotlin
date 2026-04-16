@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -18,7 +20,6 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.isRegularFile
 
@@ -227,7 +228,7 @@ class JavaClassFinderOverAstImpl(
             }
             if (resolved != null) result.add(resolved)
         }
-        debugLogFile?.appendText("findClasses: ${request.classId} ->\n  ${result.joinToString("\n  ") { it.classId?.asFqNameString() ?: it.name.asString() } }\n")
+        debugLogFile?.appendText("findClasses: ${request.classId} ->\n  ${result.joinToString("\n  ") { it.classId?.asFqNameString() ?: it.name.asString() }}\n")
         return result
     }
 
@@ -283,8 +284,8 @@ class JavaClassFinderOverAstImpl(
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
 
-        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
-        val packageName = (packageStmt ?: root).findChildByType("JAVA_CODE_REFERENCE")?.text ?: return
+        val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
+        val packageName = (packageStmt ?: root).findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text ?: return
         val packageFqName = FqName(packageName)
 
         val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
@@ -292,12 +293,12 @@ class JavaClassFinderOverAstImpl(
 
         // Annotations are in PACKAGE_STATEMENT → MODIFIER_LIST → ANNOTATION (KMP parser structure).
         // Also check other plausible locations for robustness.
-        packageStmt?.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
+        packageStmt?.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
             ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
-        packageStmt?.getChildrenByType("ANNOTATION")
+        packageStmt?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
             ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
-        root.getChildrenByType("ANNOTATION").mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
-        root.findChildByType("MODIFIER_LIST")?.getChildrenByType("ANNOTATION")
+        root.getChildrenByType(JavaSyntaxElementType.ANNOTATION).mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
+        root.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
             ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
 
         if (annotations.isNotEmpty()) {
@@ -309,7 +310,11 @@ class JavaClassFinderOverAstImpl(
         packageAnnotationNodes[packageFqName] ?: emptyList()
 
     private fun tryBuildFileEntry(path: Path): FileEntry? {
-        val fileSize = try { Files.size(path) } catch (_: IOException) { return null }
+        val fileSize = try {
+            Files.size(path)
+        } catch (_: IOException) {
+            return null
+        }
 
         return if (fileSize <= SMALL_FILE_SIZE_THRESHOLD) {
             tryBuildFileEntryWithFullParse(path)
@@ -327,12 +332,12 @@ class JavaClassFinderOverAstImpl(
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
 
-        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
-        val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
+        val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
+        val packageName = packageStmt?.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
         val packageFqName = if (packageName != null) FqName(packageName) else FqName.ROOT
 
-        val classNames = root.getChildrenByType("CLASS").mapNotNull { node ->
-            node.findChildByType("IDENTIFIER")?.text
+        val classNames = root.getChildrenByType(JavaSyntaxElementType.CLASS).mapNotNull { node ->
+            node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
         }.toSet()
 
         if (classNames.isEmpty()) return null
@@ -394,8 +399,8 @@ class JavaClassFinderOverAstImpl(
 
         // Cache ALL top-level classes from this file to avoid re-parsing for sibling classes.
         // Uses findLocalClass to ensure consistent instances with the context's local class cache.
-        val allClassNames = root.getChildrenByType("CLASS").mapNotNull {
-            it.findChildByType("IDENTIFIER")?.text
+        val allClassNames = root.getChildrenByType(JavaSyntaxElementType.CLASS).mapNotNull {
+            it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
         }
         for (className in allClassNames) {
             val cid = ClassId(file.packageFqName, FqName(className), isLocal = false)
@@ -501,15 +506,15 @@ class JavaClassFinderOverAstImpl(
         starImports: List<FqName> = emptyList(),
     ): List<ClassId> {
         val supertypes = mutableListOf<ClassId>()
-        classNode.findChildByType("EXTENDS_LIST")
-            ?.getChildrenByType("JAVA_CODE_REFERENCE")
+        classNode.findChildByType(JavaSyntaxElementType.EXTENDS_LIST)
+            ?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
             ?.forEach { ref ->
                 resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
                     supertypes.add(it)
                 }
             }
-        classNode.findChildByType("IMPLEMENTS_LIST")
-            ?.getChildrenByType("JAVA_CODE_REFERENCE")
+        classNode.findChildByType(JavaSyntaxElementType.IMPLEMENTS_LIST)
+            ?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
             ?.forEach { ref ->
                 resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
                     supertypes.add(it)
@@ -571,8 +576,8 @@ class JavaClassFinderOverAstImpl(
 
         var currentNode: JavaSyntaxNode = root
         for (segment in segments) {
-            val classNode = currentNode.getChildrenByType("CLASS").firstOrNull { node ->
-                node.findChildByType("IDENTIFIER")?.text == segment
+            val classNode = currentNode.getChildrenByType(JavaSyntaxElementType.CLASS).firstOrNull { node ->
+                node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text == segment
             } ?: return null
             currentNode = classNode
         }
@@ -633,8 +638,8 @@ class JavaClassFinderOverAstImpl(
         val classNode = findClassInTree(root, classId) ?: return emptySet()
 
         return classNode.children
-            .filter { it.type.toString() == "CLASS" }
-            .mapNotNull { it.findChildByType("IDENTIFIER")?.text }
+            .filter { it.type == JavaSyntaxElementType.CLASS }
+            .mapNotNull { it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text }
             .toSet()
     }
 }

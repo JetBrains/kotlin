@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import kotlin.experimental.inv
 
 /**
@@ -31,13 +35,13 @@ class ConstantEvaluator(
      * Returns null if the expression cannot be evaluated as a constant.
      */
     fun evaluate(node: JavaSyntaxNode): Any? {
-        return when (node.type.toString()) {
-            "LITERAL_EXPRESSION" -> evaluateLiteral(node)
-            "BINARY_EXPRESSION" -> evaluateBinaryExpression(node)
-            "PREFIX_EXPRESSION" -> evaluatePrefixExpression(node)
-            "PARENS_EXPRESSION" -> evaluateParensExpression(node)
-            "REFERENCE_EXPRESSION" -> evaluateReferenceExpression(node)
-            "POLYADIC_EXPRESSION" -> evaluatePolyadicExpression(node)
+        return when (node.type) {
+            JavaSyntaxElementType.LITERAL_EXPRESSION -> evaluateLiteral(node)
+            JavaSyntaxElementType.BINARY_EXPRESSION -> evaluateBinaryExpression(node)
+            JavaSyntaxElementType.PREFIX_EXPRESSION -> evaluatePrefixExpression(node)
+            JavaSyntaxElementType.PARENTH_EXPRESSION -> evaluateParensExpression(node)
+            JavaSyntaxElementType.REFERENCE_EXPRESSION -> evaluateReferenceExpression(node)
+            JavaSyntaxElementType.POLYADIC_EXPRESSION -> evaluatePolyadicExpression(node)
             else -> null
         }
     }
@@ -46,34 +50,34 @@ class ConstantEvaluator(
         val literalChild = node.children.firstOrNull() ?: return null
         val text = literalChild.text
 
-        return when (literalChild.type.toString()) {
-            "STRING_LITERAL" -> {
+        return when (literalChild.type) {
+            JavaSyntaxTokenType.STRING_LITERAL -> {
                 if (text.length >= 2) {
                     text.substring(1, text.length - 1).unescapeJavaString()
                 } else text
             }
-            "CHARACTER_LITERAL" -> {
+            JavaSyntaxTokenType.CHARACTER_LITERAL -> {
                 if (text.length >= 3) {
                     text.substring(1, text.length - 1).unescapeJavaString().firstOrNull()
                 } else null
             }
-            "TRUE_KEYWORD" -> true
-            "FALSE_KEYWORD" -> false
-            "NULL_LITERAL" -> null
-            "INTEGER_LITERAL" -> parseIntegerLiteral(text)
-            "LONG_LITERAL" -> parseLongLiteral(text)
-            "FLOAT_LITERAL" -> parseFloatLiteral(text)
-            "DOUBLE_LITERAL" -> parseDoubleLiteral(text)
+            JavaSyntaxTokenType.TRUE_KEYWORD -> true
+            JavaSyntaxTokenType.FALSE_KEYWORD -> false
+            JavaSyntaxTokenType.NULL_KEYWORD -> null
+            JavaSyntaxTokenType.INTEGER_LITERAL -> parseIntegerLiteral(text)
+            JavaSyntaxTokenType.LONG_LITERAL -> parseLongLiteral(text)
+            JavaSyntaxTokenType.FLOAT_LITERAL -> parseFloatLiteral(text)
+            JavaSyntaxTokenType.DOUBLE_LITERAL -> parseDoubleLiteral(text)
             else -> null
         }
     }
 
     private fun evaluateBinaryExpression(node: JavaSyntaxNode): Any? {
-        val children = node.children.filter { it.type.toString() !in listOf("WHITE_SPACE") }
+        val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
         if (children.size < 3) return null
 
         val lhs = evaluate(children[0]) ?: return null
-        val operator = children[1].type.toString()
+        val operator = children[1].type
         val rhs = evaluate(children[2]) ?: return null
 
         return evaluateBinaryOp(lhs, operator, rhs)
@@ -81,13 +85,13 @@ class ConstantEvaluator(
 
     private fun evaluatePolyadicExpression(node: JavaSyntaxNode): Any? {
         // Polyadic expression: a + b + c + d (multiple operands with same operator)
-        val children = node.children.filter { it.type.toString() !in listOf("WHITE_SPACE") }
+        val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
         if (children.size < 3) return null
 
         var result = evaluate(children[0]) ?: return null
         var i = 1
         while (i < children.size - 1) {
-            val operator = children[i].type.toString()
+            val operator = children[i].type
             val operand = evaluate(children[i + 1]) ?: return null
             result = evaluateBinaryOp(result, operator, operand) ?: return null
             i += 2
@@ -95,25 +99,25 @@ class ConstantEvaluator(
         return result
     }
 
-    private fun evaluateBinaryOp(lhs: Any, operator: String, rhs: Any): Any? {
+    private fun evaluateBinaryOp(lhs: Any, operator: SyntaxElementType, rhs: Any): Any? {
         // String concatenation
-        if (lhs is String && operator == "PLUS") {
+        if (lhs is String && operator == JavaSyntaxTokenType.PLUS) {
             return lhs + rhs.toString()
         }
-        if (rhs is String && operator == "PLUS") {
+        if (rhs is String && operator == JavaSyntaxTokenType.PLUS) {
             return lhs.toString() + rhs
         }
 
         // Boolean operations
         if (lhs is Boolean && rhs is Boolean) {
             return when (operator) {
-                "ANDAND" -> lhs && rhs
-                "OROR" -> lhs || rhs
-                "EQEQ" -> lhs == rhs
-                "NE" -> lhs != rhs
-                "XOR" -> lhs xor rhs
-                "AND" -> lhs and rhs
-                "OR" -> lhs or rhs
+                JavaSyntaxTokenType.ANDAND -> lhs && rhs
+                JavaSyntaxTokenType.OROR -> lhs || rhs
+                JavaSyntaxTokenType.EQEQ -> lhs == rhs
+                JavaSyntaxTokenType.NE -> lhs != rhs
+                JavaSyntaxTokenType.XOR -> lhs xor rhs
+                JavaSyntaxTokenType.AND -> lhs and rhs
+                JavaSyntaxTokenType.OR -> lhs or rhs
                 else -> null
             }
         }
@@ -126,7 +130,7 @@ class ConstantEvaluator(
         // Char operations (treat as int)
         if (lhs is Char && rhs is Number) {
             return evaluateNumericOp(lhs.code, operator, rhs)?.let { result ->
-                if (result is Int && operator == "PLUS") result.toChar() else result
+                if (result is Int && operator == JavaSyntaxTokenType.PLUS) result.toChar() else result
             }
         }
         if (lhs is Number && rhs is Char) {
@@ -139,82 +143,82 @@ class ConstantEvaluator(
         return null
     }
 
-    private fun evaluateNumericOp(lhs: Number, operator: String, rhs: Number): Any? {
+    private fun evaluateNumericOp(lhs: Number, operator: SyntaxElementType, rhs: Number): Any? {
         val isFloat = lhs is Float || lhs is Double || rhs is Float || rhs is Double
         val isLong = !isFloat && (lhs is Long || rhs is Long)
         val isDouble = isFloat && (lhs is Double || rhs is Double)
 
         return when (operator) {
-            "PLUS" -> when {
+            JavaSyntaxTokenType.PLUS -> when {
                 isDouble -> lhs.toDouble() + rhs.toDouble()
                 isFloat -> lhs.toFloat() + rhs.toFloat()
                 isLong -> lhs.toLong() + rhs.toLong()
                 else -> lhs.toInt() + rhs.toInt()
             }
-            "MINUS" -> when {
+            JavaSyntaxTokenType.MINUS -> when {
                 isDouble -> lhs.toDouble() - rhs.toDouble()
                 isFloat -> lhs.toFloat() - rhs.toFloat()
                 isLong -> lhs.toLong() - rhs.toLong()
                 else -> lhs.toInt() - rhs.toInt()
             }
-            "ASTERISK" -> when {
+            JavaSyntaxTokenType.ASTERISK -> when {
                 isDouble -> lhs.toDouble() * rhs.toDouble()
                 isFloat -> lhs.toFloat() * rhs.toFloat()
                 isLong -> lhs.toLong() * rhs.toLong()
                 else -> lhs.toInt() * rhs.toInt()
             }
-            "DIV" -> when {
+            JavaSyntaxTokenType.DIV -> when {
                 isDouble -> lhs.toDouble() / rhs.toDouble()
                 isFloat -> lhs.toFloat() / rhs.toFloat()
                 isLong -> lhs.toLong() / rhs.toLong()
                 else -> lhs.toInt() / rhs.toInt()
             }
-            "PERC" -> when {
+            JavaSyntaxTokenType.PERC -> when {
                 isDouble -> lhs.toDouble() % rhs.toDouble()
                 isFloat -> lhs.toFloat() % rhs.toFloat()
                 isLong -> lhs.toLong() % rhs.toLong()
                 else -> lhs.toInt() % rhs.toInt()
             }
-            "GTGT" -> if (isLong) lhs.toLong() shr rhs.toInt() else lhs.toInt() shr rhs.toInt()
-            "LTLT" -> if (isLong) lhs.toLong() shl rhs.toInt() else lhs.toInt() shl rhs.toInt()
-            "GTGTGT" -> if (isLong) lhs.toLong() ushr rhs.toInt() else lhs.toInt() ushr rhs.toInt()
-            "AND" -> if (isLong) lhs.toLong() and rhs.toLong() else lhs.toInt() and rhs.toInt()
-            "OR" -> if (isLong) lhs.toLong() or rhs.toLong() else lhs.toInt() or rhs.toInt()
-            "XOR" -> if (isLong) lhs.toLong() xor rhs.toLong() else lhs.toInt() xor rhs.toInt()
-            "EQEQ" -> if (isFloat) lhs.toDouble() == rhs.toDouble() else lhs.toLong() == rhs.toLong()
-            "NE" -> if (isFloat) lhs.toDouble() != rhs.toDouble() else lhs.toLong() != rhs.toLong()
-            "LT" -> if (isFloat) lhs.toDouble() < rhs.toDouble() else lhs.toLong() < rhs.toLong()
-            "LE" -> if (isFloat) lhs.toDouble() <= rhs.toDouble() else lhs.toLong() <= rhs.toLong()
-            "GT" -> if (isFloat) lhs.toDouble() > rhs.toDouble() else lhs.toLong() > rhs.toLong()
-            "GE" -> if (isFloat) lhs.toDouble() >= rhs.toDouble() else lhs.toLong() >= rhs.toLong()
+            JavaSyntaxTokenType.GTGT -> if (isLong) lhs.toLong() shr rhs.toInt() else lhs.toInt() shr rhs.toInt()
+            JavaSyntaxTokenType.LTLT -> if (isLong) lhs.toLong() shl rhs.toInt() else lhs.toInt() shl rhs.toInt()
+            JavaSyntaxTokenType.GTGTGT -> if (isLong) lhs.toLong() ushr rhs.toInt() else lhs.toInt() ushr rhs.toInt()
+            JavaSyntaxTokenType.AND -> if (isLong) lhs.toLong() and rhs.toLong() else lhs.toInt() and rhs.toInt()
+            JavaSyntaxTokenType.OR -> if (isLong) lhs.toLong() or rhs.toLong() else lhs.toInt() or rhs.toInt()
+            JavaSyntaxTokenType.XOR -> if (isLong) lhs.toLong() xor rhs.toLong() else lhs.toInt() xor rhs.toInt()
+            JavaSyntaxTokenType.EQEQ -> if (isFloat) lhs.toDouble() == rhs.toDouble() else lhs.toLong() == rhs.toLong()
+            JavaSyntaxTokenType.NE -> if (isFloat) lhs.toDouble() != rhs.toDouble() else lhs.toLong() != rhs.toLong()
+            JavaSyntaxTokenType.LT -> if (isFloat) lhs.toDouble() < rhs.toDouble() else lhs.toLong() < rhs.toLong()
+            JavaSyntaxTokenType.LE -> if (isFloat) lhs.toDouble() <= rhs.toDouble() else lhs.toLong() <= rhs.toLong()
+            JavaSyntaxTokenType.GT -> if (isFloat) lhs.toDouble() > rhs.toDouble() else lhs.toLong() > rhs.toLong()
+            JavaSyntaxTokenType.GE -> if (isFloat) lhs.toDouble() >= rhs.toDouble() else lhs.toLong() >= rhs.toLong()
             else -> null
         }
     }
 
     private fun evaluatePrefixExpression(node: JavaSyntaxNode): Any? {
-        val children = node.children.filter { it.type.toString() !in listOf("WHITE_SPACE") }
+        val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
         if (children.size < 2) return null
 
-        val operator = children[0].type.toString()
+        val operator = children[0].type
         val operand = evaluate(children[1]) ?: return null
 
         return when (operator) {
-            "MINUS" -> when (operand) {
+            JavaSyntaxTokenType.MINUS -> when (operand) {
                 is Int -> -operand
                 is Long -> -operand
                 is Float -> -operand
                 is Double -> -operand
                 else -> null
             }
-            "PLUS" -> operand // Unary plus is identity
-            "TILDE" -> when (operand) {
+            JavaSyntaxTokenType.PLUS -> operand // Unary plus is identity
+            JavaSyntaxTokenType.TILDE -> when (operand) {
                 is Int -> operand.inv()
                 is Long -> operand.inv()
                 is Short -> operand.inv()
                 is Byte -> operand.inv()
                 else -> null
             }
-            "EXCL" -> (operand as? Boolean)?.let { !it }
+            JavaSyntaxTokenType.EXCL -> (operand as? Boolean)?.let { !it }
             else -> null
         }
     }
@@ -222,35 +226,35 @@ class ConstantEvaluator(
     private fun evaluateParensExpression(node: JavaSyntaxNode): Any? {
         // Find the expression inside parentheses
         val innerExpr = node.children.firstOrNull {
-            it.type.toString() !in listOf("LPARENTH", "RPARENTH", "WHITE_SPACE")
+            it.type != JavaSyntaxTokenType.LPARENTH && it.type != JavaSyntaxTokenType.RPARENTH && it.type != SyntaxTokenTypes.WHITE_SPACE
         } ?: return null
         return evaluate(innerExpr)
     }
 
     private fun evaluateReferenceExpression(node: JavaSyntaxNode): Any? {
         val refText = node.text
-        
+
         // Handle qualified references like ClassName.FIELD or just FIELD
         val lastDot = refText.lastIndexOf('.')
-        
+
         if (lastDot < 0) {
             // Simple name - look in containing class first
             val localValue = resolveFieldValue(containingClass, refText)
             if (localValue != null) return localValue
-            
+
             // Try external resolution (e.g., static import from Kotlin)
             return resolveExternalReference?.invoke(null, refText)
         }
-        
+
         val className = refText.substring(0, lastDot)
         val fieldName = refText.substring(lastDot + 1)
-        
+
         // Try to find the class locally (same file)
         val targetClass = findLocalClass(className)
         if (targetClass != null) {
             return resolveFieldValue(targetClass, fieldName)
         }
-        
+
         // Try external class references (e.g., Kotlin classes) via callback
         return resolveExternalReference?.invoke(className, fieldName)
     }
@@ -260,24 +264,24 @@ class ConstantEvaluator(
         if (containingClass.name.asString() == name) {
             return containingClass
         }
-        
+
         // Check inner classes
         val innerClass = containingClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier(name))
         if (innerClass is JavaClassOverAst) {
             return innerClass
         }
-        
+
         // Check classes in the same file (siblings)
         val root = containingClass.node.parent ?: return null
         for (child in root.children) {
-            if (child.type.toString() == "CLASS") {
-                val className = child.findChildByType("IDENTIFIER")?.text
+            if (child.type == JavaSyntaxElementType.CLASS) {
+                val className = child.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
                 if (className == name) {
                     return JavaClassOverAst(child, containingClass.resolutionContext)
                 }
             }
         }
-        
+
         return null
     }
 
@@ -329,14 +333,30 @@ class ConstantEvaluator(
             while (i < length) {
                 if (this[i] == '\\' && i + 1 < length) {
                     when (this[i + 1]) {
-                        'n' -> { sb.append('\n'); i += 2 }
-                        't' -> { sb.append('\t'); i += 2 }
-                        'r' -> { sb.append('\r'); i += 2 }
-                        'b' -> { sb.append('\b'); i += 2 }
-                        'f' -> { sb.append('\u000C'); i += 2 }
-                        '\'' -> { sb.append('\''); i += 2 }
-                        '"' -> { sb.append('"'); i += 2 }
-                        '\\' -> { sb.append('\\'); i += 2 }
+                        'n' -> {
+                            sb.append('\n'); i += 2
+                        }
+                        't' -> {
+                            sb.append('\t'); i += 2
+                        }
+                        'r' -> {
+                            sb.append('\r'); i += 2
+                        }
+                        'b' -> {
+                            sb.append('\b'); i += 2
+                        }
+                        'f' -> {
+                            sb.append('\u000C'); i += 2
+                        }
+                        '\'' -> {
+                            sb.append('\''); i += 2
+                        }
+                        '"' -> {
+                            sb.append('"'); i += 2
+                        }
+                        '\\' -> {
+                            sb.append('\\'); i += 2
+                        }
                         'u' -> {
                             if (i + 5 < length) {
                                 val hex = substring(i + 2, i + 6)
@@ -366,7 +386,9 @@ class ConstantEvaluator(
                                 i++
                             }
                         }
-                        else -> { sb.append(this[i]); i++ }
+                        else -> {
+                            sb.append(this[i]); i++
+                        }
                     }
                 } else {
                     sb.append(this[i])

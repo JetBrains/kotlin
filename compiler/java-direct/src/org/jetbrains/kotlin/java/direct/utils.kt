@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 
@@ -17,7 +18,7 @@ class JavaSyntaxNode(
     val source: CharSequence,
     val startOffset: Int,
     val endOffset: Int,
-    var parent: JavaSyntaxNode? = null
+    var parent: JavaSyntaxNode? = null,
 ) {
     val text: String by lazy(LazyThreadSafetyMode.PUBLICATION) { source.subSequence(startOffset, endOffset).toString() }
 
@@ -56,7 +57,8 @@ fun buildSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaSynta
             productionMarkers.isDoneMarker(i) -> {
                 val lastChildren = childrenStack.removeAt(childrenStack.size - 1)
                 lastChildren.appendTokens(production.getEndTokenIndex())
-                val node = JavaSyntaxNode(production.getNodeType(), lastChildren, source, production.getStartOffset(), production.getEndOffset())
+                val node =
+                    JavaSyntaxNode(production.getNodeType(), lastChildren, source, production.getStartOffset(), production.getEndOffset())
                 for (child in lastChildren) {
                     child.parent = node
                 }
@@ -66,7 +68,8 @@ fun buildSyntaxTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaSynta
                 // Error markers don't have start/done pairs, handle them as leaf nodes
                 val errorTokenIndex = production.getStartTokenIndex()
                 childrenStack.peek().appendTokens(errorTokenIndex)
-                val errorNode = JavaSyntaxNode(production.getNodeType(), emptyList(), source, production.getStartOffset(), production.getEndOffset())
+                val errorNode =
+                    JavaSyntaxNode(production.getNodeType(), emptyList(), source, production.getStartOffset(), production.getEndOffset())
                 childrenStack.peek().add(errorNode)
             }
             else -> {
@@ -108,8 +111,8 @@ internal fun computeTypeParameters(
     node: JavaSyntaxNode,
     resolutionContext: JavaResolutionContext,
 ): List<JavaTypeParameter> {
-    val typeParamNodes = node.findChildByType("TYPE_PARAMETER_LIST")
-        ?.getChildrenByType("TYPE_PARAMETER")
+    val typeParamNodes = node.findChildByType(JavaSyntaxElementType.TYPE_PARAMETER_LIST)
+        ?.getChildrenByType(JavaSyntaxElementType.TYPE_PARAMETER)
         ?: return emptyList()
 
     // Create type parameter instances first

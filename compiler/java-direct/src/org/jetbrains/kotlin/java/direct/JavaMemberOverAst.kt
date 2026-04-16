@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -14,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class JavaMemberOverAst(
     node: JavaSyntaxNode,
-    override val containingClass: JavaClassOverAst
+    override val containingClass: JavaClassOverAst,
 ) : JavaElementOverAst(node), JavaMember {
 
     /**
@@ -25,31 +29,31 @@ abstract class JavaMemberOverAst(
         get() = containingClass.memberResolutionContext
 
     override val name: Name
-        get() = Name.identifier(node.findChildByType("IDENTIFIER")?.text ?: "<error>")
+        get() = Name.identifier(node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text ?: "<error>")
 
-    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType("MODIFIER_LIST") }
+    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) }
 
-    protected fun hasModifier(modifier: String): Boolean {
-        return modifierList?.children?.any { it.type.toString() == modifier } ?: false
+    protected fun hasModifier(modifier: SyntaxElementType): Boolean {
+        return modifierList?.children?.any { it.type == modifier } ?: false
     }
 
-    override val isAbstract: Boolean get() = hasModifier("ABSTRACT_KEYWORD")
-    override val isStatic: Boolean get() = hasModifier("STATIC_KEYWORD")
-    override val isFinal: Boolean get() = hasModifier("FINAL_KEYWORD")
+    override val isAbstract: Boolean get() = hasModifier(JavaSyntaxTokenType.ABSTRACT_KEYWORD)
+    override val isStatic: Boolean get() = hasModifier(JavaSyntaxTokenType.STATIC_KEYWORD)
+    override val isFinal: Boolean get() = hasModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
 
     override val visibility: Visibility
         get() {
             return when {
                 containingClass.isInterface -> Visibilities.Public
-                hasModifier("PUBLIC_KEYWORD") -> Visibilities.Public
-                hasModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
-                hasModifier("PRIVATE_KEYWORD") -> Visibilities.Private
+                hasModifier(JavaSyntaxTokenType.PUBLIC_KEYWORD) -> Visibilities.Public
+                hasModifier(JavaSyntaxTokenType.PROTECTED_KEYWORD) -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
+                hasModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD) -> Visibilities.Private
                 else -> JavaVisibilities.PackageVisibility
             }
         }
 
     override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        modifierList?.getChildrenByType("ANNOTATION")
+        modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
     }
@@ -63,9 +67,9 @@ abstract class JavaMemberOverAst(
 
 class JavaFieldOverAst(
     node: JavaSyntaxNode,
-    containingClass: JavaClassOverAst
+    containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, containingClass), JavaField {
-    override val isEnumEntry: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.type.toString() == "ENUM_CONSTANT" }
+    override val isEnumEntry: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.type == JavaSyntaxElementType.ENUM_CONSTANT }
 
     /**
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
@@ -74,7 +78,7 @@ class JavaFieldOverAst(
      * This property finds the leading FIELD sibling that carries the shared modifiers/type.
      */
     private val leadingFieldNode: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (node.findChildByType("MODIFIER_LIST") != null || node.findChildByType("TYPE") != null) {
+        if (node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || node.findChildByType(JavaSyntaxElementType.TYPE) != null) {
             null // this node already has its own modifiers/type
         } else {
             val parent = node.parent ?: return@lazy null
@@ -83,7 +87,11 @@ class JavaFieldOverAst(
             // Walk backwards to find the nearest FIELD sibling with a MODIFIER_LIST or TYPE
             (myIndex - 1 downTo 0)
                 .map { siblings[it] }
-                .firstOrNull { it.type.toString() == "FIELD" && (it.findChildByType("MODIFIER_LIST") != null || it.findChildByType("TYPE") != null) }
+                .firstOrNull {
+                    it.type == JavaSyntaxElementType.FIELD && (it.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || it.findChildByType(
+                        JavaSyntaxElementType.TYPE
+                    ) != null)
+                }
         }
     }
 
@@ -92,11 +100,11 @@ class JavaFieldOverAst(
      * in a multi-field declaration.
      */
     private val effectiveModifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        node.findChildByType("MODIFIER_LIST") ?: leadingFieldNode?.findChildByType("MODIFIER_LIST")
+        node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) ?: leadingFieldNode?.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
     }
 
-    private fun hasFieldModifier(modifier: String): Boolean {
-        return effectiveModifierList?.children?.any { it.type.toString() == modifier } ?: false
+    private fun hasFieldModifier(modifier: SyntaxElementType): Boolean {
+        return effectiveModifierList?.children?.any { it.type == modifier } ?: false
     }
 
     // Enum constants are implicitly public (JLS 8.9.3)
@@ -105,15 +113,15 @@ class JavaFieldOverAst(
             if (isEnumEntry) return Visibilities.Public
             return when {
                 containingClass.isInterface -> Visibilities.Public
-                hasFieldModifier("PUBLIC_KEYWORD") -> Visibilities.Public
-                hasFieldModifier("PROTECTED_KEYWORD") -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
-                hasFieldModifier("PRIVATE_KEYWORD") -> Visibilities.Private
+                hasFieldModifier(JavaSyntaxTokenType.PUBLIC_KEYWORD) -> Visibilities.Public
+                hasFieldModifier(JavaSyntaxTokenType.PROTECTED_KEYWORD) -> if (isStatic) JavaVisibilities.ProtectedStaticVisibility else JavaVisibilities.ProtectedAndPackage
+                hasFieldModifier(JavaSyntaxTokenType.PRIVATE_KEYWORD) -> Visibilities.Private
                 else -> JavaVisibilities.PackageVisibility
             }
         }
 
     override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        effectiveModifierList?.getChildrenByType("ANNOTATION")
+        effectiveModifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
     }
@@ -124,7 +132,7 @@ class JavaFieldOverAst(
             return@lazy JavaClassifierTypeForEnumEntry(containingClass)
         }
         // For multi-field declarations, the TYPE node is on the leading field
-        val typeSourceNode = if (node.findChildByType("TYPE") != null) node else leadingFieldNode ?: node
+        val typeSourceNode = if (node.findChildByType(JavaSyntaxElementType.TYPE) != null) node else leadingFieldNode ?: node
         createJavaType(typeSourceNode, resolutionContext)
     }
 
@@ -136,11 +144,11 @@ class JavaFieldOverAst(
         get() {
             // Find EQ token and get the expression after it
             val children = node.children
-            val eqIndex = children.indexOfFirst { it.type.toString() == "EQ" }
+            val eqIndex = children.indexOfFirst { it.type == JavaSyntaxTokenType.EQ }
             if (eqIndex < 0) return null
             // The initializer is the next non-whitespace child after EQ
             return children.drop(eqIndex + 1).firstOrNull {
-                it.type.toString() !in listOf("WHITE_SPACE", "SEMICOLON")
+                it.type != SyntaxTokenTypes.WHITE_SPACE && it.type != JavaSyntaxTokenType.SEMICOLON
             }
         }
 
@@ -153,8 +161,8 @@ class JavaFieldOverAst(
             // For String, check both resolved "java.lang.String" and unresolved "String"
             // (which implicitly refers to java.lang.String)
             val isString = fieldType is JavaClassifierType &&
-                (fieldType.classifierQualifiedName == "java.lang.String" ||
-                 fieldType.classifierQualifiedName == "String")
+                    (fieldType.classifierQualifiedName == "java.lang.String" ||
+                            fieldType.classifierQualifiedName == "String")
             if (fieldType !is JavaPrimitiveType && !isString) return false
             // Verify the initializer is a potentially-constant expression form.
             // This mirrors how PSI checks computeConstantValue() != null: method calls, object
@@ -171,21 +179,21 @@ class JavaFieldOverAst(
      * via cross-language callback. Unresolvable simple names and method calls return false.
      */
     private fun isInitializerPotentiallyConstant(node: JavaSyntaxNode): Boolean {
-        return when (node.type.toString()) {
-            "LITERAL_EXPRESSION" -> {
+        return when (node.type) {
+            JavaSyntaxElementType.LITERAL_EXPRESSION -> {
                 val child = node.children.firstOrNull()
                 child?.type.toString() != "NULL_LITERAL"
             }
-            "BINARY_EXPRESSION" -> {
-                val children = node.children.filter { it.type.toString() != "WHITE_SPACE" }
+            JavaSyntaxElementType.BINARY_EXPRESSION -> {
+                val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
                 // [lhs, operator, rhs] — check both operands
                 children.size >= 3 &&
-                    isInitializerPotentiallyConstant(children[0]) &&
-                    isInitializerPotentiallyConstant(children[2])
+                        isInitializerPotentiallyConstant(children[0]) &&
+                        isInitializerPotentiallyConstant(children[2])
             }
-            "POLYADIC_EXPRESSION" -> {
+            JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
                 // Multiple operands with same operator; operands are at even indices
-                val children = node.children.filter { it.type.toString() != "WHITE_SPACE" }
+                val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
                 var i = 0
                 var result = true
                 while (i < children.size) {
@@ -197,17 +205,17 @@ class JavaFieldOverAst(
                 }
                 result
             }
-            "PREFIX_EXPRESSION" -> {
-                val children = node.children.filter { it.type.toString() != "WHITE_SPACE" }
+            JavaSyntaxElementType.PREFIX_EXPRESSION -> {
+                val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
                 children.size >= 2 && isInitializerPotentiallyConstant(children[1])
             }
-            "PARENS_EXPRESSION" -> {
+            JavaSyntaxElementType.PARENTH_EXPRESSION -> {
                 val inner = node.children.firstOrNull {
-                    it.type.toString() !in listOf("WHITE_SPACE", "LPARENTH", "RPARENTH")
+                    it.type != SyntaxTokenTypes.WHITE_SPACE && it.type != JavaSyntaxTokenType.LPARENTH && it.type != JavaSyntaxTokenType.RPARENTH
                 }
                 inner != null && isInitializerPotentiallyConstant(inner)
             }
-            "REFERENCE_EXPRESSION" -> {
+            JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
                 val refText = node.text.trim()
                 if (refText.contains('.')) {
                     // Qualified reference (e.g., MainKt.FOO, Foo.BAR) — might be an external
@@ -251,13 +259,13 @@ class JavaFieldOverAst(
     // Interface fields are implicitly public static final
     // Enum constants are also implicitly public static final
     // For multi-field declarations, hasFieldModifier checks the effective (possibly inherited) modifier list
-    override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier("STATIC_KEYWORD")
-    override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier("FINAL_KEYWORD")
+    override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.STATIC_KEYWORD)
+    override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
 }
 
 class JavaMethodOverAst(
     node: JavaSyntaxNode,
-    containingClass: JavaClassOverAst
+    containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, containingClass), JavaMethod {
 
     override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -273,19 +281,19 @@ class JavaMethodOverAst(
     }
 
     override val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val parameterList = node.findChildByType("PARAMETER_LIST") ?: return@lazy emptyList()
-        parameterList.getChildrenByType("PARAMETER")
+        val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST) ?: return@lazy emptyList()
+        parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
             .map { JavaValueParameterOverAst(it, resolutionContext) }
     }
 
     override val returnType: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val typeNode = node.findChildByType("TYPE")
+        val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
             ?: return@lazy JavaPrimitiveTypeOverAst(node, resolutionContext)
         // TYPE_USE annotations appear in the method modifier list but belong to the return type
         createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
     }
 
-    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType("MODIFIER_LIST") }
+    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) }
 
     // Interface methods are abstract unless they have 'default' or 'static' keyword.
     // Note: in Java, a non-default interface method body is a compile error, but we still see
@@ -297,7 +305,7 @@ class JavaMethodOverAst(
 
     private val hasDefaultKeyword: Boolean
         // DEFAULT_KEYWORD is inside MODIFIER_LIST, not a direct child of the method node
-        get() = modifierList?.children?.any { it.type.toString() == "DEFAULT_KEYWORD" } ?: false
+        get() = modifierList?.children?.any { it.type == JavaSyntaxTokenType.DEFAULT_KEYWORD } ?: false
 
     override val annotationParameterDefaultValue: JavaAnnotationArgument?
         get() {
@@ -305,30 +313,30 @@ class JavaMethodOverAst(
             if (!containingClass.isAnnotationType) return null
 
             // Look for DEFAULT_KEYWORD followed by the default value
-            val defaultKeyword = node.findChildByType("DEFAULT_KEYWORD") ?: return null
+            val defaultKeyword = node.findChildByType(JavaSyntaxTokenType.DEFAULT_KEYWORD) ?: return null
 
             // Find the value node - it follows DEFAULT_KEYWORD in the children list
             val children = node.children
-            val defaultIndex = children.indexOfFirst { it.type.toString() == "DEFAULT_KEYWORD" }
+            val defaultIndex = children.indexOfFirst { it.type == JavaSyntaxTokenType.DEFAULT_KEYWORD }
             if (defaultIndex < 0) return null
 
             // The value expression is the next non-whitespace child after DEFAULT_KEYWORD
             val valueNode = children.drop(defaultIndex + 1).firstOrNull {
-                it.type.toString() !in listOf("WHITE_SPACE", "SEMICOLON")
+                it.type != SyntaxTokenTypes.WHITE_SPACE && it.type != JavaSyntaxTokenType.SEMICOLON
             } ?: return null
 
             return createAnnotationArgumentFromValue(null, valueNode, resolutionContext)
         }
 
     override val hasAnnotationParameterDefaultValue: Boolean get() = annotationParameterDefaultValue != null
-    override val isNative: Boolean get() = hasModifier("NATIVE_KEYWORD")
+    override val isNative: Boolean get() = hasModifier(JavaSyntaxTokenType.NATIVE_KEYWORD)
 
     override val isFromSource: Boolean get() = true
 }
 
 class JavaConstructorOverAst(
     node: JavaSyntaxNode,
-    containingClass: JavaClassOverAst
+    containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, containingClass), JavaConstructor {
     // Constructors are never static, abstract, and are always final (can't be overridden)
     override val isAbstract: Boolean get() = false
@@ -347,8 +355,8 @@ class JavaConstructorOverAst(
     }
 
     override val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val parameterList = node.findChildByType("PARAMETER_LIST") ?: return@lazy emptyList()
-        parameterList.getChildrenByType("PARAMETER")
+        val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST) ?: return@lazy emptyList()
+        parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
             .map { JavaValueParameterOverAst(it, resolutionContext) }
     }
 
@@ -357,14 +365,14 @@ class JavaConstructorOverAst(
 
 class JavaValueParameterOverAst(
     node: JavaSyntaxNode,
-    private val resolutionContext: JavaResolutionContext
+    private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node), JavaValueParameter {
     override val name: Name?
-        get() = node.findChildByType("IDENTIFIER")?.text?.let { Name.identifier(it) }
+        get() = node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text?.let { Name.identifier(it) }
 
     override val type: JavaType
         get() {
-            val typeNode = node.findChildByType("TYPE") ?: node
+            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE) ?: node
             // Pass modifier list annotations as extra annotations to the type.
             // Matches TreeBasedValueParameter which passes annotations to TreeBasedType.create().
             return createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
@@ -372,16 +380,16 @@ class JavaValueParameterOverAst(
 
     override val isVararg: Boolean
         get() {
-            if (node.findChildByType("ELLIPSIS") != null) return true
-            val typeNode = node.findChildByType("TYPE")
-            return typeNode?.findChildByType("ELLIPSIS") != null
+            if (node.findChildByType(JavaSyntaxTokenType.ELLIPSIS) != null) return true
+            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
+            return typeNode?.findChildByType(JavaSyntaxTokenType.ELLIPSIS) != null
         }
 
     private val modifierList: JavaSyntaxNode?
-        get() = node.findChildByType("MODIFIER_LIST")
+        get() = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
 
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.getChildrenByType("ANNOTATION")
+        get() = modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
             ?.map { JavaAnnotationOverAst(it, resolutionContext) }
             ?: emptyList()
 

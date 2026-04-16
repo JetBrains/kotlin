@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-15 (iter 68)
+**Last Updated**: 2026-04-16 (iter 70)
 
 ---
 
@@ -18,6 +18,7 @@
 | `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37–51 | 1157/1168 → 1165/1168 box, **17 combined failing** |
 | (inline below) | 52–65 | 1165/1168 → 1168/1168 box, 1454/1456 phased, **2 won't-fix** |
 | (inline below) | 66–68 | Cross-package inherited inner classes + binary supertype BFS + multi-field declarations |
+| (inline below) | 69–70 | BFS guard restoration + string-to-SyntaxElementType refactoring |
 
 ---
 
@@ -697,6 +698,49 @@ Three coordinated changes:
 - The BFS guard removal was the primary cause of the profiler hotspot — for protobuf files with hundreds of type references, the BFS ran hundreds of times redundantly, each time walking the supertype hierarchy and finding nothing
 - The `getSupertypeClassIds` callback is only available when FIR provides it (during type conversion); without it, the aggregated inherited inner class map from the class finder already covers all same-package source supertypes
 - `starImports.distinct()` is a micro-optimization but eliminates O(n) list creation per type reference resolution call, which adds up across thousands of calls
+
+---
+
+## Iteration 70: Refactoring — Replace String-Based AST Type Comparisons with SyntaxElementType Constants - 2026-04-16
+
+### Motivation
+Step 1.1 of the refactoring plan (`implDocs/REFACTORING_PLAN.md`). ~100+ call sites across all 9 source files compared AST node types via `it.type.toString() == "IDENTIFIER"` etc. This created unnecessary `String` allocations on every comparison and was fragile (typos silently fail, no compile-time verification).
+
+### Changes
+Replaced all string-based AST type comparisons with typed `SyntaxElementType` constants from the `com.intellij.java.syntax.element` package:
+
+1. **`utils.kt`** — Removed string-based `findChildByType(String)` and `getChildrenByType(String)` overloads. Updated `computeTypeParameters` to use `JavaSyntaxElementType.TYPE_PARAMETER_LIST` / `TYPE_PARAMETER`.
+
+2. **`JavaClassOverAst.kt`** (~15 sites) — Replaced `"IDENTIFIER"` → `JavaSyntaxTokenType.IDENTIFIER`, `"CLASS"` → `JavaSyntaxElementType.CLASS`, `"MODIFIER_LIST"` → `JavaSyntaxElementType.MODIFIER_LIST`, modifier keywords → `JavaSyntaxTokenType.*_KEYWORD`, etc. Changed `hasModifier(String)` parameter type to `SyntaxElementType`.
+
+3. **`JavaMemberOverAst.kt`** (~12 sites) — Replaced `"FIELD"` → `JavaSyntaxElementType.FIELD`, `"METHOD"` / `"ANNOTATION_METHOD"` → corresponding constants, `"PARAMETER_LIST"` → `JavaSyntaxElementType.PARAMETER_LIST`, etc. Changed `hasFieldModifier(String)` parameter type to `SyntaxElementType`. Converted `when(node.type.toString())` blocks to `when(node.type)` with constant branches.
+
+4. **`JavaTypeOverAst.kt`** (~12 sites) — Replaced `"TYPE"` → `JavaSyntaxElementType.TYPE`, `"LBRACKET"` → `JavaSyntaxTokenType.LBRACKET`, `"JAVA_CODE_REFERENCE"` → `JavaSyntaxElementType.JAVA_CODE_REFERENCE`, `"QUEST"` → `JavaSyntaxTokenType.QUEST`, primitive keywords → `JavaSyntaxTokenType.*_KEYWORD`, etc.
+
+5. **`JavaAnnotationOverAst.kt`** (~6 sites) — Replaced `"ANNOTATION_PARAMETER_LIST"` → `JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST`, `"NAME_VALUE_PAIR"` → `JavaSyntaxElementType.NAME_VALUE_PAIR`, literal tokens → `JavaSyntaxTokenType.INTEGER_LITERAL` etc. Converted `when(node.type.toString())` to `when(node.type)`.
+
+6. **`ConstantEvaluator.kt`** (~5 sites) — Replaced expression type strings → `JavaSyntaxElementType.LITERAL_EXPRESSION`, `BINARY_EXPRESSION`, `PREFIX_EXPRESSION`, `PARENTH_EXPRESSION`, `TYPE_CAST_EXPRESSION`, `CONDITIONAL_EXPRESSION`, `POLYADIC_EXPRESSION`. Operator tokens → `JavaSyntaxTokenType.PLUS`, `MINUS`, etc. Literal tokens → `JavaSyntaxTokenType.INTEGER_LITERAL`, `STRING_LITERAL`, etc. Converted `when(node.type.toString())` to `when(node.type)`.
+
+7. **`JavaResolutionContext.kt`** (~8 sites) — Replaced `"ASTERISK"` → `JavaSyntaxTokenType.ASTERISK`, `"IMPORT_LIST"` → `JavaSyntaxElementType.IMPORT_LIST`, `"ERROR_ELEMENT"` → `SyntaxTokenTypes.ERROR_ELEMENT`, etc.
+
+8. **`JavaClassFinderOverAstImpl.kt`** (~5 sites) — Replaced `"CLASS"` → `JavaSyntaxElementType.CLASS`, `"PACKAGE_STATEMENT"` → `JavaSyntaxElementType.PACKAGE_STATEMENT`, etc.
+
+9. **`JavaRecordComponentOverAst.kt`** (~4 sites) — Replaced string-based calls similarly.
+
+### Remaining String-Based Comparisons
+- Three `findChildByType("DOC_COMMENT")` calls remain string-based — no `DOC_COMMENT` constant exists in `JavaSyntaxElementType` or `JavaSyntaxTokenType` (it's in `JavaDocSyntaxTokenType` which has different granularity).
+- One `NULL_LITERAL` check remains string-based — no `NULL_LITERAL` constant exists; the library uses `NULL_KEYWORD` for the `null` keyword token, but the parser may produce a `NULL_LITERAL` composite node.
+
+### Test Results
+- Unit tests (`JavaParsingTest`): PASS
+- Full test suite (`JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`, ~2600+ tests): BUILD SUCCESSFUL, 0 failures
+- Zero regressions — purely mechanical replacement with no behavioral change
+
+### Key Learnings
+- The `com.intellij.java.syntax.element` package provides comprehensive constants for both composite nodes (`JavaSyntaxElementType`) and leaf tokens (`JavaSyntaxTokenType`), plus useful bitsets (`SyntaxElementTypes.PRIMITIVE_TYPE_BIT_SET`, `MODIFIER_BIT_SET`)
+- `SyntaxElementType` comparison (`it.type == JavaSyntaxElementType.CLASS`) is a direct reference equality check — no String allocation or `toString()` needed
+- The `SyntaxTokenTypes` class from `com.intellij.platform.syntax.element` provides platform-level tokens like `ERROR_ELEMENT` and `WHITE_SPACE` that are not in the Java-specific packages
+- `DOC_COMMENT` lives in `JavaDocSyntaxTokenType` (a separate doc-comment subsystem), not in the main `JavaSyntaxTokenType` — this is a gap in the available constants for java-direct's use case
 
 ---
 

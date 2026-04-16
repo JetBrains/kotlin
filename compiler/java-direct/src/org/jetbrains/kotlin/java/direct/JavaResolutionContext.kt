@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -82,6 +85,7 @@ class JavaResolutionContext private constructor(
         aggregatedInheritedInnerClassesHolder[0] = result
         return result
     }
+
     /**
      * Finds a class by simple name. Checks:
      * 1. Inner classes of the containing class (if any)
@@ -124,7 +128,7 @@ class JavaResolutionContext private constructor(
         // Then check top-level classes
         return localClassProvider(name)
     }
-    
+
     /**
      * Searches for an inner class with the given name in the supertype hierarchy.
      * This implements JLS 6.5.2 - inherited member types are in scope.
@@ -138,7 +142,7 @@ class JavaResolutionContext private constructor(
     private fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
         if (javaClass in visited) return null
         visited.add(javaClass)
-        
+
         val allFound = mutableSetOf<JavaClass>()
 
         // First try local resolution (same-file supertypes)
@@ -160,7 +164,7 @@ class JavaResolutionContext private constructor(
                 allFound.add(found)
             }
         }
-        
+
         // If local resolution found nothing, try cross-file detection
         if (allFound.isEmpty()) {
             val javaClassOverAst = javaClass as? JavaClassOverAst
@@ -771,7 +775,7 @@ class JavaResolutionContext private constructor(
         if (parts.isEmpty()) return null
         for (classStartIndex in (parts.size - 1) downTo 0) {
             val pkg = if (classStartIndex == 0) FqName.ROOT
-                      else FqName.fromSegments(parts.subList(0, classStartIndex).map { it.asString() })
+            else FqName.fromSegments(parts.subList(0, classStartIndex).map { it.asString() })
             val cls = FqName.fromSegments(parts.subList(classStartIndex, parts.size).map { it.asString() })
             val classId = ClassId(pkg, cls, false)
             if (tryResolve(classId)) return classId
@@ -784,7 +788,7 @@ class JavaResolutionContext private constructor(
         // The class name is whatever comes after the package
         val fqnString = fqName.asString()
         val pkgString = packageFqName.asString()
-        
+
         val className = if (pkgString.isEmpty()) {
             fqnString
         } else if (fqnString.startsWith(pkgString + ".")) {
@@ -792,7 +796,7 @@ class JavaResolutionContext private constructor(
         } else {
             fqnString
         }
-        
+
         return ClassId(packageFqName, FqName(className), isLocal = false)
     }
 
@@ -819,7 +823,7 @@ class JavaResolutionContext private constructor(
 
         fun create(
             root: JavaSyntaxNode,
-            classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null
+            classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
         ): JavaResolutionContext {
             val packageFqName = extractPackageName(root)
             val (simpleImports, starImports) = extractImports(root)
@@ -846,8 +850,8 @@ class JavaResolutionContext private constructor(
         }
 
         private fun extractPackageName(root: JavaSyntaxNode): FqName {
-            val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
-            val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
+            val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
+            val packageName = packageStmt?.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
             return if (packageName != null) FqName(packageName) else FqName.ROOT
         }
 
@@ -856,12 +860,12 @@ class JavaResolutionContext private constructor(
             val starImports = mutableListOf<FqName>()
 
             // Handle case where root might be CLASS instead of compilation unit
-            val importList = root.findChildByType("IMPORT_LIST")
-                ?: root.findChildByType("CLASS")?.findChildByType("IMPORT_LIST")
+            val importList = root.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
+                ?: root.findChildByType(JavaSyntaxElementType.CLASS)?.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
 
-            for (importNode in importList?.getChildrenByType("IMPORT_STATEMENT") ?: emptyList()) {
-                val codeRef = importNode.findChildByType("JAVA_CODE_REFERENCE") ?: continue
-                val hasStar = importNode.children.any { it.type.toString() == "ASTERISK" }
+            for (importNode in importList?.getChildrenByType(JavaSyntaxElementType.IMPORT_STATEMENT) ?: emptyList()) {
+                val codeRef = importNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: continue
+                val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
                 val fqName = codeRef.text
 
                 if (hasStar) {
@@ -878,9 +882,9 @@ class JavaResolutionContext private constructor(
 
             // Handle static imports: "import static pkg.Class.MEMBER" or "import static pkg.Class.*"
             // The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
-            for (importNode in importList?.getChildrenByType("IMPORT_STATIC_STATEMENT") ?: emptyList()) {
-                val refNode = importNode.findChildByType("IMPORT_STATIC_REFERENCE") ?: continue
-                val hasStar = importNode.children.any { it.type.toString() == "ASTERISK" }
+            for (importNode in importList?.getChildrenByType(JavaSyntaxElementType.IMPORT_STATIC_STATEMENT) ?: emptyList()) {
+                val refNode = importNode.findChildByType(JavaSyntaxElementType.IMPORT_STATIC_REFERENCE) ?: continue
+                val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
                 val fqName = refNode.text
 
                 if (hasStar) {
@@ -895,21 +899,21 @@ class JavaResolutionContext private constructor(
             }
 
             // Also check for ERROR_ELEMENT imports (parser may emit these for imports starting with reserved words like 'kotlin')
-            for (errorNode in importList?.getChildrenByType("ERROR_ELEMENT") ?: emptyList()) {
-                if (errorNode.findChildByType("IMPORT_KEYWORD") == null) continue
-                
+            for (errorNode in importList?.getChildrenByType(SyntaxTokenTypes.ERROR_ELEMENT) ?: emptyList()) {
+                if (errorNode.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) == null) continue
+
                 // Reconstruct the import from IDENTIFIER and DOT children
                 val identifiers = mutableListOf<String>()
                 for (child in errorNode.children) {
-                    if (child.type.toString() == "IDENTIFIER") {
+                    if (child.type == JavaSyntaxTokenType.IDENTIFIER) {
                         identifiers.add(child.text)
                     }
                 }
                 if (identifiers.isEmpty()) continue
-                
-                val hasStar = errorNode.children.any { it.type.toString() == "ASTERISK" }
+
+                val hasStar = errorNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
                 val fqName = identifiers.joinToString(".")
-                
+
                 if (hasStar) {
                     starImports.add(FqName(fqName))
                 } else {
@@ -919,7 +923,7 @@ class JavaResolutionContext private constructor(
                     }
                 }
             }
-            
+
             // Handle fragmented import patterns where parser splits import across sibling nodes
             // Pattern 1: ERROR_ELEMENT(IMPORT_KEYWORD) followed by TYPE(JAVA_CODE_REFERENCE) - simple import
             // Pattern 2: ERROR_ELEMENT(import) followed by TYPE(pkg.) followed by ERROR_ELEMENT(*;) - star import
@@ -928,57 +932,54 @@ class JavaResolutionContext private constructor(
             var i = 0
             while (i < allChildren.size) {
                 val node = allChildren[i]
-                val nodeType = node.type.toString()
-                
+
                 // Check for ERROR_ELEMENT containing "import" keyword or text
-                val isImportError = nodeType == "ERROR_ELEMENT" && 
-                    (node.findChildByType("IMPORT_KEYWORD") != null || node.text.trim() == "import")
-                
+                val isImportError = node.type == SyntaxTokenTypes.ERROR_ELEMENT &&
+                        (node.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) != null || node.text.trim() == "import")
+
                 if (isImportError) {
                     // Look for the next TYPE or JAVA_CODE_REFERENCE sibling, skipping whitespace and modifier list
                     var typeNode: JavaSyntaxNode? = null
                     var hasStar = false
-                    
+
                     for (j in (i + 1) until allChildren.size) {
                         val sibling = allChildren[j]
-                        val sibType = sibling.type.toString()
                         // Skip whitespace, empty modifier lists, and empty error elements
-                        if (sibType == "WHITE_SPACE" || sibType == "MODIFIER_LIST") continue
-                        if (sibType == "ERROR_ELEMENT" && sibling.text.isBlank()) continue
-                        
-                        if (sibType == "TYPE" || sibType == "JAVA_CODE_REFERENCE") {
+                        if (sibling.type == SyntaxTokenTypes.WHITE_SPACE || sibling.type == JavaSyntaxElementType.MODIFIER_LIST) continue
+                        if (sibling.type == SyntaxTokenTypes.ERROR_ELEMENT && sibling.text.isBlank()) continue
+
+                        if (sibling.type == JavaSyntaxElementType.TYPE || sibling.type == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
                             typeNode = sibling
                             // Continue to check for star in following siblings (not just the next one)
                             for (k in (j + 1) until allChildren.size) {
                                 val nextSib = allChildren[k]
-                                val nextSibType = nextSib.type.toString()
-                                if (nextSibType == "WHITE_SPACE" || nextSibType == "MODIFIER_LIST") continue
-                                if (nextSibType == "ERROR_ELEMENT" && nextSib.text.isBlank()) continue
-                                if (nextSibType == "ERROR_ELEMENT" && nextSib.text.contains("*")) {
+                                if (nextSib.type == SyntaxTokenTypes.WHITE_SPACE || nextSib.type == JavaSyntaxElementType.MODIFIER_LIST) continue
+                                if (nextSib.type == SyntaxTokenTypes.ERROR_ELEMENT && nextSib.text.isBlank()) continue
+                                if (nextSib.type == SyntaxTokenTypes.ERROR_ELEMENT && nextSib.text.contains("*")) {
                                     hasStar = true
                                     break
                                 }
                                 // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
-                                if (nextSibType == "CLASS") break
+                                if (nextSib.type == JavaSyntaxElementType.CLASS) break
                             }
                             break
                         }
                         // Also check if ERROR_ELEMENT itself contains star (like "*;")
-                        if (sibType == "ERROR_ELEMENT" && sibling.text.contains("*")) {
+                        if (sibling.type == SyntaxTokenTypes.ERROR_ELEMENT && sibling.text.contains("*")) {
                             hasStar = true
                         }
                         // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
-                        if (sibType == "CLASS") break
+                        if (sibling.type == JavaSyntaxElementType.CLASS) break
                     }
-                    
+
                     if (typeNode != null) {
-                        val ref = typeNode.findChildByType("JAVA_CODE_REFERENCE") ?: typeNode
+                        val ref = typeNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: typeNode
                         var fqName = ref.text.trim()
                         // Remove trailing dot if present (from fragmented star import like "org.jetbrains.annotations.")
                         if (fqName.endsWith('.')) {
                             fqName = fqName.dropLast(1)
                         }
-                        
+
                         if (fqName.contains('.')) {
                             if (hasStar) {
                                 starImports.add(FqName(fqName))
@@ -999,8 +1000,8 @@ class JavaResolutionContext private constructor(
 
         private fun findClassNode(root: JavaSyntaxNode, name: Name): JavaSyntaxNode? {
             for (child in root.children) {
-                if (child.type.toString() == "CLASS") {
-                    val id = child.findChildByType("IDENTIFIER")?.text
+                if (child.type == JavaSyntaxElementType.CLASS) {
+                    val id = child.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
                     if (id == name.asString()) return child
                 }
             }

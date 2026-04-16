@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-
-private val JavaSyntaxNode.nodeType: String get() = type.toString()
 
 class JavaAnnotationOverAst(
     node: JavaSyntaxNode,
@@ -18,8 +19,8 @@ class JavaAnnotationOverAst(
 ) : JavaElementOverAst(node), JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
-            val parameterList = node.findChildByType("ANNOTATION_PARAMETER_LIST") ?: return emptyList()
-            return parameterList.getChildrenByType("NAME_VALUE_PAIR").map { nvp ->
+            val parameterList = node.findChildByType(JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST) ?: return emptyList()
+            return parameterList.getChildrenByType(JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
                 createAnnotationArgument(nvp, resolutionContext)
             }
         }
@@ -30,7 +31,7 @@ class JavaAnnotationOverAst(
      * For `@java.lang.Deprecated`, returns "java.lang.Deprecated".
      */
     private val annotationName: String?
-        get() = node.findChildByType("JAVA_CODE_REFERENCE")?.text
+        get() = node.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
 
     override val classId: ClassId?
         get() {
@@ -78,11 +79,11 @@ private fun createAnnotationArgument(
     nameValuePair: JavaSyntaxNode,
     resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
-    val name = nameValuePair.findChildByType("IDENTIFIER")?.let { Name.identifier(it.text) }
+    val name = nameValuePair.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.let { Name.identifier(it.text) }
 
     // Find the value expression - it's the child that's not IDENTIFIER, EQ, or whitespace
     val valueNode = nameValuePair.children.firstOrNull { child ->
-        child.nodeType !in listOf("IDENTIFIER", "EQ", "WHITE_SPACE")
+        child.type != JavaSyntaxTokenType.IDENTIFIER && child.type != JavaSyntaxTokenType.EQ && child.type != SyntaxTokenTypes.WHITE_SPACE
     }
 
     return createAnnotationArgumentFromValue(name, valueNode, resolutionContext)
@@ -97,27 +98,27 @@ internal fun createAnnotationArgumentFromValue(
         return JavaUnknownAnnotationArgumentOverAst(name)
     }
 
-    return when (valueNode.nodeType) {
-        "LITERAL_EXPRESSION" -> {
+    return when (valueNode.type) {
+        JavaSyntaxElementType.LITERAL_EXPRESSION -> {
             val value = evaluateLiteral(valueNode)
             JavaLiteralAnnotationArgumentOverAst(name, value)
         }
-        "ARRAY_INITIALIZER_EXPRESSION", "ANNOTATION_ARRAY_INITIALIZER" -> {
+        JavaSyntaxElementType.ARRAY_INITIALIZER_EXPRESSION, JavaSyntaxElementType.ANNOTATION_ARRAY_INITIALIZER -> {
             JavaArrayAnnotationArgumentOverAst(name, valueNode, resolutionContext)
         }
-        "REFERENCE_EXPRESSION" -> {
+        JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
             // Could be enum constant reference (e.g., RetentionPolicy.RUNTIME)
             // or constant field reference (e.g., KotlinClass.FOO_INT)
             // FIR will determine which it is during resolution
             JavaEnumValueAnnotationArgumentOverAst(name, valueNode, resolutionContext)
         }
-        "CLASS_OBJECT_ACCESS_EXPRESSION" -> {
+        JavaSyntaxElementType.CLASS_OBJECT_ACCESS_EXPRESSION -> {
             JavaClassObjectAnnotationArgumentOverAst(name, valueNode, resolutionContext)
         }
-        "ANNOTATION" -> {
+        JavaSyntaxElementType.ANNOTATION -> {
             JavaAnnotationAsAnnotationArgumentOverAst(name, valueNode, resolutionContext)
         }
-        "PREFIX_EXPRESSION", "BINARY_EXPRESSION" -> {
+        JavaSyntaxElementType.PREFIX_EXPRESSION, JavaSyntaxElementType.BINARY_EXPRESSION -> {
             // Constant expressions like -1 or 1 + 2
             val value = evaluateConstantExpression(valueNode)
             JavaLiteralAnnotationArgumentOverAst(name, value)
@@ -132,25 +133,25 @@ private fun evaluateLiteral(node: JavaSyntaxNode): Any? {
     val literalChild = node.children.firstOrNull() ?: return null
     val text = literalChild.text
 
-    return when (literalChild.nodeType) {
-        "STRING_LITERAL" -> {
+    return when (literalChild.type) {
+        JavaSyntaxTokenType.STRING_LITERAL -> {
             // Remove surrounding quotes and unescape
             if (text.length >= 2) {
                 text.substring(1, text.length - 1).unescapeJavaString()
             } else text
         }
-        "CHARACTER_LITERAL" -> {
+        JavaSyntaxTokenType.CHARACTER_LITERAL -> {
             if (text.length >= 3) {
                 text.substring(1, text.length - 1).unescapeJavaString().firstOrNull()
             } else null
         }
-        "TRUE_KEYWORD" -> true
-        "FALSE_KEYWORD" -> false
-        "NULL_LITERAL" -> null
-        "INTEGER_LITERAL" -> parseIntegerLiteral(text)
-        "LONG_LITERAL" -> parseLongLiteral(text)
-        "FLOAT_LITERAL" -> parseFloatLiteral(text)
-        "DOUBLE_LITERAL" -> parseDoubleLiteral(text)
+        JavaSyntaxTokenType.TRUE_KEYWORD -> true
+        JavaSyntaxTokenType.FALSE_KEYWORD -> false
+        JavaSyntaxTokenType.NULL_KEYWORD -> null
+        JavaSyntaxTokenType.INTEGER_LITERAL -> parseIntegerLiteral(text)
+        JavaSyntaxTokenType.LONG_LITERAL -> parseLongLiteral(text)
+        JavaSyntaxTokenType.FLOAT_LITERAL -> parseFloatLiteral(text)
+        JavaSyntaxTokenType.DOUBLE_LITERAL -> parseDoubleLiteral(text)
         else -> {
             // Fallback: try to parse as number
             text.toIntOrNull() ?: text.toLongOrNull() ?: text.toDoubleOrNull() ?: text
@@ -158,13 +159,18 @@ private fun evaluateLiteral(node: JavaSyntaxNode): Any? {
     }
 }
 
+private val ANNOTATION_BINARY_OPERATOR_TYPES = setOf(
+    JavaSyntaxTokenType.PLUS, JavaSyntaxTokenType.MINUS, JavaSyntaxTokenType.ASTERISK,
+    JavaSyntaxTokenType.DIV, JavaSyntaxTokenType.PERC
+)
+
 private fun evaluateConstantExpression(node: JavaSyntaxNode): Any? {
-    when (node.nodeType) {
-        "PREFIX_EXPRESSION" -> {
-            val operator = node.children.firstOrNull()?.nodeType
+    when (node.type) {
+        JavaSyntaxElementType.PREFIX_EXPRESSION -> {
+            val firstChild = node.children.firstOrNull()
             val operand = node.children.getOrNull(1)
-            if (operator == "MINUS" && operand != null) {
-                val value = if (operand.nodeType == "LITERAL_EXPRESSION") {
+            if (firstChild?.type == JavaSyntaxTokenType.MINUS && operand != null) {
+                val value = if (operand.type == JavaSyntaxElementType.LITERAL_EXPRESSION) {
                     evaluateLiteral(operand)
                 } else {
                     evaluateConstantExpression(operand)
@@ -178,37 +184,37 @@ private fun evaluateConstantExpression(node: JavaSyntaxNode): Any? {
                 }
             }
         }
-        "BINARY_EXPRESSION" -> {
+        JavaSyntaxElementType.BINARY_EXPRESSION -> {
             val operands = node.children.filter {
-                it.nodeType !in listOf("WHITE_SPACE", "PLUS", "MINUS", "ASTERISK", "DIV", "PERC")
+                it.type != SyntaxTokenTypes.WHITE_SPACE && it.type !in ANNOTATION_BINARY_OPERATOR_TYPES
             }
             val operatorNode = node.children.firstOrNull {
-                it.nodeType in listOf("PLUS", "MINUS", "ASTERISK", "DIV", "PERC")
+                it.type in ANNOTATION_BINARY_OPERATOR_TYPES
             }
             if (operands.size == 2 && operatorNode != null) {
                 val left = evaluateConstantExpression(operands[0])
                 val right = evaluateConstantExpression(operands[1])
-                return evaluateBinaryExpression(left, operatorNode.nodeType, right)
+                return evaluateBinaryExpression(left, operatorNode.type, right)
             }
         }
-        "LITERAL_EXPRESSION" -> return evaluateLiteral(node)
+        JavaSyntaxElementType.LITERAL_EXPRESSION -> return evaluateLiteral(node)
     }
     return null
 }
 
-private fun evaluateBinaryExpression(left: Any?, operator: String, right: Any?): Any? {
+private fun evaluateBinaryExpression(left: Any?, operator: com.intellij.platform.syntax.SyntaxElementType, right: Any?): Any? {
     if (left == null || right == null) return null
     // String concatenation
-    if (operator == "PLUS" && (left is String || right is String)) {
+    if (operator == JavaSyntaxTokenType.PLUS && (left is String || right is String)) {
         return left.toString() + right.toString()
     }
     // Numeric operations
     return when (operator) {
-        "PLUS" -> numericBinaryOp(left, right) { a, b -> a + b }
-        "MINUS" -> numericBinaryOp(left, right) { a, b -> a - b }
-        "ASTERISK" -> numericBinaryOp(left, right) { a, b -> a * b }
-        "DIV" -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a / b else 0L }
-        "PERC" -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a % b else 0L }
+        JavaSyntaxTokenType.PLUS -> numericBinaryOp(left, right) { a, b -> a + b }
+        JavaSyntaxTokenType.MINUS -> numericBinaryOp(left, right) { a, b -> a - b }
+        JavaSyntaxTokenType.ASTERISK -> numericBinaryOp(left, right) { a, b -> a * b }
+        JavaSyntaxTokenType.DIV -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a / b else 0L }
+        JavaSyntaxTokenType.PERC -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a % b else 0L }
         else -> null
     }
 }
@@ -263,14 +269,30 @@ private fun String.unescapeJavaString(): String {
     while (i < length) {
         if (this[i] == '\\' && i + 1 < length) {
             when (this[i + 1]) {
-                'n' -> { sb.append('\n'); i += 2 }
-                't' -> { sb.append('\t'); i += 2 }
-                'r' -> { sb.append('\r'); i += 2 }
-                'b' -> { sb.append('\b'); i += 2 }
-                'f' -> { sb.append('\u000C'); i += 2 }
-                '\'' -> { sb.append('\''); i += 2 }
-                '"' -> { sb.append('"'); i += 2 }
-                '\\' -> { sb.append('\\'); i += 2 }
+                'n' -> {
+                    sb.append('\n'); i += 2
+                }
+                't' -> {
+                    sb.append('\t'); i += 2
+                }
+                'r' -> {
+                    sb.append('\r'); i += 2
+                }
+                'b' -> {
+                    sb.append('\b'); i += 2
+                }
+                'f' -> {
+                    sb.append('\u000C'); i += 2
+                }
+                '\'' -> {
+                    sb.append('\''); i += 2
+                }
+                '"' -> {
+                    sb.append('"'); i += 2
+                }
+                '\\' -> {
+                    sb.append('\\'); i += 2
+                }
                 'u' -> {
                     if (i + 5 < length) {
                         val hex = substring(i + 2, i + 6)
@@ -301,7 +323,9 @@ private fun String.unescapeJavaString(): String {
                         i++
                     }
                 }
-                else -> { sb.append(this[i]); i++ }
+                else -> {
+                    sb.append(this[i]); i++
+                }
             }
         } else {
             sb.append(this[i])
@@ -323,7 +347,7 @@ class JavaArrayAnnotationArgumentOverAst(
 ) : JavaArrayAnnotationArgument {
     override fun getElements(): List<JavaAnnotationArgument> {
         return arrayNode.children
-            .filter { it.nodeType !in listOf("LBRACE", "RBRACE", "COMMA", "WHITE_SPACE") }
+            .filter { it.type != JavaSyntaxTokenType.LBRACE && it.type != JavaSyntaxTokenType.RBRACE && it.type != JavaSyntaxTokenType.COMMA && it.type != SyntaxTokenTypes.WHITE_SPACE }
             .map { createAnnotationArgumentFromValue(null, it, resolutionContext) }
     }
 }
@@ -430,8 +454,8 @@ class JavaClassObjectAnnotationArgumentOverAst(
     override fun getReferencedType(): JavaType {
         // CLASS_OBJECT_ACCESS_EXPRESSION typically has structure: TYPE.class
         // Find the type reference before .class
-        val typeNode = classObjNode.findChildByType("TYPE")
-            ?: classObjNode.findChildByType("JAVA_CODE_REFERENCE")
+        val typeNode = classObjNode.findChildByType(JavaSyntaxElementType.TYPE)
+            ?: classObjNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
 
         return if (typeNode != null) {
             createJavaType(typeNode, resolutionContext)
