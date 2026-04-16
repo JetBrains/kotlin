@@ -98,16 +98,18 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             LeafCommonizerTarget("c") to targetCRoot
         )
 
+        val supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable)
+
         val classifiers = CirKnownClassifiers(
             classifierIndices = roots.mapValue(::CirClassifierIndex),
             targetDependencies = targetDependencies,
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = commonDependencies
         ).also { classifiers ->
-            mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings)
+            mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings, supportExpectClassSupplier)
         }
 
-        return TypeCommonizer(classifiers, DefaultCommonizerSettings)
+        return TypeCommonizer(classifiers, DefaultCommonizerSettings, supportExpectClassSupplier = supportExpectClassSupplier)
     }
 
 
@@ -620,8 +622,10 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
 
     companion object {
-        fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
-            TypeCommonizer(classifiers, DefaultCommonizerSettings).invoke(listOf(a, b)) != null
+        fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean {
+            return TypeCommonizer(classifiers, DefaultCommonizerSettings, supportExpectClassSupplier = SupportExpectClassSupplier.empty())
+                .invoke(listOf(a, b)) != null
+        }
     }
 }
 

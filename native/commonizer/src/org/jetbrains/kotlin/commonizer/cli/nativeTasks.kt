@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.konan.LibraryCommonizer
 import org.jetbrains.kotlin.commonizer.konan.ModuleSerializer
 import org.jetbrains.kotlin.commonizer.repository.*
+import org.jetbrains.kotlin.commonizer.repository.plus
 import org.jetbrains.kotlin.commonizer.stats.FileStatsOutput
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.stats.StatsType
@@ -70,8 +71,9 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         LibraryCommonizer(
             outputTargets = outputTargets,
             repository = repository,
-            dependencies = StdlibRepository(distribution, libraryLoader) +
-                    CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader),
+            dependencies = StdlibRepository(distribution, libraryLoader)
+                    + CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader)
+                    + CommonizerSupportLibraryRepository(logger),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger,
@@ -110,7 +112,8 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         LibraryCommonizer(
             outputTargets = outputTargets,
             repository = repository,
-            dependencies = StdlibRepository(distribution, libraryLoader),
+            dependencies = StdlibRepository(distribution, libraryLoader)
+                    + CommonizerSupportLibraryRepository(logger),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger,

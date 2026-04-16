@@ -157,7 +157,13 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
         )
     }
 
-    override fun createCommonizer() = ValueParameterListCommonizer(TypeCommonizer(MOCK_CLASSIFIERS, DefaultCommonizerSettings))
+    override fun createCommonizer() = ValueParameterListCommonizer(
+        TypeCommonizer(
+            classifiers = MOCK_CLASSIFIERS,
+            settings = DefaultCommonizerSettings,
+            supportExpectClassSupplier = SupportExpectClassSupplier.empty(),
+        )
+    )
 
     override fun areEqual(a: List<CirValueParameter>?, b: List<CirValueParameter>?): Boolean {
         if (a === b)
