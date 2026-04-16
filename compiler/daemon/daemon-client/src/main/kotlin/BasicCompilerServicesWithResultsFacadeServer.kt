@@ -27,18 +27,31 @@ import java.rmi.server.UnicastRemoteObject
 
 
 open class BasicCompilerServicesWithResultsFacadeServer(
-        val messageCollector: MessageCollector,
-        val outputsCollector: ((File, List<File>) -> Unit)? = null,
-        port: Int = SOCKET_ANY_FREE_PORT
+    val messageCollector: MessageCollector,
+    val outputsCollector: ((File, List<File>) -> Unit)? = null,
+    port: Int = SOCKET_ANY_FREE_PORT,
 ) : CompilerServicesFacadeBase,
-    UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
-{
+    UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) {
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         messageCollector.reportFromDaemon(outputsCollector, category, severity, message, attachment)
     }
 }
 
-fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> Unit)?, category: Int, severity: Int, message: String?, attachment: Serializable?) {
+fun MessageCollector.reportFromDaemon(
+    outputsCollector: ((File, List<File>) -> Unit)?,
+    category: Int,
+    severity: Int,
+    message: String?,
+    attachment: Serializable?,
+) {
+    fun requireNotNullMessage(category: Int, severity: Int, message: String?, attachment: Serializable?, body: (message: String) -> Unit) {
+        if (message == null) {
+            reportUnexpected(category, severity, message, attachment)
+            return
+        }
+        body(message)
+    }
+
     val reportCategory = ReportCategory.fromCode(category)
 
     when (reportCategory) {
@@ -49,35 +62,26 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
                         outputsCollector.invoke(it, outs.sourceFiles.toList())
                     }
                 }
-            }
-            else {
-                report(CompilerMessageSeverity.OUTPUT, message!!)
+            } else {
+                requireNotNullMessage(category, severity, message, attachment) {
+                    report(CompilerMessageSeverity.OUTPUT, message = it)
+                }
             }
         }
         ReportCategory.EXCEPTION -> {
             report(CompilerMessageSeverity.EXCEPTION, message.orEmpty())
         }
         ReportCategory.COMPILER_MESSAGE -> {
-            val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
-                ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
-                ReportSeverity.WARNING -> CompilerMessageSeverity.FIXED_WARNING // daemon handles warnings as errors itself, so we should just map it 'as is' without raising the severity
-                ReportSeverity.INFO -> CompilerMessageSeverity.INFO
-                ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
-            }
-            if (message != null) {
-                report(compilerSeverity, message, attachment as? CompilerMessageSourceLocation)
-            }
-            else {
-                reportUnexpected(category, severity, message, attachment)
+            val compilerSeverity = ReportSeverity.fromCode(severity).asCompilerMessageSeverity
+            requireNotNullMessage(category, severity, message, attachment) {
+                report(compilerSeverity, message = it, attachment as? CompilerMessageSourceLocation)
             }
         }
         ReportCategory.DAEMON_MESSAGE,
-        ReportCategory.IC_MESSAGE -> {
-            if (message != null) {
-                report(CompilerMessageSeverity.LOGGING, message)
-            }
-            else {
-                reportUnexpected(category, severity, message, attachment)
+        ReportCategory.IC_MESSAGE,
+            -> {
+            requireNotNullMessage(category, severity, message, attachment) {
+                report(CompilerMessageSeverity.LOGGING, message = it)
             }
         }
         else -> {
@@ -87,12 +91,16 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
 }
 
 private fun MessageCollector.reportUnexpected(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-    val compilerMessageSeverity = when (ReportSeverity.fromCode(severity)) {
+    report(
+        ReportSeverity.fromCode(severity).asCompilerMessageSeverity,
+        "Unexpected message: category=$category; severity=$severity; message='$message'; attachment=$attachment"
+    )
+}
+
+private val ReportSeverity.asCompilerMessageSeverity: CompilerMessageSeverity
+    get() = when (ReportSeverity.fromCode(this.code)) {
         ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
         ReportSeverity.WARNING -> CompilerMessageSeverity.FIXED_WARNING // daemon handles warnings as errors itself, so we should just map it 'as is' without raising the severity
         ReportSeverity.INFO -> CompilerMessageSeverity.INFO
         ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
-
-    report(compilerMessageSeverity, "Unexpected message: category=$category; severity=$severity; message='$message'; attachment=$attachment")
-}
