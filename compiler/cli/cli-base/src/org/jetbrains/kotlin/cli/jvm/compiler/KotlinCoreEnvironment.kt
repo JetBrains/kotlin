@@ -40,8 +40,6 @@ import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
@@ -705,23 +703,6 @@ class KotlinCoreEnvironment private constructor(
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
             fun createErrorMessage(extension: Any): String {
                 return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
-            }
-
-            for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
-                try {
-                    registrar.registerProjectComponents(project, configuration)
-                } catch (e: AbstractMethodError) {
-                    val message = createErrorMessage(registrar)
-                    // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
-                    // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
-                    if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
-                        configuration.report(COMPILER_PLUGIN_INITIALIZATION_WARNING, "Default scripting plugin is disabled: $message")
-                    } else {
-                        val errorMessageWithStackTrace = "$message.\n" +
-                                e.stackTraceToString().lines().take(6).joinToString("\n")
-                        configuration.report(COMPILER_PLUGIN_INITIALIZATION_ERROR, errorMessageWithStackTrace)
-                    }
-                }
             }
 
             val extensionStorage = configuration.extensionsStorage ?: return

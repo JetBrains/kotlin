@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor
@@ -31,9 +30,6 @@ private val scriptCompilationDisabledCommandlineProcessors =
     )
 
 internal fun CompilerConfiguration.loadPluginsFromClassloader(classLoader: ClassLoader) {
-    val registrars =
-        classLoader.loadServices<ComponentRegistrar>(scriptCompilationDisabledPlugins, SCRIPT_COMPILATION_DISABLE_PLUGINS_PROPERTY)
-    addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, registrars)
     val k2Registrars =
         classLoader.loadServices<CompilerPluginRegistrar>(scriptCompilationDisabledPlugins, SCRIPT_COMPILATION_DISABLE_PLUGINS_PROPERTY)
     addAll(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, k2Registrars)

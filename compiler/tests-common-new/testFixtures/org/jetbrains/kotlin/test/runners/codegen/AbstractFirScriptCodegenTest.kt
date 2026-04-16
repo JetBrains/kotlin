@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -210,12 +209,6 @@ class ScriptingPluginEnvironmentConfigurator(testServices: TestServices) : Envir
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val pluginClasspath = testServices.standardLibrariesPathProvider.scriptingPluginFilesForTests()
         val pluginClassLoader = URLClassLoader(pluginClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
-
-        val pluginRegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_REGISTRAR_NAME)
-        @Suppress("DEPRECATION_ERROR")
-        (pluginRegistrarClass.getDeclaredConstructor().newInstance() as? ComponentRegistrar)?.also {
-            configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, it)
-        }
 
         val pluginK2RegistrarClass = pluginClassLoader.loadClass(CLICompiler.SCRIPT_PLUGIN_K2_REGISTRAR_NAME)
         (pluginK2RegistrarClass.getDeclaredConstructor().newInstance() as? CompilerPluginRegistrar)?.also {
