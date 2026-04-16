@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReportTypeVarianceConflictsInDnnAndFlexible
 // FILE: J.java
 public class J {
     public static <T> T identity(T t) {

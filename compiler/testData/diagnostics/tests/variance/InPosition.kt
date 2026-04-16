@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ReportTypeVarianceConflictsInDnnAndFlexible
 
 interface In<in T>
 interface Out<out T>
