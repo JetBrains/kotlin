@@ -364,14 +364,18 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             }
 
     private fun getEnumDefAt(cursor: CValue<CXCursor>): EnumDefImpl {
-        if (clang_isCursorDefinition(cursor) == 0) {
+        if (isEnumDeclForward(cursor)) {
             val definitionCursor = clang_getCursorDefinition(cursor)
-            if (clang_isCursorDefinition(definitionCursor) != 0) {
+            if (!isEnumDeclForward(definitionCursor)) {
                 return getEnumDefAt(definitionCursor)
-            } else {
-                // FIXME("enum declaration without constants might be not a typedef, but a forward declaration instead")
-                return enumRegistry.getOrPut(cursor) { createEnumDefImpl(cursor) }
             }
+            val resolvedCursor = typesDefinitions.enumDefinition(getCursorSpelling(cursor))
+            if (resolvedCursor != null) {
+                check(!isEnumDeclForward(resolvedCursor)) { getCursorSpelling(cursor) }
+                return getEnumDefAt(resolvedCursor)
+            }
+            // FIXME("enum declaration without constants might be not a typedef, but a forward declaration instead")
+            return enumRegistry.getOrPut(cursor) { createEnumDefImpl(cursor) }
         }
 
         return enumRegistry.getOrPut(cursor) {
@@ -1292,7 +1296,7 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl, allowPrecompiledHead
             }
         } finally {
             // Drop definitions index so that we don't have dangling references when the TU is disposed
-            nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap())
+            nativeIndex.typesDefinitions = TypesDefinitions(emptyMap(), emptyMap(), emptyMap(), emptyMap())
             clang_disposeTranslationUnit(translationUnit)
         }
     }

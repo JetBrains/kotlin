@@ -815,14 +815,12 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                     verbose = false
             ).index
 
-            // TODO KT-85705: there should be only one enum.
             assertEquals(
-                    listOf("enum DDCoreLoggerLevel", "enum DDCoreLoggerLevel"),
+                    listOf("enum DDCoreLoggerLevel"),
                     index.enums.map { it.spelling }
             )
 
-            val (internalEnum, coreEnum) = (if (internalFirst) index.enums else index.enums.reversed()).toList()
-
+            val enumDecl = index.enums.single()
             assertEquals(
                     listOf(
                             "DDCoreLoggerLevelNone",
@@ -831,16 +829,11 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                             "DDCoreLoggerLevelError",
                             "DDCoreLoggerLevelCritical",
                     ),
-                    internalEnum.constants.map { it.name }
+                    enumDecl.constants.map { it.name }
             )
 
             assertEquals(
-                    emptyList(),
-                    coreEnum.constants.map { it.name }
-            )
-
-            assertEquals(
-                    listOf("internalConsume" to internalEnum, "coreConsume" to coreEnum)
+                    listOf("internalConsume" to enumDecl, "coreConsume" to enumDecl)
                             .let { if (internalFirst) it else it.reversed() },
                     index.functions.map {
                         it.name to assertIs<EnumType>(it.parameters.single().type).def

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.native.interop.indexer
 import clang.*
 import clang.CXIdxEntityKind.CXIdxEntity_ObjCClass
 import clang.CXIdxEntityKind.CXIdxEntity_ObjCProtocol
+import clang.CXIdxEntityKind.CXIdxEntity_Enum
 import clang.CXIdxEntityKind.CXIdxEntity_Struct
 import clang.CXIdxEntityKind.CXIdxEntity_Union
 import kotlinx.cinterop.*
@@ -679,10 +680,12 @@ data class TypesDefinitions(
         private val protocolDefinitionBySpelling: Map<String, CValue<CXCursor>>,
         private val classDefinitionBySpelling: Map<String, CValue<CXCursor>>,
         private val structDefinitionBySpelling: Map<String, CValue<CXCursor>>,
+        private val enumDefinitionBySpelling: Map<String, CValue<CXCursor>>,
 ) {
     fun protocolDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, protocolDefinitionBySpelling)
     fun classDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, classDefinitionBySpelling)
     fun structDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, structDefinitionBySpelling)
+    fun enumDefinition(spelling: String): CValue<CXCursor>? = getIfNonEmpty(spelling, enumDefinitionBySpelling)
 
     private fun getIfNonEmpty(value: String, map: Map<String, CValue<CXCursor>>): CValue<CXCursor>? =
             /**
@@ -713,6 +716,7 @@ fun indexTranslationUnitsForTypesDefinitions(
     val protocolDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
     val classDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
     val structDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
+    val enumDefinitionBySpelling = mutableMapOf<String, CValue<CXCursor>>()
 
     translationUnits.forEach {
         indexTranslationUnit(index, it, CXIndexOpt_IndexGeneratedDeclarations, object : Indexer {
@@ -738,6 +742,11 @@ fun indexTranslationUnitsForTypesDefinitions(
                             protocolDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
                         }
                     }
+                    CXIdxEntity_Enum -> {
+                        if (!isEnumDeclForward(cursor)) {
+                            enumDefinitionBySpelling.getOrPut(getCursorSpelling(cursor)) { cursor }
+                        }
+                    }
                     else -> {}
                 }
             }
@@ -748,6 +757,7 @@ fun indexTranslationUnitsForTypesDefinitions(
             protocolDefinitionBySpelling = protocolDefinitionBySpelling,
             classDefinitionBySpelling = classDefinitionBySpelling,
             structDefinitionBySpelling = structDefinitionBySpelling,
+            enumDefinitionBySpelling = enumDefinitionBySpelling,
     )
 }
 
@@ -1089,6 +1099,7 @@ fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
 private fun isDeclForward(cursor: CValue<CXCursor>): Boolean = clang_isCursorDefinition(cursor) == 0
 fun isObjCProtocolDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
 fun isStructDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
+fun isEnumDeclForward(cursor: CValue<CXCursor>): Boolean = isDeclForward(cursor)
 
 fun getUsr(cursor: CValue<CXCursor>): String = clang_getCursorUSR(cursor).convertAndDispose()
 
