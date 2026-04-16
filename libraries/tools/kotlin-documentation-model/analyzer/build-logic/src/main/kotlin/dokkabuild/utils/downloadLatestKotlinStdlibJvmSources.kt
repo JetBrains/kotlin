@@ -21,16 +21,16 @@ import java.io.File
 
 
 /**
- * Download and unpack Kotlin stdlib JVM source code.
+ * Download and unpack the latest Kotlin stdlib JVM source code.
  *
  * @returns the directory containing the unpacked sources.
  */
-fun downloadKotlinStdlibJvmSources(project: Project): Provider<File> {
+fun downloadLatestKotlinStdlibJvmSources(project: Project): Provider<File> {
     val kotlinStdlibJvmSources: Configuration by project.configurations.creating {
         description = "kotlin-stdlib JVM source code."
         declarable()
         defaultDependencies {
-            add(project.dependencies.run { create(kotlin("stdlib")) })
+            add(project.dependencies.run { create(kotlin("stdlib", "+")) })
         }
     }
 

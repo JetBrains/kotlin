@@ -1,15 +1,17 @@
 /*
- * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
+
+package org.jetbrains.dokka.test
+
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.assertAll
-import utils.assertContains
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlin.test.asserter
 
 /**
  * Documentation for Enum's synthetic `values()` and `valueOf()` functions is only present in source code,
@@ -27,24 +29,25 @@ class EnumTemplatesTest {
             "Returns the enum constant of this type with the specified name.",
             "(Extraneous whitespace characters are not permitted.)",
         ).forEach { line ->
-            assertSubstringIsInFiles(line, enumValueOfTemplate, actualStdlibEnumKt)
+            assertSubstringIsInFiles(line, actualStdlibEnumKt)
+            assertContains(enumValueOfTemplate, line)
         }
 
         "The string must match exactly an identifier used to declare an enum constant in this type.".let { line ->
             assertSubstringIsInFiles(line, actualStdlibEnumKt)
-            assertSubstringIsInFiles(
+            assertContains(
+                enumValueOfTemplate,
                 // The Dokka template has a newline, but otherwise the text is the same.
                 line.replace("identifier used to declare", "identifier used\nto declare"),
-                enumValueOfTemplate,
             )
         }
 
         "@throws IllegalArgumentException if this enum type has no constant with the specified name".let { line ->
             assertSubstringIsInFiles(line, actualStdlibEnumKt)
-            assertSubstringIsInFiles(
+            assertContains(
+                enumValueOfTemplate,
                 // The Dokka template uses the FQN of IllegalArgumentException
                 line.replace("IllegalArgumentException", "kotlin.IllegalArgumentException"),
-                enumValueOfTemplate,
             )
         }
     }
@@ -55,23 +58,20 @@ class EnumTemplatesTest {
             "Returns an array containing the constants of this enum type, in the order they're declared.",
             "This method may be used to iterate over the constants.",
         ).forEach { line ->
-            assertSubstringIsInFiles(line, enumValuesTemplate, actualStdlibEnumKt)
+            assertSubstringIsInFiles(line, actualStdlibEnumKt)
+            assertContains(enumValuesTemplate, line)
+
         }
     }
 
-    /**
-     * This test is disabled because the `Enum.entries` does not have accessible documentation.
-     *
-     * See https://youtrack.jetbrains.com/issue/KTIJ-23569/Provide-quick-documentation-for-Enum.entries
-     */
     @Test
-    @Disabled("Kotlin stdlib does not have kdoc for Enum.entries")
     fun enumEntries() {
         listOf(
-            "Returns a representation of an immutable list of all enum entries, in the order they're declared.",
-            "This method may be used to iterate over the enum entries.",
+            "Returns an immutable [kotlin.enums.EnumEntries] list containing the constants of this enum type, in the order they're declared."
         ).forEach { line ->
-            assertSubstringIsInFiles(line, enumEntriesTemplate, actualStdlibEnumKt)
+            assertSubstringIsInFiles(line, actualStdlibEnumKt)
+            assertContains(enumEntriesTemplate, line)
+
         }
     }
 
@@ -90,16 +90,31 @@ class EnumTemplatesTest {
             })
         }
 
-        private fun loadResource(@Language("file-reference") path: String): Path {
-            val resource = EnumTemplatesTest::class.java.getResource(path)
-                ?.toURI()
-                ?: error("Failed to load resource: $path")
-            return Paths.get(resource)
+        private fun messagePrefix(message: String?) = if (message == null) "" else "$message. "
+
+        // TODO replace with kotlin.test.assertContains after migrating to Kotlin 1.5+
+        // https://github.com/JetBrains/kotlin/blob/c072e7c945fed74805d87ecc89c9a650bad23e12/libraries/kotlin.test/common/src/main/kotlin/kotlin/test/Assertions.kt#L334-L345
+        internal fun assertContains(
+            charSequence: CharSequence,
+            other: CharSequence,
+            ignoreCase: Boolean = false,
+            message: String? = null,
+        ) {
+            asserter.assertTrue(
+                { messagePrefix(message) + "Expected the char sequence to contain the substring.\nCharSequence <$charSequence>, substring <$other>, ignoreCase <$ignoreCase>." },
+                charSequence.contains(other, ignoreCase)
+            )
         }
 
-        private val enumEntriesTemplate: Path = loadResource("/dokka/docs/kdoc/EnumEntries.kt.template")
-        private val enumValueOfTemplate: Path = loadResource("/dokka/docs/kdoc/EnumValueOf.kt.template")
-        private val enumValuesTemplate: Path = loadResource("/dokka/docs/kdoc/EnumValues.kt.template")
+        private fun loadResource(@Language("file-reference") path: String): String {
+            return EnumTemplatesTest::class.java.getResource(path)
+                ?.readText()
+                ?: error("Failed to load resource: $path")
+        }
+
+        private val enumEntriesTemplate: String = loadResource("/dokka/docs/kdoc/EnumEntries.kt.template")
+        private val enumValueOfTemplate: String = loadResource("/dokka/docs/kdoc/EnumValueOf.kt.template")
+        private val enumValuesTemplate: String = loadResource("/dokka/docs/kdoc/EnumValues.kt.template")
 
         /**
          * Base directory for the unpacked Kotlin stdlib source code.
