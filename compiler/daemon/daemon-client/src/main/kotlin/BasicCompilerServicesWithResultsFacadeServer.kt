@@ -60,7 +60,7 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
         ReportCategory.COMPILER_MESSAGE -> {
             val compilerSeverity = when (ReportSeverity.fromCode(severity)) {
                 ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
-                ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
+                ReportSeverity.WARNING -> CompilerMessageSeverity.FIXED_WARNING // daemon handles warnings as errors itself, so we should just map it 'as is' without raising the severity
                 ReportSeverity.INFO -> CompilerMessageSeverity.INFO
                 ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
             }
@@ -89,7 +89,7 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
 private fun MessageCollector.reportUnexpected(category: Int, severity: Int, message: String?, attachment: Serializable?) {
     val compilerMessageSeverity = when (ReportSeverity.fromCode(severity)) {
         ReportSeverity.ERROR -> CompilerMessageSeverity.ERROR
-        ReportSeverity.WARNING -> CompilerMessageSeverity.WARNING
+        ReportSeverity.WARNING -> CompilerMessageSeverity.FIXED_WARNING // daemon handles warnings as errors itself, so we should just map it 'as is' without raising the severity
         ReportSeverity.INFO -> CompilerMessageSeverity.INFO
         ReportSeverity.DEBUG -> CompilerMessageSeverity.LOGGING
     }

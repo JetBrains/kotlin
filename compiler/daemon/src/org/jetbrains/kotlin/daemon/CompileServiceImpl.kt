@@ -351,14 +351,13 @@ abstract class CompileServiceImplBase(
         servicesFacade: ServicesFacadeT,
         compilationResults: CompilationResultsT,
         hasIncrementalCaches: JpsServicesFacadeT.() -> Boolean,
-        createMessageCollector: (ServicesFacadeT, CompilationOptions) -> MessageCollector,
+        createMessageCollector: (ServicesFacadeT, CompilationOptions, warningsAsErrors: Boolean) -> MessageCollector,
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
         getICReporter: (ServicesFacadeT, CompilationResultsT & Any, CompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
         compilationId: Int? = null,
     ) = kotlin.run {
         maybeWaitForTestStart()
-        val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
         log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
@@ -374,6 +373,8 @@ abstract class CompileServiceImplBase(
         val k2PlatformArgs = compiler.createArguments()
         parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
         val argumentParseError = validateArgumentsAllErrors(k2PlatformArgs.errors)
+
+        val messageCollector = createMessageCollector(servicesFacade, compilationOptions, k2PlatformArgs.allWarningsAsErrors)
 
         if (argumentParseError.isNotEmpty()) {
             argumentParseError.forEach {
@@ -1006,7 +1007,7 @@ class CompileServiceImpl(
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
             val disposable = Disposer.newDisposable("Disposable for ${CompileServiceImpl::class.simpleName}.leaseReplSession")
-            val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
+            val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions, false)
             val repl = KotlinJvmReplService(
                 disposable, port, compilerId, templateClasspath, templateClassName,
                 messageCollector, null

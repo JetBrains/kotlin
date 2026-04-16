@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.daemon.common.*
 
 internal class CompileServicesFacadeMessageCollector(
         private val servicesFacade: CompilerServicesFacadeBase,
-        compilationOptions: CompilationOptions
+        compilationOptions: CompilationOptions,
+        private val warningsAsErrors: Boolean
 ) : MessageCollector {
     private val mySeverity = compilationOptions.reportSeverity
     private var hasErrors = false
@@ -45,6 +46,8 @@ internal class CompileServicesFacadeMessageCollector(
             }
             else -> {
                 val reportSeverity = when (severity) {
+                    CompilerMessageSeverity.WARNING if warningsAsErrors -> ReportSeverity.ERROR
+                    CompilerMessageSeverity.STRONG_WARNING if warningsAsErrors -> ReportSeverity.ERROR
                     CompilerMessageSeverity.ERROR -> ReportSeverity.ERROR
 
                     CompilerMessageSeverity.WARNING,
@@ -54,9 +57,7 @@ internal class CompileServicesFacadeMessageCollector(
 
                     CompilerMessageSeverity.INFO -> ReportSeverity.INFO
 
-                    CompilerMessageSeverity.EXCEPTION,
                     CompilerMessageSeverity.LOGGING,
-                    CompilerMessageSeverity.OUTPUT
                         -> ReportSeverity.DEBUG
                 }
 
