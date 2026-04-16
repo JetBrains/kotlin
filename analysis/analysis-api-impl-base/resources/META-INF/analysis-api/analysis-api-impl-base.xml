@@ -103,6 +103,11 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.references.KotlinReferenceProvidersServiceImpl"
     />
 
+    <applicationService
+        serviceInterface="org.jetbrains.kotlin.psi.KtPsiMutationService"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.psi.KtPsiMutationServiceImpl"
+    />
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBaseModuleProvider"
