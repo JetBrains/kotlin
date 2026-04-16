@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractExecutable
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
@@ -503,29 +501,14 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
 
     val aggregatedTransitiveDependencies = getAggregatedTransitiveDependenciesProvider()
 
-    val addPathsToGitInfoExclude = locateOrRegisterTask<AddPathsToGitInfoExclude>(
-        AddPathsToGitInfoExclude.addPathsToGitInfoExcludeTaskName(lowerCamelCaseName(
-                "umbrellaCheckoutDirFor",
-                identifier
-            ))
-    ){
-        it.rootDirectory.set(rootProject.layout.projectDirectory)
-    }
 
-    val sharedUmbrellaFetchTask = locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
+    locateOrRegisterTask<FetchSyntheticImportProjectPackages>(candidateFetchTaskName) {
         it.syntheticImportProjectRoot.set(provideIdentifierPackageRoot(identifier))
         it.dependsOn(actualGeneratedClaimer)
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
         it.swiftPMDependenciesCheckout.set(checkOutDir)
-        it.finalizedBy(addPathsToGitInfoExclude)
-    }
-
-    addPathsToGitInfoExclude.configure {
-        taskProvider ->
-        taskProvider.paths.from(
-            sharedUmbrellaFetchTask.map { it.swiftPMDependenciesCheckout }
-        )
+        it.gitIgnoreCheckoutDir.set(true)
     }
 
     return actualFetchClaimer

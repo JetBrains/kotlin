@@ -22,7 +22,6 @@ import javax.inject.Inject
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.Serializable
 
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -61,6 +60,9 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         project.layout.buildDirectory.dir("kotlin/swiftPMCheckout")
     )
 
+    @get:Input
+    val gitIgnoreCheckoutDir : Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+
     /**
      * Invalidate fetch when Package.swift or Package.resolved files changed.
      */
@@ -80,16 +82,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
     private fun swiftpmResolve() {
         execOps.exec { exec ->
-            val packagePath = syntheticImportProjectRoot.get().asFile
-            val scratchPath = swiftPMDependenciesCheckout.get().asFile
 
-            exec.workingDir(packagePath)
+            exec.workingDir(syntheticImportProjectRoot.get().asFile)
 
             val args = mutableListOf(
                 "/usr/bin/swift",
                 "package",
-                "--package-path", packagePath.path,
-                "--scratch-path", scratchPath.path,
+                "--scratch-path", swiftPMDependenciesCheckout.get().asFile,
                 "resolve",
             )
 
@@ -105,6 +104,36 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             }
 
             exec.commandLine(args)
+        }
+
+        if (gitIgnoreCheckoutDir.get()) {
+            writeCheckoutDirToGitIgnore()
+        }
+
+    }
+
+    private fun writeCheckoutDirToGitIgnore() {
+        val checkoutDir = swiftPMDependenciesCheckout.get().asFile
+        val root = checkoutDir.parentFile
+        val exclude = root.resolve(".gitignore")
+
+        exclude.parentFile.mkdirs()
+        exclude.createNewFile()
+
+        val existing = exclude.readLines()
+            .map { it.trim() }
+            .filterNot { it.isEmpty() || it.startsWith("#") }
+            .toSet()
+
+        val entry = "${checkoutDir.name}/"
+
+        if (entry !in existing) {
+            exclude.appendText(
+                buildString {
+                    if (exclude.length() > 0L) appendLine()
+                    appendLine(entry)
+                }
+            )
         }
     }
 

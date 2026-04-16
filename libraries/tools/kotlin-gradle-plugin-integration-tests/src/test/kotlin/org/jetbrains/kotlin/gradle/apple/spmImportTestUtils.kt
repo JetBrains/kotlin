@@ -531,7 +531,7 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     )
 }
 
-internal fun assertGitExcludeContains(
+internal fun assertGitIgnoreContains(
     gitExclude: Path,
     vararg paths : String
 ) {

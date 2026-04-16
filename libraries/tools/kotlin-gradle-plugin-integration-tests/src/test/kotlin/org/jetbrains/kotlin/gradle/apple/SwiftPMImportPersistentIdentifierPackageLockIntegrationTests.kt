@@ -50,7 +50,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 }
 
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$commonIdentifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -101,9 +101,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -126,9 +126,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -165,7 +165,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     }
                 }
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$commonIdentifier/.gitignore")
 
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -213,9 +214,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         "Projects without SwiftPM dependencies must not be included in umbrella Package.swift"
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -246,7 +247,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     }
                 }
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$commonIdentifier/.gitignore")
 
                 // from 1.0.0
                 val fuzzProject = project("empty", version) {
@@ -298,9 +300,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -321,10 +323,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             commonRepo to "1.0.1",
                         ),
                     )
-
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -354,7 +355,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     }
                 }
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$commonIdentifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -403,9 +405,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -427,9 +429,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -453,9 +455,10 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             fuzzRepo to "1.0.0",
                         ),
                     )
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -477,9 +480,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -510,7 +513,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     }
                 }
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$commonIdentifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -578,9 +581,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -609,9 +612,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$commonIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -639,7 +642,10 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     }
                 }
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+
+                val identifierGitIgnoreFuzz = projectPath.resolve(".swiftpm-locks/$fuzzIdentifier/.gitignore")
+                val identifierGitIgnoreBuzz = projectPath.resolve(".swiftpm-locks/$buzzIdentifier/.gitignore")
+
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -720,9 +726,9 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$fuzzIdentifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnoreFuzz,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -747,12 +753,10 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$fuzzIdentifier/swiftPMCheckout/",
-                        ".swiftpm-locks/$buzzIdentifier/swiftPMCheckout/",
-
-                        )
+                    assertGitIgnoreContains(
+                        identifierGitIgnoreBuzz,
+                        "swiftPMCheckout/",
+                    )
                 }
             }
         }

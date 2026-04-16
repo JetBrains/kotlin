@@ -42,7 +42,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
                 }
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -90,9 +90,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -115,9 +115,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
 
                 }
@@ -148,7 +148,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         implementation(project(":$fuzzProjectName"))
                     }
                 }
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val buzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {}
@@ -190,9 +190,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         "Projects without SwiftPM dependencies must not be included in umbrella Package.swift"
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -215,8 +215,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                 initSwiftPmProject(cacheDirFile) {}
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
-
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 // from 1.0.0
                 val fuzzProject = project("empty", version) {
@@ -265,9 +264,10 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                             commonRepo to "1.0.1",
                         ),
                     )
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
                 build(":$buzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
@@ -288,9 +288,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -313,7 +313,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                 initSwiftPmProject(cacheDirFile) {}
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -360,9 +360,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -384,9 +384,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -411,9 +411,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -434,9 +434,10 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                             buzzRepo to "1.0.0",
                         ),
                     )
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
@@ -461,7 +462,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                 initSwiftPmProject(cacheDirFile) {}
 
-                val rootGitExclude = projectPath.resolve(".git/info/exclude")
+                val identifierGitIgnore = projectPath.resolve(".swiftpm-locks/$identifier/.gitignore")
 
                 val fuzzProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
@@ -528,9 +529,9 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ),
                     )
 
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
 
@@ -558,9 +559,10 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                             buzzRepo to "1.0.0",
                         ),
                     )
-                    assertGitExcludeContains(
-                        rootGitExclude,
-                        ".swiftpm-locks/$identifier/swiftPMCheckout/",
+
+                    assertGitIgnoreContains(
+                        identifierGitIgnore,
+                        "swiftPMCheckout/",
                     )
                 }
             }
