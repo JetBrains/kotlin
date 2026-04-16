@@ -666,6 +666,40 @@ All new properties (`leadingFieldNode`, `effectiveModifierList`) use `by lazy(La
 
 ---
 
+## Iteration 69: Resolution Performance — BFS Guard Restoration + Redundant Work Elimination - 2026-04-16
+
+### Root Cause Analysis
+Profiler data from `KotlinFullPipelineTestsGenerated` showed `resolveNestedClassToClassIdWithoutInheritance` with 9,765ms own time and `resolveSimpleNameToClassIdWithoutInheritance` with 720ms own time. Investigation of the last two `[cc]` commits (`4cbf50e79cc9` and `a104546a2b53`) identified five performance gaps:
+
+1. **(Critical)** Commit `a104546a2b53` removed the `if (getSupertypeClassIds != null)` guard around `resolveInheritedInnerClassToClassId` in the `else` branch of `resolveSimpleNameToClassId`. This caused the expensive BFS to run unconditionally for every common type name (String, List, Object, etc.) that wasn't found in the aggregated cache — the vast majority of type references. The BFS almost always found nothing but still did significant work (supertype resolution, string splitting, classFinder lookups).
+
+2. **(Moderate)** In `resolveNestedClassToClassId`, the `getSupertypeClassIds == null` fallback path called `getAggregatedInheritedInnerClasses()` as a proxy for "is classFinder available?" — wasteful since it computed the full aggregated map just to check availability.
+
+3. **(Minor)** `starImports.distinct()` was called on every `resolveSimpleNameToClassId` and `resolveSimpleNameToClassIdWithoutInheritance` invocation, creating a new list each time despite `starImports` being immutable after construction.
+
+### Fix
+**File**: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt`
+
+Three coordinated changes:
+
+1. **Restored BFS guard** (Gap 1): Added `if (getSupertypeClassIds != null)` guard around the `resolveInheritedInnerClassToClassId` call in the `else` branch (empty candidates). Without the callback, the aggregated map already covers all source supertypes, so the BFS is unnecessary.
+
+2. **Simplified nested class fallback** (Gap 2): Replaced `getAggregatedInheritedInnerClasses() != null` check with direct `classFinderProvider != null` check, avoiding unnecessary computation of the aggregated map.
+
+3. **Precomputed distinct star imports** (Gap 4): Added `distinctStarImports` constructor parameter (defaulting to `starImports.distinct()`), passed through all `withTypeParameters`/`withInheritedTypeParameters`/`withContainingClass` methods. Both `resolveSimpleNameToClassId` and `resolveSimpleNameToClassIdWithoutInheritance` now iterate `distinctStarImports` instead of calling `.distinct()` on every invocation.
+
+### Test Results
+- Box: 1168/1168, Phased: 1454/1456, Total failing: 2 (same 2 won't-fix)
+- Unit tests (JavaParsingTest): all green
+- Zero regressions
+
+### Key Learnings
+- The BFS guard removal was the primary cause of the profiler hotspot — for protobuf files with hundreds of type references, the BFS ran hundreds of times redundantly, each time walking the supertype hierarchy and finding nothing
+- The `getSupertypeClassIds` callback is only available when FIR provides it (during type conversion); without it, the aggregated inherited inner class map from the class finder already covers all same-package source supertypes
+- `starImports.distinct()` is a micro-optimization but eliminates O(n) list creation per type reference resolution call, which adds up across thousands of calls
+
+---
+
 ## Future Iteration Template
 
 ~~~markdown

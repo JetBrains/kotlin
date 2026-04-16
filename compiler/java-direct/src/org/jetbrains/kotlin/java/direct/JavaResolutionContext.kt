@@ -26,6 +26,7 @@ class JavaResolutionContext private constructor(
     val packageFqName: FqName,
     private val simpleImports: Map<String, FqName>,
     private val starImports: List<FqName>,
+    private val distinctStarImports: List<FqName> = starImports.distinct(),
     private val localClassProvider: (Name) -> JavaClass?,
     private val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     private val containingClassProvider: (() -> JavaClass?)? = null,
@@ -324,7 +325,7 @@ class JavaResolutionContext private constructor(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, newScope,
+            packageFqName, simpleImports, starImports, distinctStarImports, localClassProvider, newScope,
             containingClassProvider, classFinderProvider, inheritedTypeParametersInScope,
             findLocalClassCache, // share cache — containingClass unchanged
             aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
@@ -340,7 +341,7 @@ class JavaResolutionContext private constructor(
         if (typeParams.isEmpty()) return this
         val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
+            packageFqName, simpleImports, starImports, distinctStarImports, localClassProvider, typeParametersInScope,
             containingClassProvider, classFinderProvider, newInherited,
             findLocalClassCache, // share cache — containingClass unchanged
             aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
@@ -353,7 +354,7 @@ class JavaResolutionContext private constructor(
      */
     fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, localClassProvider, typeParametersInScope,
+            packageFqName, simpleImports, starImports, distinctStarImports, localClassProvider, typeParametersInScope,
             containingClassProvider = { containingClass },
             classFinderProvider = classFinderProvider,
             inheritedTypeParametersInScope = inheritedTypeParametersInScope,
@@ -449,20 +450,15 @@ class JavaResolutionContext private constructor(
         // Also try inherited inner class resolution via the aggregated map from the class finder.
         // This covers same-package source supertypes that the getSupertypeClassIds callback
         // might not see (Java class supertypes are excluded from the callback to avoid premature resolution).
-        if (getSupertypeClassIds == null) {
-            val aggregatedInherited = getAggregatedInheritedInnerClasses()
-            if (aggregatedInherited != null && parts.size == 2) {
-                val outerClassId = resolveSimpleNameToClassId(parts[0], tryResolve)
-                if (outerClassId != null) {
-                    val classFinder = classFinderProvider?.invoke()
-                    if (classFinder != null) {
-                        val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
-                        val candidates = inheritedInners[parts[1]]
-                        if (candidates != null && candidates.size == 1) {
-                            val candidateClassId = candidates.first()
-                            if (tryResolve(candidateClassId)) return candidateClassId
-                        }
-                    }
+        if (getSupertypeClassIds == null && classFinderProvider != null && parts.size == 2) {
+            val outerClassId = resolveSimpleNameToClassId(parts[0], tryResolve)
+            if (outerClassId != null) {
+                val classFinder = classFinderProvider.invoke()
+                val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
+                val candidates = inheritedInners[parts[1]]
+                if (candidates != null && candidates.size == 1) {
+                    val candidateClassId = candidates.first()
+                    if (tryResolve(candidateClassId)) return candidateClassId
                 }
             }
         }
@@ -525,13 +521,14 @@ class JavaResolutionContext private constructor(
                     if (tryResolve(candidateClassId)) return candidateClassId
                 }
                 // allCandidates.isEmpty(): name is not an inherited source-level inner class.
-                // Still need to check non-source supertypes (Kotlin/binary) via BFS Phase 2,
-                // regardless of whether getSupertypeClassIds callback is available.
-                // The BFS Phase 1 can walk Java source supertypes via the class finder,
-                // and Phase 2 uses the callback for non-source (Kotlin/binary) supertypes.
+                // Only fall back to BFS when getSupertypeClassIds callback is available,
+                // since the BFS Phase 2 needs it for non-source (Kotlin/binary) supertypes.
+                // Without the callback, the aggregated map already covers all source supertypes.
                 else -> {
-                    val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
-                    if (inheritedResult != null) return inheritedResult
+                    if (getSupertypeClassIds != null) {
+                        val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+                        if (inheritedResult != null) return inheritedResult
+                    }
                 }
             }
         } else {
@@ -554,7 +551,7 @@ class JavaResolutionContext private constructor(
         // Handle both package-level (import java.util.*) and class-level (import a.D.*) star imports.
         // Class-level: "import a.D.*" imports nested types of class a.D.
         var foundClassId: ClassId? = null
-        for (starPackage in starImports.distinct()) {
+        for (starPackage in distinctStarImports) {
             val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
             if (tryResolve(candidateClassId)) {
                 if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
@@ -751,7 +748,7 @@ class JavaResolutionContext private constructor(
         }
 
         // Star imports
-        for (starPackage in starImports.distinct()) {
+        for (starPackage in distinctStarImports) {
             val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
             if (tryResolve(candidateClassId)) return candidateClassId
         }
