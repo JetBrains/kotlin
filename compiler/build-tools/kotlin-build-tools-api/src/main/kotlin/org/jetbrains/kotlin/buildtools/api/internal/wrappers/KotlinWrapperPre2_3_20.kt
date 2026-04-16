@@ -323,12 +323,12 @@ internal class KotlinWrapperPre2_3_20(
     }
 
     private class JvmCompilerArgumentsWrapper(
-        private val baseCompilerArguments: JvmCompilerArguments,
+        private val base: JvmCompilerArguments,
         private val argumentsFactory: () -> JvmCompilerArguments,
     ) :
-        JvmCompilerArguments by baseCompilerArguments, JvmCompilerArguments.Builder {
+        JvmCompilerArguments by base, JvmCompilerArguments.Builder {
         override fun <V> set(key: JvmCompilerArguments.JvmCompilerArgument<V>, value: V) {
-            baseCompilerArguments.set(key, value)
+            base.set(key, value)
         }
 
         override fun build(): JvmCompilerArguments {
@@ -342,15 +342,15 @@ internal class KotlinWrapperPre2_3_20(
             key: CommonCompilerArguments.CommonCompilerArgument<V>,
             value: V,
         ) {
-            baseCompilerArguments.set(key, value)
+            base.set(key, value)
         }
 
         override fun <V> set(key: CommonToolArguments.CommonToolArgument<V>, value: V) {
-            baseCompilerArguments.set(key, value)
+            base.set(key, value)
         }
 
         override fun applyArgumentStrings(arguments: List<String>) {
-            baseCompilerArguments.applyArgumentStrings(arguments)
+            base.applyArgumentStrings(arguments)
         }
     }
 }
