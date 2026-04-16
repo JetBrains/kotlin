@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Compani
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Warnings-as-errors: -Werror promotes warnings to error log level")
@@ -26,14 +26,8 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
         project(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile {
-                val warnLines = logLines[LogLevel.WARN].orEmpty()
-                val errorLines = logLines[LogLevel.ERROR].orEmpty()
-                assertTrue(warnLines.any { "oldFun" in it && "deprecated" in it.lowercase() }) {
-                    "Expected a deprecation warning at WARN level, got: $warnLines"
-                }
-                assertFalse(errorLines.any { "oldFun" in it || "deprecated" in it.lowercase() }) {
-                    "Expected no deprecation message at ERROR level, got: $errorLines"
-                }
+                assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
+                assertLogDoesNotContainPatterns(LogLevel.ERROR, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
             }
         }
     }
@@ -47,14 +41,8 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
                 it.compilerArguments[WERROR] = true
             }) {
                 expectFail()
-                val errorLines = logLines[LogLevel.ERROR].orEmpty()
-                val warnLines = logLines[LogLevel.WARN].orEmpty()
-                assertTrue(errorLines.any { "oldFun" in it && "deprecated" in it.lowercase() }) {
-                    "Expected a deprecation warning promoted to ERROR level, got: $errorLines"
-                }
-                assertFalse(warnLines.any { "oldFun" in it || "deprecated" in it.lowercase() }) {
-                    "Expected no deprecation message at WARN level when Werror is set, got: $warnLines"
-                }
+                assertLogContainsPatterns(LogLevel.ERROR, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
+                assertLogDoesNotContainPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
             }
         }
     }
@@ -69,14 +57,8 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
                 @OptIn(ExperimentalCompilerArgument::class)
                 it.compilerArguments[X_WARNING_LEVEL] = listOf(WarningLevel("DEPRECATION", WarningLevel.Severity.WARNING))
             }) {
-                val warnLines = logLines[LogLevel.WARN].orEmpty()
-                val errorLines = logLines[LogLevel.ERROR].orEmpty()
-                assertTrue(warnLines.any { "oldFun" in it && "deprecated" in it.lowercase() }) {
-                    "Expected the DEPRECATION warning pinned by -Xwarning-level to stay at WARN level, got warnLines=$warnLines"
-                }
-                assertFalse(errorLines.any { "oldFun" in it || "deprecated" in it.lowercase() }) {
-                    "Expected no DEPRECATION message at ERROR level when -Xwarning-level=DEPRECATION:warning is set, got errorLines=$errorLines"
-                }
+                assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
+                assertLogDoesNotContainPatterns(LogLevel.ERROR, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
             }
         }
     }
@@ -90,14 +72,8 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
                 @OptIn(ExperimentalCompilerArgument::class)
                 it.compilerArguments[X_WARNING_LEVEL] = listOf(WarningLevel("DEPRECATION", WarningLevel.Severity.WARNING))
             }) {
-                val warnLines = logLines[LogLevel.WARN].orEmpty()
-                val errorLines = logLines[LogLevel.ERROR].orEmpty()
-                assertTrue(warnLines.any { "oldFun" in it && "deprecated" in it.lowercase() }) {
-                    "Expected the DEPRECATION warning at WARN level, got warnLines=$warnLines"
-                }
-                assertFalse(errorLines.any { "oldFun" in it || "deprecated" in it.lowercase() }) {
-                    "Expected no DEPRECATION message at ERROR level, got errorLines=$errorLines"
-                }
+                assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
+                assertLogDoesNotContainPatterns(LogLevel.ERROR, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
             }
         }
     }
