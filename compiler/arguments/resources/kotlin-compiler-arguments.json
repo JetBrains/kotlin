@@ -7026,7 +7026,7 @@
                                     "current": "Paths to output directories for friend modules (modules whose internals should be visible).",
                                     "valueInVersions": []
                                 },
-                                "delimiter": "Default",
+                                "delimiter": null,
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
@@ -7327,7 +7327,7 @@
                                     "current": "Paths to directories with Java source files.",
                                     "valueInVersions": []
                                 },
-                                "delimiter": "Default",
+                                "delimiter": null,
                                 "affectsCompilationOutcome": true,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",

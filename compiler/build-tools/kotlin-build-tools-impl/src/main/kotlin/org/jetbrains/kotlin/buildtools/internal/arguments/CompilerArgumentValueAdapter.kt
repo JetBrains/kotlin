@@ -497,7 +497,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 if (value == null) return emptyList<Path>() as T
 
                 val arrayValue = value as Array<String>
-                arrayValue.also { array -> array.asList().checkNoneContains(",") }.map { Path(it) } as T
+                arrayValue.map { Path(it) } as T
             }
 
             JvmCompilerArgumentsImpl.X_ADD_MODULES.id,

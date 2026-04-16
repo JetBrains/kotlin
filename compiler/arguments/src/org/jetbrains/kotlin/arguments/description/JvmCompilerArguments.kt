@@ -430,7 +430,6 @@ This can be used in the event of problems with the new implementation.""".asRele
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = PathListType.defaultEmpty
-        delimiter = KotlinCompilerArgument.Delimiter.Default
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_40,
@@ -592,7 +591,6 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         argumentType = PathListType.defaultEmpty
-        delimiter = KotlinCompilerArgument.Delimiter.Default
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_70,

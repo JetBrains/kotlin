@@ -100,14 +100,6 @@ internal class KotlinWrapperPre2_4_20(
                     base[key] = value
                 }
 
-                JvmCompilerArguments.X_FRIEND_PATHS,
-                JvmCompilerArguments.X_JAVA_SOURCE_ROOTS,
-                    -> {
-                    @Suppress("UNCHECKED_CAST")
-                    (value as List<Path>).checkNoneContains(",")
-                    base[key] = value
-                }
-
                 else -> base[key] = value
             }
         }
