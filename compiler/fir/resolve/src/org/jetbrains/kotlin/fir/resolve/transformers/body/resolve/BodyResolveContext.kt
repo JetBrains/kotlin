@@ -138,13 +138,13 @@ class BodyResolveContext(
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = hashMapOf()
 
     @OptIn(PrivateForInline::class)
-    inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
+    inline fun <T> withTowerDataContexts(newContexts: FirRegularTowerDataContexts?, f: () -> T): T {
         val old = regularTowerDataContexts
-        regularTowerDataContexts = newContexts
+        if (newContexts != null) regularTowerDataContexts = newContexts
         return try {
             f()
         } finally {
-            regularTowerDataContexts = old
+            if (newContexts != null) regularTowerDataContexts = old
         }
     }
 
@@ -240,11 +240,19 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
-    inline fun <T> withTowerDataMode(mode: FirTowerDataMode?, f: () -> T): T {
+    inline fun <T> withTowerDataMode(mode: FirTowerDataMode, f: () -> T): T {
         return withTowerDataModeCleanup {
-            towerDataMode = mode ?: towerDataMode
+            towerDataMode = mode
             f()
         }
+    }
+
+    @PrivateForInline
+    inline fun <T> withCompanionBlockIf(condition: Boolean, f: () -> T): T {
+        return withTowerDataContexts(
+            newContexts = runIf(condition) { regularTowerDataContexts.forCompanionBlock() },
+            f
+        )
     }
 
     @PrivateForInline
@@ -832,7 +840,7 @@ class BodyResolveContext(
             storeFunction(namedFunction, session)
         }
 
-        return withTowerDataMode(if (namedFunction.isCompanionBlockMember) FirTowerDataMode.COMPANION_BLOCK else null) {
+        return withCompanionBlockIf(namedFunction.isCompanionBlockMember) {
             withTypeParametersOf(namedFunction) {
                 withPublicApiInlineFunctionIfApplicable(namedFunction) {
                     withContainer(namedFunction, f)
@@ -1011,7 +1019,7 @@ class BodyResolveContext(
         property: FirProperty,
         f: () -> T,
     ): T {
-        return withTowerDataMode(if (property.isCompanionBlockMember) FirTowerDataMode.COMPANION_BLOCK else null) {
+        return withCompanionBlockIf(property.isCompanionBlockMember) {
             withTypeParametersOf(property) {
                 withContainer(property, f)
             }

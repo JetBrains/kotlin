@@ -66,6 +66,10 @@ class FirRegularTowerDataContexts private constructor(
         )
     }
 
+    fun forCompanionBlock(): FirRegularTowerDataContexts {
+        return modeMap[FirTowerDataMode.COMPANION_BLOCK]?.let { FirRegularTowerDataContexts(regular = it) } ?: this
+    }
+
     companion object {
         private fun enumMap(
             regular: FirTowerDataContext,
