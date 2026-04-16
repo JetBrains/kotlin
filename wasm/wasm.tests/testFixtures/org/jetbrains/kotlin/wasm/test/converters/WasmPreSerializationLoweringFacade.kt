@@ -5,30 +5,16 @@
 
 package org.jetbrains.kotlin.wasm.test.converters
 
-import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.backend.wasm.WasmPreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
-import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.withNewDiagnosticCollector
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.configuration.createJsTestPhaseConfig
 
 class WasmPreSerializationLoweringFacade(
     testServices: TestServices,
@@ -40,77 +26,22 @@ class WasmPreSerializationLoweringFacade(
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
         require(module.languageVersionSettings.languageVersion.usesK2)
 
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
+            "WasmPreSerializationLoweringFacade expects Fir2IrCliBasedOutputArtifact as input, but got ${inputArtifact::class.simpleName}"
+        }
+        val cliArtifact = inputArtifact.cliArtifact
+        require(cliArtifact is WebFir2IrPipelineArtifact) {
+            "WasmPreSerializationLoweringFacade expects WebFir2IrPipelineArtifact as cliArtifact, but got ${cliArtifact::class.simpleName}"
+        }
+
         val diagnosticReporter = DiagnosticsCollectorImpl()
 
-        when (inputArtifact) {
-            is Fir2IrCliBasedOutputArtifact<*> -> {
-                val cliArtifact = inputArtifact.cliArtifact
-                // TODO: When KT-74671 would be implemented, feel free to adjust the following code for possibly another artifact type
-                require(cliArtifact is JsFir2IrPipelineArtifact) {
-                    "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
-                }
-                val input = cliArtifact.withNewDiagnosticCollector(diagnosticReporter)
+        val input = cliArtifact.withNewDiagnosticCollector(diagnosticReporter)
 
-                if (diagnosticReporter.hasErrors) {
-                    // Should errors be found by checkers, there's a chance that JsCodeOutlineLowering will throw an exception on unparseable code.
-                    // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
-                    return Fir2IrCliBasedOutputArtifact(input)
-                }
+        val output = WebKlibInliningPipelinePhase.executePhase(input)
 
-                val output = WebKlibInliningPipelinePhase.executePhase(input)
-
-                // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
-                // Later, third artifact of class `JsIrDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-                return Fir2IrCliBasedOutputArtifact(output)
-            }
-            is IrBackendInput.WasmAfterFrontendBackendInput -> {
-                // TODO: When KT-74671 would be implemented, the following code would be never used and is subject to be deleted
-                val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-                    diagnosticReporter,
-                    configuration.languageVersionSettings
-                )
-                runKlibCheckers(irDiagnosticReporter, configuration, inputArtifact.irModuleFragment)
-                val phaseConfig = createJsTestPhaseConfig(testServices, module)
-                if (diagnosticReporter.hasErrors) {
-                    // Should errors be found by checkers, there's a chance that some lowering will throw an exception on unparseable code.
-                    // In test pipeline, it's unwanted, so let's avoid crashes. Already found errors would already be enough for diagnostic tests.
-                    return inputArtifact.copy(diagnosticReporter = diagnosticReporter)
-                }
-
-                val transformedModule = PhaseEngine(
-                    phaseConfig,
-                    PhaserState(),
-                    WasmPreSerializationLoweringContext(
-                        inputArtifact.irBuiltIns,
-                        configuration,
-                        irDiagnosticReporter,
-                    ),
-                ).runPreSerializationLoweringPhases(
-                    wasmLoweringsOfTheFirstPhase(module.languageVersionSettings),
-                    inputArtifact.irModuleFragment,
-                )
-
-                // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
-                // Later, third artifact of class `WasmDeserializedFromKlibBackendInput` might replace it again during some test pipelines.
-                return inputArtifact.copy(irModuleFragment = transformedModule, diagnosticReporter = diagnosticReporter)
-            }
-            else -> {
-                throw IllegalArgumentException("Unexpected inputArtifact type: ${inputArtifact.javaClass.simpleName}")
-            }
-        }
+        // The returned artifact will be stored in dependencyProvider instead of `inputArtifact`, with same kind=BackendKinds.IrBackend
+        return Fir2IrCliBasedOutputArtifact(output)
     }
 
-    private fun runKlibCheckers(
-        irDiagnosticReporter: IrDiagnosticReporter,
-        configuration: CompilerConfiguration,
-        irModuleFragment: IrModuleFragment,
-    ) {
-        irModuleFragment.acceptVoid(
-            WasmKlibCheckers.makeChecker(
-                irDiagnosticReporter,
-                configuration,
-            )
-        )
-    }
 }

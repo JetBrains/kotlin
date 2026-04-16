@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.wasm.test
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.Constructor
@@ -18,8 +21,6 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.additionalK2ConfigurationForIrTextTest
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractNonJvmIrTextTest
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.bind
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmDeserializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 import org.jetbrains.kotlin.wasm.test.handlers.FirWasmJsKlibAbiDumpBeforeInliningSavingHandler
@@ -39,10 +39,10 @@ abstract class AbstractWasmJsIrTextTest :
         get() = FrontendKinds.FIR
 
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade // TODO Change for ::FirCliWebFacade in scope of KT-74671
+        get() = ::FirCliWebFacade
 
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter // TODO Change for ::Fir2IrCliWebFacade in scope of KT-74671
+        get() = ::Fir2IrCliWebFacade
 
     override val preSerializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::WasmPreSerializationLoweringFacade
@@ -52,7 +52,7 @@ abstract class AbstractWasmJsIrTextTest :
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirWasmKlibSerializerFacade, // TODO Change for ::FirKlibSerializerCliWebFacade in scope of KT-74671
+            serializerFacade = ::FirKlibSerializerCliWasmFacade,
             deserializerFacade = ::WasmDeserializerFacade,
         )
 

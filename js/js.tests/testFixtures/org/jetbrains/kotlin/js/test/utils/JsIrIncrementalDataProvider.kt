@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.cli.pipeline.web.JsSerializedKlibPipelineArtifact
+import org.jetbrains.kotlin.cli.pipeline.web.WebSerializedKlibPipelineArtifact
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.ic.JsSrcFileArtifact
@@ -127,7 +127,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
         )
     }
 
-    fun recordIncrementalData(module: TestModule, artifact: JsSerializedKlibPipelineArtifact) {
+    fun recordIncrementalData(module: TestModule, artifact: WebSerializedKlibPipelineArtifact) {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
         val klibs = loadWebKlibs(
             configuration = configuration,

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.library.abi.parser.KlibDumpParser
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -98,7 +98,7 @@ abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsP
         get() = ::JsIrPreSerializationLoweringFacade
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirKlibSerializerCliWebFacade
+        get() = ::FirKlibSerializerCliJsFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(

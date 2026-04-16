@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 
 abstract class AbstractWasmJsLoadCompiledKotlinTest :
     AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.WASM_JS)
@@ -29,9 +26,6 @@ abstract class AbstractWasmJsLoadCompiledKotlinTest :
             targetFrontend = FrontendKinds.FIR,
             targetPlatform = WasmPlatforms.wasmJs,
             wasmTarget = WasmTarget.JS,
-            frontendFacade = ::FirFrontendFacade,
-            frontendToBackendConverter = ::Fir2IrResultsConverter,
-            backendFacade = ::FirWasmKlibSerializerFacade,
             additionalSourceProvider = null,
             customIgnoreDirective = null,
             additionalIgnoreDirectives = null,

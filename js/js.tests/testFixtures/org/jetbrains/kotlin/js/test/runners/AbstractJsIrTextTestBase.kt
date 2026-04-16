@@ -49,7 +49,7 @@ abstract class AbstractJsIrTextTestBase(
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirKlibSerializerCliWebFacade,
+            serializerFacade = ::FirKlibSerializerCliJsFacade,
             deserializerFacade = ::JsIrDeserializerFacade,
         )
 

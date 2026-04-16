@@ -36,24 +36,24 @@ data class WebFrontendPipelineArtifact(
     }
 }
 
-data class JsFir2IrPipelineArtifact(
+data class WebFir2IrPipelineArtifact(
     override val result: Fir2IrActualizedResult,
     val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val hasErrors: Boolean,
 ) : Fir2IrPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsFir2IrPipelineArtifact {
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WebFir2IrPipelineArtifact {
         return copy(configuration = newConfiguration)
     }
 }
 
-data class JsSerializedKlibPipelineArtifact(
+data class WebSerializedKlibPipelineArtifact(
     val outputKlibPath: String,
     override val configuration: CompilerConfiguration,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
-    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): JsSerializedKlibPipelineArtifact {
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): WebSerializedKlibPipelineArtifact {
         return copy(configuration = newConfiguration)
     }
 }

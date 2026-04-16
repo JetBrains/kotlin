@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWasmFacade
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
@@ -20,8 +23,6 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.test.services.configuration.WasmFirstStageEnvironmen
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
-import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 
 abstract class AbstractWasmDiagnosticTestBase(
@@ -72,7 +72,7 @@ abstract class AbstractWasmDiagnosticTestBase(
         )
         useAdditionalService(::LibraryProvider)
 
-        facadeStep(::FirFrontendFacade)
+        facadeStep(::FirCliWebFacade)
 
         firHandlersStep {
             useHandlers(
@@ -86,8 +86,10 @@ abstract class AbstractWasmDiagnosticTestBase(
             )
         }
 
-        facadeStep(::Fir2IrResultsConverter)
-        irHandlersStep()
+        facadeStep(::Fir2IrCliWebFacade)
+        irHandlersStep {
+            useHandlers(::IrDiagnosticsHandler)
+        }
 
         withIrInliner('-')
         facadeStep(::WasmPreSerializationLoweringFacade)
@@ -96,7 +98,7 @@ abstract class AbstractWasmDiagnosticTestBase(
         configureLoweredIrHandlersStep {
             useHandlers(::IrDiagnosticsHandler)
         }
-        facadeStep { FirWasmKlibSerializerFacade(it, true) }
+        facadeStep { FirKlibSerializerCliWasmFacade(it, true) }
 
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)

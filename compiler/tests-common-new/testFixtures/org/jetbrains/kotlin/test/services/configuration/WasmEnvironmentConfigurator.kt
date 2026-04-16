@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.KLIB_RELATIVE_PATH_BASES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import java.io.File
@@ -98,8 +100,10 @@ class WasmFirstStageEnvironmentConfigurator(
     override val compilationStage: CompilationStage
         get() = CompilationStage.FIRST
 
+    // TODO KT-85876: this is in large part a duplicate of JsFirstStageEnvironmentConfigurator, refactor this
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         super.configureCompilerConfiguration(configuration, module)
+        configuration.phaseConfig = createJsTestPhaseConfig(testServices, module)
 
         configuration.outputDir = getKlibArtifactFile(testServices, module.name)
 
@@ -109,6 +113,15 @@ class WasmFirstStageEnvironmentConfigurator(
 
         configuration.libraries = libraries
         configuration.friendLibraries = friends
+
+        configuration.klibRelativePathBases = module.directives[KLIB_RELATIVE_PATH_BASES].applyIf(testServices.cliBasedFacadesEnabled) {
+            val modulePath = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module).canonicalPath
+            map { "$modulePath/$it" }
+        }
+
+        if (testServices.cliBasedFacadesEnabled) {
+            configuration.addSourcesForDependsOnClosure(module, testServices)
+        }
     }
 }
 

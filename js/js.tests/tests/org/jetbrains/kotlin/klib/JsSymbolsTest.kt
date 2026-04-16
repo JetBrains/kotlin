@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -31,7 +31,7 @@ class JsSymbolsTest : AbstractSymbolsValidationTest(
     ::FirCliWebFacade,
     ::Fir2IrCliWebFacade,
     ::JsIrPreSerializationLoweringFacade,
-    ::FirKlibSerializerCliWebFacade,
+    ::FirKlibSerializerCliJsFacade,
     ::JsIrDeserializerFacade,
     ::IrPreSerializationJsSymbolValidationHandler,
     ::JsSymbolValidationHandler,
