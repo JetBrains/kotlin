@@ -80,7 +80,7 @@ internal class DevServerConfigurator(
                     it.importMapFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap.json"))
                     it.importMapLoaderFile.set(project.layout.buildDirectory.file("tmp/${it.name}/importmap-loader.js"))
                     it.flattenPaths.set(true)
-                    it.pathPrefix.set("/vendors")
+                    it.pathPrefix.set("./$VENDORS_FOLDER")
                 }
 
                 subTarget.registerSubTargetTask<Sync>(
