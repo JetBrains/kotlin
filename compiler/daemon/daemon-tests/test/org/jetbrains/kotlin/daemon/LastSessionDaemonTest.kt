@@ -23,13 +23,13 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
         get() = workingDirectory.resolve("daemon.log")
 
     override val defaultDaemonOptions: DaemonOptions
-        get() = super.defaultDaemonOptions.copy(autoshutdownUnusedSeconds = (DAEMON_PERIODIC_CHECK_INTERVAL_MS / 1000).toInt())
+        get() = super.defaultDaemonOptions.copy(autoshutdownUnusedSeconds = (DAEMON_AUTOSHUTDOWN_UNUSED_MS / 1000).toInt())
 
     @DisplayName("Already leased session can perform compilation")
     @Test
     fun canCompileInLastSessionMode() {
         val (compileService, sessionId) = leaseSession(logFile = logFile)
-        sleep(DAEMON_PERIODIC_CHECK_INTERVAL_MS + 1_000)
+        sleep(DAEMON_AUTOSHUTDOWN_UNUSED_MS + DAEMON_PERIODIC_CHECK_INTERVAL_MS)
         logFile.assertLogFileContains("Some sessions are active, waiting for them to finish")
         val testMessageCollector = MessageCollectorImpl()
         val exitCode = KotlinCompilerClient.compile(
@@ -51,9 +51,13 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
     @Test
     fun canLeaseNewSession() {
         leaseSession(logFile = logFile)
-        sleep(DAEMON_PERIODIC_CHECK_INTERVAL_MS + 1_000)
+        sleep(DAEMON_AUTOSHUTDOWN_UNUSED_MS + DAEMON_PERIODIC_CHECK_INTERVAL_MS)
         logFile.assertLogFileContains("Some sessions are active, waiting for them to finish")
         // trying to lease a session with the same config again
         leaseSession(logFile = logFile)
+    }
+
+    companion object {
+        private const val DAEMON_AUTOSHUTDOWN_UNUSED_MS = 3000L
     }
 }

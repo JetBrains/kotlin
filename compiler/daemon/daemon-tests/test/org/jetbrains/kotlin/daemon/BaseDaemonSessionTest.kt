@@ -83,16 +83,26 @@ abstract class BaseDaemonSessionTest {
         clientMarkerFile.createNewFile()
         sessionMarkerFile.createNewFile()
         logFile?.createNewFile()
-        return KotlinCompilerClient.connectAndLease(
-            compilerId,
-            clientMarkerFile,
-            actualJvmOptions,
-            daemonOptions,
-            DaemonReportingTargets(messages = daemonMessagesCollector, out = System.err),
-            autostart = true,
-            leaseSession = true,
-            sessionAliveFlagFile = sessionMarkerFile,
-        )?.also { compileServices.add(it.compileService) } ?: error("failed to connect daemon")
+        try {
+            return KotlinCompilerClient.connectAndLease(
+                compilerId,
+                clientMarkerFile,
+                actualJvmOptions,
+                daemonOptions,
+                DaemonReportingTargets(messages = daemonMessagesCollector, out = System.err),
+                autostart = true,
+                leaseSession = true,
+                sessionAliveFlagFile = sessionMarkerFile,
+            )?.also { compileServices.add(it.compileService) } ?: error("failed to connect daemon")
+        } catch (e: Exception) {
+            logFile?.useLines {
+                println("Daemon log:")
+                for (line in it) {
+                    println(line)
+                }
+            }
+            throw e
+        }
     }
 }
 
