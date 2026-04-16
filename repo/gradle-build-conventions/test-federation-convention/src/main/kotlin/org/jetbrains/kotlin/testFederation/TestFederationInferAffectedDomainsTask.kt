@@ -71,7 +71,7 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
         - Set the TEST_FEDERATION_AFFECTED_SUBSYSTEMS_KEY parameter
         - Add a build tag for each affected domain
          */
-        println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedDomains.joinToString(";")}']")
+        println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedDomains.toArgumentString()}']")
         affectedDomains.forEach { domain ->
             println("##teamcity[addBuildTag 'Affected: $domain']")
         }
