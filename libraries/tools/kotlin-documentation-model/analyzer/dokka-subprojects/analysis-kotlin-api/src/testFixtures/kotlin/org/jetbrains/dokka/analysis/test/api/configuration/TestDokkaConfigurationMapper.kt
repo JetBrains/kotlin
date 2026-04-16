@@ -176,6 +176,8 @@ private fun TestDokkaSourceSet.toDokkaSourceSet(relativeToDir: File): DokkaConfi
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val suppressedFiles: Set<File>
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
+        override val suppressAnnotatedWith: Set<String>
+            get() = throw NotImplementedError("Not expected to be used by analysis modules")
         override val documentedVisibilities: Set<DokkaConfiguration.Visibility>
             get() = throw NotImplementedError("Not expected to be used by analysis modules")
     }

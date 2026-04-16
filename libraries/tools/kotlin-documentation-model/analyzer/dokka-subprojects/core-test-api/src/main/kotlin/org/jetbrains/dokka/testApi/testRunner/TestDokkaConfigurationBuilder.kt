@@ -111,7 +111,8 @@ public class DokkaSourceSetBuilder(
     public var analysisPlatform: String = "jvm",
     public var perPackageOptions: List<PackageOptionsImpl> = emptyList(),
     public var externalDocumentationLinks: List<ExternalDocumentationLinkImpl> = emptyList(),
-    public var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList()
+    public var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList(),
+    public var suppressAnnotatedWith: Set<String> = DokkaDefaults.suppressAnnotatedWith
 ) {
     @Suppress("DEPRECATION")
     public fun build(): DokkaSourceSetImpl {
@@ -137,6 +138,7 @@ public class DokkaSourceSetBuilder(
             noStdlibLink = noStdlibLink,
             noJdkLink = noJdkLink,
             suppressedFiles = suppressedFiles.map(::File).toSet(),
+            suppressAnnotatedWith = suppressAnnotatedWith,
             analysisPlatform = Platform.fromString(analysisPlatform)
         )
     }
