@@ -10,6 +10,7 @@ internal interface ArgumentTestDescriptor<T> {
     val argument: Any
 
     val argumentValues: List<T>
+    val argumentRawValues: List<String>
 
     val invalidArgumentValues: List<T>
     val runsInvalidArgumentValueTest: Boolean

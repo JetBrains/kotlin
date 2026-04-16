@@ -88,14 +88,12 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("Raw argument strings are converted to BTA argument")
     fun <T> CommonArgumentConfiguration<T>.testRawArgumentStringsConversion() {
         assumeArgumentSupported()
-        for (value in argumentValues) {
+        for (value in argumentRawValues) {
             val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
 
-            operation.compilerArguments.applyArgumentStrings(
-                expectedArgumentStringsFor(getValueString(value))
-            )
+            operation.compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(value))
 
-            assertEquals(getValueString(value), getValueString(operation.compilerArguments[argumentKey]))
+            assertEquals(value, getValueString(operation.compilerArguments[argumentKey]))
         }
     }
 
