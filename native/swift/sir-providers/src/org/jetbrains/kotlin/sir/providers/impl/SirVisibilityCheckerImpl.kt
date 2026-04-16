@@ -174,6 +174,10 @@ public class SirVisibilityCheckerImpl(
             return@withSessions SirAvailability.Unavailable("From ignored package")
         }
 
+        if (typeParameters.any { it.upperBounds.size > 1 }) {
+            return@withSessions SirAvailability.Unavailable("Classes with multiple generic upper bounds are not supported yet")
+        }
+
         // Any is exported as a KotlinBase class.
         if (classId == KaStandardTypeClassIds.ANY) {
             return@withSessions SirAvailability.Unavailable("ClassId = Any")

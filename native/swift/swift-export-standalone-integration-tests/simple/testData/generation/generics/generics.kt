@@ -118,6 +118,8 @@ typealias BFun = (B<*>) -> Unit
 
 fun returnBFun(): BFun = TODO()
 
+class MultipleUpperBounds<T> where T : Producer<String>, T : Consumer<String>
+
 // MODULE: f_bounded_type
 // EXPORT_TO_SWIFT
 // FILE: f_bounded_type.kt
