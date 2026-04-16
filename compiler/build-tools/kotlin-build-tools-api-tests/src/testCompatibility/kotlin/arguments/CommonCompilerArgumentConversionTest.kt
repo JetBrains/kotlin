@@ -86,16 +86,12 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("Raw argument strings are converted to BTA argument")
     fun <T> CommonArgumentConfiguration<T>.testRawArgumentStringsConversion() {
         assumeArgumentSupported()
-        for (value in argumentValues) {
+        for (value in argumentRawValues) {
             val operation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
-                compilerArguments.applyArgumentStrings(
-                    expectedArgumentStringsFor(
-                        getValueString(value),
-                    )
-                )
+                compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(value))
             }
 
-            assertEquals(value, operation.compilerArguments[argumentKey])
+            assertEquals(value, getValueString(operation.compilerArguments[argumentKey]))
         }
     }
 
