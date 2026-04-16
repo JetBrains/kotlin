@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticC
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
@@ -259,8 +258,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
     private fun checkNotSupportedPlugins(compilerConfiguration: CompilerConfiguration): Boolean {
         val notSupportedPlugins = mutableListOf<String?>().apply {
-            compilerConfiguration[ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS]
-                .collectIncompatiblePluginNamesTo(this, ComponentRegistrar::supportsK2)
             compilerConfiguration[CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS]
                 .collectIncompatiblePluginNamesTo(this, CompilerPluginRegistrar::supportsK2)
         }
