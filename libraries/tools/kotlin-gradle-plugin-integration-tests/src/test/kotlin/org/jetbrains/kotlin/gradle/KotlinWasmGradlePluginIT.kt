@@ -827,8 +827,8 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
         project("wasm-browser-several-modules", gradleVersion) {
-            val binaryenVersionForFoo = "123"
-            val binaryenVersionForBar = "119"
+            val binaryenVersionForFoo = "128"
+            val binaryenVersionForBar = "125"
             subProject("foo").let {
                 it.buildScriptInjection {
                     project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForFoo)
