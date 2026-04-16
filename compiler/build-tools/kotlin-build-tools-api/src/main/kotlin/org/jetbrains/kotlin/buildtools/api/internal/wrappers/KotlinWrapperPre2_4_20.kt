@@ -47,9 +47,13 @@ internal class KotlinWrapperPre2_4_20(
         }
 
         override fun <R> executeOperation(operation: BuildOperation<R>, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): R {
-            return base.executeOperation(operation, executionPolicy, logger)
+            // Unwrap so the pre-2.4.0 executeOperation can handle its own type check
+            val realOperation = if (operation is BuildOperationWrapper) operation.baseOperation else operation
+            return base.executeOperation(realOperation, executionPolicy, logger)
         }
     }
+
+    private abstract class BuildOperationWrapper<R>(val baseOperation: BuildOperation<R>) : BuildOperation<R>
 
     private class JvmPlatformToolchainWrapper(private val base: JvmPlatformToolchain) : JvmPlatformToolchain by base {
         override fun jvmCompilationOperationBuilder(
@@ -57,7 +61,7 @@ internal class KotlinWrapperPre2_4_20(
             destinationDirectory: Path,
         ): JvmCompilationOperation.Builder =
             JvmCompilationOperationBuilderWrapper(
-                base.jvmCompilationOperationBuilder(sources, destinationDirectory)
+                base.jvmCompilationOperationBuilder(sources, destinationDirectory),
             )
     }
 
@@ -65,6 +69,19 @@ internal class KotlinWrapperPre2_4_20(
         private val base: JvmCompilationOperation.Builder,
     ) : JvmCompilationOperation.Builder by base {
         override val compilerArguments: JvmCompilerArguments.Builder = JvmCompilerArgumentsBuilderWrapper(base.compilerArguments)
+
+        override fun build(): JvmCompilationOperation {
+            return JvmCompilationOperationWrapper(
+                base.build().also { it.compilerArguments.applyCompilerArguments(base.compilerArguments.toCompilerArguments()) })
+        }
+    }
+
+    private class JvmCompilationOperationWrapper(
+        private val base: JvmCompilationOperation,
+    ) : JvmCompilationOperation by base, BuildOperationWrapper<CompilationResult>(base) {
+
+        override fun toBuilder(): JvmCompilationOperation.Builder =
+            JvmCompilationOperationBuilderWrapper(base.toBuilder())
     }
 
     internal class JvmCompilerArgumentsBuilderWrapper(
@@ -94,6 +111,36 @@ internal class KotlinWrapperPre2_4_20(
                 else -> base[key] = value
             }
         }
+    }
+}
+
+private typealias K2JVMCompilerArguments = Any
+
+private fun JvmCompilerArguments.Builder.toCompilerArguments(): K2JVMCompilerArguments {
+    var current: Any = this
+    while (true) {
+        val method = current::class.java.methods.firstOrNull { it.name == "toCompilerArguments" && it.parameterCount == 1 }
+        if (method != null) {
+            val arguments = method.parameterTypes[0].getDeclaredConstructor().newInstance()
+            unwrapInvocationTargetException { method.invoke(current, arguments) }
+            return arguments
+        }
+        current = current::class.java.getDeclaredField("base").also { it.isAccessible = true }.get(current)
+    }
+}
+
+private fun JvmCompilerArguments.applyCompilerArguments(arguments: K2JVMCompilerArguments) {
+    var current: Any = this
+    val k2ArgsClass = arguments::class.java
+    while (true) {
+        val method = current::class.java.methods.firstOrNull {
+            it.name == "applyCompilerArguments" && it.parameterCount == 1 && it.parameterTypes[0] == k2ArgsClass
+        }
+        if (method != null) {
+            unwrapInvocationTargetException { method.invoke(current, arguments) }
+            return
+        }
+        current = current::class.java.getDeclaredField("base").also { it.isAccessible = true }.get(current)
     }
 }
 
