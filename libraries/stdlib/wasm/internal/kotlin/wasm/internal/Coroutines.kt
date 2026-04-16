@@ -14,6 +14,11 @@ import kotlin.coroutines.intrinsics.*
 import kotlin.wasm.internal.reftypes.contref1
 
 @PublishedApi
+internal class SuspensionMarker(var wasSuspended: Boolean = false) : AbstractCoroutineContextElement(Key) {
+    companion object Key : CoroutineContext.Key<SuspensionMarker>
+}
+
+@PublishedApi
 @ExcludedFromCodegen
 internal fun <T> getContinuation(): Continuation<T> =
     implementedAsIntrinsic
@@ -32,7 +37,7 @@ internal fun <T> interceptContinuationIfNeeded(
 @UsedFromCompilerGeneratedCode
 @PublishedApi
 @DoNotInlineOnFirstStage
-internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
+internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context.minusKey(SuspensionMarker)
 
 @UsedFromCompilerGeneratedCode
 @PublishedApi
@@ -41,43 +46,47 @@ internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(noinline b
     return suspendCoroutineUninterceptedOrReturnImpl<T>(block)
 }
 
-internal class WasmContinuationBox(internal var cont: contref1)
+internal class WasmContinuationBox(internal var cont: contref1?)
 
 internal class WasmContinuation<T, R>(
     internal var wasmContBox: WasmContinuationBox,
     completion: Continuation<R>,
-    rethrowExceptions: Boolean = false
+    rethrowExceptions: Boolean = false,
+    var synthetic: Boolean = false,
+    var syntheticResumeValue: Result<T>? = null
 ) : CoroutineImpl<T, R>(completion, rethrowExceptions) {
     internal var isResumed = false
     internal var isFreshInstance = true
     override fun doResume(): Any? {
-        do {
-            require(!isResumed) { "WasmContinuation can be resumed only once" }
-            isResumed = true
-            val resultValue = if (isFreshInstance && exception == null) {
-                require(result == Unit || result == resultContinuation)
-                isFreshInstance = false
-                resultContinuation
-            } else result
-            val resumeResult: ResumeIntrinsicResult = exception?.let {
-                resumeThrowImpl(it, wasmContBox.cont)
-            } ?: resumeWithImpl(wasmContBox.cont, resultValue)
-            wasmContBox = resumeResult.remainingFunction ?: return resumeResult.result
+        require(!isResumed) { "WasmContinuation can be resumed only once" }
+        isResumed = true
+        val resumeValue = if (isFreshInstance && exception == null) {
+            require(result == Unit || result == resultContinuation) { "Result of the continuation must be Unit or the continuation itself" }
+            isFreshInstance = false
+            resultContinuation
+        } else result
+        val resumeResult: ResumeIntrinsicResult = exception?.let {
+            resumeThrowImpl(it, wasmContBox.cont!!)
+        } ?: resumeWithImpl(wasmContBox.cont!!, resumeValue)
+        if (resumeResult.cont != null) {
+            resumeResult.cont.synthetic = false
+            wasmContBox = resumeResult.cont.wasmContBox
             isResumed = false
-            wasSuspended = true
-            if (resumeResult.result === COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
-            require(resumeResult.suspendBody != null)
-            val suspendBodyResult = try {
-                resumeResult.suspendBody(this).takeIf { it !== COROUTINE_SUSPENDED }?.let { Result.success(it) }
-            } catch (e: Throwable) {
-                Result.failure(e)
-            }
-            if (suspendBodyResult == null) {
-                return COROUTINE_SUSPENDED
-            }
-            result = suspendBodyResult.getOrNull()
-            exception = suspendBodyResult.exceptionOrNull()
-        } while (true)
+            return COROUTINE_SUSPENDED
+        } else {
+            return resumeResult.result
+        }
+    }
+
+    override fun resumeWith(result: Result<T>) {
+        if (synthetic) {
+            syntheticResumeValue = result
+            synthetic = false
+            return
+        } else {
+            require(syntheticResumeValue == null)
+            super.resumeWith(result)
+        }
     }
 }
 
@@ -100,24 +109,23 @@ internal fun resumeThrowIntrinsic(objectToThrow: Throwable, cont: contref1): Res
 }
 
 internal class ResumeIntrinsicResult(
-    val suspendBody: ((Continuation<*>) -> Any?)?,
-    val remainingFunction: WasmContinuationBox?,
+    val cont: WasmContinuation<*, *>?,
     val result: Any?,
 )
 
 @Suppress("UNUSED")
 @UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicSuspendResult(
-    suspendBody: ((Continuation<*>) -> Any?)?,
+    cont: Any?,
     remainingFunction: contref1,
 ): ResumeIntrinsicResult {
-    return ResumeIntrinsicResult(suspendBody, WasmContinuationBox(remainingFunction), null)
+    return ResumeIntrinsicResult((cont as WasmContinuation<*, *>?)?.also { it.wasmContBox.cont = remainingFunction }, null)
 }
 
 @Suppress("UNUSED")
 @UsedFromCompilerGeneratedCode
 internal fun buildResumeIntrinsicValueResult(value: Any?): ResumeIntrinsicResult {
-    return ResumeIntrinsicResult(null, null, value)
+    return ResumeIntrinsicResult(null, value)
 }
 
 @ExcludedFromCodegen
@@ -128,21 +136,38 @@ internal fun nullable_contref_intrinsic(): contref1? {
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturnImpl(block: (Continuation<T>) -> Any?): T {
-    return suspendIntrinsic(block) as T
+    val completion = getContinuation<Any?>()
+    val wasmCont = WasmContinuation<T, Any?>(WasmContinuationBox(nullable_contref_intrinsic()), completion, synthetic = true)
+    wasmCont.isFreshInstance = false
+    val result = block(wasmCont)
+    if (result === COROUTINE_SUSPENDED) {
+        completion.context[SuspensionMarker]?.wasSuspended = true
+    }
+    return if (wasmCont.syntheticResumeValue != null) {
+        val resumeResult = wasmCont.syntheticResumeValue!!.getOrThrow()
+        wasmCont.syntheticResumeValue = null
+        resumeResult
+    } else {
+        suspendIntrinsic(wasmCont) as T
+    }
 }
 
 @UsedFromCompilerGeneratedCode
 @PublishedApi
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun <T> suspendIntrinsic(block: (Continuation<T>) -> Any?): Any? {
+internal fun suspendIntrinsic(value: Any?): Any? {
     implementedAsIntrinsic
 }
 
 private fun <R> resumeWasmContinuationAndReturnResult(contref: contref1, completion: Continuation<R>): Any? {
     val wasmContinuation = WasmContinuation<Continuation<R>, R>(WasmContinuationBox(contref), completion, rethrowExceptions = true)
     wasmContinuation.resume(completion)
-    return if (wasmContinuation.wasSuspended) COROUTINE_SUSPENDED else wasmContinuation.result
+    // Check if suspension was marked in the completion's context
+    val wasSuspendedInMarker = completion.context[SuspensionMarker]?.wasSuspended == true
+    completion.context[SuspensionMarker]?.wasSuspended = false
+    if (wasmContinuation.wasSuspended || wasSuspendedInMarker) return COROUTINE_SUSPENDED
+    return wasmContinuation.result
 }
 
 internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {

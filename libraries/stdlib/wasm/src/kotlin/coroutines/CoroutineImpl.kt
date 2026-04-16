@@ -6,6 +6,7 @@
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.wasm.internal.SuspensionMarker
 
 @SinceKotlin("1.3")
 internal abstract class CoroutineImpl<T, R>(internal val resultContinuation: Continuation<R>, val rethrowExceptions: Boolean = false) : Continuation<T> {
@@ -50,11 +51,13 @@ internal abstract class CoroutineImpl<T, R>(internal val resultContinuation: Con
         val completion = resultContinuation
 
         // top-level completion reached -- invoke and return
+        val wasSuspendedInMarker = completion.context[SuspensionMarker]?.wasSuspended == true
+        val wasReallySuspended = wasSuspended || wasSuspendedInMarker
         if (exception != null) {
-            if (rethrowExceptions && !wasSuspended) throw exception!!
+            if (rethrowExceptions && !wasReallySuspended) throw exception!!
             completion.resumeWithException(exception!!)
         } else {
-            if (rethrowExceptions && !wasSuspended) return // prevent double-completion
+            if (rethrowExceptions && !wasReallySuspended) return // prevent double-completion
             completion.resume(this.result as R)
         }
         return
