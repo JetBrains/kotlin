@@ -813,8 +813,9 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         scope?.withReplacedSessionOrNull(session, scopeSession) ?: scope,
         implicitReceiver?.withReplacedSessionOrNull(session, scopeSession),
         contextParameterGroup,
+        staticScopeOwnerSymbol,
         isLocal,
-        staticScopeOwnerSymbol
+        isAllowedAsCompanionExtensionReceiver,
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {

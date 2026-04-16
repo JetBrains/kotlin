@@ -149,7 +149,7 @@ internal abstract class FirBaseTowerResolveTask(
         parentGroup: TowerGroup = TowerGroup.EmptyRoot,
         onScope: (FirScope, FirRegularClassSymbol?, TowerGroup) -> Unit,
         onImplicitReceiver: (ImplicitReceiverValue<*>, TowerGroup) -> Unit,
-        onStaticScopeOwnerSymbol: (FirRegularClassSymbol, TowerGroup) -> Unit = { _, _ -> },
+        onImplicitCompanionExtensionReceiver: (FirRegularClassSymbol, TowerGroup) -> Unit = { _, _ -> },
     ) {
         for ((index, localScope) in towerDataElementsForName.reversedFilteredLocalScopes) {
             onScope(localScope, null, parentGroup.Local(index))
@@ -164,8 +164,9 @@ internal abstract class FirBaseTowerResolveTask(
                     onScope(scope, staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
                 }
 
-                if (staticScopeOwnerSymbol != null) {
-                    onStaticScopeOwnerSymbol(staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
+                // Companion extensions on supertypes should not be resolved through scope linking (unqualified in subclass).
+                if (staticScopeOwnerSymbol != null && lexical.isAllowedAsCompanionExtensionReceiver) {
+                    onImplicitCompanionExtensionReceiver(staticScopeOwnerSymbol, parentGroup.NonLocal(depth))
                 }
             }
 
@@ -410,7 +411,7 @@ internal open class FirTowerResolveTask(
                     )
                 }
             },
-            onStaticScopeOwnerSymbol = { staticScopeOwnerSymbol, group ->
+            onImplicitCompanionExtensionReceiver = { staticScopeOwnerSymbol, group ->
                 // Searching for companion extensions triggers a bunch of resolution tasks.
                 // We skip them for performance reasons when the LF is disabled.
                 if (companionBlocksAndExtensionsEnabled) {

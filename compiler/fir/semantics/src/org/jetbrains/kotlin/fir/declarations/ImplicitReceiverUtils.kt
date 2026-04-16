@@ -44,7 +44,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
 
         superClass.staticScope(this)
             ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(expandedType, session)
-            ?.asTowerDataElementForStaticScope(staticScopeOwnerSymbol = superClass.symbol)
+            ?.asTowerDataElementForStaticScopeLinking(staticScopeOwnerSymbol = superClass.symbol)
             ?.let(superClassesStaticsAndCompanionReceivers::add)
 
         superClass.companionObjectSymbol?.let {
@@ -212,8 +212,8 @@ data class FirTowerDataContext private constructor(
         return FirTowerDataElement(
             scope = towerElementsForClass.staticScope,
             implicitReceiver = null,
+            staticScopeOwnerSymbol = towerElementsForClass.staticScopeOwnerSymbol,
             isLocal = false,
-            staticScopeOwnerSymbol = towerElementsForClass.staticScopeOwnerSymbol
         )
     }
 
@@ -275,16 +275,18 @@ class FirTowerDataElement(
     val scope: FirScope?,
     val implicitReceiver: ImplicitReceiverValue<*>?,
     val contextParameterGroup: ContextParameterGroup? = null,
-    val isLocal: Boolean,
     val staticScopeOwnerSymbol: FirRegularClassSymbol? = null,
+    val isLocal: Boolean,
+    val isAllowedAsCompanionExtensionReceiver: Boolean = true,
 ) {
     internal fun createSnapshot(keepMutable: Boolean, mapper: ImplicitValueMapper): FirTowerDataElement =
         FirTowerDataElement(
             scope,
             implicitReceiver?.let { mapper(it) },
             contextParameterGroup?.map { it.createSnapshot(keepMutable) },
+            staticScopeOwnerSymbol,
             isLocal,
-            staticScopeOwnerSymbol
+            isAllowedAsCompanionExtensionReceiver,
         )
 
     /**
@@ -321,11 +323,17 @@ fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = isLocal)
 
-fun FirScope.asTowerDataElementForStaticScope(staticScopeOwnerSymbol: FirRegularClassSymbol?): FirTowerDataElement =
-    FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = false, staticScopeOwnerSymbol = staticScopeOwnerSymbol)
+fun FirScope.asTowerDataElementForStaticScopeLinking(staticScopeOwnerSymbol: FirRegularClassSymbol?): FirTowerDataElement =
+    FirTowerDataElement(
+        scope = this,
+        implicitReceiver = null,
+        staticScopeOwnerSymbol = staticScopeOwnerSymbol,
+        isLocal = false,
+        isAllowedAsCompanionExtensionReceiver = false,
+    )
 
 fun FirRegularClassSymbol.asTowerDataElementForStaticScope(scope: FirScope?): FirTowerDataElement =
-    FirTowerDataElement(scope = scope, implicitReceiver = null, isLocal = false, staticScopeOwnerSymbol = this)
+    FirTowerDataElement(scope = scope, implicitReceiver = null, staticScopeOwnerSymbol = this, isLocal = false)
 
 fun FirClassSymbol<*>.staticScope(sessionHolder: SessionAndScopeSessionHolder): FirContainingNamesAwareScope? =
     fir.staticScope(sessionHolder)

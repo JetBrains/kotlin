@@ -25,19 +25,19 @@ open class C {
 class D : C() {
     companion {
         fun insideCompanionBlock() {
-            foo()
-            fooTa()
-            prop
-            propTa
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fooTa<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>prop<!>
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>propTa<!>
         }
     }
 
     companion object {
         fun insideCompanionObject() {
-            foo()
-            fooTa()
-            prop
-            propTa
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>fooTa<!>()
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>prop<!>
+            <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>propTa<!>
         }
     }
 }
