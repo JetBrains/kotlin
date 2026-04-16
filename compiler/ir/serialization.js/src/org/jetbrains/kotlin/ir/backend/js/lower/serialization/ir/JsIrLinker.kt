@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -29,8 +32,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class JsIrLinker(
-    configuration: CompilerConfiguration, builtIns: IrBuiltIns, symbolTable: SymbolTable,
-    override val partialLinkageSupport: PartialLinkageSupportForLinker,
+    configuration: CompilerConfiguration,
+    builtIns: IrBuiltIns,
+    symbolTable: SymbolTable,
+    partialLinkageConfig: PartialLinkageConfig,
+    irDiagnosticReporter: IrDiagnosticReporter,
     friendModules: Map<String, Collection<String>> = emptyMap(),
 ) : KotlinIrLinker(
     currentModule = null,
@@ -44,6 +50,12 @@ class JsIrLinker(
         }
         symbol
     }) {
+
+    override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
+        partialLinkageConfig = partialLinkageConfig,
+        builtIns = builtIns,
+        diagnosticReporter = irDiagnosticReporter,
+    )
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,

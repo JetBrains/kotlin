@@ -152,13 +152,10 @@ internal fun LinkKlibsContext.linkKlibs(
                 stubGenerator = stubGenerator,
                 cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
                 exportedDependencies = exportedDependencies,
-                partialLinkageSupport = createPartialLinkageSupportForLinker(
-                        partialLinkageConfig = config.configuration.partialLinkageConfig,
-                        builtIns = generatorContext.irBuiltIns,
-                        diagnosticReporter = irDiagnosticReporter,
-                ),
+                partialLinkageConfig = config.configuration.partialLinkageConfig,
+                irDiagnosticReporter = irDiagnosticReporter,
                 libraryBeingCached = config.libraryToCache,
-                externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
+                externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
         ).also { linker ->
 
             // context.config.librariesWithDependencies could change at each iteration.

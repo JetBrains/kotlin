@@ -120,13 +120,10 @@ class NativeDeserializerFacade(
             stubGenerator = stubGenerator,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
-            partialLinkageSupport = createPartialLinkageSupportForLinker(
-                partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
-                builtIns = irBuiltIns,
-                diagnosticReporter = irDiagnosticReporter,
-            ),
+            partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
+            irDiagnosticReporter = irDiagnosticReporter,
             libraryBeingCached = null,
-            externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
+            externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
         )
 
         val moduleDependencies: IrModuleDependencies = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
