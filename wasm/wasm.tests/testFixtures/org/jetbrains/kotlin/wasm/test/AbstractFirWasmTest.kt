@@ -128,6 +128,8 @@ open class AbstractFirWasmJsCodegenBoxTest(
     }
 }
 
+open class AbstractFirWasmJsCodegenBoxCoroutineTest() : AbstractFirWasmJsCodegenBoxTest("codegen/box/coroutines")
+
 open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
     testGroupOutputDirPrefix: String = "codegen/boxInlKlib/"
 ) : AbstractFirWasmJsCodegenBoxTest(

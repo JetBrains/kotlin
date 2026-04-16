@@ -99,6 +99,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxWasmBenchmark")
             }
 
+            testClass<AbstractFirWasmJsCodegenBoxCoroutineTest> {
+                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+            }
+
             testClass<AbstractFirWasmJsBenchmarkTest> {
                 model("codegen/boxWasmBenchmark")
             }
