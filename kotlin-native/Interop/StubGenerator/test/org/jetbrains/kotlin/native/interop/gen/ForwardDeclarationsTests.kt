@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.native.interop.indexer.EnumType
 import org.jetbrains.kotlin.native.interop.indexer.HeaderId
 import org.jetbrains.kotlin.native.interop.indexer.IndexerResult
 import org.jetbrains.kotlin.native.interop.indexer.ObjCClassOrProtocol
@@ -209,6 +210,76 @@ class ForwardDeclarationsTests : IndexerTestsBase() {
         assertEquals(
                 listOf("consumeTwo" to listOf(structDefinition)),
                 index.functions.map { it.name to it.parameters.map { assertIs<RecordType>(assertIs<PointerType>(it.type).pointeeType).decl } },
+        )
+    }
+
+    /**
+     * Basically the same as the test above, but with enums. With the opposite (thus desired) behavior: the enum is imported from
+     * the first module.
+     *
+     * See [org.jetbrains.kotlin.native.interop.indexer.NativeIndexImpl.getEnumDefAt]
+     */
+    @Test
+    fun `enum redeclaration with forward declaration - does not introduce type duplicate`() {
+        assumeTrue(HostManager.hostIsMac)
+
+        val files = testFiles()
+        val oneH = files.file("one.h", """
+            enum Foo {
+                ZERO
+            };
+            void consumeOne(enum Foo);
+        """.trimIndent())
+        val twoH = files.file("two.h", """
+            #include "one.h"
+            enum Foo;
+            void consumeTwo(enum Foo);
+        """.trimIndent())
+        files.file("module.modulemap", """
+            module one {
+                header "one.h"
+            }
+            module two {
+                header "two.h"
+            }
+        """.trimIndent())
+
+        val def = files.file("dup.def", """
+            language = Objective-C
+            modules = two
+        """.trimIndent())
+
+        val index = buildNativeIndex(
+                buildNativeLibraryFrom(
+                        def,
+                        // Here we intentionally don't use -fmodules since this is how the platform libraries are built
+                        arrayOf("-compiler-option", "-I${files.directory}"),
+                        imports = ImportsMock(
+                                mapOf(
+                                        HeaderId(headerContentsHash(oneH.path)) to "one"
+                                )
+                        )
+                ),
+                verbose = false
+        ).index
+
+        assertEquals(
+                listOf(headerContentsHash(twoH.path)),
+                index.includedHeaders.map { it.value },
+        )
+
+        // The enum is not included but imported.
+        assertEquals(emptyList(), index.enums)
+
+        val function = index.functions.single()
+        assertEquals("consumeTwo", function.name)
+        val parameterType = function.parameters.single().type
+
+        val enumDefinition = assertIs<EnumType>(parameterType).def
+        assertEquals("enum Foo", enumDefinition.spelling)
+        assertEquals(
+                listOf("ZERO"),
+                enumDefinition.constants.map { it.name }
         )
     }
 }
