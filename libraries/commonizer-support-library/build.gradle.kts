@@ -116,3 +116,12 @@ kotlin {
         }
     }
 }
+
+val commonizerKlibs = configurations.create("commonizerKlibs") {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+
+    outgoing.artifact(layout.buildDirectory.dir("classes/kotlin")) {
+        builtBy(tasks.named("build"))
+    }
+}

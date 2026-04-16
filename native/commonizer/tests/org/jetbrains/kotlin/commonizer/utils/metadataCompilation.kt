@@ -80,14 +80,8 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
 
-fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata {
-    val module = InlineSourceBuilder.ModuleBuilder().apply {
-        this.name = name
-        source(content = "", "empty.kt")
-    }.build()
-
-    return createModule(module, disposable).second.metadata
-}
+fun createEmptyModule(name: String, disposable: Disposable): SerializedMetadata =
+    createModule(createEmptyInlineSourceModule(name), disposable).second.metadata
 
 fun createModule(
     module: InlineSourceBuilder.Module,

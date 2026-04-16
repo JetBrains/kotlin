@@ -33,7 +33,8 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
             classifierIndices = TargetDependent(target to CirClassifierIndex(root)),
             targetDependencies = TargetDependent(target to CirProvidedClassifiers.EMPTY),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            commonDependencies = CirProvidedClassifiers.EMPTY
+            commonDependencies = CirProvidedClassifiers.EMPTY,
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(listOf(target), testRootDisposable),
         )
 
         val idOfA = CirEntityId.create("A")
@@ -109,7 +110,8 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
             classifierIndices = TargetDependent(target to CirClassifierIndex(root)),
             targetDependencies = TargetDependent(target to CirProvidedClassifiers.EMPTY),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            commonDependencies = CirProvidedClassifiers.EMPTY
+            commonDependencies = CirProvidedClassifiers.EMPTY,
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(listOf(target), testRootDisposable),
         )
 
         val idOfX = CirEntityId.create("X")
@@ -160,7 +162,8 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
             classifierIndices = TargetDependent(target to CirClassifierIndex(root)),
             targetDependencies = TargetDependent(target to CirProvidedClassifiers.EMPTY),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            commonDependencies = CirProvidedClassifiers.EMPTY
+            commonDependencies = CirProvidedClassifiers.EMPTY,
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(listOf(target), testRootDisposable),
         )
 
         assertEquals(
@@ -231,9 +234,10 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
 
         val classifiers = CirKnownClassifiers(
             classifierIndices = TargetDependent(target to CirClassifierIndex(root)),
-            commonDependencies = createCirProvidedClassifiers { commonDependencies() },
             targetDependencies = TargetDependent(target to createCirProvidedClassifiers { targetDependencies() }),
-            commonizedNodes = CirCommonizedClassifierNodes.default()
+            commonizedNodes = CirCommonizedClassifierNodes.default(),
+            commonDependencies = createCirProvidedClassifiers { commonDependencies() },
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(listOf(target), testRootDisposable),
         )
 
         val idOfX = CirEntityId.create("X")

@@ -72,7 +72,7 @@ abstract class AbstractCommonizationFromSourcesTest {
         val analyzedModules: AnalyzedModules = AnalyzedModules.create(sourceModuleRoots, testRootDisposable)
 
         val results = MockResultsConsumer()
-        runCommonization(analyzedModules.toCommonizerParameters(results))
+        runCommonization(analyzedModules.toCommonizerParameters(results, disposable = testRootDisposable))
         assertEquals(Status.DONE, results.status)
 
         val sharedTarget: SharedCommonizerTarget = analyzedModules.sharedTarget
@@ -200,6 +200,7 @@ private class AnalyzedModules(
         resultsConsumer: ResultsConsumer,
         manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
         commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
+        disposable: Disposable,
     ) = CommonizerParameters(
         outputTargets = setOf(SharedCommonizerTarget(leafTargets.toSet())),
         manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
@@ -211,6 +212,7 @@ private class AnalyzedModules(
                 .plus(loadStdlibMetadata())
                 .let(MockModulesProvider::create)
         },
+        supportLibraryModulesProvider = buildDummySupportLibraryModulesProvider(sharedTarget.withAllLeaves(), disposable),
         targetProviders = TargetDependent(leafTargets) { leafTarget ->
             TargetProvider(
                 target = leafTarget,
