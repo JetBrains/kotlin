@@ -137,7 +137,7 @@ public actual annotation class ObjCEnum(actual val name: String = "", actual val
      * always override the Swift name implied or set by other means, even if swiftName is not set explicitly. This annotation does
      * not override the prefix implied or set by ObjCEnum.
      */
-    @Target(AnnotationTarget.FIELD)
+    @Target(AnnotationTarget.PROPERTY)
     @Retention(AnnotationRetention.BINARY)
     public actual annotation class EntryName(actual val name: String, actual val swiftName: String = "")
 }

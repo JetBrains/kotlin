@@ -93,7 +93,7 @@ public expect annotation class ObjCEnum(val name: String = "", val swiftName: St
      * always override the Swift name implied or set by other means, even if swiftName is not set explicitly. This annotation does
      * not override the prefix implied or set by ObjCEnum.
      */
-    @Target(AnnotationTarget.FIELD)
+    @Target(AnnotationTarget.PROPERTY)
     @Retention(AnnotationRetention.BINARY)
     public annotation class EntryName(val name: String, val swiftName: String = "")
 }
