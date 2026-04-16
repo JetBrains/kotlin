@@ -251,9 +251,9 @@ class BackendWasmSymbols(
     }
 
     val startCoroutineUninterceptedOrReturnIntrinsics = listOf(
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics0.functionSymbol(),
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics1.functionSymbol(),
-        CallableIds.startCoroutineUninterceptedOrReturnIntrinsics2.functionSymbol(),
+        CallableIds.startCoroutineUninterceptedOrReturnIntrinsic0.functionSymbol(),
+        CallableIds.startCoroutineUninterceptedOrReturnIntrinsic1.functionSymbol(),
+        CallableIds.startCoroutineUninterceptedOrReturnIntrinsic2.functionSymbol(),
     )
 
     val createCoroutineUninterceptedIntrinsics =
@@ -538,9 +538,9 @@ private object CallableIds {
     val nullableDoubleIeee754Equals = "nullableDoubleIeee754Equals".wasmCallableId
     val returnArgumentIfItIsKotlinAny = "returnArgumentIfItIsKotlinAny".wasmCallableId
 
-    val startCoroutineUninterceptedOrReturnIntrinsics0 = "startCoroutineUninterceptedOrReturnIntrinsics0".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics1 = "startCoroutineUninterceptedOrReturnIntrinsics1".wasmCallableId
-    val startCoroutineUninterceptedOrReturnIntrinsics2 = "startCoroutineUninterceptedOrReturnIntrinsics2".wasmCallableId
+    val startCoroutineUninterceptedOrReturnIntrinsic0 = "startCoroutineUninterceptedOrReturnIntrinsic0".wasmCallableId
+    val startCoroutineUninterceptedOrReturnIntrinsic1 = "startCoroutineUninterceptedOrReturnIntrinsic1".wasmCallableId
+    val startCoroutineUninterceptedOrReturnIntrinsic2 = "startCoroutineUninterceptedOrReturnIntrinsic2".wasmCallableId
 
     val suspendCoroutineUninterceptedOrReturnStackSwitching = "suspendCoroutineUninterceptedOrReturnStackSwitching".wasmCallableId
     val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".wasmCallableId
