@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
+import org.jetbrains.kotlin.commonizer.core.toModulesProvider
+import org.jetbrains.kotlin.commonizer.repository.CommonizerSupportLibraryRepository
 import org.jetbrains.kotlin.commonizer.repository.Repository
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.commonizer.utils.progress
@@ -17,6 +19,7 @@ internal class LibraryCommonizer internal constructor(
     private val outputTargets: Set<SharedCommonizerTarget>,
     private val repository: Repository,
     private val dependencies: Repository,
+    private val supportLibraryRepository: CommonizerSupportLibraryRepository,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
     private val logger: Logger,
@@ -54,6 +57,7 @@ internal class LibraryCommonizer internal constructor(
                 targetProviders = libraries.map { target, targetLibraries -> createTargetProvider(target, targetLibraries) },
                 manifestProvider = createManifestProvider(libraries),
                 dependenciesProvider = createDependenciesProvider(),
+                supportLibraryModulesProvider = supportLibraryRepository.toModulesProvider(outputTargets),
                 resultsConsumer = resultsConsumer,
                 statsCollector = statsCollector,
                 logger = logger,
