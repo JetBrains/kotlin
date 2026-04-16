@@ -50,8 +50,8 @@ internal fun KaSession.getGeneratedKDocDocumentationFrom(symbol: KaSymbol): Docu
     return loadTemplate(templatePath)
 }
 
-private fun KaSession.loadTemplate(filePath: String): DocumentationNode? {
-    val kdoc = loadContent(filePath) ?: return null
+private fun KaSession.loadTemplate(filePath: String): DocumentationNode {
+    val kdoc = loadContent(filePath) ?: throw IllegalArgumentException("Template file not found: $filePath")
     val externalDriProvider = { link: String ->
         resolveKDocTextLinkToDRI(link)
     }
