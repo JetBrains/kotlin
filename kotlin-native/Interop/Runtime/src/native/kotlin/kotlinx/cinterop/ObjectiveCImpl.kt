@@ -125,6 +125,11 @@ internal external fun createObjCSuperStruct(receiver: NativePtr, superClass: Nat
 @InternalForKotlinNative
 public annotation class ExternalObjCClass(val protocolGetter: String = "", val binaryName: String = "")
 
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@InternalForKotlinNative
+public annotation class IdeInfo(val swiftName: String = "", val moduleName: String = "")
+
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.BINARY)
 @InternalForKotlinNative

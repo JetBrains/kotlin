@@ -132,10 +132,12 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.syntheticProductType.set(SyntheticProductType.DYNAMIC)
     }
 
+    // Это таска синкает lock файл
     val syncPersistedPackageResolvedToSyntheticSwiftPMPackage = project.locateOrRegisterTask<SyncPackageResolvedTask>(
         SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME
     )
 
+    // Эта таска делает фетч для конкретного проекта
     val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
     val fetchSyntheticImportProjectPackages = project.locateOrRegisterTask<FetchSyntheticImportProjectPackages>(
         FetchSyntheticImportProjectPackages.TASK_NAME,
@@ -175,6 +177,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     )
 
     project.afterEvaluate {
+        // Тут будет либо шаренный lock файл от identifier'а, либо lock файл проекта
         val persistedPackageResolved = providePersistedPackageResolved()
 
         syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
@@ -406,6 +409,7 @@ private fun Project.getIdentifierLockFilesMetadataProvider(): Provider<List<Swif
         }
 }
 
+// Тут мы собираем какие должны быть konanTarget'ы
 private fun Project.getKonanTargetsForUmbrellaPackageProvider(): Provider<Set<KonanTarget>>? =
     getIdentifierLockFilesMetadataProvider().map {
         it.flatMap { metadata -> metadata.konanTargets.orEmpty() }
@@ -421,6 +425,7 @@ private fun Project.getAggregatedTransitiveDependenciesProvider(): Provider<Tran
 
         lockFilesMetadata.forEach { contribution ->
             if (
+                // У проекта нет ни прямых ни транзитивных SwiftPM зависимостей, тогда мы его скипаем
                 contribution.directDependencies.isEmpty() &&
                 contribution.transitiveDependencies.metadataByDependencyIdentifier.isEmpty()
             ) {

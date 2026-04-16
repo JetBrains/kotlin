@@ -238,7 +238,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
         val declarationId: DeclarationID
-        if (CXCursorKind.CXCursor_TypedefDecl == cursor.kind) {
+        if (CXCursorKind.CXCursor_TypedefDecl == cursor.kind
+                || CXCursorKind.CXCursor_EnumDecl == cursor.kind
+                ) {
             /**
              * For typedefs we want to use the name of the typedef because the USR is distinct if typedef is redeclared across 2 modules
              * -fmodules when the modules are independent. We also decided to not use [indexTranslationUnitsForTypesDefinitions] approach
@@ -451,7 +453,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     binaryName = getObjCBinaryName(cursor).takeIf { it != name },
                     typeParameters = parameters,
                     swiftName = readSwiftName(cursor) ?: name,
-                    moduleName = clang_Cursor_getDefinedIn(cursor).convertAndDispose(),
+                    moduleName =
+                            clang_Cursor_getDefinedIn(cursor).convertAndDispose()
+                                    ?: clang_Cursor_getModule(cursor)?.let { clang_Module_getName(it).convertAndDispose() },
             )
         }) { objcClass ->
             addChildrenToObjCContainer(cursor, objcClass)
