@@ -22,6 +22,7 @@ dependencies {
 
     api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
+    implementation(project(":analysis:analysis-internal-utils"))
 
     testImplementation(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)

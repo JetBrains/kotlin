@@ -344,6 +344,17 @@ public func returnBoxFun() -> main.BoxFun {
         return { return main.Box.__createClassWrapper(externalRCRef: main_internal_functional_type_caller_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!)) }
     }()
 }
+public func returnGenericConstraintToGeneric(
+    arg1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
+    arg2: (any KotlinRuntimeSupport._KotlinBridgeable)?
+) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+    return { switch __root___returnGenericConstraintToGeneric__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg1.map { it in it.__externalRCRef() } ?? nil, arg2.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+}
+public func returnSomeBoxForArg(
+    arg: (any KotlinRuntimeSupport._KotlinBridgeable)?
+) -> main.Box {
+    return main.Box.__createClassWrapper(externalRCRef: __root___returnSomeBoxForArg__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg.map { it in it.__externalRCRef() } ?? nil))
+}
 public func takeBoxStarProjection(
     box: main.Box
 ) -> Swift.Void {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.builtinTypes
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.export.utilities.isSuspend
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.sir.*
@@ -140,8 +141,9 @@ internal open class SirFunctionFromKtSymbol(
     override val bridges: List<SirBridge> by lazyWithSessions {
         bridgeProxy?.createSirBridges {
             val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
+            val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
             val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
-                it.render(position = Variance.INVARIANT)
+                it.render(renderer, position = Variance.INVARIANT)
             } ?: ""
             val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
             val argumentsString = actualArgs.joinToString()

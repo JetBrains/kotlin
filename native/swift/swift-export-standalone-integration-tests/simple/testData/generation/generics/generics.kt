@@ -120,6 +120,10 @@ fun returnBFun(): BFun = TODO()
 
 class MultipleUpperBounds<T> where T : Producer<String>, T : Consumer<String>
 
+fun <A, B: A> returnGenericConstraintToGeneric(arg1: A, arg2: B): A = TODO()
+
+fun <A, B : Box<A>> returnSomeBoxForArg(arg: A): B = TODO()
+
 // MODULE: f_bounded_type
 // EXPORT_TO_SWIFT
 // FILE: f_bounded_type.kt
