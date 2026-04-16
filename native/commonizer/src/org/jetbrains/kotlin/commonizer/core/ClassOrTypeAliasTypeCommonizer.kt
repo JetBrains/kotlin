@@ -21,12 +21,19 @@ internal class ClassOrTypeAliasTypeCommonizer(
     private val classifiers: CirKnownClassifiers,
     private val isOptimisticNumberTypeCommonizationEnabled: Boolean,
     private val isPlatformIntegerCommonizationEnabled: Boolean,
+    private val supportExpectClassSupplier: SupportExpectClassSupplier,
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
-    constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers, settings: CommonizerSettings) : this(
+    constructor(
+        typeCommonizer: TypeCommonizer,
+        classifiers: CirKnownClassifiers,
+        settings: CommonizerSettings,
+        supportExpectClassSupplier: SupportExpectClassSupplier,
+    ) : this(
         typeCommonizer, classifiers,
         settings.getSetting(OptimisticNumberCommonizationEnabledKey),
         settings.getSetting(PlatformIntegerCommonizationEnabledKey),
+        supportExpectClassSupplier,
     )
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.context)
@@ -41,6 +48,10 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val substitutedTypes = substituteTypesIfNecessary(values)
 
         if (substitutedTypes == null) {
+            supportExpectClassSupplier.buildSupportExpectTypeFor(expansions, isMarkedNullable)?.let {
+                return it
+            }
+
             val integerCommonizationResultIfApplicable = isPlatformIntegerCommonizationEnabled.ifTrue {
                 platformIntegerCommonizer(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
@@ -77,24 +88,14 @@ internal class ClassOrTypeAliasTypeCommonizer(
         /*
         Classifier is coming from common dependencies and therefore the type can be used in common
          */
-        when (val dependencyClassifier = classifiers.commonDependencies.classifier(classifierId)) {
-            is CirProvided.Class -> return CirClassType.createInterned(
-                classId = classifierId,
+        classifiers.commonDependencies.classifier(classifierId)?.let { dependencyClassifier ->
+            return dependencyClassifier.dependencyClassifierToCir(
+                classifierId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable
-            )
-
-            is CirProvided.TypeAlias -> return CirTypeAliasType.createInterned(
-                typeAliasId = classifierId,
-                arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
-                underlyingType = dependencyClassifier.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers.commonDependencies)
-                    ?.makeNullableIfNecessary(isMarkedNullable)
-                    ?.withParentArguments(arguments) ?: return null
+                classifiers = classifiers.commonDependencies,
             )
-
-            else -> Unit
         }
 
         /*

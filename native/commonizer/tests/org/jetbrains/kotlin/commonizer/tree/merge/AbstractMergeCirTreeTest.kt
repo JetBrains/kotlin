@@ -7,15 +7,13 @@
 
 package org.jetbrains.kotlin.commonizer.tree.merge
 
-import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.commonizer.TargetDependent
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
-import org.jetbrains.kotlin.commonizer.toTargetDependent
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.KtInlineSourceCommonizerTestCase
 import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
+import org.jetbrains.kotlin.commonizer.utils.buildDummySupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.utils.loadStdlibMetadata
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -23,11 +21,15 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
     private val storageManager = LockBasedStorageManager(this::class.simpleName)
 
     fun mergeCirTree(vararg modules: Pair<String, CirTreeModule>): CirRootNode {
+        val targets = modules.map { (targetName, _) -> LeafCommonizerTarget(targetName) }
+        val supportExpectClassSupplier = buildDummySupportExpectClassSupplier(targets, testRootDisposable)
+
         return org.jetbrains.kotlin.commonizer.tree.mergeCirTree(
             storageManager,
             createDefaultKnownClassifiers(),
             TargetDependent(*modules),
-            DefaultCommonizerSettings
+            DefaultCommonizerSettings,
+            supportExpectClassSupplier,
         )
     }
 

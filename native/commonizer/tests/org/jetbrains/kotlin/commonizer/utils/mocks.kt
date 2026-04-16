@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
 import org.jetbrains.kotlin.commonizer.mergedtree.*
@@ -83,6 +84,24 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
     },
     commonDependencies = CirProvidedClassifiers.EMPTY
 )
+
+fun createEmptyInlineSourceModule(name: String): InlineSourceBuilder.Module {
+    return InlineSourceBuilder.ModuleBuilder().apply {
+        this.name = name
+        source(content = "", "empty.kt")
+    }.build()
+}
+
+internal fun buildDummySupportLibraryModulesProvider(
+    targets: Iterable<CommonizerTarget>,
+    disposable: Disposable,
+): TargetDependent<ModulesProvider> =
+    TargetDependent(targets.withAllLeaves()) {
+        MockModulesProvider.create(listOf(), disposable)
+    }
+
+internal fun buildDummySupportExpectClassSupplier(targets: Iterable<CommonizerTarget>, disposable: Disposable): SupportExpectClassSupplier =
+    SupportExpectClassSupplier(targets.toList(), buildDummySupportLibraryModulesProvider(targets, disposable))
 
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, SerializedMetadata>,
