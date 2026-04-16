@@ -444,6 +444,7 @@ projectTests {
         include("**/*.class")
         exclude("**/*SingleModule*TestGenerated.class")
         exclude("**/*MultiModule*TestGenerated.class")
+        exclude("**/FirWasmWasiCodegenBoxTestGenerated.class")
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
@@ -453,6 +454,7 @@ projectTests {
     wasmProjectTest("wasmFirCompilerExtraTest") {
         include("**/*SingleModule*TestGenerated.class")
         include("**/*MultiModule*TestGenerated.class")
+        include("**/FirWasmWasiCodegenBoxTestGenerated.class")
     }
 
     testData(project(":compiler").isolated, "testData/diagnostics")
