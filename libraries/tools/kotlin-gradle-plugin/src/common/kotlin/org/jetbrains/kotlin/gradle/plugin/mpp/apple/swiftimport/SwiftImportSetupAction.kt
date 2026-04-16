@@ -418,7 +418,7 @@ private fun Project.getKonanTargetsForUmbrellaPackageProvider(): Provider<Set<Ko
             .toSet()
     }
 
-//        ./gradlew install -PdeployVersion=2.4.255-berkay-1
+
 private fun Project.getAggregatedTransitiveDependenciesProvider(): Provider<TransitiveSwiftPMDependencies> =
     getIdentifierLockFilesMetadataProvider().map { lockFilesMetadata ->
         val merged = linkedMapOf<SwiftPMDependencyIdentifier, SwiftPMImportMetadata>()
