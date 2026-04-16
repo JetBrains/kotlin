@@ -170,7 +170,7 @@ interface VariableWithConstraints {
     /**
      * Only necessary for incorporation optimization
      */
-    fun getConstraintsContainedSpecifiedTypeVariable(typeVariableConstructor: TypeConstructorMarker): Collection<Constraint>
+    fun getConstraintsContainedSpecifiedTypeVariables(typeVariableConstructors: List<TypeConstructorMarker>): Collection<Constraint>
 }
 
 class InitialConstraint(

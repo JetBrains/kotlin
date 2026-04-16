@@ -35,6 +35,7 @@ CHOSEN for fixation: TypeVariable(S) --- Readiness(
     )
      <: SelfI<TypeVariable(S)>
      = Entity
+     <: SelfI<out Entity>
      <: SelfI<Entity> (inferred during fixation)
     FIXED TO: Entity
 ********************************

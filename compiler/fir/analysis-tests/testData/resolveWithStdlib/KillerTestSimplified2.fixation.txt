@@ -33,6 +33,7 @@ TypeVariable(U0) --- Readiness(
     )
      <: Generic<TypeVariable(U1), TypeVariable(U2), TypeVariable(U3), TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, TypeVariable(U2), TypeVariable(U3), TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U2) --- Readiness(
     	 true ALLOWED
@@ -307,6 +308,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, TypeVariable(U2), TypeVariable(U3), TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, TypeVariable(U3), TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U3) --- Readiness(
@@ -565,6 +567,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, TypeVariable(U3), TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U4) --- Readiness(
@@ -806,6 +809,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U5) --- Readiness(
@@ -1030,6 +1034,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U6) --- Readiness(
@@ -1237,6 +1242,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U7) --- Readiness(
@@ -1427,6 +1433,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U8) --- Readiness(
@@ -1600,6 +1607,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(U9) --- Readiness(
@@ -1756,6 +1764,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(Ua) --- Readiness(
@@ -1895,6 +1904,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(Ub) --- Readiness(
@@ -2017,6 +2027,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(Uc) --- Readiness(
@@ -2122,6 +2133,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(Ud) --- Readiness(
@@ -2210,6 +2222,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, TypeVariable(Ue), TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(Ue) --- Readiness(
@@ -2281,6 +2294,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, TypeVariable(Ue), TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, TypeVariable(Uf)> (inferred during fixation)
 TypeVariable(Uf) --- Readiness(
@@ -2335,6 +2349,7 @@ TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, TypeVariable(Uf)>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, Tf> (inferred during fixation)
 ********************************
@@ -2354,6 +2369,7 @@ CHOSEN for fixation: TypeVariable(U0) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: T0
+     <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>
      <: Generic<T1, T2, T3, T4, T5, T6, T7, T8, T9, Ta, Tb, Tc, Td, Te, Tf>
      = T0 (inferred during fixation)
     FIXED TO: T0

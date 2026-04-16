@@ -97,12 +97,12 @@ class MutableVariableWithConstraints private constructor(
         constraintsGroupedByTypeHashCode = null
     }
 
-    override fun getConstraintsContainedSpecifiedTypeVariable(typeVariableConstructor: TypeConstructorMarker): Collection<Constraint> {
+    override fun getConstraintsContainedSpecifiedTypeVariables(typeVariableConstructors: List<TypeConstructorMarker>): Collection<Constraint> {
         if (constraintsGroupedByContainedTypeVariables == null) {
             constraintsGroupedByContainedTypeVariables = computeConstraintsGroupedByContainedTypeVariables()
         }
 
-        return constraintsGroupedByContainedTypeVariables!![typeVariableConstructor] ?: emptyList()
+        return typeVariableConstructors.flatMap { constraintsGroupedByContainedTypeVariables!![it].orEmpty() }
     }
 
     private fun computeConstraintsGroupedByContainedTypeVariables(): Map<TypeConstructorMarker, Collection<Constraint>> = with(context) {

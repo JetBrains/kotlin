@@ -177,6 +177,7 @@ class ConstraintInjector(
 
     context(c: Context, typeCheckerState: TypeCheckerStateForConstraintInjector)
     private fun processGivenConstraints(constraintsToProcess: Collection<Pair<TypeVariableMarker, Constraint>>) {
+        val newConstraints = mutableListOf<Pair<TypeVariableMarker, Constraint>>()
         for ((typeVariable, constraint) in constraintsToProcess) {
             if (shouldWeSkipConstraint(typeVariable, constraint)) continue
 
@@ -197,12 +198,21 @@ class ConstraintInjector(
             if (wasAdded) {
                 c.onNewConstraintOrForkPoint()
                 recordReferencesOfOtherTypeVariableInConstraint(constraint, typeVariableConstructor)
+                if (typeVariable !in addedOrNonRedundantExistedConstraint.derivedFrom) {
+                    newConstraints += typeVariable to addedOrNonRedundantExistedConstraint
+                }
+            } else if (constraintToIncorporate != null &&
+                constraint.position.initialConstraint.position is FixVariableConstraintPosition<*> &&
+                typeVariable !in constraintToIncorporate.derivedFrom
+            ) {
+                newConstraints += typeVariable to constraintToIncorporate
             }
 
             if (constraintToIncorporate != null) {
-                constraintIncorporator.incorporate(typeVariable, constraintToIncorporate, constraint)
+                constraintIncorporator.incorporate(typeVariable, constraintToIncorporate)
             }
         }
+        constraintIncorporator.insideOtherConstraint(newConstraints)
     }
 
     context(c: Context)
@@ -575,11 +585,12 @@ class ConstraintInjector(
         override val approximatorCaches: TypeApproximatorCachesPerConfiguration
             get() = c.approximatorCaches
 
-        override fun getVariablesWithConstraintsContainingGivenTypeVariable(
-            variableConstructorMarker: TypeConstructorMarker
+        override fun getVariablesWithConstraintsContainingGivenTypeVariables(
+            variableConstructorMarkers: List<TypeConstructorMarker>
         ): Collection<VariableWithConstraints> =
-            c.typeVariableDependencies[variableConstructorMarker]?.mapNotNull { c.notFixedTypeVariables[it] }
-                ?: emptyList()
+            variableConstructorMarkers.flatMap { c.typeVariableDependencies[it]?.toList().orEmpty() }.mapNotNull {
+                c.notFixedTypeVariables[it]
+            }
 
         override fun getTypeVariable(typeConstructor: TypeConstructorMarker): TypeVariableMarker? {
             val typeVariable = c.allTypeVariables[typeConstructor]

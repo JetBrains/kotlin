@@ -206,7 +206,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
      >: Foo<kotlin/Any>
      >: Bar<TypeVariable(W)>
      = Foo<kotlin/Any> (inferred during fixation)
-     >: Bar<kotlin/Any> (inferred during fixation)
     FIXED TO: Foo<kotlin/Any>
 TypeVariable(W) --- Readiness(
     	 true ALLOWED
@@ -243,7 +242,6 @@ TypeVariable(U) --- Readiness(
      <: Foo<TypeVariable(W)>
      <: I
      <: Foo<out kotlin/Any> (inferred during fixation)
-     <: Foo<kotlin/Any> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(W) --- Readiness(
     	 true ALLOWED
@@ -280,7 +278,7 @@ TypeVariable(U) --- Readiness(
      <: Foo<TypeVariable(W)>
      <: I
      <: Foo<out kotlin/Any>
-     <: Foo<kotlin/Any>
+     <: Foo<kotlin/Any> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(U) --- Readiness(
     	 true ALLOWED
@@ -511,7 +509,6 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
      >: Foo2<kotlin/Any>
      >: Bar1<TypeVariable(P)>
      = Foo2<kotlin/Any> (inferred during fixation)
-     >: Bar1<kotlin/Any> (inferred during fixation)
     FIXED TO: Foo2<kotlin/Any>
 TypeVariable(P) --- Readiness(
     	 true ALLOWED
@@ -548,7 +545,6 @@ TypeVariable(U) --- Readiness(
      <: Foo2<TypeVariable(P)>
      <: I
      <: Foo2<out kotlin/Any> (inferred during fixation)
-     <: Foo2<kotlin/Any> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(P) --- Readiness(
     	 true ALLOWED
@@ -585,7 +581,7 @@ TypeVariable(U) --- Readiness(
      <: Foo2<TypeVariable(P)>
      <: I
      <: Foo2<out kotlin/Any>
-     <: Foo2<kotlin/Any>
+     <: Foo2<kotlin/Any> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(U) --- Readiness(
     	 true ALLOWED

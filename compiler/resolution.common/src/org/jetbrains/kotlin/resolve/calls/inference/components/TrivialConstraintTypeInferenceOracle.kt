@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSystemInferenceExtensionContext) :
     TypeSystemInferenceExtensionContext by context {
@@ -40,7 +41,7 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
     // Therefore, here we avoid adding such trivial constraints to have stable constraint system
     fun isGeneratedConstraintTrivial(
         baseConstraint: Constraint,
-        otherConstraint: Constraint,
+        otherConstraints: List<Pair<TypeVariableMarker, Constraint>>,
         generatedConstraintType: KotlinTypeMarker,
         isSubtype: Boolean
     ): Boolean {
@@ -50,7 +51,7 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
         // If types from constraints that will be used to generate new constraint already contains `Nothing(?)`,
         // then we can't decide that resulting constraint will be useless
         if (baseConstraint.type.contains { it.isNothingOrNullableNothing() }) return false
-        if (otherConstraint.type.contains { it.isNothingOrNullableNothing() }) return false
+        if (otherConstraints.any { (_, c) -> c.type.contains { it.isNothingOrNullableNothing() } }) return false
 
         // It's important to preserve constraints with nullable Nothing: `Nothing? <: T` (see implicitNothingConstraintFromReturn.kt test)
         if (generatedConstraintType.containsOnlyNonNullableNothing()) return true

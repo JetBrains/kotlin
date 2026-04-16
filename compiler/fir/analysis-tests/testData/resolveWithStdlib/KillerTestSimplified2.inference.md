@@ -106,11 +106,13 @@ bar#(R|<local>/generic|, R|<local>/first|, R|<local>/second|, R|<local>/third|, 
     1. `TypeVariable(Ue) == Te`
 17. Combine `Tf <: TypeVariable(Uf)` with `TypeVariable(Uf) <: Tf`
     1. `TypeVariable(Uf) == Tf`
-18. `T1.(T2) -> T3 <: TypeVariable(U1).(TypeVariable(U2)) -> TypeVariable(U3)` _from Argument R|<local>/first|_
-19. `T4.(T5) -> T6 <: TypeVariable(U4).(TypeVariable(U5)) -> TypeVariable(U6)` _from Argument R|<local>/second|_
-20. `T7.(T8) -> T9 <: TypeVariable(U7).(TypeVariable(U8)) -> TypeVariable(U9)` _from Argument R|<local>/third|_
-21. `Ta.(Tb) -> Tc <: TypeVariable(Ua).(TypeVariable(Ub)) -> TypeVariable(Uc)` _from Argument R|<local>/fourth|_
-22. `Td.(Te) -> Tf <: TypeVariable(Ud).(TypeVariable(Ue)) -> TypeVariable(Uf)` _from Argument R|<local>/fifth|_
+18. Combine `T1 <: TypeVariable(U1)` with `TypeVariable(U0) <: Generic<TypeVariable(U1), TypeVariable(U2), TypeVariable(U3), TypeVariable(U4), TypeVariable(U5), TypeVariable(U6), TypeVariable(U7), TypeVariable(U8), TypeVariable(U9), TypeVariable(Ua), TypeVariable(Ub), TypeVariable(Uc), TypeVariable(Ud), TypeVariable(Ue), TypeVariable(Uf)>`
+    1. `TypeVariable(U0) <: Generic<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in Ta, in Tb, in Tc, in Td, in Te, in Tf>`
+19. `T1.(T2) -> T3 <: TypeVariable(U1).(TypeVariable(U2)) -> TypeVariable(U3)` _from Argument R|<local>/first|_
+20. `T4.(T5) -> T6 <: TypeVariable(U4).(TypeVariable(U5)) -> TypeVariable(U6)` _from Argument R|<local>/second|_
+21. `T7.(T8) -> T9 <: TypeVariable(U7).(TypeVariable(U8)) -> TypeVariable(U9)` _from Argument R|<local>/third|_
+22. `Ta.(Tb) -> Tc <: TypeVariable(Ua).(TypeVariable(Ub)) -> TypeVariable(Uc)` _from Argument R|<local>/fourth|_
+23. `Td.(Te) -> Tf <: TypeVariable(Ud).(TypeVariable(Ue)) -> TypeVariable(Uf)` _from Argument R|<local>/fifth|_
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 

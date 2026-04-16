@@ -106,6 +106,7 @@ TypeVariable(R) --- Readiness(
      >: TypeVariable(T)?
      >: kotlin/Nothing?
      <: TypeVariable(K)?
+     >: kotlin/Nothing?
      <: kotlin/String?
      = kotlin/String? (inferred during fixation)
 ********************************
@@ -126,6 +127,7 @@ CHOSEN for fixation: TypeVariable(R) --- Readiness(
     )
      >: kotlin/Nothing?
      <: TypeVariable(K)?
+     >: kotlin/Nothing?
      = kotlin/String?
     FIXED TO: kotlin/String?
 TypeVariable(K) --- Readiness(

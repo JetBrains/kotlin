@@ -122,15 +122,20 @@ ModOp#(this@R|/rem|, R?C|/wrap|(R|<local>/t|))
     1. `TypeVariable(K) == TypeVariable(S)`
 8. Combine `TypeVariable(K) <: TypeVariable(S)` with `TypeVariable(S) <: TypeVariable(K)`
     1. `TypeVariable(S) == TypeVariable(K)`
-9. Combine `TypeVariable(R) & Any <: TypeVariable(K)` with `TypeVariable(K) <: kotlin/Number?`
+9. Combine `TypeVariable(K) <: TypeVariable(S)` with `TypeVariable(R) <: TypeVariable(K)?`
+    1. `TypeVariable(R) <: TypeVariable(K)?`
+10. Combine `TypeVariable(R) & Any <: TypeVariable(K)` with `TypeVariable(K) <: kotlin/Number?`
     1. `TypeVariable(R) <: kotlin/Number?`
-10. Combine `TypeVariable(K) == TypeVariable(S)` with `TypeVariable(K) <: kotlin/Number?`
+11. Combine `TypeVariable(K) == TypeVariable(S)` with `TypeVariable(K) <: kotlin/Number?`
     1. `TypeVariable(S) <: kotlin/Number?`
-11. Combine `TypeVariable(R) & Any <: TypeVariable(S)` with `TypeVariable(S) == TypeVariable(K)`
+12. Combine `TypeVariable(R) & Any <: TypeVariable(S)` with `TypeVariable(S) == TypeVariable(K)`
     1. `TypeVariable(R) & Any <: TypeVariable(K)`
-    2. `TypeVariable(R) <: TypeVariable(K)?`
-12. Combine `Z <: TypeVariable(S)` with `TypeVariable(S) == TypeVariable(K)`
+13. Combine `Z <: TypeVariable(S)` with `TypeVariable(S) == TypeVariable(K)`
     1. `Z <: TypeVariable(K)`
+14. Combine `TypeVariable(K) <: kotlin/Number?` with `TypeVariable(K) == TypeVariable(S)`
+    1. `Z & Any <: TypeVariable(K)`
+15. Combine `Z & Any <: TypeVariable(K)` with `TypeVariable(K) == TypeVariable(S)`
+    1. `Z & Any <: TypeVariable(S)`
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 

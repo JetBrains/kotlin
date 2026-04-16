@@ -53,7 +53,6 @@ TypeVariable(C) --- Readiness(
      <: F (inferred during fixation)
      = F (inferred during fixation)
      <: Marker<out F> (inferred during fixation)
-     <: Marker<F> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(C) --- Readiness(
     	 true ALLOWED
@@ -73,6 +72,6 @@ CHOSEN for fixation: TypeVariable(C) --- Readiness(
      <: Marker<TypeVariable(C)>
      = F
      <: Marker<out F>
-     <: Marker<F>
+     <: Marker<F> (inferred during fixation)
     FIXED TO: F
 ********************************
