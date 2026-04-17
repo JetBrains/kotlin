@@ -22,6 +22,7 @@ import javax.inject.Inject
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -81,6 +82,8 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     }
 
     private fun swiftpmResolve() {
+        prepareScratchPathForCurrentPackageRoot()
+
         execOps.exec { exec ->
 
             exec.workingDir(syntheticImportProjectRoot.get().asFile)
@@ -109,7 +112,25 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         if (gitIgnoreCheckoutDir.get()) {
             writeCheckoutDirToGitIgnore()
         }
+    }
 
+    private fun prepareScratchPathForCurrentPackageRoot() {
+        val scratchDir = swiftPMDependenciesCheckout.get().asFile
+        val packageRoot = syntheticImportProjectRoot.get().asFile.canonicalFile
+        val marker = scratchDir.resolve(SCRATCH_ROOT_MARKER_FILE_NAME)
+
+        val recordedPackageRoot = marker.takeIf(File::exists)?.readText()?.trim()
+        val currentPackageRoot = packageRoot.path
+
+        if (recordedPackageRoot == currentPackageRoot) return
+
+        // SwiftPM stores package-root-specific resolution state in workspace-state.json.
+        // Reusing the same scratch directory across umbrella and synthetic packages can
+        // otherwise carry a newer compatible resolution into the next package root.
+        scratchDir.resolve(SWIFT_PM_WORKSPACE_STATE_FILE_NAME).delete()
+
+        scratchDir.mkdirs()
+        marker.writeText(currentPackageRoot)
     }
 
     private fun writeCheckoutDirToGitIgnore() {
@@ -133,6 +154,8 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
     companion object {
         const val TASK_NAME = "fetchSyntheticImportProjectPackages"
+        private const val SCRATCH_ROOT_MARKER_FILE_NAME = ".kotlin-swiftpm-package-root"
+        private const val SWIFT_PM_WORKSPACE_STATE_FILE_NAME = "workspace-state.json"
         fun fetchUmbrellaPackageTaskName(identifier: String) = lowerCamelCaseName(
             "fetchUmbrellaPackageIdentifierFor",
             identifier

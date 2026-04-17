@@ -687,7 +687,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         persistedPackageResolvedSyncPath,
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
                         listOf(
-                            packageRepo to "1.0.2",
+                            packageRepo to "1.0.1",
                         )
                     )
 
