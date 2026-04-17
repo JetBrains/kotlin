@@ -66,6 +66,7 @@ fun IrType.isBoxedInlineClassType(): Boolean =
 fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
 
 fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
+fun IrType.isBasicValueClassType(): Boolean = erasedUpperBound.isBasicValueClass
 
 val IrType.upperBound: IrSimpleType
     get() = erasedUpperBound.symbol.starProjectedType

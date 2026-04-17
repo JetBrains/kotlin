@@ -140,7 +140,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
 @OptIn(SymbolInternals::class)
 fun FirTypeRef.isInlineClassThatRequiresMangling(session: FirSession): Boolean {
     val symbol = this.coneType.toRegularClassSymbol(session) ?: return false
-    return symbol.isInlineOrValue && !symbol.isDontMangleClass() && !symbol.fir.isExtendedValueClass
+    return symbol.fir.isBasicValueClass && !symbol.isDontMangleClass()
 }
 
 private fun FirRegularClassSymbol.isDontMangleClass(): Boolean {

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.isExtendedValueClass
+import org.jetbrains.kotlin.ir.declarations.isBasicValueClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
 internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL ||
-            (irClass.isValue && !irClass.isExtendedValueClass) || irClass.isInner || irClass.modality == Modality.SEALED
+            (irClass.isBasicValueClass) || irClass.isInner || irClass.modality == Modality.SEALED
         )
             return
 

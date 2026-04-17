@@ -22,13 +22,11 @@ import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -292,6 +290,8 @@ fun FirRegularClassSymbol.isExtendedValueClass(session: FirSession): Boolean {
 
     return isValue && !hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session)
 }
+
+fun FirRegularClassSymbol.isBasicValueClass(session: FirSession): Boolean = isInlineOrValueClass() && !isExtendedValueClass(session)
 
 val JVM_INLINE_ANNOTATION_FQ_NAME: FqName = FqName("kotlin.jvm.JvmInline")
 val JVM_INLINE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_NAME)
