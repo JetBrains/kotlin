@@ -401,6 +401,12 @@
     public java.lang.Object computeIfAbsent(java.lang.Object, it.unimi.dsi.fastutil.objects.Object2ObjectFunction);
 }
 
+# IntArraySet(int) is called from K/N backend (CustomBitSet), which is not part of the ProGuard
+# input, so ProGuard cannot see the call and would otherwise strip this constructor.
+-keep class it.unimi.dsi.fastutil.ints.IntArraySet {
+    public <init>(int);
+}
+
 -dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
 
 -dontwarn org.jetbrains.kotlin.buildtools.internal.cri.**
