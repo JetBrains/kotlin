@@ -423,8 +423,11 @@ class NativeSecondStageCompilationConfig(
     val exportedLibraries: List<KotlinLibrary>
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
+    /**
+     * Returns the list of libraries in reverse topological order.
+     */
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList().legacyKlibReverseTopoSort()
+        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
