@@ -35,6 +35,8 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         JvmStandardClassIds.Annotations.JvmRepeatable,
     )
 
+    override val jvmInlineAnnotationClassId: ClassId = JvmStandardClassIds.Annotations.JvmInline
+
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
         JvmStandardClassIds.Annotations.Java.Deprecated to false,
     )
