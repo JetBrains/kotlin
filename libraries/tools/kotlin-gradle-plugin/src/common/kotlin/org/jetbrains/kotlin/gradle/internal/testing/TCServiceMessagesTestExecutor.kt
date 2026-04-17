@@ -172,8 +172,14 @@ class TCServiceMessagesTestExecutor(
         process?.let { proc ->
             if (proc.isAlive) {
                 log.info("[$description] destroying test process")
-                proc.destroyForcibly()
             }
+            // Always call destroyForcibly() even if the process has already exited.
+            // On Windows, this closes Java-side native handles (I/O streams, process handle)
+            // that would otherwise stay open until GC. Without it, inherited file handles
+            // (e.g. binary test-result files opened by the Gradle daemon) may remain locked,
+            // preventing JUnit @TempDir cleanup from deleting the temp directory.
+            // This matches the pattern in HostExecutor.scoped() (see HostExecutor.kt:115).
+            proc.destroyForcibly()
         }
         process = null
     }
