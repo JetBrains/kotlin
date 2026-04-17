@@ -2,7 +2,45 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring steps 2.3 & 2.4 — cache short-circuit for inherited inner classes and `textEquals` to avoid `String` allocations)
+**Last Updated**: 2026-04-17 (refactoring steps 2.5, 2.6, 3.5 — negative lookup cache + consistent concurrent caches; step 3.6 documented as deferred)
+
+---
+
+## Refactoring Steps 2.5, 2.6, 3.5 (+ 3.6 note): Negative Caching + Consistent Cache Types - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+- **Step 2.5 — Negative lookups.** `CombinedJavaClassFinder` already short-circuits via `sourceFinder.isClassInIndex(...)` for top-level misses, and `JavaResolutionContext.resolve`'s per-invocation `tryResolve` cache (`HashMap<ClassId, Boolean>` + `getOrPut`) already memoises both positive and negative probes for the duration of a single `resolve` call. The remaining gap was in `JavaClassFinderOverAstImpl.findClass`: its `classCache: MutableMap<ClassId, JavaClass?>` was backed by `ConcurrentHashMap`, which silently rejects `null` values — so every *inner* ClassId miss (top-level present in index, inner name absent: FIR commonly probes these during overload resolution / type argument narrowing) re-ran `findClasses`, which in turn re-drives the top-level file's parse tree through `findInnerClass` on every candidate file.
+- **Step 2.6 + Step 3.5 — Cache type consistency.** `JavaClassFinderOverAstImpl`'s caches (`index`, `classCache`, `packageCache`, `packageAnnotationNodes`) and `JavaSupertypeGraph`'s (`supertypeCache`, `inheritedInnerClassesCache`) all use `ConcurrentHashMap`, while `JavaClassOverAst.innerClassCache` was a plain `HashMap<Name, JavaClass?>`. The inconsistency only shows up under concurrent FIR resolution (lazy properties in this module already use `LazyThreadSafetyMode.PUBLICATION`, which signals the codebase's assumption of multi-threaded access), where two threads racing on the same `JavaClassOverAst.findInnerClass` could corrupt the `HashMap`.
+- **Step 3.6 — Bounded caches / source retention.** Plan marks this as lower-priority and deferred.
+
+### Fix
+**Step 2.5** — `JavaClassFinderOverAstImpl`:
+- Narrowed `classCache`'s value type from `JavaClass?` → `JavaClass` (matches what `ConcurrentHashMap` actually allows); all downstream reads (`supertypeGraph`'s `classCacheLookup = { classCache[it] }`) continue to receive `JavaClass?` naturally via map `get`.
+- Added a concurrent negative set `negativeClassCache: MutableSet<ClassId> = Collections.newSetFromMap(ConcurrentHashMap())`. `findClass` now checks it immediately after `classCache` and adds to it on a confirmed miss. Correctness: the set is populated only from `findClasses(request).firstOrNull() == null`, which is a deterministic read of the immutable source index — no invalidation needed within a compiler run.
+
+**Step 2.6 + 3.5** — `JavaClassOverAst.innerClassCache`:
+- Switched to `ConcurrentHashMap<Name, Any>` with a private `NULL_INNER_CLASS` sentinel (`ConcurrentHashMap` cannot store `null` values, and the original implementation relied on `containsKey` to distinguish "cached as null" from "not cached"). The read path is a single `get`, preserving the pre-change fast-path.
+- Decision recorded in a comment: FIR resolution is concurrent, and all other module caches are already `ConcurrentHashMap`, so the direction of consistency is towards thread-safety, not towards downgrading the others to `HashMap`.
+
+**Step 3.6** — left as a documented deferral: the caches cannot be made LRU/bounded without breaking the *object-identity* invariant for `JavaClassOverAst` / `JavaTypeParameterOverAst` that Step 3.2 explicitly calls out as a correctness requirement for type-parameter resolution. Source retention release is likewise risky while lazy slots on `JavaSyntaxNode` (`text`, `childByTypeIndex`) may still be uninitialised. Recorded in this entry so the follow-up is tracked.
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt` — narrowed `classCache` value type; added `negativeClassCache`; `findClass` consults + populates the negative cache.
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — `innerClassCache` migrated to `ConcurrentHashMap<Name, Any>` with `NULL_INNER_CLASS` sentinel; added `java.util.concurrent.ConcurrentHashMap` import and private companion.
+
+### Alternatives considered and rejected
+- **Step 2.5: put the negative cache into `CombinedJavaClassFinder` instead.** Rejected — the existing `isClassInIndex` check there already filters every top-level miss without any allocation; adding another per-ClassId set at the combiner layer would only duplicate what the source finder's own `classCache`/`negativeClassCache` already express, and would not help the *inner*-class miss path (which is exactly where `findClasses` currently pays the re-parse cost).
+- **Step 2.5: Bloom filter for "definitely not in source".** Rejected for now — a `HashSet` is simpler, gives exact answers, and for realistic project sizes (~tens of thousands of ClassIds probed per compile) has trivial memory cost compared to the already-loaded parse trees.
+- **Step 2.6: downgrade all caches to `HashMap` + document single-threaded invariant.** Rejected — `LazyThreadSafetyMode.PUBLICATION` on the existing lazy properties is evidence that the module was authored expecting concurrent reads; a unilateral downgrade would be an unreviewed behavioural change.
+- **Step 3.5: keep `HashMap` on `innerClassCache` and add `synchronized` block instead.** Rejected — `ConcurrentHashMap` is what the surrounding module already uses; `synchronized` would be another unique concurrency idiom in the same file to reason about.
+- **Step 3.6: implement an LRU cache now.** Rejected — breaks the identity invariant documented in Step 3.2; requires Step 3.2's test infrastructure first.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines (`/tmp/jd_20260417_115237/jd_test_step25_26.txt`). Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- `ConcurrentHashMap<K, V?>` in Kotlin is a typing lie: the runtime silently rejects `null` `put`s, so "caching a negative result" must be modelled either by a narrower positive map + separate `Set<K>` (chosen here for `JavaClassFinderOverAstImpl` because the value type is a heavy `JavaClass`) or by a sentinel (chosen for `JavaClassOverAst.innerClassCache` because the map is small and a sentinel avoids a second data structure).
+- When auditing cache consistency, let the *thread-safety* model of the lazy properties in the same module set the direction of the fix — downgrading storage to `HashMap` "because it seems single-threaded" without corroborating evidence is the more dangerous change.
 
 ---
 

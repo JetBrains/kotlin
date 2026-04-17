@@ -59,8 +59,20 @@ class JavaClassFinderOverAstImpl(
     // package -> className -> list of files that declare such class
     private val index: MutableMap<FqName, MutableMap<String, MutableList<FileEntry>>> = ConcurrentHashMap()
 
-    // class cache for already created JavaClassOverAst
-    private val classCache: MutableMap<ClassId, JavaClass?> = ConcurrentHashMap()
+    // class cache for already created JavaClassOverAst.
+    // Note: ConcurrentHashMap disallows null values, so this map stores only *positive* hits;
+    // negative results (ClassId definitely not in source) are tracked in [negativeClassCache] below.
+    private val classCache: MutableMap<ClassId, JavaClass> = ConcurrentHashMap()
+
+    // Negative cache for Step 2.5: avoids re-parsing candidate files for ClassIds that were
+    // already looked up and found absent. The top-level "definitely not in source" check is
+    // handled much earlier by [isClassInIndex] (pure index hit), so this set only really matters
+    // for *inner* ClassIds whose top-level parent is in the index but that don't actually exist
+    // (e.g. typo'd inner class names or FIR probing non-existent nested types during overload
+    // resolution). Without it, every miss re-parses the top-level file.
+    // Uses Collections.newSetFromMap for a thread-safe set view.
+    private val negativeClassCache: MutableSet<ClassId> =
+        java.util.Collections.newSetFromMap(ConcurrentHashMap())
 
     // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
@@ -96,11 +108,14 @@ class JavaClassFinderOverAstImpl(
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
         val classId = request.classId
         classCache[classId]?.let { return it }
+        if (classId in negativeClassCache) return null
 
         val classes = findClasses(request)
         val result = classes.firstOrNull()
         if (result != null) {
             classCache[classId] = result
+        } else {
+            negativeClassCache.add(classId)
         }
         return result
     }

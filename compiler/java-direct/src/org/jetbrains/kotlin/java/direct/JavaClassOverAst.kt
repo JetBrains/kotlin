@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.ConcurrentHashMap
 
 class JavaClassOverAst(
     node: JavaSyntaxNode,
@@ -118,15 +119,22 @@ class JavaClassOverAst(
         }
     }
 
-    private val innerClassCache = HashMap<Name, JavaClass?>()
+    // Consistent with the other caches in this module (JavaClassFinderOverAstImpl, JavaSupertypeGraph):
+    // FIR lazy resolution queries Java model concurrently, so caches that straddle request boundaries
+    // must be thread-safe. ConcurrentHashMap disallows null values, so negative results are represented
+    // by [NULL_INNER_CLASS] (see Step 2.5 / 2.6 / 3.5 of REFACTORING_PLAN.md).
+    private val innerClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap()
 
     override fun findInnerClass(name: Name): JavaClass? {
-        innerClassCache[name]?.let { return it }
-        if (innerClassCache.containsKey(name)) return null // cached null
+        innerClassCache[name]?.let { return if (it === NULL_INNER_CLASS) null else it as JavaClass }
 
         val result = findInnerClassUncached(name)
-        innerClassCache[name] = result
+        innerClassCache[name] = result ?: NULL_INNER_CLASS
         return result
+    }
+
+    private companion object {
+        private val NULL_INNER_CLASS: Any = Any()
     }
 
     private fun findInnerClassUncached(name: Name): JavaClass? {
