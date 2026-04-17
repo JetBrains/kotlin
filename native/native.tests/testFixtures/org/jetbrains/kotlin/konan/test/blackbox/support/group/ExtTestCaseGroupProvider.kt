@@ -57,14 +57,11 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.*
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.directives.testKind
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.services.addAnnotations
-import org.jetbrains.kotlin.test.services.child
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.jetbrains.kotlin.test.services.packageFqNameForKLib
 import java.io.File
 
 internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
@@ -239,7 +236,7 @@ private class ExtTestDataFile(
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
-        var testKind = parseTestKind(structure.directives) ?: settings.get<TestKind>()
+        var testKind = settings.testKind(structure.directives)
         val definitelyStandaloneTest = testKind != TestKind.REGULAR
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         if (testKind == TestKind.REGULAR && isStandaloneTest) {

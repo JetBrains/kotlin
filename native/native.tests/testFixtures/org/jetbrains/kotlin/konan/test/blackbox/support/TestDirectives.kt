@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
@@ -27,26 +26,6 @@ import java.io.File
 import kotlin.time.Duration
 
 object TestDirectives : SimpleDirectivesContainer() {
-    val KIND by enumDirective<TestKind>(
-        description = """
-            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB, STANDALONE_STEPPING]
-            Declares the kind of the test:
-
-            - REGULAR (the default) - include this test into the shared test binary.
-              All tested functions should be annotated with @kotlin.Test.
-
-            - STANDALONE - compile the test to a separate test binary.
-              All tested functions should be annotated with @kotlin.Test
-
-            - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
-              The entry point can be customized Note that @kotlin.Test annotations are ignored.
-
-            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB, by executing specific LLDB commands.
-            
-            - STANDALONE_STEPPING - compile the test to a separate binary and debug with LLDB, by stepping through the entire program.
-        """.trimIndent()
-    )
-
     val TEST_RUNNER by enumDirective<TestRunnerType>(
         description = """
             Usage: // TEST_RUNNER: [DEFAULT, WORKER, NO_EXIT]
@@ -209,13 +188,7 @@ enum class AssertionsMode(val description: String) {
     }
 }
 
-enum class TestKind {
-    REGULAR,
-    STANDALONE,
-    STANDALONE_NO_TR,
-    STANDALONE_LLDB,
-    STANDALONE_STEPPING;
-}
+typealias TestKind = org.jetbrains.kotlin.test.directives.TestKind
 
 enum class TestRunnerType {
     DEFAULT,
@@ -290,15 +263,6 @@ open class TestCompilerArgs(
             "-Xgc="
         )
     }
-}
-
-fun parseTestKind(registeredDirectives: RegisteredDirectives?): TestKind? {
-    if (registeredDirectives == null) return null
-    if (KIND !in registeredDirectives)
-        return null // The default is determined by TEST_KIND global property
-
-    val values = registeredDirectives[KIND]
-    return values.singleOrNull() ?: fail { "Exactly one test kind expected in $KIND directive: $values" }
 }
 
 internal fun parseTestRunner(registeredDirectives: RegisteredDirectives): TestRunnerType {

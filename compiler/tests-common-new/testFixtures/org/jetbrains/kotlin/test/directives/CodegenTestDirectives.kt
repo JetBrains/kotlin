@@ -5,17 +5,22 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.settings.Settings
+import org.jetbrains.kotlin.test.settings.testRunSettings
 
 object CodegenTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_BACKEND by enumDirective<TargetBackend>(
@@ -236,7 +241,54 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for vararg type mismatches when validating IR on the target backend"
     )
+
+    val KIND by enumDirective<TestKind>(
+        description = """
+            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB, STANDALONE_STEPPING]
+            Declares the kind of the test:
+
+            - REGULAR (the default) - include this test into the shared test binary.
+              All tested functions should be annotated with @kotlin.Test.
+
+            - STANDALONE - compile the test to a separate test binary.
+              All tested functions should be annotated with @kotlin.Test
+
+            - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
+              The entry point can be customized Note that @kotlin.Test annotations are ignored.
+
+            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB, by executing specific LLDB commands.
+            
+            - STANDALONE_STEPPING - compile the test to a separate binary and debug with LLDB, by stepping through the entire program.
+        """.trimIndent()
+    )
 }
+
+enum class TestKind {
+    REGULAR,
+    STANDALONE,
+    STANDALONE_NO_TR,
+    STANDALONE_LLDB,
+    STANDALONE_STEPPING;
+}
+
+private val RegisteredDirectives.testKind: TestKind?
+    get() = get(CodegenTestDirectives.KIND).toSet().let {
+        when (it.size) {
+            0 -> null
+            1 -> it.single()
+            else -> fail("Exactly one test kind expected in ${CodegenTestDirectives.KIND} directive: $it")
+        }
+    }
+
+/**
+ * Gets the [TestKind] defined by possible [RegisteredDirectives].
+ * The default is determined by TEST_KIND global property, for ex. testrunner's annotation:
+ *      @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
+ */
+fun Settings.testKind(directives: RegisteredDirectives?): TestKind =
+    directives?.testKind ?: get<TestKind>()
+
+fun TestServices.testKind(): TestKind = testRunSettings.testKind(moduleStructure.allDirectives)
 
 fun ValueDirective<TargetBackend>.isApplicableTo(module: TestModule, testServices: TestServices): Boolean {
     val specifiedBackends = module.directives[this]
@@ -266,4 +318,3 @@ fun extractIgnoredDirectiveForTargetBackend(
             }
         }
     }
-

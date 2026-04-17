@@ -8,12 +8,6 @@ package org.jetbrains.kotlin.konan.test.handlers
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
-import org.jetbrains.kotlin.konan.test.blackbox.support.parseTestKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRoots
@@ -23,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
+import org.jetbrains.kotlin.test.directives.testKind
 import org.jetbrains.kotlin.test.groupingPhaseInputs
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.model.TestModule
@@ -90,7 +85,7 @@ private fun createTestRun(
     addTeamCityLogger: Boolean,
     addTestFilter: Boolean,
 ): TestRun {
-    val testKind = parseTestKind(testServices.moduleStructure.modules.firstOrNull()?.directives) ?: testServices.testRunSettings.get<TestKind>()
+    val testKind = testServices.testKind()
     val checks = TestRunChecks(
         executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testServices.testRunSettings.get<Timeouts>().executionTimeout),
         testFiltering = TestRunCheck.TestFiltering(
