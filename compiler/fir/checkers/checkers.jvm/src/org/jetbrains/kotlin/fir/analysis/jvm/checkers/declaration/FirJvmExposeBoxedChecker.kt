@@ -145,7 +145,7 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         // Check dispatch receiver as well - we use `-impl` suffix for them
         if (this !is FirConstructor) {
             val containingClass = containingClassLookupTag()?.toRegularClassSymbol(session)
-            return containingClass?.isInlineOrValue == true && !containingClass.fir.isExtendedValueClass
+            return containingClass?.fir?.isBasicValueClass == true
         }
         return false
     }
@@ -153,6 +153,6 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
     @OptIn(SymbolInternals::class)
     private fun FirTypeRef.isInline(session: FirSession): Boolean {
         val classSymbol = toRegularClassSymbol(session) ?: return false
-        return classSymbol.isInlineOrValue && !classSymbol.fir.isExtendedValueClass
+        return classSymbol.fir.isBasicValueClass
     }
 }

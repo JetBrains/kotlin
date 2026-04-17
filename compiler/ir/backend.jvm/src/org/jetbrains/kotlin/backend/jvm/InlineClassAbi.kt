@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
+import org.jetbrains.kotlin.backend.jvm.ir.isBasicValueClassType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
-import org.jetbrains.kotlin.backend.jvm.ir.isValueClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -56,7 +56,7 @@ object InlineClassAbi {
     fun mangledNameFor(context: JvmBackendContext, irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
-            assert(irFunction.constructedClass.let { it.isValue && !it.isExtendedValueClass }) {
+            assert(irFunction.constructedClass.isBasicValueClass) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
@@ -66,7 +66,7 @@ object InlineClassAbi {
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
-        if (suffix == null && ((irFunction.parent as? IrClass)?.let { it.isValue && !it.isExtendedValueClass } != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isBasicValueClass != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 
@@ -118,7 +118,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isValue = isValueClassType() && !erasedUpperBound.isExtendedValueClass,
+            isValue = isBasicValueClassType(),
             isNullable = isNullable()
         )
 

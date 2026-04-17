@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isOverridable
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -71,6 +70,6 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
     private fun FirRegularClass.isValueClassThatRequiresMangling(): Boolean {
         // value classes have inline modifiers in FIR
-        return isInlineOrValue && name != StandardClassIds.Result.shortClassName && !isExtendedValueClass
+        return isBasicValueClass && name != StandardClassIds.Result.shortClassName
     }
 }

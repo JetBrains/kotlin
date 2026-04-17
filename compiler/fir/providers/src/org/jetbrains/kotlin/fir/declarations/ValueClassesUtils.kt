@@ -84,7 +84,7 @@ fun FirNamedFunctionSymbol.isTypedEqualsInValueClass(session: FirSession): Boole
         with(this@isTypedEqualsInValueClass) {
             contextParameterSymbols.isEmpty() && receiverParameterSymbol == null
                     && name == OperatorNameConventions.EQUALS
-                    && this@run.isInlineOrValue && valueParameterSymbols.size == 1 && !this@run.isExtendedValueClass(session)
+                    && this@run.isBasicValueClass(session) && valueParameterSymbols.size == 1
                     && resolvedReturnTypeRef.coneType.fullyExpandedType(session).let {
                 it.isBoolean || it.isNothing
             } && valueParameterSymbols[0].resolvedReturnTypeRef.coneType.let {
