@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class DeserializedClassDescriptor(
     outerContext: DeserializationContext,
@@ -54,13 +57,17 @@ class DeserializedClassDescriptor(
 
     val hasEnumEntriesMetadataFlag: Boolean = Flags.HAS_ENUM_ENTRIES.get(classProto.flags)
 
-    private val staticScope =
-        if (kind == ClassKind.ENUM_CLASS) {
-            val enumEntriesCanBeUsed = hasEnumEntriesMetadataFlag ||
-                    c.components.enumEntriesDeserializationSupport.canSynthesizeEnumEntries() == true
-            StaticScopeForKotlinEnum(c.storageManager, this, enumEntriesCanBeUsed)
-        } else {
-            MemberScope.Empty
+    private val staticScope: MemberScope =
+        DeserializedClassStaticScope().let { staticScope ->
+            if (kind == ClassKind.ENUM_CLASS) {
+                val enumEntriesCanBeUsed = hasEnumEntriesMetadataFlag ||
+                        c.components.enumEntriesDeserializationSupport.canSynthesizeEnumEntries() == true
+                ChainedMemberScope.create(
+                    name.asString(), staticScope, StaticScopeForKotlinEnum(c.storageManager, this, enumEntriesCanBeUsed),
+                )
+            } else {
+                staticScope
+            }
         }
 
     private val typeConstructor = DeserializedClassTypeConstructor()
@@ -272,8 +279,33 @@ class DeserializedClassDescriptor(
             get() = SupertypeLoopChecker.EMPTY
     }
 
+    private inner class DeserializedClassStaticScope : DeserializedMemberScope(
+        c,
+        classProto.functionList.filter { Flags.IS_STATIC_FUNCTION.get(it.flags) },
+        classProto.propertyList.filter { Flags.IS_STATIC_PROPERTY.get(it.flags) },
+        emptyList(),
+        { emptyList() },
+    ) {
+        private val allDescriptors = c.storageManager.createLazyValue {
+            computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+        }
+
+        override fun getContributedDescriptors(
+            kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean
+        ): Collection<DeclarationDescriptor> = allDescriptors()
+
+        override fun createClassId(name: Name): ClassId = shouldNotBeCalled()
+        override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()
+        override fun getNonDeclaredVariableNames(): Set<Name> = emptySet()
+        override fun getNonDeclaredClassifierNames(): Set<Name> = emptySet()
+        override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {}
+    }
+
     private inner class DeserializedClassMemberScope(private val kotlinTypeRefiner: KotlinTypeRefiner) : DeserializedMemberScope(
-        c, classProto.functionList, classProto.propertyList, classProto.typeAliasList,
+        c,
+        classProto.functionList.filterNot { Flags.IS_STATIC_FUNCTION.get(it.flags) },
+        classProto.propertyList.filterNot { Flags.IS_STATIC_PROPERTY.get(it.flags) },
+        classProto.typeAliasList,
         classProto.nestedClassNameList.map(c.nameResolver::getName).let { { it } } // workaround KT-13454
     ) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor

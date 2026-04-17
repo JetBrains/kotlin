@@ -22,16 +22,21 @@ internal abstract class KotlinKProperty<out V>(
 ) : KotlinKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     override val name: String get() = kmProperty.name
 
+    private val extensionReceiverType: KmType? by lazy(PUBLICATION) {
+        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+        kmProperty.receiverParameterType.takeUnless { kmProperty.isStatic }
+    }
+
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters(
-            kmProperty.contextParameters, kmProperty.receiverParameterType, valueParameters = emptyList(), typeParameterTable.value,
+            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
             includeReceivers = true,
         )
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
         if (isBound) computeParameters(
-            kmProperty.contextParameters, kmProperty.receiverParameterType, valueParameters = emptyList(), typeParameterTable.value,
+            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
             includeReceivers = false,
         )
         else allParameters

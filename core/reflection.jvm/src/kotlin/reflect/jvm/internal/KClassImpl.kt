@@ -437,7 +437,7 @@ internal class KClassImpl<T : Any>(
 
         private val declaredStaticMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
             if (useK1Implementation || kmClass != null || classKind == ClassKind.ENUM_ENTRY) {
-                // For Kotlin classes, use the legacy implementation for now to create enum's static functions.
+                // For Kotlin classes, use the legacy implementation for now to create companion block members / enum's static members.
                 getMembers(staticScope, DECLARED)
             } else buildList {
                 for (method in jClass.declaredMethods) {

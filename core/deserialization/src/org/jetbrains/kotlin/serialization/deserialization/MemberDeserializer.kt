@@ -60,10 +60,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         property.setType(
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
             local.typeDeserializer.ownTypeParameters,
-            getDispatchReceiverParameter(),
-            proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
-                DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
-            },
+            getDispatchReceiverParameter()?.takeUnless { Flags.IS_STATIC_PROPERTY.get(flags) },
+            proto.receiverType(c.typeTable)?.takeUnless { Flags.IS_STATIC_PROPERTY.get(flags) }?.let(local.typeDeserializer::type)
+                ?.let { receiverType ->
+                    DescriptorFactory.createExtensionReceiverParameterForCallable(property, receiverType, receiverAnnotations)
+                },
             local.memberDeserializer.contextReceivers(
                 proto.contextReceiverTypes(c.typeTable), proto.contextParameterList, proto, AnnotatedCallableKind.PROPERTY_GETTER,
             ),
@@ -214,10 +215,11 @@ class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(function, proto.typeParameterList)
 
         function.initializeWithCoroutinesExperimentalityStatus(
-            proto.receiverType(c.typeTable)?.let(local.typeDeserializer::type)?.let { receiverType ->
-                DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
-            },
-            getDispatchReceiverParameter(),
+            proto.receiverType(c.typeTable)?.takeUnless { Flags.IS_STATIC_FUNCTION.get(flags) }?.let(local.typeDeserializer::type)
+                ?.let { receiverType ->
+                    DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, receiverAnnotations)
+                },
+            getDispatchReceiverParameter()?.takeUnless { Flags.IS_STATIC_FUNCTION.get(flags) },
             local.memberDeserializer.contextReceivers(
                 proto.contextReceiverTypes(c.typeTable), proto.contextParameterList, proto, AnnotatedCallableKind.FUNCTION,
             ),

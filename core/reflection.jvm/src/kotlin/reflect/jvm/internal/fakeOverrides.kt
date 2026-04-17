@@ -20,24 +20,18 @@ import kotlin.reflect.jvm.javaMethod
 
 internal fun getAllMembers(kClass: KClassImpl<*>): Collection<ReflectKCallable<*>> {
     val fakeOverrideMembers = kClass.data.value.fakeOverrideMembers
-    // Kotlin doesn't have statics (unless it's enum), and it never inherits statics from Java
     val isKotlin = kClass.java.isKotlin
-    val doNeedToFilterOutStatics =
-        fakeOverrideMembers.containsInheritedStatics && kClass.classKind != ClassKind.ENUM_CLASS && isKotlin
-    val doNeedToShrinkMembers = fakeOverrideMembers.containsPackagePrivate || doNeedToFilterOutStatics
-    val members = when (doNeedToShrinkMembers) {
-        true -> fakeOverrideMembers.members.filterNotTo(
-            newHashMapWithExpectedSize(
-                // We expect that all non-transitive operations below (like filtering out statics or adding privates)
-                // do not change the final size of the collection significantly.
-                // We expect the size to stay more or less the same.
-                expectedSize = fakeOverrideMembers.members.size
-            )
-        ) { (_, member) ->
-            doNeedToFilterOutStatics && member.isStatic ||
-                    member.isPackagePrivate && member.originalContainer.jClass.`package` != kClass.java.`package`
-        }
-        false -> fakeOverrideMembers.members
+    val members = fakeOverrideMembers.members.filterNotTo(
+        newHashMapWithExpectedSize(
+            // We expect that all non-transitive operations below (like filtering out statics or adding privates)
+            // do not change the final size of the collection significantly.
+            // We expect the size to stay more or less the same.
+            expectedSize = fakeOverrideMembers.members.size
+        )
+    ) { (_, member) ->
+        // Kotlin classes never inherit static members (neither from Java, nor from Kotlin).
+        (isKotlin && member.isStatic && member.overriddenStorage.isFakeOverride) ||
+                (member.isPackagePrivate && member.originalContainer.jClass.`package` != kClass.java.`package`)
     }
     return members.values + kClass.declaredReflectKCallableMembers.filter { isNonTransitiveMember(kClass, it) }
 }
