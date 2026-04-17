@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
 import org.jetbrains.kotlin.incremental.classpathDiff.ImpactedSymbolsComputer.computeImpactedSymbols
@@ -62,7 +64,7 @@ internal object ClasspathChangesComputer {
     fun computeChangedAndImpactedSet(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>,
-        reporter: ClasspathSnapshotBuildReporter
+        reporter: ClasspathSnapshotBuildReporter,
     ): ProgramSymbolSet {
         val currentClasses: Map<ClassId, AccessibleClassSnapshot> = currentClassSnapshots.associateBy { it.classId }
         val previousClasses: Map<ClassId, AccessibleClassSnapshot> = previousClassSnapshots.associateBy { it.classId }
@@ -134,7 +136,7 @@ internal object ClasspathChangesComputer {
         val kotlinClassChanges = metrics.measure(COMPUTE_KOTLIN_CLASS_CHANGES) {
             computeKotlinClassChanges(
                 currentKotlinClassSnapshots as List<KotlinClassSnapshot>,
-                previousKotlinClassSnapshots as List<KotlinClassSnapshot>
+                previousKotlinClassSnapshots as List<KotlinClassSnapshot>,
             )
         }
 
@@ -151,15 +153,37 @@ internal object ClasspathChangesComputer {
 
     private fun computeKotlinClassChanges(
         currentClassSnapshots: List<KotlinClassSnapshot>,
-        previousClassSnapshots: List<KotlinClassSnapshot>
+        previousClassSnapshots: List<KotlinClassSnapshot>,
     ): ProgramSymbolSet {
-        val (coarseGrainedCurrentClassSnapshots, fineGrainedCurrentClassSnapshots) =
-            currentClassSnapshots.partition { it.classMemberLevelSnapshot == null }
-        val (coarseGrainedPreviousClassSnapshots, fineGrainedPreviousClassSnapshots) =
-            previousClassSnapshots.partition { it.classMemberLevelSnapshot == null }
+        val granularityChangedClassIds = findClassesWithGranularityChange(currentClassSnapshots, previousClassSnapshots)
+
+        val (coarseGrainedCurrentClassSnapshots, fineGrainedCurrentClassSnapshots) = currentClassSnapshots.partition {
+            it.classMemberLevelSnapshot == null || it.classId in granularityChangedClassIds
+        }
+        val (coarseGrainedPreviousClassSnapshots, fineGrainedPreviousClassSnapshots) = previousClassSnapshots.partition {
+            it.classMemberLevelSnapshot == null || it.classId in granularityChangedClassIds
+        }
 
         return computeCoarseGrainedKotlinClassChanges(coarseGrainedCurrentClassSnapshots, coarseGrainedPreviousClassSnapshots) +
                 computeFineGrainedKotlinClassChanges(fineGrainedCurrentClassSnapshots, fineGrainedPreviousClassSnapshots)
+    }
+
+    /**
+     * Identifies classes where granularity changed between previous and current snapshots (e.g., a dependency
+     * switched from [CLASS_MEMBER_LEVEL] to [CLASS_LEVEL] or vice versa). For such classes, we can only compare at the coarse (class)
+     * level since one side lacks member-level data.
+     */
+    private fun findClassesWithGranularityChange(
+        currentClassSnapshots: List<KotlinClassSnapshot>,
+        previousClassSnapshots: List<KotlinClassSnapshot>,
+    ): MutableSet<ClassId> {
+        val currentByClassId = currentClassSnapshots.associateBy { it.classId }
+        val previousByClassId = previousClassSnapshots.associateBy { it.classId }
+        val granularityChangedClassIds = (currentByClassId.keys intersect previousByClassId.keys).filterTo(mutableSetOf()) { classId ->
+            (currentByClassId.getValue(classId).classMemberLevelSnapshot == null) !=
+                    (previousByClassId.getValue(classId).classMemberLevelSnapshot == null)
+        }
+        return granularityChangedClassIds
     }
 
     private fun computeCoarseGrainedKotlinClassChanges(

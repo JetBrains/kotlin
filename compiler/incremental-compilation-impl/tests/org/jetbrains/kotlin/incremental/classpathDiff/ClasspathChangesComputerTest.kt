@@ -352,6 +352,107 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
             )
         ).assertEquals(changes)
     }
+
+    /**
+     * Tests granularity transition with a companion object where only the companion's ABI changes.
+     * Without the fix in computeKotlinClassChanges, this triggers IllegalStateException:
+     * "The following FqNames can't be derived from DirtyData.dirtyLookupSymbols"
+     * because the companion reports MembersChanged(parentFqName, ...) but the parent class
+     * is not in allClasses (its ABI didn't change so it wasn't included in changed classes).
+     */
+    @Test // KT-84271
+    fun testGranularityTransition_CoarseToFine() {
+        val testDataSrcDir = File(testDataDir, "KotlinOnly/testGranularityTransition/src")
+        val previousSnapshot = snapshotClasspath(File(testDataSrcDir, "previous-classpath"), tmpDir, CLASS_LEVEL)
+        val currentSnapshot = snapshotClasspath(File(testDataSrcDir, "current-classpath"), tmpDir, CLASS_MEMBER_LEVEL)
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
+        // Only the companion object's ABI changed. With the fix, granularity-mismatched classes
+        // are compared at the coarse (class) level, so only class-level changes are reported.
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "Companion", scope = "com.example.Outer"),
+            ),
+            fqNames = setOf(
+                "com.example.Outer.Companion",
+            )
+        ).assertEquals(changes)
+    }
+
+    /** Same as [testGranularityTransition_CoarseToFine] but in the opposite direction. */
+    @Test // KT-84271
+    fun testGranularityTransition_FineToCoarse() {
+        val testDataSrcDir = File(testDataDir, "KotlinOnly/testGranularityTransition/src")
+        val previousSnapshot = snapshotClasspath(File(testDataSrcDir, "previous-classpath"), tmpDir, CLASS_MEMBER_LEVEL)
+        val currentSnapshot = snapshotClasspath(File(testDataSrcDir, "current-classpath"), tmpDir, CLASS_LEVEL)
+        val changes = computeClasspathChanges(currentSnapshot, previousSnapshot)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "Companion", scope = "com.example.Outer"),
+            ),
+            fqNames = setOf(
+                "com.example.Outer.Companion",
+            )
+        ).assertEquals(changes)
+    }
+
+    /**
+     * After a coarse→fine granularity transition (class-level comparison), a subsequent fine→fine build
+     * should correctly use member-level comparison since both snapshots now have fine-grained data.
+     */
+    @Test // KT-84271
+    fun testGranularityTransition_CoarseToFineToFine() {
+        val testDataSrcDir = File(testDataDir, "KotlinOnly/testGranularityTransition/src")
+        val coarseGrainedCompanionChanges = Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "Companion", scope = "com.example.Outer"),
+            ),
+            fqNames = setOf("com.example.Outer.Companion")
+        )
+        val fineGrainedCompanionChanges = Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "companionFunction", scope = "com.example.Outer.Companion"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.Outer.Companion"),
+            ),
+            fqNames = setOf("com.example.Outer.Companion")
+        )
+
+        // Build 1→2: coarse → fine (granularity transition → class-level comparison)
+        val build1Snapshot = snapshotClasspath(File(testDataSrcDir, "previous-classpath"), tmpDir, CLASS_LEVEL)
+        val build2Snapshot = snapshotClasspath(File(testDataSrcDir, "current-classpath"), tmpDir, CLASS_MEMBER_LEVEL)
+        coarseGrainedCompanionChanges.assertEquals(computeClasspathChanges(build2Snapshot, build1Snapshot))
+
+        // Build 2→3: fine → fine (stable granularity → member-level comparison)
+        val build3Snapshot = snapshotClasspath(File(testDataSrcDir, "previous-classpath"), tmpDir, CLASS_MEMBER_LEVEL)
+        fineGrainedCompanionChanges.assertEquals(computeClasspathChanges(build3Snapshot, build2Snapshot))
+    }
+
+    /**
+     * Verifies multiple granularity transitions: fine→coarse, then coarse→coarse, then coarse→fine.
+     * All transitions and stable states should use class-level comparison (coarse is involved every time).
+     */
+    @Test // KT-84271
+    fun testGranularityTransition_FineToCoarseToCoarseToFine() {
+        val testDataSrcDir = File(testDataDir, "KotlinOnly/testGranularityTransition/src")
+        val coarseGrainedCompanionChanges = Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "Companion", scope = "com.example.Outer"),
+            ),
+            fqNames = setOf("com.example.Outer.Companion")
+        )
+
+        // Build 1→2: fine → coarse (granularity transition → class-level comparison)
+        val build1Snapshot = snapshotClasspath(File(testDataSrcDir, "previous-classpath"), tmpDir, CLASS_MEMBER_LEVEL)
+        val build2Snapshot = snapshotClasspath(File(testDataSrcDir, "current-classpath"), tmpDir, CLASS_LEVEL)
+        coarseGrainedCompanionChanges.assertEquals(computeClasspathChanges(build2Snapshot, build1Snapshot))
+
+        // Build 2→3: coarse → coarse (same granularity → class-level comparison)
+        val build3Snapshot = snapshotClasspath(File(testDataSrcDir, "previous-classpath"), tmpDir, CLASS_LEVEL)
+        coarseGrainedCompanionChanges.assertEquals(computeClasspathChanges(build3Snapshot, build2Snapshot))
+
+        // Build 3→4: coarse → fine (granularity transition → class-level comparison)
+        val build4Snapshot = snapshotClasspath(File(testDataSrcDir, "current-classpath"), tmpDir, CLASS_MEMBER_LEVEL)
+        coarseGrainedCompanionChanges.assertEquals(computeClasspathChanges(build4Snapshot, build3Snapshot))
+    }
 }
 
 class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
