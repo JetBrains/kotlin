@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
@@ -148,9 +149,6 @@ open class IncrementalJvmCache(
             if (!icContext.useCompilerMapsOnly) internalNameToSource[className.internalName] = sourceFiles
         }
 
-        @OptIn(ClassIdBasedLocality::class)
-        if (kotlinClassInfo.classId.isLocal) return
-
         when (kotlinClassInfo.classKind) {
             KotlinClassHeader.Kind.FILE_FACADE -> {
                 if (sourceFiles != null) {
@@ -210,7 +208,16 @@ open class IncrementalJvmCache(
                 }
             }
             KotlinClassHeader.Kind.CLASS -> {
-                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.singleOrNull(), icContext.useCompilerMapsOnly)
+                val classProtoData = kotlinClassInfo.protoData as ClassProtoData
+                // Regenerated copies of anonymous objects from inline functions can have inconsistent source file
+                // attribution between incremental and clean builds, so we only record hierarchy data for them
+                // to avoid mappings dump mismatches.
+                val isAnonymousObjectCopy = classProtoData.proto.hasExtension(JvmProtoBuf.anonymousObjectOriginName)
+                if (isAnonymousObjectCopy) {
+                    recordClassHierarchyData(classProtoData)
+                } else {
+                    addToClassStorage(classProtoData, sourceFiles?.singleOrNull(), icContext.useCompilerMapsOnly)
+                }
 
                 protoMap.process(kotlinClassInfo, changesCollector)
 
