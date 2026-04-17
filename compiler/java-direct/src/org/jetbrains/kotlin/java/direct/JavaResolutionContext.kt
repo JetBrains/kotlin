@@ -227,19 +227,22 @@ class JavaResolutionContext private constructor(
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
     ): ClassId? {
-        // Cache tryResolve results within this invocation. The recursive prefix splitting
-        // in resolveNestedClassToClassId probes the same ClassIds many times (e.g., "com"
-        // is tried as a class for each prefix of "com.google.protobuf.Foo"). The callback
-        // is deterministic within a single resolve() call, so caching is safe.
-        val cache = HashMap<ClassId, Boolean>()
-        val cachedTryResolve: (ClassId) -> Boolean = { classId ->
-            cache.getOrPut(classId) { tryResolve(classId) }
-        }
         // Handle nested class references like "Map.Entry"
         if (name.contains('.')) {
+            // Cache tryResolve results within this invocation. The recursive prefix splitting
+            // in resolveNestedClassToClassId probes the same ClassIds many times (e.g., "com"
+            // is tried as a class for each prefix of "com.google.protobuf.Foo"). The callback
+            // is deterministic within a single resolve() call, so caching is safe.
+            //
+            // Only allocated for dotted names — simple names (the majority) go through
+            // resolveSimpleNameToClassId directly, avoiding the HashMap allocation entirely.
+            val cache = HashMap<ClassId, Boolean>()
+            val cachedTryResolve: (ClassId) -> Boolean = { classId ->
+                cache.getOrPut(classId) { tryResolve(classId) }
+            }
             return resolveNestedClassToClassId(name, cachedTryResolve, getSupertypeClassIds)
         }
-        return resolveSimpleNameToClassId(name, cachedTryResolve, getSupertypeClassIds)
+        return resolveSimpleNameToClassId(name, tryResolve, getSupertypeClassIds)
     }
 
     /**

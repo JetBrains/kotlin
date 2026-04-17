@@ -23,36 +23,61 @@ class JavaClassOverAst(
     override val outerClass: JavaClass? = null,
 ) : JavaElementOverAst(node), JavaClass {
 
+    // Performance: manual @Volatile fields replace `by lazy(PUBLICATION)` delegates.
+    // JavaClassOverAst has 16 lazy properties; at ~32 bytes each that's 512 bytes per instance.
+    // With 5,000 classes in a large project, this saves ~2.5 MB of delegate overhead.
+    // Same safe-publication JMM semantics as the lazy(PUBLICATION) pattern.
+
     /**
      * Resolution context for members of this class, includes the class's own type parameters
      * and allows resolution of inner classes by simple name.
      * Used by fields, methods, constructors, and inner classes to resolve type references.
      */
-    val memberResolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        resolutionContext
-            .withContainingClass(this)
-            .withTypeParameters(typeParameters)
-    }
+    @Volatile private var _memberResolutionContext: JavaResolutionContext? = null
+    val memberResolutionContext: JavaResolutionContext
+        get() {
+            _memberResolutionContext?.let { return it }
+            val computed = resolutionContext.withContainingClass(this).withTypeParameters(typeParameters)
+            _memberResolutionContext = computed
+            return computed
+        }
 
     override val name: Name
         get() = Name.identifier(node.children.find { it.type == JavaSyntaxTokenType.IDENTIFIER }?.text ?: "<error>")
 
-    override val fqName: FqName? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    @Volatile private var _fqName: Any? = NOT_COMPUTED
+    override val fqName: FqName?
+        get() {
+            val cached = _fqName
+            if (cached !== NOT_COMPUTED) return cached as FqName?
+            val computed = computeFqName()
+            _fqName = computed
+            return computed
+        }
+
+    private fun computeFqName(): FqName {
         val nestedName = mutableListOf<String>()
         var currentClass: JavaClass? = this
         while (currentClass != null) {
             nestedName.add(0, currentClass.name.asString())
             currentClass = currentClass.outerClass
         }
-
         var result = resolutionContext.packageFqName
         for (n in nestedName) {
             result = result.child(Name.identifier(n))
         }
-        result
+        return result
     }
 
-    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) }
+    @Volatile private var _modifierList: Any? = NOT_COMPUTED
+    private val modifierList: JavaSyntaxNode?
+        get() {
+            val cached = _modifierList
+            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
+            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            _modifierList = computed
+            return computed
+        }
 
     private fun hasModifier(modifier: SyntaxElementType): Boolean {
         return modifierList?.children?.any { it.type == modifier } ?: false
@@ -82,11 +107,25 @@ class JavaClassOverAst(
             else -> JavaVisibilities.PackageVisibility
         }
 
-    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        computeTypeParameters(node, resolutionContext)
-    }
+    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
+    override val typeParameters: List<JavaTypeParameter>
+        get() {
+            _typeParameters?.let { return it }
+            val computed = computeTypeParameters(node, resolutionContext)
+            _typeParameters = computed
+            return computed
+        }
 
-    override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    @Volatile private var _supertypes: Collection<JavaClassifierType>? = null
+    override val supertypes: Collection<JavaClassifierType>
+        get() {
+            _supertypes?.let { return it }
+            val computed = computeSupertypes()
+            _supertypes = computed
+            return computed
+        }
+
+    private fun computeSupertypes(): List<JavaClassifierType> {
         val result = mutableListOf<JavaClassifierType>()
 
         // Add implicit supertypes for special class kinds
@@ -111,14 +150,19 @@ class JavaClassOverAst(
         node.findChildByType(JavaSyntaxElementType.IMPLEMENTS_LIST)?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.forEach {
             result.add(JavaClassifierTypeOverAst(it, memberResolutionContext))
         }
-        result
+        return result
     }
 
-    override val innerClassNames: Collection<Name> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        node.children.filter { it.type == JavaSyntaxElementType.CLASS }.map {
-            Name.identifier(it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text ?: "<error>")
+    @Volatile private var _innerClassNames: Collection<Name>? = null
+    override val innerClassNames: Collection<Name>
+        get() {
+            _innerClassNames?.let { return it }
+            val computed = node.children.filter { it.type == JavaSyntaxElementType.CLASS }.map {
+                Name.identifier(it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text ?: "<error>")
+            }
+            _innerClassNames = computed
+            return computed
         }
-    }
 
     // Consistent with the other caches in this module (JavaClassFinderOverAstImpl, JavaSupertypeGraph):
     // FIR lazy resolution queries Java model concurrently, so caches that straddle request boundaries
@@ -136,6 +180,8 @@ class JavaClassOverAst(
 
     private companion object {
         private val NULL_INNER_CLASS: Any = Any()
+        /** Sentinel for @Volatile nullable properties: distinguishes "not yet computed" from "computed as null". */
+        private val NOT_COMPUTED: Any = Any()
     }
 
     private fun findInnerClassUncached(name: Name): JavaClass? {
@@ -231,7 +277,16 @@ class JavaClassOverAst(
         return null
     }
 
-    override val isInterface: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.INTERFACE_KEYWORD) != null }
+    // Boolean flags: tri-state @Volatile Int (-1 = not computed, 0 = false, 1 = true)
+    @Volatile private var _isInterface: Int = -1
+    override val isInterface: Boolean
+        get() {
+            val cached = _isInterface
+            if (cached >= 0) return cached != 0
+            val computed = node.findChildByType(JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
+            _isInterface = if (computed) 1 else 0
+            return computed
+        }
 
     /**
      * A Java `@interface` (annotation declaration) is represented by the KMP parser as a CLASS
@@ -244,7 +299,17 @@ class JavaClassOverAst(
      * against future parser changes that might surface an annotation token at the CLASS level
      * for a non-annotation interface, and makes the invariant explicit.
      */
-    override val isAnnotationType: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    @Volatile private var _isAnnotationType: Int = -1
+    override val isAnnotationType: Boolean
+        get() {
+            val cached = _isAnnotationType
+            if (cached >= 0) return cached != 0
+            val computed = computeIsAnnotationType()
+            _isAnnotationType = if (computed) 1 else 0
+            return computed
+        }
+
+    private fun computeIsAnnotationType(): Boolean {
         val children = node.children
         var i = 0
         while (i < children.size - 1) {
@@ -252,15 +317,42 @@ class JavaClassOverAst(
                 // Skip whitespace/comments between AT and the next significant token.
                 var j = i + 1
                 while (j < children.size && children[j].type == SyntaxTokenTypes.WHITE_SPACE) j++
-                if (j < children.size && children[j].type == JavaSyntaxTokenType.INTERFACE_KEYWORD) return@lazy true
+                if (j < children.size && children[j].type == JavaSyntaxTokenType.INTERFACE_KEYWORD) return true
             }
             i++
         }
-        false
+        return false
     }
-    override val isEnum: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.ENUM_KEYWORD) != null }
-    override val isRecord: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.RECORD_KEYWORD) != null }
-    override val isSealed: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD) }
+
+    @Volatile private var _isEnum: Int = -1
+    override val isEnum: Boolean
+        get() {
+            val cached = _isEnum
+            if (cached >= 0) return cached != 0
+            val computed = node.findChildByType(JavaSyntaxTokenType.ENUM_KEYWORD) != null
+            _isEnum = if (computed) 1 else 0
+            return computed
+        }
+
+    @Volatile private var _isRecord: Int = -1
+    override val isRecord: Boolean
+        get() {
+            val cached = _isRecord
+            if (cached >= 0) return cached != 0
+            val computed = node.findChildByType(JavaSyntaxTokenType.RECORD_KEYWORD) != null
+            _isRecord = if (computed) 1 else 0
+            return computed
+        }
+
+    @Volatile private var _isSealed: Int = -1
+    override val isSealed: Boolean
+        get() {
+            val cached = _isSealed
+            if (cached >= 0) return cached != 0
+            val computed = hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD)
+            _isSealed = if (computed) 1 else 0
+            return computed
+        }
 
     override val permittedTypes: Sequence<JavaClassifierType>
         get() {
@@ -303,40 +395,67 @@ class JavaClassOverAst(
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
-    override val methods: Collection<JavaMethod> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        // Both regular methods and annotation interface methods need to be included
-        val methodNodes =
-            node.getChildrenByType(JavaSyntaxElementType.METHOD) + node.getChildrenByType(JavaSyntaxElementType.ANNOTATION_METHOD)
-        methodNodes
-            .filter { it.findChildByType(JavaSyntaxElementType.TYPE) != null }
-            .map { JavaMethodOverAst(it, this) }
-    }
+    @Volatile private var _methods: Collection<JavaMethod>? = null
+    override val methods: Collection<JavaMethod>
+        get() {
+            _methods?.let { return it }
+            // Both regular methods and annotation interface methods need to be included
+            val methodNodes =
+                node.getChildrenByType(JavaSyntaxElementType.METHOD) + node.getChildrenByType(JavaSyntaxElementType.ANNOTATION_METHOD)
+            val computed = methodNodes
+                .filter { it.findChildByType(JavaSyntaxElementType.TYPE) != null }
+                .map { JavaMethodOverAst(it, this) }
+            _methods = computed
+            return computed
+        }
 
-    override val fields: Collection<JavaField> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        // Include both regular fields and enum constants
-        val fieldNodes = node.getChildrenByType(JavaSyntaxElementType.FIELD) + node.getChildrenByType(JavaSyntaxElementType.ENUM_CONSTANT)
-        fieldNodes.map { JavaFieldOverAst(it, this) }
-    }
+    @Volatile private var _fields: Collection<JavaField>? = null
+    override val fields: Collection<JavaField>
+        get() {
+            _fields?.let { return it }
+            // Include both regular fields and enum constants
+            val fieldNodes = node.getChildrenByType(JavaSyntaxElementType.FIELD) + node.getChildrenByType(JavaSyntaxElementType.ENUM_CONSTANT)
+            val computed = fieldNodes.map { JavaFieldOverAst(it, this) }
+            _fields = computed
+            return computed
+        }
 
-    override val constructors: Collection<JavaConstructor> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        node.getChildrenByType(JavaSyntaxElementType.METHOD)
-            .filter { it.findChildByType(JavaSyntaxElementType.TYPE) == null && it.findChildByType(JavaSyntaxTokenType.IDENTIFIER) != null }
-            .map { JavaConstructorOverAst(it, this) }
-    }
+    @Volatile private var _constructors: Collection<JavaConstructor>? = null
+    override val constructors: Collection<JavaConstructor>
+        get() {
+            _constructors?.let { return it }
+            val computed = node.getChildrenByType(JavaSyntaxElementType.METHOD)
+                .filter { it.findChildByType(JavaSyntaxElementType.TYPE) == null && it.findChildByType(JavaSyntaxTokenType.IDENTIFIER) != null }
+                .map { JavaConstructorOverAst(it, this) }
+            _constructors = computed
+            return computed
+        }
 
-    override val recordComponents: Collection<JavaRecordComponent> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val header = node.findChildByType(JavaSyntaxElementType.RECORD_HEADER) ?: return@lazy emptyList()
-        header.getChildrenByType(JavaSyntaxElementType.RECORD_COMPONENT)
-            .map { JavaRecordComponentOverAst(it, this) }
-    }
+    @Volatile private var _recordComponents: Collection<JavaRecordComponent>? = null
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() {
+            _recordComponents?.let { return it }
+            val header = node.findChildByType(JavaSyntaxElementType.RECORD_HEADER)
+            val computed = if (header != null) {
+                header.getChildrenByType(JavaSyntaxElementType.RECORD_COMPONENT)
+                    .map { JavaRecordComponentOverAst(it, this) }
+            } else emptyList()
+            _recordComponents = computed
+            return computed
+        }
 
     override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 
-    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-            ?: emptyList()
-    }
+    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            _annotations?.let { return it }
+            val computed = modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
+                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+                ?: emptyList()
+            _annotations = computed
+            return computed
+        }
 
     // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean

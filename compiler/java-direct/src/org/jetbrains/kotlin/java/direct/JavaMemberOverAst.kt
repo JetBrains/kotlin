@@ -31,7 +31,19 @@ abstract class JavaMemberOverAst(
     override val name: Name
         get() = Name.identifier(node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text ?: "<error>")
 
-    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) }
+    // Performance: manual @Volatile fields replace `by lazy(PUBLICATION)` delegates.
+    // JavaMethodOverAst (~50K instances) and JavaFieldOverAst (~30K instances) each had
+    // multiple delegates at ~32 bytes each; this saves ~13 MB total in large projects.
+
+    @Volatile private var _baseModifierList: Any? = NOT_COMPUTED
+    private val modifierList: JavaSyntaxNode?
+        get() {
+            val cached = _baseModifierList
+            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
+            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            _baseModifierList = computed
+            return computed
+        }
 
     protected fun hasModifier(modifier: SyntaxElementType): Boolean {
         return modifierList?.children?.any { it.type == modifier } ?: false
@@ -52,10 +64,20 @@ abstract class JavaMemberOverAst(
             }
         }
 
-    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-            ?: emptyList()
+    @Volatile private var _baseAnnotations: Collection<JavaAnnotation>? = null
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            _baseAnnotations?.let { return it }
+            val computed = modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
+                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+                ?: emptyList()
+            _baseAnnotations = computed
+            return computed
+        }
+
+    protected companion object {
+        /** Sentinel for @Volatile nullable properties: distinguishes "not yet computed" from "computed as null". */
+        @JvmField val NOT_COMPUTED: Any = Any()
     }
 
     // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
@@ -69,7 +91,15 @@ class JavaFieldOverAst(
     node: JavaSyntaxNode,
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, containingClass), JavaField {
-    override val isEnumEntry: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.type == JavaSyntaxElementType.ENUM_CONSTANT }
+    @Volatile private var _isEnumEntry: Int = -1
+    override val isEnumEntry: Boolean
+        get() {
+            val cached = _isEnumEntry
+            if (cached >= 0) return cached != 0
+            val computed = node.type == JavaSyntaxElementType.ENUM_CONSTANT
+            _isEnumEntry = if (computed) 1 else 0
+            return computed
+        }
 
     /**
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
@@ -77,31 +107,46 @@ class JavaFieldOverAst(
      * Subsequent fields (B, C) have no MODIFIER_LIST or TYPE of their own.
      * This property finds the leading FIELD sibling that carries the shared modifiers/type.
      */
-    private val leadingFieldNode: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || node.findChildByType(JavaSyntaxElementType.TYPE) != null) {
-            null // this node already has its own modifiers/type
-        } else {
-            val parent = node.parent ?: return@lazy null
-            val siblings = parent.children
-            val myIndex = siblings.indexOf(node)
-            // Walk backwards to find the nearest FIELD sibling with a MODIFIER_LIST or TYPE
-            (myIndex - 1 downTo 0)
-                .map { siblings[it] }
-                .firstOrNull {
-                    it.type == JavaSyntaxElementType.FIELD && (it.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || it.findChildByType(
-                        JavaSyntaxElementType.TYPE
-                    ) != null)
-                }
+    @Volatile private var _leadingFieldNode: Any? = NOT_COMPUTED
+    private val leadingFieldNode: JavaSyntaxNode?
+        get() {
+            val cached = _leadingFieldNode
+            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
+            val computed = computeLeadingFieldNode()
+            _leadingFieldNode = computed
+            return computed
         }
+
+    private fun computeLeadingFieldNode(): JavaSyntaxNode? {
+        if (node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || node.findChildByType(JavaSyntaxElementType.TYPE) != null) {
+            return null // this node already has its own modifiers/type
+        }
+        val parent = node.parent ?: return null
+        val siblings = parent.children
+        val myIndex = siblings.indexOf(node)
+        // Walk backwards to find the nearest FIELD sibling with a MODIFIER_LIST or TYPE
+        return (myIndex - 1 downTo 0)
+            .map { siblings[it] }
+            .firstOrNull {
+                it.type == JavaSyntaxElementType.FIELD && (it.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || it.findChildByType(
+                    JavaSyntaxElementType.TYPE
+                ) != null)
+            }
     }
 
     /**
      * Effective modifier list: own if present, otherwise inherited from the leading field
      * in a multi-field declaration.
      */
-    private val effectiveModifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) ?: leadingFieldNode?.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
-    }
+    @Volatile private var _effectiveModifierList: Any? = NOT_COMPUTED
+    private val effectiveModifierList: JavaSyntaxNode?
+        get() {
+            val cached = _effectiveModifierList
+            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
+            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) ?: leadingFieldNode?.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            _effectiveModifierList = computed
+            return computed
+        }
 
     private fun hasFieldModifier(modifier: SyntaxElementType): Boolean {
         return effectiveModifierList?.children?.any { it.type == modifier } ?: false
@@ -120,20 +165,34 @@ class JavaFieldOverAst(
             }
         }
 
-    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        effectiveModifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-            ?: emptyList()
-    }
+    @Volatile private var _fieldAnnotations: Collection<JavaAnnotation>? = null
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            _fieldAnnotations?.let { return it }
+            val computed = effectiveModifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
+                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+                ?: emptyList()
+            _fieldAnnotations = computed
+            return computed
+        }
 
-    override val type: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    @Volatile private var _type: JavaType? = null
+    override val type: JavaType
+        get() {
+            _type?.let { return it }
+            val computed = computeType()
+            _type = computed
+            return computed
+        }
+
+    private fun computeType(): JavaType {
         // For enum constants, the type is the containing enum class itself
         if (isEnumEntry) {
-            return@lazy JavaClassifierTypeForEnumEntry(containingClass)
+            return JavaClassifierTypeForEnumEntry(containingClass)
         }
         // For multi-field declarations, the TYPE node is on the leading field
         val typeSourceNode = if (node.findChildByType(JavaSyntaxElementType.TYPE) != null) node else leadingFieldNode ?: node
-        createJavaType(typeSourceNode, resolutionContext)
+        return createJavaType(typeSourceNode, resolutionContext)
     }
 
     /**
@@ -268,32 +327,65 @@ class JavaMethodOverAst(
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, containingClass), JavaMethod {
 
-    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        computeTypeParameters(node, containingClass.memberResolutionContext)
-    }
+    @Volatile private var _methodTypeParameters: List<JavaTypeParameter>? = null
+    override val typeParameters: List<JavaTypeParameter>
+        get() {
+            _methodTypeParameters?.let { return it }
+            val computed = computeTypeParameters(node, containingClass.memberResolutionContext)
+            _methodTypeParameters = computed
+            return computed
+        }
 
     /**
      * Resolution context including both class and method type parameters.
      * Method's own type parameters shadow class type parameters with the same name.
      */
-    override val resolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        containingClass.memberResolutionContext.withTypeParameters(typeParameters)
-    }
+    @Volatile private var _methodResolutionContext: JavaResolutionContext? = null
+    override val resolutionContext: JavaResolutionContext
+        get() {
+            _methodResolutionContext?.let { return it }
+            val computed = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
+            _methodResolutionContext = computed
+            return computed
+        }
 
-    override val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST) ?: return@lazy emptyList()
-        parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
-            .map { JavaValueParameterOverAst(it, resolutionContext) }
-    }
+    @Volatile private var _methodValueParameters: List<JavaValueParameter>? = null
+    override val valueParameters: List<JavaValueParameter>
+        get() {
+            _methodValueParameters?.let { return it }
+            val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST)
+            val computed = if (parameterList != null) {
+                parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
+                    .map { JavaValueParameterOverAst(it, resolutionContext) }
+            } else emptyList()
+            _methodValueParameters = computed
+            return computed
+        }
 
-    override val returnType: JavaType by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
-            ?: return@lazy JavaPrimitiveTypeOverAst(node, resolutionContext)
-        // TYPE_USE annotations appear in the method modifier list but belong to the return type
-        createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
-    }
+    @Volatile private var _returnType: JavaType? = null
+    override val returnType: JavaType
+        get() {
+            _returnType?.let { return it }
+            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
+            val computed = if (typeNode != null) {
+                // TYPE_USE annotations appear in the method modifier list but belong to the return type
+                createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
+            } else {
+                JavaPrimitiveTypeOverAst(node, resolutionContext)
+            }
+            _returnType = computed
+            return computed
+        }
 
-    private val modifierList: JavaSyntaxNode? by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) }
+    @Volatile private var _methodModifierList: Any? = NOT_COMPUTED
+    private val modifierList: JavaSyntaxNode?
+        get() {
+            val cached = _methodModifierList
+            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
+            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            _methodModifierList = computed
+            return computed
+        }
 
     // Interface methods are abstract unless they have 'default' or 'static' keyword.
     // Note: in Java, a non-default interface method body is a compile error, but we still see
@@ -343,22 +435,39 @@ class JavaConstructorOverAst(
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
 
-    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        computeTypeParameters(node, containingClass.memberResolutionContext)
-    }
+    @Volatile private var _ctorTypeParameters: List<JavaTypeParameter>? = null
+    override val typeParameters: List<JavaTypeParameter>
+        get() {
+            _ctorTypeParameters?.let { return it }
+            val computed = computeTypeParameters(node, containingClass.memberResolutionContext)
+            _ctorTypeParameters = computed
+            return computed
+        }
 
     /**
      * Resolution context including both class and constructor type parameters.
      */
-    override val resolutionContext: JavaResolutionContext by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        containingClass.memberResolutionContext.withTypeParameters(typeParameters)
-    }
+    @Volatile private var _ctorResolutionContext: JavaResolutionContext? = null
+    override val resolutionContext: JavaResolutionContext
+        get() {
+            _ctorResolutionContext?.let { return it }
+            val computed = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
+            _ctorResolutionContext = computed
+            return computed
+        }
 
-    override val valueParameters: List<JavaValueParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST) ?: return@lazy emptyList()
-        parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
-            .map { JavaValueParameterOverAst(it, resolutionContext) }
-    }
+    @Volatile private var _ctorValueParameters: List<JavaValueParameter>? = null
+    override val valueParameters: List<JavaValueParameter>
+        get() {
+            _ctorValueParameters?.let { return it }
+            val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST)
+            val computed = if (parameterList != null) {
+                parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
+                    .map { JavaValueParameterOverAst(it, resolutionContext) }
+            } else emptyList()
+            _ctorValueParameters = computed
+            return computed
+        }
 
     override val isFromSource: Boolean get() = true
 }

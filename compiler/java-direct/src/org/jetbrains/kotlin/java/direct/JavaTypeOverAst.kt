@@ -233,19 +233,14 @@ class JavaClassifierTypeOverAst(
     private fun computeClassifierQualifiedName(): String {
         val parts = rawTypeNameParts
 
-        // 1. Check type parameters - return name as-is (FIR handles type params specially)
-        if (parts.size == 1 && resolutionContext.findTypeParameter(parts[0]) != null) {
+        // Leverage the already-cached `classifier` to avoid redundant findTypeParameter/findLocalClass lookups.
+        // Both `classifier` and this method independently resolve the same name through the same scopes.
+        val resolvedClassifier = classifier
+        if (resolvedClassifier is JavaTypeParameter) {
             return rawTypeName
         }
-
-        // 2. Check local scope (same compilation unit)
-        val localBase = resolutionContext.findLocalClass(Name.identifier(parts[0]))
-        if (localBase != null) {
-            var current: JavaClass? = localBase
-            for (i in 1 until parts.size) {
-                current = current?.findInnerClass(Name.identifier(parts[i]))
-            }
-            return current?.fqName?.asString() ?: rawTypeName
+        if (resolvedClassifier is JavaClass) {
+            return resolvedClassifier.fqName?.asString() ?: rawTypeName
         }
 
         // 3. Check explicit single-type imports

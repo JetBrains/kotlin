@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (performance optimizations: allocation reduction on hot model classes)
+**Last Updated**: 2026-04-17 (performance optimizations: lazy delegate elimination + resolve() cache optimization)
 
 ---
 
@@ -89,6 +89,94 @@ a ~184 bytes/instance saving. At 200K+ instances, this is ~36 MB of heap reducti
 - The `by lazy(PUBLICATION)` → `@Volatile` migration pattern from Step 3.6 applies beyond `JavaSyntaxNode`. Any model class instantiated in the thousands or more benefits from eliminating delegate wrappers, especially when the class has many lazy properties.
 - Caching intermediate results (`rawTypeNameParts`) that multiple lazy properties depend on is a simple, high-value win — 4 independent `split('.')` calls on the same string is easy to miss in review because each lives in its own lazy block.
 - For recursive resolution methods that split/join strings, refactoring to pass `List<String>` + `subList()` views eliminates O(n²) allocation without changing semantics — `subList` is a zero-copy view.
+
+---
+
+## Performance Optimizations Round 2: Lazy Delegate Elimination + Resolve Cache — 2026-04-17
+
+### Overview
+
+Continuation of performance optimization work from PERFORMANCE_REVIEW.md. This round focuses on:
+- Eliminating `by lazy(PUBLICATION)` delegates from remaining model classes (items 1.1, 8 from the roadmap)
+- Avoiding unnecessary HashMap allocation in `resolve()` (item 3.1)
+- Reducing overlapping work between `classifier` and `classifierQualifiedName` (item 2.2)
+
+### Optimization 6 — Skip HashMap allocation in `resolve()` for simple names
+
+**Problem** (PERFORMANCE_REVIEW.md §3.1): Every call to `JavaResolutionContext.resolve()` created a fresh
+`HashMap<ClassId, Boolean>` to cache `tryResolve` results within recursive prefix splitting. Most type
+references are simple names (no dots) that don't benefit from this cache, but still paid the HashMap
+allocation cost (~128 bytes per HashMap). For a file with 200 type references, this meant 200 short-lived
+HashMaps with most of them unnecessary.
+
+**Fix** (`JavaResolutionContext.kt`): Moved HashMap creation inside the `name.contains('.')` branch.
+Simple names now call `resolveSimpleNameToClassId` directly with the raw `tryResolve` callback,
+eliminating ~80% of HashMap allocations.
+
+### Optimization 7 — Leverage cached `classifier` in `classifierQualifiedName`
+
+**Problem** (PERFORMANCE_REVIEW.md §2.2): `classifierQualifiedName` independently called
+`findTypeParameter(parts[0])` and `findLocalClass(Name.identifier(parts[0]))`, duplicating the same
+lookups that `classifier` already performs and caches. Since both are `@Volatile`-cached, the second
+property could simply read the first.
+
+**Fix** (`JavaTypeOverAst.kt`): `computeClassifierQualifiedName()` now reads the cached `classifier`
+property first. If it resolved to a `JavaTypeParameter`, returns `rawTypeName`. If it resolved to a
+`JavaClass`, returns its FQN. Only falls through to import-based resolution when `classifier` is null
+(external/cross-file classes).
+
+### Optimization 8 — Replace 16 `by lazy(PUBLICATION)` delegates on `JavaClassOverAst`
+
+**Problem** (PERFORMANCE_REVIEW.md §1.1): `JavaClassOverAst` had 16 lazy delegates (512 bytes per instance).
+With ~5,000 class instances in a large project, this is ~2.5 MB of pure delegate overhead.
+
+**Fix** (`JavaClassOverAst.kt`): Replaced all 16 delegates with `@Volatile`-backed manual caching:
+- Reference types (`memberResolutionContext`, `typeParameters`, `supertypes`, `innerClassNames`,
+  `methods`, `fields`, `constructors`, `recordComponents`, `annotations`): `@Volatile T? = null`
+- Nullable results (`fqName`, `modifierList`): `@Volatile Any? = NOT_COMPUTED` sentinel
+- Booleans (`isInterface`, `isAnnotationType`, `isEnum`, `isRecord`, `isSealed`): `@Volatile Int`
+  tri-state (-1/0/1)
+
+### Optimization 9 — Replace 15 `by lazy(PUBLICATION)` delegates on JavaMemberOverAst hierarchy
+
+**Problem** (PERFORMANCE_REVIEW.md §1.1): `JavaMethodOverAst` (~50K instances, 5 delegates = 160 bytes),
+`JavaFieldOverAst` (~30K instances, 5 delegates = 160 bytes), `JavaConstructorOverAst` (3 delegates),
+and the shared `JavaMemberOverAst` base (2 delegates) together accounted for ~13 MB of delegate overhead.
+
+**Fix** (`JavaMemberOverAst.kt`): Same `@Volatile` pattern applied across the hierarchy:
+- `JavaMemberOverAst`: `modifierList` (sentinel), `annotations` (null)
+- `JavaFieldOverAst`: `isEnumEntry` (tri-state), `leadingFieldNode` (sentinel), `effectiveModifierList`
+  (sentinel), `annotations` (null), `type` (null)
+- `JavaMethodOverAst`: `typeParameters`, `resolutionContext`, `valueParameters`, `returnType` (null),
+  `modifierList` (sentinel)
+- `JavaConstructorOverAst`: `typeParameters`, `resolutionContext`, `valueParameters` (null)
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaResolutionContext.kt` | Skip HashMap for simple names in `resolve()` |
+| `JavaTypeOverAst.kt` | `classifierQualifiedName` leverages cached `classifier` |
+| `JavaClassOverAst.kt` | 16 lazy delegates → `@Volatile` manual caching |
+| `JavaMemberOverAst.kt` | 15 lazy delegates → `@Volatile` manual caching across 4 classes |
+
+### Estimated Memory Impact
+
+| Class | Instances | Old overhead | New overhead | Savings |
+|-------|-----------|-------------|-------------|---------|
+| `JavaClassOverAst` | 5K | 512 B/inst | ~128 B/inst | ~1.9 MB |
+| `JavaMethodOverAst` | 50K | 160 B/inst | ~40 B/inst | ~6 MB |
+| `JavaFieldOverAst` | 30K | 160 B/inst | ~48 B/inst | ~3.4 MB |
+| `JavaConstructorOverAst` | 5K | 96 B/inst | ~24 B/inst | ~0.4 MB |
+| `JavaMemberOverAst` (base) | 85K | 64 B/inst | ~16 B/inst | ~4 MB |
+| **Total** | | | | **~15.7 MB** |
+
+Combined with Round 1's ~36 MB savings on `JavaClassifierTypeOverAst`, total delegate overhead
+reduction is ~52 MB for large projects.
+
+### Test Results
+
+All 4 optimizations verified independently: `./gradlew :kotlin-java-direct:test` → **BUILD SUCCESSFUL** after each change.
 
 ---
 
