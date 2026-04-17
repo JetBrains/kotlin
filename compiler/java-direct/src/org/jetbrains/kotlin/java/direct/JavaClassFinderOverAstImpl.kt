@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -16,12 +17,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.isRegularFile
 
 /**
  * Size threshold (in bytes) for eager vs. lightweight indexing.
@@ -87,14 +84,15 @@ private fun stripLineComments(line: String, inBlockComment: Boolean): Pair<Strin
  *
  * This is much cheaper than full parsing and is used for indexing large files.
  */
-internal fun extractFileInfoLightweight(path: Path): LightweightFileInfo? {
+internal fun extractFileInfoLightweight(file: VirtualFile, reader: JavaSourceFileReader): LightweightFileInfo? {
     var packageName: String? = null
     val classNames = mutableSetOf<String>()
     var inBlockComment = false
     var braceDepth = 0
 
-    Files.newBufferedReader(path, StandardCharsets.UTF_8).use { reader ->
-        var rawLine = reader.readLine()
+    val lineReader = reader.openLineReader(file) ?: return null
+    lineReader.use { br ->
+        var rawLine = br.readLine()
         while (rawLine != null) {
             val (effective, stillInComment) = stripLineComments(rawLine, inBlockComment)
             inBlockComment = stillInComment
@@ -121,7 +119,7 @@ internal fun extractFileInfoLightweight(path: Path): LightweightFileInfo? {
                 }
             }
 
-            rawLine = reader.readLine()
+            rawLine = br.readLine()
         }
     }
 
@@ -145,12 +143,13 @@ internal fun extractFileInfoLightweight(path: Path): LightweightFileInfo? {
  *   classes in the file are cached to avoid re-parsing for sibling classes.
  */
 class JavaClassFinderOverAstImpl(
-    private val sourceRoots: List<Path>,
+    private val sourceRoots: List<VirtualFile>,
     private val debugLogFilePath: Path? = null,
+    private val sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder {
 
     private data class FileEntry(
-        val path: Path,
+        val file: VirtualFile,
         val packageFqName: FqName,
         val topLevelClassNames: Set<String>,
     )
@@ -248,7 +247,7 @@ class JavaClassFinderOverAstImpl(
         return byName.entries
             .filter { (name, fileEntries) ->
                 fileEntries.any { entry ->
-                    entry.path.fileName.toString().removeSuffix(".java") == name
+                    entry.file.name.removeSuffix(".java") == name
                 }
             }
             .map { it.key }
@@ -258,29 +257,23 @@ class JavaClassFinderOverAstImpl(
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
 
     private fun buildIndex() {
-        for (root in sourceRoots) {
-            if (!Files.exists(root)) continue
-            Files.walk(root).use { stream ->
-                stream.filter { it.isRegularFile() && it.fileName.toString().endsWith(".java") }
-                    .forEach { path ->
-                        // Special handling for package-info.java — extract package-level annotations
-                        if (path.fileName.toString() == "package-info.java") {
-                            indexPackageInfo(path)
-                            return@forEach
-                        }
-                        val entry = tryBuildFileEntry(path) ?: return@forEach
-                        val byName = index.getOrPut(entry.packageFqName) { ConcurrentHashMap() }
-                        for (name in entry.topLevelClassNames) {
-                            val list = byName.getOrPut(name) { mutableListOf() }
-                            list.add(entry)
-                        }
-                    }
+        for (file in sourceFileReader.walkSourceRoots(sourceRoots)) {
+            // Special handling for package-info.java — extract package-level annotations
+            if (file.name == "package-info.java") {
+                indexPackageInfo(file)
+                continue
+            }
+            val entry = tryBuildFileEntry(file) ?: continue
+            val byName = index.getOrPut(entry.packageFqName) { ConcurrentHashMap() }
+            for (name in entry.topLevelClassNames) {
+                val list = byName.getOrPut(name) { mutableListOf() }
+                list.add(entry)
             }
         }
     }
 
-    private fun indexPackageInfo(path: Path) {
-        val source = tryReadFile(path) ?: return
+    private fun indexPackageInfo(file: VirtualFile) {
+        val source = sourceFileReader.readFileContent(file) ?: return
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
 
@@ -309,17 +302,12 @@ class JavaClassFinderOverAstImpl(
     internal fun getPackageAnnotations(packageFqName: FqName): List<JavaAnnotation> =
         packageAnnotationNodes[packageFqName] ?: emptyList()
 
-    private fun tryBuildFileEntry(path: Path): FileEntry? {
-        val fileSize = try {
-            Files.size(path)
-        } catch (_: IOException) {
-            return null
-        }
-
+    private fun tryBuildFileEntry(file: VirtualFile): FileEntry? {
+        val fileSize = file.length
         return if (fileSize <= SMALL_FILE_SIZE_THRESHOLD) {
-            tryBuildFileEntryWithFullParse(path)
+            tryBuildFileEntryWithFullParse(file)
         } else {
-            tryBuildFileEntryLightweight(path)
+            tryBuildFileEntryLightweight(file)
         }
     }
 
@@ -327,8 +315,8 @@ class JavaClassFinderOverAstImpl(
      * Small-file path: parse the file fully and cache all [JavaClassOverAst] instances
      * so that subsequent [findClass] calls are pure cache hits.
      */
-    private fun tryBuildFileEntryWithFullParse(path: Path): FileEntry? {
-        val source = tryReadFile(path) ?: return null
+    private fun tryBuildFileEntryWithFullParse(file: VirtualFile): FileEntry? {
+        val source = sourceFileReader.readFileContent(file) ?: return null
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
 
@@ -342,7 +330,7 @@ class JavaClassFinderOverAstImpl(
 
         if (classNames.isEmpty()) return null
 
-        val fileBaseName = path.fileName.toString().removeSuffix(".java")
+        val fileBaseName = file.name.removeSuffix(".java")
         if (!classNames.contains(fileBaseName)) return null
 
         // Eagerly create and cache all top-level JavaClass instances.
@@ -360,7 +348,7 @@ class JavaClassFinderOverAstImpl(
             }
         }
 
-        return FileEntry(path, packageFqName, classNames)
+        return FileEntry(file, packageFqName, classNames)
     }
 
     /**
@@ -368,18 +356,18 @@ class JavaClassFinderOverAstImpl(
      * the file line by line without invoking the parser.
      * The full parse is deferred to [parseTopLevelClassFromFile] on first access.
      */
-    private fun tryBuildFileEntryLightweight(path: Path): FileEntry? {
-        val info = extractFileInfoLightweight(path) ?: return null
+    private fun tryBuildFileEntryLightweight(file: VirtualFile): FileEntry? {
+        val info = extractFileInfoLightweight(file, sourceFileReader) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
 
         // Only create an entry when the file's base name matches at least one declared class.
         // This matches PSI's behavior per KT-4455: a file like "E.java" that only declares
         // class "F" (no class "E") is not indexed — the classes it contains are not accessible
         // to the compiler unless they appear as return/parameter types within the same .java file.
-        val fileBaseName = path.fileName.toString().removeSuffix(".java")
+        val fileBaseName = file.name.removeSuffix(".java")
         if (!info.topLevelClassNames.contains(fileBaseName)) return null
 
-        return FileEntry(path, packageFqName, info.topLevelClassNames)
+        return FileEntry(file, packageFqName, info.topLevelClassNames)
     }
 
     private fun parseTopLevelClassFromFile(file: FileEntry, simpleName: String): JavaClassOverAst? {
@@ -392,7 +380,7 @@ class JavaClassFinderOverAstImpl(
         val classId = ClassId(file.packageFqName, FqName(simpleName), isLocal = false)
         classCache[classId]?.let { return it as? JavaClassOverAst }
 
-        val source = tryReadFile(file.path) ?: return null
+        val source = sourceFileReader.readFileContent(file.file) ?: return null
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
         val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
@@ -415,12 +403,6 @@ class JavaClassFinderOverAstImpl(
         return classCache[classId] as? JavaClassOverAst
     }
 
-    // TODO: check the uses; the io errors shoulbe probably propagated
-    private fun tryReadFile(path: Path): CharSequence? = try {
-        path.toFile().readText()
-    } catch (_: IOException) {
-        null
-    }
 
     internal fun classesInPackage(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val byName = index[fqName] ?: return emptyList()
@@ -482,7 +464,7 @@ class JavaClassFinderOverAstImpl(
             if (files.isEmpty()) return@getOrPut emptyList()
 
             val file = files.first()
-            val source = tryReadFile(file.path) ?: return@getOrPut emptyList()
+            val source = sourceFileReader.readFileContent(file.file) ?: return@getOrPut emptyList()
             val builder = parseJavaToSyntaxTreeBuilder(source, 0)
             val root = buildSyntaxTree(builder, source)
 
@@ -631,7 +613,7 @@ class JavaClassFinderOverAstImpl(
         if (files.isEmpty()) return emptySet()
 
         val file = files.first()
-        val source = tryReadFile(file.path) ?: return emptySet()
+        val source = sourceFileReader.readFileContent(file.file) ?: return emptySet()
         val builder = parseJavaToSyntaxTreeBuilder(source, 0)
         val root = buildSyntaxTree(builder, source)
 

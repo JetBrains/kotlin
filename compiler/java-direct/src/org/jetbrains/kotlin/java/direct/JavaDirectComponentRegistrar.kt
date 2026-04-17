@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -12,7 +14,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import java.io.File
 import java.nio.file.Paths
 
 class JavaDirectComponentRegistrar : CompilerPluginRegistrar() {
@@ -30,13 +31,13 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
     override fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
-        findLocalFile: (String) -> File?,
+        localFs: VirtualFileSystem,
+        findLocalFile: (String) -> VirtualFile?,
         defaultFinderProvider: (() -> JavaClassFinder)?,
     ): JavaClassFinder {
-        // Collect source roots (directories only)
-        val roots = configuration.javaSourceRoots
+        // Collect source roots as VirtualFiles so all subsequent reads/walks go through VFS caches.
+        val roots: List<VirtualFile> = configuration.javaSourceRoots
             .mapNotNull(findLocalFile)
-            .map { it.canonicalFile.toPath() }
 
         // For library session (no Java sources), just use the default finder
         if (roots.isEmpty()) {

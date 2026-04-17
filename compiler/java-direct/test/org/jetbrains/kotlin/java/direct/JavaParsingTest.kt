@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.name.ClassId
@@ -14,6 +16,17 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.writeText
+
+/**
+ * Shared local VFS used by the tests below to convert `@TempDir` paths into [VirtualFile]s
+ * that `JavaClassFinderOverAstImpl` and `extractFileInfoLightweight` now consume. The instance
+ * is stateless (no VFS refresh) so reusing it across tests is safe.
+ */
+private val testLocalFs = KotlinLocalFileSystem()
+
+private fun Path.toVirtualFile(): VirtualFile =
+    testLocalFs.findFileByNioFile(this)
+        ?: error("Could not obtain VirtualFile for path: $this (does it exist?)")
 
 class JavaParsingTest {
 
@@ -318,7 +331,7 @@ class JavaParsingTest {
         """.trimIndent())
 
         // Create JavaClassFinder with this source root
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Test package with classes - should return class names
         val comExampleClasses = finder.knownClassNamesInPackage(FqName("com.example"))
@@ -609,7 +622,7 @@ class JavaParsingTest {
                 }
             """.trimIndent())
 
-            val finder = JavaClassFinderOverAstImpl(listOf(helloFile))
+            val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toVirtualFile()))
 
             // Try to find example.Hello
             val classId = org.jetbrains.kotlin.name.ClassId(
@@ -1943,7 +1956,7 @@ class JavaParsingTest {
         """.trimIndent())
         
         // Create class finder with tempDir as source root
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
         
         // Verify NotNull.java is indexed
         val annotationPackageClasses = finder.knownClassNamesInPackage(FqName("org.jetbrains.annotations"))
@@ -2039,7 +2052,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "com.example") { "Expected package 'com.example', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Foo")) { "Expected {Foo}, got ${info.topLevelClassNames}" }
@@ -2052,7 +2065,7 @@ class JavaParsingTest {
             public class Bar {}
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == null) { "Expected null package (default), got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Bar")) { "Expected {Bar}, got ${info.topLevelClassNames}" }
@@ -2070,7 +2083,7 @@ class JavaParsingTest {
             enum Color { RED, GREEN, BLUE }
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "test") { "Expected package 'test', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Multi", "Helper", "Service", "Color")) {
@@ -2095,7 +2108,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.topLevelClassNames == setOf("Comments")) {
             "Expected only {Comments}, got ${info.topLevelClassNames}"
@@ -2115,7 +2128,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.topLevelClassNames == setOf("Outer")) {
             "Expected only {Outer}, got ${info.topLevelClassNames}"
@@ -2135,7 +2148,7 @@ class JavaParsingTest {
             public class BlockComment {}
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.topLevelClassNames == setOf("BlockComment")) {
             "Expected only {BlockComment}, got ${info.topLevelClassNames}"
@@ -2151,7 +2164,7 @@ class JavaParsingTest {
             public record Point(int x, int y) {}
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "geometry") { "Expected package 'geometry', got '${info.packageName}'" }
         assert(info.topLevelClassNames == setOf("Point")) { "Expected {Point}, got ${info.topLevelClassNames}" }
@@ -2165,7 +2178,7 @@ class JavaParsingTest {
             // Just a file with no classes
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info == null) { "Expected null for file with no class declarations" }
     }
 
@@ -2182,7 +2195,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // findClass should succeed (class was cached during indexing for small files)
         val classId = ClassId(FqName("com.example"), Name.identifier("Small"))
@@ -2205,7 +2218,7 @@ class JavaParsingTest {
             class Helper {}
         """.trimIndent())
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Both classes should be findable after a single parse during indexing
         val mainId = ClassId(FqName("test"), Name.identifier("Main"))
@@ -2242,7 +2255,7 @@ class JavaParsingTest {
 
         pkgDir.resolve("Large.java").writeText(largeContent)
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Class should be indexed and findable despite using lightweight scanning
         val classId = ClassId(FqName("com.big"), Name.identifier("Large"))
@@ -2273,7 +2286,7 @@ class JavaParsingTest {
 
         pkgDir.resolve("BigMain.java").writeText(largeContent)
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // First access triggers full parse, which should cache both classes
         val mainId = ClassId(FqName("test"), Name.identifier("BigMain"))
@@ -2302,7 +2315,7 @@ class JavaParsingTest {
             public class Derived extends Base {}
         """.trimIndent())
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Access the class to populate cache (small files are already cached)
         val derivedId = ClassId(FqName("test"), Name.identifier("Derived"))
@@ -2333,7 +2346,7 @@ class JavaParsingTest {
             public class Child extends Parent {}
         """.trimIndent())
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Access both classes to populate cache
         val parentId = ClassId(FqName("test"), Name.identifier("Parent"))
@@ -2446,7 +2459,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Verify inherited inner class detection works cross-file
         val simpleDescId = ClassId(FqName("test"), Name.identifier("SimpleFunctionDescriptor"))
@@ -2495,7 +2508,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val finder = JavaClassFinderOverAstImpl(listOf(tempDir))
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // Verify inherited inner class detection works cross-package
         val funcDescImplId = ClassId(FqName("base.impl"), Name.identifier("FunctionDescriptorImpl"))
@@ -2550,7 +2563,7 @@ class JavaParsingTest {
             }
         """.trimIndent())
 
-        val info = extractFileInfoLightweight(file)
+        val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
         assert(info!!.packageName == "annotations") { "Expected 'annotations', got '${info.packageName}'" }
         // @interface declares a type named MyAnnotation — the scanner extracts "MyAnnotation" from "interface MyAnnotation"

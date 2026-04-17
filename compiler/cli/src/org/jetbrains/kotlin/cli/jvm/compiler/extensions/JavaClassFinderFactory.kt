@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.extensions
 
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import java.io.File
 
 interface JavaClassFinderFactory {
 
@@ -23,7 +24,10 @@ interface JavaClassFinderFactory {
      *
      * @param scope The search scope for finding Java classes
      * @param annotationProvider Provider for Java annotations
-     * @param findLocalFile Function to resolve file paths to File objects
+     * @param localFs The local [VirtualFileSystem] used by the project; implementations can use
+     *        it directly for subsequent lookups so reads benefit from the VFS caching layer.
+     * @param findLocalFile Resolves a path string to a [VirtualFile] within the project's
+     *        search scope, or `null` if the path is outside the scope / does not exist.
      * @param defaultFinderProvider Optional provider for the platform's default JavaClassFinder.
      *        Can be used to create a hybrid finder that combines custom source-based lookup
      *        with the platform's binary class lookup. Returns null if no default is available.
@@ -31,7 +35,8 @@ interface JavaClassFinderFactory {
     fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
-        findLocalFile: (String) -> File?,
+        localFs: VirtualFileSystem,
+        findLocalFile: (String) -> VirtualFile?,
         defaultFinderProvider: (() -> JavaClassFinder)? = null,
     ): JavaClassFinder
 }

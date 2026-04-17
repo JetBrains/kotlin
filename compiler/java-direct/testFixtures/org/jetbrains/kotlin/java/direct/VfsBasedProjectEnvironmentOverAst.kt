@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -28,8 +30,15 @@ class VfsBasedProjectEnvironmentOverAst(
     fileSystem: VirtualFileSystem,
     private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
     private val librariesScope: AbstractProjectFileSearchScope,
-    private val javaSourceRoots: List<Path>,
+    javaSourceRoots: List<Path>,
 ) : VfsBasedProjectEnvironment(project, configuration.extensionsStorage, fileSystem, getPackagePartProviderFn) {
+
+    // Resolve the source roots through the local VFS once, so the class finder and VFS caches
+    // share the same VirtualFile instances.
+    private val javaSourceRootVFiles: List<VirtualFile> = run {
+        val localFs = KotlinLocalFileSystem()
+        javaSourceRoots.mapNotNull { localFs.findFileByNioFile(it) }
+    }
 
     override fun getFirJavaFacade(
         firSession: FirSession,
@@ -41,7 +50,7 @@ class VfsBasedProjectEnvironmentOverAst(
             return super.getFirJavaFacade(firSession, baseModuleData, fileSearchScope)
         }
 
-        val javaClassFinder = JavaClassFinderOverAstImpl(javaSourceRoots)
+        val javaClassFinder = JavaClassFinderOverAstImpl(javaSourceRootVFiles)
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
     }
 }

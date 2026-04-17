@@ -2,7 +2,82 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 1.4)
+**Last Updated**: 2026-04-17 (refactoring step 1.5 — revised to use `VirtualFileSystem`)
+
+---
+
+## Refactoring Step 1.5 (follow-up): Remove IO try/catch and logging - 2026-04-17
+
+Per review feedback, IO error handling belongs at a higher compiler level — the reader should not
+catch and log `IOException` itself. Removed all `try`/`catch` blocks from
+`DefaultJavaSourceFileReader` (`readFileContent`, `openLineReader`, `walkSourceRoots.walk`) along
+with the now-unused `java.util.logging.Logger`/`Level` and `java.io.IOException` imports. The
+reader still distinguishes "not a readable regular file" (silent `null` for invalid/directory) from
+a real read attempt; any `IOException` from the VFS now propagates to the caller. Tests green:
+baseline 1168/1168 box + 1454/1456 phased preserved.
+
+---
+
+## Refactoring Step 1.5 (revision): File I/O via `VirtualFileSystem` - 2026-04-17
+
+### Why a revision
+The first attempt at Step 1.5 introduced `JavaSourceFileReader` over `java.nio.file.Path` and used `Files.walk` / `path.toFile().readText()`. Review feedback: this ignores the `localFs: VirtualFileSystem` already constructed in `org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment.getFirJavaFacade`, and so bypasses the VFS caching layer that the rest of the compiler relies on. The correct seam is to thread `VirtualFile`/`VirtualFileSystem` all the way through the `JavaClassFinderFactory` → `JavaClassFinderOverAstImpl` chain, including the initial source-roots handling.
+
+### Changes
+- **`JavaClassFinderFactory.createJavaClassFinder`** (interface in `compiler/cli`): signature gains `localFs: VirtualFileSystem` and `findLocalFile` changes from `(String) -> File?` to `(String) -> VirtualFile?`. This lets implementations both (a) resolve the configured source-root paths to `VirtualFile`s with the project's scope filter applied, and (b) reuse the same `VirtualFileSystem` for any subsequent lookups so reads benefit from VFS caching.
+- **`VfsBasedProjectEnvironment.getFirJavaFacade`**: passes `localFs` directly and simplifies the lambda to `{ localFs.findFileByPath(it)?.takeIf(psiSearchScope::contains) }` — no more `VirtualFile → path → File` round-trip.
+- **`JavaClassFinderOverAstFactory`** (in `JavaDirectComponentRegistrar.kt`): the configured `javaSourceRoots` are now resolved via the injected `findLocalFile` directly to `List<VirtualFile>`; no `canonicalFile.toPath()` conversion.
+- **`JavaClassFinderOverAstImpl`**: `sourceRoots: List<Path>` → `List<VirtualFile>`, and `FileEntry.path: Path` → `FileEntry.file: VirtualFile`. All read sites (`indexPackageInfo`, `tryBuildFileEntryWithFullParse`, `parseTopLevelClassFromFile`, `getDirectSupertypes` slow path, `getInnerClassNames` slow path) now call `sourceFileReader.readFileContent(vf)`; file-size bucket uses `VirtualFile.length`; the `Files.walk` in `buildIndex` is replaced by `sourceFileReader.walkSourceRoots(roots)`, which recurses through `VirtualFile.children` (backed by `CoreLocalVirtualFile`'s cache). `debugLogFilePath: Path?` is kept as `Path` — it points to a debug artefact outside the project scope.
+- **`JavaSourceFileReader`**: rewritten around `VirtualFile`. Interface now declares `readFileContent(file: VirtualFile)`, `walkSourceRoots(roots: List<VirtualFile>)`, and `openLineReader(file: VirtualFile)` (for the lightweight scanner). `DefaultJavaSourceFileReader` uses `VirtualFile.contentsToByteArray()` and decodes with UTF-8 — **not** `VirtualFile.charset`, which indirects through `EncodingManager.getInstance()` and NPEs in environments without an IDE `Application`. This matches the legacy scanner (`Files.newBufferedReader(..., StandardCharsets.UTF_8)`) and javac's default. I/O errors are still logged at `Level.WARNING`; "not a regular file / invalid / directory" is silent `null`.
+- **`extractFileInfoLightweight`**: takes a `VirtualFile` plus a `JavaSourceFileReader` and obtains its line reader through the reader (so test fakes can swap it just like full reads).
+- **Tests**: `JavaParsingTest.kt` gained a shared `private val testLocalFs = KotlinLocalFileSystem()` + `Path.toVFile()` helper; all 11 `JavaClassFinderOverAstImpl(listOf(tempDir))` and 9 `extractFileInfoLightweight(file)` call-sites updated. The test fixture `VfsBasedProjectEnvironmentOverAst` resolves its `javaSourceRoots: List<Path>` to `List<VirtualFile>` once via `KotlinLocalFileSystem().findFileByNioFile(...)`.
+
+### Key learning — the charset trap
+`VirtualFile.charset` delegates to `EncodingRegistry.getInstance()` → `EncodingManager.getInstance()`, which dereferences the IntelliJ `Application`. Unit tests for this module run without an `Application`, so the first test run NPE'd in `JavaParsingTest.testLightweightScannerDefaultPackage` etc. Fix: decode bytes from `VirtualFile.contentsToByteArray()` with `StandardCharsets.UTF_8` explicitly. For `.java` sources this matches what javac does by default and is consistent with the behavior before this refactor.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --no-configuration-cache --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines. Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix).
+
+### Design notes
+- **Why a `JavaSourceFileReader` at all (even with VFS)?** VFS gives caching, but the `java-direct` module still benefits from an injection seam: tests that don't want to populate a local directory can provide a fake reader, and a future `MessageCollector`-routing implementation can replace the default without touching call sites.
+- **`walkSourceRoots` uses recursion over `VirtualFile.children`** rather than `VfsUtilCore.visitChildrenRecursively` to keep the lazy `Sequence` semantics — `buildIndex` consumes the stream once and never materializes the full file list.
+
+---
+
+## Refactoring Step 1.5: File I/O via External Service & Error Swallowing Fix - 2026-04-17 (superseded)
+
+### Problem (from REFACTORING_PLAN.md)
+`JavaClassFinderOverAstImpl.kt` did its own filesystem I/O: `Files.walk()` in `buildIndex()` and a private `tryReadFile()` helper that silently swallowed `IOException` (with a `// TODO: ... shoulbe propagated` comment typo). Five call sites (`indexPackageInfo`, `tryBuildFileEntryWithFullParse`, `parseTopLevelClassFromFile`, `getDirectSupertypes`, `getInnerClassNames`) read source files through that swallow-all helper, meaning permission errors / encoding failures were indistinguishable from "file simply missing".
+
+### Fix
+Introduced a new collaborator `JavaSourceFileReader` (interface) with the default on-disk implementation `DefaultJavaSourceFileReader`:
+
+- `readFileContent(path)` — distinguishes "not found / not a regular file" (silent `null`) from "exists but unreadable" (logs a `Level.WARNING` via `java.util.logging` and returns `null`). Both `IOException` and `SecurityException` are caught and logged with the offending path.
+- `walkSourceRoots(roots)` — lazy `Sequence<Path>` yielding `.java` files under each root; non-existent roots are skipped silently, but walk failures are logged and the root is skipped (never swallowed silently).
+
+`JavaClassFinderOverAstImpl`:
+- Added a third constructor parameter `sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader` so existing call sites (tests + `JavaDirectComponentRegistrar`) need no changes, and tests can inject an in-memory/virtual-FS reader in the future.
+- Replaced all five `tryReadFile(...)` sites with `sourceFileReader.readFileContent(...)` and removed the private helper along with its `shoulbe` TODO.
+- Replaced the `Files.walk(root).use { ... forEach }` block in `buildIndex()` with a single `for (path in sourceFileReader.walkSourceRoots(sourceRoots))` loop. The package-info.java branch and the index-building logic are unchanged.
+- Dropped the now-unused `kotlin.io.path.isRegularFile` import; `Files` / `IOException` are still required by `extractFileInfoLightweight` (uses `Files.newBufferedReader` and line-by-line scanning — intentionally kept out of the reader abstraction since it's a streaming pre-parse scan, not a "read whole file" operation) and by `tryBuildFileEntry`'s `Files.size(path)` size-bucket check.
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaSourceFileReader.kt` (new, 102 LOC)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt` (5 read sites, 1 walk site, 1 constructor param, 1 TODO removed, 1 unused import removed)
+
+### Design Notes
+- **Why `java.util.logging`?** The compiler's `MessageCollector` is oriented at user-facing source diagnostics; a missing/unreadable `.java` file under a configured source root is an infrastructural problem (build setup) rather than a source-code diagnostic. `j.u.l` surfaces the warning in compiler logs without pulling in a new dependency. If the team later wants to route these through `MessageCollector`, a second `JavaSourceFileReader` impl can be wired via the registrar — that is exactly why the abstraction was extracted.
+- **Why `CharSequence` instead of `String`?** Matches the KMP parser signature (`parseJavaToSyntaxTreeBuilder(source: CharSequence, ...)`) — avoids forcing future impls to materialize a full `String`.
+- **`JavaDirectComponentRegistrar`** was left untouched: the default-argument constructor preserves behavior, and Step 1.7 (not 1.5) is the one that revisits the registrar.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --no-configuration-cache --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines.
+- Baseline preserved from Step 1.3/1.4: 1168/1168 box, 1454/1456 phased (2 known won't-fix).
+
+### Key Learnings
+- When extracting I/O into a collaborator, keep the "not found" vs. "unreadable" distinction at the interface level — it's cheap to encode (pre-check existence before the `try`) and makes the contract obvious to every caller.
+- Stream interop: `java.util.stream.Stream<Path>.toList()` is **not** Kotlin's `toList()`; in Kotlin 1.x we iterate manually (`forEach { ... }` into an `ArrayList`) rather than depending on `kotlin.streams.toList` which was experimental in the target Kotlin version for this module.
+- Default-argument constructor params are a low-risk way to introduce a new dependency into a class with many existing callers — no call site churn, and tests can opt in to a custom impl when needed.
 
 ---
 
