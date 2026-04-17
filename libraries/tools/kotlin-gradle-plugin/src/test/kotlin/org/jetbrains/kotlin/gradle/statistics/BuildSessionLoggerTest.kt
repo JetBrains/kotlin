@@ -169,7 +169,7 @@ class BuildSessionLoggerTest {
     }
 
     @Test
-    fun testSaveAndReadAlªlMetrics() {
+    fun testSaveAndReadAllMetrics() {
         val logger = BuildSessionLogger(statsFolder)
         logger.startBuildSession("test")
         for (metric in StringMetrics.entries) {
