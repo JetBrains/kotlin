@@ -2,7 +2,93 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring steps 3.1–3.4 — code quality improvements: extractImports readability, fragile-invariant tests, TODO cleanup, isAnnotationType robustness)
+**Last Updated**: 2026-04-17 (performance optimizations: allocation reduction on hot model classes)
+
+---
+
+## Performance Optimizations: Allocation Reduction on Hot Paths — 2026-04-17
+
+### Overview
+
+Performance review identified that java-direct is ~20% slower than PSI-based approach on large pipeline
+tests. Root causes include excessive lazy delegate overhead, redundant string splitting, uncached annotations,
+and O(n²) string re-joining in resolution. This iteration implements 5 targeted quick-win optimizations.
+
+Full analysis in `implDocs/PERFORMANCE_REVIEW.md`.
+
+### Optimization 1 — Cache `rawTypeNameParts` in `JavaClassifierTypeOverAst`
+
+**Problem**: `rawTypeName.split('.')` was called independently in 4 lazy properties (`classifier`,
+`isTriviallyFlexibleHint`, `classifierQualifiedName`, `isResolved`), producing 4 array allocations
+per type reference for the same string.
+
+**Fix** (`JavaTypeOverAst.kt`): Added a `rawTypeNameParts` cached property that splits once. All 4
+consumers now read the cached result.
+
+### Optimization 2 — Cache `annotations` in `JavaTypeOverAst`
+
+**Problem**: `annotations` was a computed `get()` property that created new `JavaAnnotationOverAst`
+wrapper objects on every access. FIR accesses annotations multiple times per type (nullability,
+deprecation, etc.), multiplying allocations.
+
+**Fix** (`JavaTypeOverAst.kt`): Converted to `by lazy(PUBLICATION)` so annotation wrappers are
+created once and reused.
+
+### Optimization 3 — Pre-compute file basename in `FileEntry`
+
+**Problem**: `knownClassNamesInPackage` called `entry.file.name.removeSuffix(".java")` per file entry
+per iteration, creating a new string allocation each time.
+
+**Fix** (`JavaClassFinderOverAstImpl.kt`): Added `fileBaseName` field to `FileEntry` data class with
+default computed from `file.name`. The `knownClassNamesInPackage` filter now uses the pre-computed value.
+
+### Optimization 4 — Eliminate `joinToString(".")` in recursive nested class resolution
+
+**Problem**: `resolveNestedClassToClassId` recursively called itself with `outerParts.joinToString(".")`,
+which the callee immediately re-split with `name.split('.')`. For a name like `"a.b.c.D.E"`, this
+produced O(n²) string allocations across recursion levels. Same pattern in
+`resolveNestedClassToClassIdWithoutInheritance`.
+
+**Fix** (`JavaResolutionContext.kt`): Introduced `resolveNestedClassToClassIdFromParts` and
+`resolveNestedClassToClassIdFromPartsWithoutInheritance` that accept `List<String>` directly.
+The public entry points split once; recursive calls pass `subList` views (zero-copy) without
+re-joining.
+
+### Optimization 5 — Replace `by lazy(PUBLICATION)` with `@Volatile` on `JavaClassifierTypeOverAst`
+
+**Problem**: `JavaClassifierTypeOverAst` is the most-instantiated model class (one per type reference,
+200K+ in large projects). It had 8 `by lazy(PUBLICATION)` delegates, each allocating ~32 bytes
+(`SafePublicationLazyImpl` wrapper + captured lambda) = ~256 bytes per instance of pure delegate
+overhead, totalling ~50 MB for 200K instances.
+
+**Fix** (`JavaTypeOverAst.kt`): Replaced all 8 lazy delegates with manual `@Volatile`-backed fields
+using the same pattern as Step 3.6 for `JavaSyntaxNode`:
+- `rawTypeName`, `rawTypeNameParts`: `@Volatile String?` / `@Volatile List<String>?`
+- `classifier`: `@Volatile Any?` with `CLASSIFIER_NOT_COMPUTED` sentinel (null is a valid result)
+- `isTriviallyFlexibleHint`, `isRaw`: `@Volatile Int` tri-state (-1/0/1)
+- `classifierQualifiedName`: `@Volatile String?` (non-null result, null = not computed)
+- `typeArguments`, `containingClassIds`: `@Volatile List<...>?`
+
+Per-instance overhead drops from ~256 bytes (8 delegates) to ~72 bytes (9 volatile reference/int slots),
+a ~184 bytes/instance saving. At 200K+ instances, this is ~36 MB of heap reduction.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaTypeOverAst.kt` | Cached `rawTypeNameParts`; cached `annotations`; replaced 8 lazy delegates with `@Volatile` fields |
+| `JavaClassFinderOverAstImpl.kt` | Pre-computed `fileBaseName` in `FileEntry`; used in `knownClassNamesInPackage` |
+| `JavaResolutionContext.kt` | Split recursive resolution into `*FromParts` variants avoiding `joinToString` |
+
+### Test Results
+
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED`. Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+
+- The `by lazy(PUBLICATION)` → `@Volatile` migration pattern from Step 3.6 applies beyond `JavaSyntaxNode`. Any model class instantiated in the thousands or more benefits from eliminating delegate wrappers, especially when the class has many lazy properties.
+- Caching intermediate results (`rawTypeNameParts`) that multiple lazy properties depend on is a simple, high-value win — 4 independent `split('.')` calls on the same string is easy to miss in review because each lives in its own lazy block.
+- For recursive resolution methods that split/join strings, refactoring to pass `List<String>` + `subList()` views eliminates O(n²) allocation without changing semantics — `subList` is a zero-copy view.
 
 ---
 

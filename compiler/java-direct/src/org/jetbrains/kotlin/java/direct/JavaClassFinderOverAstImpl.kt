@@ -54,6 +54,8 @@ class JavaClassFinderOverAstImpl(
         val file: VirtualFile,
         val packageFqName: FqName,
         val topLevelClassNames: Set<String>,
+        /** Pre-computed `file.name.removeSuffix(".java")` to avoid repeated allocation in [knownClassNamesInPackage]. */
+        val fileBaseName: String = file.name.removeSuffix(".java"),
     )
 
     // package -> className -> list of files that declare such class
@@ -169,9 +171,7 @@ class JavaClassFinderOverAstImpl(
         // java-direct bug, so the fix belongs in a separate task tracked by the issue.
         return byName.entries
             .filter { (name, fileEntries) ->
-                fileEntries.any { entry ->
-                    entry.file.name.removeSuffix(".java") == name
-                }
+                fileEntries.any { entry -> entry.fileBaseName == name }
             }
             .map { it.key }
             .toSet()

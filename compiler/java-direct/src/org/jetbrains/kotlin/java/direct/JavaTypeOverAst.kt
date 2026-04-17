@@ -25,18 +25,19 @@ abstract class JavaTypeOverAst(
     // These need callback-based filtering since they may or may not be TYPE_USE.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
-    override val annotations: Collection<JavaAnnotation>
-        get() {
-            val modifierListAnnotations =
-                node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-                    ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-                    ?: emptyList()
+    // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
+    // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
+    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val modifierListAnnotations =
+            node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
+                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
+                ?: emptyList()
 
-            val directAnnotations = node.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, resolutionContext) }
+        val directAnnotations = node.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
+            .map { JavaAnnotationOverAst(it, resolutionContext) }
 
-            return memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
-        }
+        memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
+    }
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
         // Type-position annotations (from the type node itself) are TYPE_USE by syntax.
@@ -74,13 +75,37 @@ class JavaClassifierTypeOverAst(
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
 
-    private val rawTypeName: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        // Extract the type name from AST structure, excluding annotations.
-        // For "java.util.List" → collect IDENTIFIERs: ["java", "util", "List"]
-        // For "@NotNull Object" → skip ANNOTATION, get IDENTIFIER: "Object"
-        // For "Outer<T>.Inner" → traverse JAVA_CODE_REFERENCEs recursively
-        extractTypeName(node)
-    }
+    // Performance: manual @Volatile fields replace `by lazy(PUBLICATION)` delegates on this class.
+    // JavaClassifierTypeOverAst is one of the most-instantiated model classes (one per type reference,
+    // 200K+ in large projects). Each lazy delegate allocates ~32 bytes (SafePublicationLazyImpl wrapper
+    // + captured lambda), totalling ~256 bytes per instance for 8 delegates. The manual @Volatile
+    // pattern preserves identical safe-publication JMM semantics at zero per-instance overhead beyond
+    // the reference slots themselves. Same technique as Step 3.6 for JavaSyntaxNode.
+
+    @Volatile private var _rawTypeName: String? = null
+
+    private val rawTypeName: String
+        get() {
+            _rawTypeName?.let { return it }
+            val computed = extractTypeName(node)
+            _rawTypeName = computed
+            return computed
+        }
+
+    @Volatile private var _rawTypeNameParts: List<String>? = null
+
+    /**
+     * Cached split of [rawTypeName] on '.'. Eliminates redundant [String.split] allocations —
+     * [classifier], [isTriviallyFlexibleHint], [classifierQualifiedName], and [isResolved]
+     * all share this single split result.
+     */
+    private val rawTypeNameParts: List<String>
+        get() {
+            _rawTypeNameParts?.let { return it }
+            val computed = rawTypeName.split('.')
+            _rawTypeNameParts = computed
+            return computed
+        }
 
     /**
      * Extracts type name from a JAVA_CODE_REFERENCE node, ignoring annotations and type arguments.
@@ -107,18 +132,34 @@ class JavaClassifierTypeOverAst(
         }
     }
 
-    override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val parts = rawTypeName.split('.')
+    // Sentinel for classifier: null is a valid result (unresolved external class), so we need
+    // a tri-state: not-computed / computed-null / computed-non-null.
+    @Volatile private var _classifier: Any? = CLASSIFIER_NOT_COMPUTED
+
+    override val classifier: JavaClassifier?
+        get() {
+            val cached = _classifier
+            if (cached !== CLASSIFIER_NOT_COMPUTED) {
+                @Suppress("UNCHECKED_CAST")
+                return cached as JavaClassifier?
+            }
+            val computed = computeClassifier()
+            _classifier = computed
+            return computed
+        }
+
+    private fun computeClassifier(): JavaClassifier? {
+        val parts = rawTypeNameParts
 
         if (parts.size == 1) {
             // Resolution order for simple names (matches Java scoping rules):
             // 1. OWN type parameters (method/class own — high priority, win over inner class names)
-            resolutionContext.findTypeParameter(parts[0])?.let { return@lazy it }
+            resolutionContext.findTypeParameter(parts[0])?.let { return it }
             // 2. Inner/local class names (shadow INHERITED outer type params)
             val localClass = resolutionContext.findLocalClass(Name.identifier(parts[0]))
-            if (localClass != null) return@lazy localClass
+            if (localClass != null) return localClass
             // 3. INHERITED type parameters from outer class (low priority — shadowed by inner classes)
-            resolutionContext.findInheritedTypeParameter(parts[0])?.let { return@lazy it }
+            resolutionContext.findInheritedTypeParameter(parts[0])?.let { return it }
         }
 
         // Multi-part names: navigate from base class through inner classes
@@ -127,10 +168,10 @@ class JavaClassifierTypeOverAst(
         if (current is JavaClass) {
             for (i in 1 until parts.size) {
                 current = (current as JavaClass).findInnerClass(Name.identifier(parts[i]))
-                    ?: return@lazy null
+                    ?: return null
             }
         }
-        current
+        return current
     }
 
     /**
@@ -145,34 +186,56 @@ class JavaClassifierTypeOverAst(
      * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
      * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
      */
-    override val isTriviallyFlexibleHint: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (classifier != null) return@lazy false // local lookup found it — handled by isTriviallyFlexible()
-        val parts = rawTypeName.split('.')
+    // -1 = not computed, 0 = false, 1 = true
+    @Volatile private var _isTriviallyFlexibleHint: Int = -1
+
+    override val isTriviallyFlexibleHint: Boolean
+        get() {
+            val cached = _isTriviallyFlexibleHint
+            if (cached >= 0) return cached != 0
+            val computed = computeIsTriviallyFlexibleHint()
+            _isTriviallyFlexibleHint = if (computed) 1 else 0
+            return computed
+        }
+
+    private fun computeIsTriviallyFlexibleHint(): Boolean {
+        if (classifier != null) return false // local lookup found it — handled by isTriviallyFlexible()
+        val parts = rawTypeNameParts
 
         // Cross-file Java source class (same module, different file)
-        if (parts.size == 1 && resolutionContext.isUnambiguouslyCrossFileClass(parts[0])) return@lazy true
+        if (parts.size == 1 && resolutionContext.isUnambiguouslyCrossFileClass(parts[0])) return true
 
         // For types resolved via explicit imports, check the Java FQN against the read-only set
         val qualifiedName = classifierQualifiedName
         if (qualifiedName != rawTypeName) {
-            return@lazy FqName(qualifiedName) !in JAVA_READ_ONLY_FQ_NAMES
+            return FqName(qualifiedName) !in JAVA_READ_ONLY_FQ_NAMES
         }
 
         // Unresolved simple name (java.lang implicit import, star imports, same-package).
         // Conservatively check against simple names of read-only collection classes.
         if (parts.size == 1) {
-            return@lazy parts[0] !in JAVA_READ_ONLY_SIMPLE_NAMES
+            return parts[0] !in JAVA_READ_ONLY_SIMPLE_NAMES
         }
 
-        false
+        return false
     }
 
-    override val classifierQualifiedName: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val parts = rawTypeName.split('.')
+    @Volatile private var _classifierQualifiedName: String? = null
+
+    override val classifierQualifiedName: String
+        get() {
+            _classifierQualifiedName?.let { return it }
+            val computed = computeClassifierQualifiedName()
+            _classifierQualifiedName = computed
+            return computed
+        }
+
+    private fun computeClassifierQualifiedName(): String {
+        val parts = rawTypeNameParts
 
         // 1. Check type parameters - return name as-is (FIR handles type params specially)
         if (parts.size == 1 && resolutionContext.findTypeParameter(parts[0]) != null) {
-            return@lazy rawTypeName
+            return rawTypeName
         }
 
         // 2. Check local scope (same compilation unit)
@@ -182,7 +245,7 @@ class JavaClassifierTypeOverAst(
             for (i in 1 until parts.size) {
                 current = current?.findInnerClass(Name.identifier(parts[i]))
             }
-            return@lazy current?.fqName?.asString() ?: rawTypeName
+            return current?.fqName?.asString() ?: rawTypeName
         }
 
         // 3. Check explicit single-type imports
@@ -196,28 +259,50 @@ class JavaClassifierTypeOverAst(
             for (i in 1 until parts.size) {
                 result += "." + parts[i]
             }
-            return@lazy result
+            return result
         }
 
         // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang types)
-        rawTypeName
+        return rawTypeName
     }
 
     override val presentableText: String get() = node.text
 
-    override val isRaw: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    // -1 = not computed, 0 = false, 1 = true
+    @Volatile private var _isRaw: Int = -1
+
+    override val isRaw: Boolean
+        get() {
+            val cached = _isRaw
+            if (cached >= 0) return cached != 0
+            val computed = computeIsRaw()
+            _isRaw = if (computed) 1 else 0
+            return computed
+        }
+
+    private fun computeIsRaw(): Boolean {
         // A type is raw if it has no type arguments but the class has type parameters.
         // Also raw if fewer args than params (javac treats wrong-arity as error).
         // Note: REFERENCE_PARAMETER_LIST may exist but be empty (no TYPE children).
         val parameterList = node.findChildByType(JavaSyntaxElementType.REFERENCE_PARAMETER_LIST)
         val explicitArgCount = parameterList?.children?.count { it.type == JavaSyntaxElementType.TYPE } ?: 0
-        val javaClass = classifier as? JavaClass ?: return@lazy false
+        val javaClass = classifier as? JavaClass ?: return false
         val typeParamCount = javaClass.typeParameters.size
-        if (typeParamCount == 0) return@lazy false
-        explicitArgCount == 0 || explicitArgCount < typeParamCount
+        if (typeParamCount == 0) return false
+        return explicitArgCount == 0 || explicitArgCount < typeParamCount
     }
 
-    override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    @Volatile private var _typeArguments: List<JavaType>? = null
+
+    override val typeArguments: List<JavaType>
+        get() {
+            _typeArguments?.let { return it }
+            val computed = computeTypeArguments()
+            _typeArguments = computed
+            return computed
+        }
+
+    private fun computeTypeArguments(): List<JavaType> {
         // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.
         // This handles both flat ("A<T>.B<U>" → [<T>, <U>] as direct children) and
         // nested ("A<T>.B<U>" → child JAVA_CODE_REF("A<T>") + sibling REFPARAMLIST(<U>)) structures.
@@ -240,7 +325,7 @@ class JavaClassifierTypeOverAst(
                     .map { createJavaType(it, resolutionContext) }
             }
             if (outerExplicitArgs.isNotEmpty()) {
-                return@lazy explicitArgs + outerExplicitArgs
+                return explicitArgs + outerExplicitArgs
             }
         }
 
@@ -248,7 +333,7 @@ class JavaClassifierTypeOverAst(
         // This handles references like "Inner<U>" inside Outer<T> where the outer T is implicit.
         val javaClass = classifier as? JavaClass
         if (javaClass == null || javaClass.isStatic) {
-            return@lazy explicitArgs
+            return explicitArgs
         }
 
         val outerTypeParams = mutableListOf<JavaTypeParameter>()
@@ -259,7 +344,7 @@ class JavaClassifierTypeOverAst(
         }
 
         if (outerTypeParams.isEmpty()) {
-            return@lazy explicitArgs
+            return explicitArgs
         }
 
         // Resolve each outer type param through the current context so we get the caller's H
@@ -270,7 +355,7 @@ class JavaClassifierTypeOverAst(
             else JavaTypeParameterTypeOverAst(typeParam)
         }
 
-        explicitArgs + implicitArgs
+        return explicitArgs + implicitArgs
     }
 
     /**
@@ -294,7 +379,7 @@ class JavaClassifierTypeOverAst(
             // Already resolved if we found a local classifier (including inner classes)
             if (classifier != null) return true
 
-            val parts = rawTypeName.split('.')
+            val parts = rawTypeNameParts
 
             // Type parameter reference (single name only)
             if (parts.size == 1 && resolutionContext.findTypeParameter(rawTypeName) != null) return true
@@ -310,9 +395,15 @@ class JavaClassifierTypeOverAst(
             return false
         }
 
-    override val containingClassIds: List<ClassId> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        resolutionContext.getContainingClassIds()
-    }
+    @Volatile private var _containingClassIds: List<ClassId>? = null
+
+    override val containingClassIds: List<ClassId>
+        get() {
+            _containingClassIds?.let { return it }
+            val computed = resolutionContext.getContainingClassIds()
+            _containingClassIds = computed
+            return computed
+        }
 
     override fun resolve(
         tryResolve: (ClassId) -> Boolean,
@@ -328,6 +419,9 @@ class JavaClassifierTypeOverAst(
         /** Simple names of read-only collection classes for conservative matching of unresolved names. */
         private val JAVA_READ_ONLY_SIMPLE_NAMES: Set<String> =
             JAVA_READ_ONLY_FQ_NAMES.mapTo(mutableSetOf()) { it.shortName().asString() }
+
+        /** Sentinel for [_classifier]: distinguishes "not yet computed" from "computed as null". */
+        private val CLASSIFIER_NOT_COMPUTED: Any = Any()
     }
 }
 

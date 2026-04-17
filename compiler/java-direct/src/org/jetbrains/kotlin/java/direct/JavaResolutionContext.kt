@@ -260,8 +260,19 @@ class JavaResolutionContext private constructor(
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
     ): ClassId? {
-        val parts = name.split('.')
+        return resolveNestedClassToClassIdFromParts(name.split('.'), tryResolve, getSupertypeClassIds)
+    }
 
+    /**
+     * Internal workhorse for [resolveNestedClassToClassId] that operates on a pre-split parts list.
+     * Avoids O(n²) [String.split] + [joinToString] allocations on recursive calls by passing
+     * the parts list directly instead of re-joining and re-splitting the string.
+     */
+    private fun resolveNestedClassToClassIdFromParts(
+        parts: List<String>,
+        tryResolve: (ClassId) -> Boolean,
+        getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
+    ): ClassId? {
         // Try resolving increasing prefixes as outer classes using normal resolution rules
         // This respects JLS 6.5.2: nested class takes priority when the outer class is in scope
         for (i in 1 until parts.size) {
@@ -270,7 +281,7 @@ class JavaResolutionContext private constructor(
 
             // Resolve the outer class using normal resolution (same package, imports, etc.)
             val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassId(outerParts.joinToString("."), tryResolve, getSupertypeClassIds)
+                resolveNestedClassToClassIdFromParts(outerParts, tryResolve, getSupertypeClassIds)
             } else {
                 // For single-part outer name, use resolveSimpleNameToClassId which
                 // checks same-package, java.lang, imports - the normal resolution order
@@ -444,15 +455,20 @@ class JavaResolutionContext private constructor(
      * Resolve a nested class reference without checking inherited inner classes (to avoid infinite recursion).
      */
     private fun resolveNestedClassToClassIdWithoutInheritance(name: String, tryResolve: (ClassId) -> Boolean): ClassId? {
-        val parts = name.split('.')
+        return resolveNestedClassToClassIdFromPartsWithoutInheritance(name.split('.'), tryResolve)
+    }
 
+    private fun resolveNestedClassToClassIdFromPartsWithoutInheritance(
+        parts: List<String>,
+        tryResolve: (ClassId) -> Boolean,
+    ): ClassId? {
         // Try resolving increasing prefixes as outer classes
         for (i in 1 until parts.size) {
             val outerParts = parts.subList(0, i)
             val nestedParts = parts.subList(i, parts.size)
 
             val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassIdWithoutInheritance(outerParts.joinToString("."), tryResolve)
+                resolveNestedClassToClassIdFromPartsWithoutInheritance(outerParts, tryResolve)
             } else {
                 resolveSimpleNameToClassIdWithoutInheritance(outerParts[0], tryResolve)
             }
