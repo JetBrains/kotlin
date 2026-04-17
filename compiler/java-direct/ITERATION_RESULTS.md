@@ -2,7 +2,49 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 1.5 — revised to use `VirtualFileSystem`)
+**Last Updated**: 2026-04-17 (refactoring step 1.6 — split `JavaClassFinderOverAstImpl`)
+
+---
+
+## Refactoring Step 1.6: Split `JavaClassFinderOverAstImpl` into Focused Components - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+`JavaClassFinderOverAstImpl.kt` had grown to 627 lines, combining: filesystem walking, source index building (eager full parse + lightweight scan), package-info annotation extraction, class-cache orchestration, supertype-graph computation, inherited-inner-class collection (with JLS 8.5 shadowing), and same-package/import-aware supertype reference resolution. All three reviews flagged it as a candidate for decomposition.
+
+### Fix
+Two new files, one behavioural refactor of the finder itself. The `JavaFileParserCache` proposed in the plan did not justify extraction — the file-level parser+cache path is small, already private, and tightly coupled to `classCache` (which is also touched by the supertype graph's fast path), so splitting it would have required leaking the cache through a second interface for zero readability gain. The pragmatic 2-way split:
+
+- **`JavaSourceIndex.kt`** (new, 116 LOC) — top-level lightweight-scan helpers extracted verbatim from the finder:
+  - `PACKAGE_REGEX`, `DECLARATION_REGEX`
+  - `LightweightFileInfo` data class
+  - `stripLineComments` (private, comment-state machine)
+  - `extractFileInfoLightweight(file, reader)` — unchanged signature, so `JavaParsingTest.kt` (9 call sites) needs no update.
+- **`JavaSupertypeGraph.kt`** (new, 227 LOC) — encapsulates the supertype-graph logic and its two caches:
+  - `supertypeCache: MutableMap<ClassId, List<ClassId>>`
+  - `inheritedInnerClassesCache: MutableMap<ClassId, Map<String, Set<ClassId>>>`
+  - `getDirectSupertypes(classId)` — fast path via cached `JavaClassOverAst.node` + `getImports()`, slow path re-parses the file.
+  - `collectInheritedInnerClasses(classId)` — BFS with JLS 8.5 shadowing.
+  - Private: `getInnerClassNames`, `extractSupertypeRefsFromNode`, `findClassInTree`, `resolveSupertypeReference`.
+  - Consults the finder via 4 constructor callbacks (no bidirectional reference): `classCacheLookup`, `filesForClassLookup`, `sameClassInSameFilePackage`, `sourceFileReader`. This preserves the single authoritative copy of `index` and `classCache` in the finder — the graph only reads through them.
+
+- **`JavaClassFinderOverAstImpl.kt`** (627 → 368 LOC): removes the extracted helpers/classes, instantiates a single `supertypeGraph` property, and turns `getDirectSupertypes` / `collectInheritedInnerClasses` into one-line delegates. The `findFilesForClass` helper stays here (it reads `index`) and is wrapped into the `filesForClassLookup` callback so the graph can use `VirtualFile` directly without touching the private `FileEntry` type. All other behaviour — `findClass`, `findClasses`, `findPackage`, `knownClassNamesInPackage`, `buildIndex`, `indexPackageInfo`, `tryBuildFileEntryWithFullParse`, `tryBuildFileEntryLightweight`, `parseTopLevelClassFromFile`, `classesInPackage`, `subPackagesOf`, `isClassInIndex`, `getPackageAnnotations` — is unchanged.
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaSourceIndex.kt` (new, 116 LOC)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaSupertypeGraph.kt` (new, 227 LOC)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt` (627 → 368 LOC)
+
+### Design notes
+- **Callback-based coupling, not bidirectional references.** The graph never holds a reference to the finder; it receives only the four narrow functions it actually needs. This keeps the dependency unidirectional (finder → graph) and makes the graph unit-testable in isolation (future work).
+- **Why not a third `JavaFileParserCache` file?** The plan proposed it, but the eager full-parse + lazy sibling-caching paths are inseparable from `classCache` (which the supertype-graph fast path also reads through `classCacheLookup`). Extracting them would have required promoting `classCache` into a second public-ish interface with no reduction in LOC of the owning class. Keeping parser+cache in the finder preserves the invariant that **all** writes to `classCache` originate in one file.
+- **`extractFileInfoLightweight` stays top-level.** Tests use it directly (`JavaParsingTest.kt`, 9 call sites), and its signature `(VirtualFile, JavaSourceFileReader) -> LightweightFileInfo?` is already seam-friendly.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines. Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- When splitting a "God class", start by inventorying which fields are read from where. Fields shared between two candidate halves (here: `classCache` — read by both the parser path and the supertype path) are signals to **not** split along that line, or to promote the shared field to a neutral dependency of both halves.
+- Callback constructor parameters (`(X) -> Y` function types) are lighter than extracted Kotlin interfaces for internal module collaborators: no extra file, no vtable, no `override` ceremony, and the call sites read naturally.
 
 ---
 

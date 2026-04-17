@@ -29,104 +29,6 @@ import java.util.concurrent.ConcurrentHashMap
  */
 private const val SMALL_FILE_SIZE_THRESHOLD = 4096L
 
-private val PACKAGE_REGEX = Regex("""\bpackage\s+([\w.]+)\s*;""")
-private val DECLARATION_REGEX = Regex("""\b(class|interface|enum|record)\s+([A-Za-z_]\w*)""")
-
-/**
- * Result of lightweight (no-parse) file scanning.
- */
-internal data class LightweightFileInfo(
-    val packageName: String?,
-    val topLevelClassNames: Set<String>,
-)
-
-/**
- * Strips single-line (`//`) and block (`/* */`) comments from a line.
- * Tracks block comment state across lines.
- *
- * @return pair of (effective text with comments removed, whether still inside a block comment)
- */
-private fun stripLineComments(line: String, inBlockComment: Boolean): Pair<String, Boolean> {
-    val sb = StringBuilder()
-    var inComment = inBlockComment
-    var i = 0
-    while (i < line.length) {
-        if (inComment) {
-            val endIdx = line.indexOf("*/", i)
-            if (endIdx >= 0) {
-                inComment = false
-                i = endIdx + 2
-            } else {
-                return sb.toString() to true
-            }
-        } else {
-            if (i + 1 < line.length) {
-                if (line[i] == '/' && line[i + 1] == '/') {
-                    return sb.toString() to false
-                }
-                if (line[i] == '/' && line[i + 1] == '*') {
-                    inComment = true
-                    i += 2
-                    continue
-                }
-            }
-            sb.append(line[i])
-            i++
-        }
-    }
-    return sb.toString() to inComment
-}
-
-/**
- * Extracts package name and top-level class/interface/enum/record names from a Java file
- * without invoking the parser. Scans the file line by line, stripping comments and tracking
- * brace depth to distinguish top-level declarations from nested ones.
- *
- * This is much cheaper than full parsing and is used for indexing large files.
- */
-internal fun extractFileInfoLightweight(file: VirtualFile, reader: JavaSourceFileReader): LightweightFileInfo? {
-    var packageName: String? = null
-    val classNames = mutableSetOf<String>()
-    var inBlockComment = false
-    var braceDepth = 0
-
-    val lineReader = reader.openLineReader(file) ?: return null
-    lineReader.use { br ->
-        var rawLine = br.readLine()
-        while (rawLine != null) {
-            val (effective, stillInComment) = stripLineComments(rawLine, inBlockComment)
-            inBlockComment = stillInComment
-
-            if (effective.isNotBlank()) {
-                val depthBeforeLine = braceDepth
-                for (ch in effective) {
-                    when (ch) {
-                        '{' -> braceDepth++
-                        '}' -> braceDepth--
-                    }
-                }
-
-                if (packageName == null && depthBeforeLine == 0) {
-                    PACKAGE_REGEX.find(effective)?.let {
-                        packageName = it.groupValues[1]
-                    }
-                }
-
-                if (depthBeforeLine == 0) {
-                    DECLARATION_REGEX.find(effective)?.let {
-                        classNames.add(it.groupValues[2])
-                    }
-                }
-            }
-
-            rawLine = br.readLine()
-        }
-    }
-
-    if (classNames.isEmpty()) return null
-    return LightweightFileInfo(packageName, classNames)
-}
-
 /**
  * A simple JavaClassFinder implementation over the direct Java AST parser used in this module.
  *
@@ -166,11 +68,14 @@ class JavaClassFinderOverAstImpl(
     // Package-level annotations from package-info.java files
     private val packageAnnotationNodes: MutableMap<FqName, MutableList<JavaAnnotation>> = ConcurrentHashMap()
 
-    // Cache: ClassId -> list of supertype ClassIds (direct only)
-    private val supertypeCache: MutableMap<ClassId, List<ClassId>> = ConcurrentHashMap()
-
-    // Cache: ClassId -> Map<simpleName, Set<ClassId>> for inherited inner classes
-    private val inheritedInnerClassesCache: MutableMap<ClassId, Map<String, Set<ClassId>>> = ConcurrentHashMap()
+    // Supertype graph queries (direct supertypes, inherited inner classes).
+    // Extracted into a focused collaborator in Step 1.6 of the refactoring plan.
+    private val supertypeGraph = JavaSupertypeGraph(
+        classCacheLookup = { classCache[it] },
+        filesForClassLookup = { classId -> findFilesForClass(classId).map { it.file } },
+        sameClassInSameFilePackage = { pkg, name -> index[pkg]?.containsKey(name) == true },
+        sourceFileReader = sourceFileReader,
+    )
 
     private val debugLogFile: File? = debugLogFilePath?.toFile()
 
@@ -441,187 +346,22 @@ class JavaClassFinderOverAstImpl(
 
     /**
      * Returns the direct supertype [ClassId]s for a class.
-     * Prefers the cached [JavaClass] instance to avoid re-parsing. Falls back to file parsing
-     * only when the class hasn't been cached yet.
-     * Resolves cross-package supertypes via imports from the file.
+     * Delegates to [JavaSupertypeGraph].
      */
-    internal fun getDirectSupertypes(classId: ClassId): List<ClassId> {
-        return supertypeCache.getOrPut(classId) {
-            val packageFqName = classId.packageFqName
-
-            // Fast path: use the cached JavaClassOverAst's AST node directly.
-            // IMPORTANT: we read raw JAVA_CODE_REFERENCE text from the node, NOT classifierQualifiedName,
-            // because the latter triggers resolution which can circle back into getDirectSupertypes
-            // via findInnerClassFromSupertypes → collectInheritedInnerClasses.
-            val cachedClass = classCache[classId]
-            if (cachedClass is JavaClassOverAst) {
-                val (simpleImports, starImports) = cachedClass.resolutionContext.getImports()
-                return@getOrPut extractSupertypeRefsFromNode(cachedClass.node, packageFqName, simpleImports, starImports)
-            }
-
-            // Slow path: parse the file (should be rare after indexing improvements)
-            val files = findFilesForClass(classId)
-            if (files.isEmpty()) return@getOrPut emptyList()
-
-            val file = files.first()
-            val source = sourceFileReader.readFileContent(file.file) ?: return@getOrPut emptyList()
-            val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-            val root = buildSyntaxTree(builder, source)
-
-            // Assuming this is a rare case, when we need to get import before `parseTopLevelClassFromFile`, which extracts imports too
-            // TODO: check if this is rare enore
-            val (simpleImports, starImports) = JavaResolutionContext.extractImports(root)
-            val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
-            extractSupertypeRefsFromNode(classNode, packageFqName, simpleImports, starImports)
-        }
-    }
-
-
-    /**
-     * Extracts supertype [ClassId]s from extends/implements clauses of an AST node.
-     * Uses raw text from JAVA_CODE_REFERENCE nodes — no type resolution involved.
-     */
-    private fun extractSupertypeRefsFromNode(
-        classNode: JavaSyntaxNode,
-        packageFqName: FqName,
-        simpleImports: Map<String, FqName> = emptyMap(),
-        starImports: List<FqName> = emptyList(),
-    ): List<ClassId> {
-        val supertypes = mutableListOf<ClassId>()
-        classNode.findChildByType(JavaSyntaxElementType.EXTENDS_LIST)
-            ?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
-            ?.forEach { ref ->
-                resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
-                    supertypes.add(it)
-                }
-            }
-        classNode.findChildByType(JavaSyntaxElementType.IMPLEMENTS_LIST)
-            ?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
-            ?.forEach { ref ->
-                resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
-                    supertypes.add(it)
-                }
-            }
-        return supertypes
-    }
+    internal fun getDirectSupertypes(classId: ClassId): List<ClassId> =
+        supertypeGraph.getDirectSupertypes(classId)
 
     /**
      * Recursively collects all inner class names from the supertype hierarchy.
-     * Returns Map<simpleName, Set<ClassId>> to detect ambiguities.
+     * Delegates to [JavaSupertypeGraph].
      */
-    internal fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> {
-        inheritedInnerClassesCache[classId]?.let { return it }
-
-        val result = mutableMapOf<String, MutableSet<ClassId>>()
-        val visited = mutableSetOf<ClassId>()
-
-        // shadowedNames: inner class names declared by closer classes in the current inheritance path.
-        // Per JLS 8.5, a member type declared in a subclass shadows same-named types from supertypes.
-        // Example: if B extends A and both declare Inner, then from C extends B, B.Inner shadows A.Inner.
-        // Only inner class names from UNRELATED paths that can't shadow each other indicate ambiguity.
-        fun collectRecursive(current: ClassId, shadowedNames: Set<String>) {
-            if (current in visited) return
-            visited.add(current)
-
-            val innerClasses = getInnerClassNames(current)
-            for (innerName in innerClasses) {
-                // Don't report names already declared by a closer class in this path (they're shadowed)
-                if (innerName !in shadowedNames) {
-                    val innerClassId = current.createNestedClassId(Name.identifier(innerName))
-                    result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
-                }
-            }
-
-            // This class's inner class names shadow same-named types from its own supertypes
-            val shadowedByThisClass = shadowedNames + innerClasses
-            for (supertypeId in getDirectSupertypes(current)) {
-                collectRecursive(supertypeId, shadowedByThisClass)
-            }
-        }
-
-        collectRecursive(classId, emptySet())
-        val immutableResult: Map<String, Set<ClassId>> = result.mapValues { it.value.toSet() }
-        inheritedInnerClassesCache[classId] = immutableResult
-        return immutableResult
-    }
+    internal fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> =
+        supertypeGraph.collectInheritedInnerClasses(classId)
 
     private fun findFilesForClass(classId: ClassId): List<FileEntry> {
         val packageFqName = classId.packageFqName
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString()
             ?: return emptyList()
         return index[packageFqName]?.get(topLevelName) ?: emptyList()
-    }
-
-    private fun findClassInTree(root: JavaSyntaxNode, classId: ClassId): JavaSyntaxNode? {
-        val segments = classId.relativeClassName.pathSegments().map { it.asString() }
-        if (segments.isEmpty()) return null
-
-        var currentNode: JavaSyntaxNode = root
-        for (segment in segments) {
-            val classNode = currentNode.getChildrenByType(JavaSyntaxElementType.CLASS).firstOrNull { node ->
-                node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text == segment
-            } ?: return null
-            currentNode = classNode
-        }
-        return currentNode
-    }
-
-    private fun resolveSupertypeReference(
-        ref: String,
-        packageFqName: FqName,
-        simpleImports: Map<String, FqName> = emptyMap(),
-        starImports: List<FqName> = emptyList(),
-    ): ClassId? {
-        val simpleName = ref.substringBefore('<').trim()
-
-        if (!simpleName.contains('.')) {
-            // 1. Same-package lookup
-            if (index[packageFqName]?.containsKey(simpleName) == true) {
-                return ClassId(packageFqName, Name.identifier(simpleName))
-            }
-
-            // 2. Explicit import lookup (e.g., import base.FunctionDescriptor)
-            val explicitFqName = simpleImports[simpleName]
-            if (explicitFqName != null) {
-                val importPkg = explicitFqName.parent()
-                val importName = explicitFqName.shortName().asString()
-                if (index[importPkg]?.containsKey(importName) == true) {
-                    return ClassId(importPkg, Name.identifier(importName))
-                }
-            }
-
-            // 3. Star import lookup (e.g., import base.*)
-            for (starPkg in starImports) {
-                if (index[starPkg]?.containsKey(simpleName) == true) {
-                    return ClassId(starPkg, Name.identifier(simpleName))
-                }
-            }
-        }
-
-        return null
-    }
-
-    private fun getInnerClassNames(classId: ClassId): Set<String> {
-        // Fast path: use the cached JavaClass (no file I/O, no parsing)
-        val cachedClass = classCache[classId]
-        if (cachedClass != null) {
-            return cachedClass.innerClassNames.map { it.asString() }.toSet()
-        }
-
-        // Slow path: parse the file (should be rare after indexing improvements)
-        val files = findFilesForClass(classId)
-        if (files.isEmpty()) return emptySet()
-
-        val file = files.first()
-        val source = sourceFileReader.readFileContent(file.file) ?: return emptySet()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-
-        val classNode = findClassInTree(root, classId) ?: return emptySet()
-
-        return classNode.children
-            .filter { it.type == JavaSyntaxElementType.CLASS }
-            .mapNotNull { it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text }
-            .toSet()
     }
 }
