@@ -2,7 +2,82 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 3.6 — memory footprint: lazy-delegate removal on `JavaSyntaxNode`; LRU + source-release re-evaluated and deferred with rationale)
+**Last Updated**: 2026-04-17 (refactoring steps 3.1–3.4 — code quality improvements: extractImports readability, fragile-invariant tests, TODO cleanup, isAnnotationType robustness)
+
+---
+
+## Refactoring Steps 3.1–3.4: Code Quality Improvements — 2026-04-17
+
+### Overview
+
+Steps 3.1–3.4 from REFACTORING_PLAN.md address code readability, documentation of fragile invariants,
+remaining TODOs, and robustness of `isAnnotationType` detection.
+
+### Step 3.1 — Improve `extractImports` Method Readability
+
+**Problem**: The 145-line `extractImports` method handled 4 different import patterns in a single method with nested loops.
+
+**Changes** (`JavaImportResolver.kt`):
+- Split `extractImports` into 4 focused private methods:
+  - `extractNormalImports` — well-formed `import pkg.Class;` / `import pkg.*;`
+  - `extractStaticImports` — `import static pkg.Class.MEMBER;` / `import static pkg.Class.*;`
+  - `extractErrorElementImports` — ERROR_ELEMENT inside IMPORT_LIST (reserved-word imports like `import kotlin.X;`)
+  - `extractFragmentedImports` — parser-split imports at compilation-unit root level
+- Added an early-exit fast path: fragmented import scanning is skipped entirely when the root has no ERROR_ELEMENT children (common case for well-formed files)
+- Replaced `containsKey` + assignment patterns with `putIfAbsent` throughout
+
+### Step 3.2 — Document and Test Fragile Invariants
+
+**Problem**: Several critical invariants depend on comments rather than structural enforcement.
+
+**Changes** (`JavaParsingTest.kt` — 4 new tests):
+
+1. **`testTypeParameterIdentityPreservedAcrossLookups`** — Verifies that `findClass` returns the *same* `JavaClassOverAst` instance (object identity `===`) across repeated lookups and that type parameter objects are identical. FIR matches Java type parameters by identity, so mismatched instances cause "ERROR CLASS: Unresolved name: T".
+
+2. **`testNestedClassTakesPriorityOverPackageClass`** — JLS 6.5.2: when a simple name could be both an inherited inner class and a separate top-level class in the same package, the inner class interpretation takes priority. Tests with `Base.Conflict` vs top-level `Conflict`.
+
+3. **`testDiamondInheritanceInnerClasses`** — Diamond inheritance (A→B, A→C, B&C→D): inner class `A.Inner` is collected exactly once via the B→A path. Validates that the `collectInheritedInnerClasses` BFS correctly handles shared ancestors.
+
+4. **`testNonCanonicalTopLevelClassVisibility`** — A secondary class (`Helper` in `Main.java`) is findable by direct ClassId lookup but must NOT appear in `knownClassNamesInPackage`. Validates the KT-4455 behavior.
+
+### Step 3.3 — Address Remaining TODOs
+
+**Problem**: Several TODOs indicated unfinished work or questionable logic.
+
+**Changes**:
+
+1. **`JavaClassFinderOverAstImpl.kt:161`** — `TODO: this is the place there we can fix KT-4455` → Replaced with documentation explaining this is an intentional Kotlin/JVM design choice (non-canonical classes are not exposed as standalone same-package names), not a java-direct bug. The fix belongs in a separate task tracked by the YouTrack issue.
+
+2. **`JavaSupertypeGraph.kt:79`** — `TODO: check if this is rare enough` → Replaced with documentation explaining when the slow path fires (during early supertype-graph construction before `parseTopLevelClassFromFile` has cached the class) and why it's acceptable (once a class is requested through `findClass`, the fast path kicks in for all subsequent calls). Also updated the similar comment in `getInnerClassNames`.
+
+3. **`JavaDirectComponentRegistrar.kt:63`** — `TODO: remove after testing or find a better way to debuglog` → Replaced with proper KDoc explaining why this is a system property (must be injectable before `CompilerConfiguration` exists) and why replacing it with a plugin option would be gratuitous for a test-only diagnostic.
+
+4. **`CombinedJavaClassFinder.kt:38`** — `TODO: recheck this place, the reasoning is suspicious` → Already addressed in a prior commit (proper documentation of the FQN verification rationale).
+
+### Step 3.4 — Improve `isAnnotationType` Detection Robustness
+
+**Problem**: `JavaClassOverAst.isAnnotationType` checked for `AT` token presence in direct children, which could be fragile.
+
+**Changes** (`JavaClassOverAst.kt`):
+- Rewrote `isAnnotationType` to check that `AT` is immediately followed by `INTERFACE_KEYWORD` (with whitespace skipping), not just that both exist anywhere among the children
+- Added documentation explaining why this works with the KMP parser's AST structure and why adjacency is checked
+
+### Verification
+
+- **Unit tests**: 80/80 passed (including 4 new invariant tests)
+- **Full suite**: 2668/2668 passed, 0 failures, 0 regressions
+- **IDE inspections**: No new errors or warnings related to changes (pre-existing `@ApiStatus.Experimental` warnings are unrelated)
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `JavaImportResolver.kt` | Split `extractImports` into 4 methods, fast-path for fragmented imports, `putIfAbsent` |
+| `JavaClassOverAst.kt` | Robust `isAnnotationType` adjacency check with documentation |
+| `JavaDirectComponentRegistrar.kt` | Replaced debug-log TODO with KDoc |
+| `JavaClassFinderOverAstImpl.kt` | Replaced KT-4455 TODO with documentation |
+| `JavaSupertypeGraph.kt` | Replaced slow-path TODOs with documentation |
+| `JavaParsingTest.kt` | 4 new invariant tests (+211 lines) |
 
 ---
 

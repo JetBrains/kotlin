@@ -71,7 +71,31 @@ internal object JavaImportResolver {
         val importList = root.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
             ?: root.findChildByType(JavaSyntaxElementType.CLASS)?.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
 
-        for (importNode in importList?.getChildrenByType(JavaSyntaxElementType.IMPORT_STATEMENT) ?: emptyList()) {
+        if (importList != null) {
+            extractNormalImports(importList, simpleImports, starImports)
+            extractStaticImports(importList, simpleImports, starImports)
+            extractErrorElementImports(importList, simpleImports, starImports)
+        }
+
+        // Fast path: fragmented imports only occur when the parser emits ERROR_ELEMENT children
+        // at the root level. For well-formed files (the common case) there are none, so we can
+        // skip walking `root.children` entirely — that loop is O(N) in the file size otherwise.
+        if (root.children.any { it.type == SyntaxTokenTypes.ERROR_ELEMENT }) {
+            extractFragmentedImports(root, simpleImports, starImports)
+        }
+
+        return simpleImports to starImports
+    }
+
+    /**
+     * Pattern 1: well-formed `import pkg.Class;` / `import pkg.*;` statements.
+     */
+    private fun extractNormalImports(
+        importList: JavaSyntaxNode,
+        simpleImports: MutableMap<String, FqName>,
+        starImports: MutableList<FqName>,
+    ) {
+        for (importNode in importList.getChildrenByType(JavaSyntaxElementType.IMPORT_STATEMENT)) {
             val codeRef = importNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: continue
             val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
             val fqName = codeRef.text
@@ -82,15 +106,22 @@ internal object JavaImportResolver {
                 // Keep first occurrence: duplicate explicit imports for the same simple name
                 // are a compile error in Java. PSI uses first-seen semantics, so we do too.
                 val simpleName = fqName.substringAfterLast('.')
-                if (!simpleImports.containsKey(simpleName)) {
-                    simpleImports[simpleName] = FqName(fqName)
-                }
+                simpleImports.putIfAbsent(simpleName, FqName(fqName))
             }
         }
+    }
 
-        // Handle static imports: "import static pkg.Class.MEMBER" or "import static pkg.Class.*"
-        // The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
-        for (importNode in importList?.getChildrenByType(JavaSyntaxElementType.IMPORT_STATIC_STATEMENT) ?: emptyList()) {
+    /**
+     * Pattern 2: `import static pkg.Class.MEMBER;` / `import static pkg.Class.*;`.
+     *
+     * The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
+     */
+    private fun extractStaticImports(
+        importList: JavaSyntaxNode,
+        simpleImports: MutableMap<String, FqName>,
+        starImports: MutableList<FqName>,
+    ) {
+        for (importNode in importList.getChildrenByType(JavaSyntaxElementType.IMPORT_STATIC_STATEMENT)) {
             val refNode = importNode.findChildByType(JavaSyntaxElementType.IMPORT_STATIC_REFERENCE) ?: continue
             val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
             val fqName = refNode.text
@@ -100,14 +131,22 @@ internal object JavaImportResolver {
             } else {
                 // e.g. "example.KotlinDtoMapping.ID" → simpleName = "ID"
                 val simpleName = fqName.substringAfterLast('.')
-                if (!simpleImports.containsKey(simpleName)) {
-                    simpleImports[simpleName] = FqName(fqName)
-                }
+                simpleImports.putIfAbsent(simpleName, FqName(fqName))
             }
         }
+    }
 
-        // Also check for ERROR_ELEMENT imports (parser may emit these for imports starting with reserved words like 'kotlin')
-        for (errorNode in importList?.getChildrenByType(SyntaxTokenTypes.ERROR_ELEMENT) ?: emptyList()) {
+    /**
+     * Pattern 3: ERROR_ELEMENT inside IMPORT_LIST. The parser emits these when the import
+     * starts with a reserved word (e.g. `import kotlin.X;`) — the overall IMPORT_LIST is
+     * intact but one entry became an ERROR_ELEMENT with recoverable IDENTIFIER/DOT children.
+     */
+    private fun extractErrorElementImports(
+        importList: JavaSyntaxNode,
+        simpleImports: MutableMap<String, FqName>,
+        starImports: MutableList<FqName>,
+    ) {
+        for (errorNode in importList.getChildrenByType(SyntaxTokenTypes.ERROR_ELEMENT)) {
             if (errorNode.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) == null) continue
 
             // Reconstruct the import from IDENTIFIER and DOT children
@@ -125,26 +164,26 @@ internal object JavaImportResolver {
             if (hasStar) {
                 starImports.add(FqName(fqName))
             } else {
-                val simpleName = identifiers.last()
-                if (!simpleImports.containsKey(simpleName)) {
-                    simpleImports[simpleName] = FqName(fqName)
-                }
+                simpleImports.putIfAbsent(identifiers.last(), FqName(fqName))
             }
         }
+    }
 
-        // Handle fragmented import patterns where parser splits import across sibling nodes
-        // Pattern 1: ERROR_ELEMENT(IMPORT_KEYWORD) followed by TYPE(JAVA_CODE_REFERENCE) - simple import
-        // Pattern 2: ERROR_ELEMENT(import) followed by TYPE(pkg.) followed by ERROR_ELEMENT(*;) - star import
-        // Parser may insert MODIFIER_LIST and other nodes between them.
-        //
-        // Fast path: fragmented imports only occur when the parser emits ERROR_ELEMENT children
-        // at the root level. For well-formed files (the common case) there are none, so we can
-        // skip walking `root.children` entirely — that loop is O(N) in the file size otherwise.
+    /**
+     * Pattern 4: fragmented imports — the parser has split the import across sibling nodes
+     * at the compilation-unit root.
+     *
+     * Shape 1: `ERROR_ELEMENT(IMPORT_KEYWORD)` followed by `TYPE(JAVA_CODE_REFERENCE)` — simple import.
+     * Shape 2: `ERROR_ELEMENT(import)` followed by `TYPE(pkg.)` followed by `ERROR_ELEMENT(*;)` — star import.
+     *
+     * The parser may insert MODIFIER_LIST and whitespace between the anchor and the type node.
+     */
+    private fun extractFragmentedImports(
+        root: JavaSyntaxNode,
+        simpleImports: MutableMap<String, FqName>,
+        starImports: MutableList<FqName>,
+    ) {
         val allChildren = root.children
-        val hasRootLevelErrorElement = allChildren.any { it.type == SyntaxTokenTypes.ERROR_ELEMENT }
-        if (!hasRootLevelErrorElement) {
-            return simpleImports to starImports
-        }
         var i = 0
         while (i < allChildren.size) {
             val node = allChildren[i]
@@ -201,17 +240,13 @@ internal object JavaImportResolver {
                             starImports.add(FqName(fqName))
                         } else {
                             val simpleName = fqName.substringAfterLast('.')
-                            if (!simpleImports.containsKey(simpleName)) {
-                                simpleImports[simpleName] = FqName(fqName)
-                            }
+                            simpleImports.putIfAbsent(simpleName, FqName(fqName))
                         }
                     }
                 }
             }
             i++
         }
-
-        return simpleImports to starImports
     }
 
     /**

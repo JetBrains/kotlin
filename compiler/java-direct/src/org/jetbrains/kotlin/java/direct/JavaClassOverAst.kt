@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -231,7 +232,32 @@ class JavaClassOverAst(
     }
 
     override val isInterface: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.INTERFACE_KEYWORD) != null }
-    override val isAnnotationType: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.AT) != null && isInterface }
+
+    /**
+     * A Java `@interface` (annotation declaration) is represented by the KMP parser as a CLASS
+     * node whose direct children contain an `AT` token followed immediately by `INTERFACE_KEYWORD`.
+     *
+     * A plain interface (`interface Foo`) contains `INTERFACE_KEYWORD` but no `AT` token at the
+     * class-header level (any `@Annotation` on the class lives inside the `MODIFIER_LIST` child,
+     * not as a direct CLASS child). So a loose `AT present && INTERFACE_KEYWORD present` check
+     * is normally sufficient, but we tighten it further to guarantee adjacency — this protects
+     * against future parser changes that might surface an annotation token at the CLASS level
+     * for a non-annotation interface, and makes the invariant explicit.
+     */
+    override val isAnnotationType: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val children = node.children
+        var i = 0
+        while (i < children.size - 1) {
+            if (children[i].type == JavaSyntaxTokenType.AT) {
+                // Skip whitespace/comments between AT and the next significant token.
+                var j = i + 1
+                while (j < children.size && children[j].type == SyntaxTokenTypes.WHITE_SPACE) j++
+                if (j < children.size && children[j].type == JavaSyntaxTokenType.INTERFACE_KEYWORD) return@lazy true
+            }
+            i++
+        }
+        false
+    }
     override val isEnum: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.ENUM_KEYWORD) != null }
     override val isRecord: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { node.findChildByType(JavaSyntaxTokenType.RECORD_KEYWORD) != null }
     override val isSealed: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) { hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD) }

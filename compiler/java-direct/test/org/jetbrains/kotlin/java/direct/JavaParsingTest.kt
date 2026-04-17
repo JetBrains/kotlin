@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.name.ClassId
@@ -2570,5 +2571,215 @@ class JavaParsingTest {
         assert("MyAnnotation" in info.topLevelClassNames) {
             "Expected MyAnnotation in class names, got ${info.topLevelClassNames}"
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Step 3.2: Tests for fragile invariants
+    // -------------------------------------------------------------------------
+
+    /**
+     * Invariant: [JavaClassFinderOverAstImpl.findClass] must return the *same* [JavaClassOverAst]
+     * instance for a given top-level class regardless of how many times it is called. FIR matches
+     * Java type parameters by object identity (`===`), so two different instances with the same
+     * name would cause "ERROR CLASS: Unresolved name: T" at use sites.
+     *
+     * This test also verifies that looking up an outer class after navigating to it through an
+     * inner class still yields the same instance and therefore the same type parameter objects.
+     */
+    @Test
+    fun testTypeParameterIdentityPreservedAcrossLookups(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("pkg")
+        pkgDir.toFile().mkdirs()
+        pkgDir.resolve("Outer.java").writeText("""
+            package pkg;
+            public class Outer<T> {
+                public class Inner {
+                    public T get() { return null; }
+                }
+            }
+        """.trimIndent())
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+
+        // First lookup: Outer
+        val outerId = ClassId(FqName("pkg"), Name.identifier("Outer"))
+        val outer1 = finder.findClass(JavaClassFinder.Request(outerId))
+        assert(outer1 != null) { "Expected to find pkg.Outer" }
+
+        // Second lookup: same ClassId — must be the exact same instance
+        val outer2 = finder.findClass(JavaClassFinder.Request(outerId))
+        assert(outer1 === outer2) { "Repeated findClass must return the same JavaClassOverAst instance" }
+
+        // Lookup via inner class: navigating Outer.Inner should reference the same Outer
+        val innerId = ClassId(FqName("pkg"), FqName("Outer.Inner"), isLocal = false)
+        val inner = finder.findClass(JavaClassFinder.Request(innerId))
+        assert(inner != null) { "Expected to find pkg.Outer.Inner" }
+        assert(inner!!.outerClass === outer1) { "Inner class's outerClass must be the same Outer instance" }
+
+        // Type parameters on both references must be object-identical
+        val tp1 = (outer1 as JavaClassOverAst).typeParameters.single()
+        val tp2 = (outer2 as JavaClassOverAst).typeParameters.single()
+        assert(tp1 === tp2) { "Type parameter instances must be identical (===) across lookups" }
+    }
+
+    /**
+     * JLS 6.5.2: when a simple name is ambiguous — it could be a nested class declared in a
+     * supertype or a separate top-level class in the same package — the nested class
+     * interpretation takes priority.
+     *
+     * Setup:
+     *   - `Base` declares inner class `Conflict`
+     *   - A separate top-level `Conflict` class exists in the same package
+     *   - `Sub extends Base` uses `Conflict` as a field type
+     *
+     * The field type must resolve to `Base.Conflict`, not to the top-level `Conflict`.
+     */
+    @Test
+    fun testNestedClassTakesPriorityOverPackageClass(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("pkg")
+        pkgDir.toFile().mkdirs()
+
+        pkgDir.resolve("Base.java").writeText("""
+            package pkg;
+            public class Base {
+                public static class Conflict {
+                    public int fromBase;
+                }
+            }
+        """.trimIndent())
+
+        pkgDir.resolve("Conflict.java").writeText("""
+            package pkg;
+            public class Conflict {
+                public int fromTopLevel;
+            }
+        """.trimIndent())
+
+        pkgDir.resolve("Sub.java").writeText("""
+            package pkg;
+            public class Sub extends Base {
+                public Conflict field;
+            }
+        """.trimIndent())
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+
+        val subId = ClassId(FqName("pkg"), Name.identifier("Sub"))
+        val sub = finder.findClass(JavaClassFinder.Request(subId)) as JavaClassOverAst
+
+        val field = sub.fields.single()
+        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+
+        // The simple name "Conflict" should resolve to Base.Conflict (inherited inner),
+        // not to the top-level pkg.Conflict.
+        val classifier = fieldType.classifier
+        assert(classifier != null) { "Conflict should resolve locally" }
+        // Inner class's outer class must be Base
+        val outerClass = (classifier as? JavaClassOverAst)?.outerClass
+        assert(outerClass != null && outerClass.name.asString() == "Base") {
+            "Expected Conflict to resolve to Base.Conflict (inner class), " +
+                    "but outerClass=${outerClass?.name}"
+        }
+    }
+
+    /**
+     * Diamond inheritance: inner class names from two independent supertype paths should be
+     * collected and reported correctly.
+     *
+     *     A (declares Inner)
+     *    / \
+     *   B   C
+     *    \ /
+     *     D
+     *
+     * `D` inherits `Inner` from A via both B and C. The inherited inner class set should contain
+     * exactly one entry for "Inner" pointing to `A.Inner`.
+     */
+    @Test
+    fun testDiamondInheritanceInnerClasses(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("pkg")
+        pkgDir.toFile().mkdirs()
+
+        pkgDir.resolve("A.java").writeText("""
+            package pkg;
+            public class A {
+                public static class Inner {}
+            }
+        """.trimIndent())
+
+        pkgDir.resolve("B.java").writeText("""
+            package pkg;
+            public class B extends A {}
+        """.trimIndent())
+
+        pkgDir.resolve("C.java").writeText("""
+            package pkg;
+            public class C extends A {}
+        """.trimIndent())
+
+        pkgDir.resolve("D.java").writeText("""
+            package pkg;
+            public class D extends B {
+                // Also implements C via the diamond — but Java single inheritance means we
+                // can only extend one class. We test the B→A path here; the inherited inner
+                // class collector should still find A.Inner exactly once.
+            }
+        """.trimIndent())
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+
+        // Force D to be loaded so its supertype graph is built
+        val dId = ClassId(FqName("pkg"), Name.identifier("D"))
+        val dClass = finder.findClass(JavaClassFinder.Request(dId))
+        assert(dClass != null) { "Expected to find pkg.D" }
+
+        // D inherits Inner from A (via B)
+        val inherited = finder.collectInheritedInnerClasses(dId)
+        assert("Inner" in inherited) {
+            "Expected inherited inner class 'Inner' from A, got keys: ${inherited.keys}"
+        }
+        val innerClassIds = inherited["Inner"]!!
+        assert(innerClassIds.size == 1) {
+            "Expected exactly 1 ClassId for Inner (A.Inner), got $innerClassIds"
+        }
+        val innerId = innerClassIds.single()
+        assert(innerId == ClassId(FqName("pkg"), FqName("A.Inner"), isLocal = false)) {
+            "Expected pkg.A.Inner, got $innerId"
+        }
+    }
+
+    /**
+     * Non-canonical top-level classes: a secondary class (e.g., class Helper declared alongside
+     * class Main in Main.java) should be findable by its [ClassId] but should NOT appear in
+     * [JavaClassFinderOverAstImpl.knownClassNamesInPackage].
+     *
+     * This matches the PSI-based behavior and the intentional design from KT-4455.
+     */
+    @Test
+    fun testNonCanonicalTopLevelClassVisibility(@TempDir tempDir: Path) {
+        val pkgDir = tempDir.resolve("pkg")
+        pkgDir.toFile().mkdirs()
+
+        pkgDir.resolve("Main.java").writeText("""
+            package pkg;
+            public class Main {}
+            class Helper {}
+        """.trimIndent())
+
+        val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
+
+        // knownClassNamesInPackage should expose only "Main", not "Helper"
+        val knownNames = finder.knownClassNamesInPackage(FqName("pkg"))
+        assert(knownNames != null) { "Expected non-null for pkg" }
+        assert("Main" in knownNames!!) { "Expected Main in known names, got $knownNames" }
+        assert("Helper" !in knownNames) {
+            "Helper is a non-canonical class (in Main.java) and must NOT appear in knownClassNamesInPackage, got $knownNames"
+        }
+
+        // But Helper should still be findable by direct ClassId lookup
+        val helperId = ClassId(FqName("pkg"), Name.identifier("Helper"))
+        val helper = finder.findClass(JavaClassFinder.Request(helperId))
+        assert(helper != null) { "Expected to find pkg.Helper by direct ClassId lookup" }
+        assert(helper!!.name.asString() == "Helper") { "Expected name 'Helper', got ${helper.name}" }
     }
 }

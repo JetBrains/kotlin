@@ -158,12 +158,15 @@ class JavaClassFinderOverAstImpl(
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
         val byName = index[packageFqName] ?: return emptySet()
-        // TODO: this is the place there we can fix KT-4455, so it worth revisiting it later
         // Only return canonical class names (where the class name matches the file's basename).
         // Secondary classes (e.g., class B defined alongside class A in A.java) are accessible
         // when their ClassId is known directly (e.g., as return type from the same file's API)
-        // but are NOT exposed as standalone same-package names. This matches PSI behavior for
+        // but are NOT exposed as standalone same-package names. This matches PSI behavior.
+        //
         // KT-4455: non-canonical Java classes are not visible as independent types from Kotlin.
+        // Fixing this would mean removing the filter below so that secondary classes appear in
+        // package-level name sets — but that is a deliberate Kotlin/JVM design choice, not a
+        // java-direct bug, so the fix belongs in a separate task tracked by the issue.
         return byName.entries
             .filter { (name, fileEntries) ->
                 fileEntries.any { entry ->

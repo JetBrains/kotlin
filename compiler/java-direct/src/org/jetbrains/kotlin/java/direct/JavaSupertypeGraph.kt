@@ -66,7 +66,12 @@ internal class JavaSupertypeGraph(
                 return@getOrPut extractSupertypeRefsFromNode(cachedClass.node, packageFqName, simpleImports, starImports)
             }
 
-            // Slow path: parse the file (should be rare after indexing improvements)
+            // Slow path: re-parse the file to extract supertype references. This fires when
+            // getDirectSupertypes is called for a class that hasn't been cached yet by
+            // parseTopLevelClassFromFile — typically during early supertype-graph construction
+            // triggered by collectInheritedInnerClasses before the class finder has had a
+            // reason to fully parse the file. In practice this is rare: once a class is
+            // requested through findClass the fast path above kicks in for all subsequent calls.
             val files = filesForClassLookup(classId)
             if (files.isEmpty()) return@getOrPut emptyList()
 
@@ -75,8 +80,6 @@ internal class JavaSupertypeGraph(
             val builder = parseJavaToSyntaxTreeBuilder(source, 0)
             val root = buildSyntaxTree(builder, source)
 
-            // Assuming this is a rare case, when we need to get import before `parseTopLevelClassFromFile`, which extracts imports too
-            // TODO: check if this is rare enough
             val (simpleImports, starImports) = JavaResolutionContext.extractImports(root)
             val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
             extractSupertypeRefsFromNode(classNode, packageFqName, simpleImports, starImports)
@@ -147,7 +150,7 @@ internal class JavaSupertypeGraph(
             return cachedClass.innerClassNames.map { it.asString() }.toSet()
         }
 
-        // Slow path: parse the file (should be rare after indexing improvements)
+        // Slow path: re-parse for inner class names (same rationale as getDirectSupertypes).
         val files = filesForClassLookup(classId)
         if (files.isEmpty()) return emptySet()
 
