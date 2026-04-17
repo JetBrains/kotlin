@@ -182,10 +182,7 @@ OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements);
 
 
-// `initialValue` may be `nullptr`, which signifies that the appropriate initial value was already
-// set by static initialization.
-// TODO: When global initialization becomes lazy, this signature won't do.
-void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) RUNTIME_NOTHROW;
+void RegisterGlobal(ObjHeader** location) RUNTIME_NOTHROW;
 
 //
 // Object reference management.

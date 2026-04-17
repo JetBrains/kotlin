@@ -51,23 +51,6 @@ internal val IrClass.isArrayWithFixedSizeItems: Boolean
 
 fun IrClass.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
 
-private fun IrStatement.isConst(): Boolean = when (this) {
-    is IrConst, is IrConstantValue -> true
-    is IrBlock -> {
-        if (statements.isEmpty())
-            true
-        else {
-            // This might happen after the local declarations lowering where local declarations are replaced with an empty composite.
-            statements.take(statements.size - 1).all { it is IrComposite && it.statements.isEmpty() }
-                    && statements.last().isConst()
-        }
-    }
-    else -> false
-}
-
-internal val IrField.hasNonConstInitializer: Boolean
-    get() = initializer?.expression?.isConst() == false
-
 private enum class TypeKind {
     ABSENT,
     VOID,

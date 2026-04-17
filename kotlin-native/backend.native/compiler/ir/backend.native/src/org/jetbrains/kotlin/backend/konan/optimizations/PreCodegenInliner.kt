@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.PreCodegenFunctionInlining
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
+import org.jetbrains.kotlin.backend.konan.lower.isLazyStaticInitializer
 import org.jetbrains.kotlin.backend.konan.lower.liveVariablesAtSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -135,6 +137,8 @@ internal class PreCodegenInliner(
                                 && calleeSize <= inlineThreshold
                                 && calleeIrFunction.symbol != context.symbols.entryPoint // Might be unexpected to not see [main] in stacktraces.
                                 && !calleeIrFunction.isBoxOrUnbox()
+                                && !calleeIrFunction.isLazyStaticInitializer
+                                && !calleeIrFunction.isEagerStaticInitializer
                                 && calleeIrFunction.konanLibrary?.isCInteropLibrary() != true
                                 && !calleeIrFunction.hasAnnotation(noInline)
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true

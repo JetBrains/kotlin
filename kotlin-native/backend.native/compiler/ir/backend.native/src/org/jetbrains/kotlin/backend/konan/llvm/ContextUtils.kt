@@ -242,16 +242,14 @@ internal interface ContextUtils : RuntimeAware {
 internal fun stringAsBytes(str: String) = str.toByteArray(Charsets.UTF_8)
 
 internal class ScopeInitializersGenerationState {
-    val topLevelFields = mutableListOf<IrField>()
-    var globalInitFunction: IrSimpleFunction? = null
     var globalInitState: LLVMValueRef? = null
-    var threadLocalInitFunction: IrSimpleFunction? = null
     var threadLocalInitState: AddressAccess? = null
-    val globalSharedObjects = mutableSetOf<LLVMValueRef>()
-    fun isEmpty() = topLevelFields.isEmpty() &&
+    var globalEagerInitFunction: LlvmCallable? = null
+    var threadLocalEagerInitFunction: LlvmCallable? = null
+    fun isEmpty() = globalEagerInitFunction == null &&
+            threadLocalEagerInitFunction == null &&
             globalInitState == null &&
-            threadLocalInitState == null &&
-            globalSharedObjects.isEmpty()
+            threadLocalInitState == null
 }
 
 internal class InitializersGenerationState {
@@ -423,7 +421,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val allocInstanceFunction = importRtFunction("AllocInstance", true)
     val allocArrayFunction = importRtFunction("AllocArrayInstance", true)
-    val initAndRegisterGlobalFunction = importRtFunction("InitAndRegisterGlobal", false)
+    val registerGlobalFunction = importRtFunction("RegisterGlobal", false)
     val updateHeapRefFunction = importRtFunction("UpdateHeapRef", false)
     val updateStackRefFunction = importRtFunction("UpdateStackRef", false)
     val updateReturnRefFunction = importRtFunction("UpdateReturnRef", false)
