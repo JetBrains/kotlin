@@ -538,10 +538,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isJvmInlineMultiFieldValueClass(): Boolean {
+        val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId ?: return false
         val regularClass = toFirRegularClass()
         if (regularClass != null) {
             if (regularClass.isExtendedValueClass) return false
-            if (!regularClass.symbol.hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session)) return false
+            if (!regularClass.symbol.hasAnnotation(jvmInlineAnnotationClassId, session)) return false
         }
         val fields = getValueClassProperties() ?: return false
         return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
