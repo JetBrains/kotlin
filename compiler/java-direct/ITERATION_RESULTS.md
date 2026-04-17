@@ -2,7 +2,38 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 1.7 — fix remaining architectural code smells)
+**Last Updated**: 2026-04-17 (refactoring step 2.1 — optimize `findChildByType` / `getChildrenByType` for hot nodes)
+
+---
+
+## Refactoring Step 2.1: Optimize `findChildByType` / `getChildrenByType` for Hot Nodes - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+Both `findChildByType(SyntaxElementType)` and `getChildrenByType(SyntaxElementType)` in `utils.kt` performed a full linear scan over `JavaSyntaxNode.children` on every call. On "hot" composite nodes (class bodies, method declarations, modifier lists, etc.) the same node is typically queried for several different child types in sequence — MODIFIER_LIST, then IDENTIFIER, then TYPE_PARAMETER_LIST, then EXTENDS_LIST, … — so aggregate behaviour is O(n²) in the number of children.
+
+### Fix
+Added a lazily-built, type-indexed view on `JavaSyntaxNode` and routed the two `SyntaxElementType`-based lookup helpers through it. Design points:
+
+- **Threshold-gated materialization.** `JavaSyntaxNode.childByTypeIndex` is a `by lazy(LazyThreadSafetyMode.PUBLICATION)` property that returns `null` whenever `children.size <= CHILD_INDEX_THRESHOLD` (constant = 4). For small children lists the linear scan is both faster than a `HashMap` lookup *and* avoids retaining a map object. Token/leaf nodes (empty children) therefore never allocate a map — only the (tiny) lazy delegate header.
+- **`PUBLICATION` thread-safety mode** — matches the existing `text` property; the computation is idempotent (`groupBy` on an immutable `children` list), so a double-compute race is harmless.
+- **Return-type symmetry.** The index stores `Map<SyntaxElementType, List<JavaSyntaxNode>>` (via `groupBy`). `findChildByType` returns `list.firstOrNull()` (matching the "first child of that type" semantics of the previous `children.find { … }`); `getChildrenByType` returns the list or `emptyList()`. Ordering among same-type siblings is preserved because `groupBy` is order-stable.
+- **String-overload untouched.** `findChildByType(String)` / `getChildrenByType(String)` are still used at three `DOC_COMMENT` call sites (`JavaClassOverAst.kt`, `JavaMemberOverAst.kt ×2`) because the KMP parser exposes doc comments only as a string-named leaf type. Step 1.1 explicitly listed these as out of scope for constant-ification, so they remain on the linear-scan path — those nodes (class/method) happen to be the same hot nodes that benefit from the index, but the string comparison still walks `children` directly. That is acceptable: only 3 call sites, once per lazy property (`isDeprecatedInJavaDoc`).
+
+Files modified: `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/utils.kt` only.
+
+### Alternatives considered and rejected
+- **Always build the map.** Rejected: millions of token/leaf nodes would allocate a `HashMap` on first access for a single lookup — a net slowdown.
+- **Cache commonly needed children as `lateinit`/`lazy` properties on each model class** (`JavaClassOverAst`, `JavaMemberOverAst`, …). This was the second alternative suggested in the plan, but it spreads the optimisation across ~6 files and requires ad-hoc judgement of "which children to cache". The threshold-gated index achieves the same amortised O(1) behaviour for **any** child-type query on hot nodes without per-class bookkeeping, and keeps the change localised to `utils.kt`.
+- **Per-node `HashMap` with manual double-checked locking.** Rejected as needless — `by lazy(PUBLICATION)` compiles to an essentially equivalent double-checked pattern and matches the style already used by `JavaSyntaxNode.text`.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines in the saved log.
+- Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- When the "obvious" cache would sit on millions of tiny objects, a size threshold before materialisation is usually strictly better than an always-on cache — the lazy delegate itself is cheap, but the cached collection is not.
+- `groupBy` is the right building block for a child-by-type index: order-stable, one pass, and naturally supports both the "first match" (`find*`) and "all matches" (`get*`) semantics without a second representation.
+- Keeping the optimisation entirely inside `utils.kt` (no model-class changes) means future new model classes automatically benefit with zero extra code.
 
 ---
 

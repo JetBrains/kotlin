@@ -22,6 +22,24 @@ class JavaSyntaxNode(
 ) {
     val text: String by lazy(LazyThreadSafetyMode.PUBLICATION) { source.subSequence(startOffset, endOffset).toString() }
 
+    /**
+     * Lazy type-indexed view over [children], used by [findChildByType] and [getChildrenByType]
+     * (the `SyntaxElementType` overloads) to avoid repeated O(n) linear scans on hot nodes
+     * (class / method bodies, modifier lists, …), where several different child types are queried
+     * sequentially — yielding O(n²) behaviour overall.
+     *
+     * Built only when [children] is larger than [CHILD_INDEX_THRESHOLD]; for small lists a linear
+     * scan is both faster and cheaper than building and retaining a [HashMap]. With millions of
+     * leaf/token nodes in a typical project tree, this threshold keeps the extra per-node memory
+     * footprint negligible (the `by lazy` delegate itself is a couple of machine words; the map is
+     * only materialized for composite nodes that actually get queried).
+     *
+     * `null` entries mean "threshold not exceeded — fall back to linear scan".
+     */
+    internal val childByTypeIndex: Map<SyntaxElementType, List<JavaSyntaxNode>>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (children.size <= CHILD_INDEX_THRESHOLD) null else children.groupBy { it.type }
+    }
+
     fun dump(indent: String = ""): String {
         val sb = StringBuilder()
         sb.append(indent).append(type).append(": ").append(text.replace("\n", "\\n")).append("\n")
@@ -99,11 +117,19 @@ fun JavaSyntaxNode.getChildrenByType(typeName: String): List<JavaSyntaxNode> {
     return children.filter { it.type.toString() == typeName }
 }
 
+/**
+ * Above this many children we start indexing nodes by type (see [JavaSyntaxNode.childByTypeIndex]).
+ * Small values keep memory usage low; tune via profiling if new hot paths appear.
+ */
+internal const val CHILD_INDEX_THRESHOLD: Int = 4
+
 fun JavaSyntaxNode.findChildByType(type: SyntaxElementType): JavaSyntaxNode? {
+    childByTypeIndex?.let { return it[type]?.firstOrNull() }
     return children.find { it.type == type }
 }
 
 fun JavaSyntaxNode.getChildrenByType(type: SyntaxElementType): List<JavaSyntaxNode> {
+    childByTypeIndex?.let { return it[type] ?: emptyList() }
     return children.filter { it.type == type }
 }
 
