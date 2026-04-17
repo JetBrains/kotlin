@@ -843,10 +843,10 @@ public inline fun <T> Array<out T>.copyOf(): Array<T> {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.LowPriorityInOverloadResolution
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOf(): Array<T> {
-    return this.copyOf()
+    return this.asDynamic().slice()
 }
 
 /**
@@ -1112,10 +1112,10 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
-@kotlin.internal.InlineOnly
-public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    return this.copyOf(newSize)
+@kotlin.internal.LowPriorityInOverloadResolution
+public actual fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+    require(newSize >= 0) { "Invalid new array size: $newSize." }
+    return arrayCopyResize(this, newSize, null)
 }
 
 /**
@@ -1141,10 +1141,10 @@ public fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> 
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
-@kotlin.internal.InlineOnly
-public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    return this.copyOfRange(fromIndex, toIndex)
+@kotlin.internal.LowPriorityInOverloadResolution
+public actual fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    return this.asDynamic().slice(fromIndex, toIndex)
 }
 
 /**
@@ -1416,10 +1416,10 @@ public inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.LowPriorityInOverloadResolution
 @kotlin.internal.InlineOnly
 public actual inline operator fun <T> Array<T>.plus(element: T): Array<T> {
-    return this.plus(element)
+    return this.asDynamic().concat(arrayOf(element))
 }
 
 /**
@@ -1496,10 +1496,10 @@ public operator fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.LowPriorityInOverloadResolution
 @kotlin.internal.InlineOnly
 public actual inline operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
-    return this.plus(elements)
+    return arrayPlusCollection(this, elements)
 }
 
 /**
@@ -1593,10 +1593,10 @@ public inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.LowPriorityInOverloadResolution
 @kotlin.internal.InlineOnly
 public actual inline operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
-    return this.plus(elements)
+    return this.asDynamic().concat(elements)
 }
 
 /**
@@ -1674,10 +1674,10 @@ public inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
 /**
  * Returns an array containing all elements of the original array and then the given [element].
  */
-@Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
+@kotlin.internal.LowPriorityInOverloadResolution
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
-    return this.plusElement(element)
+    return this.asDynamic().concat(arrayOf(element))
 }
 
 /**

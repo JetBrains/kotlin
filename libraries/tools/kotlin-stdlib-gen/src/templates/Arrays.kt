@@ -1,7 +1,7 @@
- /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+/*
+* Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+* Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+*/
 
 package templates
 
@@ -532,8 +532,8 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.JS) {
                 inlineOnly()
-                deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                body { """return this.plusElement(element)""" }
+                annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                body { """return this.asDynamic().concat(arrayOf(element))""" }
             }
         }
     }
@@ -590,8 +590,8 @@ object ArrayOps : TemplateGroupBase() {
                     }
                     specialFor(InvariantArraysOfObjects) {
                         inlineOnly()
-                        deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                        body { "return this.plus(element)" }
+                        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                        body { "return this.asDynamic().concat(arrayOf(element))" }
                     }
                 }
                 on(Platform.Native) {
@@ -667,8 +667,8 @@ object ArrayOps : TemplateGroupBase() {
                     }
                     specialFor(InvariantArraysOfObjects) {
                         inlineOnly()
-                        deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                        body { "return this.plus(elements)" }
+                        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                        body { "return arrayPlusCollection(this, elements)" }
                     }
                 }
                 on(Platform.Native) {
@@ -731,8 +731,8 @@ object ArrayOps : TemplateGroupBase() {
                     inline(suppressWarning = true)
                     specialFor(InvariantArraysOfObjects) {
                         inlineOnly()
-                        deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                        body { "return this.plus(elements)" }
+                        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                        body { """return this.asDynamic().concat(elements)""" }
                     }
                     specialFor(ArraysOfPrimitives) {
                         body { """return primitiveArrayConcat(this, elements)""" }
@@ -903,9 +903,9 @@ object ArrayOps : TemplateGroupBase() {
                             body { "return longCopyOfRange(this, fromIndex, toIndex)" }
                         }
                         null -> {
-                            inlineOnly()
-                            deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                            body { "return this.copyOfRange(fromIndex, toIndex)" }
+                            annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                            body { "return this.asDynamic().slice(fromIndex, toIndex)" }
+                            body { rangeCheck + "\n" + body }
                             return@on
                         }
                         else -> {
@@ -1014,8 +1014,8 @@ object ArrayOps : TemplateGroupBase() {
                     when (primitive) {
                         null -> {
                             inlineOnly()
-                            deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                            body { "return this.copyOf()" }
+                            annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                            body { "return this.asDynamic().slice()" }
                         }
                         PrimitiveType.Long -> {
                             annotation("@OptIn(JsIntrinsic::class)")
@@ -1140,9 +1140,13 @@ object ArrayOps : TemplateGroupBase() {
                 sample("samples.collections.Arrays.CopyOfOperations.resizingCopyOf")
                 returns("Array<T?>")
                 on(Platform.JS) {
-                    inlineOnly()
-                    deprecate(Deprecation("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN))
-                    body { "return this.copyOf(newSize)" }
+                    annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+                    body {
+                        """
+                        $newSizeCheck
+                        return arrayCopyResize(this, newSize, null)
+                        """
+                    }
                 }
                 on(Platform.Native) {
                     body { "return this.copyOfNulls(newSize)" }
