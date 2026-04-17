@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getKindSpecificClangFlags
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Test
 import java.io.File
 

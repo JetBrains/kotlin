@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.needSmallBinary
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -23,11 +22,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestReport
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.junit.jupiter.api.Assumptions
-import org.opentest4j.AssertionFailedError
-import org.opentest4j.ValueWrapper
 import java.io.File
 import kotlin.time.Duration
 

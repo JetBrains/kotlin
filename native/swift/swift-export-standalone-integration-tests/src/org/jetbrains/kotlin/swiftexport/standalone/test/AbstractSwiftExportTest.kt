@@ -33,6 +33,7 @@ import kotlin.io.path.div
 import org.jetbrains.kotlin.swiftexport.standalone.UnsupportedDeclarationReporterKind
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(SwiftExportTestSupport::class)

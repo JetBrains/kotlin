@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToS
 import org.jetbrains.kotlin.native.executors.RunProcessResult
 import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File

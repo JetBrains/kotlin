@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildTree
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.startsWith
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.TestService

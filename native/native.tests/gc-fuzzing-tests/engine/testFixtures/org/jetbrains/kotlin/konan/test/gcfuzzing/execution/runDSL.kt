@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.cinteropToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.generateObjCFrameworkTestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory

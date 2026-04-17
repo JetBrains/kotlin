@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.groupingPhaseInputs
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.model.TestModule

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.junit.jupiter.api.Test
 import java.io.File

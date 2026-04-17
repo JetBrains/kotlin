@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.KLIB_IR_INLINER
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.*
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {

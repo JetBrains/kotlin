@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.test.directives.TestKind
 
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 abstract class AbstractNativeLinkerOutputTest : AbstractNativeCInteropBaseTest() {

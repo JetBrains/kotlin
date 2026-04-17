@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File

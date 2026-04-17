@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test

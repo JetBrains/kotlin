@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LAUNCHER_MODULE_NAME
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 

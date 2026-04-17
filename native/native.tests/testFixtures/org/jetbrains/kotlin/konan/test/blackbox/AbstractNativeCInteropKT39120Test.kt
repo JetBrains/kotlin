@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_FILE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag

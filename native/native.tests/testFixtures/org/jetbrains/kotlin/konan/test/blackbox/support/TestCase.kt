@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import java.io.File
 

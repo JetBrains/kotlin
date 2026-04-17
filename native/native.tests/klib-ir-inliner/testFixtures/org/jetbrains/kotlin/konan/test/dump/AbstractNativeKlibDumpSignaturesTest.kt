@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIrSignatures
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadataSignatures
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.junit.jupiter.api.Assertions.assertTrue

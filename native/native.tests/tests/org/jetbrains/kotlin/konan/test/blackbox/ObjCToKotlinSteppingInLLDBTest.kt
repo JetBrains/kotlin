@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File

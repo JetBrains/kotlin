@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 
 /**

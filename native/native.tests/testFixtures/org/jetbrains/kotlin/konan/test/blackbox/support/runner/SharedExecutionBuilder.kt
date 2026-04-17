@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.SharedExecutionTestRunner
 import org.jetbrains.kotlin.native.executors.Executor
+import org.jetbrains.kotlin.test.directives.TestKind
 import java.util.concurrent.ConcurrentHashMap
 
 /**

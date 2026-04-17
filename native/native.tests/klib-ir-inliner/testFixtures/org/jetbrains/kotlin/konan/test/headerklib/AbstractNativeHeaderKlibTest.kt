@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Tag
 import java.io.File
 import kotlin.test.assertContentEquals

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.NoTestRunnerExtras
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestOutputFilter
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.test.assertIs

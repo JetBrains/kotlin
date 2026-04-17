@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
-import java.io.File
 
 @Tag("objcexport")
 abstract class AbstractNativeObjCExportTest : AbstractNativeSimpleTest() {

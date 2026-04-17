@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.opentest4j.TestAbortedException
 import java.io.File

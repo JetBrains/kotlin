@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.JUnit5Assertions

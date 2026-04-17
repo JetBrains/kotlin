@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail

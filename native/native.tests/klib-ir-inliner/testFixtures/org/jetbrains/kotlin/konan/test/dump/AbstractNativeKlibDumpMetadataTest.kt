@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.dump
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileToLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.muteTestIfNecessary
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail

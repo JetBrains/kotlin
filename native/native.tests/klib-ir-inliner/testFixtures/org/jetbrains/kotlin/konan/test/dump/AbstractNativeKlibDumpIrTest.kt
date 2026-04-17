@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.io.File

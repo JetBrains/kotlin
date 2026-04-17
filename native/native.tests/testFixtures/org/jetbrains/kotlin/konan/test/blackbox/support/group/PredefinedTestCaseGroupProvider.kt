@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File

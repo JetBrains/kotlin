@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Success
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DumpedTestListing
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.startsWith
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull

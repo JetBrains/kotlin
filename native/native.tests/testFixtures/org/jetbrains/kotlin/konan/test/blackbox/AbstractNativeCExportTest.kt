@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
@@ -14,23 +13,18 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangDistribution
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag

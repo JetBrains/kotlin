@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File

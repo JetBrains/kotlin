@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.test.TestDataAssertions
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.junit.jupiter.api.Tag
 import java.nio.file.Path
 import kotlin.io.path.Path

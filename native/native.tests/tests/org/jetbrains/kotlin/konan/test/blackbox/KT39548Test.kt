@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.junit.jupiter.api.Assumptions
