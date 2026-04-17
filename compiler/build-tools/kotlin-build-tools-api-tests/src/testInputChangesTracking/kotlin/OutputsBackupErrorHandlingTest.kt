@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.execute
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -59,9 +59,9 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
 
     private fun testWithBackupOptionsOutputsPreserved(
         strategyConfig: CompilerExecutionStrategyConfiguration,
-        createModule: Scenario.() -> ScenarioModule,
+        createModule: Scenario<*, *>.() -> ScenarioModule<*, *>,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = createModule()
 
             module.createFile("extra.kt", "fun extra() = foo()")
@@ -82,9 +82,9 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
 
     private fun testWithoutBackupOptionsOutputsLost(
         strategyConfig: CompilerExecutionStrategyConfiguration,
-        createModule: Scenario.() -> ScenarioModule,
+        createModule: Scenario<*, *>.() -> ScenarioModule<*, *>,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = createModule()
 
             module.createFile("extra.kt", "fun extra() = foo()")
@@ -122,9 +122,9 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
 
     private fun testBackupClassesOnlyOutputsPreservedButCachesInvalid(
         strategyConfig: CompilerExecutionStrategyConfiguration,
-        createModule: Scenario.() -> ScenarioModule,
+        createModule: Scenario<*, *>.() -> ScenarioModule<*, *>,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = createModule()
 
             module.createFile("extra.kt", "fun extra() = foo()")
@@ -169,9 +169,9 @@ class OutputsBackupErrorHandlingTest : BaseCompilationTest() {
 
     private fun testCorrectnessAfterRecovery(
         strategyConfig: CompilerExecutionStrategyConfiguration,
-        createModule: Scenario.() -> ScenarioModule,
+        createModule: Scenario<*, *>.() -> ScenarioModule<*, *>,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = createModule()
 
             module.createFile("extra.kt", "fun main() { println(\"v1\") }")

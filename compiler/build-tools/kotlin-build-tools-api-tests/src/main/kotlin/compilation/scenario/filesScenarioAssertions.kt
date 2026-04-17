@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
+context(module: Module<*, *, *>, scenarioModule: ScenarioModule<*, *>)
 fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
     assertAddedOutputs(addedOutputs.toSet())
 }
@@ -22,7 +22,7 @@ fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
+context(module: Module<*, *, *>, scenarioModule: ScenarioModule<*, *>)
 fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
     val outputs = requireScenarioModuleImpl().outputs
     outputs.addAll(addedOutputs)
@@ -33,7 +33,7 @@ fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
+context(module: Module<*, *, *>, scenarioModule: ScenarioModule<*, *>)
 fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
     assertRemovedOutputs(removedOutputs.toSet())
 }
@@ -42,7 +42,7 @@ fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
  * This assertion has side effects modifying the expected total outputs list!
  * If you decided to start using it, don't mix it with regular [assertOutputs]
  */
-context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
+context(module: Module<*, *, *>, scenarioModule: ScenarioModule<*, *>)
 fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
     val outputs = requireScenarioModuleImpl().outputs
     val notPresentOutputs = removedOutputs - outputs
@@ -53,12 +53,12 @@ fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
     assertOutputs(outputs)
 }
 
-context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
+context(module: Module<*, *, *>, scenarioModule: ScenarioModule<*, *>)
 fun CompilationOutcome.assertNoOutputSetChanges() {
     val outputs = requireScenarioModuleImpl().outputs
     assertOutputs(outputs)
 }
 
-context(scenarioModule: ScenarioModule)
+context(scenarioModule: ScenarioModule<*, *>)
 private fun requireScenarioModuleImpl() =
     (scenarioModule as? BaseScenarioModule ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))

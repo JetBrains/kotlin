@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 
-interface ScenarioModule {
+interface ScenarioModule<out B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder> {
     /**
      * Performs registered existing file modification.
      *
@@ -54,11 +54,11 @@ interface ScenarioModule {
 
     fun compile(
         forceOutput: LogLevel? = null,
-        assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>, ScenarioModule) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module<*, *, *>, ScenarioModule<B, IC>) CompilationOutcome.() -> Unit = {},
     )
 
     fun executeCompiledCode(
         mainClassFqn: String,
-        assertions: ExecutionOutcome.() -> Unit = {}
+        assertions: ExecutionOutcome.() -> Unit = {},
     )
 }

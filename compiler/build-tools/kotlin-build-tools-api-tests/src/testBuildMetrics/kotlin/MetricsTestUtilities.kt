@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
  * Invokes [Module.compile] with autoconfiguration of [org.jetbrains.kotlin.buildtools.api.BuildOperation.METRICS_COLLECTOR].
  * The passed metrics collector will be accessible in [assertions] as [TestBuildMetricsCollector].
  */
-fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder>.compileWithMetrics(
+fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.compileWithMetrics(
     strategyConfig: ExecutionPolicy = defaultStrategyConfig,
     forceOutput: LogLevel? = null,
     compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     compilationAction: (JvmCompilationOperation) -> Unit = {},
-    assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder>) CompilationOutcome.(TestBuildMetricsCollector) -> Unit = {},
+    assertions: context(Module<*, *, *>) CompilationOutcome.(TestBuildMetricsCollector) -> Unit = {},
 ): CompilationResult {
     val metricsCollector = TestBuildMetricsCollector()
     return compile(strategyConfig, forceOutput, compilationConfigAction = {
@@ -39,7 +39,7 @@ fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder>.compileWith
  * Invokes [Module.compileIncrementally] with autoconfiguration of [org.jetbrains.kotlin.buildtools.api.BuildOperation.METRICS_COLLECTOR].
  * The passed metrics collector will be accessible in [assertions] as [TestBuildMetricsCollector].
  */
-fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder>.compileIncrementallyWithMetrics(
+fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.compileIncrementallyWithMetrics(
     sourcesChanges: SourcesChanges,
     strategyConfig: ExecutionPolicy = defaultStrategyConfig,
     forceOutput: LogLevel? = null,
@@ -47,7 +47,7 @@ fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder>.compileIncr
     compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     compilationAction: (JvmCompilationOperation) -> Unit = {},
     icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit = {},
-    assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder>) CompilationOutcome.(TestBuildMetricsCollector) -> Unit = {},
+    assertions: context(Module<*, *, *>) CompilationOutcome.(TestBuildMetricsCollector) -> Unit = {},
 ): CompilationResult {
     val metricsCollector = TestBuildMetricsCollector()
     return compileIncrementally(

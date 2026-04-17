@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcom
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.EXPLICIT_NULL_MODULE_NAME_MARKER
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -45,7 +45,7 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun incremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module1 = module("jvm-module-1", compilationConfigAction = {
                 it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
@@ -65,7 +65,7 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
     fun incrementalWithFirRunner(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module1 = module("jvm-module-1", icOptionsConfigAction = {
                 it[USE_FIR_RUNNER] = true
             }, compilationConfigAction = {

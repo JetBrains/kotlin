@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsLines
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -23,7 +22,7 @@ class NullableParamTypeLookupTest : BaseCompilationTest() {
     @DisplayName("Removing the class used as a nullable parameter type triggers recompilation of the call site that passes null")
     @TestMetadata("ic-scenarios/kt-85740/module-a")
     fun testNullArgumentCallSiteTracksParameterType(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val moduleC = module("ic-scenarios/kt-85740/module-c")
             val moduleB = module("ic-scenarios/kt-85740/module-b", dependencies = listOf(moduleC))
             val moduleA = module("ic-scenarios/kt-85740/module-a", dependencies = listOf(moduleB, moduleC))

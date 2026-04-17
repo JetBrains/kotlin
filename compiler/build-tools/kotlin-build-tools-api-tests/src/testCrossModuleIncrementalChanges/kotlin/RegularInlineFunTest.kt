@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.execute
 import org.jetbrains.kotlin.test.TestMetadata
@@ -19,7 +19,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DisplayName("When regular inline function changes, its call site is recompiled")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
     fun testBasicCase(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val lib = module("ic-scenarios/regular-inline-fun/basic-change/lib")
             val app = module(
                 "ic-scenarios/regular-inline-fun/basic-change/app",
@@ -52,7 +52,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DisplayName("Recompilation of call site affected by an inline fun in a value class")
     @TestMetadata("ic-scenarios/inline-fun-in-value-class/lib")
     fun testJvmInlineValueClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val lib = module("ic-scenarios/inline-fun-in-value-class/lib")
             val app = module(
                 "ic-scenarios/inline-fun-in-value-class/app",

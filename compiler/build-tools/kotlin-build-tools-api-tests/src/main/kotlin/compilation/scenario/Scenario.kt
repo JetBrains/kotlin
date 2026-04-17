@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 
-interface Scenario {
+interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
     /**
      * Creates a module for a scenario.
      *
@@ -27,11 +27,11 @@ interface Scenario {
      */
     fun module(
         moduleName: String,
-        dependencies: List<ScenarioModule> = emptyList(),
+        dependencies: List<ScenarioModule<B, IC>> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit) = {},
-    ): ScenarioModule
+        compilationConfigAction: (B) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+    ): ScenarioModule<B, IC>
 
     /**
      * Creates a module for a scenario.
@@ -51,9 +51,9 @@ interface Scenario {
      */
     fun trackedModule(
         moduleName: String,
-        dependencies: List<ScenarioModule> = emptyList(),
+        dependencies: List<ScenarioModule<B, IC>> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit) = {},
-    ): ScenarioModule
+        compilationConfigAction: (B) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+    ): ScenarioModule<B, IC>
 }

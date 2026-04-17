@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import kotlin.io.path.*
-import org.junit.jupiter.api.condition.OS
 
 class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
@@ -181,7 +181,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     }
 
     private fun runMixedModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val compilerArgumentsConf: (JvmCompilationOperation.Builder) -> Unit = {
                 it.compilerArguments[VERBOSE] = true
             }
@@ -214,7 +214,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) == KotlinToolingVersion("2.2.21") && OS.MAC.isCurrentOs,
             "Known failure on Mac with 2.2.21"
         )
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module1 = if (useTrackedModules) {
                 trackedModule("jvm-module-1")
             } else {
@@ -246,7 +246,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 private fun assertCompiledSources(
     logger: TestKotlinLogger,
     expectedCompiledSources: List<String>,
-    appModule: Module<*,*>,
+    appModule: Module<*, *, *>,
 ) {
     val actualCompiledSources = (logger.logMessagesByLevel[LogLevel.DEBUG] ?: emptyList())
         .map { it.removePrefix("[KOTLIN] ") }
