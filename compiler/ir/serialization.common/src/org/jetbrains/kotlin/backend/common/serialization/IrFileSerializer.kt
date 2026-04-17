@@ -1489,8 +1489,8 @@ open class IrFileSerializer(
 
 
         when (val representation = clazz.valueClassRepresentation) {
-            is MultiFieldValueClassRepresentation ->
-                proto.multiFieldValueClassRepresentation = serializeMultiFieldValueClassRepresentation(representation)
+            is JvmInlineMultiFieldValueClassRepresentation ->
+                proto.multiFieldValueClassRepresentation = serializeJvmInlineMultiFieldValueClassRepresentation(representation)
             is InlineClassRepresentation -> proto.inlineClassRepresentation = serializeInlineClassRepresentation(representation)
             is ExtendedValueClassRepresentation, null -> Unit
         }
@@ -1523,7 +1523,7 @@ open class IrFileSerializer(
             underlyingPropertyType = serializeIrType(representation.underlyingType)
         }.build()
 
-    private fun serializeMultiFieldValueClassRepresentation(representation: MultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
+    private fun serializeJvmInlineMultiFieldValueClassRepresentation(representation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
         ProtoIrMultiFieldValueClassRepresentation.newBuilder().apply {
             addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { [name, _] -> serializeName(name) })
             addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { [_, irType] -> serializeIrType(irType) })

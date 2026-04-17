@@ -118,7 +118,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         hint: String,
         type: ConeKotlinType,
     ) {
-        if (type.needsMultiFieldValueClassFlattening(context.session)) {
+        if (type.needsJvmInlineMultiFieldValueClassFlattening(context.session)) {
             reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, hint)
         }
     }
