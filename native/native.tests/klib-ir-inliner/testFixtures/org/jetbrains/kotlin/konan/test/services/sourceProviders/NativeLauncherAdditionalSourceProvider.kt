@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.konan.test.services.sourceProviders
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
-import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.testKindIsRegular
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
@@ -29,7 +29,9 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
     ): List<TestFile> {
         val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
         var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
-        if (ESCAPE_MODULE_NAME in globalDirectives) {
+        // Tests of a REGULAR kind will be grouped, so their `box()` functions are moved to own packages by BatchingPackageInserter.
+        // In standalone tests, box() function is not moved to a package.
+        if (ESCAPE_MODULE_NAME in globalDirectives && module.testKindIsRegular()) {
             val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
             boxFqName = "$additionalPackage.$boxFqName"
         }

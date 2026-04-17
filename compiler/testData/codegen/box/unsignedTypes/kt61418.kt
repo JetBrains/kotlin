@@ -1,3 +1,4 @@
+// KIND: STANDALONE
 // WITH_STDLIB
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // FILE: signedToUnsignedConversions_annotation.kt

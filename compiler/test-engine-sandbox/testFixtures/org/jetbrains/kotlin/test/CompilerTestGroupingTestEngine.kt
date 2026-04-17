@@ -31,6 +31,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.io.path.Path
+import kotlin.io.path.useLines
 
 class CompilerTestGroupingTestEngine : TestEngine {
     companion object {
@@ -197,7 +199,13 @@ class CompilerTestGroupingTestEngine : TestEngine {
     }
 
     private fun groupTestsInBatches(infos: List<TestMethodInfo>): List<List<TestMethodInfo>> {
-        return listOf(infos)
+        val testMetadatas = infos.map {
+            val clsMeta: TestMetadata = it.descriptor.testClass.getAnnotationsByType(TestMetadata::class.java).single()!!
+            val mthMeta = it.descriptor.testMethod.getAnnotationsByType(TestMetadata::class.java).single()
+            it to Path("${clsMeta.value}/${mthMeta.value}").useLines { it.any { it.startsWith("// KIND: STANDALONE")} }
+        }
+        val (standalones, regulars) = testMetadatas.partition { it.second }
+        return standalones.map { listOf(it.first) } + listOf(regulars.map { it.first })
     }
 
     private fun runGroupingPhaseOnBatch(
