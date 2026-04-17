@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
-class MultiFieldValueClassRepresentation<Type : RigidTypeMarker>(
+class JvmInlineMultiFieldValueClassRepresentation<Type : RigidTypeMarker>(
     override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
 ) : BasicValueClassRepresentation<Type>() {
 

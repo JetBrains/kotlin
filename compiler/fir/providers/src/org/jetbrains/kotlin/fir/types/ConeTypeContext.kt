@@ -535,7 +535,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
     }
 
-    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
+    override fun TypeConstructorMarker.isJvmInlineMultiFieldValueClass(): Boolean {
         val regularClass = toFirRegularClass()
         if (regularClass != null) {
             if (regularClass.isExtendedValueClass) return false

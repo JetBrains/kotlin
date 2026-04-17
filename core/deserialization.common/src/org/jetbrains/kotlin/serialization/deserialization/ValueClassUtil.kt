@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -52,7 +52,7 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
     // metadata version is large enough (1.5.1+), because we must be able to load inline classes compiled with earlier versions correctly.
     if (tryLoadJvmInlineMultiFieldValueClass && Flags.IS_VALUE_CLASS.get(flags)) {
         val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
-        return MultiFieldValueClassRepresentation(primaryConstructor.valueParameterList.map {
+        return JvmInlineMultiFieldValueClassRepresentation(primaryConstructor.valueParameterList.map {
             nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
         })
     }

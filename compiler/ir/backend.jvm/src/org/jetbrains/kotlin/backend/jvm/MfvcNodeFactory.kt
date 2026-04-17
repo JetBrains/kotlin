@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -241,7 +241,7 @@ fun createIntermediateMfvcNode(
 ): IntermediateMfvcNode {
     require(type.needsMfvcFlattening()) { "${type.render()} does not require flattening" }
     val valueClass = type.erasedUpperBound
-    val representation = valueClass.multiFieldValueClassRepresentation!!
+    val representation = valueClass.jvmInlineMultiFieldValueClassRepresentation!!
 
     val replacements = context.multiFieldValueClassReplacements
     val rootNode = replacements.getRootMfvcNode(valueClass)
@@ -350,10 +350,10 @@ private fun IrProperty.isStatic(currentContainer: IrDeclarationContainer) =
         ?: error("Property without both getter and backing field:\n${dump()}")
 
 fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
-    require(mfvc.isMultiFieldValueClass) { "${mfvc.defaultType.render()} does not require flattening" }
+    require(mfvc.isJvmInlineMultiFieldValueClass) { "${mfvc.defaultType.render()} does not require flattening" }
     val oldPrimaryConstructor = mfvc.primaryConstructor
     val oldFields = mfvc.declarations.mapNotNull { it as? IrField ?: (it as? IrProperty)?.backingField }.filter { !it.isStatic }
-    val representation = mfvc.multiFieldValueClassRepresentation!!
+    val representation = mfvc.jvmInlineMultiFieldValueClassRepresentation!!
     val properties = collectPropertiesAfterLowering(mfvc, context).associateBy { it.isStatic(mfvc) to it.name }
 
     val subnodes = makeRootMfvcNodeSubnodes(representation, properties, context, mfvc)
@@ -511,7 +511,7 @@ private fun makeMfvcPrimaryConstructor(
 }
 
 private fun makeRootMfvcNodeSubnodes(
-    representation: MultiFieldValueClassRepresentation<IrSimpleType>,
+    representation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>,
     properties: Map<Pair<Boolean, Name>, IrProperty>,
     context: JvmBackendContext,
     mfvc: IrClass

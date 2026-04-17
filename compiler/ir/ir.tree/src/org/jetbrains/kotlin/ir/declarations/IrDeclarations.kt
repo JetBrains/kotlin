@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.descriptors.toInlineRepresentation
 import org.jetbrains.kotlin.ir.IrElement
@@ -53,8 +53,8 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 fun IrClass.isSingleFieldValueClass(distinguishBasicAndExtended: Boolean): Boolean =
     valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndExtended) != null
 
-val IrClass.isMultiFieldValueClass: Boolean
-    get() = valueClassRepresentation is MultiFieldValueClassRepresentation
+val IrClass.isJvmInlineMultiFieldValueClass: Boolean
+    get() = valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
 
 val IrClass.isExtendedValueClass: Boolean
     get() = valueClassRepresentation is ExtendedValueClassRepresentation<*>
@@ -82,8 +82,8 @@ val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
 
 
-val IrClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepresentation<IrSimpleType>?
-    get() = valueClassRepresentation as? MultiFieldValueClassRepresentation<IrSimpleType>
+val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>?
+    get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>
 
 /**
  * Retrieves the inline class representation of this class if available.

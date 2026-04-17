@@ -63,7 +63,7 @@ fun IrType.isInlineClassType(): Boolean {
 fun IrType.isBoxedInlineClassType(): Boolean =
     isInlineClassType() && isNullable() && makeNotNull().unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }
 
-fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
+fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isJvmInlineMultiFieldValueClass
 
 fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
 fun IrType.isBasicValueClassType(): Boolean = erasedUpperBound.isBasicValueClass

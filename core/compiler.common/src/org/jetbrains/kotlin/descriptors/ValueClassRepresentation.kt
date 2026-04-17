@@ -19,8 +19,8 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
 
     fun <Other : SimpleTypeMarker> mapUnderlyingType(transform: (Type) -> Other): ValueClassRepresentation<Other> = when (this) {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
-        is MultiFieldValueClassRepresentation ->
-            MultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { [name, type] -> name to transform(type) })
+        is JvmInlineMultiFieldValueClassRepresentation ->
+            JvmInlineMultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { [name, type] -> name to transform(type) })
         is ExtendedValueClassRepresentation ->
             ExtendedValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
     }
@@ -44,7 +44,7 @@ fun <Type : RigidTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKi
         with(this) {
             when {
                 type.isNullableType() -> Inline
-                !type.typeConstructor().isMultiFieldValueClass() -> Inline
+                !type.typeConstructor().isJvmInlineMultiFieldValueClass() -> Inline
                 else -> MultiField
             }
         }
@@ -54,7 +54,7 @@ fun <Type : RigidTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKi
 fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =
     when (context.valueClassLoweringKind(fields)) {
         Inline -> InlineClassRepresentation(fields[0].first, fields[0].second)
-        MultiField -> MultiFieldValueClassRepresentation(fields)
+        MultiField -> JvmInlineMultiFieldValueClassRepresentation(fields)
     }
 
 
@@ -62,7 +62,7 @@ fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
     distinguishBasicAndExtended: Boolean
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this
-    is MultiFieldValueClassRepresentation -> null
+    is JvmInlineMultiFieldValueClassRepresentation -> null
     is ExtendedValueClassRepresentation if distinguishBasicAndExtended -> null
     is ExtendedValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
         ?.let { (name, type) -> InlineClassRepresentation(name, type) }
