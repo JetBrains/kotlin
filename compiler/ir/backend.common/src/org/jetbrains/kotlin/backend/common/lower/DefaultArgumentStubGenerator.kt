@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.backend.common.lower.canHaveDefaultValue as canHaveDefaultValueImpl
@@ -286,7 +284,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     }
 
     private fun needsTypeArgumentOffset(declaration: IrFunction) =
-        isStatic(declaration) && declaration.parentAsClass.isMultiFieldValueClass && declaration is IrSimpleFunction
+        isStatic(declaration) && declaration.parentAsClass.isJvmInlineMultiFieldValueClass && declaration is IrSimpleFunction
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
         expression.transformChildrenVoid()

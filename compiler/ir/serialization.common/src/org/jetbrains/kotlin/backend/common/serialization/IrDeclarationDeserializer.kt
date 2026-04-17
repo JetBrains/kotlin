@@ -416,10 +416,10 @@ class IrDeclarationDeserializer(
             deserializeIrType(proto.underlyingPropertyType) as IrSimpleType,
         )
 
-    private fun deserializeMultiFieldValueClassRepresentation(proto: ProtoIrMultiFieldValueClassRepresentation): MultiFieldValueClassRepresentation<IrSimpleType> {
+    private fun deserializeMultiFieldValueClassRepresentation(proto: ProtoIrMultiFieldValueClassRepresentation): JvmInlineMultiFieldValueClassRepresentation<IrSimpleType> {
         val names = proto.underlyingPropertyNameList.memoryOptimizedMap { deserializeName(it) }
         val types = proto.underlyingPropertyTypeList.memoryOptimizedMap { deserializeIrType(it) as IrSimpleType }
-        return MultiFieldValueClassRepresentation(names memoryOptimizedZip types)
+        return JvmInlineMultiFieldValueClassRepresentation(names memoryOptimizedZip types)
     }
 
     private fun deserializeExtendedValueClassRepresentation(irClass: IrClass): ExtendedValueClassRepresentation<IrSimpleType> {

@@ -283,7 +283,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     )
                 }
 
-                declaration.multiFieldValueClassRepresentation != null -> {
+                declaration.jvmInlineMultiFieldValueClassRepresentation != null -> {
                     val defaultValue = primaryConstructorParameter.resolvedDefaultValue
                     if (defaultValue != null) {
                         // TODO, KT-50113: Fix when inline arguments are supported.
