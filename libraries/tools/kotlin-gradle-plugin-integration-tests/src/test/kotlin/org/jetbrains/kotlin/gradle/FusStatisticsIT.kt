@@ -748,7 +748,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @GradleTest
     @JvmGradlePluginTests
     fun testCompilerExecutionSettings(gradleVersion: GradleVersion) {
-        val kotlinVersion = StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize(KOTLIN_VERSION)
+        val kotlinVersion = StringAnonymizationPolicy.ComponentVersionAnonymizer().anonymize(KOTLIN_VERSION, ";")
         project("simpleProject", gradleVersion) {
             assertNoErrorFilesCreated {
                 build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {

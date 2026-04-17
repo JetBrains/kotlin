@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusKotlinProfileFile
+import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.createValidateAndAnonymizeCopy
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -105,7 +106,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
                 fusFile.writer().buffered().use {
                     it.appendLine("Build: $buildUid")
                     it.appendLine("Kotlin version: $kotlinVersion")
-                    metricContainer.flush(it)
+                    metricContainer.createValidateAndAnonymizeCopy().flush(it)
                 }
 
                 if (!fusReportDirectory.resolve("$buildUid.finish-profile").createNewFile()) {

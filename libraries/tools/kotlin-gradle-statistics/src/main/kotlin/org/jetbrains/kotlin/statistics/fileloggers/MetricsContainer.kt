@@ -48,7 +48,7 @@ class MetricsContainer(
         private const val BUILD_SESSION_SEPARATOR = "BUILD FINISHED"
         private const val METRIC_SEPARATOR = '='
         private const val PROJECT_METRIC_NAME_SEPARATOR = '.'
-        private  const val FUS_METRIC_SEPARATOR_FOR_KOTLIN_PROFILE_FILE = ","
+        private const val FUS_METRIC_SEPARATOR_FOR_KOTLIN_PROFILE_FILE = ","
         private const val FUS_METRIC_SEPARATOR_FOR_BACKWARD_COMPATIBILITY_PROFILE_FILE = ";"
 
         val ENCODING = Charsets.UTF_8
@@ -60,7 +60,10 @@ class MetricsContainer(
         private val numericalMetricsMap = NumericalMetrics.values().associateBy(NumericalMetrics::name)
 
         fun createMetricsContainerForProfileFile(forceValuesValidation: Boolean = false) =
-            MetricsContainer(forceValuesValidation = forceValuesValidation, metricValuesSeparator = FUS_METRIC_SEPARATOR_FOR_BACKWARD_COMPATIBILITY_PROFILE_FILE)
+            MetricsContainer(
+                forceValuesValidation = forceValuesValidation,
+                metricValuesSeparator = FUS_METRIC_SEPARATOR_FOR_BACKWARD_COMPATIBILITY_PROFILE_FILE
+            )
 
         fun createMetricsContainerForKotlinProfileFile(forceValuesValidation: Boolean = false) =
             MetricsContainer(
@@ -73,7 +76,6 @@ class MetricsContainer(
             representation: String,
             separator: String = metricValuesSeparator,
         ) {
-
             stringMetricsMap[metricDescriptor.name]?.also { metricType ->
                 synchronized(metricsLock) {
                     stringMetrics.getOrPut(metricDescriptor) {
@@ -155,7 +157,34 @@ class MetricsContainer(
             }
             return null
         }
+
+        fun MetricsContainer.createValidateAndAnonymizeCopy(): MetricsContainer {
+            val metricsContainer = MetricsContainer(forceValuesValidation, metricValuesSeparator)
+            numericalMetrics.forEach { (metricDescriptor, container) ->
+                val metric = numericalMetricsMap[metricDescriptor.name]
+                val value = container.getValue()
+                if (metric != null && value != null) {
+                    metricsContainer.report(metric, value, metricDescriptor.projectHash, null)
+                }
+            }
+            booleanMetrics.forEach { (metricDescriptor, container) ->
+                val metric = booleanMetricsMap[metricDescriptor.name]
+                val value = container.getValue()
+                if (metric != null && value != null) {
+                    metricsContainer.report(metric, value, metricDescriptor.projectHash, null)
+                }
+            }
+            stringMetrics.forEach { (metricDescriptor, container) ->
+                val metric = stringMetricsMap[metricDescriptor.name]
+                val value = container.getValue()
+                if (metric != null && value != null) {
+                    metricsContainer.report(metric, value, metricDescriptor.projectHash, null)
+                }
+            }
+            return metricsContainer
+        }
     }
+
 
     private fun processProjectName(subprojectName: String?, perProject: Boolean) =
         if (perProject && subprojectName != null) sha256(subprojectName) else null
@@ -167,7 +196,7 @@ class MetricsContainer(
         val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
             val metricContainer = booleanMetrics.getOrPut(MetricDescriptor(metric.name, projectHash)) { metric.type.newMetricContainer() }
-            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
+            metricContainer.addValue(metric.anonymization.anonymize(value, metricValuesSeparator), weight)
         }
         return true
     }
@@ -176,7 +205,7 @@ class MetricsContainer(
         val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
             val metricContainer = numericalMetrics.getOrPut(MetricDescriptor(metric.name, projectHash)) { metric.type.newMetricContainer() }
-            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
+            metricContainer.addValue(metric.anonymization.anonymize(value, metricValuesSeparator), weight)
         }
         return true
     }

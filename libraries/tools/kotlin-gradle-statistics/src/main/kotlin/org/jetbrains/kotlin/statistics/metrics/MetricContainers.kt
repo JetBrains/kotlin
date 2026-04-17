@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.statistics.metrics
 
+import org.jetbrains.kotlin.statistics.DEFAULT_SEPARATOR
 import java.io.Serializable
 import java.util.*
 
@@ -13,7 +14,7 @@ interface IMetricContainer<T> : Serializable {
 
     fun addValueFromStringPresentation(str: String, separator: String)
 
-    fun toStringRepresentation(separator: String? = ";"): String
+    fun toStringRepresentation(separator: String? = DEFAULT_SEPARATOR): String
 
     fun getValue(): T?
 }

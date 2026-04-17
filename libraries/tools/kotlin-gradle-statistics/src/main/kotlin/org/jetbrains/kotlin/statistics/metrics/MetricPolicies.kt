@@ -5,24 +5,26 @@
 
 package org.jetbrains.kotlin.statistics.metrics
 
+import org.jetbrains.kotlin.statistics.DEFAULT_SEPARATOR
 import org.jetbrains.kotlin.statistics.ValueAnonymizer
 import org.jetbrains.kotlin.statistics.anonymizeComponentVersion
 import kotlin.math.abs
 
 
-internal const val DEFAULT_SEPARATOR = ";"
 enum class StringOverridePolicy : IMetricContainerFactory<String> {
     OVERRIDE {
         override fun newMetricContainer(): IMetricContainer<String> = OverrideStringMetricContainer()
 
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? = OverrideStringMetricContainer().also {
-            it.addValueFromStringPresentation(state, separator)
-        }
+        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? =
+            OverrideStringMetricContainer().also {
+                it.addValueFromStringPresentation(state, separator)
+            }
     },
     OVERRIDE_VERSION_IF_NOT_SET {
         override fun newMetricContainer(): IMetricContainer<String> = OverrideVersionMetricContainer()
 
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? = OverrideVersionMetricContainer(state)
+        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? =
+            OverrideVersionMetricContainer(state)
     },
     CONCAT {
         override fun newMetricContainer(): IMetricContainer<String> = ConcatMetricContainer()
@@ -73,14 +75,16 @@ enum class BooleanOverridePolicy : IMetricContainerFactory<Boolean> {
     OVERRIDE {
         override fun newMetricContainer(): IMetricContainer<Boolean> = OverrideBooleanMetricContainer()
 
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Boolean>? = OverrideBooleanMetricContainer().also {
-            it.addValueFromStringPresentation(state, separator)
-        }
+        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Boolean>? =
+            OverrideBooleanMetricContainer().also {
+                it.addValueFromStringPresentation(state, separator)
+            }
     },
     OR {
         override fun newMetricContainer(): IMetricContainer<Boolean> = OrMetricContainer()
 
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Boolean>? = OrMetricContainer(state.toBoolean())
+        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Boolean>? =
+            OrMetricContainer(state.toBoolean())
     }
 
     // may be add disctribution counter metric container
@@ -88,17 +92,13 @@ enum class BooleanOverridePolicy : IMetricContainerFactory<Boolean> {
 
 enum class BooleanAnonymizationPolicy : ValueAnonymizer<Boolean> {
     SAFE {
-        override fun anonymize(t: Boolean) = t
+        override fun anonymize(t: Boolean, separator: String) = t
     }
 }
 
 abstract class StringAnonymizationPolicy : ValueAnonymizer<String> {
 
     abstract fun validationRegexp(separator: String = DEFAULT_SEPARATOR): String
-
-    abstract fun anonymize(t: String, separator: String = DEFAULT_SEPARATOR): String
-
-    override fun anonymize(t: String): String = anonymize(t, separator = DEFAULT_SEPARATOR)
 
     class AllowedListAnonymizer(val allowedValues: Collection<String>) : StringAnonymizationPolicy() {
         companion object {
@@ -141,10 +141,10 @@ abstract class StringAnonymizationPolicy : ValueAnonymizer<String> {
 
 enum class NumberAnonymizationPolicy : ValueAnonymizer<Long> {
     SAFE {
-        override fun anonymize(t: Long) = t
+        override fun anonymize(t: Long, separator: String) = t
     },
     RANDOM_10_PERCENT {
-        override fun anonymize(t: Long): Long {
+        override fun anonymize(t: Long, separator: String): Long {
             if (abs(t) < 10) return t
             val sign = if (t < 0)
                 -1
