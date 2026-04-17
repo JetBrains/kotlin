@@ -2,7 +2,61 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 1.3)
+**Last Updated**: 2026-04-17 (refactoring step 1.4)
+
+---
+
+## Refactoring Step 1.4: ConstantEvaluator vs FirExpressionEvaluator — Investigation - 2026-04-17
+
+### Question (from REFACTORING_PLAN.md)
+Can the java-direct `ConstantEvaluator` (~290 LOC after Step 1.3) be replaced by FIR's `FirExpressionEvaluator` so Java constant folding reuses the canonical FIR evaluator?
+
+### Investigation — What Each Evaluator Operates On
+
+| Evaluator | Input | Output | Stage |
+|-----------|-------|--------|-------|
+| `ConstantEvaluator` (java-direct, `ConstantEvaluator.kt`) | `JavaSyntaxNode` — raw Java KMP-parser AST (`LITERAL_EXPRESSION`, `BINARY_EXPRESSION`, `REFERENCE_EXPRESSION`, …) | `Any?` — a Kotlin primitive/String/null | During Java model construction, before any FIR is built |
+| `FirExpressionEvaluator.evaluateExpression(expr, session)` (`compiler/fir/providers/src/.../FirExpressionEvaluator.kt`, 704 LOC) | `FirExpression` — already fully-built & resolved FIR tree (`FirLiteralExpression`, `FirFunctionCall`, `FirPropertyAccessExpression`, …) | `FirEvaluatorResult` (wrapping a `FirLiteralExpression` or diagnostic) | During FIR resolution, after symbol & type resolution |
+
+### Call Chain
+
+1. **Consumer of `ConstantEvaluator`** — sole caller is `JavaFieldOverAst.initializerValue` / `resolveInitializerValue` (`JavaMemberOverAst.kt:244–255`).
+2. **Who calls those?** — `FirJavaFacade.kt:567–576` (`lazyInitializer = lazy { ... }` of `buildJavaField`):
+   ```kotlin
+   lazyInitializer = lazy {
+       javaField.initializerValue?.createConstantIfAny(session)
+           ?: javaField.resolveInitializerValue { classQualifier, fieldName ->
+               resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
+           }?.createConstantIfAny(session)
+   }
+   ```
+   This runs during FIR Java symbol provider materialization — we are *producing* the `FirField`'s initializer and need a plain `Any?` right now. There is no pre-existing `FirExpression` for the Java initializer: the Java-direct module never converts Java expressions to FIR.
+3. **Interaction with `FirExpressionEvaluator`**: `FirJavaFacade.kt` line 32 already imports `FirExpressionEvaluator`, and `resolveExternalFieldValue` uses it (indirectly, via `extractConstantValue` on a Kotlin `FirPropertySymbol`) to resolve *the Kotlin side* of the cross-language callback — e.g. `MainKt.FOO` where `FOO` is a Kotlin `const val`. So the two evaluators already coexist on opposite sides of the Java→Kotlin boundary.
+
+### Why a Direct Swap Is Not Feasible
+
+- `FirExpressionEvaluator` fundamentally requires `FirExpression` inputs. The java-direct pipeline has no `FirExpression` for a Java field initializer — it has a raw KMP `JavaSyntaxNode`.
+- Building one would require a new **Java-AST → FIR-expression** conversion layer (equivalent to what the old PSI-based Java-to-FIR converter did for method bodies and initializers), which is a substantially larger architectural change than the goal of this refactoring plan.
+- Even then, the conversion would need access to FIR symbol resolution for `REFERENCE_EXPRESSION`s, introducing a new ordering dependency: Java field FIR-building would have to wait on (or lazily trigger) FIR resolution of referenced Kotlin/Java symbols. Today that dependency is cleanly side-stepped via the `resolveReference` callback, which only descends into FIR for qualified cross-language refs.
+- Scope: `ConstantEvaluator` handles literals (integer/long/float/double/string/char/bool/null), unary (`+`, `-`, `!`, `~`), binary & polyadic (`+`, `-`, `*`, `/`, `%`, `<<`, `>>`, `>>>`, `&`, `|`, `^`, `&&`, `||`, `==`, `!=`, `<`, `>`, `<=`, `>=`), parenthesized, conditional (`?:`), type casts, and simple/qualified field refs — this is exactly the JLS §15.29 "constant expression" subset. `FirExpressionEvaluator` is a **superset** of this functionality (it also handles Kotlin-specific calls, when-expressions, string templates, etc.), so no expressive power is gained.
+
+### Conclusion
+
+`ConstantEvaluator` cannot be replaced by `FirExpressionEvaluator` without first introducing a Java-AST → FIR-expression conversion layer inside `FirJavaFacade` (or earlier). The cost/benefit is poor:
+
+- **Cost**: a new conversion layer (non-trivial — must cover all JLS §15.29 constant-expression forms, plus resolve Java class/field references to FIR symbols at the right resolution phase), plus the risk of reshuffling the FIR Java symbol-provider phase ordering.
+- **Benefit**: removing ~290 LOC of fairly contained code, in exchange for non-trivial FIR conversion code of comparable size.
+
+### Recommendation (final)
+
+**Keep `ConstantEvaluator` as-is.** It is the correct architectural layer for Java-model-level constant folding (pre-FIR), it is contained, has no external consumers beyond `JavaMemberOverAst`, and now shares its literal-parsing core with `JavaAnnotationOverAst` via `JavaLiteralParser` (Step 1.3). No follow-up task is warranted unless/until a separate initiative introduces a Java-AST→FIR-expression converter for other reasons (e.g. method-body constant folding, which is out of scope here).
+
+### Verification
+Document-only step — no code changes, no test run required per the plan. Current baseline from Step 1.3 (1168/1168 box, 1454/1456 phased) remains authoritative.
+
+### Key Learnings
+- FIR's `FirExpressionEvaluator` is a post-resolution tool; any pre-FIR layer that needs constant folding cannot use it without first materializing FIR.
+- Coexistence pattern is already in place: Java side uses `ConstantEvaluator`, Kotlin side (for cross-language refs) uses `FirExpressionEvaluator` via the `resolveReference` callback. This is a sensible seam and should be preserved.
 
 ---
 
