@@ -1,8 +1,8 @@
 // IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 
-// Exception in new-reflect implementation
-// SKIP_NEW_KOTLIN_REFLECT_COMPATIBILITY_CHECK
+// K1 also sees "fun B<T1>.bar(T1!): T1!", in addition to "fun B<T1>.bar(T1 & Any): T1 & Any". New reflection sees only the latter, which seems more correct.
+// KOTLIN_REFLECT_DUMP_MISMATCH
 
 // FILE: A.java
 import org.jetbrains.annotations.*;

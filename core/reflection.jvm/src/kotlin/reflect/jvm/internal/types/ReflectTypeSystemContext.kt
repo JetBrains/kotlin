@@ -62,7 +62,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).makeDefinitelyNotNullAsSpecified(false)
     }
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
