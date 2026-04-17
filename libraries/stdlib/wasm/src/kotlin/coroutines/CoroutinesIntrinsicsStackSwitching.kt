@@ -10,6 +10,7 @@ package kotlin.coroutines.intrinsics
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineImplStackSwitching
 import kotlin.coroutines.WasmContinuation
+import kotlin.coroutines.WasmContinuationBox
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.*
 
@@ -18,7 +19,7 @@ internal fun <T> createCoroutineUninterceptedIntrinsic0StackSwitching(
     f: suspend () -> T,
     completion: Continuation<T>
 ): Continuation<Unit> = WasmContinuation<Unit, T>(
-    suspendFunction0ToContrefImpl(f),
+    WasmContinuationBox(suspendFunction0ToContrefImpl(f), false),
     createSimpleCoroutineFromSuspendFunctionStackSwitching(completion)
 )
 
@@ -28,7 +29,7 @@ internal fun <R, T> createCoroutineUninterceptedIntrinsic1StackSwitching(
     receiver: R,
     completion: Continuation<T>
 ): Continuation<Unit> = WasmContinuation<Unit, T>(
-    suspendFunction1ToContrefImpl(f, receiver),
+    WasmContinuationBox(suspendFunction1ToContrefImpl(f, receiver), false),
     createSimpleCoroutineFromSuspendFunctionStackSwitching(completion)
 )
 

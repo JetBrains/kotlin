@@ -105,11 +105,8 @@ internal class WasmUsefulDeclarationProcessor(
             context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic,
             context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
                 val intrinsics = context.wasmSymbols.coroutinesStackSwitchingIntrinsics
-                val buildResumeIntrinsicValueResult =
-                    intrinsics.buildResumeIntrinsicValueResult.owner
                 val buildResumeIntrinsicSuspendResult =
                     intrinsics.buildResumeIntrinsicSuspendResult.owner
-                buildResumeIntrinsicValueResult.enqueue(from, "intrinsic ${buildResumeIntrinsicValueResult.name}")
                 buildResumeIntrinsicSuspendResult.enqueue(from, "intrinsic ${buildResumeIntrinsicSuspendResult.name}")
                 true
             }
