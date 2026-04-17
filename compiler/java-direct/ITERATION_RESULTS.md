@@ -2,7 +2,55 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 2.7 — evaluated and deferred: no current hot-path consumer)
+**Last Updated**: 2026-04-17 (refactoring step 3.6 — memory footprint: lazy-delegate removal on `JavaSyntaxNode`; LRU + source-release re-evaluated and deferred with rationale)
+
+---
+
+## Refactoring Step 3.6: Memory Footprint — `JavaSyntaxNode` Lazy-Delegate Removal (+ LRU / source-release deferral) - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md Step 3.6 + user-requested memory-footprint audit)
+Step 3.6 calls out three potential memory concerns for the module: (a) `JavaSyntaxNode` retains the full source `CharSequence`; (b) monotonically-growing caches (`classCache`, `supertypeCache`, `inheritedInnerClassesCache`); (c) the lack of bounded-size / LRU policies. The user additionally asked to review *virtual-file* retention and "other uses". The underlying question is: where is the actual peak-working-set cost, and which reductions are *safe* given the correctness invariants already recorded (Step 3.2 — object identity for `JavaClassOverAst` / `JavaTypeParameterOverAst`; Step 2.5 / 2.6 / 3.5 — concurrent-map invariants).
+
+### Memory-footprint walk (what the module actually retains)
+
+1. **`source: CharSequence` per file.** One reference per `JavaSyntaxNode`, but the referent is *shared* across all nodes from the same file — not copied. Retention is therefore per-file, not per-node. `CombinedJavaClassFinder` / `JavaClassFinderOverAstImpl` is constructed per compilation and its `classCache` / `packageAnnotationNodes` hold the roots strongly, so the full parse tree (and therefore its `source`) stays live for as long as the finder is live. This is expected — the finder's lifetime *is* the compilation — so the question is whether *peak* working-set can be reduced, not whether there is a leak.
+2. **`JavaSyntaxNode` per token + per composite marker.** For a realistic Java source tree this is in the low-to-mid single-digit millions of instances. Each previously paid **two** `SafePublicationLazyImpl` allocations (`text`, `childByTypeIndex`), ~32 bytes apiece on 64-bit HotSpot with compressed oops (object header + value slot + captured initialiser lambda holding `this`). That is ~**64 bytes per node** of pure delegate overhead — a hundreds-of-MB fixed cost that is paid overwhelmingly for leaf/token nodes whose `text` is never read and whose child list is empty.
+3. **`VirtualFile` retention.** Held only inside `FileEntry` (inside the package → name → `List<FileEntry>` `index`) — one reference per source file, not per class, not per node. This is a constant ~O(files) footprint; not a meaningful reduction target.
+4. **Caches:** `supertypeCache: Map<ClassId, List<ClassId>>` and `inheritedInnerClassesCache: Map<ClassId, Map<String, Set<ClassId>>>` store only `ClassId`s — small, bounded by the number of classes actually queried during a compile. `classCache` / `innerClassCache` hold the heavy `JavaClassOverAst` / member graphs that keep the parse tree live.
+
+### Implemented change — Step 3.6 narrow win
+
+**`utils.kt` — removed both `by lazy(LazyThreadSafetyMode.PUBLICATION)` delegates from `JavaSyntaxNode`, replaced with manual `@Volatile`-backed fields:**
+
+- `val text: String` now a custom-getter property backed by `@Volatile private var cachedText: String?`. First read computes `source.subSequence(…).toString()` and stores it; subsequent reads hit the field. Semantics are preserved — benign race on computation (two threads may both compute equal Strings; the write is atomic and `@Volatile` ensures publication), identical to what `LazyThreadSafetyMode.PUBLICATION` already guarantees.
+- `internal val childByTypeIndex: Map<…>?` likewise backed by `@Volatile private var cachedChildByTypeIndex: Map<…>?`, using a shared top-level `BELOW_THRESHOLD_SENTINEL = emptyMap()` as a tri-state marker ("not yet computed" = `null`; "computed, small node, caller should linear-scan" = sentinel; otherwise the real map). Using a shared sentinel instead of a second boolean field keeps the feature at a single reference slot per node.
+
+Per-node overhead for these two features drops from **~64 bytes of lazy delegates + whatever the delegates themselves wrap** to **2 reference slots (16 bytes on compressed oops)**, a ~50-bytes-per-node reduction that scales with the entire parse-tree size. The saving is taken primarily on token leaves, which are the overwhelming majority of `JavaSyntaxNode` instances and almost never have their `text` materialised — thanks to Step 2.4 (`textEquals`) for eliminating the last remaining hot consumer of `text` on those nodes.
+
+### Explicitly deferred — with rationale
+
+1. **LRU / bounded caches on `classCache` / `innerClassCache`.** Rejected again, same argument as the prior Step 3.6 note: Step 3.2 documents an *object-identity* invariant — `JavaTypeParameterOverAst` instances must match by reference between a `JavaClassOverAst` and every subsequent `JavaResolutionContext` lookup, or FIR emits `ERROR CLASS: Unresolved name: T`. LRU eviction of `JavaClassOverAst` would silently re-parse and produce a *different* `JavaClassOverAst` with *different* `JavaTypeParameterOverAst` instances on re-access. Fixing this would require a weak-value map keyed by `ClassId` plus a resurrection protocol, and Step 3.2's test infrastructure is a prerequisite.
+2. **LRU on `supertypeCache` / `inheritedInnerClassesCache`.** Rejected as not worth the risk: these store only `ClassId`s (small), are proportional to the number of classes *actually* queried during a compile (bounded), and their re-computation requires the parse tree anyway — so evicting them does not release the heavy objects. Any "saving" is theoretical.
+3. **Early source-text release after extraction.** Rejected: the `source` field is read transitively by every lazy slot that has not yet been computed (`text`, `textEquals`, and now `childByTypeIndex`). Nulling it after initial resolution would break on any subsequent call that reaches into a previously un-touched child — for example FIR lazily touching a `JavaAnnotationOverAst` parameter list long after the top-level class was parsed. A safe release would require proving every reachable `JavaSyntaxNode` has had its slots filled, which is effectively a full traversal of the tree — a tree the caller is about to discard anyway.
+4. **Virtual-file release.** Not applicable: `VirtualFile` references in `FileEntry` are cheap (one per source file) and are the module's addressable handle for re-parse on misses through `JavaSupertypeGraph.filesForClassLookup`. Dropping them would force re-discovery via the filesystem walk, trading a few MB for a large correctness risk under incremental compilation scenarios.
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/utils.kt` — replaced `val text: String by lazy(PUBLICATION)` and `internal val childByTypeIndex: Map<…>? by lazy(PUBLICATION)` with `@Volatile`-backed manual caching; added `BELOW_THRESHOLD_SENTINEL` file-private constant; expanded documentation explaining the JMM / safe-publication reasoning.
+- `compiler/java-direct/ITERATION_RESULTS.md` — this entry.
+
+### Alternatives considered and rejected
+- **`AtomicReferenceFieldUpdater` CAS for first-writer-wins semantics.** Rejected — `by lazy(PUBLICATION)` itself does not provide first-writer-wins (it allows multiple threads to race on computation, keeping the first publish — the docs explicitly describe this), so the `@Volatile` benign-race replacement is a direct semantic match. A CAS version would be strictly *stronger* than what the module previously guaranteed, and therefore neither required nor justified by the plan.
+- **Drop `text` caching entirely, always recompute.** Rejected — a few call sites (import resolution, literal parsing in `ConstantEvaluator` / `JavaAnnotationOverAst`) access `.text` repeatedly on the same node inside a tight loop. Losing the cache there would turn O(n) into O(n·m) per call; the manual `@Volatile` field keeps the fast-path essentially free for those users while no longer charging token leaves who never read it.
+- **Drop `childByTypeIndex` caching for composite nodes.** Rejected — this is the Step 2.1 optimisation; its cache is what turns O(k²) repeated linear scans (hit on class / method bodies with many children) back into O(k).
+- **Bounded cache on the `text` field itself (e.g. only cache if length ≥ N).** Rejected for complexity — the `textEquals` path from Step 2.4 already bypasses `text` for the short-identifier hot path, so the remaining `.text` readers are the ones where the cache saves real work.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL** in 2m 17s, 0 `FAILED` lines (`/tmp/jd_20260417_115237/jd_test_step36.txt`). Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- Kotlin's `by lazy(PUBLICATION)` is the right default for correctness but wrong for classes instantiated in the millions: the per-property wrapper object dominates the feature cost at that scale. A manual `@Volatile` field with a sentinel for tri-state semantics matches `PUBLICATION`'s memory-model guarantees at a fraction of the allocation cost.
+- "Release early" strategies that target the `source` `CharSequence` or the cache entries are attractive on paper but collide with the identity invariants this module *already* relies on for correctness (Step 3.2). Any future bounded-cache work must either come after reference-stable type-parameter resolution (via weak-value maps + resurrection) or come with a failing test that documents the cost it is meant to avoid.
+- The biggest per-instance memory win in this module was not about removing a cache but about removing the *wrapper* around one.
 
 ---
 
