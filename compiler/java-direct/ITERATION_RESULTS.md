@@ -2,7 +2,38 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 1.6 — split `JavaClassFinderOverAstImpl`)
+**Last Updated**: 2026-04-17 (refactoring step 1.7 — fix remaining architectural code smells)
+
+---
+
+## Refactoring Step 1.7: Fix Remaining Architectural Code Smells - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+Five small but real code smells, each well-known but unfixed: a `TODO`-flagged FQN check in `CombinedJavaClassFinder` whose reasoning was opaque; an undocumented two-phase construction invariant in `JavaTypeParameterOverAst.updateResolutionContext` (publicly callable, no contract); two `findInner…InSupertypes` methods (one in `JavaClassOverAst`, one in `JavaInheritedMemberResolver`) with no comment on why both exist; a `TODO: remove after testing or find a better way to debuglog` on `JAVA_DIRECT_DEBUG_LOG_PROPERTY_NAME`; and a typo `enore` in `JavaSupertypeGraph` (the `shoulbe` typo had already been removed by Step 1.5, and `reasonin` lived in the `CombinedJavaClassFinder` TODO that this step removed).
+
+### Fix
+Five focused, low-risk edits — no behavioural changes:
+
+- **`CombinedJavaClassFinder.kt`** (line ~38): removed `// TODO: recheck this place, the reasonin is suspicious`. The check **is** load-bearing — some delegating finders (PSI-based, in particular) can return a `JavaClass` whose `fqName` does not equal `request.classId.asSingleFqName()` (inner-class collisions, classpath/module scoping). Without it, FIR would build symbols keyed by the requested ClassId but pointing at the wrong class, breaking annotation/type resolution. Replaced the TODO with a clear multi-paragraph rationale (including the note that `asSingleFqName()` flattens nested separators, so the comparison is intentionally a flat-FQName equality).
+- **`JavaTypeOverAst.kt`** (`JavaTypeParameterOverAst`, lines ~532–547): added a class-level KDoc spelling out the **two-phase construction invariant** (parameters are constructed with the bare containing-class context, then `updateResolutionContext` is called once with the sibling-aware context before `upperBounds` is touched). Marked `updateResolutionContext` as `internal` so external callers cannot break the invariant — the only call site is `computeTypeParameters` in `utils.kt` (verified by symbol search). Did not switch to `lateinit var` because it would require a sentinel-then-replace pattern that obscures more than it documents; the `var` + KDoc is clearer and equally safe given the now-`internal` setter.
+- **`JavaClassOverAst.kt`** (`findInnerClassInSupertypes`, lines ~167–207): added a comparison-table KDoc explicitly distinguishing it from `JavaInheritedMemberResolver.findInnerClassFromSupertypes`. Key point: this method **must** scan raw AST text (`EXTENDS_LIST`/`IMPLEMENTS_LIST` text content) and resolve via `findLocalClass`, because reading `javaClass.supertypes` would re-enter type construction → `classifier → findLocalClass → findInnerClass`, looping. The inherited-member resolver, conversely, **needs** resolved supertypes to detect cross-file ambiguities. The two cannot be unified.
+- **`JavaDirectComponentRegistrar.kt`** (line ~64): removed the `// TODO: remove after testing or find a better way to debuglog`. Investigation showed the property is genuinely useful — it's read in `JavaDirectComponentRegistrar.createJavaClassFinder` and consumed by `JavaClassFinderOverAstImpl` (`debugLogFilePath`/`debugLogFile`, line 49 / 80 / 135) to append `findClasses` traces. Promoted from `val` to `const val`, kept it `internal`, and added KDoc explaining (a) what it does, (b) why it remains a system property rather than a CompilerConfiguration option (must be enabled before the finder is constructed; developer-only diagnostic with no public CLI surface), and (c) that no I/O occurs when the property is unset.
+- **`JavaSupertypeGraph.kt`** (line 79): typo `enore` → `enough` in the existing `// TODO: check if this is rare enough` comment (the TODO itself is tracked under Step 3.3 and intentionally left for later).
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/CombinedJavaClassFinder.kt` (TODO removed, rationale block added; +6 net LOC of comments)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` (class KDoc added, function `internal`-ised + KDoc; +27 net LOC of docs)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` (KDoc table added; +12 net LOC of docs)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaDirectComponentRegistrar.kt` (TODO removed, KDoc added, `val` → `const val`; +11 net LOC of docs)
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaSupertypeGraph.kt` (one-character typo fix)
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines. Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- A `TODO: this looks suspicious` is itself a smell — either prove the code wrong (and fix it) or prove it right (and document why). For `CombinedJavaClassFinder`'s FQN-equality guard, walking through the underlying finder contracts showed it is genuinely required, so the TODO was replaced by rationale rather than by a code change.
+- When two functions in different files do "almost the same thing", the right move is often to document **why they cannot be unified** rather than to force a unification. Here, the recursion-guard requirements (raw-AST traversal vs. resolved-supertypes traversal) are fundamentally incompatible.
+- `internal` + KDoc is a stronger contract than `lateinit` for two-phase construction when there is exactly one trusted caller — `lateinit` advertises "this can be set later by anyone", which is the opposite of what we want.
 
 ---
 

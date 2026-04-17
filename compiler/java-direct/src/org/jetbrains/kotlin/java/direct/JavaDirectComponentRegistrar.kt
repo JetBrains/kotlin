@@ -61,5 +61,5 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
 
 private const val PLUGIN_ID = "org.jetbrains.kotlin.javaDirect"
 
-// TODO: remove after testing or find a better way to debuglog
-internal val JAVA_DIRECT_DEBUG_LOG_PROPERTY_NAME = "java.direct.debug.log.path"
+// TODO: consider removing after testing or find a better way to debuglog
+internal const val JAVA_DIRECT_DEBUG_LOG_PROPERTY_NAME = "java.direct.debug.log.path"

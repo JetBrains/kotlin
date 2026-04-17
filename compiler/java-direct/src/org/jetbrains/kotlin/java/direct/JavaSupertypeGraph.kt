@@ -76,7 +76,7 @@ internal class JavaSupertypeGraph(
             val root = buildSyntaxTree(builder, source)
 
             // Assuming this is a rare case, when we need to get import before `parseTopLevelClassFromFile`, which extracts imports too
-            // TODO: check if this is rare enore
+            // TODO: check if this is rare enough
             val (simpleImports, starImports) = JavaResolutionContext.extractImports(root)
             val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
             extractSupertypeRefsFromNode(classNode, packageFqName, simpleImports, starImports)

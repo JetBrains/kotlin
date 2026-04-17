@@ -165,10 +165,22 @@ class JavaClassOverAst(
     }
 
     /**
-     * Searches for an inner class in the supertypes of this class.
-     * Uses raw supertype reference names from the AST to avoid triggering full type resolution
-     * (which would cause infinite recursion via classifier → findLocalClass → findInnerClass).
-     * Resolves supertype names via [JavaResolutionContext.findLocalClass] to find same-unit classes.
+     * Searches for an inner class in the supertypes of this class, working **purely on raw AST text**.
+     *
+     * This is intentionally distinct from [JavaInheritedMemberResolver.findInnerClassFromSupertypes]:
+     *
+     * | Aspect            | This method (`JavaClassOverAst`)                       | `JavaInheritedMemberResolver`                          |
+     * |-------------------|--------------------------------------------------------|--------------------------------------------------------|
+     * | Input             | Raw `EXTENDS_LIST` / `IMPLEMENTS_LIST` AST text        | Resolved `javaClass.supertypes` (full [JavaClassifierType]) |
+     * | Resolution depth  | Simple-name lookup via [JavaResolutionContext.findLocalClass] | Full classifier resolution + cross-file ambiguity check |
+     * | Caller context    | Inside [findInnerClass] — recursion sentinel for the model layer | Top-level resolver entry point used by [JavaScopeResolver] |
+     * | Recursion guard   | `visited: MutableSet<String>` of FQN strings           | `visited: MutableSet<JavaClass>` of model instances    |
+     *
+     * The two paths cannot be unified because **this method must avoid triggering full type
+     * resolution** — calling `javaClass.supertypes` here would re-enter type construction, which
+     * itself calls `classifier → findLocalClass → findInnerClass`, producing infinite recursion.
+     * Conversely, the inherited-member resolver requires resolved supertypes to detect cross-file
+     * ambiguities that simple-name AST scanning cannot see.
      */
     private fun findInnerClassInSupertypes(name: Name, visited: MutableSet<String>): JavaClass? {
         val myId = fqName?.asString() ?: return null

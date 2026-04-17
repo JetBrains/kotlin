@@ -529,6 +529,27 @@ fun createJavaTypeWithAnnotations(
     return createJavaType(typeNode, resolutionContext, memberAnnotations = memberAnnotations)
 }
 
+/**
+ * AST-backed [JavaTypeParameter].
+ *
+ * Two-phase construction invariant
+ * --------------------------------
+ * A type parameter's upper bounds may forward-reference its sibling type parameters
+ * (e.g. `<S extends JsStubElement<E>, E>`). At construction time, however, only the
+ * containing-class context is known — the sibling list is not yet available. We therefore
+ * build a [JavaTypeParameterOverAst] in two phases:
+ *
+ *  1. Create each parameter with the bare [initialResolutionContext] (containing class only).
+ *  2. Once **all** sibling parameters in the same declaration list have been created,
+ *     [updateResolutionContext] is called exactly once with a context enriched by the full
+ *     sibling list (see `computeTypeParameters` in `utils.kt`).
+ *
+ * The [upperBounds] property is `lazy(PUBLICATION)`, so it must not be touched between
+ * phases 1 and 2 — otherwise it would cache a context that cannot resolve sibling references.
+ * This contract is enforced by convention: only `computeTypeParameters` constructs
+ * [JavaTypeParameterOverAst], and it always invokes [updateResolutionContext] before exposing
+ * the parameters to any caller.
+ */
 class JavaTypeParameterOverAst(
     node: JavaSyntaxNode,
     initialResolutionContext: JavaResolutionContext,
@@ -536,13 +557,19 @@ class JavaTypeParameterOverAst(
 
     // Resolution context can be updated after construction to include all sibling type parameters.
     // This is needed for resolving bounds like `S extends JsStubElement<E>` where E is another type param.
+    // See the class-level KDoc for the two-phase construction invariant.
     private var resolutionContext: JavaResolutionContext = initialResolutionContext
 
     /**
-     * Updates the resolution context used for resolving upper bounds.
-     * Called after all type parameters are created to add them all to scope.
+     * Phase 2 of the two-phase construction (see class KDoc).
+     * Replaces the resolution context with one that knows about all sibling type parameters,
+     * so that forward references in upper bounds can be resolved.
+     *
+     * Must be called exactly once, before [upperBounds] is first accessed.
+     * Marked `internal` because only the `utils.kt` `computeTypeParameters` factory is allowed
+     * to invoke it; external callers must not break the construction invariant.
      */
-    fun updateResolutionContext(newContext: JavaResolutionContext) {
+    internal fun updateResolutionContext(newContext: JavaResolutionContext) {
         resolutionContext = newContext
     }
 
