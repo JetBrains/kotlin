@@ -130,7 +130,7 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
     val irClass = erasedUpperBound
     return !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME) && when {
         irClass.isSingleFieldValueClass -> includeInline
-        irClass.isMultiFieldValueClass -> includeMFVC
+        irClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     }
 }
@@ -138,12 +138,12 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
 fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
     (dispatchReceiverParameter != null && when {
         parentAsClass.isSingleFieldValueClass -> includeInline
-        parentAsClass.isMultiFieldValueClass -> includeMFVC
+        parentAsClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     }) || nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) }
             || (this is IrConstructor && when {
         constructedClass.isSingleFieldValueClass -> includeInline
-        constructedClass.isMultiFieldValueClass -> includeMFVC
+        constructedClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     })
 
@@ -159,10 +159,10 @@ val IrFunction.isInlineClassFieldGetter: Boolean
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
 
 val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction &&
+    get() = (parent as? IrClass)?.isJvmInlineMultiFieldValueClass == true && this is IrSimpleFunction &&
             hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let {
-                val multiFieldValueClassRepresentation = parentAsClass.multiFieldValueClassRepresentation
-                    ?: error("Multi-field value class must have multiFieldValueClassRepresentation: ${parentAsClass.render()}")
+                val multiFieldValueClassRepresentation = parentAsClass.jvmInlineMultiFieldValueClassRepresentation
+                    ?: error("@JvmInline Multi-field value class must have jvmInlineMultiFieldValueClassRepresentation: ${parentAsClass.render()}")
                 it.owner.getter == this && multiFieldValueClassRepresentation.containsPropertyWithName(it.owner.name)
             } == true

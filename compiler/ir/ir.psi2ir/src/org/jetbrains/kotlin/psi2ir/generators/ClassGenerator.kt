@@ -101,7 +101,7 @@ internal class ClassGenerator(
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
 
-            if (irClass.isMultiFieldValueClass && ktClassOrObject is KtClassOrObject) {
+            if (irClass.isJvmInlineMultiFieldValueClass && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForMultiFieldValueClasses(irClass, ktClassOrObject)
             }
 
