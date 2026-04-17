@@ -39,8 +39,9 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
             ":app:jvmTest",
             ":lib:jvmTest",
 
-            ":app:nativeTest",
-            ":lib:nativeTest",
+            // for native, we check only recompilation, but not test run, as sometimes after recompilation exactly same binary is produced.
+            ":app:linkDebugTestNative",
+            ":lib:linkDebugTestNative",
         )
     override val gradleTask: String
         get() = "build"
@@ -75,7 +76,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:compileTestKotlinJs",
                 ":app:jsTest",
                 ":app:jvmTest",
-                ":app:nativeTest",
+                ":app:linkDebugTestNative",
             ),
         ) {
             assertIncrementalCompilation(listOf(changedInAppCommon).relativizeTo(projectPath))
@@ -117,7 +118,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
         checkIncrementalBuild(
             tasksExpectedToExecute = setOf(
                 ":app:compileTestKotlinNative",
-                ":app:nativeTest",
+                ":app:linkDebugTestNative",
             ),
         )
     }
