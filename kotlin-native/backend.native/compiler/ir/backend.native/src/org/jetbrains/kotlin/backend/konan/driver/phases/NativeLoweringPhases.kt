@@ -415,6 +415,12 @@ private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
+private val cudaIntrinsicsPhase = createFileLoweringPhase(
+        lowering = ::CudaIntrinsicsLowering,
+        name = "CudaIntrinsics",
+        prerequisite = setOf(inlineAllFunctionsPhase)
+)
+
 internal val specialObjCValidationPhase = createFileLoweringPhase(
         lowering = ::SpecialObjCValidationLowering,
         name = "SpecialObjCValidation",
@@ -640,6 +646,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         specializeSharedVariableBoxes,
         interopPhase,
         specialInteropIntrinsicsPhase,
+        cudaIntrinsicsPhase,
         initTestsPhase,
         dumpTestsPhase.takeIf { this.configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,

@@ -310,7 +310,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
     val config = context.config
     val containsStdlib = config.libraryToCache?.klib == context.stdlibModule.konanLibrary
     if (config.produce.isCache && containsStdlib)
-        input.files.removeAll { it.packageFqName.asString() == "kotlin.native.cuda" }
+        input.files.removeAll { it.packageFqName == KonanFqNames.cudaPackageName }
     return if (config.producePerFileCache) {
         val files = input.files.toList()
 
