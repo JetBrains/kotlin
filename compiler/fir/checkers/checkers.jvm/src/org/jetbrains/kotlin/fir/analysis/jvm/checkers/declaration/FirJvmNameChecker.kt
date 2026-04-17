@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.isInlineClassThatRequiresMangling
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isOverridable
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
@@ -52,7 +53,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             if (
                 declaration.isOverride ||
                 containingClass != null && containingClass.modality != Modality.FINAL && declaration.isOverridable ||
-                containingClass?.isValueClassThatRequiresMangling() == true
+                containingClass?.symbol?.isInlineClassThatRequiresMangling() == true
             ) {
                 reporter.reportOn(jvmName.source, FirJvmErrors.INAPPLICABLE_JVM_NAME)
             }
@@ -66,10 +67,5 @@ object FirJvmNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 // It's valid, because once declared, a property accessor is always renamable.
                 // Local variables can neither declare an accessor nor use @get:JvmName
                 function is FirPropertyAccessor
-    }
-
-    private fun FirRegularClass.isValueClassThatRequiresMangling(): Boolean {
-        // value classes have inline modifiers in FIR
-        return isBasicValueClass && name != StandardClassIds.Result.shortClassName
     }
 }
