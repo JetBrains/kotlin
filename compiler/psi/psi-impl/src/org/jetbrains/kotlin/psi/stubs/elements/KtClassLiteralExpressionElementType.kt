@@ -10,15 +10,14 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
+import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassLiteralExpressionStubImpl
 
 class KtClassLiteralExpressionElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinClassLiteralExpressionStubImpl, KtClassLiteralExpression>(
         debugName,
-        ::KtClassLiteralExpression,
-        ::KtClassLiteralExpression,
-        { arrayOfNulls<KtClassLiteralExpression>(it) },
-        true,
+        KtClassLiteralExpression::class.java,
+        KotlinClassLiteralExpressionStub::class.java,
     ) {
 
     override fun createStub(psi: KtClassLiteralExpression, parentStub: StubElement<*>?): KotlinClassLiteralExpressionStubImpl {

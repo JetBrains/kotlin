@@ -1,12 +1,12 @@
 public class org/jetbrains/kotlin/KtNodeType : com/intellij/psi/tree/IElementType {
-	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/KtNodeType$PsiFactory;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun createPsi (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
 public class org/jetbrains/kotlin/KtNodeType$KtLeftBoundNodeType : org/jetbrains/kotlin/KtNodeType {
-	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/KtNodeType$PsiFactory;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun isLeftBound ()Z
 }
 
@@ -4193,7 +4193,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinValueArgume
 }
 
 public abstract class org/jetbrains/kotlin/psi/stubs/elements/KtStubElementType : com/intellij/psi/stubs/IStubElementType {
-	public fun <init> (Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;Lcom/intellij/util/ArrayFactory;Z)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Class;Ljava/lang/Class;)V
 	public synthetic fun createPsi (Lcom/intellij/psi/stubs/StubElement;)Lcom/intellij/psi/PsiElement;
 	public fun createPsi (Lcom/intellij/psi/stubs/StubElement;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
 	public fun createPsiFromAst (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
@@ -4271,4 +4271,3 @@ public final class org/jetbrains/kotlin/resolve/StatementFilterKt {
 	public static final fun filterStatements (Lorg/jetbrains/kotlin/resolve/StatementFilter;Lorg/jetbrains/kotlin/psi/KtBlockExpression;)Ljava/util/List;
 	public static final fun getLastStatementInABlock (Lorg/jetbrains/kotlin/resolve/StatementFilter;Lorg/jetbrains/kotlin/psi/KtBlockExpression;)Lorg/jetbrains/kotlin/psi/KtExpression;
 }
-

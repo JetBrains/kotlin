@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class KtImportDirectiveElementType extends KtStubElementType<KotlinImportDirectiveStubImpl, KtImportDirective> {
     public KtImportDirectiveElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtImportDirective::new, KtImportDirective::new, KtImportDirective[]::new, false);
+        super(debugName, KtImportDirective.class, KotlinImportDirectiveStub.class);
     }
 
     @NotNull

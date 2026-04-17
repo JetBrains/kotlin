@@ -10,16 +10,15 @@ import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readContract
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeContract
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 
 internal object KtPropertyAccessorElementType : KtStubElementType<KotlinPropertyAccessorStubImpl, KtPropertyAccessor>(
     "PROPERTY_ACCESSOR",
-    ::KtPropertyAccessor,
-    ::KtPropertyAccessor,
-    { arrayOfNulls<KtPropertyAccessor>(it) },
-    false,
+    KtPropertyAccessor::class.java,
+    KotlinPropertyAccessorStub::class.java,
 ) {
     @OptIn(KtImplementationDetail::class)
     override fun createStub(psi: KtPropertyAccessor, parentStub: StubElement<*>?): KotlinPropertyAccessorStubImpl {

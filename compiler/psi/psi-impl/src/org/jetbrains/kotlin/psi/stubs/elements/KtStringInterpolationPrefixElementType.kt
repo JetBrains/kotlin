@@ -10,15 +10,14 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.psi.KtStringInterpolationPrefix
+import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStringInterpolationPrefixStubImpl
 
 class KtStringInterpolationPrefixElementType(debugName: String) :
     KtStubElementType<KotlinStringInterpolationPrefixStubImpl, KtStringInterpolationPrefix>(
         debugName,
-        ::KtStringInterpolationPrefix,
-        ::KtStringInterpolationPrefix,
-        { arrayOfNulls<KtStringInterpolationPrefix>(it) },
-        false,
+        KtStringInterpolationPrefix::class.java,
+        KotlinStringInterpolationPrefixStub::class.java,
     ) {
 
     override fun createStub(

@@ -10,14 +10,13 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionTypeStubImpl
 
 class KtFunctionTypeElementType(@NonNls debugName: String) : KtStubElementType<KotlinFunctionTypeStubImpl, KtFunctionType>(
     debugName,
-    ::KtFunctionType,
-    ::KtFunctionType,
-    { arrayOfNulls<KtFunctionType>(it) },
-    false,
+    KtFunctionType::class.java,
+    KotlinFunctionTypeStub::class.java,
 ) {
     override fun createStub(psi: KtFunctionType, parentStub: StubElement<*>?): KotlinFunctionTypeStubImpl =
         KotlinFunctionTypeStubImpl(

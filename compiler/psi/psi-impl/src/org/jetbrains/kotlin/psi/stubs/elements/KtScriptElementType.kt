@@ -13,14 +13,13 @@ import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
 
 class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStubImpl, KtScript>(
     debugName,
-    ::KtScript,
-    ::KtScript,
-    { arrayOfNulls<KtScript>(it) },
-    false,
+    KtScript::class.java,
+    KotlinScriptStub::class.java,
 ) {
     override fun createStub(psi: KtScript, parentStub: StubElement<out PsiElement>): KotlinScriptStubImpl {
         @OptIn(KtExperimentalApi::class)

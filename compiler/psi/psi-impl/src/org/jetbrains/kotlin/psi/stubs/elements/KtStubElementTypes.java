@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl;
 
 public interface KtStubElementTypes {
     KtClassElementType CLASS = KtClassElementType.INSTANCE;
@@ -20,7 +18,7 @@ public interface KtStubElementTypes {
     KtEnumEntryElementType ENUM_ENTRY = KtEnumEntryElementType.INSTANCE;
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
     KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
-            new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer::new, KtClassInitializer::new, KtClassInitializer[]::new, false);
+            new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
     KtPlaceHolderStubElementType<KtScriptInitializer> SCRIPT_INITIALIZER = KtScriptInitializerElementType.INSTANCE;
     KtSecondaryConstructorElementType SECONDARY_CONSTRUCTOR =
             new KtSecondaryConstructorElementType("SECONDARY_CONSTRUCTOR");
@@ -29,58 +27,58 @@ public interface KtStubElementTypes {
 
     KtParameterElementType VALUE_PARAMETER = new KtParameterElementType("VALUE_PARAMETER");
     KtPlaceHolderStubElementType<KtParameterList> VALUE_PARAMETER_LIST =
-            new KtPlaceHolderStubElementType<>("VALUE_PARAMETER_LIST", KtParameterList::new, KtParameterList::new, KtParameterList[]::new, false);
+            new KtPlaceHolderStubElementType<>("VALUE_PARAMETER_LIST", KtParameterList.class);
 
     KtTypeParameterElementType TYPE_PARAMETER = new KtTypeParameterElementType("TYPE_PARAMETER");
     KtPlaceHolderStubElementType<KtTypeParameterList> TYPE_PARAMETER_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_PARAMETER_LIST", KtTypeParameterList::new, KtTypeParameterList::new, KtTypeParameterList[]::new, false);
+            new KtPlaceHolderStubElementType<>("TYPE_PARAMETER_LIST", KtTypeParameterList.class);
 
     KtAnnotationEntryElementType ANNOTATION_ENTRY = KtAnnotationEntryElementType.INSTANCE;
     KtPlaceHolderStubElementType<KtAnnotation> ANNOTATION =
-            new KtPlaceHolderStubElementType<>("ANNOTATION", KtAnnotation::new, KtAnnotation::new, KtAnnotation[]::new, false);
+            new KtPlaceHolderStubElementType<>("ANNOTATION", KtAnnotation.class);
 
     KtAnnotationUseSiteTargetElementType ANNOTATION_TARGET = new KtAnnotationUseSiteTargetElementType("ANNOTATION_TARGET");
 
     KtPlaceHolderStubElementType<KtClassBody> CLASS_BODY =
-            new KtPlaceHolderStubElementType<>("CLASS_BODY", KtClassBody::new, KtClassBody::new, KtClassBody[]::new, false);
+            new KtPlaceHolderStubElementType<>("CLASS_BODY", KtClassBody.class);
 
     KtPlaceHolderStubElementType<KtCompanionBlock> COMPANION_BLOCK =
-            new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock::new, KtCompanionBlock::new, KtCompanionBlock[]::new, false);
+            new KtPlaceHolderStubElementType<>("COMPANION_BLOCK", KtCompanionBlock.class);
 
     KtPlaceHolderStubElementType<KtImportList> IMPORT_LIST =
-            new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList::new, KtImportList::new, KtImportList[]::new, false);
+            new KtPlaceHolderStubElementType<>("IMPORT_LIST", KtImportList.class);
 
     KtPlaceHolderStubElementType<KtFileAnnotationList> FILE_ANNOTATION_LIST =
-            new KtPlaceHolderStubElementType<>("FILE_ANNOTATION_LIST", KtFileAnnotationList::new, KtFileAnnotationList::new, KtFileAnnotationList[]::new, false);
+            new KtPlaceHolderStubElementType<>("FILE_ANNOTATION_LIST", KtFileAnnotationList.class);
 
     KtImportDirectiveElementType IMPORT_DIRECTIVE = new KtImportDirectiveElementType("IMPORT_DIRECTIVE");
 
     KtImportAliasElementType IMPORT_ALIAS = new KtImportAliasElementType("IMPORT_ALIAS");
 
     KtPlaceHolderStubElementType<KtPackageDirective> PACKAGE_DIRECTIVE =
-            new KtPlaceHolderStubElementType<>("PACKAGE_DIRECTIVE", KtPackageDirective::new, KtPackageDirective::new, KtPackageDirective[]::new, false);
+            new KtPlaceHolderStubElementType<>("PACKAGE_DIRECTIVE", KtPackageDirective.class);
 
     KtModifierListElementType<KtDeclarationModifierList> MODIFIER_LIST =
-            new KtModifierListElementType<>("MODIFIER_LIST", KtDeclarationModifierList::new, KtDeclarationModifierList::new, KtDeclarationModifierList[]::new);
+            new KtModifierListElementType<>("MODIFIER_LIST", KtDeclarationModifierList.class);
 
     KtPlaceHolderStubElementType<KtTypeConstraintList> TYPE_CONSTRAINT_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT_LIST", KtTypeConstraintList::new, KtTypeConstraintList::new, KtTypeConstraintList[]::new, false);
+            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT_LIST", KtTypeConstraintList.class);
 
     KtPlaceHolderStubElementType<KtTypeConstraint> TYPE_CONSTRAINT =
-            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT", KtTypeConstraint::new, KtTypeConstraint::new, KtTypeConstraint[]::new, false);
+            new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT", KtTypeConstraint.class);
 
     KtPlaceHolderStubElementType<KtNullableType> NULLABLE_TYPE =
-            new KtPlaceHolderStubElementType<>("NULLABLE_TYPE", KtNullableType::new, KtNullableType::new, KtNullableType[]::new, false);
+            new KtPlaceHolderStubElementType<>("NULLABLE_TYPE", KtNullableType.class);
 
     KtPlaceHolderStubElementType<KtIntersectionType> INTERSECTION_TYPE =
-            new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType::new, KtIntersectionType::new, KtIntersectionType[]::new, false);
+            new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType.class);
 
     KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
-            new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference::new, KtTypeReference::new, KtTypeReference[]::new, false);
+            new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
 
     KtUserTypeElementType USER_TYPE = new KtUserTypeElementType("USER_TYPE");
     KtPlaceHolderStubElementType<KtDynamicType> DYNAMIC_TYPE =
-            new KtPlaceHolderStubElementType<>("DYNAMIC_TYPE", KtDynamicType::new, KtDynamicType::new, KtDynamicType[]::new, false);
+            new KtPlaceHolderStubElementType<>("DYNAMIC_TYPE", KtDynamicType.class);
 
     KtFunctionTypeElementType FUNCTION_TYPE = new KtFunctionTypeElementType("FUNCTION_TYPE");
 
@@ -91,7 +89,7 @@ public interface KtStubElementTypes {
     KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
 
     KtPlaceHolderStubElementType<KtFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
-            new KtPlaceHolderStubElementType<>("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver::new, KtFunctionTypeReceiver::new, KtFunctionTypeReceiver[]::new, false);
+            new KtPlaceHolderStubElementType<>("FUNCTION_TYPE_RECEIVER", KtFunctionTypeReceiver.class);
 
     KtNameReferenceExpressionElementType REFERENCE_EXPRESSION = new KtNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     KtDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new KtDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
@@ -100,50 +98,47 @@ public interface KtStubElementTypes {
             ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION =
             new KtEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
     KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
-            new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList::new, KtTypeArgumentList::new, KtTypeArgumentList[]::new, false);
+            new KtPlaceHolderStubElementType<>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
 
     KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_LIST", KtValueArgumentList::new, KtValueArgumentList::new, KtValueArgumentList[]::new, false);
+            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_LIST", KtValueArgumentList.class);
 
     KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
-            new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument::new, KtValueArgument::new, KtValueArgument[]::new);
+            new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
 
     KtPlaceHolderStubElementType<KtContractEffectList> CONTRACT_EFFECT_LIST =
             new KtContractEffectListElementType("CONTRACT_EFFECT_LIST");
 
     KtContractEffectElementType CONTRACT_EFFECT =
-            new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect::new, KtContractEffect::new, KtContractEffect[]::new);
+            new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect.class);
 
     KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
-            new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument::new, KtLambdaArgument::new, KtLambdaArgument[]::new);
+            new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
 
     KtPlaceHolderStubElementType<KtValueArgumentName> VALUE_ARGUMENT_NAME =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_NAME", KtValueArgumentName::new, KtValueArgumentName::new, KtValueArgumentName[]::new, false);
+            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
 
     KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList::new, KtSuperTypeList::new, KtSuperTypeList[]::new, false);
+            new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList.class);
 
     KtPlaceHolderStubElementType<KtInitializerList> INITIALIZER_LIST =
-            new KtPlaceHolderStubElementType<>("INITIALIZER_LIST", KtInitializerList::new, KtInitializerList::new, KtInitializerList[]::new, false);
+            new KtPlaceHolderStubElementType<>("INITIALIZER_LIST", KtInitializerList.class);
 
     KtPlaceHolderStubElementType<KtDelegatedSuperTypeEntry> DELEGATED_SUPER_TYPE_ENTRY =
-            new KtPlaceHolderStubElementType<>("DELEGATED_SUPER_TYPE_ENTRY", KtDelegatedSuperTypeEntry::new, KtDelegatedSuperTypeEntry::new, KtDelegatedSuperTypeEntry[]::new, false);
+            new KtPlaceHolderStubElementType<>("DELEGATED_SUPER_TYPE_ENTRY", KtDelegatedSuperTypeEntry.class);
 
     KtPlaceHolderStubElementType<KtSuperTypeCallEntry> SUPER_TYPE_CALL_ENTRY =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_CALL_ENTRY", KtSuperTypeCallEntry::new, KtSuperTypeCallEntry::new, KtSuperTypeCallEntry[]::new, false);
+            new KtPlaceHolderStubElementType<>("SUPER_TYPE_CALL_ENTRY", KtSuperTypeCallEntry.class);
     KtPlaceHolderStubElementType<KtSuperTypeEntry> SUPER_TYPE_ENTRY =
-            new KtPlaceHolderStubElementType<>("SUPER_TYPE_ENTRY", KtSuperTypeEntry::new, KtSuperTypeEntry::new, KtSuperTypeEntry[]::new, false);
+            new KtPlaceHolderStubElementType<>("SUPER_TYPE_ENTRY", KtSuperTypeEntry.class);
     KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
-            new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression::new, KtConstructorCalleeExpression::new, KtConstructorCalleeExpression[]::new, false);
+            new KtPlaceHolderStubElementType<>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
     KtContextReceiverElementType CONTEXT_RECEIVER = new KtContextReceiverElementType("CONTEXT_RECEIVER");
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     KtPlaceHolderStubElementType<KtContextParameterList> CONTEXT_PARAMETER_LIST =
-            new KtPlaceHolderStubElementType("CONTEXT_PARAMETER_LIST",
-                    (java.util.function.Function<ASTNode, ?>) KtContextReceiverList::new,
-                    (java.util.function.Function<KotlinPlaceHolderStubImpl, ?>) (KotlinPlaceHolderStubImpl stub) -> new KtContextReceiverList(stub),
-                    KtContextReceiverList[]::new, false);
+            new KtPlaceHolderStubElementType("CONTEXT_PARAMETER_LIST", KtContextReceiverList.class);
 
     KtConstantExpressionElementType NULL                = new KtConstantExpressionElementType("NULL");
     KtConstantExpressionElementType BOOLEAN_CONSTANT    = new KtConstantExpressionElementType("BOOLEAN_CONSTANT");
@@ -160,13 +155,13 @@ public interface KtStubElementTypes {
             new KtBlockStringTemplateEntryElementType("LONG_STRING_TEMPLATE_ENTRY");
 
     KtPlaceHolderWithTextStubElementType<KtSimpleNameStringTemplateEntry> SHORT_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry::new, KtSimpleNameStringTemplateEntry::new, KtSimpleNameStringTemplateEntry[]::new);
+            new KtPlaceHolderWithTextStubElementType<>("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);
 
     KtPlaceHolderWithTextStubElementType<KtLiteralStringTemplateEntry> LITERAL_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry::new, KtLiteralStringTemplateEntry::new, KtLiteralStringTemplateEntry[]::new);
+            new KtPlaceHolderWithTextStubElementType<>("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry.class);
 
     KtPlaceHolderWithTextStubElementType<KtEscapeStringTemplateEntry> ESCAPE_STRING_TEMPLATE_ENTRY =
-            new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry::new, KtEscapeStringTemplateEntry::new, KtEscapeStringTemplateEntry[]::new);
+            new KtPlaceHolderWithTextStubElementType<>("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
 
     KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 

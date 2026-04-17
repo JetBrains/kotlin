@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.Utils
 
 internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtClass>(
     /* debugName = */ "CLASS",
-    /* psiFromAstFactory = */ ::KtClass,
-    /* psiFromStubFactory = */ ::KtClass,
-    /* arrayFactory = */ { arrayOfNulls<KtClass>(it) },
-    /* isExpression = */ false,
+    /* psiClass = */ KtClass::class.java,
+    /* stubClass = */ KotlinClassStub::class.java,
 ) {
     /**
      * All classes should have stubs since we want to index even local ones

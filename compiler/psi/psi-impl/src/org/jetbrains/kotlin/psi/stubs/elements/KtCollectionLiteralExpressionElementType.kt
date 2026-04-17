@@ -10,15 +10,14 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
+import org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinCollectionLiteralExpressionStubImpl
 
 class KtCollectionLiteralExpressionElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinCollectionLiteralExpressionStubImpl, KtCollectionLiteralExpression>(
         debugName,
-        ::KtCollectionLiteralExpression,
-        ::KtCollectionLiteralExpression,
-        { arrayOfNulls<KtCollectionLiteralExpression>(it) },
-        true,
+        KtCollectionLiteralExpression::class.java,
+        KotlinCollectionLiteralExpressionStub::class.java,
     ) {
     override fun serialize(stub: KotlinCollectionLiteralExpressionStubImpl, dataStream: StubOutputStream) {
         dataStream.writeVarInt(stub.innerExpressionCount)

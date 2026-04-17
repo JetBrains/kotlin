@@ -20,7 +20,7 @@ import static org.jetbrains.kotlin.psi.stubs.elements.TypeBeanSerializationKt.*;
 
 public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStubImpl, KtUserType> {
     public KtUserTypeElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtUserType::new, KtUserType::new, KtUserType[]::new, false);
+        super(debugName, KtUserType.class, KotlinUserTypeStub.class);
     }
 
     @NotNull

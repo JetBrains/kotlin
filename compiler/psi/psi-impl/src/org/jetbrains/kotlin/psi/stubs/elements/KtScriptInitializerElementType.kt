@@ -9,11 +9,7 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.psi.KtScriptInitializer
 
 object KtScriptInitializerElementType : KtPlaceHolderStubElementType<KtScriptInitializer>(
-    "SCRIPT_INITIALIZER",
-    { node -> KtScriptInitializer(node) },
-    { stub -> KtScriptInitializer(stub) },
-    { arrayOfNulls<KtScriptInitializer>(it) },
-    false,
+    "SCRIPT_INITIALIZER", KtScriptInitializer::class.java,
 ) {
     override fun shouldCreateStub(node: ASTNode): Boolean = true
 }

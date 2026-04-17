@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.ArrayFactory;
 import com.intellij.util.io.DataInputOutputUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -18,19 +16,12 @@ import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl;
 
 import java.io.IOException;
-import java.util.function.Function;
 
 import static org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils.computeMaskFromModifierList;
 
 public class KtModifierListElementType<T extends KtModifierList> extends KtStubElementType<KotlinModifierListStubImpl, T> {
-    @SuppressWarnings("unchecked")
-    public KtModifierListElementType(
-            @NotNull @NonNls String debugName,
-            @NotNull Function<ASTNode, T> psiFromAstFactory,
-            @NotNull Function<KotlinModifierListStub, T> psiFromStubFactory,
-            @NotNull ArrayFactory<T> arrayFactory
-    ) {
-        super(debugName, psiFromAstFactory, (Function) psiFromStubFactory, arrayFactory, false);
+    public KtModifierListElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
+        super(debugName, psiClass, KotlinModifierListStub.class);
     }
 
     @NotNull

@@ -12,15 +12,14 @@ import com.intellij.psi.util.childrenOfType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinBlockStringTemplateEntryStubImpl
 
 class KtBlockStringTemplateEntryElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinBlockStringTemplateEntryStubImpl, KtBlockStringTemplateEntry>(
         debugName,
-        ::KtBlockStringTemplateEntry,
-        ::KtBlockStringTemplateEntry,
-        { arrayOfNulls<KtBlockStringTemplateEntry>(it) },
-        false,
+        KtBlockStringTemplateEntry::class.java,
+        KotlinBlockStringTemplateEntryStub::class.java,
     ) {
 
     override fun createStub(

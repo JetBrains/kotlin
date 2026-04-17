@@ -10,13 +10,8 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 
-@OptIn(KtImplementationDetail::class)
 internal object KtCallExpressionElementType : KtPlaceHolderStubElementType<KtCallExpression>(
-    "CALL_EXPRESSION",
-    { node -> KtCallExpression(node) },
-    { stub -> KtCallExpression(stub) },
-    { arrayOfNulls<KtCallExpression>(it) },
-    true,
+    "CALL_EXPRESSION", KtCallExpression::class.java
 ) {
     override fun shouldCreateStub(node: ASTNode): Boolean {
         @OptIn(KtImplementationDetail::class)

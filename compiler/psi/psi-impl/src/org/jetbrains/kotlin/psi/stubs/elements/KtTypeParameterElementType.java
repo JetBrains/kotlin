@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class KtTypeParameterElementType extends KtStubElementType<KotlinTypeParameterStubImpl, KtTypeParameter> {
     public KtTypeParameterElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtTypeParameter::new, KtTypeParameter::new, KtTypeParameter[]::new, false);
+        super(debugName, KtTypeParameter.class, KotlinTypeParameterStub.class);
     }
 
     @NotNull

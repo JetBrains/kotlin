@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 
 class KtTypeAliasElementType(debugName: String) :
-    KtStubElementType<KotlinTypeAliasStubImpl, KtTypeAlias>(debugName, ::KtTypeAlias, ::KtTypeAlias, { arrayOfNulls<KtTypeAlias>(it) }, false) {
+    KtStubElementType<KotlinTypeAliasStubImpl, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
 
     override fun createStub(psi: KtTypeAlias, parentStub: StubElement<*>): KotlinTypeAliasStubImpl {
         val name = StringRef.fromString(psi.name)

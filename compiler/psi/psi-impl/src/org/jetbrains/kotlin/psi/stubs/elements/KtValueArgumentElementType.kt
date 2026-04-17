@@ -5,29 +5,20 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import com.intellij.util.ArrayFactory
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinValueArgumentStubImpl
-import java.util.function.Function
 
-class KtValueArgumentElementType<T : KtValueArgument>(
-    debugName: String,
-    psiFromAstFactory: Function<ASTNode, T>,
-    psiFromStubFactory: Function<in KotlinValueArgumentStubImpl<T>, out T>,
-    arrayFactory: ArrayFactory<T>,
-) : KtStubElementType<KotlinValueArgumentStubImpl<T>, T>(
-    debugName,
-    psiFromAstFactory,
-    @Suppress("UNCHECKED_CAST") (psiFromStubFactory as Function<KotlinValueArgumentStubImpl<T>, T>),
-    arrayFactory,
-    false,
-) {
+class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClass: Class<T>) :
+    KtStubElementType<KotlinValueArgumentStubImpl<T>, T>(
+        debugName,
+        psiClass,
+        KotlinValueArgumentStub::class.java,
+    ) {
 
     override fun createStub(psi: T, parentStub: StubElement<out PsiElement>?): KotlinValueArgumentStubImpl<T> {
         return KotlinValueArgumentStubImpl(parentStub, this, psi.isSpread)

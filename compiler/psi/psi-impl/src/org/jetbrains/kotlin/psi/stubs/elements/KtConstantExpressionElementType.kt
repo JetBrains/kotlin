@@ -23,10 +23,8 @@ import org.jetbrains.kotlin.psi.utils.toConstantValueKind
 class KtConstantExpressionElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinConstantExpressionStubImpl, KtConstantExpression>(
         debugName,
-        ::KtConstantExpression,
-        ::KtConstantExpression,
-        { arrayOfNulls<KtConstantExpression>(it) },
-        true,
+        KtConstantExpression::class.java,
+        KotlinConstantExpressionStub::class.java,
     ) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {

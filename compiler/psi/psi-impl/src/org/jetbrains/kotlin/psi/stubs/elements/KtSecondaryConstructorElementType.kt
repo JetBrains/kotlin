@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText
 import org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
@@ -19,11 +20,9 @@ import java.io.IOException
 
 class KtSecondaryConstructorElementType(@NonNls debugName: String) :
     KtStubElementType<KotlinSecondaryConstructorStubImpl, KtSecondaryConstructor>(
-        debugName,
-        ::KtSecondaryConstructor,
-        ::KtSecondaryConstructor,
-        { arrayOfNulls<KtSecondaryConstructor>(it) },
-        false,
+        /* debugName = */ debugName,
+        /* psiClass = */ KtSecondaryConstructor::class.java,
+        /* stubClass = */ KotlinConstructorStub::class.java,
     ) {
 
     override fun createStub(

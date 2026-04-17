@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class KtTypeProjectionElementType extends KtStubElementType<KotlinTypeProjectionStubImpl, KtTypeProjection> {
     public KtTypeProjectionElementType(@NotNull @NonNls String debugName) {
-        super(debugName, KtTypeProjection::new, KtTypeProjection::new, KtTypeProjection[]::new, false);
+        super(debugName, KtTypeProjection.class, KotlinTypeProjectionStub.class);
     }
 
     @NotNull
