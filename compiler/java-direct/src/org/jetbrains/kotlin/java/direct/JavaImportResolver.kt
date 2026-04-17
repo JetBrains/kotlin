@@ -9,6 +9,8 @@ import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.name.FqName
+import java.util.WeakHashMap
+import java.util.Collections
 
 /**
  * Handles extraction and lookup of Java import declarations from AST nodes.
@@ -18,9 +20,19 @@ import org.jetbrains.kotlin.name.FqName
  * - Extracting the package name from a compilation unit
  * - Finding top-level class nodes by name
  *
- * This is a stateless utility — all methods are pure functions operating on AST nodes.
+ * The [extractImports] result is cached per root [JavaSyntaxNode] via a weak-keyed map so
+ * repeated context creations over the same compilation unit do not re-walk the AST.
  */
 internal object JavaImportResolver {
+
+    /**
+     * Weak-keyed cache of extracted import data per compilation-unit root node.
+     * Entries are evicted automatically when the root `JavaSyntaxNode` becomes unreachable.
+     * Wrapped in [Collections.synchronizedMap] because resolution contexts may be created
+     * from multiple threads during FIR analysis.
+     */
+    private val importCache: MutableMap<JavaSyntaxNode, Pair<Map<String, FqName>, List<FqName>>> =
+        Collections.synchronizedMap(WeakHashMap())
 
     /**
      * Extracts the package name from a compilation unit root node.
@@ -45,6 +57,13 @@ internal object JavaImportResolver {
      * 4. Fragmented imports (parser splits import across sibling nodes)
      */
     fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
+        importCache[root]?.let { return it }
+        val result = extractImportsUncached(root)
+        importCache[root] = result
+        return result
+    }
+
+    private fun extractImportsUncached(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
         val simpleImports = mutableMapOf<String, FqName>()
         val starImports = mutableListOf<FqName>()
 
@@ -116,8 +135,16 @@ internal object JavaImportResolver {
         // Handle fragmented import patterns where parser splits import across sibling nodes
         // Pattern 1: ERROR_ELEMENT(IMPORT_KEYWORD) followed by TYPE(JAVA_CODE_REFERENCE) - simple import
         // Pattern 2: ERROR_ELEMENT(import) followed by TYPE(pkg.) followed by ERROR_ELEMENT(*;) - star import
-        // Parser may insert MODIFIER_LIST and other nodes between them
+        // Parser may insert MODIFIER_LIST and other nodes between them.
+        //
+        // Fast path: fragmented imports only occur when the parser emits ERROR_ELEMENT children
+        // at the root level. For well-formed files (the common case) there are none, so we can
+        // skip walking `root.children` entirely — that loop is O(N) in the file size otherwise.
         val allChildren = root.children
+        val hasRootLevelErrorElement = allChildren.any { it.type == SyntaxTokenTypes.ERROR_ELEMENT }
+        if (!hasRootLevelErrorElement) {
+            return simpleImports to starImports
+        }
         var i = 0
         while (i < allChildren.size) {
             val node = allChildren[i]

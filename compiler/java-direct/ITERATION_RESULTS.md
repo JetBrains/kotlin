@@ -2,7 +2,38 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 2.1 — optimize `findChildByType` / `getChildrenByType` for hot nodes)
+**Last Updated**: 2026-04-17 (refactoring step 2.2 — optimize import extraction)
+
+---
+
+## Refactoring Step 2.2: Optimize Import Extraction - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+`JavaImportResolver.extractImports` (155 LOC, called from `JavaResolutionContext.create()` on every context creation) unconditionally walked `root.children` looking for fragmented-import patterns — sibling `ERROR_ELEMENT`/`TYPE` sequences the parser emits only when an import line doesn't parse cleanly (e.g., `import kotlin.*` where `kotlin` is a reserved package name in the Kotlin-compiled-Java parser profile). For well-formed Java files — i.e. essentially all of them — that loop ran all the way through every top-level node of the file for zero matches. The method was also re-run from scratch for every new `JavaResolutionContext` built on the same compilation unit root (e.g. on every `withTypeParameters` / `withContainingClass` chain-start), duplicating the whole scan.
+
+### Fix
+Two orthogonal, targeted optimisations inside `JavaImportResolver.kt` — no behaviour change, no other files touched:
+
+- **Per-root result cache.** Added a `Collections.synchronizedMap(WeakHashMap<JavaSyntaxNode, Pair<…,…>>)` keyed on the compilation-unit root. `extractImports` now does an O(1) lookup first and only invokes the new private `extractImportsUncached` on a miss. `WeakHashMap` + weak key means entries are GC-collected when the root AST is released, so this never holds a file alive and never grows unboundedly across multiple compiler invocations. The synchronized wrapper covers concurrent FIR-phase readers.
+
+- **Fast-path exit on the fragmented-import scan.** Inside `extractImportsUncached`, right before the existing `while (i < allChildren.size)` loop, added `val hasRootLevelErrorElement = allChildren.any { it.type == SyntaxTokenTypes.ERROR_ELEMENT }` and an early `return simpleImports to starImports` when it is `false`. Rationale: the whole purpose of that loop is to recover from `ERROR_ELEMENT`-flagged parser failures; if there are none at the root level, there is nothing it can recover. This short-circuits the common case with an O(N) `any` over root children — which is already what the loop's first iteration would do anyway, just now bounded to a single pass and without entering the inner skip/lookahead state machine.
+
+`extractPackageName` and `findClassNode` were left untouched (cheap, single-pass, not hot in profiling).
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaImportResolver.kt` (+22 LOC — cache field, cache wrapper, fast-path check, KDoc touch-up)
+
+### Alternatives considered and rejected
+- **Guard behind "importList is non-null and well-formed"** (first bullet in the plan). Rejected: the "well-formed" check is exactly what the fragmented-import loop does; a pre-check that inspects each import statement's children to decide "well-formed enough" would duplicate most of the loop. The `ERROR_ELEMENT`-presence gate is a strictly cheaper equivalent — no root-level `ERROR_ELEMENT` implies the fragmented-import pattern cannot exist.
+- **Cache on `JavaResolutionContext` instead of on `JavaImportResolver`.** Rejected: a `JavaResolutionContext` is rebuilt per containing-class / type-parameter scope, so caching there would miss the hits that actually matter (different contexts, same root file).
+- **Strong-keyed `HashMap`.** Rejected: would pin compilation-unit ASTs in memory across runs. `WeakHashMap` is the standard idiom for "cache while the key is alive", and matches the overall lifetime model of the module (AST roots are held by `JavaClassFinderOverAstImpl.classCache` entries and released with them).
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines (`$JD_TMP/jd_test_step2_2.txt`). Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- For parser-recovery code paths, the cheapest correctness-preserving short-circuit is usually a presence-check on the token the recovery code *exists to handle* — here, `SyntaxTokenTypes.ERROR_ELEMENT`. That is strictly cheaper than re-validating the happy-path data structures.
+- A `WeakHashMap` keyed by AST root is a surprisingly effective memoisation surface for per-file pure computations in this module: the AST roots are interned by the class finder's own cache, so hits are frequent and eviction piggybacks on the class cache's lifecycle.
 
 ---
 
