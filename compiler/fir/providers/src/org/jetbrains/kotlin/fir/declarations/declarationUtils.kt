@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.fir.types.functionTypeKind
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.contracts.ExperimentalContracts
@@ -288,13 +286,11 @@ fun FirRegularClassSymbol.isExtendedValueClass(session: FirSession): Boolean {
 
     if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) return false
 
-    return isValue && !hasAnnotation(JVM_INLINE_ANNOTATION_CLASS_ID, session)
+    val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId
+    return isValue && (jvmInlineAnnotationClassId == null || !hasAnnotation(jvmInlineAnnotationClassId, session))
 }
 
 fun FirRegularClassSymbol.isBasicValueClass(session: FirSession): Boolean = isInlineOrValueClass() && !isExtendedValueClass(session)
-
-val JVM_INLINE_ANNOTATION_FQ_NAME: FqName = FqName("kotlin.jvm.JvmInline")
-val JVM_INLINE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_NAME)
 
 @PrivateForInline
 inline val FirDeclarationOrigin.isJavaOrEnhancement: Boolean
