@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POINT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNN
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -27,25 +27,7 @@ import java.io.File
 import kotlin.time.Duration
 
 object TestDirectives : SimpleDirectivesContainer() {
-    val KIND by enumDirective<TestKind>(
-        description = """
-            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB, STANDALONE_STEPPING]
-            Declares the kind of the test:
-
-            - REGULAR (the default) - include this test into the shared test binary.
-              All tested functions should be annotated with @kotlin.Test.
-
-            - STANDALONE - compile the test to a separate test binary.
-              All tested functions should be annotated with @kotlin.Test
-
-            - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
-              The entry point can be customized Note that @kotlin.Test annotations are ignored.
-
-            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB, by executing specific LLDB commands.
-            
-            - STANDALONE_STEPPING - compile the test to a separate binary and debug with LLDB, by stepping through the entire program.
-        """.trimIndent()
-    )
+    val KIND = ConfigurationDirectives.KIND
 
     val TEST_RUNNER by enumDirective<TestRunnerType>(
         description = """
@@ -209,13 +191,7 @@ enum class AssertionsMode(val description: String) {
     }
 }
 
-enum class TestKind {
-    REGULAR,
-    STANDALONE,
-    STANDALONE_NO_TR,
-    STANDALONE_LLDB,
-    STANDALONE_STEPPING;
-}
+typealias TestKind = org.jetbrains.kotlin.test.directives.TestKind
 
 enum class TestRunnerType {
     DEFAULT,

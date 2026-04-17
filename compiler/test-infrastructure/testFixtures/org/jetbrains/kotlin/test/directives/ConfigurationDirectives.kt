@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestModule
 
 object ConfigurationDirectives : SimpleDirectivesContainer() {
     val WITH_STDLIB by directive("Add Kotlin stdlib to classpath")
@@ -27,4 +28,32 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
     val DONT_TARGET_EXACT_BACKEND by enumDirective<TargetBackend>("If specified then test will be skipped on specified backends")
 
     val METADATA_TARGET_PLATFORMS by stringDirective("List of platforms for which metadata should be generated")
+
+    val KIND by enumDirective<TestKind>(
+        description = """
+            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB, STANDALONE_STEPPING]
+            Declares the kind of the test:
+
+            - REGULAR (the default) - include this test into the shared test binary.
+              All tested functions should be annotated with @kotlin.Test.
+
+            - STANDALONE - compile the test to a separate test binary.
+              All tested functions should be annotated with @kotlin.Test
+
+            - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
+              The entry point can be customized Note that @kotlin.Test annotations are ignored.
+
+            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB, by executing specific LLDB commands.
+            
+            - STANDALONE_STEPPING - compile the test to a separate binary and debug with LLDB, by stepping through the entire program.
+        """.trimIndent()
+    )
+}
+
+enum class TestKind {
+    REGULAR,
+    STANDALONE,
+    STANDALONE_NO_TR,
+    STANDALONE_LLDB,
+    STANDALONE_STEPPING;
 }
