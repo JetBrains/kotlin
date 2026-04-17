@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
@@ -25,3 +26,6 @@ val FirRegularClass.multiFieldValueClassRepresentation: MultiFieldValueClassRepr
 
 val FirRegularClass.isExtendedValueClass: Boolean
     get() = valueClassRepresentation is ExtendedValueClassRepresentation
+
+val FirRegularClass.isBasicValueClass: Boolean
+    get() = valueClassRepresentation is BasicValueClassRepresentation

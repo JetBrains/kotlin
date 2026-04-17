@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
+import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
@@ -57,6 +58,9 @@ val IrClass.isMultiFieldValueClass: Boolean
 
 val IrClass.isExtendedValueClass: Boolean
     get() = valueClassRepresentation is ExtendedValueClassRepresentation<*>
+
+val IrClass.isBasicValueClass: Boolean
+    get() = valueClassRepresentation is BasicValueClassRepresentation<*>
 
 fun IrClass.addMember(member: IrDeclaration) {
     declarations.add(member)
