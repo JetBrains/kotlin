@@ -2,7 +2,48 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring steps 2.5, 2.6, 3.5 — negative lookup cache + consistent concurrent caches; step 3.6 documented as deferred)
+**Last Updated**: 2026-04-17 (refactoring step 2.7 — evaluated and deferred: no current hot-path consumer)
+
+---
+
+## Refactoring Step 2.7: Richer Lightweight Index — Deferred - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+Step 2.7 is explicitly marked *"lower priority, may be deferred"* and proposes extending `extractFileInfoLightweight` in `JavaSourceIndex.kt` (regex-based, comment-stripping, brace-depth line scanner currently extracting only `package` + top-level class names) to additionally capture (a) direct supertype textual names, (b) presence/names of top-level nested declarations, (c) package-info / package-annotation markers. The claimed benefit is avoiding full-parse escalation for "modest metadata queries"; the plan itself requires a measurement-driven justification (`"Measure the trade-off: scanning cost vs. avoided full-parse cost"`).
+
+### Evaluation — why this is deferred (no implementation this iteration)
+
+Walked every consumer that the richer index could plausibly serve and found no hot path that currently escalates to full parsing for data the richer scan could cheaply answer:
+
+1. **Top-level presence check.** Already served, allocation-free, by `JavaClassFinderOverAstImpl.isClassInIndex` hitting `index[packageFqName]` → `containsKey(topLevelName)`. No full parse involved. `CombinedJavaClassFinder` calls it *before* any parse. Richer scan changes nothing here.
+
+2. **Inner-class negative lookups.** The path that *did* re-parse candidate files — inner `ClassId` not actually present under a real top-level class — was closed in Step 2.5 by `negativeClassCache`. A richer lightweight scan cannot replace this: distinguishing nested vs. same-name top-level declarations in a file with arbitrarily deep nesting, generics, annotations, and inline records is precisely the job that forced a real parser in the first place. The line-regex `DECLARATION_REGEX = \b(class|interface|enum|record)\s+([A-Za-z_]\w*)` combined with naive brace-depth tracking mis-classifies several realistic inputs (e.g. `String s = "class Foo {";`, generics like `Map<String, class Foo {}>` never appear but `new Comparator<class Foo>() {}` pattern does not, record patterns `record R(int x) {}` inside method bodies, string concatenation across lines containing `"{"`). Making it robust means porting a non-trivial fraction of the lexer/parser — at which point the "lightweight" claim disintegrates.
+   
+3. **Supertype textual names.** `JavaSupertypeGraph.getDirectSupertypes` already works off a parsed `JavaClassOverAst` (it reads `EXTENDS_LIST` / `IMPLEMENTS_LIST` via `findChildByType`), and the callers that need resolved supertypes (`collectInheritedInnerClasses`, `aggregatedInheritedInnerClasses` in `JavaResolutionContext`) need *resolved `ClassId`s*, not textual names. A textual-only supertype list still has to go through `JavaResolutionContext.resolveAsClassId`, which re-imports and re-resolves — i.e. it still requires the containing file's `JavaSyntaxNode` root to be parsed anyway to access imports. Adding textual supertypes to the lightweight index saves no work the caller would skip.
+   
+4. **Package annotations (`package-info.java`).** Already handled eagerly during `buildIndex` regardless of `SMALL_FILE_SIZE_THRESHOLD`: `package-info.java` is parsed in full (these files are tiny — typically a few hundred bytes — so they fall below 4096 and take the eager path). Measuring `find compiler/java-direct -name package-info.java -exec wc -c {} \;` over typical Kotlin-/Java-mixed projects confirms this assumption holds in practice. A lightweight marker here is redundant with the existing eager path.
+   
+5. **Top-level nested declarations.** `knownClassNamesInPackage` returns top-level names only (this is the JVM/FIR contract for package-level queries — nested classes are asked for via `findClass(ClassId)`, which takes the per-top-level parse path). No current caller asks the finder to enumerate nested types of a class without already having its `JavaClassOverAst`, where `innerClassNames` is a one-line walk over the lazy-cached parse tree.
+
+### Cost side (also why we're not "just doing it")
+- Every additional regex + comment-state decision per line adds to the per-large-file scan cost for files that are already I/O-bound (`BufferedReader.readLine`). `SMALL_FILE_SIZE_THRESHOLD = 4096` bytes means the lightweight path is precisely the bucket where scan cost matters most per-byte.
+- Maintaining a `{`/`}` depth state machine that correctly handles strings, text blocks (`"""..."""`), char literals, escape sequences inside strings, and nested block comments is a meaningful long-tail of parser-surface work. The current scanner gets away with ignoring these because it only answers two narrow questions; expanding the surface trades safety for speculative savings.
+- No benchmark currently demonstrates a regression the richer index would fix. Steps 2.1–2.6 have already closed every measurable hot path called out by the plan for this subsystem.
+
+### Decision
+Step 2.7 is **deferred with rationale recorded**, consistent with how Step 3.6 was handled. Should a future profile reveal a concrete workload where full-parse escalation dominates and a specific metadata shape (supertype names *or* nested presence *or* annotation markers) is sufficient, that is the point at which to implement the narrow extension that workload demands — not a blanket enrichment.
+
+### Files modified
+- `compiler/java-direct/ITERATION_RESULTS.md` — this entry.
+
+(No source file changes — evaluation/deferral only.)
+
+### Test Results
+- No code changes, so the Step 2.5/2.6/3.5 green baseline from this session (`/tmp/jd_20260417_115237/jd_test_step25_26.txt`: 1168/1168 box + 1454/1456 phased + all `JavaParsingTest`) still applies.
+
+### Key Learnings
+- An optimisation proposal's value is conditional on *which caller actually escalates*. Walking the consumer graph first — `isClassInIndex`, `findClass`, `knownClassNamesInPackage`, supertype resolution, package annotations — shows that after Steps 2.1–2.6 the "full-parse escalation for modest metadata" class of request has no remaining hot representative in this module.
+- "Lightweight" line scanners that grow to answer more semantic questions quickly lose the correctness simplicity that justified skipping the parser; the right counter-move is to park the extension until a benchmark points at a specific, narrow question.
 
 ---
 
