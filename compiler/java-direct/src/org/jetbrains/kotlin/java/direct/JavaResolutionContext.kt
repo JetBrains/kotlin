@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.java.syntax.element.JavaSyntaxElementType
-import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -24,34 +19,21 @@ import org.jetbrains.kotlin.name.Name
  * This is analogous to FIR scopes but simplified for Java's scoping rules.
  * The typeParametersInScope tracks type parameters visible at the current location
  * (from containing class and method declarations).
+ *
+ * Delegates to focused implementations:
+ * - [JavaImportResolver] — import extraction and package name parsing (stateless)
+ * - [JavaScopeResolver] — type parameter scoping and local class lookup
+ * - [JavaInheritedMemberResolver] — supertype hierarchy traversal for inner classes
  */
 class JavaResolutionContext private constructor(
     val packageFqName: FqName,
     private val simpleImports: Map<String, FqName>,
     private val starImports: List<FqName>,
     private val distinctStarImports: List<FqName> = starImports.distinct(),
-    private val localClassProvider: (Name) -> JavaClass?,
-    private val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
+    private val scopeResolver: JavaScopeResolver,
+    private val inheritedMemberResolver: JavaInheritedMemberResolver,
     private val containingClassProvider: (() -> JavaClass?)? = null,
     private val classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
-    /**
-     * Type parameters from OUTER (enclosing) classes that have lower priority than inner class names.
-     * Used for static nested types where outer type params are "in scope" per some Java compilers
-     * (like PSI) but inner class names of the static nested type shadow them.
-     * Distinct from [typeParametersInScope] which are the method/class OWN type params and take
-     * priority over inner class names.
-     */
-    private val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
-    /**
-     * Cache for [findLocalClass] results. Shared across contexts that have the same
-     * [containingClassProvider] and [localClassProvider] (i.e., contexts created via
-     * [withTypeParameters] / [withInheritedTypeParameters]). A new cache is created
-     * when [withContainingClass] changes the containing class.
-     *
-     * Uses [Any] value type with a sentinel to distinguish "not yet looked up" from
-     * "looked up, result was null".
-     */
-    private val findLocalClassCache: HashMap<Name, Any?> = HashMap(),
     /**
      * Lazily computed aggregated inherited inner classes for the entire containing class chain.
      * Maps simpleName -> Set<ClassId> across the containing class and all its outer classes.
@@ -65,23 +47,7 @@ class JavaResolutionContext private constructor(
     private fun getAggregatedInheritedInnerClasses(): Map<String, Set<ClassId>>? {
         aggregatedInheritedInnerClassesHolder[0]?.let { return it }
         val containingClass = containingClassProvider?.invoke() as? JavaClassOverAst ?: return null
-        val classFinder = classFinderProvider?.invoke() ?: return null
-
-        val merged = mutableMapOf<String, MutableSet<ClassId>>()
-        var current: JavaClass? = containingClass
-        while (current != null) {
-            val jdClass = current as? JavaClassOverAst
-            val fqn = jdClass?.fqName
-            if (fqn != null) {
-                val cid = fqNameToClassId(fqn)
-                val inheritedInners = classFinder.collectInheritedInnerClasses(cid)
-                for ((name, classIds) in inheritedInners) {
-                    merged.getOrPut(name) { mutableSetOf() }.addAll(classIds)
-                }
-            }
-            current = current.outerClass
-        }
-        val result: Map<String, Set<ClassId>> = merged.mapValues { it.value.toSet() }
+        val result = inheritedMemberResolver.computeAggregatedInheritedInnerClasses(containingClass)
         aggregatedInheritedInnerClassesHolder[0] = result
         return result
     }
@@ -94,104 +60,7 @@ class JavaResolutionContext private constructor(
      * 4. Inner classes of outer classes' supertypes (for nested inner classes)
      * 5. Top-level classes in the same compilation unit
      */
-    fun findLocalClass(name: Name): JavaClass? {
-        val cached = findLocalClassCache[name]
-        if (cached != null) return if (cached === FIND_LOCAL_CLASS_NULL) null else cached as JavaClass
-        if (findLocalClassCache.containsKey(name)) return null // explicit null entry
-
-        val result = findLocalClassUncached(name)
-        findLocalClassCache[name] = result ?: FIND_LOCAL_CLASS_NULL
-        return result
-    }
-
-    private fun findLocalClassUncached(name: Name): JavaClass? {
-        val containingClass = containingClassProvider?.invoke()
-        // First check inner classes of the containing class
-        containingClass?.findInnerClass(name)?.let { return it }
-        // Then check sibling inner classes (classes in the outer class)
-        // This handles cases like: class J { class AImpl {} class A extends AImpl {} }
-        containingClass?.outerClass?.findInnerClass(name)?.let { return it }
-        // Then check inner classes of supertypes (inherited member types per JLS 6.5.2)
-        // This handles cases like: class B extends A { ... } where A has inner class Y
-        containingClass?.let { cls ->
-            findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
-        }
-        // Also check inner classes of outer classes and their supertypes.
-        // Walk the full outer class chain: for deeply nested classes like
-        // Outer { Inner1 { Inner2 { ... } } }, Inner2 must see siblings of Outer.
-        var outer = containingClass?.outerClass
-        while (outer != null) {
-            outer.outerClass?.findInnerClass(name)?.let { return it }
-            findInnerClassFromSupertypes(name, outer, mutableSetOf())?.let { return it }
-            outer = outer.outerClass
-        }
-        // Then check top-level classes
-        return localClassProvider(name)
-    }
-
-    /**
-     * Searches for an inner class with the given name in the supertype hierarchy.
-     * This implements JLS 6.5.2 - inherited member types are in scope.
-     * 
-     * Returns null if multiple inner classes with the same name are found (ambiguity),
-     * which will cause MISSING_DEPENDENCY_CLASS error as per javac behavior.
-     * 
-     * Uses the classFinderProvider (if available) to detect cross-file ambiguities.
-     * Falls back to local resolution for same-file supertypes.
-     */
-    private fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
-        if (javaClass in visited) return null
-        visited.add(javaClass)
-
-        val allFound = mutableSetOf<JavaClass>()
-
-        // First try local resolution (same-file supertypes)
-        for (supertype in javaClass.supertypes) {
-            val supertypeRef = supertype.presentableText.let { text ->
-                val withoutGenerics = text.substringBefore('<').trim()
-                withoutGenerics.substringBefore('.').trim()
-            }
-
-            if (supertypeRef.isEmpty()) continue
-
-            val supertypeClass = localClassProvider(Name.identifier(supertypeRef)) ?: continue
-
-            supertypeClass.findInnerClass(name)?.let { found ->
-                allFound.add(found)
-            }
-
-            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { found ->
-                allFound.add(found)
-            }
-        }
-
-        // If local resolution found nothing, try cross-file detection
-        if (allFound.isEmpty()) {
-            val javaClassOverAst = javaClass as? JavaClassOverAst
-            if (javaClassOverAst != null && classFinderProvider != null) {
-                val fqName = javaClassOverAst.fqName
-                if (fqName != null) {
-                    val containingClassId = fqNameToClassId(fqName)
-                    val classFinder = classFinderProvider.invoke()
-
-                    val inheritedInners = classFinder.collectInheritedInnerClasses(containingClassId)
-                    val candidates = inheritedInners[name.asString()] ?: emptySet()
-
-                    if (candidates.size > 1) {
-                        // Ambiguity detected across multiple supertypes
-                        return null
-                    }
-
-                    if (candidates.size == 1) {
-                        return classFinder.findClass(JavaClassFinder.Request(candidates.first()))
-                    }
-                }
-            }
-        }
-
-        if (allFound.size > 1) return null
-        return allFound.firstOrNull()
-    }
+    fun findLocalClass(name: Name): JavaClass? = scopeResolver.findLocalClass(name)
 
     /**
      * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with [nestedName].
@@ -204,37 +73,13 @@ class JavaResolutionContext private constructor(
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: (ClassId) -> List<ClassId>,
         visited: MutableSet<ClassId>,
-    ): ClassId? {
-        if (outerClassId in visited) return null
-        visited.add(outerClassId)
-
-        for (supertypeId in getSupertypeClassIds(outerClassId)) {
-            val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
-            if (tryResolve(candidateId)) return candidateId
-            // Recurse into supertype's supertypes
-            findInheritedNestedClass(supertypeId, nestedName, tryResolve, getSupertypeClassIds, visited)
-                ?.let { return it }
-        }
-
-        // Also check via the class finder for same-package Java source supertypes
-        val classFinder = classFinderProvider?.invoke()
-        if (classFinder != null) {
-            val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
-            val candidates = inheritedInners[nestedName]
-            if (candidates != null && candidates.size == 1) {
-                val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return candidateClassId
-            }
-        }
-
-        return null
-    }
+    ): ClassId? = inheritedMemberResolver.findInheritedNestedClass(outerClassId, nestedName, tryResolve, getSupertypeClassIds, visited)
 
     /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
-    fun findTypeParameter(name: String): JavaTypeParameter? = typeParametersInScope[name]
+    fun findTypeParameter(name: String): JavaTypeParameter? = scopeResolver.findTypeParameter(name)
 
     /** Returns type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
-    fun findInheritedTypeParameter(name: String): JavaTypeParameter? = inheritedTypeParametersInScope[name]
+    fun findInheritedTypeParameter(name: String): JavaTypeParameter? = scopeResolver.findInheritedTypeParameter(name)
 
     fun getSimpleImport(simpleName: String): FqName? = simpleImports[simpleName]
 
@@ -327,11 +172,11 @@ class JavaResolutionContext private constructor(
      */
     fun withTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
         if (typeParams.isEmpty()) return this
-        val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, distinctStarImports, localClassProvider, newScope,
-            containingClassProvider, classFinderProvider, inheritedTypeParametersInScope,
-            findLocalClassCache, // share cache — containingClass unchanged
+            packageFqName, simpleImports, starImports, distinctStarImports,
+            scopeResolver.withTypeParameters(typeParams),
+            inheritedMemberResolver,
+            containingClassProvider, classFinderProvider,
             aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
         )
     }
@@ -343,11 +188,11 @@ class JavaResolutionContext private constructor(
      */
     fun withInheritedTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
         if (typeParams.isEmpty()) return this
-        val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, distinctStarImports, localClassProvider, typeParametersInScope,
-            containingClassProvider, classFinderProvider, newInherited,
-            findLocalClassCache, // share cache — containingClass unchanged
+            packageFqName, simpleImports, starImports, distinctStarImports,
+            scopeResolver.withInheritedTypeParameters(typeParams),
+            inheritedMemberResolver,
+            containingClassProvider, classFinderProvider,
             aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
         )
     }
@@ -358,11 +203,12 @@ class JavaResolutionContext private constructor(
      */
     fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, distinctStarImports, localClassProvider, typeParametersInScope,
+            packageFqName, simpleImports, starImports, distinctStarImports,
+            scopeResolver.withContainingClass(containingClass),
+            inheritedMemberResolver,
             containingClassProvider = { containingClass },
             classFinderProvider = classFinderProvider,
-            inheritedTypeParametersInScope = inheritedTypeParametersInScope,
-            // new cache — containingClass changed, findLocalClass results may differ
+            // new holder — containingClass changed, aggregated inherited inner classes may differ
         )
     }
 
@@ -580,115 +426,19 @@ class JavaResolutionContext private constructor(
 
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
-     * This handles cross-file inheritance (e.g., Java class extending Kotlin class with inner class).
-     *
-     * Walks the supertype hierarchy transitively using BFS. For each resolved supertype,
-     * probes SupertypeClassId.SimpleName via [tryResolve]. For Java source supertypes,
-     * also queues their own supertypes for deeper walking.
-     *
-     * Example: Derived extends Base, Base implements Map → Map.Entry is findable.
+     * Delegates to [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId].
      */
     private fun resolveInheritedInnerClassToClassId(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
-    ): ClassId? {
-        val containingClass = containingClassProvider?.invoke() ?: return null
-
-        // Collect direct supertypes from the containing class and its outer classes
-        val initialSupertypes = mutableListOf<JavaClassifierType>()
-        var currentClass: JavaClass? = containingClass
-        while (currentClass != null) {
-            initialSupertypes.addAll(currentClass.supertypes)
-            currentClass = currentClass.outerClass
+    ): ClassId? = inheritedMemberResolver.resolveInheritedInnerClassToClassId(
+        simpleName, tryResolve, getSupertypeClassIds, containingClassProvider,
+        resolveWithoutInheritance = { name, resolve ->
+            if (name.contains('.')) resolveNestedClassToClassIdWithoutInheritance(name, resolve)
+            else resolveSimpleNameToClassIdWithoutInheritance(name, resolve)
         }
-        val visited = mutableSetOf<ClassId>()
-        var foundClassId: ClassId? = null
-
-        // Phase 1: BFS through JavaClassifierType objects (from Java model)
-        var currentLevel: List<JavaClassifierType> = initialSupertypes
-        // ClassIds of non-source supertypes that couldn't be walked via Java model
-        val nonSourceSupertypeIds = mutableListOf<ClassId>()
-        val maxDepth = 5
-
-        for (depth in 0 until maxDepth) {
-            if (currentLevel.isEmpty()) break
-            val nextLevel = mutableListOf<JavaClassifierType>()
-
-            for (supertype in currentLevel) {
-                // Resolve the supertype using text-based resolution only (no resolve() calls
-                // to avoid recursion back into resolveInheritedInnerClassToClassId).
-                val supertypeName = supertype.presentableText.substringBefore('<').trim()
-                if (supertypeName.isEmpty()) continue
-
-                val supertypeClassId = if (supertypeName.contains('.')) {
-                    resolveNestedClassToClassIdWithoutInheritance(supertypeName, tryResolve)
-                } else {
-                    resolveSimpleNameToClassIdWithoutInheritance(supertypeName, tryResolve)
-                } ?: continue
-
-                if (!visited.add(supertypeClassId)) continue
-
-                // Try the inner class: SupertypeClassId.SimpleName
-                val innerClassId = supertypeClassId.createNestedClassId(Name.identifier(simpleName))
-                if (tryResolve(innerClassId)) {
-                    if (foundClassId != null && foundClassId != innerClassId) {
-                        return null // Ambiguity
-                    }
-                    foundClassId = innerClassId
-                }
-
-                // Queue deeper supertypes for the next BFS level.
-                if (foundClassId == null) {
-                    val classFinder = classFinderProvider?.invoke()
-                    if (classFinder != null && classFinder.isClassInIndex(supertypeClassId)) {
-                        // Java source class: walk via class finder (safe, no FIR interaction)
-                        val javaClass = classFinder.findClass(JavaClassFinder.Request(supertypeClassId))
-                        if (javaClass != null) {
-                            nextLevel.addAll(javaClass.supertypes)
-                        }
-                    } else {
-                        // Non-source class (Kotlin, binary): remember for Phase 2
-                        nonSourceSupertypeIds.add(supertypeClassId)
-                    }
-                }
-            }
-
-            if (foundClassId != null) return foundClassId
-            currentLevel = nextLevel
-        }
-
-        if (foundClassId != null) return foundClassId
-
-        // Phase 2: For non-source supertypes (Kotlin/binary classes), use the FIR callback
-        // to get their supertype ClassIds and probe for inner classes transitively.
-        if (getSupertypeClassIds != null && nonSourceSupertypeIds.isNotEmpty()) {
-            val queue = ArrayDeque(nonSourceSupertypeIds)
-            var phase2Depth = 0
-            while (queue.isNotEmpty() && phase2Depth < maxDepth) {
-                val batch = queue.toList()
-                queue.clear()
-                for (classId in batch) {
-                    for (parentClassId in getSupertypeClassIds(classId)) {
-                        if (!visited.add(parentClassId)) continue
-
-                        val innerClassId = parentClassId.createNestedClassId(Name.identifier(simpleName))
-                        if (tryResolve(innerClassId)) {
-                            if (foundClassId != null && foundClassId != innerClassId) return null
-                            foundClassId = innerClassId
-                        }
-                        if (foundClassId == null) {
-                            queue.add(parentClassId)
-                        }
-                    }
-                }
-                if (foundClassId != null) return foundClassId
-                phase2Depth++
-            }
-        }
-
-        return foundClassId
-    }
+    )
 
     /**
      * Resolve a nested class reference without checking inherited inner classes (to avoid infinite recursion).
@@ -784,20 +534,7 @@ class JavaResolutionContext private constructor(
     }
 
     private fun fqNameToClassId(fqName: FqName): ClassId {
-        // We know the package from resolutionContext.packageFqName
-        // The class name is whatever comes after the package
-        val fqnString = fqName.asString()
-        val pkgString = packageFqName.asString()
-
-        val className = if (pkgString.isEmpty()) {
-            fqnString
-        } else if (fqnString.startsWith(pkgString + ".")) {
-            fqnString.substring(pkgString.length + 1)
-        } else {
-            fqnString
-        }
-
-        return ClassId(packageFqName, FqName(className), isLocal = false)
+        return JavaInheritedMemberResolver.fqNameToClassId(fqName, packageFqName)
     }
 
     /**
@@ -818,194 +555,49 @@ class JavaResolutionContext private constructor(
     }
 
     companion object {
-        /** Sentinel for [findLocalClassCache]: "looked up, result was null". */
-        private val FIND_LOCAL_CLASS_NULL = Any()
-
         fun create(
             root: JavaSyntaxNode,
             classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
         ): JavaResolutionContext {
-            val packageFqName = extractPackageName(root)
-            val (simpleImports, starImports) = extractImports(root)
+            val packageFqName = JavaImportResolver.extractPackageName(root)
+            val (simpleImports, starImports) = JavaImportResolver.extractImports(root)
 
             // Local classes indexed lazily to avoid circular initialization
             var contextRef: JavaResolutionContext? = null
             val localClassCache = mutableMapOf<Name, JavaClass>()
 
             val localClassProvider: (Name) -> JavaClass? = { name ->
-                localClassCache[name] ?: findClassNode(root, name)?.let { classNode ->
+                localClassCache[name] ?: JavaImportResolver.findClassNode(root, name)?.let { classNode ->
                     JavaClassOverAst(classNode, contextRef!!, outerClass = null).also {
                         localClassCache[name] = it
                     }
                 }
             }
 
+            val inheritedMemberResolver = JavaInheritedMemberResolver(
+                packageFqName, classFinderProvider, localClassProvider,
+            )
+            val scopeResolver = JavaScopeResolver(
+                localClassProvider,
+                containingClassProvider = null,
+                inheritedMemberResolver,
+            )
+
             return JavaResolutionContext(
                 packageFqName = packageFqName,
                 simpleImports = simpleImports,
                 starImports = starImports,
-                localClassProvider = localClassProvider,
-                classFinderProvider = classFinderProvider
+                scopeResolver = scopeResolver,
+                inheritedMemberResolver = inheritedMemberResolver,
+                classFinderProvider = classFinderProvider,
             ).also { contextRef = it }
         }
 
-        private fun extractPackageName(root: JavaSyntaxNode): FqName {
-            val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
-            val packageName = packageStmt?.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
-            return if (packageName != null) FqName(packageName) else FqName.ROOT
-        }
-
-        internal fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
-            val simpleImports = mutableMapOf<String, FqName>()
-            val starImports = mutableListOf<FqName>()
-
-            // Handle case where root might be CLASS instead of compilation unit
-            val importList = root.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
-                ?: root.findChildByType(JavaSyntaxElementType.CLASS)?.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
-
-            for (importNode in importList?.getChildrenByType(JavaSyntaxElementType.IMPORT_STATEMENT) ?: emptyList()) {
-                val codeRef = importNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: continue
-                val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
-                val fqName = codeRef.text
-
-                if (hasStar) {
-                    starImports.add(FqName(fqName))
-                } else {
-                    // Keep first occurrence: duplicate explicit imports for the same simple name
-                    // are a compile error in Java. PSI uses first-seen semantics, so we do too.
-                    val simpleName = fqName.substringAfterLast('.')
-                    if (!simpleImports.containsKey(simpleName)) {
-                        simpleImports[simpleName] = FqName(fqName)
-                    }
-                }
-            }
-
-            // Handle static imports: "import static pkg.Class.MEMBER" or "import static pkg.Class.*"
-            // The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
-            for (importNode in importList?.getChildrenByType(JavaSyntaxElementType.IMPORT_STATIC_STATEMENT) ?: emptyList()) {
-                val refNode = importNode.findChildByType(JavaSyntaxElementType.IMPORT_STATIC_REFERENCE) ?: continue
-                val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
-                val fqName = refNode.text
-
-                if (hasStar) {
-                    starImports.add(FqName(fqName))
-                } else {
-                    // e.g. "example.KotlinDtoMapping.ID" → simpleName = "ID"
-                    val simpleName = fqName.substringAfterLast('.')
-                    if (!simpleImports.containsKey(simpleName)) {
-                        simpleImports[simpleName] = FqName(fqName)
-                    }
-                }
-            }
-
-            // Also check for ERROR_ELEMENT imports (parser may emit these for imports starting with reserved words like 'kotlin')
-            for (errorNode in importList?.getChildrenByType(SyntaxTokenTypes.ERROR_ELEMENT) ?: emptyList()) {
-                if (errorNode.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) == null) continue
-
-                // Reconstruct the import from IDENTIFIER and DOT children
-                val identifiers = mutableListOf<String>()
-                for (child in errorNode.children) {
-                    if (child.type == JavaSyntaxTokenType.IDENTIFIER) {
-                        identifiers.add(child.text)
-                    }
-                }
-                if (identifiers.isEmpty()) continue
-
-                val hasStar = errorNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
-                val fqName = identifiers.joinToString(".")
-
-                if (hasStar) {
-                    starImports.add(FqName(fqName))
-                } else {
-                    val simpleName = identifiers.last()
-                    if (!simpleImports.containsKey(simpleName)) {
-                        simpleImports[simpleName] = FqName(fqName)
-                    }
-                }
-            }
-
-            // Handle fragmented import patterns where parser splits import across sibling nodes
-            // Pattern 1: ERROR_ELEMENT(IMPORT_KEYWORD) followed by TYPE(JAVA_CODE_REFERENCE) - simple import
-            // Pattern 2: ERROR_ELEMENT(import) followed by TYPE(pkg.) followed by ERROR_ELEMENT(*;) - star import
-            // Parser may insert MODIFIER_LIST and other nodes between them
-            val allChildren = root.children
-            var i = 0
-            while (i < allChildren.size) {
-                val node = allChildren[i]
-
-                // Check for ERROR_ELEMENT containing "import" keyword or text
-                val isImportError = node.type == SyntaxTokenTypes.ERROR_ELEMENT &&
-                        (node.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) != null || node.text.trim() == "import")
-
-                if (isImportError) {
-                    // Look for the next TYPE or JAVA_CODE_REFERENCE sibling, skipping whitespace and modifier list
-                    var typeNode: JavaSyntaxNode? = null
-                    var hasStar = false
-
-                    for (j in (i + 1) until allChildren.size) {
-                        val sibling = allChildren[j]
-                        // Skip whitespace, empty modifier lists, and empty error elements
-                        if (sibling.type == SyntaxTokenTypes.WHITE_SPACE || sibling.type == JavaSyntaxElementType.MODIFIER_LIST) continue
-                        if (sibling.type == SyntaxTokenTypes.ERROR_ELEMENT && sibling.text.isBlank()) continue
-
-                        if (sibling.type == JavaSyntaxElementType.TYPE || sibling.type == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
-                            typeNode = sibling
-                            // Continue to check for star in following siblings (not just the next one)
-                            for (k in (j + 1) until allChildren.size) {
-                                val nextSib = allChildren[k]
-                                if (nextSib.type == SyntaxTokenTypes.WHITE_SPACE || nextSib.type == JavaSyntaxElementType.MODIFIER_LIST) continue
-                                if (nextSib.type == SyntaxTokenTypes.ERROR_ELEMENT && nextSib.text.isBlank()) continue
-                                if (nextSib.type == SyntaxTokenTypes.ERROR_ELEMENT && nextSib.text.contains("*")) {
-                                    hasStar = true
-                                    break
-                                }
-                                // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
-                                if (nextSib.type == JavaSyntaxElementType.CLASS) break
-                            }
-                            break
-                        }
-                        // Also check if ERROR_ELEMENT itself contains star (like "*;")
-                        if (sibling.type == SyntaxTokenTypes.ERROR_ELEMENT && sibling.text.contains("*")) {
-                            hasStar = true
-                        }
-                        // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
-                        if (sibling.type == JavaSyntaxElementType.CLASS) break
-                    }
-
-                    if (typeNode != null) {
-                        val ref = typeNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: typeNode
-                        var fqName = ref.text.trim()
-                        // Remove trailing dot if present (from fragmented star import like "org.jetbrains.annotations.")
-                        if (fqName.endsWith('.')) {
-                            fqName = fqName.dropLast(1)
-                        }
-
-                        if (fqName.contains('.')) {
-                            if (hasStar) {
-                                starImports.add(FqName(fqName))
-                            } else {
-                                val simpleName = fqName.substringAfterLast('.')
-                                if (!simpleImports.containsKey(simpleName)) {
-                                    simpleImports[simpleName] = FqName(fqName)
-                                }
-                            }
-                        }
-                    }
-                }
-                i++
-            }
-
-            return simpleImports to starImports
-        }
-
-        private fun findClassNode(root: JavaSyntaxNode, name: Name): JavaSyntaxNode? {
-            for (child in root.children) {
-                if (child.type == JavaSyntaxElementType.CLASS) {
-                    val id = child.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
-                    if (id == name.asString()) return child
-                }
-            }
-            return null
-        }
+        /**
+         * Extracts imports from a root AST node.
+         * Delegates to [JavaImportResolver.extractImports].
+         */
+        internal fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> =
+            JavaImportResolver.extractImports(root)
     }
 }

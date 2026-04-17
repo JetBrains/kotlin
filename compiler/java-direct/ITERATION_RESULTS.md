@@ -2,7 +2,7 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-16 (iter 70)
+**Last Updated**: 2026-04-16 (iter 71)
 
 ---
 
@@ -18,7 +18,7 @@
 | `implDocs/archive/ITERATIONS_37_51_DETAILS.md` | 37–51 | 1157/1168 → 1165/1168 box, **17 combined failing** |
 | (inline below) | 52–65 | 1165/1168 → 1168/1168 box, 1454/1456 phased, **2 won't-fix** |
 | (inline below) | 66–68 | Cross-package inherited inner classes + binary supertype BFS + multi-field declarations |
-| (inline below) | 69–70 | BFS guard restoration + string-to-SyntaxElementType refactoring |
+| (inline below) | 69–71 | BFS guard restoration + string-to-SyntaxElementType refactoring + JavaResolutionContext decomposition |
 
 ---
 
@@ -741,6 +741,54 @@ Replaced all string-based AST type comparisons with typed `SyntaxElementType` co
 - `SyntaxElementType` comparison (`it.type == JavaSyntaxElementType.CLASS`) is a direct reference equality check — no String allocation or `toString()` needed
 - The `SyntaxTokenTypes` class from `com.intellij.platform.syntax.element` provides platform-level tokens like `ERROR_ELEMENT` and `WHITE_SPACE` that are not in the Java-specific packages
 - `DOC_COMMENT` lives in `JavaDocSyntaxTokenType` (a separate doc-comment subsystem), not in the main `JavaSyntaxTokenType` — this is a gap in the available constants for java-direct's use case
+
+---
+
+## Iteration 71: Refactoring — Split JavaResolutionContext into Focused Collaborators - 2026-04-16
+
+### Motivation
+Step 1.2 of the refactoring plan (`implDocs/REFACTORING_PLAN.md`). `JavaResolutionContext.kt` was 1,012 lines and acted as a "God class" combining import management, type parameter scoping, local class lookup, inherited inner class resolution, nested class resolution, simple name resolution, callback-based resolution, containing class chain management, cross-file ambiguity detection, and cache management. All three code reviews identified this as the primary maintainability risk.
+
+### Changes
+Decomposed `JavaResolutionContext` into three focused collaborators while preserving its public API:
+
+1. **`JavaImportResolver.kt`** (203 lines) — Stateless `internal object` extracting:
+   - `extractPackageName()` — package name extraction from AST root
+   - `extractImports()` — all four import patterns (normal, static, error-element, fragmented)
+   - `findClassNode()` — top-level class node lookup by name
+
+2. **`JavaScopeResolver.kt`** (141 lines) — Type parameter scoping and local class lookup:
+   - `findLocalClass()` with caching (sentinel-based null distinction)
+   - `findTypeParameter()` / `findInheritedTypeParameter()` — high/low priority type param lookup
+   - `withTypeParameters()` / `withInheritedTypeParameters()` / `withContainingClass()` — scope factory methods
+   - Delegates supertype inner class search to `JavaInheritedMemberResolver`
+
+3. **`JavaInheritedMemberResolver.kt`** (292 lines) — Supertype hierarchy traversal:
+   - `findInnerClassFromSupertypes()` — JLS 6.5.2 inherited member type resolution (local + cross-file)
+   - `findInheritedNestedClass()` — nested class search via supertype callback + class finder
+   - `computeAggregatedInheritedInnerClasses()` — aggregated map across containing class chain
+   - `resolveInheritedInnerClassToClassId()` — two-phase BFS (Java model + FIR callback)
+   - `fqNameToClassId()` companion utility shared with `JavaResolutionContext`
+
+4. **`JavaResolutionContext.kt`** (498 lines, down from 1,012) — Remains as orchestrator:
+   - Composes the three collaborators
+   - `resolve()` / `resolveNestedClassToClassId()` / `resolveSimpleNameToClassId()` orchestrate across collaborators
+   - `resolveAsClassId()`, `resolveNestedClassToClassIdWithoutInheritance()`, `resolveSimpleNameToClassIdWithoutInheritance()` remain here (they reference import data + star imports directly)
+   - `create()` factory method wires collaborators together
+   - `extractImports()` companion method delegates to `JavaImportResolver`
+   - All public API methods preserved — no changes needed in callers
+
+### Test Results
+- Unit tests (`JavaParsingTest`): PASS
+- Full test suite (`JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`, ~2600+ tests): BUILD SUCCESSFUL, 0 failures
+- Zero regressions — purely structural refactoring with no behavioral change
+
+### Key Learnings
+- The import extraction and package name parsing were the cleanest to extract — pure functions with no state dependencies, already in the companion object
+- The inherited member resolver was the next most self-contained — it only needed `packageFqName`, `classFinderProvider`, and `localClassProvider` as constructor parameters
+- The scope resolver needed a reference to the inherited member resolver for `findLocalClassUncached()` which delegates supertype inner class search
+- Resolution methods (`resolveSimpleNameToClassId`, `resolveNestedClassToClassId`) remain in the orchestrator because they reference import data, star imports, local class lookup, and inherited inner class resolution in a tightly interleaved JLS priority order
+- The `resolveWithoutInheritance` callback pattern avoids circular dependency: `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId()` needs to resolve supertype names without recursing back into inherited inner class search
 
 ---
 
