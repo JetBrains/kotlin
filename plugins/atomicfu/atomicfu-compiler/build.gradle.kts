@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("d8-configuration")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -190,23 +191,16 @@ projectTests {
             excludeTags("atomicfu-native")
         }
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-
-        workingDir = rootDir
-
-        dependsOn(":dist")
-        dependsOn(atomicfuJsIrRuntimeForTests)
-
-        val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
-        val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
-        val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
-        val localAtomicfuCompilerPluginClasspath: FileCollection = atomicfuCompilerPluginForTests
-
-        doFirst {
-            systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
-            systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
-            systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
-            systemProperty("atomicfu.compiler.plugin", localAtomicfuCompilerPluginClasspath.asPath)
+        testInputsCheck {
+            with(extraPermissions) {
+                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
+            }
         }
+
+        addClasspathProperty(atomicfuJsIrRuntimeForTests, "atomicfuJsIrRuntimeForTests.classpath")
+        addClasspathProperty(atomicfuJsClasspath, "atomicfuJs.classpath")
+        addClasspathProperty(atomicfuJvmClasspath, "atomicfuJvm.classpath")
+        addClasspathProperty(atomicfuCompilerPluginForTests, "atomicfu.compiler.plugin")
     }
 
     nativeTestTask(
@@ -217,10 +211,7 @@ projectTests {
         customTestDependencies = listOf(atomicfuNativeKlib),
         compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
     ) {
-        val localAtomicfuNativeKlib: FileCollection = atomicfuNativeKlib
-        doFirst {
-            systemProperty("atomicfuNative.classpath", localAtomicfuNativeKlib.asPath)
-        }
+        addClasspathProperty(atomicfuNativeKlib, "atomicfuNative.classpath")
 
         // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
         // Kotlin test infra uses reflection to access JDK internals.
@@ -232,7 +223,20 @@ projectTests {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 
+    testData(project.isolated, "testData")
+    // For test task only
+    testData(project(":js:js.translator").isolated, "testData/_commonFiles")
+
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withJsRuntime()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+
+    // For test task only, IncrementalK2JVMWithAtomicfuRunnerTestGenerated needs it
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }
 
 publish()
