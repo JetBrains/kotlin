@@ -23,6 +23,25 @@ class JavaSyntaxNode(
     val text: String by lazy(LazyThreadSafetyMode.PUBLICATION) { source.subSequence(startOffset, endOffset).toString() }
 
     /**
+     * Equivalent to `text == expected`, but without materialising the [text] `String`.
+     * Prefer this for identifier/keyword comparisons on hot paths: the vast majority of
+     * [JavaSyntaxNode]s never need their full `text` — creating one only to compare it
+     * against a short literal wastes both an allocation and an `O(length)` copy.
+     *
+     * Falls back to the cached [text] if it was already materialised (cheap reference
+     * equality fast-path on length mismatch, then `String.equals`); otherwise walks the
+     * underlying [source] `CharSequence` directly.
+     */
+    fun textEquals(expected: String): Boolean {
+        val length = endOffset - startOffset
+        if (length != expected.length) return false
+        for (i in 0 until length) {
+            if (source[startOffset + i] != expected[i]) return false
+        }
+        return true
+    }
+
+    /**
      * Lazy type-indexed view over [children], used by [findChildByType] and [getChildrenByType]
      * (the `SyntaxElementType` overloads) to avoid repeated O(n) linear scans on hot nodes
      * (class / method bodies, modifier lists, …), where several different child types are queried

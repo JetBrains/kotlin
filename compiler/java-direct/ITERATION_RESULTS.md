@@ -2,7 +2,52 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (refactoring step 2.2 — optimize import extraction)
+**Last Updated**: 2026-04-17 (refactoring steps 2.3 & 2.4 — cache short-circuit for inherited inner classes and `textEquals` to avoid `String` allocations)
+
+---
+
+## Refactoring Steps 2.3 & 2.4: Cache Short-Circuit + `textEquals` - 2026-04-17
+
+### Problem (from REFACTORING_PLAN.md)
+- **Step 2.3**: `JavaSupertypeGraph.collectInheritedInnerClasses` caches the *final* result per `ClassId`, but its inner `collectRecursive` walk never consulted that cache for intermediate nodes. In diamond / wide inheritance patterns (e.g. deep framework hierarchies where dozens of classes share a handful of common supertypes) this re-walked each shared supertype once per distinct descendant path, doing redundant file-I/O + parse work through `getInnerClassNames` → `getDirectSupertypes`.
+- **Step 2.4**: `JavaSyntaxNode.text` materialises the slice as a `String` via `source.subSequence(...).toString()` and the result is cached by `by lazy`. Hot identifier/keyword comparisons (`node.findChildByType(IDENTIFIER)?.text == name.asString()` in `findInnerClassUncached`, the supertype-walk in `findInnerClassInSupertypes`, and class-path traversal in `JavaSupertypeGraph.findClassInTree`) are invoked many times per lookup and would otherwise populate the lazy slot + allocate a fresh `String` for every candidate child — almost all of which mismatch on length alone.
+
+### Fix
+**Step 2.3 — `JavaSupertypeGraph.kt` `collectRecursive` cache short-circuit.** Added a pre-visit lookup into `inheritedInnerClassesCache` at the top of the recursive function. On a cache hit we add `current` to `visited`, merge the cached `Map<String, Set<ClassId>>` into `result` honouring the caller's `shadowedNames`, and return. Correctness argument, kept in comments next to the code: the cached map for `current` already reflects the intra-subtree shadowing applied when it was originally computed (closer supertypes of `current` shadowing their farther supertypes); the only extra filter we need is `shadowedNames` coming from the caller's *path above* `current`, which is exactly what the merge-with-filter does. Merging via `getOrPut { mutableSetOf() }.addAll(classIds)` is idempotent for diamond cases where the same cached entry contributes through multiple paths.
+
+**Step 2.4 — `utils.kt` `JavaSyntaxNode.textEquals`.** Added:
+```kotlin
+fun textEquals(expected: String): Boolean {
+    val length = endOffset - startOffset
+    if (length != expected.length) return false
+    for (i in 0 until length) if (source[startOffset + i] != expected[i]) return false
+    return true
+}
+```
+Zero allocations, O(length) with an O(1) length fast-fail for the overwhelming majority of mismatching candidates. Then migrated the three hottest call-sites:
+- `JavaClassOverAst.findInnerClassUncached` (inner-class lookup over `node.children`).
+- `JavaClassOverAst.findInnerClassInSupertypes` (scan over each resolved supertype's direct children; hoisted `val nameString = name.asString()` out of the `for (supertypeRef in …)` loop so it's computed once per call, not per iteration).
+- `JavaSupertypeGraph.findClassInTree` (segment-by-segment `ClassId` resolution down the parse tree).
+
+`.text` is left in place where the value is actually consumed as a `String` (import resolution, annotation-value parsing, `deriveImplicitPermittedTypes`' `substringBefore('<').trim()` path, etc.) — no benefit there.
+
+### Files modified
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaSupertypeGraph.kt` — cache short-circuit in `collectRecursive`; `findClassInTree` switched to `textEquals`.
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/utils.kt` — `textEquals` added to `JavaSyntaxNode`.
+- `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` — two `?.text == name.asString()` call-sites migrated; `nameString` hoisted in the supertype loop.
+
+### Alternatives considered and rejected
+- **Step 2.3: recompute the full `collectRecursive` for each supertype and deduplicate via `result`.** Rejected: already what the code did before this change — the whole point of the cache is to skip that work for shared ancestors.
+- **Step 2.3: key the cache by `(ClassId, shadowedNames)`.** Rejected: `shadowedNames` varies per path, so the cache hit-rate would collapse; also memory-unbounded. The current invariant (cache key = `ClassId`, filter on read) gives the same visible result because the stored map is already internally-shadowed.
+- **Step 2.4: make `textEquals` look at the cached `text` first.** Rejected: the `by lazy` delegate itself is already a monitor/volatile read; we'd pay for it on every call. When `text` isn't yet materialised (the common case on hot paths) we save both the allocation and the slot population; when it is, the `source[…]` loop is still about as fast as `String.equals` on short identifiers.
+- **Step 2.4: introduce a second lazy `name`/`identifierText` slot on `JavaSyntaxNode`.** Rejected: would permanently grow every node (millions of tokens) by a pointer just to serve three call-sites; `textEquals` has zero per-node cost.
+
+### Test Results
+- `./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --tests JavaParsingTest --stacktrace --rerun-tasks --no-build-cache` → **BUILD SUCCESSFUL**, 0 `FAILED` lines (`/tmp/jd_20260417_115237/jd_test_step2_34.txt`). Baseline preserved: 1168/1168 box + 1454/1456 phased (2 known won't-fix) + all `JavaParsingTest` unit tests.
+
+### Key Learnings
+- For tree walks that already cache their *final* output per node, pushing the same cache down into the recursion is often a one-line win — as long as the cached value is self-consistent under the caller's remaining filters (here: `shadowedNames`). The correctness proof hinges on the cache storing a value that is invariant under path-above context.
+- An allocation-free `textEquals` on a lazy-string AST node is strictly more useful than premature eager materialisation: it keeps the memory story of "most tokens never spell their text" intact while still giving `O(len)` comparison with a cheap length fast-fail.
 
 ---
 

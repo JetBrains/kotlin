@@ -130,8 +130,10 @@ class JavaClassOverAst(
     }
 
     private fun findInnerClassUncached(name: Name): JavaClass? {
+        val nameString = name.asString()
         val innerClassNode = node.children.find {
-            it.type == JavaSyntaxElementType.CLASS && it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text == name.asString()
+            it.type == JavaSyntaxElementType.CLASS &&
+                    it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.textEquals(nameString) == true
         }
 
         if (innerClassNode != null) {
@@ -197,6 +199,7 @@ class JavaClassOverAst(
                 supertypeRefNames.add(ref.text.substringBefore('<').trim())
             }
 
+        val nameString = name.asString()
         for (supertypeRef in supertypeRefNames) {
             // Use only the first part (simple name) to find the supertype class locally
             val simpleName = supertypeRef.substringBefore('.')
@@ -205,7 +208,8 @@ class JavaClassOverAst(
 
             // Check if the supertype directly declares this inner class
             val directInner = supertypeClass.node.children.find {
-                it.type == JavaSyntaxElementType.CLASS && it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text == name.asString()
+                it.type == JavaSyntaxElementType.CLASS &&
+                        it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.textEquals(nameString) == true
             }
             if (directInner != null) {
                 // Found the inner class — return it properly constructed

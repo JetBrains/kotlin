@@ -99,6 +99,23 @@ internal class JavaSupertypeGraph(
         // Only inner class names from UNRELATED paths that can't shadow each other indicate ambiguity.
         fun collectRecursive(current: ClassId, shadowedNames: Set<String>) {
             if (current in visited) return
+
+            // Cache short-circuit: a previously computed result for [current] already reflects
+            // intra-subtree shadowing (closer classes shadowing farther supertypes). The only
+            // extra filtering we need is the [shadowedNames] coming from the caller's path.
+            // Safe in diamond inheritance: merging via getOrPut + addAll is idempotent for
+            // ClassId sets, and the `visited` guard above only affects duplicate traversal of
+            // the same ClassId within a single top-level call — which the cache makes redundant.
+            inheritedInnerClassesCache[current]?.let { cached ->
+                visited.add(current)
+                for ((name, classIds) in cached) {
+                    if (name !in shadowedNames) {
+                        result.getOrPut(name) { mutableSetOf() }.addAll(classIds)
+                    }
+                }
+                return
+            }
+
             visited.add(current)
 
             val innerClasses = getInnerClassNames(current)
@@ -182,7 +199,7 @@ internal class JavaSupertypeGraph(
         var currentNode: JavaSyntaxNode = root
         for (segment in segments) {
             val classNode = currentNode.getChildrenByType(JavaSyntaxElementType.CLASS).firstOrNull { node ->
-                node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text == segment
+                node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.textEquals(segment) == true
             } ?: return null
             currentNode = classNode
         }
