@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -56,7 +57,26 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
 
         val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
-        val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
+        val java8AnnotationsDir = File(org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory(), "../../third-party/java8-annotations")
+        val java8AnnotationsJar = java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+            MockLibraryUtil.compileJavaFilesLibraryToJar(
+                java8AnnotationsDir.path,
+                "java8-annotations",
+                assertions = testServices.assertions,
+                extraOptions = listOf("-Xlint:-options")
+            )
+        })
+        
+        val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath } +
+                java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+                    ForTestCompileRuntime.jvmAnnotationsForTests().absolutePath
+                }) +
+                java8AnnotationsJar.absolutePath
+        
+        configuration.addJvmClasspathRoot(java.security.AccessController.doPrivileged(java.security.PrivilegedAction {
+            ForTestCompileRuntime.jvmAnnotationsForTests()
+        }))
+        configuration.addJvmClasspathRoot(java8AnnotationsJar)
 
         try {
             val compiledJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
