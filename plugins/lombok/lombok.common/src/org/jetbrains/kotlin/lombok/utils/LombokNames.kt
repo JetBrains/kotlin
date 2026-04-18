@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object LombokNames {
-
     val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
     val SETTER = FqName("lombok.Setter")
@@ -25,6 +24,7 @@ object LombokNames {
     val SUPER_BUILDER = FqName("lombok.experimental.SuperBuilder")
     val SINGULAR = FqName("lombok.Singular")
     val LOG = FqName("lombok.extern.java.Log")
+    val TO_STRING = FqName("lombok.ToString")
 
     val TABLE = FqName("Table".guavaPackage())
 
@@ -41,11 +41,10 @@ object LombokNames {
     val ALL_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(ALL_ARGS_CONSTRUCTOR)
     val REQUIRED_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(REQUIRED_ARGS_CONSTRUCTOR)
 
-    val TABLE_CLASS_ID = ClassId.topLevel(TABLE)
-
-    val CAN_EQUAL = Name.identifier("canEqual")
-
     val LOG_ID = ClassId.topLevel(LOG)
+    val TO_STRING_ID = ClassId.topLevel(TO_STRING)
+    val TO_STRING_INCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Include"))
+    val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Exclude"))
 
     //taken from idea lombok plugin
     val NON_NULL_ANNOTATIONS = listOf(

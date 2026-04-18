@@ -41,6 +41,10 @@ import kotlin.collections.orEmpty
 
 @OptIn(DirectDeclarationsAccess::class)
 class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
+    companion object {
+        val CAN_EQUAL = Name.identifier("canEqual")
+    }
+
     private val lombokService: LombokService
         get() = session.lombokService
 
@@ -121,9 +125,9 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
             }
 
             if (data != null) {
-                getOrPut(LombokNames.CAN_EQUAL) { mutableListOf() }.add(
+                getOrPut(CAN_EQUAL) { mutableListOf() }.add(
                     classSymbol.createJavaMethod(
-                        name = LombokNames.CAN_EQUAL,
+                        name = CAN_EQUAL,
                         valueParameters = listOf(ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)),
                         returnTypeRef = session.builtinTypes.booleanType,
                         visibility = JavaVisibilities.ProtectedAndPackage,

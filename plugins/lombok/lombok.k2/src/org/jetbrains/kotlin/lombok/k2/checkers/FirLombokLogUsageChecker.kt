@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChe
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Log.FlagUsageValue
+import org.jetbrains.kotlin.lombok.k2.config.FlagUsageValue
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 

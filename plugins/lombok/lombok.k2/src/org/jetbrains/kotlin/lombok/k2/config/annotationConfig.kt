@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CHAIN
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CHAIN_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FIELD_IS_STATIC_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FIELD_NAME_CONFIG
-import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLUENT
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLUENT_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.IGNORE_NULL_COLLECTIONS
@@ -36,6 +36,16 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.PREFIX_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.SETTER_PREFIX
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_NAME
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CALL_SUPER
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.DO_NOT_USE_GETTERS
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.EXCLUDE
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_FIELD_NAMES
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.ONLY_EXPLICITLY_INCLUDED
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_STRING_CALL_SUPER_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_STRING_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_STRING_INCLUDE_FIELD_NAMES_CONFIG
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TOPIC
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.TO_BUILDER
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.VALUE
@@ -316,18 +326,22 @@ object ConeLombokAnnotations {
         }
     }
 
+    interface FlagUsage {
+        val flagUsage: FlagUsageValue?
+    }
+
+    fun parseFlagUsage(config: LombokConfig, key: String): FlagUsageValue? {
+        return config.getString(key)
+            ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
+    }
+
     class Log(
         val visibility: Visibility?,
         val topic: String,
         val fieldName: String,
         val fieldIsStatic: Boolean,
-        val flagUsage: FlagUsageValue?,
-    ) {
-        enum class FlagUsageValue {
-            Warning,
-            Error,
-        }
-
+        override val flagUsage: FlagUsageValue?,
+    ) : FlagUsage {
         companion object : ConeAnnotationAndConfigCompanion<Log>(LombokNames.LOG_ID) {
             override fun extract(
                 annotation: FirAnnotation?,
@@ -339,8 +353,41 @@ object ConeLombokAnnotations {
                     topic = annotation?.getStringArgument(TOPIC) ?: "",
                     fieldName = config.getString(FIELD_NAME_CONFIG) ?: "log",
                     fieldIsStatic = config.getBoolean(FIELD_IS_STATIC_CONFIG) ?: true,
-                    flagUsage = config.getString(FLAG_USAGE_CONFIG)
-                        ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } },
+                    flagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),
+                )
+            }
+        }
+    }
+
+    class ToString(
+        val includeFieldNames: Boolean,
+        val callSuper: CallSuperMode,
+        val doNotUseGetters: Boolean,
+        val onlyExplicitlyIncluded: Boolean,
+        val excludeFields: Set<String>,
+        override val flagUsage: FlagUsageValue?,
+    ) : FlagUsage {
+        enum class CallSuperMode {
+            Skip,
+            Call,
+            Warn
+        }
+
+        companion object : ConeAnnotationAndConfigCompanion<ToString>(LombokNames.TO_STRING_ID) {
+            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): ToString {
+                val callSuperConfigValue = config.getString(TO_STRING_CALL_SUPER_CONFIG)
+                return ToString(
+                    includeFieldNames = annotation?.getBooleanArgument(INCLUDE_FIELD_NAMES)
+                        ?: config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
+                    callSuper = annotation?.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip }
+                        ?: CallSuperMode.entries.find { it.name.equals(callSuperConfigValue, ignoreCase = true) }
+                        ?: CallSuperMode.Skip,
+                    doNotUseGetters = annotation?.getBooleanArgument(DO_NOT_USE_GETTERS)
+                        ?: config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG) ?: false,
+                    onlyExplicitlyIncluded = annotation?.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED)
+                        ?: config.getBoolean(TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
+                    excludeFields = annotation?.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
+                    flagUsage = parseFlagUsage(config, TO_STRING_FLAG_USAGE_CONFIG),
                 )
             }
         }
