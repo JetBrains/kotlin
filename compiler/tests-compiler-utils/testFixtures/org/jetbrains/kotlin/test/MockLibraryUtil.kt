@@ -149,6 +149,7 @@ object MockLibraryUtil {
                 }
                 add("-encoding")
                 add("utf8")
+                addAll(extraOptions)
             }
 
             val jdkHome = if (useJava11) KtTestUtil.getJdk11Home() else null
