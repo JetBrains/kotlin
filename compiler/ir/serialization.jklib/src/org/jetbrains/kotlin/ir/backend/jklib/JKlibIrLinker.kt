@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.jklib
 
-
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -68,6 +70,16 @@ class JKlibIrLinker(
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = emptyMap(),
         partialLinkageSupport = partialLinkageSupport,
+        platformSpecificClassFilter =
+            object : FakeOverrideClassFilter {
+                override fun needToConstructFakeOverrides(clazz: IrClass): Boolean =
+                    // Do not construct fake overrides for Java classes. These classes are created with
+                    // the stub generator and are already complete. Building fake overrides for them will throw
+                    // an IllegalStateException as class declarations symbols are already bound
+                    // Note: We use an origin check instead of `clazz.isFromJava()` because parents might
+                    // not be initialized yet, and `isFromJava()` attempts to access the parent.
+                    clazz.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            },
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
