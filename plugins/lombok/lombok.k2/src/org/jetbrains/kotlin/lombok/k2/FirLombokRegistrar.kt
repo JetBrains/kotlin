@@ -22,6 +22,7 @@ class FirLombokRegistrar(private val lombokConfigFile: File?) : FirExtensionRegi
         +::DeclarationWithValueAnnStatusTransformer
 
         +::LoggerGenerator
+        +::ToStringGenerator
         +::FirLombokCheckersExtension
 
         registerDiagnosticContainers(LombokCliDiagnostics)
