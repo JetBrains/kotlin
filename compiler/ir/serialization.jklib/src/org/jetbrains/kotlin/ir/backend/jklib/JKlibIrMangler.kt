@@ -203,9 +203,15 @@ private fun CallableDescriptor.computeJvmSignature(): String? = signatures {
     val classDescriptor = containingDeclaration as? ClassDescriptor ?: return null
     if (classDescriptor.name.isSpecial) return null
 
+    val jvmDescriptor = when (val original = original) {
+        is FunctionDescriptor -> original.computeJvmDescriptor()
+        is PropertyDescriptor -> original.name.asString()
+        else -> return null
+    }
+
     signature(
         classDescriptor,
-        (original as? FunctionDescriptor ?: return null).computeJvmDescriptor()
+        jvmDescriptor
     )
 }
 
@@ -236,12 +242,16 @@ private fun IrDeclaration.isJavaBackedCallable(): Boolean {
         }
         is IrProperty -> {
             // Check property accessors.
-            listOfNotNull(getter, setter)
+            val accessors = listOfNotNull(getter, setter)
+            if (accessors.isEmpty() && isFakeOverride) {
+                return overriddenSymbols.any { it.owner.isDeclaredInJava() }
+            }
+            accessors
         }
         else -> emptyList()
     }
 
-    if (functions.any { it.isFakeOverride }) {
+    if (functions.isNotEmpty() && functions.any { it.isFakeOverride }) {
         return ifAnyDFS(
             functions,
             { current ->
