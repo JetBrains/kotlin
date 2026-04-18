@@ -48,9 +48,9 @@ value class New7(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New7_<!>)
 
 value class New7_(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New7<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>New7<!>)
 
-value class Bounded1<T: Bounded1<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
+value class Bounded1<T: Bounded1<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
 value class Bounded2<T: Bounded2<T>>(val x: T?)
-value class Bounded3<T: Bounded3<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
+value class Bounded3<T: Bounded3<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_ERROR!>T<!>)
 value class Bounded4<T: Bounded4<T>>(val x: T?, val y: T?)
 value class Bounded5<T: Bounded5<T>?>(val x: T)
 value class Bounded6<T: Bounded6<T>?>(val x: T?)

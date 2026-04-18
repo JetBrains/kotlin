@@ -12,6 +12,78 @@ public final class B {
 }
 
 @kotlin.Metadata
+public final class Bounded2 {
+    // source: 'recursive.kt'
+    private final @org.jetbrains.annotations.Nullable field x: Bounded2
+    public method <init>(@org.jetbrains.annotations.Nullable p0: Bounded2): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getX(): Bounded2
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Bounded4 {
+    // source: 'recursive.kt'
+    private final @org.jetbrains.annotations.Nullable field x: Bounded4
+    private final @org.jetbrains.annotations.Nullable field y: Bounded4
+    public method <init>(@org.jetbrains.annotations.Nullable p0: Bounded4, @org.jetbrains.annotations.Nullable p1: Bounded4): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getX(): Bounded4
+    public final @org.jetbrains.annotations.Nullable method getY(): Bounded4
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Bounded5 {
+    // source: 'recursive.kt'
+    private final field x: Bounded5
+    public method <init>(p0: Bounded5): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): Bounded5
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Bounded6 {
+    // source: 'recursive.kt'
+    private final @org.jetbrains.annotations.Nullable field x: Bounded6
+    public method <init>(@org.jetbrains.annotations.Nullable p0: Bounded6): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getX(): Bounded6
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Bounded7 {
+    // source: 'recursive.kt'
+    private final field x: Bounded7
+    private final field y: Bounded7
+    public method <init>(p0: Bounded7, p1: Bounded7): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): Bounded7
+    public final method getY(): Bounded7
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Bounded8 {
+    // source: 'recursive.kt'
+    private final @org.jetbrains.annotations.Nullable field x: Bounded8
+    private final @org.jetbrains.annotations.Nullable field y: Bounded8
+    public method <init>(@org.jetbrains.annotations.Nullable p0: Bounded8, @org.jetbrains.annotations.Nullable p1: Bounded8): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.Nullable method getX(): Bounded8
+    public final @org.jetbrains.annotations.Nullable method getY(): Bounded8
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
 public final class E {
     // source: 'recursive.kt'
     private final field a: java.lang.Object
