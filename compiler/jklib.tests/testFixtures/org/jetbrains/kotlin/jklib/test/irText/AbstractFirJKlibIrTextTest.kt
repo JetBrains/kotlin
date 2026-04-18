@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -55,7 +56,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
+        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper, ::JavaDependsOnKotlinSkipper)
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
@@ -74,6 +75,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         }
 
         setupDefaultDirectivesForIrTextTest()
+        useDirectives(JKlibTestDirectives)
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_IR_EXPECT_FLAG
         }
@@ -102,5 +104,20 @@ class WithReflectSkipper(testServices: TestServices) : MetaTestConfigurator(test
 
     override fun shouldSkipTest(): Boolean {
         return testServices.moduleStructure.allDirectives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT)
+    }
+}
+
+object JKlibTestDirectives : SimpleDirectivesContainer() {
+    val JAVA_DEPENDS_ON_KOTLIN by directive(
+        "The test contains Java classes that depend on Kotlin classes, which is unsupported in jklib tests."
+    )
+}
+
+class JavaDependsOnKotlinSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(JKlibTestDirectives)
+
+    override fun shouldSkipTest(): Boolean {
+        return testServices.moduleStructure.allDirectives.contains(JKlibTestDirectives.JAVA_DEPENDS_ON_KOTLIN)
     }
 }
