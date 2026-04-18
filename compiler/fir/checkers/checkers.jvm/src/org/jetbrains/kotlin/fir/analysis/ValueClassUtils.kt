@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.isBasicValueClass
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
@@ -20,6 +19,5 @@ fun FirTypeRef.isInlineClassThatRequiresMangling(session: FirSession): Boolean {
     return symbol.isInlineClassThatRequiresMangling()
 }
 
-@OptIn(SymbolInternals::class)
 fun FirRegularClassSymbol.isInlineClassThatRequiresMangling(): Boolean =
-    fir.isBasicValueClass && classId != StandardClassIds.Result
+    isBasicValueClass && classId != StandardClassIds.Result
