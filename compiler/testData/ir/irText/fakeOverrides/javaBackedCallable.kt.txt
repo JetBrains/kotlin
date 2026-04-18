@@ -31,7 +31,7 @@ class Kotlin3 : Kotlin2 {
 
   fun test() {
     val x: Int = <this>.getE()
-    <this>.setE(p0 = x.plus(other = 1))
+    <this>.setE(value = x.plus(other = 1))
     <this>.getJavaString() /*~> Unit */
     <this>.doJavaAction()
   }
