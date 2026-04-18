@@ -66,7 +66,6 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 
-    @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkVarargParameters(function: FirFunction) {
         val varargParameters = function.valueParameters.filter { it.isVararg }
@@ -88,7 +87,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             // over many other types.
             if (varargParameterType.leastUpperBound(context.session).fullyExpandedType().isNothingOrNullableNothing ||
                 (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType &&
-                        varargParameterType.toRegularClassSymbol()?.fir?.isExtendedValueClass != true)
+                        varargParameterType.toRegularClassSymbol()?.isExtendedValueClass != true)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {
