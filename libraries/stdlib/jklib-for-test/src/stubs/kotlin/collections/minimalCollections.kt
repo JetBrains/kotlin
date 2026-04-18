@@ -123,3 +123,5 @@ public fun <T> Iterable<T>.joinToString(
     truncated: CharSequence = "...",
     transform: ((T) -> CharSequence)? = null,
 ): String = "stub"
+
+public fun <T> Array<out T>.asList(): List<T> = java.util.Arrays.asList(*this)
