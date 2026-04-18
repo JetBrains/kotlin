@@ -10,7 +10,7 @@ expect value class CommonFinal {
 
 @kotlin.jvm.JvmInline
 expect value class CommonJvmInline {
-    <!EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY("final value")!>constructor(value: Int)<!>
+    <!EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY("@JvmInline value")!>constructor(value: Int)<!>
 }
 
 expect <!VALUE_CLASS_OPEN!>open<!> value class CommonOpen {
