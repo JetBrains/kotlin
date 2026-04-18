@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 
 // FILE: foo/Base.java

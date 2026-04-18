@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // FILE: enhancedNullability.kt
 // WITH_JDK

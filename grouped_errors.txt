@@ -1,0 +1,49 @@
+Calling Gemini to group similar errors...
+### 10: FIR analysis crashed or returned null without reporting errors.
+'nullCheckOnInterfaceDelegation',
+'nullCheckInElvisRhs',
+'allPropertiesAndMethodsWithSeparateModuleKJJ',
+'intersectionWithSeparateModule',
+'intersectionOverride',
+'intersectionWithGenericOverride',
+'substitutionOverride',
+'basicOverride',
+'intersectionWithExplicitOverride',
+'javaRawTypesAndGenericsErasure',
+
+### 9: Missing built-in declaration: test environment is missing a dependency on the Kotlin standard library.
+'ifWithLoop',
+'simpleOperators',
+'kt47245',
+'whenWithSubjectVariable',
+'breakContinueInWhen',
+'withVarargViewedAsArray',
+'coercionInLoop',
+'classLiteralInAnnotation',
+'arraysFromBuiltins',
+
+### 8: FIR resolution failure: unresolved reference.
+'internalPotentialFakeOverride',
+'internalPotentialOverride',
+'allPropertiesAndMethodsKJ',
+'intersectionWithPublishedApiOverride',
+'firBuilder',
+'specialAnnotationsMetadata',
+'annotationRetentionsMultiModule',
+'genericClassInDifferentModule',
+
+### 4: IR mangler failure: fake override property missing accessors or backing field.
+'fieldAccess_generic',
+'fieldAccess_invisible',
+'protectedJavaFieldRef',
+'fieldAccess_regular',
+
+### 2: Java compilation failure in JKlib: likely circular dependency or missing classpath/Kotlin classes.
+'fakeOverrideOfRaw',
+'lateinitPropertiesSeparateModule',
+
+### 1: Infrastructure error: required environment variable missing.
+'javaRecordComponentAccess',
+
+### 1: IR text mismatch: actual IR output differs from the expected golden file.
+'staticOverrideOnKJJ',

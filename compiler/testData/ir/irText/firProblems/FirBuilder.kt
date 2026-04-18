@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // MODULE: m1
 // FILE: BaseFirBuilder.kt
 

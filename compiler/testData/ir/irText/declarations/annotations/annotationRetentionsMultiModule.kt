@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // ISSUE: KT-69965
 
 // MODULE: lib
