@@ -1,9 +1,13 @@
 
 // FILE: KotlinClass.kt
 
-import lombok.Builder;
+import lombok.Builder
+import lombok.extern.slf4j.Slf4j
+import lombok.RequiredArgsConstructor
 
-@Builder
+@Builder // Not yet supported
+@Slf4j // Not yet supported
+@RequiredArgsConstructor // Isn't going to be supported
 class KotlinClass {
     companion object
 }
