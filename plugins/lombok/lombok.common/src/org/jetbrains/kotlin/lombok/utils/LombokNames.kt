@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object LombokNames {
+    val LOMBOK = FqName("lombok")
+
     val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
     val SETTER = FqName("lombok.Setter")

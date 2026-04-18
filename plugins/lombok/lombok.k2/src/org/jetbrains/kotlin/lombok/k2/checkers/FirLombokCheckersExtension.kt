@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
-            FirLombokLogWrongAnnotationTargetChecker
+            FirLombokWrongOrUnsupportedAnnotationTargetChecker
         )
 
         override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
