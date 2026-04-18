@@ -95,8 +95,6 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         reporter.reportOn(source, factory)
     }
 
-    @OptIn(SymbolInternals::class)
-    context(context: CheckerContext)
     /**
      * Exclusion list:
      * 1. Primary constructors of public API classes
@@ -108,6 +106,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      * 7. An anonymous function
      * 8. A local named function
      */
+    context(context: CheckerContext)
     private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration): Boolean {
         return when (declaration) {
             is FirPrimaryConstructor, // 1,
@@ -119,7 +118,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
                 // 2, 5
                 if (declaration is FirProperty) {
-                    if (containingClass != null && (containingClass.isData || containingClass.fir.isExtendedValueClass || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
+                    if (containingClass != null && (containingClass.isData || containingClass.isExtendedValueClass || containingClass.classKind == ClassKind.ANNOTATION_CLASS)) {
                         return true
                     }
                 }

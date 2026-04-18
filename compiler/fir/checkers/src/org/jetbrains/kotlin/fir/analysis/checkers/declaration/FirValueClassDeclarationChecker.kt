@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -63,7 +64,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         private val recordFqName = FqName("Record")
     }
 
-    @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (!declaration.symbol.isInlineOrValueClass()) {
@@ -105,7 +105,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.fir.isExtendedValueClass(context) && !supertypeSymbol.classId.isRecordId()) {
+            } else if (!supertypeSymbol.isExtendedValueClass(context) && !supertypeSymbol.classId.isRecordId()) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
         }
@@ -328,6 +328,12 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 )
             }
         }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirRegularClassSymbol.isExtendedValueClass(context: CheckerContext): Boolean {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+        return fir.isExtendedValueClass(context)
     }
 
     private fun FirRegularClass.isExtendedValueClass(context: CheckerContext): Boolean {

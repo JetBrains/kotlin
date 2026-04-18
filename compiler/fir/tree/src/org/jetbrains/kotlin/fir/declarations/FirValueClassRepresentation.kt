@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentat
 import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.toInlineRepresentation
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 
 private object FirValueClassRepresentationKey : FirDeclarationDataKey()
@@ -29,3 +31,15 @@ val FirRegularClass.isExtendedValueClass: Boolean
 
 val FirRegularClass.isBasicValueClass: Boolean
     get() = valueClassRepresentation is BasicValueClassRepresentation
+
+val FirRegularClassSymbol.isExtendedValueClass: Boolean
+    get() {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+        return fir.valueClassRepresentation is ExtendedValueClassRepresentation
+    }
+
+val FirRegularClassSymbol.isBasicValueClass: Boolean
+    get() {
+        lazyResolveToPhase(FirResolvePhase.STATUS)
+        return fir.valueClassRepresentation is BasicValueClassRepresentation
+    }
