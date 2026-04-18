@@ -1,0 +1,35 @@
+@kotlin.Metadata
+public final class TestKt {
+    // source: 'test.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Value1 {
+    // source: 'test.kt'
+    private final field x: char
+    private synthetic method <init>(p0: char): void
+    public synthetic final static method box-impl(p0: char): Value1
+    public static method constructor-impl(p0: char): char
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: char, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: char, p1: char): boolean
+    public final method getX(): char
+    public method hashCode(): int
+    public static method hashCode-impl(p0: char): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: char): java.lang.String
+    public synthetic final method unbox-impl(): char
+}
+
+@kotlin.Metadata
+public final class Value2 {
+    // source: 'test.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): char
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
