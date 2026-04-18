@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jklib.test.irText
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -18,8 +19,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.javaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -50,12 +52,22 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
 
         configuration.configureJdkClasspathRoots()
 
-        val javaFiles = module.files.filter { it.name.endsWith(".java") }
+        val javaFiles = module.javaFiles
         if (javaFiles.isEmpty()) return
 
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
 
         val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
+        val java8AnnotationsDir = File(JavaForeignAnnotationType.Java8Annotations.path)
+        val java8AnnotationsJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
+            java8AnnotationsDir.path,
+            "java8-annotations",
+            assertions = testServices.assertions,
+            // keeping this to suppress warnings during tests
+            extraOptions = listOf("-Xlint:-options")
+        )
+        configuration.addJvmClasspathRoot(java8AnnotationsJar)
+        
         val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
 
         try {
