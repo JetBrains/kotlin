@@ -1,3 +1,4 @@
+// KIND: STANDALONE
 // WITH_STDLIB
 // LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // IGNORE_BACKEND: ANDROID

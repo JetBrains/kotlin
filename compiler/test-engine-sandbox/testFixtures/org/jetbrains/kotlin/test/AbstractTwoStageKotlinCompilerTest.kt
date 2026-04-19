@@ -9,6 +9,8 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
 import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
+import org.jetbrains.kotlin.test.directives.TestKind
+import org.jetbrains.kotlin.test.directives.testKind
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.toKotlinTestInfo
@@ -46,6 +48,9 @@ abstract class AbstractTwoStageKotlinCompilerTest {
 
     private lateinit var testInfo: KotlinTestInfo
     lateinit var nonGroupingRunner: NonGroupingTestRunner
+        private set
+
+    var testKind: TestKind = TestKind.REGULAR
         private set
 
     var nonGroupingPhaseRunnerInitialized: Boolean = false
@@ -88,6 +93,8 @@ abstract class AbstractTwoStageKotlinCompilerTest {
 
     fun initTestRunnerAndCreateModuleStructure(@TestDataFile filePath: String) {
         initTestRunners(filePath)
-        nonGroupingRunner.prepareModuleStructure(filePath)
+        nonGroupingRunner.prepareModuleStructure(filePath)?.also {
+            testKind = nonGroupingRunner.testServices.testKind()
+        }
     }
 }

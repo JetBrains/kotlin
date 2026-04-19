@@ -9,6 +9,7 @@ import com.intellij.util.containers.orNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.junit.jupiter.engine.config.CachingJupiterConfiguration
@@ -197,7 +198,8 @@ class CompilerTestGroupingTestEngine : TestEngine {
     }
 
     private fun groupTestsInBatches(infos: List<TestMethodInfo>): List<List<TestMethodInfo>> {
-        return listOf(infos)
+        val (regulars, standalones) = infos.partition { it.testInstance.testKind == TestKind.REGULAR }
+        return standalones.map { listOf(it) }.plusElement(regulars)
     }
 
     private fun runGroupingPhaseOnBatch(
