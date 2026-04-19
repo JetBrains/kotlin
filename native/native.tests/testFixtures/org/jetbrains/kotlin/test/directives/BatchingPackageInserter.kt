@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.TestKind
-import org.jetbrains.kotlin.test.directives.testKind
+import org.jetbrains.kotlin.test.directives.testKindFrom
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
@@ -57,6 +58,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * Examples: package kotlin.coroutines -> package kotlin.coroutines
  *           import kotlin.test.* -> import kotlin.test.*
  */
+// TODO: KT-85850,KT-85851: To support more backends in grouped blackbox testing,
+//                          move BatchingPackageInserter to `compiler/tests-common-new`, along with `testRunSettings`
 class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
     companion object {
         private val lock = Any()
@@ -87,9 +90,9 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
     @TestInfrastructureInternals
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
-        // TODO: The default TestKind must be determined instead by TEST_KIND global property, for ex,
+        // The default TestKind is determined by TEST_KIND global property, for ex,
         //   @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
-        if ((module.directives.testKind ?: TestKind.REGULAR) != TestKind.REGULAR)
+        if (testServices.testRunSettings.testKindFrom(module.directives) != TestKind.REGULAR)
             return // only tests of the REGULAR test kind can be grouped. For non-grouped tests, no package re-work is needed.
 
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.

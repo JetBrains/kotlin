@@ -8,12 +8,9 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.computeBlackBoxTestInstances
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -35,6 +32,3 @@ abstract class AbstractNativeCoreTest : AbstractKotlinCompilerWithTargetBackendT
         }
     }
 }
-
-val TestServices.testRunSettings: TestRunSettings by TestServices.testServiceAccessor()
-val TestServices.testRunProvider: TestRunProvider by TestServices.testServiceAccessor()
