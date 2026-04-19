@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.konan.test.services.sourceProviders
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
-import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
+import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.testKindFrom
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
@@ -29,7 +31,9 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
     ): List<TestFile> {
         val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
         var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
-        if (ESCAPE_MODULE_NAME in globalDirectives) {
+        if (testServices.testRunSettings.testKindFrom(module.directives) == TestKind.REGULAR && ESCAPE_MODULE_NAME in globalDirectives) {
+            // Tests of a REGULAR kind will be grouped, hence their `box()` functions have to be moved to separate packages to avoid clashes.
+            // In standalone tests, there's no need to rearrange packages.
             val additionalPackage = BatchingPackageInserter.computePackage(testServices.testInfo)
             boxFqName = "$additionalPackage.$boxFqName"
         }

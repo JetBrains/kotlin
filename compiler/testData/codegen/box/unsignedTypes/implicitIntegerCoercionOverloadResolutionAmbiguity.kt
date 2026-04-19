@@ -1,3 +1,4 @@
+// KIND: STANDALONE
 // IGNORE_BACKEND: ANDROID
 // STATUS:
 //  This line has been added because of the `AndroidRunner` test.

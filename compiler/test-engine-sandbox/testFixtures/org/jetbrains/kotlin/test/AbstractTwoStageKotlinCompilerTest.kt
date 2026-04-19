@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.test
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
 import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
+import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
-import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
-import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.KotlinTestInfo
-import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.test.services.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import kotlin.jvm.optionals.getOrNull
@@ -46,6 +45,9 @@ abstract class AbstractTwoStageKotlinCompilerTest {
 
     private lateinit var testInfo: KotlinTestInfo
     lateinit var nonGroupingRunner: NonGroupingTestRunner
+        private set
+
+    var testKind: TestKind = TestKind.REGULAR
         private set
 
     var nonGroupingPhaseRunnerInitialized: Boolean = false
@@ -88,7 +90,9 @@ abstract class AbstractTwoStageKotlinCompilerTest {
 
     fun initTestRunnerAndCreateModuleStructure(@TestDataFile filePath: String) {
         initTestRunners(filePath)
-        nonGroupingRunner.prepareModuleStructure(filePath)
+        nonGroupingRunner.prepareModuleStructure(filePath)?.also {
+            testKind = it.modules.first().directives[ConfigurationDirectives.KIND].firstOrNull() ?: TestKind.REGULAR
+        }
     }
 }
 

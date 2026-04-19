@@ -1,3 +1,4 @@
+// KIND: STANDALONE
 // LANGUAGE: +MultiPlatformProjects +ImplicitSignedToUnsignedIntegerConversion
 // WITH_STDLIB
 
