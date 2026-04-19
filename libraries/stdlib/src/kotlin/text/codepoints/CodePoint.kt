@@ -80,6 +80,20 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
     @kotlin.internal.InlineOnly
     public inline operator fun dec(): CodePoint = this - 1
 
+    /** Creates a range from this value to the specified [other] value. */
+    @kotlin.internal.InlineOnly
+    public inline operator fun rangeTo(other: CodePoint): CodePointRange = CodePointRange(this, other)
+
+    /**
+     * Creates a range from this value up to but excluding the specified [other] value.
+     *
+     * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     */
+    public operator fun rangeUntil(other: CodePoint): CodePointRange {
+        if (other <= CodePoint.MIN_VALUE) return CodePointRange.EMPTY
+        return this..(other - 1)
+    }
+
     public override fun toString(): String = toCharArray().concatToString()
 
     public companion object {
