@@ -97,8 +97,9 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
                 val metricContainer = MetricsContainer.createMetricsContainerForProfileFile()
 
                 fusReportDirectory.listFiles()
-                    .filter { it.name.startsWith(buildUid) && (it.name.endsWith("plugin-profile") || it.name.endsWith("kotlin-profile")) }
-                    .forEach {
+                    ?.sortedBy { it.lastModified() }
+                    ?.filter { it.name.startsWith(buildUid) && (it.name.endsWith("plugin-profile") || it.name.endsWith("kotlin-profile")) }
+                    ?.forEach {
                         metricContainer.addMetricFromFusKotlinProfileFile(it)
                     }
 
