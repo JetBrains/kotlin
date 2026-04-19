@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.KtAssert.fail
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 
 object ConfigurationDirectives : SimpleDirectivesContainer() {
     val WITH_STDLIB by directive("Add Kotlin stdlib to classpath")
@@ -57,3 +58,12 @@ enum class TestKind {
     STANDALONE_LLDB,
     STANDALONE_STEPPING;
 }
+
+val RegisteredDirectives.testKind: TestKind?
+    get() = get(ConfigurationDirectives.KIND).let {
+        when (it.size) {
+            0 -> null
+            1 -> it.single()
+            else -> fail("Exactly one test kind expected in ${ConfigurationDirectives.KIND} directive: $it")
+        }
+    }

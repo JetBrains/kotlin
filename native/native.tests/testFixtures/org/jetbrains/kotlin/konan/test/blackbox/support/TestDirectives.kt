@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ENTRY_POI
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXIT_CODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DATA_FILE
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNN
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ReplLLDBSessionSpec
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -27,8 +25,6 @@ import java.io.File
 import kotlin.time.Duration
 
 object TestDirectives : SimpleDirectivesContainer() {
-    val KIND = ConfigurationDirectives.KIND
-
     val TEST_RUNNER by enumDirective<TestRunnerType>(
         description = """
             Usage: // TEST_RUNNER: [DEFAULT, WORKER, NO_EXIT]
@@ -266,15 +262,6 @@ open class TestCompilerArgs(
             "-Xgc="
         )
     }
-}
-
-fun parseTestKind(registeredDirectives: RegisteredDirectives?): TestKind? {
-    if (registeredDirectives == null) return null
-    if (KIND !in registeredDirectives)
-        return null // The default is determined by TEST_KIND global property
-
-    val values = registeredDirectives[KIND]
-    return values.singleOrNull() ?: fail { "Exactly one test kind expected in $KIND directive: $values" }
 }
 
 internal fun parseTestRunner(registeredDirectives: RegisteredDirectives): TestRunnerType {

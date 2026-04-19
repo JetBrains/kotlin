@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.*
+import org.jetbrains.kotlin.test.directives.testKindFrom
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -239,7 +240,7 @@ private class ExtTestDataFile(
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
-        var testKind = parseTestKind(structure.directives) ?: settings.get<TestKind>()
+        var testKind = settings.testKindFrom(structure.directives)
         val definitelyStandaloneTest = testKind != TestKind.REGULAR
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         if (testKind == TestKind.REGULAR && isStandaloneTest) {
