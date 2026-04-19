@@ -286,7 +286,10 @@ private val RegisteredDirectives.testKind: TestKind?
  *      @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
  */
 fun Settings.testKind(directives: RegisteredDirectives?): TestKind =
-    directives?.testKind ?: get<TestKind>()
+    directives?.let {
+        it.testKind
+        // ?: TODO: KT-84713: Implement conditions for STANDALONE, similar to those in `determineIfStandaloneTest()`
+    } ?: get<TestKind>()
 
 fun TestServices.testKind(): TestKind = testRunSettings.testKind(moduleStructure.allDirectives)
 

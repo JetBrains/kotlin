@@ -238,6 +238,7 @@ private class ExtTestDataFile(
 
         var testKind = settings.testKind(structure.directives)
         val definitelyStandaloneTest = testKind != TestKind.REGULAR
+        // KT-84713: TODO Include logic of `determineIfStandaloneTest()` into `Settings.testKind()` (see invocation above)
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         if (testKind == TestKind.REGULAR && isStandaloneTest) {
             testKind = TestKind.STANDALONE

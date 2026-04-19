@@ -198,6 +198,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
     }
 
     private fun groupTestsInBatches(infos: List<TestMethodInfo>): List<List<TestMethodInfo>> {
+        // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect difference of compiler args, etc.
         val (regulars, standalones) = infos.partition { it.testInstance.testKind == TestKind.REGULAR }
         return standalones.map { listOf(it) }.plusElement(regulars)
     }

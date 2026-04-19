@@ -128,7 +128,10 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
 
             facadeStep(NativeCompilerSecondStageFacade::Grouping.bind(currentCustomNativeCompilerSettings))
             handlersStep(ArtifactKinds.Native, CompilationStage.SECOND) {
-                useHandlers(::NativeBoxRunnerGroupingPhase)
+                useHandlers(
+                    // TODO: KT-84713: Implement FileCheckHandlerGroupingPhase. For each artifact, it would need testdata and test directives
+                    ::NativeBoxRunnerGroupingPhase,
+                )
             }
         }
     }
