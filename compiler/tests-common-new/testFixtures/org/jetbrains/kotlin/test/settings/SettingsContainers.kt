@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.settings
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.TestService
+import org.jetbrains.kotlin.test.services.TestServices
 import kotlin.reflect.KClass
 
 abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
@@ -60,3 +61,5 @@ class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any>) : Sett
  */
 class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
 class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
+
+val TestServices.testRunSettings: TestRunSettings by TestServices.testServiceAccessor()
