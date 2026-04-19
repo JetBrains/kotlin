@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.konan.test.suppressors
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
-import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.testRunSettings
 import org.junit.jupiter.api.Assumptions
 
 class NativeTestsSuppressor(

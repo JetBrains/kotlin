@@ -17,19 +17,12 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
-import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
-import org.jetbrains.kotlin.test.model.AbstractTestFacade
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.model.SourcesKind
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.ModuleStructureExtractor.Companion.CINTEROP_SOURCE_EXTENSIONS
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceFileProvider
-import kotlin.collections.flatMap
-import kotlin.io.extension
+import org.jetbrains.kotlin.test.services.testRunSettings
 
 class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<ResultingArtifact.Source, BinaryArtifacts.KLib>() {
     override val inputKind = SourcesKind

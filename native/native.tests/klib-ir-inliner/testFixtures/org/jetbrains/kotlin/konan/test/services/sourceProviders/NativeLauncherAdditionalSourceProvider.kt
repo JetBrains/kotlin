@@ -6,19 +6,14 @@
 package org.jetbrains.kotlin.konan.test.services.sourceProviders
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
-import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
 import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.testKindFrom
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.BatchingPackageInserter
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
-import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import org.jetbrains.kotlin.test.services.testInfo
 
 private const val LAUNCHER_FILE_NAME = "__launcher__.kt"
 private val BOX_FUNCTION_NAME = "box"
