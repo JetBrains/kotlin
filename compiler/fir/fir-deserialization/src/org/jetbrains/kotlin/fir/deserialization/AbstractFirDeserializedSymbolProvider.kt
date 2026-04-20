@@ -71,40 +71,69 @@ abstract class LibraryPathFilter {
         }
     }
 
-    class LibraryList(inputLibs: Set<Path>) : LibraryPathFilter() {
-        // As a cache and normalize lazily
-        private class WrappedPath(val path: Path) {
-            val isAbsolute: Boolean by lazy { path.isAbsolute }
-
-            val normalizedPath: Path by lazy {
-                path.normalize()
+    class LibraryList(libs: Set<Path>) : LibraryPathFilter() {
+        private class PathTrie {
+            private class TrieNode {
+                val children = HashMap<String, TrieNode>()
+                var isTerminal = false
             }
 
-            val absoluteNormalizedPath: Path by lazy {
-                if (isAbsolute) normalizedPath else path.toAbsolutePath().normalize()
+            private val root = TrieNode()
+
+            fun add(path: Path) {
+                var node = root
+                path.root?.let { node = node.children.getOrPut(it.toString()) { TrieNode() } }
+                for (component in path) {
+                    node = node.children.getOrPut(component.toString()) { TrieNode() }
+                }
+                node.isTerminal = true
             }
 
-            fun startsWith(wrappedPath: WrappedPath): Boolean =
-                path.startsWith(wrappedPath.normalizedPath)
+            fun contains(path: Path): Boolean {
+                var node = root
+                path.root?.let {
+                    if (node.isTerminal) return true
+                    node = node.children[it.toString()] ?: return false
+                }
+                for (component in path) {
+                    if (node.isTerminal) return true
+                    node = node.children[component.toString()] ?: return false
+                }
+                return node.isTerminal
+            }
         }
 
-        // TODO: Migrate to wrappedLibs only use by K2ScriptingCompilerEnviroment
-        val libs: Set<Path> by lazy { inputLibs.mapTo(mutableSetOf()) { it.normalize() } }
+        /**
+         * Handles directories with .class files and JS directories
+         */
+        private val directoryLibraryPaths: PathTrie = PathTrie()
 
-        private val wrappedLibs: List<WrappedPath> = inputLibs.map { WrappedPath(it) }
+        /**
+         * Handles .jar, .klib libraries
+         */
+        private val fileLibraryPaths: Set<Path> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            mutableSetOf<Path>().apply {
+                for (lib in libs) {
+                    lib.absoluteNormalized().let {
+                        add(it)
+                        directoryLibraryPaths.add(it)
+                    }
+                }
+            }
+        }
+
+        // TODO: Migrate to Set and Trie only use by K2ScriptingCompilerEnviroment
+        val libs: Set<Path> by lazy(LazyThreadSafetyMode.PUBLICATION) { libs.mapTo(mutableSetOf()) { it.normalize() } }
 
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
 
-            val wrappedPath = WrappedPath(path)
-            return wrappedLibs.any {
-                when {
-                    it.isAbsolute && !wrappedPath.isAbsolute -> wrappedPath.absoluteNormalizedPath.startsWith(it.normalizedPath)
-                    !it.isAbsolute && wrappedPath.isAbsolute -> wrappedPath.absoluteNormalizedPath.startsWith(it.absoluteNormalizedPath)
-                    else -> wrappedPath.startsWith(it)
-                }
+            return path.absoluteNormalized().let {
+                fileLibraryPaths.contains(it) || directoryLibraryPaths.contains(it)
             }
         }
+
+        private fun Path.absoluteNormalized(): Path = toAbsolutePath().normalize()
     }
 }
 
