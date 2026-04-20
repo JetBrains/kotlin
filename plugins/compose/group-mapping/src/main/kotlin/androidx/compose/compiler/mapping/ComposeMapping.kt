@@ -51,7 +51,7 @@ class ComposeMapping(
         if (group.key == null) return
         if (group.line == -1) return
 
-        append("  ")
+        append("    ")
         append("1:1:")
         append(descriptorToProguardString("${cls.classId.fqName}.${method.id.methodName}", method.id.methodDescriptor))
         append(":")
