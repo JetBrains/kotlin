@@ -105,15 +105,7 @@ class FirCallCompleter(
 
         if (skipEvenPartialCompletion) return call
 
-        val completionMode = candidate.computeCompletionMode(
-            session.inferenceComponents, resolutionMode, initialType
-        ).let {
-            when {
-                it == ConstraintSystemCompletionMode.FULL ->
-                    inferenceSession.customCompletionModeInsteadOfFull(call) ?: ConstraintSystemCompletionMode.FULL
-                else -> it
-            }
-        }
+        val completionMode = candidate.computeCompletionMode(resolutionMode, initialType, call)
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         if (call is FirFunctionCall) {
@@ -152,6 +144,20 @@ class FirCallCompleter(
             @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA
                 -> throw IllegalStateException()
+        }
+    }
+
+    private fun Candidate.computeCompletionMode(
+        resolutionMode: ResolutionMode,
+        initialType: ConeKotlinType,
+        call: FirResolvable,
+    ): ConstraintSystemCompletionMode = computeCompletionMode(
+        session.inferenceComponents, resolutionMode, initialType
+    ).let {
+        when {
+            it == ConstraintSystemCompletionMode.FULL ->
+                inferenceSession.customCompletionModeInsteadOfFull(call) ?: ConstraintSystemCompletionMode.FULL
+            else -> it
         }
     }
 
