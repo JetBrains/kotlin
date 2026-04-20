@@ -104,6 +104,7 @@ class FirebaseCloudXCTestExecutor(
                 "firebase", "test", "ios", "run",
                 "--test=$testsZip",
                 "--no-record-video",
+                "--device=model=iphone16pro,version=18.3",
                 "--client-details=matrixLabel=$description"
             ),
             stderr = stderr
