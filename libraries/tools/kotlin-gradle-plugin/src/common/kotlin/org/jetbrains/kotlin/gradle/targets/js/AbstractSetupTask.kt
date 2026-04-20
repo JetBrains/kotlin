@@ -112,7 +112,6 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         }
     }
 
-    @Suppress("unused")
     @TaskAction
     fun exec() {
         if (!shouldDownload.get()) return
@@ -131,7 +130,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     private fun <T> withUrlRepo(action: () -> T): T {
         val repo = downloadBaseUrlProvider.orNull?.let {
             project.repositories.ivy { repo ->
-                repo.name = "Distributions at ${it}"
+                repo.name = "Distributions at $it"
                 repo.url = URI(it)
 
                 repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
