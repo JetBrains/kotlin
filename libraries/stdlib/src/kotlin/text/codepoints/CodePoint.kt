@@ -121,3 +121,53 @@ public fun Int.toCodePoint(): CodePoint =
 @ExperimentalCodePointApi
 public fun Char.toCodePoint(): CodePoint =
     code.toCodePoint()
+
+
+@ExperimentalCodePointApi
+@IgnorableReturnValue
+public fun <T : Appendable> T.appendCodePoint(value: CodePoint): T {
+    if (value.isBasic) {
+        append(value.code.toChar())
+    } else {
+        append(value.highSurrogate())
+        append(value.lowSurrogate())
+    }
+    return this
+}
+
+@ExperimentalCodePointApi
+@IgnorableReturnValue
+public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): StringBuilder {
+    return if (value.isBasic) {
+        insert(index, value.code.toChar())
+    } else {
+        insert(index, value.toCharArray())
+    }
+}
+
+@ExperimentalCodePointApi
+@IgnorableReturnValue
+public fun StringBuilder.setCodePointAt(index: Int, value: CodePoint): StringBuilder {
+    val current = codePointAt(index)
+    if (value.isBasic) {
+        set(index, value.code.toChar())
+        if (current.isSupplementary) {
+            deleteAt(index + 1)
+        }
+    } else {
+        set(index, value.highSurrogate())
+        if (current.isSupplementary) {
+            set(index + 1, value.lowSurrogate())
+        } else {
+            insert(index + 1, value.lowSurrogate())
+        }
+    }
+    return this
+}
+
+@ExperimentalCodePointApi
+@IgnorableReturnValue
+public fun StringBuilder.deleteCodePointAt(index: Int): StringBuilder {
+    val current = codePointAt(index)
+    return deleteRange(index, index + current.size)
+}
