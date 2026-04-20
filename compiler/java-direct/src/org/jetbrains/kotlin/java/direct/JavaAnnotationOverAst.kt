@@ -23,18 +23,15 @@ class JavaAnnotationOverAst(
 
     @Volatile private var _arguments: Collection<JavaAnnotationArgument>? = null
     override val arguments: Collection<JavaAnnotationArgument>
-        get() {
-            _arguments?.let { return it }
+        get() = cachedNonNull({ _arguments }, { _arguments = it }) {
             val parameterList = tree.findChildByType(node, JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST)
-            val computed = if (parameterList == null) {
+            if (parameterList == null) {
                 emptyList()
             } else {
                 tree.getChildrenByType(parameterList, JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
                     createAnnotationArgument(nvp, tree, resolutionContext)
                 }
             }
-            _arguments = computed
-            return computed
         }
 
     /**
@@ -47,23 +44,13 @@ class JavaAnnotationOverAst(
      */
     @Volatile private var _annotationName: Any? = NOT_COMPUTED
     private val annotationName: String?
-        get() {
-            val cached = _annotationName
-            if (cached !== NOT_COMPUTED) return cached as String?
-            val computed = tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
-            _annotationName = computed
-            return computed
+        get() = cachedNullable({ _annotationName }, { _annotationName = it }) {
+            tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
         }
 
     @Volatile private var _classId: Any? = NOT_COMPUTED
     override val classId: ClassId?
-        get() {
-            val cached = _classId
-            if (cached !== NOT_COMPUTED) return cached as ClassId?
-            val computed = computeClassId()
-            _classId = computed
-            return computed
-        }
+        get() = cachedNullable({ _classId }, { _classId = it }) { computeClassId() }
 
     private fun computeClassId(): ClassId? {
         val reference = annotationName ?: return null
@@ -93,11 +80,6 @@ class JavaAnnotationOverAst(
     }
 
     override fun resolve(): JavaClass? = null
-
-    private companion object {
-        /** Sentinel for @Volatile nullable properties: distinguishes "not yet computed" from "computed as null". */
-        private val NOT_COMPUTED: Any = Any()
-    }
 }
 
 private fun createAnnotationArgument(

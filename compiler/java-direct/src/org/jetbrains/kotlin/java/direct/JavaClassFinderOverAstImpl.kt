@@ -58,8 +58,11 @@ class JavaClassFinderOverAstImpl(
         val fileBaseName: String = file.name.removeSuffix(".java"),
     )
 
-    // package -> className -> list of files that declare such class
-    private val index: MutableMap<FqName, MutableMap<String, MutableList<FileEntry>>> = ConcurrentHashMap()
+    // package -> className -> list of files that declare such class.
+    // Built only during [buildIndex] (single-threaded in `init`), frozen afterwards —
+    // publication is guaranteed by the `init{}` block running before the reference escapes
+    // (`this` is not leaked during construction).
+    private val index: MutableMap<FqName, MutableMap<String, MutableList<FileEntry>>> = HashMap()
 
     // class cache for already created JavaClassOverAst.
     // Note: ConcurrentHashMap disallows null values, so this map stores only *positive* hits;
@@ -79,8 +82,9 @@ class JavaClassFinderOverAstImpl(
     // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
 
-    // Package-level annotations from package-info.java files
-    private val packageAnnotationNodes: MutableMap<FqName, MutableList<JavaAnnotation>> = ConcurrentHashMap()
+    // Package-level annotations from package-info.java files.
+    // Populated only during [buildIndex] (single-threaded in `init`), read-only afterwards.
+    private val packageAnnotationNodes: MutableMap<FqName, MutableList<JavaAnnotation>> = HashMap()
 
     // Supertype graph queries (direct supertypes, inherited inner classes).
     // Extracted into a focused collaborator in Step 1.6 of the refactoring plan.
@@ -189,7 +193,7 @@ class JavaClassFinderOverAstImpl(
                 continue
             }
             val entry = tryBuildFileEntry(file) ?: continue
-            val byName = index.getOrPut(entry.packageFqName) { ConcurrentHashMap() }
+            val byName = index.getOrPut(entry.packageFqName) { HashMap() }
             for (name in entry.topLevelClassNames) {
                 val list = byName.getOrPut(name) { mutableListOf() }
                 list.add(entry)

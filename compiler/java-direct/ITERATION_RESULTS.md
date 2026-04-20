@@ -2,7 +2,170 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-20 (hot-path caching quick wins from revised PERFORMANCE_REVIEW.md, plus LightTree migration write-up)
+**Last Updated**: 2026-04-20 (remaining PERFORMANCE_REVIEW work: resolve() dedup, CHM downgrades, cache-helper unification)
+
+---
+
+## Remaining PERFORMANCE_REVIEW Work: resolve() Dedup, CHM Downgrades, Cache-Helper Unification — 2026-04-20
+
+### Overview
+
+Closes the remaining medium-value items from `implDocs/PERFORMANCE_REVIEW.md` (§2 items 6 & 7,
+§4 overkill `ConcurrentHashMap` instances) and unifies the hand-rolled `@Volatile` caching
+pattern that proliferated across the model layer during the two previous optimization rounds.
+One item (§2 #6, context-level `tryResolve` cache) is intentionally deferred with a recorded
+correctness argument. One related line of investigation (Kotlin 2.4's `ExplicitBackingFields`
+language feature) produced a negative result.
+
+### Change 1 — Deduplicate `resolve*` / `resolve*WithoutInheritance` (§2 #7)
+
+**Problem**: `JavaResolutionContext` carried two near-identical pairs of resolution methods:
+- `resolveSimpleNameToClassId` (full rules: imports, local/inner classes, inherited inner
+  classes, same-package, `java.lang`, star imports with ambiguity + class-level handling)
+  versus `resolveSimpleNameToClassIdWithoutInheritance` (a strict subset: imports,
+  same-package, `java.lang`, simple star imports).
+- `resolveNestedClassToClassIdFromParts` versus
+  `resolveNestedClassToClassIdFromPartsWithoutInheritance` with the same structural
+  difference.
+
+The duplication was ~90 lines of Kotlin that had to stay in lock-step; any fix to one risked
+silent divergence from the other.
+
+**Fix** (`JavaResolutionContext.kt`): Collapsed each pair into a single `*Impl` workhorse with
+a `checkInheritance: Boolean` parameter. When `false`, the impl skips:
+- step 2 (`findLocalClass`) and step 2b (aggregated inherited inner classes / BFS fallback)
+  in the simple-name resolver,
+- the `findInheritedNestedClass` probe inside the nested resolver,
+- the class-finder-based inherited-inner-class fallback for `size == 2` names,
+- the class-level star-import handling and cross-star-package ambiguity check in step 5.
+
+The explicit-import step behaves differently in the two flavors (`resolveAsClassId` vs.
+`ClassId.topLevel`) and the flag gates that too — a difference that was easy to miss in the
+old copy-pair. Thin public wrappers (`resolveSimpleNameToClassId`, `resolveNestedClassToClassId`)
+pass `checkInheritance = true`; the `WithoutInheritance` callers now call the impl directly
+with `checkInheritance = false`.
+
+### Change 2 — `ConcurrentHashMap` → `HashMap` for build-once-read-many maps (§4)
+
+**Problem**: Three maps in `JavaClassFinderOverAstImpl` were `ConcurrentHashMap` despite being
+populated only inside the single-threaded `init{}` block and never mutated afterward:
+- `index: MutableMap<FqName, MutableMap<String, MutableList<FileEntry>>>` (outer + inner maps)
+- `packageAnnotationNodes: MutableMap<FqName, MutableList<JavaAnnotation>>`
+
+The concurrent-hash overhead was pure waste: after `buildIndex()` returns, the maps become
+effectively immutable. Publication to subsequent readers is already guaranteed by
+`init{}` + `final` fields.
+
+**Fix** (`JavaClassFinderOverAstImpl.kt`): Downgraded both to plain `HashMap`. Added comments
+spelling out the "populated only in `init{}`, read-only afterwards" invariant so that any
+future code that mutates these post-`init` will be caught in review.
+
+Six other maps (`classCache`, `packageCache`, `negativeClassCache`, `supertypeCache`,
+`inheritedInnerClassesCache`, `innerClassCache`) stay `ConcurrentHashMap` — they're genuinely
+written during concurrent FIR resolution.
+
+### Change 3 — Unified cache helpers (`CacheHelpers.kt`)
+
+**Problem**: Three `@Volatile`-backed lazy-cache patterns had proliferated across the model
+layer after `by lazy(PUBLICATION)` was eliminated:
+1. Non-null cache (35+ sites): `@Volatile private var _x: T? = null` + 6-line getter.
+2. Nullable cache with sentinel (10+ sites): `@Volatile private var _x: Any? = NOT_COMPUTED`
+   + 7-line getter.
+3. Tri-state `Int` for `Boolean` (8+ sites): `@Volatile private var _x: Int = -1` + 7-line getter.
+
+The hand-rolled sequences were error-prone (two sites used a bespoke `CLASSIFIER_NOT_COMPUTED`
+sentinel instead of the shared `NOT_COMPUTED`; three classes carried their own duplicate
+`NOT_COMPUTED` companion objects).
+
+**Fix** — new file `CacheHelpers.kt`, one module-level sentinel, three `internal inline`
+functions:
+- `cachedNonNull<T : Any>(read, write, compute): T`
+- `cachedNullable<T>(read, write, compute): T` (uses the shared `NOT_COMPUTED`)
+- `cachedBoolean(read, write, compute): Boolean` (tri-state `Int` backing)
+
+Each helper is `inline`: at every call site, Kotlin expands the helper plus both lambdas into
+bytecode byte-for-byte equivalent to the hand-rolled sequence. There is no runtime cost
+compared to the previous per-property expansion — this is purely an API unification.
+
+All ~45 cache sites across `JavaClassOverAst`, `JavaMemberOverAst`, `JavaTypeOverAst`, and
+`JavaAnnotationOverAst` now read:
+```kotlin
+@Volatile private var _x: ...
+val x: ... get() = cachedXxx({ _x }, { _x = it }) { <expensive> }
+```
+Three redundant per-class `NOT_COMPUTED` sentinels were deleted; the per-class
+`CLASSIFIER_NOT_COMPUTED` in `JavaClassifierTypeOverAst` was merged into the shared one.
+
+### Change 4 — `ExplicitBackingFields` is not usable (negative result)
+
+The user asked whether Kotlin 2.4's `ExplicitBackingFields` feature could eliminate the
+underscore-prefixed pattern entirely. Verified by a one-file probe that the 2.4 compiler:
+1. **Requires the backing field's type to be a subtype of the property's type.** So a
+   property typed `T` cannot have a backing field typed `T?`, and the lazy-cache pattern
+   needs exactly that.
+2. **Rejects properties that declare both an explicit `field` and a custom accessor.** But
+   the lazy-cache pattern's whole purpose is a custom `get()` that consults the field.
+
+Observed compiler errors (recorded for future reference):
+```
+e: The type of the backing field must be a subtype of the property's type.
+e: Properties with explicit backing fields cannot have accessors.
+e: Reassignment of read-only property via backing field.
+```
+
+The feature in its 2.4 form is designed for narrowing public types (e.g. `val flow: Flow<T>`
+with `field: MutableSharedFlow<T>`), not for generic lazy caching. The probe was removed
+after verification.
+
+### Change 5 — Skipped: context-level `tryResolve` cache (§2 #6)
+
+**Why skipped**: The current per-call `HashMap<ClassId, Boolean>` in `JavaResolutionContext.resolve`
+is allocated only for dotted names (simple names bypass it). Hoisting it to the
+context level would only be correct if FIR's `tryResolve` callback is deterministic for a
+given `ClassId` across the resolution context's lifetime. In practice FIR *can* pass
+different callbacks for different type references (different visibility scopes in principle),
+and cache reuse keyed on `ClassId` alone would risk returning a stale yes/no answer under
+a different callback's rules. The saving (a few `HashMap` allocations per file, only for
+dotted names) doesn't justify the correctness risk without stronger guarantees about FIR's
+callback contract. Re-evaluate if a future task strengthens that contract.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `CacheHelpers.kt` (new) | Shared `cachedNonNull` / `cachedNullable` / `cachedBoolean` inline helpers + module-level `NOT_COMPUTED` sentinel |
+| `JavaClassOverAst.kt` | All 16 cache sites rewritten to use helpers; per-class `NOT_COMPUTED` companion deleted |
+| `JavaMemberOverAst.kt` | All 15 cache sites rewritten; base-class `protected NOT_COMPUTED` companion and `JavaValueParameterOverAst`'s private sentinel both deleted |
+| `JavaTypeOverAst.kt` | 10 cache sites rewritten; `CLASSIFIER_NOT_COMPUTED` folded into shared sentinel |
+| `JavaAnnotationOverAst.kt` | 3 cache sites rewritten; per-class `NOT_COMPUTED` companion deleted |
+| `JavaClassFinderOverAstImpl.kt` | `index` (outer + inner) and `packageAnnotationNodes` downgraded to `HashMap` |
+| `JavaResolutionContext.kt` | `resolveSimpleNameToClassIdImpl` / `resolveNestedClassToClassIdFromParts` with `checkInheritance: Boolean` replace two pairs of near-duplicate methods |
+
+### Test Results
+
+- `./gradlew :kotlin-java-direct:test` via the `Tests in 'kotlin.kotlin-java-direct'` run
+  configuration — **BUILD SUCCESSFUL**, `tests=2769 failures=0 errors=0 skipped=0` across
+  463 XML reports. Matches the baseline from the previous iteration (same day).
+- JetBrains IDE `build_project` on all 7 changed source files — 0 errors, no new warnings.
+
+### Key Learnings
+
+- Kotlin `inline fun` with lambda parameters is a legitimate zero-cost API-unification tool
+  as long as the helper doesn't need to own the backing storage. The helper here takes the
+  field accessors as lambdas, so every call site still declares its own `@Volatile` field —
+  but the read-check-compute-store sequence is shared and consistent.
+- `ExplicitBackingFields` (Kotlin 2.4) is narrower than its name suggests: it doesn't give
+  you a general "expose the backing field" escape hatch, it gives you a *narrowed* backing
+  field type with no custom getter. Knowing this upfront saves a speculative refactor.
+- When two methods have an 80-line body and an 8-line body that is a strict subset, a
+  single `checkInheritance` boolean parameter is usually cleaner than two separate
+  implementations. The opposite smell (boolean parameters that gate unrelated behavior)
+  doesn't apply here because all gated branches are on the same axis ("should this level of
+  resolution recurse into inherited-member lookup?").
+- `ConcurrentHashMap` is a useful hint in code review: "every write is concurrent with
+  other writes/reads". Using it for populate-once-read-many maps loses that hint and costs a
+  little performance. Prefer `HashMap` + an `init{}` publication invariant that is
+  documented in a comment.
 
 ---
 
