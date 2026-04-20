@@ -37,3 +37,12 @@ fun parse(languageLevel: LanguageLevel, builder: SyntaxTreeBuilder) {
     parser.fileParser.parse(builder)
 }
 
+/**
+ * Convenience wrapper around [parseJavaToSyntaxTreeBuilder] + [buildJavaLightTree] for callers
+ * that just need the resulting [JavaLightTree].
+ */
+fun parseJavaToLightTree(charSequence: CharSequence, start: Int): JavaLightTree {
+    val builder = parseJavaToSyntaxTreeBuilder(charSequence, start)
+    return buildJavaLightTree(builder, charSequence)
+}
+
