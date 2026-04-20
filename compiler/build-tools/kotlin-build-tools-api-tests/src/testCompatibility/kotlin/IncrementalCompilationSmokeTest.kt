@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
@@ -17,18 +18,13 @@ import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilati
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation.Companion.INCREMENTAL_COMPILATION
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ModuleSpec
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -248,9 +244,11 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             }
         }
 
-//        jvmScenario(strategyConfig, action)
-//        workingDirectory.deleteRecursively()
-        jsScenario(strategyConfig, action)
+        jvmScenario(strategyConfig, action)
+        workingDirectory.deleteRecursively()
+        if (strategyConfig.first.supportsJs()) {
+            jsScenario(strategyConfig, action)
+        }
     }
 }
 
@@ -279,3 +277,6 @@ private fun assertCompiledSources(
         """.trimIndent()
     }
 }
+
+fun KotlinToolchains.supportsJs() = this::class.java.simpleName == "KotlinToolchainsImpl"
+        && KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)

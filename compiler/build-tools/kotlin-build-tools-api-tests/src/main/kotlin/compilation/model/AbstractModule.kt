@@ -51,6 +51,7 @@ private class CompilationOutcomeImpl(
 }
 
 data class AbstractModuleCacheKey(
+    val moduleClass: String,
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
     val compilationArguments: Function1<*, Unit>,
@@ -58,7 +59,7 @@ data class AbstractModuleCacheKey(
 
 val EXPLICIT_NULL_MODULE_NAME_MARKER = "###null_module_name###"
 
-abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC: BaseIncrementalCompilationConfiguration.Builder>(
+abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder>(
     override val project: AbstractProject<*, *, *>,
     final override val moduleName: String,
     val moduleDirectory: Path,
@@ -85,7 +86,12 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         get() = icWorkingDir.resolve("caches")
 
     override val scenarioDslCacheKey =
-        AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, moduleCompilationConfigAction)
+        AbstractModuleCacheKey(
+            this::class.java.name,
+            moduleName,
+            dependencies.map { it.scenarioDslCacheKey },
+            moduleCompilationConfigAction
+        )
 
     override fun compileAndThrow(
         strategyConfig: ExecutionPolicy,
@@ -112,7 +118,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         forceOutput: LogLevel?,
         compilationConfigAction: (B) -> Unit,
         compilationAction: (O) -> Unit,
-        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit
+        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(

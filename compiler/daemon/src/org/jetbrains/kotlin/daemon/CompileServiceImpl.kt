@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
-import org.jetbrains.kotlin.build.report.metrics.COMPILE_ITERATION
-import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
-import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.cli.common.*
+import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -40,13 +38,7 @@ import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.incremental.components.ScopeKind
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -473,7 +465,8 @@ abstract class CompileServiceImplBase(
                                     gradleIncrementalServicesFacade,
                                     compilationResults!!,
                                     gradleIncrementalArgs
-                                )
+                                ),
+                                gradleIncrementalArgs.configurationInputs
                             )
                         }
                     }
@@ -688,6 +681,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        configurationInputs: ConfigurationInputs? = null
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
@@ -702,6 +696,12 @@ abstract class CompileServiceImplBase(
             ModulesApiHistoryJs(rootProjectDir, modulesInfo)
         } ?: EmptyModulesApiHistory
 
+        val projectDir = incrementalCompilationOptions.rootProjectDir
+        val buildDir = incrementalCompilationOptions.buildDir
+        val fileLocations = if (projectDir != null && buildDir != null) {
+            FileLocations(projectDir, buildDir)
+        } else null
+
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
             reporter = reporter,
@@ -711,7 +711,14 @@ abstract class CompileServiceImplBase(
             icFeatures = incrementalCompilationOptions.icFeatures,
         )
         return try {
-            compiler.compile(allKotlinFiles, args, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles())
+            compiler.compile(
+                allKotlinFiles,
+                args,
+                compilerMessageCollector,
+                incrementalCompilationOptions.sourceChanges.toChangedFiles(),
+                fileLocations = fileLocations,
+                configurationInputs = configurationInputs,
+            )
         } finally {
             reporter.endMeasureGc()
             reporter.flush()

@@ -133,7 +133,7 @@ internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.
             val name = it.relativeTo(module.outputDirectory).toString()
             !outputs.contains(FileKey(name, it.getLastModifiedTime().toMillis(), it.fileSize()))
         }.map { it.absolute().toFile() },
-        removedFiles = outputs.map { module.outputDirectory.resolve(it.relativeFilePath).toFile() }.filter { !it.exists() }
+        removedFiles = outputs.map { module.outputDirectory.resolve(it.relativeFilePath).absolute().toFile() }.filter { !it.exists() }
     )
 
     override fun getSourcesChanges() =
