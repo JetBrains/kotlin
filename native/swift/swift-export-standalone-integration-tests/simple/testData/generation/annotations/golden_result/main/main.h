@@ -3,6 +3,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool deprecatedT_deprecationInheritedF__reverse_swift(void * self);
+
+_Bool normalT_deprecatedInFutureF__reverse_swift(void * self);
+
+_Bool normalT_normalF__reverse_swift(void * self);
+
+_Bool normalT_obsoletedInFutureF__reverse_swift(void * self);
+
+_Bool normalT_removedInFutureF__reverse_swift(void * self);
+
 _Bool ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction(void * self);
 
 _Bool ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction(void * self);

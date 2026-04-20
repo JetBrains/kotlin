@@ -10,7 +10,6 @@ public final class FeatureC: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        if Self.self != anotherFeature.FeatureC.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from anotherFeature.FeatureC ") }
         let __kt = __root___FeatureC_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___FeatureC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

@@ -34,10 +34,10 @@ import java.io.File
  * Harness is at native/native.tests/testData/framework/main-testing.swift
  */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
-    @BeforeEach
-    fun disableExecutionTests() {
-        Assumptions.abort<Unit>("Swift export execution tests are temporarily disabled, reenable with KT-85308")
-    }
+//    @BeforeEach
+//    fun disableExecutionTests() {
+//        Assumptions.abort<Unit>("Swift export execution tests are temporarily disabled, reenable with KT-85308")
+//    }
 
     private val testSuiteDir = File("native/native.tests/testData/framework")
 

@@ -228,7 +228,6 @@ extension ExportedKotlinPackages.kotlin.text {
             }
         }
         public init() {
-            if Self.self != ExportedKotlinPackages.kotlin.text.StringBuilder.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.text.StringBuilder ") }
             let __kt = kotlin_text_StringBuilder_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_text_StringBuilder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -236,7 +235,6 @@ extension ExportedKotlinPackages.kotlin.text {
         public init(
             capacity: Swift.Int32
         ) {
-            if Self.self != ExportedKotlinPackages.kotlin.text.StringBuilder.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.text.StringBuilder ") }
             let __kt = kotlin_text_StringBuilder_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_text_StringBuilder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, capacity); return () }()
@@ -244,7 +242,6 @@ extension ExportedKotlinPackages.kotlin.text {
         public init(
             content: any ExportedKotlinPackages.kotlin.CharSequence
         ) {
-            if Self.self != ExportedKotlinPackages.kotlin.text.StringBuilder.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.text.StringBuilder ") }
             let __kt = kotlin_text_StringBuilder_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_text_StringBuilder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_CharSequence__(__kt, content.__externalRCRef()); return () }()
@@ -252,7 +249,6 @@ extension ExportedKotlinPackages.kotlin.text {
         public init(
             content: Swift.String
         ) {
-            if Self.self != ExportedKotlinPackages.kotlin.text.StringBuilder.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlin.text.StringBuilder ") }
             let __kt = kotlin_text_StringBuilder_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlin_text_StringBuilder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, content); return () }()
@@ -541,4 +537,17 @@ extension ExportedKotlinPackages.kotlin.text {
             }
         }
     }
+}
+@_cdecl("kotlin_collections_ByteIterator_nextByte__reverse_swift")
+public func kotlin_collections_ByteIterator_nextByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
+    let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int8 = _self.nextByte()
+    return _result
+}
+
+@_cdecl("kotlin_collections_CharIterator_nextChar__reverse_swift")
+public func kotlin_collections_CharIterator_nextChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
+    let _self = ExportedKotlinPackages.kotlin.collections.CharIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Unicode.UTF16.CodeUnit = _self.nextChar()
+    return _result
 }

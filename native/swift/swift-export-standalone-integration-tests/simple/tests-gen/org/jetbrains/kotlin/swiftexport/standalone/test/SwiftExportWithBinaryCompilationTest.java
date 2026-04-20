@@ -60,6 +60,12 @@ public class SwiftExportWithBinaryCompilationTest extends AbstractSwiftExportWit
   }
 
   @Test
+  @TestMetadata("cross_language_inheritance")
+  public void testCross_language_inheritance() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/cross_language_inheritance/");
+  }
+
+  @Test
   @TestMetadata("empty")
   public void testEmpty() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/empty/");

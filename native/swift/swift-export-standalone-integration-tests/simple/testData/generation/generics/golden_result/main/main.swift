@@ -51,7 +51,6 @@ package protocol _Producer {
 }
 public final class AnyConsumer: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.AnyConsumer.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.AnyConsumer ") }
         let __kt = __root___AnyConsumer_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___AnyConsumer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -75,7 +74,6 @@ public final class ArrayBox: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        if Self.self != main.ArrayBox.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ArrayBox ") }
         let __kt = __root___ArrayBox_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ArrayBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -107,7 +105,6 @@ open class Box: KotlinRuntime.KotlinBase {
 }
 public final class CPImpl: main.StringProducer {
     public override init() {
-        if Self.self != main.CPImpl.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.CPImpl ") }
         let __kt = __root___CPImpl_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___CPImpl_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -128,7 +125,6 @@ public final class DefaultBox: main.Box {
     public override init(
         t: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) {
-        if Self.self != main.DefaultBox.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DefaultBox ") }
         let __kt = __root___DefaultBox_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___DefaultBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, t.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -147,7 +143,6 @@ public final class Demo: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        if Self.self != main.Demo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Demo ") }
         let __kt = __root___Demo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -161,7 +156,6 @@ public final class Demo: KotlinRuntime.KotlinBase {
 }
 public final class FunctionalBox: main.Box {
     public init() {
-        if Self.self != main.FunctionalBox.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.FunctionalBox ") }
         let __kt = __root___FunctionalBox_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___FunctionalBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -182,7 +176,6 @@ public final class GenericWithComparableUpperBound: KotlinRuntime.KotlinBase {
     public init(
         t: any ExportedKotlinPackages.kotlin.Comparable
     ) {
-        if Self.self != main.GenericWithComparableUpperBound.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GenericWithComparableUpperBound ") }
         let __kt = __root___GenericWithComparableUpperBound_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___GenericWithComparableUpperBound_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_Comparable__(__kt, t.__externalRCRef()); return () }()
@@ -203,7 +196,6 @@ public final class Holder: KotlinRuntime.KotlinBase {
     public init(
         xs: ExportedKotlinPackages.kotlin.Array
     ) {
-        if Self.self != main.Holder.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Holder ") }
         let __kt = __root___Holder_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Holder_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_ExportedKotlinPackages_kotlin_Array__(__kt, xs.__externalRCRef()); return () }()
@@ -220,7 +212,6 @@ public final class Holder: KotlinRuntime.KotlinBase {
 }
 public final class IdentityProcessor: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.IdentityProcessor.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.IdentityProcessor ") }
         let __kt = __root___IdentityProcessor_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___IdentityProcessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -258,7 +249,6 @@ public final class Pair: KotlinRuntime.KotlinBase {
         first: (any KotlinRuntimeSupport._KotlinBridgeable)?,
         second: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) {
-        if Self.self != main.Pair.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Pair ") }
         let __kt = __root___Pair_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Pair_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, first.map { it in it.__externalRCRef() } ?? nil, second.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -266,7 +256,6 @@ public final class Pair: KotlinRuntime.KotlinBase {
 }
 open class StringProducer: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.StringProducer.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.StringProducer ") }
         let __kt = __root___StringProducer_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___StringProducer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -283,7 +272,6 @@ open class StringProducer: KotlinRuntime.KotlinBase {
 }
 public final class TripleBox: main.Box {
     public init() {
-        if Self.self != main.TripleBox.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.TripleBox ") }
         let __kt = __root___TripleBox_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___TripleBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -420,4 +408,10 @@ extension KotlinRuntimeSupport._KotlinExistential: main.ConsumerProducer where W
 extension KotlinRuntimeSupport._KotlinExistential: main.A where Wrapped : main._A {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.B where Wrapped : main._B {
+}
+@_cdecl("StringProducer_produce__reverse_swift")
+public func StringProducer_produce__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = main.StringProducer.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.produce()
+    return _result
 }

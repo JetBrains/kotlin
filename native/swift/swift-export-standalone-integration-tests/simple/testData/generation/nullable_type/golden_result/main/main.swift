@@ -8,7 +8,6 @@ public typealias OptToNonOptTypealias = main.NonoptionalRef?
 public typealias OptionalRef = main.Bar?
 public final class Bar: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ") }
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -42,7 +41,6 @@ public final class Foo: KotlinRuntime.KotlinBase {
     public init(
         b: main.Bar?
     ) {
-        if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_main_Bar___(__kt, b.map { it in it.__externalRCRef() } ?? nil); return () }()

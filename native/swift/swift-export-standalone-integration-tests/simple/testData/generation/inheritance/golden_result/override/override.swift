@@ -10,7 +10,6 @@ package protocol _P {
 }
 open class Base: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != override.Base.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from override.Base ") }
         let __kt = __root___Base_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Base_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -29,7 +28,6 @@ open class Base: KotlinRuntime.KotlinBase {
 }
 open class Sub: override.Base {
     public override init() {
-        if Self.self != override.Sub.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from override.Sub ") }
         let __kt = __root___Sub_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Sub_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -54,4 +52,17 @@ extension override.P where Self : KotlinRuntimeSupport._KotlinBridgeable {
 extension override.P {
 }
 extension KotlinRuntimeSupport._KotlinExistential: override.P where Wrapped : override._P {
+}
+@_cdecl("Base_g__TypesOfArguments__anyU20override_P____reverse_swift")
+public func Base_g__TypesOfArguments__anyU20override_P____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ x: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = override.Base.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.g(x: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: x) as! any override.P)
+    return { _result; return true }()
+}
+
+@_cdecl("Sub_g__TypesOfArguments__anyU20override_P____reverse_swift")
+public func Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ x: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = override.Sub.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.g(x: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: x) as! any override.P)
+    return { _result; return true }()
 }

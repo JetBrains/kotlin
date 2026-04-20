@@ -6,7 +6,6 @@ import KotlinStdlib
 
 public final class Foo: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -144,7 +143,6 @@ public func setFoo(
 extension ExportedKotlinPackages.inline {
     public final class Bar: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != ExportedKotlinPackages.inline.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.inline.Bar ") }
             let __kt = inline_Bar_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { inline_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -256,7 +254,6 @@ extension ExportedKotlinPackages.operators {
         public init(
             value: Swift.Int32
         ) {
-            if Self.self != ExportedKotlinPackages.operators.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.operators.Foo ") }
             let __kt = operators_Foo_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
@@ -517,7 +514,6 @@ extension ExportedKotlinPackages.operators {
 extension ExportedKotlinPackages.overload {
     public final class Foo: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != ExportedKotlinPackages.overload.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.overload.Foo ") }
             let __kt = overload_Foo_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { overload_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

@@ -174,3 +174,58 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
     }
 }
+@_cdecl("kotlin_Number_toByte__reverse_swift")
+public func kotlin_Number_toByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int8 = _self.toByte()
+    return _result
+}
+
+@_cdecl("kotlin_Number_toDouble__reverse_swift")
+public func kotlin_Number_toDouble__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Double {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Double = _self.toDouble()
+    return _result
+}
+
+@_cdecl("kotlin_Number_toFloat__reverse_swift")
+public func kotlin_Number_toFloat__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Float {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Float = _self.toFloat()
+    return _result
+}
+
+@_cdecl("kotlin_Number_toInt__reverse_swift")
+public func kotlin_Number_toInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.toInt()
+    return _result
+}
+
+@_cdecl("kotlin_Number_toLong__reverse_swift")
+public func kotlin_Number_toLong__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int64 {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int64 = _self.toLong()
+    return _result
+}
+
+@_cdecl("kotlin_Number_toShort__reverse_swift")
+public func kotlin_Number_toShort__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int16 {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int16 = _self.toShort()
+    return _result
+}
+
+@_cdecl("kotlin_collections_BooleanIterator_nextBoolean__reverse_swift")
+public func kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlin.collections.BooleanIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Bool = _self.nextBoolean()
+    return _result
+}
+
+@_cdecl("kotlin_collections_IntIterator_nextInt__reverse_swift")
+public func kotlin_collections_IntIterator_nextInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.nextInt()
+    return _result
+}

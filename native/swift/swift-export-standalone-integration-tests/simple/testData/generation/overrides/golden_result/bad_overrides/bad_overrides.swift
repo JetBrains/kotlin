@@ -11,7 +11,6 @@ extension ExportedKotlinPackages.weird {
             }
         }
         public init() throws {
-            if Self.self != ExportedKotlinPackages.weird.A.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.weird.A ") }
             let __kt = weird_A_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             var __error: UnsafeMutableRawPointer? = nil
@@ -44,7 +43,6 @@ extension ExportedKotlinPackages.weird {
         }
         @_nonoverride
         public init() {
-            if Self.self != ExportedKotlinPackages.weird.B.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.weird.B ") }
             let __kt = weird_B_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { weird_B_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -63,4 +61,10 @@ extension ExportedKotlinPackages.weird {
             return { weird_B_throws(self.__externalRCRef()); return () }()
         }
     }
+}
+@_cdecl("weird_A_throws__reverse_swift")
+public func weird_A_throws__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = try! _self.throws()
+    return { _result; return true }()
 }

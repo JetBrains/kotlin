@@ -4,7 +4,6 @@ import KotlinRuntimeSupport
 
 public final class Bar: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ") }
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -18,7 +17,6 @@ public final class Bar: KotlinRuntime.KotlinBase {
 }
 public final class Context: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.Context.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Context ") }
         let __kt = __root___Context_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Context_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -32,7 +30,6 @@ public final class Context: KotlinRuntime.KotlinBase {
 }
 public final class ContextA: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.ContextA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ContextA ") }
         let __kt = __root___ContextA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ContextA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -46,7 +43,6 @@ public final class ContextA: KotlinRuntime.KotlinBase {
 }
 public final class ContextB: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.ContextB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ContextB ") }
         let __kt = __root___ContextB_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ContextB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

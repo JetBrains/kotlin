@@ -2,9 +2,21 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Cousin::class, "24overrides_across_modules6CousinC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(FinalDerived3::class, "24overrides_across_modules13FinalDerived3C")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, arg: Int): Int
+
+@BindReverseBridgeToMethod(Cousin::class, "primitiveTypeFunc")
+public fun Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse(self: Cousin, arg: Int): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(__self, arg)
+    return __result
+}
 
 @ExportedBridge("Cousin_finalOverrideFunc")
 public fun Cousin_finalOverrideFunc(self: kotlin.native.internal.NativePtr): Boolean {

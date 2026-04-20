@@ -3,9 +3,33 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Sub::class, "8override3SubC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(P::class, "_P")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("Base_g__TypesOfArguments__anyU20override_P____reverse_swift")
+internal external fun Base_g__TypesOfArguments__anyU20override_P____reverse_swift(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(Base::class, "g")
+public fun Base_g__TypesOfArguments__anyU20override_P____reverse(self: Base, x: P): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __x = kotlin.native.internal.ref.createRetainedExternalRCRef(x)
+    val __result = Base_g__TypesOfArguments__anyU20override_P____reverse_swift(__self, __x)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("Sub_g__TypesOfArguments__anyU20override_P____reverse_swift")
+internal external fun Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(Sub::class, "g")
+public fun Sub_g__TypesOfArguments__anyU20override_P____reverse(self: Sub, x: P): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __x = kotlin.native.internal.ref.createRetainedExternalRCRef(x)
+    val __result = Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(__self, __x)
+    return run<Unit> { __result }
+}
 
 @ExportedBridge("Base_g__TypesOfArguments__anyU20override_P__")
 public fun Base_g__TypesOfArguments__anyU20override_P__(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean {

@@ -155,3 +155,9 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
 }
+@_cdecl("kotlin_Enum_toString__reverse_swift")
+public func kotlin_Enum_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.toString()
+    return _result
+}

@@ -202,7 +202,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             missingFields: [Swift.String],
             serialName: Swift.String
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.MissingFieldException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.MissingFieldException ") }
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String__Swift_String__(__kt, missingFields, serialName); return () }()
@@ -212,7 +211,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             missingField: Swift.String,
             serialName: Swift.String
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.MissingFieldException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.MissingFieldException ") }
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String_Swift_String__(__kt, missingField, serialName); return () }()
@@ -223,7 +221,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.MissingFieldException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.MissingFieldException ") }
             let __kt = kotlinx_serialization_MissingFieldException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_MissingFieldException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String__Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, missingFields, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -316,7 +313,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     }
     open class SerializationException: ExportedKotlinPackages.kotlin.IllegalArgumentException {
         public override init() {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.SerializationException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.SerializationException ") }
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -324,7 +320,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         public override init(
             message: Swift.String?
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.SerializationException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.SerializationException ") }
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String___(__kt, message ?? nil); return () }()
@@ -333,7 +328,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
             message: Swift.String?,
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.SerializationException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.SerializationException ") }
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -341,7 +335,6 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.SerializationException.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.SerializationException ") }
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_SerializationException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -497,7 +490,6 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             readIfAbsent: @escaping (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool
         ) {
-            if Self.self != ExportedKotlinPackages.kotlinx.serialization.`internal`.ElementMarker.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.serialization.`internal`.ElementMarker ") }
             let __kt = kotlinx_serialization_internal_ElementMarker_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(__kt, descriptor.__externalRCRef(), {
@@ -2841,4 +2833,346 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder where Se
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder {
+}
+@_cdecl("kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift")
+public func kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.hashCode()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift")
+public func kotlinx_serialization_descriptors_SerialKind_toString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.toString()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder = _self.beginStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeBoolean__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeBoolean__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Bool = _self.decodeBoolean()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeByte__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int8 = _self.decodeByte()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeChar__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Unicode.UTF16.CodeUnit = _self.decodeChar()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeDouble__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeDouble__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Double {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Double = _self.decodeDouble()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ enumDescriptor: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.decodeEnum(enumDescriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: enumDescriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeFloat__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeFloat__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Float {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Float = _self.decodeFloat()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeInlineElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeInlineElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder = _self.decodeInlineElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder = _self.decodeInline(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeInt__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.decodeInt()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeLong__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeLong__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int64 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int64 = _self.decodeLong()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeNotNullMark__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeNotNullMark__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Bool = _self.decodeNotNullMark()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeNull__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeNull__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Optional<Swift.Never> = _self.decodeNull()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeShort__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeShort__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int16 {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int16 = _self.decodeShort()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeString__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.String = _self.decodeString()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_decodeValue__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_decodeValue__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any KotlinRuntimeSupport._KotlinBridgeable = _self.decodeValue()
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.endStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder = _self.beginStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeBoolean__TypesOfArguments__Swift_Bool____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeBoolean__TypesOfArguments__Swift_Bool____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Bool) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeBoolean(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeByte__TypesOfArguments__Swift_Int8____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeByte__TypesOfArguments__Swift_Int8____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int8) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeByte(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeChar__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeChar__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UInt16) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeChar(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeDouble__TypesOfArguments__Swift_Double____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeDouble__TypesOfArguments__Swift_Double____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Double) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeDouble(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Bool = _self.encodeElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ enumDescriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeEnum(enumDescriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: enumDescriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeFloat__TypesOfArguments__Swift_Float____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeFloat__TypesOfArguments__Swift_Float____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Float) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeFloat(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder = _self.encodeInline(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeInt__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeInt__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int32) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeInt(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeLong__TypesOfArguments__Swift_Int64____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeLong__TypesOfArguments__Swift_Int64____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int64) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeLong(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeNull__reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeNull__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeNull()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeShort__TypesOfArguments__Swift_Int16____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeShort__TypesOfArguments__Swift_Int16____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int16) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeShort(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeString__TypesOfArguments__Swift_String____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeString__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.String) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeString(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeValue(value: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: value))
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.encoding.AbstractEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.endStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift")
+public func kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ decoder: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.deserialize(decoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: decoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder)
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ encoder: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.serialize(encoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: encoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, value: { switch value { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Swift_Optional_Swift_String_____reverse_swift")
+public func kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Swift_Optional_Swift_String_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ decoder: Swift.UnsafeMutableRawPointer, _ klassName: Swift.String?) -> Swift.UnsafeMutableRawPointer? {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy> = _self.findPolymorphicSerializerOrNull(decoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: decoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, klassName: klassName)
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift")
+public func kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ encoder: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy> = _self.findPolymorphicSerializerOrNull(encoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: encoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, value: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: value))
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ encoder: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.MapLikeSerializer.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.serialize(encoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: encoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, value: { switch value { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_internal_TaggedDecoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder = _self.beginStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedDecoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_internal_TaggedDecoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder = _self.decodeInline(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedDecoder_decodeNotNullMark__reverse_swift")
+public func kotlinx_serialization_internal_TaggedDecoder_decodeNotNullMark__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Bool = _self.decodeNotNullMark()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_internal_TaggedDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedDecoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.endStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_internal_TaggedEncoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder = _self.beginStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedEncoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_internal_TaggedEncoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder = _self.encodeInline(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedEncoder_encodeNotNullMark__reverse_swift")
+public func kotlinx_serialization_internal_TaggedEncoder_encodeNotNullMark__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeNotNullMark()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_internal_TaggedEncoder_encodeNull__reverse_swift")
+public func kotlinx_serialization_internal_TaggedEncoder_encodeNull__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.TaggedEncoder.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.encodeNull()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector____reverse_swift")
+public func kotlinx_serialization_modules_SerializersModule_dumpTo__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleCollector____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ collector: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.dumpTo(collector: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: collector) as! any ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector)
+    return { _result; return true }()
 }

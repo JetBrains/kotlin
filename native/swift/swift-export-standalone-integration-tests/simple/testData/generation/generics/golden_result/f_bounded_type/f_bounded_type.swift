@@ -12,7 +12,6 @@ package protocol _MyComparable {
 }
 public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
     public override init() {
-        if Self.self != f_bounded_type.ConcreteSelfReferencing.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from f_bounded_type.ConcreteSelfReferencing ") }
         let __kt = __root___ConcreteSelfReferencing_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -50,4 +49,10 @@ extension f_bounded_type.MyComparable where Self : KotlinRuntimeSupport._KotlinB
 extension f_bounded_type.MyComparable {
 }
 extension KotlinRuntimeSupport._KotlinExistential: f_bounded_type.MyComparable where Wrapped : f_bounded_type._MyComparable {
+}
+@_cdecl("SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift")
+public func SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any f_bounded_type.MyComparable
+    let _result: Swift.Int32 = _self.compareTo(other: f_bounded_type.SelfReferencing.__createClassWrapper(externalRCRef: other))
+    return _result
 }

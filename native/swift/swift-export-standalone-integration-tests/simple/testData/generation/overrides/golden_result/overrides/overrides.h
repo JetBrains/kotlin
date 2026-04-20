@@ -3,6 +3,70 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool AbstractBase_abstractFun1__reverse_swift(void * self);
+
+_Bool AbstractBase_abstractFun2__reverse_swift(void * self);
+
+_Bool AbstractDerived2_abstractFun1__reverse_swift(void * self);
+
+_Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent_____reverse_swift(void * self, NSNumber * _Nullable nullable, void * poly, void * _Nullable nullablePoly);
+
+_Bool Child_contains__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t element);
+
+_Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable to);
+
+NSArray<id> * Child_genericReturnTypeFunc__reverse_swift(void * self);
+
+_Bool Child_nonoverride__reverse_swift(void * self);
+
+void * Child_objectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+void * _Nullable Child_objectOptionalFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+_Bool Child_overrideChainFunc__reverse_swift(void * self);
+
+int32_t Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg);
+
+void * Child_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+void * Child_subtypeOptionalObjectFunc__reverse_swift(void * self);
+
+int32_t Child_subtypeOptionalPrimitiveFunc__reverse_swift(void * self);
+
+_Bool OpenDerived1_abstractFun1__reverse_swift(void * self);
+
+_Bool OpenDerived1_abstractFun2__reverse_swift(void * self);
+
+_Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child____reverse_swift(void * self, int32_t nullable, void * poly, void * nullablePoly);
+
+_Bool Parent_contains__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t element);
+
+_Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable to);
+
+_Bool Parent_finalOverrideFunc__reverse_swift(void * self);
+
+_Bool Parent_finalOverrideHopFunc__reverse_swift(void * self);
+
+NSArray<id> * Parent_genericReturnTypeFunc__reverse_swift(void * self);
+
+_Bool Parent_hopFunc__reverse_swift(void * self);
+
+int32_t Parent_nonoverride__reverse_swift(void * self);
+
+void * Parent_objectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+void * _Nullable Parent_objectOptionalFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+_Bool Parent_overrideChainFunc__reverse_swift(void * self);
+
+int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t arg);
+
+void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child____reverse_swift(void * self, void * arg);
+
+void * _Nullable Parent_subtypeOptionalObjectFunc__reverse_swift(void * self);
+
+NSNumber * _Nullable Parent_subtypeOptionalPrimitiveFunc__reverse_swift(void * self);
+
 _Bool AbstractBase_abstractFun1(void * self);
 
 _Bool AbstractBase_abstractFun2(void * self);

@@ -4,9 +4,21 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.ByteIterator::class, "22ExportedKotlinPackages6kotlinO11collectionsO12KotlinStdlibE12ByteIteratorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.collections.Iterator::class, "_Iterator")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("kotlin_collections_ByteIterator_nextByte__reverse_swift")
+internal external fun kotlin_collections_ByteIterator_nextByte__reverse_swift(self: kotlin.native.internal.NativePtr): Byte
+
+@BindReverseBridgeToMethod(kotlin.collections.ByteIterator::class, "nextByte")
+public fun kotlin_collections_ByteIterator_nextByte__reverse(self: kotlin.collections.ByteIterator): Byte {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_collections_ByteIterator_nextByte__reverse_swift(__self)
+    return __result
+}
 
 @ExportedBridge("kotlin_Array_get__TypesOfArguments__Swift_Int32__")
 public fun kotlin_Array_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {

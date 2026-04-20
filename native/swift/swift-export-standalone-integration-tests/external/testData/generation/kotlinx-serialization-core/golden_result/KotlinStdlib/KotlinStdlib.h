@@ -3,6 +3,50 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int8_t kotlin_Number_toByte__reverse_swift(void * self);
+
+double kotlin_Number_toDouble__reverse_swift(void * self);
+
+float kotlin_Number_toFloat__reverse_swift(void * self);
+
+int32_t kotlin_Number_toInt__reverse_swift(void * self);
+
+int64_t kotlin_Number_toLong__reverse_swift(void * self);
+
+int16_t kotlin_Number_toShort__reverse_swift(void * self);
+
+NSString * kotlin_Throwable_toString__reverse_swift(void * self);
+
+uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
+
+int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
+
+_Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
+
+int32_t kotlin_ranges_CharProgression_hashCode__reverse_swift(void * self);
+
+_Bool kotlin_ranges_CharProgression_isEmpty__reverse_swift(void * self);
+
+void * kotlin_ranges_CharProgression_iterator__reverse_swift(void * self);
+
+NSString * kotlin_ranges_CharProgression_toString__reverse_swift(void * self);
+
+_Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
+
+int32_t kotlin_ranges_UIntProgression_hashCode__reverse_swift(void * self);
+
+_Bool kotlin_ranges_UIntProgression_isEmpty__reverse_swift(void * self);
+
+NSString * kotlin_ranges_UIntProgression_toString__reverse_swift(void * self);
+
+_Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
+
+int32_t kotlin_ranges_ULongProgression_hashCode__reverse_swift(void * self);
+
+_Bool kotlin_ranges_ULongProgression_isEmpty__reverse_swift(void * self);
+
+NSString * kotlin_ranges_ULongProgression_toString__reverse_swift(void * self);
+
 void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 void * kotlin_Array_iterator(void * self);

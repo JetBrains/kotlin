@@ -96,7 +96,6 @@ extension ExportedKotlinPackages.funinterface {
     }
     public final class FunctorClass: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface._FunctionalInterface {
         public init() {
-            if Self.self != ExportedKotlinPackages.funinterface.FunctorClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.funinterface.FunctorClass ") }
             let __kt = funinterface_FunctorClass_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { funinterface_FunctorClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

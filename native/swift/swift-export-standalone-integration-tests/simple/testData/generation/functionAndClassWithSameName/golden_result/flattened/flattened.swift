@@ -12,7 +12,6 @@ public func flattenedPackageClass(
 extension ExportedKotlinPackages.flattenedPackage {
     public final class FlattenedPackageClass: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass ") }
             let __kt = flattenedPackage_FlattenedPackageClass_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { flattenedPackage_FlattenedPackageClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

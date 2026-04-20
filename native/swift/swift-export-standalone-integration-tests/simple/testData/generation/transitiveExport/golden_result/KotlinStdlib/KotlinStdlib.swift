@@ -134,3 +134,9 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
 }
+@_cdecl("kotlin_collections_ByteIterator_nextByte__reverse_swift")
+public func kotlin_collections_ByteIterator_nextByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
+    let _self = ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int8 = _self.nextByte()
+    return _result
+}

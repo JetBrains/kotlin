@@ -10,9 +10,91 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.I1::class, "_I1")
 @file:kotlin.native.internal.objc.BindClassToObjCName(namespace.I1.I2::class, "__ExportedKotlinPackages_namespace_I1_I2")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("namespace_Bar_foo__reverse_swift")
+internal external fun namespace_Bar_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.Bar::class, "foo")
+public fun namespace_Bar_foo__reverse(self: namespace.Bar): kotlinx.coroutines.flow.Flow<namespace.I1.I2> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_Bar_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.Flow<namespace.I1.I2>
+}
+
+@ImportedBridge("namespace_Foo_foo__reverse_swift")
+internal external fun namespace_Foo_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.Foo::class, "foo")
+public fun namespace_Foo_foo__reverse(self: namespace.Foo): kotlinx.coroutines.flow.Flow<namespace.I1?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_Foo_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.Flow<namespace.I1?>
+}
+
+@ImportedBridge("namespace_MutableSharedFoo_foo__reverse_swift")
+internal external fun namespace_MutableSharedFoo_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.MutableSharedFoo::class, "foo")
+public fun namespace_MutableSharedFoo_foo__reverse(self: namespace.MutableSharedFoo): kotlinx.coroutines.flow.MutableSharedFlow<namespace.I1?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_MutableSharedFoo_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.MutableSharedFlow<namespace.I1?>
+}
+
+@ImportedBridge("namespace_MutableStateFoo_foo__reverse_swift")
+internal external fun namespace_MutableStateFoo_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.MutableStateFoo::class, "foo")
+public fun namespace_MutableStateFoo_foo__reverse(self: namespace.MutableStateFoo): kotlinx.coroutines.flow.MutableStateFlow<namespace.I1?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_MutableStateFoo_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.MutableStateFlow<namespace.I1?>
+}
+
+@ImportedBridge("namespace_Nar_foo__reverse_swift")
+internal external fun namespace_Nar_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.Nar::class, "foo")
+public fun namespace_Nar_foo__reverse(self: namespace.Nar): kotlinx.coroutines.flow.Flow<Nothing> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_Nar_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.Flow<Nothing>
+}
+
+@ImportedBridge("namespace_SharedFoo_foo__reverse_swift")
+internal external fun namespace_SharedFoo_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.SharedFoo::class, "foo")
+public fun namespace_SharedFoo_foo__reverse(self: namespace.SharedFoo): kotlinx.coroutines.flow.SharedFlow<namespace.I1?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_SharedFoo_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.SharedFlow<namespace.I1?>
+}
+
+@ImportedBridge("namespace_StateFoo_foo__reverse_swift")
+internal external fun namespace_StateFoo_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.StateFoo::class, "foo")
+public fun namespace_StateFoo_foo__reverse(self: namespace.StateFoo): kotlinx.coroutines.flow.StateFlow<namespace.I1?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_StateFoo_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.StateFlow<namespace.I1?>
+}
+
+@ImportedBridge("namespace_Zar_foo__reverse_swift")
+internal external fun namespace_Zar_foo__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(namespace.Zar::class, "foo")
+public fun namespace_Zar_foo__reverse(self: namespace.Zar): kotlinx.coroutines.flow.Flow<namespace.I1.I2?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = namespace_Zar_foo__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.Flow<namespace.I1.I2?>
+}
 
 @ExportedBridge("namespace_Bar_foo")
 public fun namespace_Bar_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

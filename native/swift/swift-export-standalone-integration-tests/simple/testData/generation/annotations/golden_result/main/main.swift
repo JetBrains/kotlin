@@ -67,7 +67,6 @@ public final class Bar: main.Foo {
 }
 public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main._InterfaceWithDeprecatedMembers {
     public init() {
-        if Self.self != main.ClassWithDeprecatedMembersFromInterface.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassWithDeprecatedMembersFromInterface ") }
         let __kt = __root___ClassWithDeprecatedMembersFromInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassWithDeprecatedMembersFromInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -307,7 +306,6 @@ public final class PublicSubClassImplHiddenInterface: main.PublicClassImplHidden
 public final class SwiftClassA: KotlinRuntime.KotlinBase {
     public final class ObjCSubClassC: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.SwiftClassA.ObjCSubClassC.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.ObjCSubClassC ") }
             let __kt = KotlinClassA_KotlinSubClassC_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -321,7 +319,6 @@ public final class SwiftClassA: KotlinRuntime.KotlinBase {
     }
     public final class SwiftSubClassA: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.SwiftClassA.SwiftSubClassA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.SwiftSubClassA ") }
             let __kt = KotlinClassA_KotlinSubClassA_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -335,7 +332,6 @@ public final class SwiftClassA: KotlinRuntime.KotlinBase {
     }
     public final class SwiftSubClassB: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.SwiftClassA.SwiftSubClassB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.SwiftSubClassB ") }
             let __kt = KotlinClassA_KotlinSubClassB_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -349,7 +345,6 @@ public final class SwiftClassA: KotlinRuntime.KotlinBase {
     }
     public final class SwiftSubClassD: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.SwiftClassA.SwiftSubClassD.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA.SwiftSubClassD ") }
             let __kt = KotlinClassA_KotlinSubClassD_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { KotlinClassA_KotlinSubClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -375,7 +370,6 @@ public final class SwiftClassA: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        if Self.self != main.SwiftClassA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SwiftClassA ") }
         let __kt = __root___KotlinClassA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___KotlinClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -446,7 +440,6 @@ public final class deprecatedChildT: main.deprecatedT {
         }
     }
     public override init() {
-        if Self.self != main.deprecatedChildT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.deprecatedChildT ") }
         let __kt = __root___deprecatedChildT_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___deprecatedChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -471,7 +464,6 @@ public final class deprecatedChildT: main.deprecatedT {
 open class deprecatedT: KotlinRuntime.KotlinBase {
     open class deprecationInheritedT: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.deprecatedT.deprecationInheritedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.deprecatedT.deprecationInheritedT ") }
             let __kt = deprecatedT_deprecationInheritedT_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -501,7 +493,6 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     @available(*, deprecated, message: "Deprecated")
     open class deprecationRestatedT: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.deprecatedT.deprecationRestatedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.deprecatedT.deprecationRestatedT ") }
             let __kt = deprecatedT_deprecationRestatedT_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { deprecatedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -532,7 +523,6 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     }
     @available(*, deprecated, message: "Deprecated")
     public init() {
-        if Self.self != main.deprecatedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.deprecatedT ") }
         let __kt = __root___deprecatedT_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -631,7 +621,6 @@ public final class normalChildT: main.normalT {
         }
     }
     public override init() {
-        if Self.self != main.normalChildT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.normalChildT ") }
         let __kt = __root___normalChildT_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___normalChildT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -670,7 +659,6 @@ open class normalT: KotlinRuntime.KotlinBase {
         public init(
             deprecated: Swift.Int32
         ) {
-            if Self.self != main.normalT.deprecatedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.normalT.deprecatedT ") }
             let __kt = normalT_deprecatedT_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { normalT_deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, deprecated); return () }()
@@ -684,7 +672,6 @@ open class normalT: KotlinRuntime.KotlinBase {
     }
     open class normalT: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.normalT.normalT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.normalT.normalT ") }
             let __kt = normalT_normalT_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { normalT_normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -799,7 +786,6 @@ open class normalT: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        if Self.self != main.normalT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.normalT ") }
         let __kt = __root___normalT_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___normalT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -961,7 +947,6 @@ open class obsoletedT: KotlinRuntime.KotlinBase {
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
 public final class renamedT: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.renamedT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.renamedT ") }
         let __kt = __root___renamedT_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___renamedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -1312,4 +1297,38 @@ extension KotlinRuntimeSupport._KotlinExistential: main.NonDeprecatedInterface w
 extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface where Wrapped : main._SubDeprecatedInterface {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
+}
+@_cdecl("deprecatedT_deprecationInheritedF__reverse_swift")
+public func deprecatedT_deprecationInheritedF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = main.deprecatedT.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.deprecationInheritedF()
+    return { _result; return true }()
+}
+
+@_cdecl("normalT_deprecatedInFutureF__reverse_swift")
+public func normalT_deprecatedInFutureF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.deprecatedInFutureF()
+    return { _result; return true }()
+}
+
+@_cdecl("normalT_normalF__reverse_swift")
+public func normalT_normalF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.normalF()
+    return { _result; return true }()
+}
+
+@_cdecl("normalT_obsoletedInFutureF__reverse_swift")
+public func normalT_obsoletedInFutureF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.obsoletedInFutureF()
+    return { _result; return true }()
+}
+
+@_cdecl("normalT_removedInFutureF__reverse_swift")
+public func normalT_removedInFutureF__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = main.normalT.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = _self.removedInFutureF()
+    return { _result; return true }()
 }

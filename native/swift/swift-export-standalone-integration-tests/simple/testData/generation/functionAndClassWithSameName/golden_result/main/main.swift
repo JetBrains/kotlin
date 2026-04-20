@@ -67,7 +67,6 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public init(
         value: Swift.Int32
     ) {
-        if Self.self != main.ClassWithFactoryWithoutParameters.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassWithFactoryWithoutParameters ") }
         let __kt = __root___ClassWithFactoryWithoutParameters_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
@@ -97,7 +96,6 @@ public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
 }
 public final class UtcOffset: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.UtcOffset.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.UtcOffset ") }
         let __kt = __root___UtcOffset_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -153,7 +151,6 @@ extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory whe
 extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage ") }
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -168,7 +165,6 @@ extension ExportedKotlinPackages.test.factory {
     public final class Outer: KotlinRuntime.KotlinBase {
         public final class Nested: KotlinRuntime.KotlinBase {
             public init() {
-                if Self.self != ExportedKotlinPackages.test.factory.Outer.Nested.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer.Nested ") }
                 let __kt = test_factory_Outer_Nested_init_allocate()
                 super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
                 { test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -181,7 +177,6 @@ extension ExportedKotlinPackages.test.factory {
             }
         }
         public init() {
-            if Self.self != ExportedKotlinPackages.test.factory.Outer.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer ") }
             let __kt = test_factory_Outer_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
