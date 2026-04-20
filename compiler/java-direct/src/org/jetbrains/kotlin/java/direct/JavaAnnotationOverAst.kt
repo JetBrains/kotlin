@@ -20,38 +20,66 @@ class JavaAnnotationOverAst(
     tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaAnnotation {
+
+    @Volatile private var _arguments: Collection<JavaAnnotationArgument>? = null
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
-            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST) ?: return emptyList()
-            return tree.getChildrenByType(parameterList, JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
-                createAnnotationArgument(nvp, tree, resolutionContext)
+            _arguments?.let { return it }
+            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST)
+            val computed = if (parameterList == null) {
+                emptyList()
+            } else {
+                tree.getChildrenByType(parameterList, JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
+                    createAnnotationArgument(nvp, tree, resolutionContext)
+                }
             }
+            _arguments = computed
+            return computed
         }
 
     /**
      * The simple or qualified name of the annotation as it appears in source.
      * For `@Deprecated`, returns "Deprecated".
      * For `@java.lang.Deprecated`, returns "java.lang.Deprecated".
+     *
+     * Cached — accessed by [classId], [isResolved], and [resolveAnnotation], so caching avoids
+     * re-walking the AST three times per annotation.
      */
+    @Volatile private var _annotationName: Any? = NOT_COMPUTED
     private val annotationName: String?
-        get() = tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
+        get() {
+            val cached = _annotationName
+            if (cached !== NOT_COMPUTED) return cached as String?
+            val computed = tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
+            _annotationName = computed
+            return computed
+        }
 
+    @Volatile private var _classId: Any? = NOT_COMPUTED
     override val classId: ClassId?
         get() {
-            val reference = annotationName ?: return null
+            val cached = _classId
+            if (cached !== NOT_COMPUTED) return cached as ClassId?
+            val computed = computeClassId()
+            _classId = computed
+            return computed
+        }
 
-            if (reference.contains('.')) {
-                return ClassId.topLevel(FqName(reference))
-            }
+    private fun computeClassId(): ClassId? {
+        val reference = annotationName ?: return null
 
-            val imported = resolutionContext.getSimpleImport(reference)
-            if (imported != null) {
-                return ClassId.topLevel(imported)
-            }
-
-            // Return unqualified - FIR will need to resolve via resolveAnnotation
+        if (reference.contains('.')) {
             return ClassId.topLevel(FqName(reference))
         }
+
+        val imported = resolutionContext.getSimpleImport(reference)
+        if (imported != null) {
+            return ClassId.topLevel(imported)
+        }
+
+        // Return unqualified - FIR will need to resolve via resolveAnnotation
+        return ClassId.topLevel(FqName(reference))
+    }
 
     override val isResolved: Boolean
         get() {
@@ -65,6 +93,11 @@ class JavaAnnotationOverAst(
     }
 
     override fun resolve(): JavaClass? = null
+
+    private companion object {
+        /** Sentinel for @Volatile nullable properties: distinguishes "not yet computed" from "computed as null". */
+        private val NOT_COMPUTED: Any = Any()
+    }
 }
 
 private fun createAnnotationArgument(

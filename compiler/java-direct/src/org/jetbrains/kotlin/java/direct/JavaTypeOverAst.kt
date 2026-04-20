@@ -30,18 +30,26 @@ abstract class JavaTypeOverAst(
 ) : JavaType, JavaAnnotationOwner {
     // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
     // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
-    override val annotations: Collection<JavaAnnotation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val modifierListAnnotations =
-            tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            } ?: emptyList()
+    // Uses @Volatile rather than `by lazy(PUBLICATION)` to match the caching pattern used by
+    // the rest of the module's high-volume model classes and avoid the `SafePublicationLazyImpl`
+    // wrapper per type instance.
+    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
+    override val annotations: Collection<JavaAnnotation>
+        get() {
+            _annotations?.let { return it }
+            val modifierListAnnotations =
+                tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+                    tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                        .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+                } ?: emptyList()
 
-        val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
-            .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
+                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
 
-        memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
-    }
+            val computed = memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
+            _annotations = computed
+            return computed
+        }
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
         // Type-position annotations (from the type node itself) are TYPE_USE by syntax.
@@ -685,18 +693,26 @@ class JavaTypeParameterOverAst(
 
     // Annotations on the type parameter declaration itself (e.g., <@NonNull T>).
     // Matches TreeBasedTypeParameter which reads tree.annotations().
-    // Annotations on the type parameter declaration (e.g., <@NonNull T>).
     // The KMP parser may place annotations in a MODIFIER_LIST or directly under the
     // TYPE_PARAMETER node (no MODIFIER_LIST wrapper).
+    //
+    // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
+    // Safe w.r.t. the two-phase construction contract (see class KDoc): annotations don't
+    // reference sibling type parameters, so caching is valid as long as callers respect the
+    // "don't access before updateResolutionContext" invariant that already governs upperBounds.
+    @Volatile private var _typeParamAnnotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() {
+            _typeParamAnnotations?.let { return it }
             val modListAnns = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
                 tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
                     .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
             } ?: emptyList()
             val directAnns = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
                 .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            return modListAnns + directAnns
+            val computed = modListAnns + directAnns
+            _typeParamAnnotations = computed
+            return computed
         }
 
     override val isDeprecatedInJavaDoc: Boolean get() = false

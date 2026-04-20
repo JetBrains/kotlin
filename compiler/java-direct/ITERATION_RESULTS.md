@@ -2,7 +2,272 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-17 (performance optimizations: lazy delegate elimination + resolve() cache optimization)
+**Last Updated**: 2026-04-20 (hot-path caching quick wins from revised PERFORMANCE_REVIEW.md, plus LightTree migration write-up)
+
+---
+
+## Hot-Path Caching + Concurrency Correctness — 2026-04-20
+
+### Overview
+
+Re-audit of `PERFORMANCE_REVIEW.md` after the LightTree migration (see next iteration) showed that
+the original review's items 5.1/5.2 (materialized AST vs. LightTree) were closed by the migration,
+and items 1.1/2.1/2.2/2.3/3.4 were closed by the two April 17 performance rounds. A revised review
+(`implDocs/PERFORMANCE_REVIEW.md`, old version moved to `implDocs/archive/PERFORMANCE_REVIEW.md`)
+identified a short list of remaining quick wins and two thread-safety issues latent under the
+module's "FIR resolution is concurrent" assumption. This iteration implements all of them in one
+pass.
+
+### Changes
+
+**Caching (allocation reduction):**
+
+- `JavaValueParameterOverAst` — `type`, `isVararg`, `modifierList`, `annotations` converted from
+  plain `get()` to `@Volatile`-backed caches. Parameters are iterated repeatedly by FIR during
+  overload resolution; previously every read re-walked the AST and re-allocated
+  `JavaAnnotationOverAst` wrappers. Added a class-local `NOT_COMPUTED` sentinel because the class
+  extends `JavaElementOverAst` (not `JavaMemberOverAst`, whose sentinel is `protected`).
+- `JavaTypeParameterOverAst.annotations` — `@Volatile`-cached. Contract-compatible with the
+  two-phase construction invariant: annotations don't reference sibling type parameters, so they
+  can be cached after `updateResolutionContext` is called (same rule as `upperBounds`).
+- `JavaAnnotationOverAst` — `annotationName`, `classId`, `arguments` cached. `annotationName` is
+  read three times per annotation (from `classId`, `isResolved`, `resolveAnnotation`); one cache
+  covers all three. Uses a `NOT_COMPUTED` sentinel for the nullable `classId`.
+- `JavaTypeOverAst.annotations` — converted from `by lazy(PUBLICATION)` to the `@Volatile` pattern
+  used by the rest of the module. Base-class delegate inherited by every `JavaType*OverAst`, so
+  this drops one `SafePublicationLazyImpl` wrapper per type instance.
+
+**Concurrency correctness (`getOrPut` → `computeIfAbsent` on `ConcurrentHashMap`):**
+
+`getOrPut` on `ConcurrentHashMap` is non-atomic — two concurrent threads can both compute the value
+and the second `put` silently discards the first's result. For deterministic computations the
+outcome is the same but the wasted work is not free.
+
+- `JavaSupertypeGraph.getDirectSupertypes` — re-parses files on the cold path; concurrent
+  double-compute would mean concurrent double-parse.
+- `JavaSupertypeGraph.collectInheritedInnerClasses` — recursive supertype walk. Inner recursive
+  reads still use plain `get` (not `computeIfAbsent`) so the top-level `computeIfAbsent` cannot
+  self-deadlock.
+- `JavaClassFinderOverAstImpl.findPackage`.
+- `JavaClassOverAst.findInnerClass` — kept the lock-free fast path via an initial `get`; only a
+  miss enters `computeIfAbsent`.
+
+**Thread-safety (plain `HashMap` → `ConcurrentHashMap`):**
+
+Two plain `HashMap` caches were living on paths that every other cache in the module treats as
+concurrent. Both were race-prone under FIR's concurrent resolution of members of the same class.
+
+- `JavaScopeResolver.findLocalClassCache` — shared across scopes produced by `withTypeParameters`
+  / `withInheritedTypeParameters`. Now `ConcurrentHashMap<Name, Any>` + `computeIfAbsent`, null
+  results encoded via the existing `FIND_LOCAL_CLASS_NULL` sentinel.
+- `JavaResolutionContext.Companion.create`'s `localClassCache` — shared across all users of the
+  resolution context. Critical for `JavaClassOverAst` identity: FIR matches type parameters by
+  object identity, so a race that produced two distinct `JavaClassOverAst` instances for the
+  same name would surface as `ERROR CLASS: Unresolved name: T`. `computeIfAbsent` guarantees a
+  single canonical instance per name.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaMemberOverAst.kt` | `JavaValueParameterOverAst`: cache `type`, `isVararg`, `modifierList`, `annotations`; add class-local `NOT_COMPUTED` sentinel |
+| `JavaTypeOverAst.kt` | `JavaTypeOverAst.annotations`: `by lazy` → `@Volatile`; `JavaTypeParameterOverAst.annotations`: add `@Volatile` cache |
+| `JavaAnnotationOverAst.kt` | Cache `annotationName`, `classId`, `arguments`; add `NOT_COMPUTED` sentinel companion |
+| `JavaSupertypeGraph.kt` | `getDirectSupertypes` / `collectInheritedInnerClasses`: `getOrPut` → `computeIfAbsent` |
+| `JavaClassFinderOverAstImpl.kt` | `findPackage`: `getOrPut` → `computeIfAbsent` |
+| `JavaClassOverAst.kt` | `findInnerClass`: retain fast-path `get`, use `computeIfAbsent` on miss |
+| `JavaScopeResolver.kt` | `findLocalClassCache`: `HashMap` → `ConcurrentHashMap` with `computeIfAbsent` |
+| `JavaResolutionContext.kt` | `localClassCache` inside `Companion.create`: `mutableMapOf` → `ConcurrentHashMap` + `computeIfAbsent` |
+| `implDocs/PERFORMANCE_REVIEW.md` | Rewritten as the post-LT-migration review; old version moved to `implDocs/archive/` |
+
+### Test Results
+
+- `./gradlew :kotlin-java-direct:test` — **BUILD SUCCESSFUL**. 2769 tests, 0 failures, 0 errors,
+  0 skipped, across 463 XML reports.
+- JetBrains IDE `get_file_problems` — 0 errors in all 8 changed source files; remaining warnings
+  are pre-existing "unstable API" references to `com.intellij.platform.syntax.*`, not introduced
+  by this iteration.
+
+### Key Learnings
+
+- `getOrPut` on `ConcurrentHashMap` is not atomic — it compiles and behaves "correctly" under
+  racy access but silently duplicates work. Every getOrPut call on a concurrent cache in this
+  module was a candidate; `computeIfAbsent` is the atomic replacement and also clearer about
+  intent. Keep a fast-path `get()` before `computeIfAbsent` if the hot path is lock-free reads
+  (as in `findInnerClass`).
+- The module enforces a specific threading contract (every shared cache is concurrent) but two
+  `HashMap`s had slipped through. When a codebase commits to "concurrent everywhere", the cost
+  of a single non-concurrent outlier is two-fold: it races under load and it teaches readers
+  that "it's OK to use `HashMap` here sometimes".
+- Caching `annotationName` was a one-line change with a 3× saving per annotation — the cheapest
+  wins were still visible after two rounds of performance work. Worth re-auditing hot paths after
+  any architectural change (like the LightTree migration) because new patterns expose new
+  hot spots.
+
+---
+
+## LightTree Migration: Phases 1–4 — 2026-04-20
+
+### Overview
+
+The original performance review flagged the fully-materialized `JavaSyntaxNode` tree as the single
+largest structural contributor to the gap vs. PSI: every token allocated a ~64-byte node plus an
+`ArrayList` of children, on top of the source `CharSequence` being retained for every cached
+class. PSI solved the equivalent problem via `LighterASTNode` — a flat-array representation where
+a node is an `Int` index, not an object. This iteration migrates java-direct to the same pattern
+over four phases, each gated on passing tests so that the migration could be reviewed and
+committed incrementally.
+
+Planning doc: `implDocs/LIGHTTREE_MIGRATION_PLAN.md`. Analysis: `implDocs/LIGHTTREE_MIGRATION_ANALYSIS.md`.
+
+### Phase 1 — Infrastructure and unit-test harness
+
+Commit: `d726603a2b75 ~ [cc] LT migration phase 1`.
+
+Problem: the migration target (`JavaLightTree` wrapping `ProductionMarkerList` + `TokenList` from
+`com.intellij.platform.syntax.parser`) did not exist yet; the existing `JavaParsing*Test` suites
+could not be run against it until all model classes were migrated (Phase 3), so Phase 1 needed its
+own unit-test harness.
+
+Fix:
+- New `JavaLightTree.kt` (~400 lines): `JavaLightNode(val index: Int)` inline value class,
+  `JavaLightTree` holding precomputed `parentStartIndex[]` / `doneForStart[]` / `startForDone[]` /
+  `tokenParentStart[]` lookup arrays, and `buildJavaLightTree(builder, source)` stack-based
+  single-pass factory. API parallels the legacy `JavaSyntaxNode` extensions: `getRoot()`,
+  `isComposite()` / `isToken()`, `getType()`, `getStartOffset()` / `getEndOffset()`, `getText()`,
+  `textEquals()`, `getParent()`, `getChildren()`, `findChildByType()` / `getChildrenByType()` /
+  `hasChildOfType()`.
+- Synthetic root (`rootIndex = markerCount`) wraps all top-level productions so existing
+  `root.children`-walking code paths continue to work. Error markers (no matching done-pair) are
+  treated as leaves in `getEndOffset` / `getChildren`.
+- New `JavaLightTreeTest.kt` (~280 lines, 18 tests) exercises primitives that the
+  `JavaParsing*Test` suites don't cover: token `getParent`, `isToken` / `isComposite`,
+  `textEquals` edges, malformed input tolerance, `dump()` output, synthetic root offsets.
+
+Bumps and fixes during Phase 1:
+- First implementation returned the first top-level `START` marker as root; legacy
+  `buildSyntaxTree` synthesizes a wrapper root spanning `[0, source.length)`. 17/18 tests failed.
+  Switched to `rootIndex = markerCount` sentinel.
+- `testFindChildByTypeReturnsNullWhenAbsent` was testing the `EXTENDS_LIST` on `class A {}` which
+  is actually *present* but empty; retargeted the test to `INTERFACE_KEYWORD` and `RECORD_HEADER`
+  which are truly absent.
+- `-Werror` complained about `listOf<...>(...) as List<SyntaxElementType>`; replaced with an
+  explicit type parameter on `listOf<SyntaxElementType>(...)`.
+
+### Phase 2 — Parallel verification
+
+Commit: `059e0ae0c23b ~ [cc] LT migration phase 2`.
+
+Problem: before migrating callers, we wanted to confirm that `JavaLightTree` produces the same
+structure as `JavaSyntaxNode` across the full test corpus, not just the 18 unit tests from Phase 1.
+
+Fix:
+- `JavaParsingTestBase` extended to build both representations for every parsed source and
+  compare: node types, offsets, text, parent/child structure.
+- `testPublicClassWithMalformedMembers` immediately flagged an `IndexOutOfBoundsException: Index
+  -1 out of bounds for length 37` in `getEndOffset` when error markers were reached:
+  `doneForStart[errorMarkerIndex]` is `-1`. Added an `isErrorMarker` short-circuit so error
+  markers return the marker's own `getEndOffset()` directly and have empty `getChildren()`.
+
+### Phase 3 — Migrate model, resolution, and finder layers
+
+Commit: `89aa4d884429 ~ [cc] LT migration phase 3 (main)` — 18 files, +792 / –842 lines.
+
+Problem: all `JavaElementOverAst` / `JavaClassOverAst` / `JavaTypeOverAst` / `JavaMemberOverAst` /
+`JavaAnnotationOverAst` / `JavaResolutionContext` / `JavaImportResolver` /
+`JavaClassFinderOverAstImpl` / `JavaSupertypeGraph` still referenced `JavaSyntaxNode`. Direct
+replacement: every `.findChildByType(X)` / `.children` / `.text` / `.type` / `.textEquals(...)` on
+a `JavaSyntaxNode` becomes `tree.findChildByType(node, X)` / `tree.getChildren(node)` /
+`tree.getText(node)` / `tree.getType(node)` / `tree.textEquals(node, ...)`.
+
+Fix:
+- `JavaElementOverAst` base takes `(val node: JavaLightNode, val tree: JavaLightTree)`; `equals`
+  compares both.
+- All per-file caches keyed on `JavaSyntaxNode` become keyed on `JavaLightTree`
+  (e.g. `JavaImportResolver.importCache`).
+- `JavaResolutionContext.create(tree, classFinderProvider)` factory takes a tree and calls
+  `tree.getRoot()`; all previous callers pass `tree` in place of the old root.
+- `JavaClassFinderOverAstImpl` paths (`indexPackageInfo`, `tryBuildFileEntryWithFullParse`,
+  `parseTopLevelClassFromFile`) use `parseJavaToLightTree(source, 0)` + `tree.getRoot()`.
+- `JavaParsingTestBase.parseSource()` returns a `ParsedSource(root, context, tree)` data class.
+  Component order chosen so existing `val (root, context) = parseSource(...)` destructuring in
+  the per-feature parsing tests continues to compile unchanged.
+- `parse.kt` gained a `parseJavaToLightTree(charSequence, start)` wrapper around the KMP parser.
+
+Test run after Phase 3: **2766 / 2766 pass** (98 unit + 1488 phased + 1180 box).
+
+### Phase 4 — Remove legacy and assess the new test suite
+
+Commit: `3f16b322018d ~ [cc] LT migration phase 4 (cleanup)`.
+
+Problem: with all callers on `JavaLightTree`, the legacy `JavaSyntaxNode` class,
+`buildSyntaxTree()`, and the parallel verification code in `JavaParsingTestBase` are dead weight.
+
+Fix:
+- `utils.kt` rewritten: the `JavaSyntaxNode` class and `buildSyntaxTree()` deleted (~150 LOC
+  removed); only `computeTypeParameters(node, tree, resolutionContext)` remains.
+- `JavaParsingTestBase`'s parallel-verification code stripped.
+- Stale KDoc references to `JavaSyntaxNode` / `buildSyntaxTree` in `JavaLightTree.kt` and
+  `JavaLightTreeTest.kt` rewritten to reference only the new API.
+
+`JavaLightTreeTest` assessment — does it still earn its keep after migration?
+- `JavaParsing*Test` exercises `JavaLightTree` transitively but through the model layer. It does
+  not directly test primitives like token `getParent`, `isToken` / `isComposite`, `textEquals`
+  edges, malformed-input tolerance, `dump()` output, or synthetic root offsets.
+- Kept. Rationale recorded in the test file's KDoc: these are the `JavaLightTree` primitives that
+  are not incidentally covered by the model-level tests, and regressions on them would surface
+  as confusing failures far from the root cause.
+
+### Files Modified
+
+Beyond the file-level diffs above, the net shape of the change is:
+
+| File | Phase | Change |
+|------|-------|--------|
+| `JavaLightTree.kt` (new) | 1, 2, 4 | Flat-array tree + API surface; error-marker handling; KDoc cleanup |
+| `parse.kt` | 1 | `parseJavaToLightTree` wrapper |
+| `JavaLightTreeTest.kt` (new) | 1, 4 | 18 unit tests for `JavaLightTree` primitives |
+| `JavaElementOverAst.kt` | 3 | Base class takes `(node, tree)` |
+| `JavaTypeOverAst.kt` | 3 | All type subclasses migrated |
+| `JavaClassOverAst.kt` | 3 | Migrated |
+| `JavaMemberOverAst.kt` | 3 | Field / method / constructor / parameter all migrated |
+| `JavaAnnotationOverAst.kt` | 3 | All argument types migrated |
+| `ConstantEvaluator.kt` | 3 | `tree` exposed via `containingClass.tree` |
+| `JavaImportResolver.kt` | 3 | `WeakHashMap` keyed on `JavaLightTree` |
+| `JavaResolutionContext.kt` | 3 | `create(tree, …)` factory; `extractImports(tree, root)` |
+| `JavaSupertypeGraph.kt` | 3 | `extractSupertypeRefsFromNode(tree, classNode, …)` |
+| `JavaClassFinderOverAstImpl.kt` | 3 | All parsing paths use `parseJavaToLightTree` |
+| `JavaRecordComponentOverAst.kt` | 3 | Migrated |
+| `utils.kt` | 4 | Rewritten down to `computeTypeParameters` only |
+| `JavaParsingTestBase.kt` | 2, 3, 4 | Parallel verification; `ParsedSource` data class; cleanup |
+| `JavaParsing*Test.kt` (5 files) | 3 | Raw AST navigation rewritten to `tree.*` |
+
+### Test Results
+
+Green at the end of every phase. Final Phase-4 run: `./gradlew :kotlin-java-direct:test` —
+**BUILD SUCCESSFUL**, 2766 tests, 0 failures, 0 errors.
+
+### Key Learnings
+
+- Legacy behavior sometimes hides in invisible places. The `buildSyntaxTree` synthetic root is
+  documented nowhere in the legacy class — the first `JavaLightTree` built without it failed 17
+  out of 18 tests, most of which walked `root.children`. When replacing an established abstraction,
+  reproduce its observable shape (here: a single root that spans `[0, source.length)`) even if
+  the docs don't call the shape out.
+- Error markers are the subtle cost of parser recovery. The KMP Java parser emits them for
+  unbalanced or malformed input; they have no done-pair, so any traversal assuming every `START`
+  has a matching `DONE` crashes. Short-circuit on error markers in `getEndOffset` and
+  `getChildren` — don't try to synthesize a done for them.
+- Preserving destructuring compatibility is cheaper than renaming call sites. `ParsedSource`'s
+  component order (`root`, `context`, `tree`) was chosen specifically so `val (root, context) =
+  parseSource(...)` in every existing per-feature test continued to compile. Saved a large
+  low-value rewrite for tests the migration did not conceptually change.
+- Parallel verification in Phase 2 catches classes of bugs that unit tests for the new code
+  never see. The error-marker crash wasn't reachable from the 18 Phase-1 tests; it only
+  surfaced when the comparison was run against the full parsing-test corpus.
+- A dedicated unit-test suite (`JavaLightTreeTest`) stays useful after higher-level tests cover
+  the same type transitively — primitive-level failures show up as primitive-level failures
+  there, not as confusing errors deep in the model layer.
 
 ---
 

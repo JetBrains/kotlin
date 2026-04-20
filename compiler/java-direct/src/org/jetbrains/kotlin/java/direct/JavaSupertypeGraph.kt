@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -48,9 +50,12 @@ internal class JavaSupertypeGraph(
 
     /**
      * Returns the direct supertype [ClassId]s for a class.
+     *
+     * Uses [java.util.concurrent.ConcurrentHashMap.computeIfAbsent] (not `getOrPut`) so that
+     * concurrent callers do not both re-parse the same file or re-extract from the same AST.
      */
     fun getDirectSupertypes(classId: ClassId): List<ClassId> {
-        return supertypeCache.getOrPut(classId) {
+        return supertypeCache.computeIfAbsent(classId) {
             val packageFqName = classId.packageFqName
 
             // Fast path: use the cached JavaClassOverAst's AST node directly.
@@ -60,22 +65,22 @@ internal class JavaSupertypeGraph(
             val cachedClass = classCacheLookup(classId)
             if (cachedClass is JavaClassOverAst) {
                 val (simpleImports, starImports) = cachedClass.resolutionContext.getImports()
-                return@getOrPut extractSupertypeRefsFromNode(
+                return@computeIfAbsent extractSupertypeRefsFromNode(
                     cachedClass.tree, cachedClass.node, packageFqName, simpleImports, starImports
                 )
             }
 
             // Slow path: re-parse the file to extract supertype references.
             val files = filesForClassLookup(classId)
-            if (files.isEmpty()) return@getOrPut emptyList()
+            if (files.isEmpty()) return@computeIfAbsent emptyList()
 
             val file = files.first()
-            val source = sourceFileReader.readFileContent(file) ?: return@getOrPut emptyList()
+            val source = sourceFileReader.readFileContent(file) ?: return@computeIfAbsent emptyList()
             val tree = parseJavaToLightTree(source, 0)
             val root = tree.getRoot()
 
             val (simpleImports, starImports) = JavaResolutionContext.extractImports(tree, root)
-            val classNode = findClassInTree(tree, root, classId) ?: return@getOrPut emptyList()
+            val classNode = findClassInTree(tree, root, classId) ?: return@computeIfAbsent emptyList()
             extractSupertypeRefsFromNode(tree, classNode, packageFqName, simpleImports, starImports)
         }
     }
@@ -83,56 +88,58 @@ internal class JavaSupertypeGraph(
     /**
      * Recursively collects all inner class names from the supertype hierarchy.
      * Returns Map<simpleName, Set<ClassId>> to detect ambiguities.
+     *
+     * Uses [java.util.concurrent.ConcurrentHashMap.computeIfAbsent] so that concurrent callers
+     * do not both perform the recursive supertype walk for the same class. Nested recursion
+     * reads the cache via plain `get` (not `computeIfAbsent`) so it cannot self-deadlock.
      */
     fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> {
-        inheritedInnerClassesCache[classId]?.let { return it }
+        return inheritedInnerClassesCache.computeIfAbsent(classId) {
+            val result = mutableMapOf<String, MutableSet<ClassId>>()
+            val visited = mutableSetOf<ClassId>()
 
-        val result = mutableMapOf<String, MutableSet<ClassId>>()
-        val visited = mutableSetOf<ClassId>()
+            // shadowedNames: inner class names declared by closer classes in the current inheritance path.
+            // Per JLS 8.5, a member type declared in a subclass shadows same-named types from supertypes.
+            // Example: if B extends A and both declare Inner, then from C extends B, B.Inner shadows A.Inner.
+            // Only inner class names from UNRELATED paths that can't shadow each other indicate ambiguity.
+            fun collectRecursive(current: ClassId, shadowedNames: Set<String>) {
+                if (current in visited) return
 
-        // shadowedNames: inner class names declared by closer classes in the current inheritance path.
-        // Per JLS 8.5, a member type declared in a subclass shadows same-named types from supertypes.
-        // Example: if B extends A and both declare Inner, then from C extends B, B.Inner shadows A.Inner.
-        // Only inner class names from UNRELATED paths that can't shadow each other indicate ambiguity.
-        fun collectRecursive(current: ClassId, shadowedNames: Set<String>) {
-            if (current in visited) return
+                // Cache short-circuit: a previously computed result for [current] already reflects
+                // intra-subtree shadowing (closer classes shadowing farther supertypes). The only
+                // extra filtering we need is the [shadowedNames] coming from the caller's path.
+                // Safe in diamond inheritance: merging via getOrPut + addAll is idempotent for
+                // ClassId sets, and the `visited` guard above only affects duplicate traversal of
+                // the same ClassId within a single top-level call — which the cache makes redundant.
+                inheritedInnerClassesCache[current]?.let { cached ->
+                    visited.add(current)
+                    for ((name, classIds) in cached) {
+                        if (name !in shadowedNames) {
+                            result.getOrPut(name) { mutableSetOf() }.addAll(classIds)
+                        }
+                    }
+                    return
+                }
 
-            // Cache short-circuit: a previously computed result for [current] already reflects
-            // intra-subtree shadowing (closer classes shadowing farther supertypes). The only
-            // extra filtering we need is the [shadowedNames] coming from the caller's path.
-            // Safe in diamond inheritance: merging via getOrPut + addAll is idempotent for
-            // ClassId sets, and the `visited` guard above only affects duplicate traversal of
-            // the same ClassId within a single top-level call — which the cache makes redundant.
-            inheritedInnerClassesCache[current]?.let { cached ->
                 visited.add(current)
-                for ((name, classIds) in cached) {
-                    if (name !in shadowedNames) {
-                        result.getOrPut(name) { mutableSetOf() }.addAll(classIds)
+
+                val innerClasses = getInnerClassNames(current)
+                for (innerName in innerClasses) {
+                    if (innerName !in shadowedNames) {
+                        val innerClassId = current.createNestedClassId(Name.identifier(innerName))
+                        result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
                     }
                 }
-                return
-            }
 
-            visited.add(current)
-
-            val innerClasses = getInnerClassNames(current)
-            for (innerName in innerClasses) {
-                if (innerName !in shadowedNames) {
-                    val innerClassId = current.createNestedClassId(Name.identifier(innerName))
-                    result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
+                val shadowedByThisClass = shadowedNames + innerClasses
+                for (supertypeId in getDirectSupertypes(current)) {
+                    collectRecursive(supertypeId, shadowedByThisClass)
                 }
             }
 
-            val shadowedByThisClass = shadowedNames + innerClasses
-            for (supertypeId in getDirectSupertypes(current)) {
-                collectRecursive(supertypeId, shadowedByThisClass)
-            }
+            collectRecursive(classId, emptySet())
+            result.mapValues { it.value.toSet() }
         }
-
-        collectRecursive(classId, emptySet())
-        val immutableResult: Map<String, Set<ClassId>> = result.mapValues { it.value.toSet() }
-        inheritedInnerClassesCache[classId] = immutableResult
-        return immutableResult
     }
 
     private fun getInnerClassNames(classId: ClassId): Set<String> {

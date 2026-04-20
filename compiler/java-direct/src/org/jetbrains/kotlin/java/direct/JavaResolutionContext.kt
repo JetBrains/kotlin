@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Resolution context for Java source files. Encapsulates all information
@@ -582,14 +583,22 @@ class JavaResolutionContext private constructor(
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
             val (simpleImports, starImports) = JavaImportResolver.extractImports(tree, root)
 
-            // Local classes indexed lazily to avoid circular initialization
+            // Local classes indexed lazily to avoid circular initialization.
+            // ConcurrentHashMap + computeIfAbsent so that concurrent FIR resolution of
+            // different members in the same file does not race on cache updates (and, critically,
+            // does not produce two distinct JavaClassOverAst instances for the same top-level
+            // class — FIR matches type parameters by object identity, so a split would cause
+            // "ERROR CLASS: Unresolved name: T").
             var contextRef: JavaResolutionContext? = null
-            val localClassCache = mutableMapOf<Name, JavaClass>()
+            val localClassCache = ConcurrentHashMap<Name, JavaClass>()
 
             val localClassProvider: (Name) -> JavaClass? = { name ->
                 localClassCache[name] ?: JavaImportResolver.findClassNode(tree, root, name)?.let { classNode ->
-                    JavaClassOverAst(classNode, tree, contextRef!!, outerClass = null).also {
-                        localClassCache[name] = it
+                    // computeIfAbsent is atomic — if another thread wins, the loser's fresh
+                    // JavaClassOverAst is discarded and we return the winner's instance.
+                    // Returning null from the lambda (classNode missing) leaves the key unmapped.
+                    localClassCache.computeIfAbsent(name) {
+                        JavaClassOverAst(classNode, tree, contextRef!!, outerClass = null)
                     }
                 }
             }

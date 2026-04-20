@@ -458,27 +458,52 @@ class JavaValueParameterOverAst(
     override val name: Name?
         get() = tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { Name.identifier(tree.getText(it).toString()) }
 
+    @Volatile private var _type: JavaType? = null
     override val type: JavaType
         get() {
+            _type?.let { return it }
             val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE) ?: node
-            return createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
+            val computed = createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
+            _type = computed
+            return computed
         }
 
+    @Volatile private var _isVararg: Int = -1
     override val isVararg: Boolean
         get() {
-            if (tree.findChildByType(node, JavaSyntaxTokenType.ELLIPSIS) != null) return true
-            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
-            return typeNode?.let { tree.findChildByType(it, JavaSyntaxTokenType.ELLIPSIS) } != null
+            val cached = _isVararg
+            if (cached >= 0) return cached != 0
+            val computed = if (tree.findChildByType(node, JavaSyntaxTokenType.ELLIPSIS) != null) {
+                true
+            } else {
+                val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
+                typeNode?.let { tree.findChildByType(it, JavaSyntaxTokenType.ELLIPSIS) } != null
+            }
+            _isVararg = if (computed) 1 else 0
+            return computed
         }
 
+    @Volatile private var _modifierList: Any? = NOT_COMPUTED
     private val modifierList: JavaLightNode?
-        get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+        get() {
+            val cached = _modifierList
+            if (cached !== NOT_COMPUTED) return cached as JavaLightNode?
+            val computed = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+            _modifierList = computed
+            return computed
+        }
 
+    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.let { ml ->
-            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        } ?: emptyList()
+        get() {
+            _annotations?.let { return it }
+            val computed = modifierList?.let { ml ->
+                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            } ?: emptyList()
+            _annotations = computed
+            return computed
+        }
 
     // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
@@ -488,4 +513,9 @@ class JavaValueParameterOverAst(
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true
+
+    private companion object {
+        /** Sentinel for @Volatile nullable properties: distinguishes "not yet computed" from "computed as null". */
+        private val NOT_COMPUTED: Any = Any()
+    }
 }

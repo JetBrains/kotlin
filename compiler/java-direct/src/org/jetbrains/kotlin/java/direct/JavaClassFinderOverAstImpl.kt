@@ -155,7 +155,9 @@ class JavaClassFinderOverAstImpl(
 
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         if (!index.containsKey(fqName)) return null
-        return packageCache.getOrPut(fqName) { JavaPackageOverAst(fqName, this) }
+        // computeIfAbsent (not getOrPut) so concurrent callers share a single JavaPackageOverAst
+        // instance instead of each creating their own and racing on put.
+        return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {

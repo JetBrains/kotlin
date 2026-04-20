@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Manages type parameter scoping and local class lookup for Java source resolution.
@@ -33,10 +34,12 @@ internal class JavaScopeResolver(
      * [withTypeParameters] / [withInheritedTypeParameters]). A new cache is created
      * when [withContainingClass] changes the containing class.
      *
-     * Uses [Any] value type with a sentinel to distinguish "not yet looked up" from
-     * "looked up, result was null".
+     * Uses a [ConcurrentHashMap] because FIR resolves types concurrently across members of the
+     * same class, and the scope resolver (and therefore this cache) is shared across those
+     * resolutions. Null results are encoded via the [FIND_LOCAL_CLASS_NULL] sentinel because
+     * [ConcurrentHashMap] does not accept null values.
      */
-    private val findLocalClassCache: HashMap<Name, Any?> = HashMap(),
+    private val findLocalClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap(),
 ) {
 
     /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
@@ -54,13 +57,12 @@ internal class JavaScopeResolver(
      * 5. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
-        val cached = findLocalClassCache[name]
-        if (cached != null) return if (cached === FIND_LOCAL_CLASS_NULL) null else cached as JavaClass
-        if (findLocalClassCache.containsKey(name)) return null // explicit null entry
-
-        val result = findLocalClassUncached(name)
-        findLocalClassCache[name] = result ?: FIND_LOCAL_CLASS_NULL
-        return result
+        // Fast path: lock-free get. computeIfAbsent on miss to avoid concurrent double-compute.
+        findLocalClassCache[name]?.let { return if (it === FIND_LOCAL_CLASS_NULL) null else it as JavaClass }
+        val cached = findLocalClassCache.computeIfAbsent(name) {
+            findLocalClassUncached(it) ?: FIND_LOCAL_CLASS_NULL
+        }
+        return if (cached === FIND_LOCAL_CLASS_NULL) null else cached as JavaClass
     }
 
     private fun findLocalClassUncached(name: Name): JavaClass? {

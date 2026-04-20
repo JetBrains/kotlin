@@ -156,11 +156,11 @@ class JavaClassOverAst(
     private val innerClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap()
 
     override fun findInnerClass(name: Name): JavaClass? {
+        // computeIfAbsent (not get+put) so concurrent callers do not both re-run the AST scan
+        // and the supertype walk. A plain cache hit stays lock-free (initial `get` short-circuit).
         innerClassCache[name]?.let { return if (it === NULL_INNER_CLASS) null else it as JavaClass }
-
-        val result = findInnerClassUncached(name)
-        innerClassCache[name] = result ?: NULL_INNER_CLASS
-        return result
+        val cached = innerClassCache.computeIfAbsent(name) { findInnerClassUncached(it) ?: NULL_INNER_CLASS }
+        return if (cached === NULL_INNER_CLASS) null else cached as JavaClass
     }
 
     private companion object {
