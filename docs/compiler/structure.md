@@ -46,7 +46,7 @@ flowchart TD
 
         CSRC --> CInterop
         DEF --> CInterop
-        click CInterop "../native/compilation-model.md" "Click to see Native compilation model"
+        click CInterop "https://github.com/JetBrains/kotlin/blob/master/docs/native/compilation-model.md" "Click to see Native compilation model"
     end
     KLIB@{ shape: lin-cyl, label: "KLib" }
     KlibSerialization --> KLIB
@@ -75,7 +75,7 @@ flowchart TD
         WASM_JS@{ shape: lin-cyl, label: "WASM_JS"}
         WASM_WASI@{ shape: lin-cyl, label: "WASM_WASI"}
 
-        click Native_Backend "../native/compilation-model.md" "Click to see Native compilation model"
+        click Native_Backend "https://github.com/JetBrains/kotlin/blob/master/docs/native/compilation-model.md" "Click to see Native compilation model"
         style Native_Backend fill:#e1f5fe,stroke:#01579b
         Native_Backend --> CPU
         Native_Backend --> STATIC
@@ -90,7 +90,7 @@ flowchart TD
     - Begins with input source code and JAR/Klib dependencies
     - Applies various stages of the compilation pipeline within Kotlin, leading to a `.jar` or `.klib` as output for the module.
 
-2. **2nd Compilation Stage (KLibs -> executable artifact or library cache) for Native, JS, WASM backends**:
+2. **2nd Compilation Stage (KLibs -> executable artifact or library cache) for [Native](../native/compilation-model.md), JS, WASM backends**:
     - Deserializes/links KLibs
     - Performs numerous IR lowerings.
     - Converts IR to backend-specific representation.
