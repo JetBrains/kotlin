@@ -502,9 +502,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val Kotlin_processEmptyObjectInMark by lazy { importRtFunction("Kotlin_processEmptyObjectInMark", false) }
 
     val Kotlin_zeroObjectBody by lazy { importRtFunction("Kotlin_zeroObjectBody", false) }
-    val Kotlin_zeroEmptyObjectBody by lazy { importRtFunction("Kotlin_zeroEmptyObjectBody", false) }
-    val Kotlin_zeroObjectArrayBody by lazy { importRtFunction("Kotlin_zeroObjectArrayBody", false) }
-    val Kotlin_zeroPrimitiveArrayBody by lazy { importRtFunction("Kotlin_zeroPrimitiveArrayBody", false) }
 
     val UpdateVolatileHeapRef by lazy { importRtFunction("UpdateVolatileHeapRef", false) }
     val CompareAndSetVolatileHeapRef by lazy { importRtFunction("CompareAndSetVolatileHeapRef", false) }

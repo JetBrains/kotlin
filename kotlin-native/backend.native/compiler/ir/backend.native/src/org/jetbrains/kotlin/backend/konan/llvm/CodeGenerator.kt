@@ -402,7 +402,7 @@ internal class StackLocalsManagerImpl(
         }
 
         if (!isRootScope()) {
-            zeroObjectBody(classInfo, objHeaderPtr)
+            call(llvm.Kotlin_zeroObjectBody, listOf(objHeaderPtr))
         }
         storeStackRef(objHeaderPtr, gcRootSetSlot)
         objHeaderPtr
@@ -462,24 +462,10 @@ internal class StackLocalsManagerImpl(
         }
 
         if (!isRootScope()) {
-            zeroObjectBody(classInfo, objHeaderPtr)
+            call(llvm.Kotlin_zeroObjectBody, listOf(objHeaderPtr))
         }
         storeStackRef(objHeaderPtr, gcRootSetSlot)
         objHeaderPtr
-    }
-
-    private fun zeroObjectBody(classInfo: ClassLlvmDeclarations, objHeaderPtr: LLVMValueRef) = with(functionGenerationContext) {
-        val hasWritableTypeInfo = runtime.writableTypeInfoType != null
-        /* zeroObjectBody */
-        val index = 17 + if (hasWritableTypeInfo) 1 else 0
-        val zeroObjectBody = structGep(runtime.typeInfoType, classInfo.typeInfo.llvm, index)
-        val zeroObjectBodyType = LlvmFunctionSignature(
-                LlvmRetType(llvm.voidType, isObjectType = false),
-                listOf(LlvmParamType(llvm.pointerType)),
-                functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
-        )
-        // Not using `call`, because it won't detect nounwind attribute
-        LlvmCallable(zeroObjectBody, zeroObjectBodyType).buildCall(builder, listOf(objHeaderPtr))
     }
 
     private fun setTypeInfoForStackObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {

@@ -27,6 +27,7 @@
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"
 #include "MemoryDump.hpp"
+#include "Types.h"
 
 using namespace kotlin;
 
@@ -438,30 +439,28 @@ RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, Obj
 
 RUNTIME_NOTHROW extern "C" void Kotlin_zeroObjectBody(ObjHeader* object) {
     auto* typeInfo = object->type_info();
-    RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-    traverseClassObjectFields(object, [](mm::RefFieldAccessor field) noexcept {
-        field = nullptr;
-    });
-    memset(reinterpret_cast<char*>(object + 1), 0, typeInfo->instanceSize_);
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_zeroEmptyObjectBody(ObjHeader* object) {
-    auto* typeInfo = object->type_info();
-    RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-    memset(reinterpret_cast<char*>(object + 1), 0, typeInfo->instanceSize_);
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_zeroObjectArrayBody(ObjHeader* object) {
-    traverseArrayOfObjectsElements(object->array(), [](mm::RefFieldAccessor field) noexcept {
-        field = nullptr;
-    });
-}
-
-RUNTIME_NOTHROW extern "C" void Kotlin_zeroPrimitiveArrayBody(ObjHeader* object) {
-    auto* typeInfo = object->type_info();
-    RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-    ArrayHeader* arr = object->array();
-    memset(reinterpret_cast<char*>(arr + 1), 0, -typeInfo->instanceSize_ * arr->count_);
+    if (typeInfo == theArrayTypeInfo) {
+        traverseArrayOfObjectsElements(object->array(), [](mm::RefFieldAccessor field) noexcept {
+            field = nullptr;
+        });
+        // Array of objects has no other data. Nothing to do.
+        return;
+    }
+    char* objectBody = nullptr;
+    size_t size = 0;
+    if (typeInfo->IsArray()) {
+        auto* array = object->array();
+        objectBody = reinterpret_cast<char*>(array + 1); // right after the header.
+        size = static_cast<size_t>(-typeInfo->instanceSize_) * array->count_;
+    } else {
+        // If it's not an array, properly clean up the object fields (if any).
+        traverseClassObjectFields(object, [](mm::RefFieldAccessor field) noexcept {
+            field = nullptr;
+        });
+        objectBody = reinterpret_cast<char*>(object + 1); // right after the header.
+        size = typeInfo->instanceSize_;
+    }
+    memset(objectBody, 0, size);
 }
 
 extern "C" OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
