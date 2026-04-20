@@ -3,6 +3,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString * kotlin_Throwable_toString__reverse_swift(void * self);
+
+int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
+
+int64_t kotlin_collections_LongIterator_nextLong__reverse_swift(void * self);
+
 void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 void * kotlin_Array_iterator(void * self);

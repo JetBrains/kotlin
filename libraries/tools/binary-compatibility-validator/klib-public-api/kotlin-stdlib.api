@@ -9839,6 +9839,16 @@ open annotation class kotlin.native.internal.objc/BindClassToObjCName : kotlin/A
 }
 
 // Targets: [native]
+open annotation class kotlin.native.internal.objc/BindReverseBridgeToMethod : kotlin/Annotation { // kotlin.native.internal.objc/BindReverseBridgeToMethod|null[0]
+    constructor <init>(kotlin.reflect/KClass<*>, kotlin/String) // kotlin.native.internal.objc/BindReverseBridgeToMethod.<init>|<init>(kotlin.reflect.KClass<*>;kotlin.String){}[0]
+
+    final val targetClass // kotlin.native.internal.objc/BindReverseBridgeToMethod.targetClass|{}targetClass[0]
+        final fun <get-targetClass>(): kotlin.reflect/KClass<*> // kotlin.native.internal.objc/BindReverseBridgeToMethod.targetClass.<get-targetClass>|<get-targetClass>(){}[0]
+    final val targetMethod // kotlin.native.internal.objc/BindReverseBridgeToMethod.targetMethod|{}targetMethod[0]
+        final fun <get-targetMethod>(): kotlin/String // kotlin.native.internal.objc/BindReverseBridgeToMethod.targetMethod.<get-targetMethod>|<get-targetMethod>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native.internal.test/TestInitializer : kotlin/Annotation { // kotlin.native.internal.test/TestInitializer|null[0]
     constructor <init>() // kotlin.native.internal.test/TestInitializer.<init>|<init>(){}[0]
 }
@@ -9896,6 +9906,14 @@ open annotation class kotlin.native.internal/GCUnsafeCall : kotlin/Annotation { 
 
     final val callee // kotlin.native.internal/GCUnsafeCall.callee|{}callee[0]
         final fun <get-callee>(): kotlin/String // kotlin.native.internal/GCUnsafeCall.callee.<get-callee>|<get-callee>(){}[0]
+}
+
+// Targets: [native]
+open annotation class kotlin.native.internal/ImportedBridge : kotlin/Annotation { // kotlin.native.internal/ImportedBridge|null[0]
+    constructor <init>(kotlin/String) // kotlin.native.internal/ImportedBridge.<init>|<init>(kotlin.String){}[0]
+
+    final val bridgeName // kotlin.native.internal/ImportedBridge.bridgeName|{}bridgeName[0]
+        final fun <get-bridgeName>(): kotlin/String // kotlin.native.internal/ImportedBridge.bridgeName.<get-bridgeName>|<get-bridgeName>(){}[0]
 }
 
 // Targets: [native]

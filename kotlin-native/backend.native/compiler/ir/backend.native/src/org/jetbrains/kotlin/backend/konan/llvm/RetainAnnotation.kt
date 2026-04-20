@@ -20,5 +20,6 @@ internal fun IrFunction.retainAnnotation(target: KonanTarget): Boolean {
     val forTarget = this.annotations.findAnnotation(retainForTargetAnnotationName)
     if (forTarget != null && forTarget.getAnnotationStringValue() == target.name) return true
     if (this.annotations.findAnnotation(RuntimeNames.exportedBridge) != null) return true
+    if (this.annotations.findAnnotation(RuntimeNames.bindReverseBridgeToMethod) != null) return true
     return false
 }

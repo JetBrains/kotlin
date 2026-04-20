@@ -42,6 +42,7 @@ object NativeRuntimeNames {
         val symbolNameClassId = ClassId(kotlinNativePackage, Name.identifier("SymbolName"))
         val cNameClassId = ClassId(kotlinNativePackage, Name.identifier("CName"))
         val exportedBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportedBridge"))
+        val importedBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ImportedBridge"))
         val exportForCppRuntimeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCppRuntime"))
         val exportForCompilerClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCompiler"))
         val exportTypeInfoClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportTypeInfo"))
@@ -57,6 +58,7 @@ object NativeRuntimeNames {
         val EscapesNothing = Escapes.createNestedClassId(Name.identifier("Nothing"))
         val HasFinalizer = ClassId(kotlinNativeInternalPackage, Name.identifier("HasFinalizer"))
         val BindClassToObjCName = ClassId(kotlinNativeInternalPackage.child(Name.identifier("objc")), Name.identifier("BindClassToObjCName"))
+        val BindReverseBridgeToMethod = ClassId(kotlinNativeInternalPackage.child(Name.identifier("objc")), Name.identifier("BindReverseBridgeToMethod"))
     }
 }
 

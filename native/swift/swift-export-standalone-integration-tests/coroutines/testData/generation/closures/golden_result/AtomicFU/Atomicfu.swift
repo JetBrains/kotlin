@@ -7,7 +7,6 @@ import KotlinRuntimeSupport
 extension ExportedKotlinPackages.kotlinx.atomicfu.locks {
     open class SynchronizedObject: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != ExportedKotlinPackages.kotlinx.atomicfu.locks.SynchronizedObject.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.kotlinx.atomicfu.locks.SynchronizedObject ") }
             let __kt = kotlinx_atomicfu_locks_SynchronizedObject_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_atomicfu_locks_SynchronizedObject_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

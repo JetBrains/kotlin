@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int8_t kotlin_collections_ByteIterator_nextByte__reverse_swift(void * self);
+
+uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
+
 int8_t kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 void * kotlin_ByteArray_iterator(void * self);

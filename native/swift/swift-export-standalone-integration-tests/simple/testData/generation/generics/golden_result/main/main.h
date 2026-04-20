@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString * StringProducer_produce__reverse_swift(void * self);
+
 void * _Nullable A_foo_get(void * self);
 
 _Bool AnyConsumer_consume__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * item);

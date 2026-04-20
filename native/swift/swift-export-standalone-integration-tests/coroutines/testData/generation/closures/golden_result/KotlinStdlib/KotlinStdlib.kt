@@ -30,9 +30,41 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.coroutines.CoroutineContext.Element::class, "__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlin.coroutines.CoroutineContext.Key::class, "__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("kotlin_Throwable_toString__reverse_swift")
+internal external fun kotlin_Throwable_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.Throwable::class, "toString")
+public fun kotlin_Throwable_toString__reverse(self: kotlin.Throwable): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_Throwable_toString__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
+
+@ImportedBridge("kotlin_collections_IntIterator_nextInt__reverse_swift")
+internal external fun kotlin_collections_IntIterator_nextInt__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(kotlin.collections.IntIterator::class, "nextInt")
+public fun kotlin_collections_IntIterator_nextInt__reverse(self: kotlin.collections.IntIterator): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_collections_IntIterator_nextInt__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("kotlin_collections_LongIterator_nextLong__reverse_swift")
+internal external fun kotlin_collections_LongIterator_nextLong__reverse_swift(self: kotlin.native.internal.NativePtr): Long
+
+@BindReverseBridgeToMethod(kotlin.collections.LongIterator::class, "nextLong")
+public fun kotlin_collections_LongIterator_nextLong__reverse(self: kotlin.collections.LongIterator): Long {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_collections_LongIterator_nextLong__reverse_swift(__self)
+    return __result
+}
 
 @ExportedBridge("kotlin_Array_get__TypesOfArguments__Swift_Int32__")
 public fun kotlin_Array_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {

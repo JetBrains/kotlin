@@ -13,11 +13,19 @@ import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Compan
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.bindObjCExportTypeAdapterTo
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
+    val reverseBridgesByClass = collectReverseBridgeAdapters(file)
+
     file.allBindClassToObjCName.forEach {
-        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName)
+        val vtableSize = if (it.kotlinClass.isInterface)
+            -1
+        else
+            generationState.context.getLayoutBuilder(it.kotlinClass).vtableEntries.size
+        val reverseAdapters = reverseBridgesByClass[it.kotlinClass] ?: emptyList()
+        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName, vtableSize, reverseAdapters)
         val typeAdapter = staticData.placeGlobal("", adapter).pointer
         try {
             bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter)

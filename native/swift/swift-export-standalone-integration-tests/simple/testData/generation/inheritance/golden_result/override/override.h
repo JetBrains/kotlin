@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool Base_g__TypesOfArguments__anyU20override_P____reverse_swift(void * self, void * x);
+
+_Bool Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(void * self, void * x);
+
 _Bool Base_g__TypesOfArguments__anyU20override_P__(void * self, void * x);
 
 _Bool P_f(void * self);
