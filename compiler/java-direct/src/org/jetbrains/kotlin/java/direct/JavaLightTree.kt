@@ -66,6 +66,14 @@ class JavaLightTree(
     fun isComposite(node: JavaLightNode): Boolean = node.index >= 0 && node.index <= rootIndex
     fun isToken(node: JavaLightNode): Boolean = node.index < 0 && node.index != Int.MIN_VALUE
 
+    /**
+     * True when [node] is a composite index referring to an error marker. Error markers are
+     * leaf children in the materialised tree (no sub-children) and have no matching done pair,
+     * so they must be treated specially by offset / children lookups.
+     */
+    private fun isErrorMarker(node: JavaLightNode): Boolean =
+        isComposite(node) && !isSyntheticRoot(node) && productionMarkers.getMarker(node.index).isErrorMarker()
+
     fun getType(node: JavaLightNode): SyntaxElementType {
         if (isSyntheticRoot(node)) return rootNodeType
         return if (isComposite(node)) {
@@ -89,10 +97,16 @@ class JavaLightTree(
     fun getEndOffset(node: JavaLightNode): Int {
         if (isSyntheticRoot(node)) return source.length
         return if (isComposite(node)) {
-            // For start markers we report the END of the corresponding done marker, matching the
-            // legacy `JavaSyntaxNode` which used the production's `getEndOffset()`.
-            val doneIdx = doneForStart[node.index]
-            productionMarkers.getMarker(doneIdx).getEndOffset()
+            val marker = productionMarkers.getMarker(node.index)
+            if (marker.isErrorMarker()) {
+                // Error markers have no done-marker pair; use the marker's own end offset.
+                marker.getEndOffset()
+            } else {
+                // For START markers, report the END of the corresponding DONE marker, matching the
+                // legacy `JavaSyntaxNode` which used the production's `getEndOffset()`.
+                val doneIdx = doneForStart[node.index]
+                productionMarkers.getMarker(doneIdx).getEndOffset()
+            }
         } else {
             val tokenIdx = -(node.index + 1)
             tokens.getTokenEnd(tokenIdx)
@@ -146,6 +160,8 @@ class JavaLightTree(
      */
     fun getChildren(node: JavaLightNode): List<JavaLightNode> {
         if (!isComposite(node)) return emptyList()
+        // Error markers are leaves in the legacy `buildSyntaxTree` result — no children.
+        if (isErrorMarker(node)) return emptyList()
         val firstTokenIndex: Int
         val lastTokenIndex: Int
         val startIdx: Int
