@@ -35,11 +35,11 @@ import java.io.File
 import java.util.regex.Pattern
 
 object BuiltinsTestUtils {
-    fun compileBuiltinsModule(environment: KotlinCoreEnvironment): ModuleDescriptor {
+    fun compileBuiltinsModule(environment: KotlinCoreEnvironment, stdlibPath: String): ModuleDescriptor {
         val files = KotlinTestUtils.loadToKtFiles(
             environment, ContainerUtil.concat<File>(
-                allFilesUnder("libraries/stdlib/jvm/"),
-                allFilesUnder("libraries/stdlib/src/")
+                allFilesUnder("$stdlibPath/jvm/"),
+                allFilesUnder("$stdlibPath/src/")
             )
         ).filter {
             it.annotationEntries.any { annotation ->

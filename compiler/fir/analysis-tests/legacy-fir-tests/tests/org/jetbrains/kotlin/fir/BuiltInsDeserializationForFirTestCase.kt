@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.test.TestJdkKind
 
 class BuiltInsDeserializationForFirTestCase : AbstractFirLoadBinariesTest() {
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithJdk(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
     }
 
     @OptIn(ObsoleteTestInfrastructure::class)
     fun testBuiltInPackagesContent() {
-        val moduleDescriptor = BuiltinsTestUtils.compileBuiltinsModule(environment)
+        val moduleDescriptor = BuiltinsTestUtils.compileBuiltinsModule(environment, "libraries/stdlib")
         val session = FirTestSessionFactoryHelper.createSessionForTests(
             environment.toVfsBasedProjectEnvironment(),
             GlobalSearchScope.allScope(project).toAbstractProjectFileSearchScope()

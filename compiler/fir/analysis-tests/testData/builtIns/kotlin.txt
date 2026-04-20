@@ -414,7 +414,7 @@ public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel
     }
 
     public final static val entries: R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
-        public get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
+        public static get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
 
 }
 
@@ -1102,8 +1102,8 @@ public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class MustUseReturnValue : R|kotlin/Annotation| {
-    public constructor(): R|kotlin/MustUseReturnValue|
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(2.3)) public final annotation class MustUseReturnValues : R|kotlin/Annotation| {
+    public constructor(): R|kotlin/MustUseReturnValues|
 
 }
 
@@ -1165,7 +1165,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.3)) public final annotation class RequiresOptIn : R|kotlin/Annotation| {
     public final val message: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1186,7 +1186,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
 
         public final static val entries: R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
-            public get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
+            public static get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
 
     }
 
@@ -1379,7 +1379,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
 }
 
-@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(2.1)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalSubclassOptIn|)))) public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(2.1)) @R|kotlin/WasExperimental|(markerClass = <collectionLiteralCall>(<getClass>(<getClass>(R|kotlin/ExperimentalSubclassOptIn|)))) public final annotation class SubclassOptInRequired : R|kotlin/Annotation| {
     public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
         public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
 

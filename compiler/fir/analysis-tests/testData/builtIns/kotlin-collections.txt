@@ -1,10 +1,3 @@
-public/*package*/ open class ArraysUtilJVM : R|kotlin/Any| {
-    public/*package*/ open static fun <T : java.lang.Object> asList(p0: T[]): java.util.List<T>
-
-    public/*package*/ constructor(): R|kotlin/collections/ArraysUtilJVM|
-
-}
-
 public abstract class BooleanIterator : R|kotlin/collections/Iterator<kotlin/Boolean>| {
     public final operator fun next(): R|kotlin/Boolean|
 
@@ -243,7 +236,7 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
 
     @R|kotlin/IgnorableReturnValue|() public abstract fun remove(key: R|K|): R|V?|
 
-    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
+    @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() @R|kotlin/IgnorableReturnValue|() public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
 
     public abstract fun putAll(from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
 

@@ -25,6 +25,7 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testFixturesCompileOnly(intellijCore())
+    testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 }
 
@@ -32,11 +33,13 @@ optInToK1Deprecation()
 
 sourceSets {
     "main" { none() }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
 projectTests {
     testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
         dependsOn(":dist")
     }
 
@@ -53,6 +56,7 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJava/compiledJava")
     testData(project(":compiler:fir:analysis-tests").isolated, "testData/enhancement")
     testData(project(":compiler:fir:analysis-tests").isolated, "testData/lightClasses")
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData/builtIns")
 }
 
 testsJar()

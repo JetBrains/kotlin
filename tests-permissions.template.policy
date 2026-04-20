@@ -54,6 +54,12 @@ grant {
     // org.jetbrains.kotlin.cli.klib.ZipTest
     permission java.nio.file.LinkPermission "symbolic";
 
+    // org.jetbrains.kotlin.fir.BuiltInsDeserializationForFirTestCase
+    permission java.io.FilePermission "libraries/stdlib/jvm", "read";
+    permission java.io.FilePermission "libraries/stdlib/src", "read";
+    permission java.io.FilePermission "libraries/stdlib/jvm/-", "read";
+    permission java.io.FilePermission "libraries/stdlib/src/-", "read";
+
     {{extra_permissions}}
 
     {{native}}
