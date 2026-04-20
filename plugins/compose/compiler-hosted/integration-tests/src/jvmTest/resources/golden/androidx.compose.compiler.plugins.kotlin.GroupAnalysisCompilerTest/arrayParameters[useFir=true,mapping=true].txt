@@ -14,4 +14,4 @@ fun Test(ints: IntArray, strings: Array<String>) {
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:void TestKt.Test(int[],java.lang.String[],androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+    1:1:void TestKt.Test(int[],java.lang.String[],androidx.compose.runtime.Composer,int):5:5 -> m$<key>
