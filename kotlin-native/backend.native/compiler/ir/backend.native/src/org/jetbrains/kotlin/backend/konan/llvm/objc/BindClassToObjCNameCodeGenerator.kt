@@ -20,13 +20,19 @@ internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
     val reverseBridgesByClass = collectReverseBridgeAdapters(file)
 
     file.allBindClassToObjCName.forEach {
-        val vtableSize = if (it.kotlinClass.isInterface)
-            -1
-        else
-            generationState.context.getLayoutBuilder(it.kotlinClass).vtableEntries.size
+        val layoutBuilder = generationState.context.getLayoutBuilder(it.kotlinClass)
+        val isInterface = it.kotlinClass.isInterface
+        val vtableSize = if (isInterface) -1 else layoutBuilder.vtableEntries.size
+        val itableSize = if (isInterface) layoutBuilder.interfaceVTableEntries.size else 0
         val reverseAdapters = reverseBridgesByClass[it.kotlinClass] ?: emptyList()
-        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName, vtableSize, reverseAdapters)
+        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName, vtableSize, itableSize, reverseAdapters)
         val typeAdapter = staticData.placeGlobal("", adapter).pointer
+        val adaptersMap = if (it.kotlinClass.isInterface) {
+            generationState.bindClassToObjCNameInterfaceAdapters
+        } else {
+            generationState.bindClassToObjCNameClassAdapters
+        }
+        adaptersMap[it.objCName] = typeAdapter
         try {
             bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter)
         } catch (e: WritableTypeInfoOverrideError) {

@@ -43,15 +43,19 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.confli
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Foo {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Bar {
+}
 extension ExportedKotlinPackages.conflictingTypealiases {
-    public protocol Bar: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases.Foo {
+    public protocol Bar: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases._Bar {
     }
-    public protocol Foo: KotlinRuntime.KotlinBase {
+    public protocol Foo: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases._Foo {
     }
     @objc(_Bar)
-    package protocol _Bar: ExportedKotlinPackages.conflictingTypealiases._Foo {
+    public protocol _Bar: ExportedKotlinPackages.conflictingTypealiases._Foo {
     }
     @objc(_Foo)
-    package protocol _Foo {
+    public protocol _Foo {
     }
 }

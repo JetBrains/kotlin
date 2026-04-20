@@ -13,6 +13,26 @@ import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ImportedBridge("kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, index: Int): Char
+
+@BindReverseBridgeToMethod(kotlin.CharSequence::class, "get")
+public fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse(self: kotlin.CharSequence, index: Int): Char {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(__self, index)
+    return __result
+}
+
+@ImportedBridge("kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
+internal external fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, startIndex: Int, endIndex: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.CharSequence::class, "subSequence")
+public fun kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse(self: kotlin.CharSequence, startIndex: Int, endIndex: Int): kotlin.CharSequence {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(__self, startIndex, endIndex)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.CharSequence
+}
+
 @ImportedBridge("kotlin_collections_ByteIterator_nextByte__reverse_swift")
 internal external fun kotlin_collections_ByteIterator_nextByte__reverse_swift(self: kotlin.native.internal.NativePtr): Byte
 
@@ -31,6 +51,38 @@ public fun kotlin_collections_CharIterator_nextChar__reverse(self: kotlin.collec
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __result = kotlin_collections_CharIterator_nextChar__reverse_swift(__self)
     return __result
+}
+
+@ImportedBridge("kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift")
+internal external fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr, startIndex: Int, endIndex: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.text.Appendable::class, "append")
+public fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse(self: kotlin.text.Appendable, value: kotlin.CharSequence?, startIndex: Int, endIndex: Int): kotlin.text.Appendable {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    val __result = kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift(__self, __value, startIndex, endIndex)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.text.Appendable
+}
+
+@ImportedBridge("kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift")
+internal external fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.text.Appendable::class, "append")
+public fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse(self: kotlin.text.Appendable, value: kotlin.CharSequence?): kotlin.text.Appendable {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+    val __result = kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift(__self, __value)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.text.Appendable
+}
+
+@ImportedBridge("kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift")
+internal external fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift(self: kotlin.native.internal.NativePtr, value: Char): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlin.text.Appendable::class, "append")
+public fun kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse(self: kotlin.text.Appendable, value: Char): kotlin.text.Appendable {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift(__self, value)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.text.Appendable
 }
 
 @ExportedBridge("kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__")

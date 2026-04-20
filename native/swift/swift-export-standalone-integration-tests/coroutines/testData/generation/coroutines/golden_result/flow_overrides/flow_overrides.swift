@@ -5,10 +5,10 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinxCoroutinesCore
 
-public protocol _ExportedKotlinPackages_namespace_I1_I2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.namespace.I1 {
+public protocol _ExportedKotlinPackages_namespace_I1_I2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.namespace.I1, flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
 }
 @objc(__ExportedKotlinPackages_namespace_I1_I2)
-package protocol __ExportedKotlinPackages_namespace_I1_I2: ExportedKotlinPackages.namespace._I1 {
+public protocol __ExportedKotlinPackages_namespace_I1_I2: ExportedKotlinPackages.namespace._I1 {
 }
 extension ExportedKotlinPackages.namespace.I1 where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -23,11 +23,15 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.namesp
 }
 extension KotlinRuntimeSupport._KotlinExistential: flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Wrapped : flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.namespace._I1 {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
+}
 extension ExportedKotlinPackages.namespace {
-    public protocol I1: KotlinRuntime.KotlinBase {
+    public protocol I1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.namespace._I1 {
     }
     @objc(_I1)
-    package protocol _I1 {
+    public protocol _I1 {
     }
     open class Bar: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride

@@ -6,11 +6,11 @@ import KotlinxCoroutinesCore
 
 public typealias AliasedAsyncFunctionType = (Swift.Float) async throws -> Swift.Int64
 public typealias AliasedFunctionType = (Swift.Float) -> Swift.Int32
-public protocol FunctionalInterfaceWithSuspendFunction: KotlinRuntime.KotlinBase {
+public protocol FunctionalInterfaceWithSuspendFunction: KotlinRuntime.KotlinBase, main._FunctionalInterfaceWithSuspendFunction {
     func emit() async throws -> Swift.Void
 }
 @objc(_FunctionalInterfaceWithSuspendFunction)
-package protocol _FunctionalInterfaceWithSuspendFunction {
+public protocol _FunctionalInterfaceWithSuspendFunction {
 }
 public final class Foo: KotlinRuntime.KotlinBase {
     public init() {
@@ -574,4 +574,6 @@ extension main.FunctionalInterfaceWithSuspendFunction where Self : KotlinRuntime
 extension main.FunctionalInterfaceWithSuspendFunction {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.FunctionalInterfaceWithSuspendFunction where Wrapped : main._FunctionalInterfaceWithSuspendFunction {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._FunctionalInterfaceWithSuspendFunction {
 }

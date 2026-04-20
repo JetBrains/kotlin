@@ -2,10 +2,10 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Semaphore: KotlinRuntime.KotlinBase {
+public protocol Semaphore: KotlinRuntime.KotlinBase, main._Semaphore {
 }
 @objc(_Semaphore)
-package protocol _Semaphore {
+public protocol _Semaphore {
 }
 public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main._Semaphore {
     public init() {
@@ -56,4 +56,6 @@ extension main.Semaphore where Self : KotlinRuntimeSupport._KotlinBridgeable {
 extension main.Semaphore {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.Semaphore where Wrapped : main._Semaphore {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Semaphore {
 }

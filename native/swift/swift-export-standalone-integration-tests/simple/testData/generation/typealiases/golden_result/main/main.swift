@@ -99,10 +99,10 @@ public typealias objectWithInterfaceInheritance = main.OBJECT_WITH_INTERFACE_INH
 public typealias openClass = main.OPEN_CLASS
 public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
-public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
+public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase, main._OUTSIDE_PROTO {
 }
 @objc(_OUTSIDE_PROTO)
-package protocol _OUTSIDE_PROTO {
+public protocol _OUTSIDE_PROTO {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package init() {
@@ -500,6 +500,8 @@ extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridgeable
 extension main.OUTSIDE_PROTO {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._OUTSIDE_PROTO {
 }
 extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo

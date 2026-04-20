@@ -28,9 +28,9 @@
 #include "TypeInfoObjCExportAddition.hpp"
 #include "std_support/Atomic.hpp"
 #include "swiftExportRuntime/SwiftExport.hpp"
+#include "StackTrace.hpp"
 
 extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class, const TypeInfo*);
-#include "StackTrace.hpp"
 
 @interface NSObject (NSObjectPrivateMethods)
 // Implemented for NSObject in libobjc/NSObject.mm

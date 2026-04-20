@@ -3,6 +3,48 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
+
+_Bool kotlin_collections_Collection_isEmpty__reverse_swift(void * self);
+
+void * kotlin_collections_Collection_iterator__reverse_swift(void * self);
+
+void * kotlin_collections_Iterable_iterator__reverse_swift(void * self);
+
+_Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
+
+void * _Nullable kotlin_collections_Iterator_next__reverse_swift(void * self);
+
+_Bool kotlin_collections_ListIterator_hasNext__reverse_swift(void * self);
+
+_Bool kotlin_collections_ListIterator_hasPrevious__reverse_swift(void * self);
+
+int32_t kotlin_collections_ListIterator_nextIndex__reverse_swift(void * self);
+
+void * _Nullable kotlin_collections_ListIterator_next__reverse_swift(void * self);
+
+int32_t kotlin_collections_ListIterator_previousIndex__reverse_swift(void * self);
+
+void * _Nullable kotlin_collections_ListIterator_previous__reverse_swift(void * self);
+
+_Bool kotlin_collections_List_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
+
+void * _Nullable kotlin_collections_List_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
+
+int32_t kotlin_collections_List_indexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
+
+_Bool kotlin_collections_List_isEmpty__reverse_swift(void * self);
+
+void * kotlin_collections_List_iterator__reverse_swift(void * self);
+
+int32_t kotlin_collections_List_lastIndexOf__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable element);
+
+void * kotlin_collections_List_listIterator__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
+
+void * kotlin_collections_List_listIterator__reverse_swift(void * self);
+
+NSArray<id> * kotlin_collections_List_subList__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t fromIndex, int32_t toIndex);
+
 _Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable element);
 
 _Bool kotlin_collections_Collection_isEmpty(void * self);

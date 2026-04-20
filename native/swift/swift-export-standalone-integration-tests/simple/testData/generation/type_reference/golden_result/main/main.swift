@@ -3,10 +3,10 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol INTERFACE: KotlinRuntime.KotlinBase {
+public protocol INTERFACE: KotlinRuntime.KotlinBase, main._INTERFACE {
 }
 @objc(_INTERFACE)
-package protocol _INTERFACE {
+public protocol _INTERFACE {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package init() {
@@ -485,6 +485,8 @@ extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridgeable {
 extension main.INTERFACE {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE where Wrapped : main._INTERFACE {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._INTERFACE {
 }
 extension ExportedKotlinPackages.namespace.deeper {
     public final class Class_with_package: KotlinRuntime.KotlinBase {
