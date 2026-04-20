@@ -387,18 +387,17 @@ internal class StackLocalsManagerImpl(
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
-        val type = classInfo.bodyType.llvmBodyType
+        val typeInfo = codegen.typeInfoForAllocation(irClass)
+        val size = LLVMStoreSizeOfType(codegen.llvmTargetData, classInfo.bodyType.llvmBodyType).toInt()
+        val alignment = classInfo.alignment
+        // TODO: ensure that size is aligned at least as alignment.
         val (objHeaderPtr, gcRootSetSlot) = appendingTo(bbInitStackLocals) {
-            val stackSlot = LLVMBuildAlloca(builder, type, "")!!
-            LLVMSetAlignment(stackSlot, classInfo.alignment)
+            val stackSlot = LLVMBuildArrayAlloca(builder, llvm.int8Type, llvm.int32(size), "")!!
+            LLVMSetAlignment(stackSlot, alignment)
+            memset(stackSlot, 0, size)
+            setTypeInfoForStackObject(stackSlot, typeInfo)
 
-            memset(stackSlot, 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
-
-            val objectHeader = structGep(type, stackSlot, 0, "objHeader")
-            val typeInfo = codegen.typeInfoForAllocation(irClass)
-            setTypeInfoForStackObject(runtime.objHeaderType, objectHeader, typeInfo)
-            val gcRootSetSlot = createRootSetSlot()
-            objectHeader to gcRootSetSlot
+            stackSlot to createRootSetSlot()
         }
 
         if (!isRootScope()) {
@@ -449,7 +448,7 @@ internal class StackLocalsManagerImpl(
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
             // Set array size in ArrayHeader.
             val arrayHeaderSlot = structGep(arrayType, arraySlot, 0, "arrayHeader")
-            setTypeInfoForStackObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
+            setTypeInfoForStackObject(arrayHeaderSlot, typeInfo)
             val sizeField = structGep(runtime.arrayHeaderType, arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
@@ -468,12 +467,11 @@ internal class StackLocalsManagerImpl(
         objHeaderPtr
     }
 
-    private fun setTypeInfoForStackObject(headerType: LLVMTypeRef, header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
-        val typeInfo = structGep(headerType, header, 0, "typeInfoOrMeta_")
+    private fun setTypeInfoForStackObject(header: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
         // Set tag OBJECT_TAG_STACK.
         val typeInfoValue = intToPtr(or(ptrToInt(typeInfoPointer, codegen.intPtrType),
                 codegen.immThreeIntPtrType), llvm.pointerType)
-        store(typeInfoValue, typeInfo)
+        store(typeInfoValue, header)
     }
 }
 
