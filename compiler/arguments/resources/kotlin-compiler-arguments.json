@@ -11511,7 +11511,7 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
                                             "isNullable": {
                                                 "current": true,
                                                 "valueInVersions": []
@@ -11775,13 +11775,13 @@
                                             "removedVersion": null
                                         },
                                         "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                            "isNullable": {
-                                                "current": true,
-                                                "valueInVersions": []
-                                            },
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.SearchPathType",
                                             "defaultValue": {
                                                 "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
                                                 "valueInVersions": []
                                             }
                                         }
@@ -11956,7 +11956,7 @@
                                                     "removedVersion": null
                                                 },
                                                 "argumentType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
                                                     "isNullable": {
                                                         "current": true,
                                                         "valueInVersions": []
@@ -12000,7 +12000,7 @@
                                                     "removedVersion": null
                                                 },
                                                 "argumentType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
                                                     "isNullable": {
                                                         "current": true,
                                                         "valueInVersions": []
@@ -13852,7 +13852,7 @@
                                                     "removedVersion": null
                                                 },
                                                 "argumentType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
                                                     "isNullable": {
                                                         "current": true,
                                                         "valueInVersions": []
@@ -13896,7 +13896,7 @@
                                                     "removedVersion": null
                                                 },
                                                 "argumentType": {
-                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
                                                     "isNullable": {
                                                         "current": true,
                                                         "valueInVersions": []

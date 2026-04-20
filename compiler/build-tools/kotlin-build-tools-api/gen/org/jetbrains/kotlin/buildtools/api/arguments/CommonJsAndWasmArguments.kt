@@ -63,7 +63,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      * Destination for generated files.
      */
     @JvmField
-    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<String?> =
+    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<Path?> =
         CommonJsAndWasmArgument("IR_OUTPUT_DIR", KotlinReleaseVersion(1, 8, 20))
 
     /**

@@ -3,6 +3,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import java.nio.`file`.Path
 import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
@@ -216,7 +217,7 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmCompilerLinkingArgument<String?> =
+    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmCompilerLinkingArgument<Path?> =
         WasmCompilerLinkingArgument("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE", KotlinReleaseVersion(2, 1, 20))
 
     /**
@@ -226,7 +227,7 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmCompilerLinkingArgument<String?> =
+    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmCompilerLinkingArgument<Path?> =
         WasmCompilerLinkingArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE", KotlinReleaseVersion(2, 1, 20))
   }
 }
