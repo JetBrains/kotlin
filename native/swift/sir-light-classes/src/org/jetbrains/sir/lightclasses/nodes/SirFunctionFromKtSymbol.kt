@@ -138,7 +138,7 @@ internal open class SirFunctionFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        bridgeProxy?.createSirBridges {
+        val forwardBridges = bridgeProxy?.createSirBridges {
             val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
             val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
                 it.render(position = Variance.INVARIANT)
@@ -148,6 +148,37 @@ internal open class SirFunctionFromKtSymbol(
 
             buildCall("$typesAsString($argumentsString)")
         }.orEmpty()
+
+        val reverseBridges = if (needsReverseBridge()) {
+            bridgeProxy?.createReverseSirBridges(
+                targetClassFqName = (ktSymbol as? KaNamedFunctionSymbol)
+                    ?.containingSymbol?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
+                    ?: "",
+                targetMethodName = ktSymbol.name?.asString() ?: "",
+                swiftDynamicCall = { selfExpr, paramExprs ->
+                    val methodName = this@SirFunctionFromKtSymbol.name
+                    val args = this@SirFunctionFromKtSymbol.parameters
+                        .zip(paramExprs)
+                        .joinToString(", ") { (param, expr) ->
+                            "${param.argumentName ?: param.parameterName ?: "_"}: $expr"
+                        }
+                    val tryPrefix = if (errorType != SirType.never) "try! " else ""
+                    "$tryPrefix$selfExpr.$methodName($args)"
+                },
+            ).orEmpty()
+        } else {
+            emptyList()
+        }
+
+        forwardBridges + reverseBridges
+    }
+
+    private fun needsReverseBridge(): Boolean = withSessions {
+        if (!isInstance) return@withSessions false
+        if (modality != SirModality.OPEN) return@withSessions false
+        if (attributes.any { it is SirAttribute.Available && (it.unavailable || it.deprecated) }) return@withSessions false
+        val containingClass = parent as? SirClass ?: return@withSessions false
+        containingClass.modality == SirModality.OPEN
     }
 
     /**

@@ -229,11 +229,11 @@ extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* p
   return (typeAdapter != nullptr) ? typeAdapter->kotlinTypeInfo : nullptr;
 }
 
-static const TypeInfo* getOrCreateTypeInfo(Class clazz);
+extern "C" const TypeInfo* Kotlin_ObjCExport_getOrCreateTypeInfo(Class clazz);
 
 extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
   RuntimeAssert(clazz != nullptr, "Cannot be null");
-  return getOrCreateTypeInfo(*clazz);
+  return Kotlin_ObjCExport_getOrCreateTypeInfo(*clazz);
 }
 
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
@@ -245,7 +245,7 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 
   const ObjCTypeAdapter* typeAdapter = findClassAdapter(clazz);
   if (typeAdapter == nullptr) {
-    getOrCreateTypeInfo(clazz);
+    Kotlin_ObjCExport_getOrCreateTypeInfo(clazz);
     return;
   }
 
@@ -284,7 +284,7 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 }
 
 extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
-  const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(obj));
+  const TypeInfo* typeInfo = Kotlin_ObjCExport_getOrCreateTypeInfo(object_getClass(obj));
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, Kotlin_objc_retain_inNative(obj));
 }
 
@@ -788,10 +788,12 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
-  if (compiler::swiftExport() && compiler::runtimeAssertsEnabled()) {
+  bool isSwiftExportSubclass = false;
+  if (compiler::swiftExport()) {
       auto kotlinBase = objc_getClass("KotlinBase");
       RuntimeAssert(kotlinBase != nullptr, "Couldn't find KotlinBase when Swift Export is enabled");
-      RuntimeAssert(![clazz isSubclassOfClass:kotlinBase], "Trying to createTypeInfo for KotlinBase-descendant with Swift Export");
+      isSwiftExportSubclass = [clazz isSubclassOfClass:kotlinBase];
+      // Swift Export subclasses are allowed when they have reverse bridge adapters.
   }
 
   std::unordered_set<SEL> definedSelectors;
@@ -883,7 +885,12 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
     for (int i = 0; i < typeAdapter->reverseAdapterNum; ++i) {
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
-      if (definedSelectors.find(sel_registerName(adapter->selector)) == definedSelectors.end()) continue;
+      if (isSwiftExportSubclass) {
+        // Swift Export: patch unconditionally. Swift dynamic dispatch handles
+        // whether the method is actually overridden.
+      } else {
+        if (definedSelectors.find(sel_registerName(adapter->selector)) == definedSelectors.end()) continue;
+      }
 
       throwIfCantBeOverridden(clazz, adapter);
 
@@ -937,7 +944,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
 static kotlin::ThreadStateAware<kotlin::SpinLock> typeInfoCreationMutex;
 
-static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
+extern "C" const TypeInfo* Kotlin_ObjCExport_getOrCreateTypeInfo(Class clazz) {
   const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(clazz);
   if (result != nullptr) {
     return result;
@@ -947,7 +954,7 @@ static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
 
   const TypeInfo* superType = superClass == nullptr ?
     theForeignObjCObjectTypeInfo :
-    getOrCreateTypeInfo(superClass);
+    Kotlin_ObjCExport_getOrCreateTypeInfo(superClass);
 
   std::lock_guard lockGuard(typeInfoCreationMutex);
 
@@ -960,11 +967,28 @@ static const TypeInfo* getOrCreateTypeInfo(Class clazz) {
   return result;
 }
 
+extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class swiftSubclass, const TypeInfo* kotlinSuperTypeInfo) {
+  const TypeInfo* result = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass);
+  if (result != nullptr) {
+    return result;
+  }
+
+  std::lock_guard lockGuard(typeInfoCreationMutex);
+
+  result = Kotlin_ObjCExport_getAssociatedTypeInfo(swiftSubclass); // double-checking.
+  if (result == nullptr) {
+    result = createTypeInfo(swiftSubclass, kotlinSuperTypeInfo, nullptr);
+    setAssociatedTypeInfo(swiftSubclass, result);
+  }
+
+  return result;
+}
+
 const TypeInfo* Kotlin_ObjCExport_createTypeInfoWithKotlinFieldsFrom(Class clazz, const TypeInfo* fieldsInfo) {
   Class superClass = class_getSuperclass(clazz);
   RuntimeCheck(superClass != nullptr, "");
 
-  const TypeInfo* superType = getOrCreateTypeInfo(superClass);
+  const TypeInfo* superType = Kotlin_ObjCExport_getOrCreateTypeInfo(superClass);
 
   return createTypeInfo(clazz, superType, fieldsInfo);
 }

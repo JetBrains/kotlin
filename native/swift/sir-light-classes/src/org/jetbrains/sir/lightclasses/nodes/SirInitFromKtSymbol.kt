@@ -107,6 +107,11 @@ internal sealed class SirInitFromKtSymbol(
             } ?: false
         }
 
+    protected val isAbstractClass: Boolean
+        get() = withSessions {
+            (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.modality?.isAbstract() ?: false
+        }
+
 }
 
 private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterParameterOfInnerClass(): SirParameter? {
@@ -195,8 +200,10 @@ internal class SirRegularInitFromKtSymbol(
             val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
 
             return@withSessions SirFunctionBody(buildList {
-                (parent as? SirScopeDefiningDeclaration)?.let {
-                    add("if Self.self != ${it.swiftFqName}.self { fatalError(\"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \") }")
+                if (isAbstractClass) {
+                    (parent as? SirScopeDefiningDeclaration)?.let {
+                        add("if Self.self == ${it.swiftFqName}.self { fatalError(\"Abstract class ${it.swiftFqName} cannot be instantiated directly\") }")
+                    }
                 }
 
                 addAll(allocDescriptor.createSwiftInvocation {
