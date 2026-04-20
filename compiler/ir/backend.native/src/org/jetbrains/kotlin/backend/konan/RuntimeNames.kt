@@ -8,6 +8,7 @@ object RuntimeNames {
     val cnameAnnotation = NativeRuntimeNames.Annotations.cNameClassId.asSingleFqName()
     val exportForCppRuntime = NativeRuntimeNames.Annotations.exportForCppRuntimeClassId.asSingleFqName()
     val exportedBridge = NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName()
+    val importedBridge = NativeRuntimeNames.Annotations.importedBridgeClassId.asSingleFqName()
     val exportTypeInfoAnnotation = NativeRuntimeNames.Annotations.exportTypeInfoClassId.asSingleFqName()
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
     val cCallDirect = FqName("kotlinx.cinterop.internal.CCall.Direct")
@@ -23,6 +24,7 @@ object RuntimeNames {
     val kotlinNativeInternalTestPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal", "test"))
     val kotlinxCInteropInternalPackageName = FqName.fromSegments(listOf("kotlinx", "cinterop", "internal"))
     val kotlinNativeCoroutinesInternalPackageName = FqName.fromSegments(listOf("kotlin", "coroutines", "native", "internal"))
+    val bindReverseBridgeToMethod = NativeRuntimeNames.Annotations.BindReverseBridgeToMethod.asSingleFqName()
     val associatedObjectKey = FqName("kotlin.reflect.AssociatedObjectKey")
     val typedIntrinsicAnnotation = FqName("kotlin.native.internal.TypedIntrinsic")
 }

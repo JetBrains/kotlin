@@ -9,15 +9,28 @@ import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCName
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCNameWithReverseBridges
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.bindObjCExportTypeAdapterTo
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
+    val reverseBridgesByClass = collectReverseBridgeAdapters(file)
+
     file.allBindClassToObjCName.forEach {
-        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName)
+        val vtableSize = if (it.kotlinClass.isInterface)
+            -1
+        else
+            generationState.context.getLayoutBuilder(it.kotlinClass).vtableEntries.size
+        val reverseAdapters = reverseBridgesByClass[it.kotlinClass] ?: emptyList()
+        val adapter = if (reverseAdapters.isEmpty()) {
+            ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName, vtableSize)
+        } else {
+            ObjCTypeAdapterForBindClassToObjCNameWithReverseBridges(it.kotlinClass, it.objCName, reverseAdapters, vtableSize)
+        }
         val typeAdapter = staticData.placeGlobal("", adapter).pointer
         try {
             bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter)

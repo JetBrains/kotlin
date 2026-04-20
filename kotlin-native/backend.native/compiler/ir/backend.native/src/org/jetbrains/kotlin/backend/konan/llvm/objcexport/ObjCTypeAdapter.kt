@@ -86,13 +86,14 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
         fun CodeGenerator.ObjCTypeAdapterForBindClassToObjCName(
                 irClass: IrClass?,
                 objCName: String,
+                vtableSize: Int,
         ) = ObjCTypeAdapter(
                 irClass = irClass,
                 objCName = objCName,
                 type = llvm.runtime.objCTypeAdapter,
                 irClass?.let { constPointer(typeInfoValue(it)) },
                 llvm.nullPointer, // vtable
-                llvm.constInt32(0),
+                llvm.constInt32(vtableSize),
                 llvm.nullPointer, // itable
                 llvm.constInt32(0),
                 llvm.staticData.cStringLiteral(objCName),
@@ -104,6 +105,31 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
                 llvm.constInt32(0),
                 llvm.nullPointer, // reverseAdapters
                 llvm.constInt32(0),
+        )
+
+        fun CodeGenerator.ObjCTypeAdapterForBindClassToObjCNameWithReverseBridges(
+                irClass: IrClass?,
+                objCName: String,
+                reverseAdapters: List<KotlinToObjCMethodAdapter>,
+                vtableSize: Int,
+        ) = ObjCTypeAdapter(
+                irClass = irClass,
+                objCName = objCName,
+                type = llvm.runtime.objCTypeAdapter,
+                irClass?.let { constPointer(typeInfoValue(it)) },
+                llvm.nullPointer, // vtable
+                llvm.constInt32(vtableSize),
+                llvm.nullPointer, // itable
+                llvm.constInt32(0),
+                llvm.staticData.cStringLiteral(objCName),
+                llvm.nullPointer, // directAdapters
+                llvm.constInt32(0),
+                llvm.nullPointer, // classAdapters
+                llvm.constInt32(0),
+                llvm.nullPointer, // virtualAdapters
+                llvm.constInt32(0),
+                llvm.staticData.placeGlobalConstArray("", llvm.runtime.kotlinToObjCMethodAdapter, reverseAdapters),
+                llvm.constInt32(reverseAdapters.size),
         )
     }
 }

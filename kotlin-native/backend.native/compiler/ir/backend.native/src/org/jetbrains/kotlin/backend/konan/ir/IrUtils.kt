@@ -257,6 +257,8 @@ fun IrFunctionSymbol.isComparisonFunction(map: Map<IrClassifierSymbol, IrSimpleF
         this in map.values
 
 fun IrFunction.externalSymbolOrThrow(): String? {
+    annotations.findAnnotation(RuntimeNames.importedBridge)?.let { return it.getAnnotationStringValue("bridgeName") }
+
     annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationStringValue() }
 
     annotations.findAnnotation(KonanFqNames.gcUnsafeCall)?.let { return it.getAnnotationStringValue("callee") }
@@ -267,7 +269,7 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     if (this.isCFunctionOrGlobalAccessor()) return null
 
-    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall or @ObjCMethod annotation")
+    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName, @GCUnsafeCall, @ImportedBridge or @ObjCMethod annotation")
 }
 
 private val IrFunction.longName: String

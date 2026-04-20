@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class NativeCodeGeneratorException(val declarations: List<IrElement>, cause: Throwable?): IllegalStateException(cause) {
     override val message: String
@@ -2532,13 +2533,17 @@ internal class CodeGeneratorVisitor(
     private val IrSimpleFunction.needsNativeThreadState: Boolean
         get() {
             // We assume that call site thread state switching is required for interop calls only.
-            val result = origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE
-            if (result) {
+            if (origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE) {
                 check(isExternal)
                 check(!annotations.hasAnnotation(KonanFqNames.gcUnsafeCall))
                 check(annotations.hasAnnotation(RuntimeNames.filterExceptions))
+                return true
             }
-            return result
+            if (annotations.hasAnnotation(RuntimeNames.importedBridge)) {
+                check(isExternal)
+                return true
+            }
+            return false
         }
 
     private fun call(function: IrSimpleFunction, llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
@@ -2566,6 +2571,8 @@ internal class CodeGeneratorVisitor(
         } else {
             needsNativeThreadState = function.needsNativeThreadState
             filterExceptionWith = foreignExceptionModeFromAnnotation
+                    ?: (needsNativeThreadState && function.annotations.hasAnnotation(RuntimeNames.importedBridge))
+                            .ifTrue { ForeignExceptionMode.Mode.TERMINATE }
         }
 
         val exceptionHandler = if (filterExceptionWith != null) {

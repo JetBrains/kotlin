@@ -168,6 +168,18 @@ public annotation class ReflectionPackageName(val name: String)
 public annotation class ExportedBridge(val bridgeName: String)
 
 /**
+ * Indicates that the marked external function is an imported bridge from the platform to Kotlin.
+ * Calls to this function will be replaced with calls to the external function
+ * identified by [bridgeName], with automatic GC thread state transitions.
+ *
+ * This is the symmetric functional counterpart of [ExportedBridge]
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(value = AnnotationRetention.BINARY)
+@InternalForKotlinNative
+public annotation class ImportedBridge(val bridgeName: String)
+
+/**
  * Indicates that the marked function should be skipped by the debugger when stepping into (if allowed by the platform).
  */
 @Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
