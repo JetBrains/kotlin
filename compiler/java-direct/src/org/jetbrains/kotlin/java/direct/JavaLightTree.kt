@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.platform.syntax.SyntaxElementType
@@ -17,7 +19,7 @@ import com.intellij.platform.syntax.parser.prepareProduction
  * Encoding:
  *  - Non-negative values [0 .. markerCount-1]: composite (START) marker index.
  *  - `markerCount` (i.e. [JavaLightTree.rootIndex]): the synthetic file root that wraps all
- *    top-level productions, mirroring the legacy `JavaSyntaxNode` root.
+ *    top-level productions.
  *  - Negative values: token index encoded as `-(tokenIndex + 1)`. So `-1` is token at index 0.
  *  - `Int.MIN_VALUE`: invalid / "not computed" sentinel ([JavaLightTree.NO_NODE]).
  *
@@ -37,9 +39,9 @@ value class JavaLightNode(val index: Int)
  * have been produced by it; mixing nodes between trees is an error (no runtime check).
  *
  * The tree exposes a synthetic root (index = [rootIndex]) that wraps all top-level production
- * markers as direct children. This matches the behaviour of the legacy `JavaSyntaxNode` root
- * built by `buildSyntaxTree` and lets every existing call site that walks `root.children`
- * continue to work after migration.
+ * markers as direct children. `getChildren(root)` yields the file's top-level declarations in
+ * source order, so model-class consumers can iterate a compilation unit uniformly regardless
+ * of how many top-level productions the parser emits.
  */
 class JavaLightTree(
     val productionMarkers: ProductionMarkerList,
@@ -102,8 +104,8 @@ class JavaLightTree(
                 // Error markers have no done-marker pair; use the marker's own end offset.
                 marker.getEndOffset()
             } else {
-                // For START markers, report the END of the corresponding DONE marker, matching the
-                // legacy `JavaSyntaxNode` which used the production's `getEndOffset()`.
+                // For START markers, report the END of the corresponding DONE marker — the
+                // composite node spans the full range from its START to its DONE.
                 val doneIdx = doneForStart[node.index]
                 productionMarkers.getMarker(doneIdx).getEndOffset()
             }
@@ -153,14 +155,14 @@ class JavaLightTree(
      *  - Direct child START markers (whose parent is [node]) — recorded as composite child nodes,
      *    skipping their interior markers via [doneForStart].
      *  - Direct child ERROR markers (whose parent is [node]).
-     *  - Tokens in the gaps between child markers (matching the original `buildSyntaxTree`
-     *    semantics, including the empty-token skip).
+     *  - Tokens in the gaps between child markers (empty tokens such as DANGLING_NEWLINE and
+     *    whitespace with `start == end` are skipped).
      *
      * For the synthetic root, walks all top-level markers and the surrounding tokens.
      */
     fun getChildren(node: JavaLightNode): List<JavaLightNode> {
         if (!isComposite(node)) return emptyList()
-        // Error markers are leaves in the legacy `buildSyntaxTree` result — no children.
+        // Error markers have no done-pair — they are treated as leaves with no children.
         if (isErrorMarker(node)) return emptyList()
         val firstTokenIndex: Int
         val lastTokenIndex: Int
@@ -262,9 +264,8 @@ class JavaLightTree(
 /**
  * Builds a [JavaLightTree] from a populated [SyntaxTreeBuilder].
  *
- * The construction performs a single pass over the production markers to compute parent indices
- * for both composite markers and tokens, mirroring the stack-based logic of the legacy
- * `buildSyntaxTree` but without allocating any per-node objects.
+ * The construction performs a single pass over the production markers using a stack to compute
+ * parent indices for both composite markers and tokens, without allocating any per-node objects.
  */
 fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLightTree {
     val productionMarkers = prepareProduction(builder).productionMarkers
@@ -309,8 +310,8 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
 
     require(stackSize == 0) { "Unbalanced production markers: $stackSize unmatched START markers remain" }
 
-    // Token → enclosing-composite mapping. Re-walks the marker stream with the same parent
-    // semantics as `buildSyntaxTree` so each emitted token records its enclosing START index
+    // Token → enclosing-composite mapping. Walks the marker stream with a parent stack so that
+    // every emitted token (non-empty range, non-null type) records its enclosing START index
     // (or [rootIndex] for top-level tokens).
     val tokenParentStart = IntArray(tokens.tokenCount) { rootIndex }
     run {
@@ -362,9 +363,8 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
         assignTokens(tokens.tokenCount)
     }
 
-    // Mirror the legacy `buildSyntaxTree` convention: the synthetic root carries the nodeType of
-    // the last production marker. Callers do not generally read the root's type, but preserving
-    // this avoids any drift from the prior representation.
+    // The synthetic root carries the nodeType of the last production marker. Callers do not
+    // generally read the root's type, but this assignment gives it a deterministic value.
     val rootNodeType = if (markerCount > 0)
         productionMarkers.getMarker(markerCount - 1).getNodeType()
     else
@@ -384,8 +384,8 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
 }
 
 /**
- * Convenience: pretty-prints the subtree rooted at [node] for debugging. Mirrors
- * `JavaSyntaxNode.dump` so test code can switch implementations without changing assertions.
+ * Convenience: pretty-prints the subtree rooted at [node] for debugging. Each line prints the
+ * node type and (newline-escaped) text, indented by depth.
  */
 fun JavaLightTree.dump(node: JavaLightNode = getRoot(), indent: String = ""): String {
     val sb = StringBuilder()

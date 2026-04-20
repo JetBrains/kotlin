@@ -16,10 +16,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Unit tests for the [JavaLightTree] infrastructure introduced in Phase 1 of the
- * LightTree migration. These tests verify the navigation API independently of the
- * [JavaSyntaxNode]-based model classes, so the new tree can be validated before
- * any model-class migration happens.
+ * Unit tests for the [JavaLightTree] infrastructure. These tests exercise the tree
+ * navigation API directly — offsets, text, parent/child relationships, token vs. composite
+ * discrimination, and error-input handling — independent of the `*OverAst` model classes that
+ * consume the tree. Several behaviours here (token parent via [JavaLightTree.getParent],
+ * [JavaLightTree.isToken] / [JavaLightTree.isComposite] discrimination, [JavaLightTree.textEquals]
+ * edge cases, malformed-source tolerance, [JavaLightTree.dump]) are not covered elsewhere and
+ * form the regression safety net for the tree primitives.
  */
 class JavaLightTreeTest {
 
