@@ -1,0 +1,55 @@
+FILE: complexFixationOrderNoReturnTypeInVariableFeatureDisabled.kt
+    public final fun bar(): R|Inv<kotlin/reflect/KFunction0<kotlin/Int>>| {
+        ^bar R|kotlin/TODO|()
+    }
+    public final fun bar2(): R|kotlin/Int| {
+        ^bar2 Int(1)
+    }
+    public final fun bar2(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^bar2 Int(1)
+    }
+    public final class Inv<P> : R|kotlin/Any| {
+        public constructor<P>(x: R|P|): R|Inv<P>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <K, L : R|Inv<out M>|, M> R|K|.singleOverload(cr1: R|M|, cr2: R|(L) -> K|, cr3: R|() -> L|, fn: R|(K) -> kotlin/Int|): R|kotlin/Int| {
+        ^singleOverload R|kotlin/TODO|()
+    }
+    @R|kotlin/jvm/JvmName|(name = String(debounce1) [evaluated = String(debounce1)]) @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|)) [evaluated = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))]) @R|kotlin/OverloadResolutionByLambdaReturnType|() public final fun <K, L : R|Inv<out M>|, M> R|K|.debounce(cr1: R|M|, cr2: R|(L) -> K|, cr3: R|() -> L|, fn: R|(K) -> kotlin/Int|): R|kotlin/Int| {
+        ^debounce R|kotlin/TODO|()
+    }
+    @R|kotlin/jvm/JvmName|(name = String(debounce2) [evaluated = String(debounce2)]) @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|)) [evaluated = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))]) @R|kotlin/OverloadResolutionByLambdaReturnType|() public final fun <K, L : R|Inv<out M>|, M> R|K|.debounce(cr1: R|M|, cr2: R|(L) -> K|, cr3: R|() -> L|, fn: R|(K) -> kotlin/String|): R|kotlin/String| {
+        ^debounce R|kotlin/TODO|()
+    }
+    public final fun foo(x: R|Inv<kotlin/reflect/KFunction0<kotlin/Int>>|): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|Inv<kotlin/reflect/KFunction0<kotlin/Int?>>|): R|kotlin/Number| {
+            ^foo Int(2)
+        }
+
+        @R|kotlin/jvm/JvmName|(name = String(foo2) [evaluated = String(foo2)]) public final fun foo(x: R|Inv<kotlin/reflect/KFunction0<kotlin/Int>>|): R|kotlin/Number| {
+            ^foo Int(3)
+        }
+
+        public final fun main(i: R|kotlin/Int|): R|kotlin/Unit| {
+            lval x1: R|kotlin/Int| = R|<local>/i|.R|/singleOverload|<R|kotlin/Number|, R|Inv<kotlin/reflect/KFunction0<kotlin/Int>>|, R|kotlin/reflect/KFunction0<kotlin/Int>|>(::R|/bar2|, ::R|/A.foo|, ::R|/bar|, <L> = singleOverload@fun <anonymous>(value: R|kotlin/Number|): R|kotlin/Int| <inline=NoInline>  {
+                ^ Int(0)
+            }
+            )
+            lval x2: <ERROR TYPE REF: Ambiguity: debounce, [/debounce, /debounce]> = R|<local>/i|.<Ambiguity: debounce, [/debounce, /debounce]>#(::<Ambiguity: bar2, [/bar2, /bar2]>#, ::<Ambiguity: foo, [/A.foo, /A.foo]>#, ::R|/bar|, <L> = debounce@fun <anonymous>(value: <ERROR TYPE REF: Cannot infer type for parameter value>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+                ^ Int(0)
+            }
+            )
+            R|<local>/x1|
+            R|<local>/x2|
+        }
+
+    }
