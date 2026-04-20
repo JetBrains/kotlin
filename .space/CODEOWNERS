@@ -220,7 +220,6 @@
 /compiler/testData/loadJava8/ "Kotlin Frontend"
 /compiler/testData/loadJavaPackageAnnotations/ "Kotlin Frontend"
 /compiler/testData/moduleProtoBuf/ "Kotlin JVM"
-/compiler/testData/modules.xml/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
