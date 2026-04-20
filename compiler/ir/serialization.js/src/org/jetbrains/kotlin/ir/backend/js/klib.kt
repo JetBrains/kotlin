@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -111,7 +110,6 @@ fun loadIr(
 ): IrModuleInfo {
     val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
-    val messageLogger = configuration.messageCollector
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -130,7 +128,6 @@ fun loadIr(
                 friendModules = friendModules,
                 configuration = configuration,
                 symbolTable = symbolTable,
-                messageCollector = messageLogger,
             ) { modulesStructure.getModuleDescriptor(it) }
         }
     }
@@ -143,7 +140,6 @@ fun loadIrForSingleModule(
 ): IrModuleInfo {
     val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
-    val messageLogger = configuration.messageCollector
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -163,7 +159,7 @@ fun loadIrForSingleModule(
     )
 
     val irLinker = JsIrLinker(
-        messageCollector = messageLogger,
+        configuration = configuration,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
@@ -237,7 +233,6 @@ private fun getIrModuleInfoForKlib(
     friendModules: Map<String, List<String>>,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    messageCollector: MessageCollector,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleInfo {
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
@@ -248,7 +243,7 @@ private fun getIrModuleInfoForKlib(
     )
 
     val irLinker = JsIrLinker(
-        messageCollector = messageCollector,
+        configuration = configuration,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
         partialLinkageSupport = createPartialLinkageSupportForLinker(
