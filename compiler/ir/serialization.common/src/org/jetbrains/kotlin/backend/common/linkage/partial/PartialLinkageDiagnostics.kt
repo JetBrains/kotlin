@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
-import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
 object PartialLinkageDiagnostics : KtDiagnosticsContainer() {
     val MINOR_PARTIAL_LINKAGE_ISSUE = KtSourcelessDiagnosticFactory("MINOR_PARTIAL_LINKAGE_ISSUE", Severity.INFO, getRendererFactory())
     val MAJOR_PARTIAL_LINKAGE_ISSUE = KtSourcelessDiagnosticFactory("MAJOR_PARTIAL_LINKAGE_ISSUE", Severity.WARNING, getRendererFactory())
+
+    val IR_LINKER_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultPartialLinkageErrorMessages
 }
@@ -36,5 +35,6 @@ private object KtDefaultPartialLinkageErrorMessages : BaseDiagnosticRendererFact
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(PartialLinkageDiagnostics.MINOR_PARTIAL_LINKAGE_ISSUE, "{0}")
         map.put(PartialLinkageDiagnostics.MAJOR_PARTIAL_LINKAGE_ISSUE, "{0}")
+        map.put(PartialLinkageDiagnostics.IR_LINKER_ERROR, "{0}")
     }
 }

@@ -126,7 +126,7 @@ object JKlibIrCompilationPhase :
         ).apply { unboundSymbolGeneration = true }
         val linker = JKlibIrLinker(
             module = mainModule,
-            messageCollector = messageCollector,
+            configuration = configuration,
             irBuiltIns = irBuiltIns,
             symbolTable = symbolTable,
             stubGenerator = stubGenerator,

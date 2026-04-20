@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -28,22 +27,16 @@ import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.isAnyPlatformStdlib
-import org.jetbrains.kotlin.library.isJsStdlib
-import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import kotlin.collections.*
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 
@@ -143,13 +136,12 @@ internal class JsIrLinkerLoader(
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        val messageCollector = compilerConfiguration.messageCollector
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             compilerConfiguration.diagnosticsCollector,
             compilerConfiguration.languageVersionSettings,
         )
         return JsIrLinker(
-            messageCollector = messageCollector,
+            configuration = compilerConfiguration,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
             partialLinkageSupport = createPartialLinkageSupportForLinker(
