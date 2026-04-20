@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 @OptIn(ExperimentalCompilerArgument::class)
 fun Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.moduleWithFir(
     moduleName: String,
-    dependencies: List<ScenarioModule<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>> = emptyList(),
+    dependencies: List<ScenarioModule> = emptyList(),
     compilationOperationConfig: (JvmCompilationOperation.Builder) -> Unit = {},
 ) = module(
     moduleName = moduleName,

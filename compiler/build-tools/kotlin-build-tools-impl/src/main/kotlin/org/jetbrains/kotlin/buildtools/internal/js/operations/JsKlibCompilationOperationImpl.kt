@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonJsAndWasmArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonJsAndWasmArgumentsImpl.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.io.File
 import java.nio.file.Path
+import kotlin.text.endsWith
 
 internal class JsKlibCompilationOperationImpl private constructor(
     override val options: Options = Options(JsKlibCompilationOperation::class),
@@ -60,7 +63,9 @@ internal class JsKlibCompilationOperationImpl private constructor(
     constructor(
         sources: List<Path>,
         destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+        compilerArguments: JsArgumentsImpl = JsArgumentsImpl().apply {
+            this[NOPACK] = true
+        },
         buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
@@ -321,7 +326,7 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
             map.forEach { (_, it) -> (getOrPut(it.name) { mutableSetOf() } as MutableSet<IncrementalModuleEntry>).add(it) }
         },
         emptyMap(),
-        map.mapKeys { it.key.output.toFile() }.toMap(),
+        map.mapKeys { it.key.output.toFile() }.filter { it.key.name.endsWith(".klib", ignoreCase = true) },
         emptyMap()
     )
 }

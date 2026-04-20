@@ -20,4 +20,8 @@ public class IncrementalModule(
     public val output: Path,
     public val buildDir: Path,
     public val buildHistoryDir: Path? = null,
-)
+) {
+    override fun toString(): String {
+        return "IncrementalModule(name='$name', output=$output, buildDir=$buildDir, buildHistoryDir=$buildHistoryDir)"
+    }
+}

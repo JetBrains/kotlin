@@ -102,11 +102,11 @@ context(module: Module<*, *, *>)
 fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
-        .apply {
-            if (none { it.fileName.toString().endsWith(".kotlin_module") }) {
-                add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
-            }
-        }
+//        .apply {
+//            if (none { it.fileName.toString().endsWith(".kotlin_module") }) {
+//                add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
+//            }
+//        }
     val notDeclaredFiles = hashSetOf<Path>()
     for (file in module.outputDirectory.walk()) {
         if (!file.isRegularFile()) continue

@@ -168,7 +168,7 @@ internal class JvmCompilerArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 

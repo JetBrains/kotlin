@@ -173,7 +173,7 @@ internal abstract class CommonCompilerArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 

@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
  * Shorthands for commonly used scenario steps & assertions
  */
 
-fun ScenarioModule<*, *>.compile(expectedDirtySet: Set<String>) {
+fun ScenarioModule.compile(expectedDirtySet: Set<String>) {
     compile {
         assertCompiledSources(expectedDirtySet)
     }
 }
 
-fun ScenarioModule<*, *>.execute(mainClass: String, exactOutput: String) {
+fun ScenarioModule.execute(mainClass: String, exactOutput: String) {
     executeCompiledCode(mainClass) {
         assertExactOutput(exactOutput)
     }

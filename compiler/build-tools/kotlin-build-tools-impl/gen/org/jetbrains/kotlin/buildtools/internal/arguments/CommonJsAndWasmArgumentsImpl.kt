@@ -85,7 +85,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 

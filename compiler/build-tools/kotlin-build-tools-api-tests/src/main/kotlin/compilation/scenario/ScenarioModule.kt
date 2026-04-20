@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 
-interface ScenarioModule<out B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder> {
+interface ScenarioModule {
     /**
      * Performs registered existing file modification.
      *
@@ -54,7 +52,7 @@ interface ScenarioModule<out B : BaseCompilationOperation.Builder, out IC : Base
 
     fun compile(
         forceOutput: LogLevel? = null,
-        assertions: context(Module<*, *, *>, ScenarioModule<B, IC>) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module<*, *, *>, ScenarioModule) CompilationOutcome.() -> Unit = {},
     )
 
     fun executeCompiledCode(

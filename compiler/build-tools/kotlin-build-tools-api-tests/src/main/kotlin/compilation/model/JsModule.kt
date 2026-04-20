@@ -6,16 +6,21 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.FORCE_RECOMPILATION
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.IR_OUTPUT_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.jsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation.Companion.INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.js.operations.historyBasedIcConfiguration
 import java.nio.file.Path
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
@@ -39,6 +44,8 @@ class JsModule(
     defaultStrategyConfig,
     moduleCompilationConfigAction,
 ) {
+
+    val otherModules = mutableListOf<JsModule>()
 
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibKlibLocation)
@@ -80,9 +87,36 @@ class JsModule(
         icOptionsConfigAction: (JsHistoryBasedIncrementalCompilationConfiguration.Builder) -> Unit,
         assertions: context(Module<JsKlibCompilationOperation, JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>) CompilationOutcome.() -> Unit,
     ): CompilationResult {
-        // JS incremental compilation uses a different IC mechanism than JVM;
-        // for now, delegate to non-incremental compilation
-        return compile(strategyConfig, forceOutput, compilationConfigAction, compilationAction, assertions)
+        return compile(strategyConfig, forceOutput, { compilationOperation ->
+            val modulesInfo = (otherModules + this).map {
+                IncrementalModule(
+                    it.moduleName,
+                    it.outputDirectory,
+                    it.buildDirectory,
+                    it.icCachesDir,
+                )
+            }
+
+            println("MODULES FOR $moduleName")
+            modulesInfo.forEach {
+                println(it)
+            }
+
+            val icConfig = compilationOperation.historyBasedIcConfiguration(
+                project.projectDirectory,
+                icCachesDir,
+                sourcesChanges,
+                modulesInfo
+            ) {
+                this[MODULE_BUILD_DIR] = buildDirectory
+                this[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
+
+                icOptionsConfigAction(this)
+            }
+
+            compilationOperation[INCREMENTAL_COMPILATION] = icConfig
+            compilationConfigAction(compilationOperation)
+        }, compilationAction, assertions)
     }
 
     override fun prepareExecutionProcessBuilder(
@@ -92,7 +126,7 @@ class JsModule(
         throw UnsupportedOperationException("Execution of compiled JS modules is not supported directly")
     }
 
-    fun linkedJsModule(moduleLinkingConfigAction: (JsLinkingOperation.Builder) -> Unit = {},): LinkedJsModule {
+    fun linkedJsModule(moduleLinkingConfigAction: (JsLinkingOperation.Builder) -> Unit = {}): LinkedJsModule {
         return LinkedJsModule(
             kotlinToolchain,
             buildSession,

@@ -82,7 +82,7 @@ internal class JsArgumentsImpl(
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
 
-  private operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
+  public operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
 

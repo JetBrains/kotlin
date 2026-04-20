@@ -629,7 +629,7 @@ internal class BtaImplOptionsGenerator(
         }
         function("set") {
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR, KModifier.PRIVATE)
+            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", implParameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
