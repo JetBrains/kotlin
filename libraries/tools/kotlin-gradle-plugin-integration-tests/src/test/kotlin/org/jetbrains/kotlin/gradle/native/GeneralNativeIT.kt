@@ -718,6 +718,10 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Does not leak native stderr output into Gradle log (KT-69896)")
     @GradleTest
     @TestMetadata("native-tests")
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+        enabledOnCI = [OS.LINUX, OS.MAC], // File descriptors not released fast enough before JUnit @TempDir cleanup on Windows
+    )
     fun testNativeStderrOutputStaysInTestLog(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {
             val marker = "KT_69896_MARKER"
