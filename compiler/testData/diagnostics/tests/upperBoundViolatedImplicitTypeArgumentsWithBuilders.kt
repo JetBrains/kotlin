@@ -1,4 +1,5 @@
 // LATEST_LV_DIFFERENCE
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DUMP_INFERENCE_LOGS: FIXATION, MARKDOWN
 // ISSUE: KT-85405
@@ -50,7 +51,7 @@ fun test4(shape: OperationShape) {
 @Suppress("UNCHECKED_CAST", "CAST_NEVER_SUCCEEDS")
 fun <B : AbstractShapeBuilder<B, S>, S : Shape> shapeToBuilder(shape: S): B =
     // In the actual code, there's a call to a Java function returning the raw type AbstractShapeBuilder
-    null as B
+    null <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> B
 
 abstract class SimpleShape : Shape()
 

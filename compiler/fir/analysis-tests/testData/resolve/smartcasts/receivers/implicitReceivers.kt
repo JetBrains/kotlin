@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DUMP_CFG
 class A {
@@ -80,7 +81,7 @@ fun Any.test_5(): Int = when {
 fun Any.test_6() {
     this as List<*>
     size
-    this <!CAST_NEVER_SUCCEEDS!>as<!> String
+    this <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> String
     length
 }
 

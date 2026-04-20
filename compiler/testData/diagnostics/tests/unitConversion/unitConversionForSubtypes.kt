@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +UnitConversionsOnArbitraryExpressions
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
@@ -14,7 +15,7 @@ fun test1(s: SubInt, sWrong: SubIntWrong) {
     val a = "foo"
     foo(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 
-    a <!CAST_NEVER_SUCCEEDS!>as<!> (Int, String) -> String
+    a <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> (Int, String) -> String
     foo(a)
 }
 

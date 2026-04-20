@@ -1,6 +1,7 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
-// LANGUAGE: +ContextParameters
+// LANGUAGE: +PartiallySpecifiedTypeArguments, +ContextParameters
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 
@@ -44,10 +45,10 @@ fun <`_`> bar(): Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>> = TODO()
 fun <`_`> bar1(): Foo<Foo<<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>>> = TODO()
 
 fun test() {
-    val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>{ it }<!> }
+    val x1 = foo<Int, (<!UNRESOLVED_REFERENCE!>_<!>) -> Unit> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>{ it }<!> }
     val x1cp = foo<Int, context(<!UNRESOLVED_REFERENCE!>_<!>) () -> Unit> { <!CANNOT_INFER_IT_PARAMETER_TYPE!>{ "" }<!> }
     val x2 = foo<Int, (Int) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!UNRESOLVED_REFERENCE!>{ it }<!> }
-    val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>{ it }<!> }
+    val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>{ it }<!> }
     val x4 = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED, NO_VALUE_FOR_PARAMETER!>foo<!><!UNRESOLVED_REFERENCE!><<!>Int<!SYNTAX!>, _ -> Float><!> <!CANNOT_INFER_IT_PARAMETER_TYPE!>{ { <!UNRESOLVED_REFERENCE!>it<!> } }<!>
     val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
     val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
@@ -66,7 +67,7 @@ fun test() {
     if (<!USELESS_IS_CHECK!>x11 is Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>) { }
 
     x10 as <!UNRESOLVED_REFERENCE!>_<!>
-    x10 <!CAST_NEVER_SUCCEEDS!>as<!> Foo<<!UNRESOLVED_REFERENCE!>_<!>>
+    x10 <!CAST_NEVER_SUCCEEDS_ERROR!>as<!> Foo<<!UNRESOLVED_REFERENCE!>_<!>>
 
     val x12: Foo<@<!UNRESOLVED_REFERENCE!>_<!> Int>? = null
     val x13: Foo<@<!UNRESOLVED_REFERENCE!>_<!>() Int>? = null

@@ -18,8 +18,8 @@ fun testTypeOperations(obj: JsReference<C>) {
     )
 
     val reported = listOf(
-        { obj <!CAST_NEVER_SUCCEEDS!>as<!> String },
-        { obj <!CAST_NEVER_SUCCEEDS!>as?<!> String },
+        { obj <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> String },
+        { obj <!CAST_NEVER_SUCCEEDS_WARNING!>as?<!> String },
     )
 }
 
@@ -35,8 +35,8 @@ fun testTypeOperationsWithIntersection(obj: JsReference<C>) {
     )
 
     val reported = listOf(
-        { obj <!CAST_NEVER_SUCCEEDS!>as<!> String },
-        { obj <!CAST_NEVER_SUCCEEDS!>as?<!> String },
+        { obj <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> String },
+        { obj <!CAST_NEVER_SUCCEEDS_WARNING!>as?<!> String },
     )
 }
 

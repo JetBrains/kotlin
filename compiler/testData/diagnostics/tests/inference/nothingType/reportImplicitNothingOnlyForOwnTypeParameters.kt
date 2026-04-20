@@ -1,5 +1,7 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
-fun <R> runCatching(block: () -> R) = null <!CAST_NEVER_SUCCEEDS!>as<!> Result<R>
+// FIR_IDENTICAL
+fun <R> runCatching(block: () -> R) = null <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> Result<R>
 
 class Result<out T> {
     fun getOrNull(): T? = null

@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
@@ -30,7 +31,7 @@ fun testUnsafeTypeCast2(i: SealedClass) {
     i as SealedInheritor1
     i.prop1.hashCode()
 
-    i <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
+    i <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> SealedInheritor2
     i.prop2.dec()
 
     i as <!UNRESOLVED_REFERENCE!>SealedInheritor1<!>
@@ -40,7 +41,7 @@ fun testUnsafeTypeCast2(i: SealedClass) {
 fun testUnsafeTypeCast(i: SealedClass) {
     (i as SealedInheritor1).prop1.hashCode()
 
-    i <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
+    i <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> SealedInheritor2
     i.prop2.dec()
 
     var v = i as <!UNRESOLVED_REFERENCE!>SealedInheritor1<!>

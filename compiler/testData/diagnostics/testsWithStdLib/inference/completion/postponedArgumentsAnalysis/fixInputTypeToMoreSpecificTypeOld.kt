@@ -1,6 +1,6 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: BACKEND
-// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER -UNCHECKED_CAST
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS_WARNING -UNUSED_PARAMETER -UNCHECKED_CAST
 
 fun <T> materialize() = null as T
 

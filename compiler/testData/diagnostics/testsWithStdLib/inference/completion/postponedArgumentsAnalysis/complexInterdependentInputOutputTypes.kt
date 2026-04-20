@@ -1,5 +1,6 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
-// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS_WARNING -UNUSED_PARAMETER
 
 interface AssertionPlant<out T : Any>
 interface AssertionPlantNullable<out T : Any?>: BaseAssertionPlant<T, AssertionPlantNullable<T>>

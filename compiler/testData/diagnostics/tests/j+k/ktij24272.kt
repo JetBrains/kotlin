@@ -1,13 +1,15 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
 
 // FILE: use.kt
 package one
 
 fun getStructureElementFor() {
     val container: SuperJava = if (true) {
-        true <!CAST_NEVER_SUCCEEDS!>as<!> Child2
+        true <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> Child2
     } else {
-        false <!CAST_NEVER_SUCCEEDS!>as<!> Child1
+        false <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> Child1
     }
 }
 

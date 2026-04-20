@@ -1,3 +1,5 @@
+@file:Suppress("CAST_NEVER_SUCCEEDS_ERROR")
+
 /**
  * [T.fo<caret_1>xAny]
  * [T.fox<caret_2>AnyNullable]

@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:Suppress("CAST_NEVER_SUCCEEDS_ERROR")
 
 import kotlinx.cinterop.*
 import objcSmoke.*

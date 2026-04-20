@@ -1,6 +1,7 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
-// LANGUAGE: +ContextParameters
+// LANGUAGE: +PartiallySpecifiedTypeArguments, +ContextParameters
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 
@@ -66,7 +67,7 @@ fun test() {
     if (<!USELESS_IS_CHECK!>x11 is Foo<<!UNRESOLVED_REFERENCE!>_<!>><!>) { }
 
     x10 as <!UNRESOLVED_REFERENCE!>_<!>
-    x10 <!CAST_NEVER_SUCCEEDS!>as<!> Foo<<!UNRESOLVED_REFERENCE!>_<!>>
+    x10 <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> Foo<<!UNRESOLVED_REFERENCE!>_<!>>
 
     val x12: Foo<@<!UNRESOLVED_REFERENCE!>_<!> Int>? = null
     val x13: Foo<@<!UNRESOLVED_REFERENCE!>_<!>() Int>? = null

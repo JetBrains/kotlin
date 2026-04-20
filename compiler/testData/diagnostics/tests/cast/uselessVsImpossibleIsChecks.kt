@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76766
 // RENDER_DIAGNOSTIC_ARGUMENTS
@@ -28,9 +29,9 @@ fun uselessAs(a: A) = a <!USELESS_CAST!>as A<!>
 
 fun uselessNullaleAs(a: A) = a <!USELESS_CAST!>as? A<!>
 
-fun impossibleAs(a: A) = a <!CAST_NEVER_SUCCEEDS!>as<!> B
+fun impossibleAs(a: A) = a <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> B
 
-fun impossibleNullableAs(a: A) = a <!CAST_NEVER_SUCCEEDS!>as?<!> B
+fun impossibleNullableAs(a: A) = a <!CAST_NEVER_SUCCEEDS_WARNING!>as?<!> B
 
 
 fun nullableUselessAs(a: A?) = a <!USELESS_CAST!>as A?<!>

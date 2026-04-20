@@ -1,0 +1,24 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS_WARNING -UNUSED_VARIABLE
+// FILE: Test.java
+
+class Test {
+    static Number[] flexibleNumbers() {
+        return null;
+    }
+}
+
+// FILE: main.kt
+
+fun <T> foo(x: Array<out T>): T = x[0]
+
+inline fun <reified T> materializeArray(): Array<T> = null <!CAST_NEVER_SUCCEEDS_ERROR!>as<!> Array<T>
+
+fun main()  {
+    val y = foo(Test.flexibleNumbers() ?: materializeArray()) // Any? in NI, Number! in OI (T of `materializeArray` is inferred to Any?)
+}
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, elvisExpression, flexibleType, functionDeclaration, inline,
+integerLiteral, javaFunction, localProperty, nullableType, outProjection, propertyDeclaration, reified, typeParameter */

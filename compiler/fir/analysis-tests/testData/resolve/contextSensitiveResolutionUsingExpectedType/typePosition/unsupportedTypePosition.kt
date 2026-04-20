@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-75061
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
@@ -30,7 +31,7 @@ sealed class SealedClass {
 
 fun testAs(instance: SealedClass) {
     val SealedInheritor1 = instance as SealedInheritor1
-    val SealedInheritor2 = instance <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
+    val SealedInheritor2 = instance <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> SealedInheritor2
 }
 
 fun testTypeAnnotation(arg: SealedClass) {

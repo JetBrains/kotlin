@@ -1,0 +1,22 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-70447
+
+fun foo(n: UByte) {}
+fun foo(n: String) {}
+
+fun bar(n: Long) {}
+fun bar(n: String) {}
+
+fun main() {
+    val a = ""
+    a <!CAST_NEVER_SUCCEEDS_ERROR!>as<!> UByte
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(a)
+
+    val b = ""
+    b <!CAST_NEVER_SUCCEEDS_ERROR!>as<!> Long
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>(b)
+}
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, intersectionType, localProperty, propertyDeclaration,
+smartcast, stringLiteral */

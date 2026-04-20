@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-75303
 // WITH_STDLIB
@@ -8,7 +9,7 @@ class Foo
 class Bar {
     fun render() = print(this)
 }
-val a = (Foo() <!CAST_NEVER_SUCCEEDS!>as?<!> Bar)?.render()
+val a = (Foo() <!CAST_NEVER_SUCCEEDS_WARNING!>as?<!> Bar)?.render()
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, safeCall,
 thisExpression */

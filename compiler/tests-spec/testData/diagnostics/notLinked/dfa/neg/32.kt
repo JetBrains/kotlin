@@ -44,7 +44,7 @@ fun case_2(x: Int?, y: Nothing?) {
  */
 fun case_3(x: Int?) {
     if (x == null) {
-        x <!CAST_NEVER_SUCCEEDS!>as<!> Int
+        x <!CAST_NEVER_SUCCEEDS_WARNING!>as<!> Int
         stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
     }
