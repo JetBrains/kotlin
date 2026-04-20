@@ -172,7 +172,6 @@
 /compiler/test-infrastructure-utils.common/ "Kotlin Frontend"
 /compiler/test-engine-sandbox/ "Kotlin Frontend" "Kotlin Common Backend"
 
-/compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/checkLocalVariablesTable/ "Kotlin JVM"
 /compiler/testData/cli/ "Kotlin Frontend"
 /compiler/testData/cli/js/ "Kotlin JS" "Kotlin Frontend"
