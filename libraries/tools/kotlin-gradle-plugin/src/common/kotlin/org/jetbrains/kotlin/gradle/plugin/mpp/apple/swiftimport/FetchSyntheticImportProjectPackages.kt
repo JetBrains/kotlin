@@ -64,6 +64,9 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Input
     val gitIgnoreCheckoutDir : Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
 
+    @get:Input
+    abstract val forcePackageResolved : Property<Boolean>
+
     /**
      * Invalidate fetch when Package.swift or Package.resolved files changed.
      */
@@ -82,8 +85,6 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     }
 
     private fun swiftpmResolve() {
-        prepareScratchPathForCurrentPackageRoot()
-
         execOps.exec { exec ->
 
             exec.workingDir(syntheticImportProjectRoot.get().asFile)
@@ -91,9 +92,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             val args = mutableListOf(
                 "/usr/bin/swift",
                 "package",
-                "--scratch-path", swiftPMDependenciesCheckout.get().asFile,
+                "--scratch-path", swiftPMDependenciesCheckout.get().asFile.absolutePath,
                 "resolve",
             )
+
+            if(syntheticLockFile.get().asFile.exists() && forcePackageResolved.get()) {
+                args.add("--only-use-versions-from-resolved-file")
+            }
 
             if (additionalSwiftPackageResolveArgs.isPresent) {
                 args.addAll(additionalSwiftPackageResolveArgs.get())
@@ -108,29 +113,9 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
             exec.commandLine(args)
         }
-
         if (gitIgnoreCheckoutDir.get()) {
             writeCheckoutDirToGitIgnore()
         }
-    }
-
-    private fun prepareScratchPathForCurrentPackageRoot() {
-        val scratchDir = swiftPMDependenciesCheckout.get().asFile
-        val packageRoot = syntheticImportProjectRoot.get().asFile.canonicalFile
-        val marker = scratchDir.resolve(SCRATCH_ROOT_MARKER_FILE_NAME)
-
-        val recordedPackageRoot = marker.takeIf(File::exists)?.readText()?.trim()
-        val currentPackageRoot = packageRoot.path
-
-        if (recordedPackageRoot == currentPackageRoot) return
-
-        // SwiftPM stores package-root-specific resolution state in workspace-state.json.
-        // Reusing the same scratch directory across umbrella and synthetic packages can
-        // otherwise carry a newer compatible resolution into the next package root.
-        scratchDir.resolve(SWIFT_PM_WORKSPACE_STATE_FILE_NAME).delete()
-
-        scratchDir.mkdirs()
-        marker.writeText(currentPackageRoot)
     }
 
     private fun writeCheckoutDirToGitIgnore() {

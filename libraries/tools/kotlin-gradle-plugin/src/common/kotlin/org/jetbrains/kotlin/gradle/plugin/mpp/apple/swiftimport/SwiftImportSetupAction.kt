@@ -208,13 +208,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     )
 
                     syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
-                        it.dependsOn(actualFetchClaimer)
-                        it.onlyIf("Shared Package.resolved exists") {
-                            persistedPackageResolved.asFile.exists()
+                        syncToSyntheticTask ->
+                        syncToSyntheticTask.dependsOn(actualFetchClaimer)
+                        syncToSyntheticTask.sourceFile.set(persistedPackageResolved)
+                        syncToSyntheticTask.onlyIf("Shared Package.resolved exists") {
+                            syncToSyntheticTask.sourceFile.map { sourceFile -> sourceFile.asFile.exists()}.get()
                         }
                     }
                 }
                 fetchSyntheticImportProjectPackages.configure {
+                    it.forcePackageResolved.set(true)
                     it.swiftPMDependenciesCheckout.set(provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier))
                 }
             }
@@ -509,6 +512,7 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
         it.swiftPMDependenciesCheckout.set(checkOutDir)
         it.gitIgnoreCheckoutDir.set(true)
+        it.forcePackageResolved.set(false)
     }
 
     return actualFetchClaimer
@@ -739,6 +743,7 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
         it.discoverModulesImplicitly.set(discoverModulesImplicitly)
         it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
         it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
+        it.forcePackageResolved.set(true)
     }
 }
 
@@ -807,17 +812,19 @@ private fun Project.providePersistedPackageResolvedSync(): PackageResolvedSynchr
 
 private fun Project.rootDirFile(): File = rootProject.projectDir
 
-private fun Project.providePersistedPackageResolved(): RegularFile {
+private fun Project.providePersistedPackageResolved(): Provider<RegularFile> {
     return when (val syncStrategy = providePersistedPackageResolvedSync()) {
         is PackageResolvedSynchronization.Identifier -> {
             layout.file(
-                provider {
+                provider{
                     rootDirFile().resolve(".swiftpm-locks/${syncStrategy.identifier}/swiftImport/Package.resolved")
                 }
-            ).get()
+            )
         }
         else -> {
-            layout.projectDirectory.file("Package.resolved")
+            project.provider {
+                layout.projectDirectory.file("Package.resolved")
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -678,6 +679,16 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         )
                     )
 
+                    assertResolvedVersions(
+                        projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+
+
                     assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
                     assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
                 }
@@ -698,4 +709,151 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
             }
         }
     }
+
+    /**
+    * Verifies that switching the version key from exact to from does not change the locked versions in Package_resolved.
+    */
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `fetchUmbrellaPackageIdentifierForDefault locks versions in Package_resolved when version key changes from exact to from`(version: GradleVersion) {
+
+        project("empty", version) {
+            withLockFileFixture {
+
+                val identifier = "default"
+                val useFromVersionKey = "useFromVersionKey"
+                val useExactVersionKey = "useExactVersionKey"
+
+                val repoName = "TestPackage"
+
+                val packageRepo = repoRef(repoName).also {
+                    createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {
+                    if (project.hasProperty(useFromVersionKey)) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(repoName))
+                            )
+                        }
+                    }
+                    if (project.hasProperty(useExactVersionKey)) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url), version = exact("1.0.1"), products = listOf(product(repoName))
+                            )
+                        }
+                    }
+                }
+                build("fetchUmbrellaPackageIdentifierForDefault", "-P${useExactVersionKey}=true") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+                }
+
+                build("fetchUmbrellaPackageIdentifierForDefault", "-P${useFromVersionKey}=true") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+                }
+
+            }
+        }
+    }
+
+
+    /**
+     * Verifies that switching the version key from exact to from does not change the locked versions in Package_resolved.
+     */
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `compileKotlinIosArm64 locks versions in Package_resolved when version key changes from exact to from`(version: GradleVersion) {
+
+        project("empty", version) {
+            withLockFileFixture {
+
+                val identifier = "default"
+                val useFromVersionKey = "useFromVersionKey"
+                val useExactVersionKey = "useExactVersionKey"
+
+                val repoName = "TestPackage"
+
+                val packageRepo = repoRef(repoName).also {
+                    createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {
+                    sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
+
+                    if (project.hasProperty(useFromVersionKey)) {
+
+
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(repoName))
+                            )
+                        }
+                    }
+                    if (project.hasProperty(useExactVersionKey)) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(packageRepo.url), version = exact("1.0.1"), products = listOf(product(repoName))
+                            )
+                        }
+                    }
+                }
+                build("compileKotlinIosArm64", "-P${useExactVersionKey}=true") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+                    assertResolvedVersions(
+                        projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+
+
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+                }
+
+                build("compileKotlinIosArm64", "-P${useFromVersionKey}=true") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$identifier/swiftPMCheckout/checkouts"),
+                        listOf(
+                            packageRepo to "1.0.1",
+                        )
+                    )
+
+                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+                }
+
+            }
+        }
+    }
+
+
 }
