@@ -123,7 +123,7 @@ object JKlibIrCompilationPhase :
             irBuiltIns = irBuiltIns,
             symbolTable = symbolTable,
             stubGenerator = stubGenerator,
-            mangler = mangler,
+            descriptorMangler = mangler,
         )
 
         val pluginContext = IrPluginContextImpl(

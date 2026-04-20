@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -57,10 +58,12 @@ class JsIrLinker(
         diagnosticReporter = irDiagnosticReporter,
     )
 
+    override val irMangler: KotlinMangler.IrMangler = JsManglerIr
+
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
-        mangler = JsManglerIr,
+        mangler = irMangler,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -75,6 +76,8 @@ abstract class KotlinIrLinker(
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
     protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
+
+    abstract val irMangler: KotlinMangler.IrMangler
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider
 
@@ -305,7 +308,7 @@ abstract class KotlinIrLinker(
             IrModuleDeserializerWithBuiltIns(
                 builtIns,
                 symbolTable,
-                fakeOverrideBuilder.mangler,
+                irMangler,
                 { clazz, signature -> fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode) },
                 moduleDeserializer
             )

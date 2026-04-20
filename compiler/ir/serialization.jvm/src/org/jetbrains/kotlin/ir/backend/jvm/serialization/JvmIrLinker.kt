@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -41,10 +42,12 @@ class JvmIrLinker(
     private val manglerDesc: JvmDescriptorMangler,
 ) : KotlinIrLinker(currentModule, configuration, typeSystem.irBuiltIns, symbolTable, emptyList()) {
 
+    override val irMangler: KotlinMangler.IrMangler = JvmIrMangler
+
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
-        mangler = JvmIrMangler,
+        mangler = irMangler,
         typeSystem = typeSystem,
         friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED

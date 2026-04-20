@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -56,6 +57,8 @@ class KonanIrLinker(
         KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)
     }
 
+    override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
+
     override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
         partialLinkageConfig = partialLinkageConfig,
         builtIns = builtIns,
@@ -65,7 +68,7 @@ class KonanIrLinker(
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
-        mangler = KonanManglerIr,
+        mangler = irMangler,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
