@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -152,9 +151,8 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 if (parsedValue != null) {
                     put(JVMConfigurationKeys.SAM_CONVERSIONS, parsedValue)
                 } else {
-                    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                    messageCollector.report(
-                        ERROR,
+                    configuration.report(
+                        COMPILER_ARGUMENTS_ERROR,
                         "Unknown `-Xsam-conversions` argument: ${it}\n." +
                                 "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { scheme -> scheme.description }}"
                     )
