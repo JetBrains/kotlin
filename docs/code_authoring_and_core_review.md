@@ -31,7 +31,7 @@ The preparation of the MR requires a non-zero effort compared to pushing “as i
 The following list of general recommendations (that can also be used as a reviewer/author checklist) might be particularly helpful:
 
 1. Non-functional changes should be extracted into dedicated commits. So they can be reviewed separately and excluded from the review using [the Space feature](https://resources.jetbrains.com/help/img/space/mergeRequestDefaultDiff.png)
-    * If the review is expected to take a significant amount of time, such refactorings might be and encouraged to be merged separately
+    * If the review is expected to take a significant amount of time, such refactorings might be and are encouraged to be merged separately
     * Non-functional changes include but are not limited to manual and automatic refactorings, reformats, code restructuring
 2. If the MR is functional, ensure that at least a single commit explicitly mentions the corresponding YT ticket
 3. Unless explicitly specified, if the MR mentions more than one YT ticket, it is recommended to split the MR into multiple ones, one per ticket
@@ -72,11 +72,11 @@ A few specifics apply:
 
 ### TODOs
 
-It is well known that one leaves `TODO` comment in the code it will stay there forever (or until the sudden moment when someone visits this place in code and fix it). Such TODOs hurts the quality of the codebase for the following reasons:
+It is well known that if one leaves a `TODO` comment in the code it will stay there forever (or until the sudden moment when someone visits this place in code and fixes it). Such TODOs hurt the quality of the codebase for the following reasons:
 - Usually comments in those TODOs are quite small, and it's hard to understand the original intent without additional context (which becomes forgotten quite fast)
 - `TODO` in the code means that there is some problem in the code of which developers are aware. So ideally, it should be immediately fixed or tracked using regular mechanisms for that
 
-So to avoid leaving such TODOs in the code without any intention the following process is introduced: if you leave `TODO` comment or `TODO("some reason")` in the code which is going to be pushed to `master` please
+So to avoid leaving such TODOs in the code without any intention, the following process is introduced: if you leave a `TODO` comment or `TODO("some reason")` in the code which is going to be pushed to `master`, please
 - Create a YouTrack ticket with a description of what should be done with this TODO and why
 - Add `kotlin-todo` tag to this ticket
 - Mention this ticket in the title line of the `TODO` itself. e.g. `TODO KT-XXXX description`
@@ -85,7 +85,7 @@ So to avoid leaving such TODOs in the code without any intention the following p
 
 As a reviewer, please perform the following actions when you see some newly introduced `TODO` in the code:
 - Check if some ticket is mentioned
-- If it is, ensure that the ticket described enough to gather enough context to fix this `TODO` in the future
+- If it is, ensure that the ticket is described well enough to gather enough context to fix this `TODO` in the future
 - If it isn't, please ask the author of the code to introduce it
 
 - When an issue with `kotlin-todo` is resolved, please ensure that the author fixed all corresponding TODOs in the code. 
