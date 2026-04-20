@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -70,7 +68,6 @@ class NativeDeserializerFacade(
     }
 
     private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): IrModuleInfo {
-        val messageCollector = configuration.messageCollector
         val symbolTable = SymbolTable(IdSignatureDescriptor(KonanManglerDesc), IrFactoryImpl)
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
@@ -85,7 +82,6 @@ class NativeDeserializerFacade(
             friendModules,
             configuration,
             symbolTable,
-            messageCollector,
         ) { if (it == mainModuleLib) moduleDescriptor else testServices.libraryProvider.getDescriptorByCompiledLibrary(it) }
     }
 
@@ -96,7 +92,6 @@ class NativeDeserializerFacade(
         friendModules: Map<String, List<String>>,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
-        messageCollector: MessageCollector,
         mapping: (KotlinLibrary) -> ModuleDescriptor,
     ): IrModuleInfo {
         val mainModuleLib = sortedDependencies.last()
@@ -117,7 +112,7 @@ class NativeDeserializerFacade(
 
         val irLinker = KonanIrLinker(
             currentModule = moduleDescriptor,
-            messageCollector = messageCollector,
+            configuration = configuration,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
             friendModules = friendModules,

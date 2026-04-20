@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -28,12 +29,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class JsIrLinker(
-    messageCollector: MessageCollector, builtIns: IrBuiltIns, symbolTable: SymbolTable,
+    configuration: CompilerConfiguration, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val partialLinkageSupport: PartialLinkageSupportForLinker,
     friendModules: Map<String, Collection<String>> = emptyMap(),
 ) : KotlinIrLinker(
     currentModule = null,
-    messageCollector = messageCollector,
+    configuration = configuration,
     builtIns = builtIns,
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),

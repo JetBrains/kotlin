@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -38,12 +39,12 @@ import org.jetbrains.kotlin.name.Name
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JKlibIrLinker(
     module: ModuleDescriptor,
-    messageCollector: MessageCollector,
+    configuration: CompilerConfiguration,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     val stubGenerator: DeclarationStubGenerator,
     val mangler: JKlibDescriptorMangler,
-) : KotlinIrLinker(module, messageCollector, irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(module, configuration, irBuiltIns, symbolTable, emptyList()) {
     override val returnUnboundSymbolsIfSignatureNotFound
         get() = false
 
