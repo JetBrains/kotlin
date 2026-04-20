@@ -32,6 +32,13 @@
         ]
       },
       {
+        "name": "nativeApiElements",
+        "sourceSet": [
+          "commonNonJvmMain",
+          "commonMain"
+        ]
+      },
+      {
         "name": "wasmJsApiElements",
         "sourceSet": [
           "webMain",
