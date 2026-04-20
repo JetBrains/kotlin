@@ -65,9 +65,9 @@
     }
 }
 
-<!NO_TAIL_CALLS_FOUND!>tailrec<!> fun foo5(param: Int) {
+tailrec fun foo5(param: Int) {
     if (true) {
-        return <!TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED!>foo5<!>(param)
+        return foo5(param)
     } else {
         try { } finally { }
     }
