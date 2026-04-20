@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_K1
 
 context(_: Int, _: UInt, c1: Int, c2: UInt)
 fun UInt.foo(x: Int, y: UInt) {
