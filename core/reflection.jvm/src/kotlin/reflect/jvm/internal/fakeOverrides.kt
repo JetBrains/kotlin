@@ -14,10 +14,7 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.full.declaredMembers
 import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.jvm.internal.types.AbstractKType
-import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
-import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
-import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext
+import kotlin.reflect.jvm.internal.types.*
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 
@@ -434,5 +431,3 @@ private fun List<KType>.sortedUpperBounds(memberNameForDebug: String): List<KTyp
             else -> error("Unknown upper bound classifier: ${classifier::class}")
         }
     }
-
-private fun areEqualKTypes(a: KType, b: KType): Boolean = a.isSubtypeOf(b) && b.isSubtypeOf(a)
