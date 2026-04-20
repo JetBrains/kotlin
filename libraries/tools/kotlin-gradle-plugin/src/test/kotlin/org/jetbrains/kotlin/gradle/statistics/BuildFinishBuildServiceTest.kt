@@ -58,7 +58,7 @@ class BuildFinishBuildServiceTest {
                 BUILD FINISHED
             """.trimIndent()
         )
-        fusDir.resolve("$buildId.kajfsjfh.kotlin-profile").writeText(
+        fusDir.resolve("$buildId-kajfsjfh.kotlin-profile").writeText(
             """
                 ${BooleanMetrics.BUILD_SCAN_BUILD_REPORT}=true
                 ${StringMetrics.OS_VERSION}=2.0.0-SNAPSHOT
