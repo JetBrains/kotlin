@@ -698,4 +698,64 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
             }
         }
     }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `convertSyntheticImportProjectIntoDefFileIphoneos keeps swiftpm resolution isolated across subprojects` (version: GradleVersion) {
+
+        val revenueConsumerProject = "revenueConsumer"
+
+        project("empty", version) {
+            withLockFileFixture {
+
+                initSwiftPmProject(cacheDirFile) {
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":$revenueConsumerProject"))
+
+                    }
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+                            version = from("12.5.0"),
+                            products = listOf(product("FirebaseAnalytics")),
+                        )
+                        swiftPackage(
+                            url = url("https://github.com/apple/swift-protobuf.git"),
+                            version = exact("1.31.0"),
+                            products = listOf(product("SwiftProtobuf")),
+                        )
+                    }
+                }
+
+                val revenueConsumer = project("empty", version){
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
+                                version = exact("5.49.0"),
+                                products = listOf(product("RevenueCat")),
+                            )
+                        }
+
+                    }
+                }
+
+                include(revenueConsumer, revenueConsumerProject)
+
+
+                build(":convertSyntheticImportProjectIntoDefFileIphoneos") {
+
+                    assertTasksExecuted(
+                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+                    )
+
+                    assertDirectoryExists(
+                        projectPath.resolve("build/kotlin/swiftPMCheckout"),
+                        "Root project must create its own swiftPMCheckout directory for SwiftPM dependencies"
+                    )
+                }
+
+            }
+        }
+    }
 }
