@@ -2,9 +2,21 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(weird.A::class, "22ExportedKotlinPackages5weirdO13bad_overridesE1AC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(weird.B::class, "22ExportedKotlinPackages5weirdO13bad_overridesE1BC")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("weird_A_throws__reverse_swift")
+internal external fun weird_A_throws__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(weird.A::class, "throws")
+public fun weird_A_throws__reverse(self: weird.A): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = weird_A_throws__reverse_swift(__self)
+    return run<Unit> { __result }
+}
 
 @ExportedBridge("weird_A_bar_get")
 public fun weird_A_bar_get(self: kotlin.native.internal.NativePtr): Int {

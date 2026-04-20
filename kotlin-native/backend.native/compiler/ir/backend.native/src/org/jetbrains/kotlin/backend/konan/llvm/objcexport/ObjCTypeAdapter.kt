@@ -86,13 +86,15 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
         fun CodeGenerator.ObjCTypeAdapterForBindClassToObjCName(
                 irClass: IrClass?,
                 objCName: String,
+                vtableSize: Int,
+                reverseAdapters: List<KotlinToObjCMethodAdapter> = emptyList(),
         ) = ObjCTypeAdapter(
                 irClass = irClass,
                 objCName = objCName,
                 type = llvm.runtime.objCTypeAdapter,
                 irClass?.let { constPointer(typeInfoValue(it)) },
                 llvm.nullPointer, // vtable
-                llvm.constInt32(0),
+                llvm.constInt32(vtableSize),
                 llvm.nullPointer, // itable
                 llvm.constInt32(0),
                 llvm.staticData.cStringLiteral(objCName),
@@ -102,8 +104,9 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
                 llvm.constInt32(0),
                 llvm.nullPointer, // virtualAdapters
                 llvm.constInt32(0),
-                llvm.nullPointer, // reverseAdapters
-                llvm.constInt32(0),
+                if (reverseAdapters.isEmpty()) llvm.nullPointer
+                else llvm.staticData.placeGlobalConstArray("", llvm.runtime.kotlinToObjCMethodAdapter, reverseAdapters),
+                llvm.constInt32(reverseAdapters.size),
         )
     }
 }

@@ -94,6 +94,17 @@ val SirType.annotatedSwiftName
         "@${it.identifier.swiftIdentifier}${it.arguments?.let { "()" } ?: ""}"
     } + this.swiftName).joinToString(" ")
 
+fun SirAttribute.renderAsSwiftSourceLine(): String {
+    val rendered = arguments?.joinToString(prefix = "(", postfix = ")") { arg ->
+        val value = when (val expr = arg.expression) {
+            is SirExpression.Raw -> expr.raw
+            is SirExpression.StringLiteral -> expr.value.swiftStringLiteral
+        }
+        arg.name?.let { "${it.swiftIdentifier}: $value" } ?: value
+    }
+    return "@${identifier.swiftIdentifier}${rendered.orEmpty()}"
+}
+
 val SirDeclaration.swiftParentNamePrefix: String?
     get() = this.parent.swiftFqNameOrNull
 

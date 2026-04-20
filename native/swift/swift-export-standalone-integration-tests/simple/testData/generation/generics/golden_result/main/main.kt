@@ -19,9 +19,21 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(Processor::class, "_Processor")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Producer::class, "_Producer")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("StringProducer_produce__reverse_swift")
+internal external fun StringProducer_produce__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(StringProducer::class, "produce")
+public fun StringProducer_produce__reverse(self: StringProducer): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = StringProducer_produce__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
 
 @ExportedBridge("A_foo_get")
 public fun A_foo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

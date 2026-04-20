@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -141,7 +142,7 @@ internal open class SirFunctionFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        bridgeProxy?.createSirBridges {
+        val forwardBridges = bridgeProxy?.createSirBridges {
             val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
             val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
             val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
@@ -152,6 +153,46 @@ internal open class SirFunctionFromKtSymbol(
 
             buildCall("$typesAsString($argumentsString)")
         }.orEmpty()
+
+        val reverseBridges = if (needsReverseBridge()) {
+            bridgeProxy?.createReverseSirBridges(
+                targetClassFqName = (ktSymbol as? KaNamedFunctionSymbol)
+                    ?.containingSymbol?.let { (it as? KaNamedClassSymbol)?.classId?.asSingleFqName()?.asString() }
+                    ?: "",
+                targetMethodName = ktSymbol.name?.asString() ?: "",
+                swiftDynamicCall = { selfExpr, paramExprs ->
+                    val methodName = this@SirFunctionFromKtSymbol.name
+                    val args = this@SirFunctionFromKtSymbol.parameters
+                        .zip(paramExprs)
+                        .joinToString(", ") { (param, expr) ->
+                            param.argumentName?.let { "$it: $expr" } ?: expr
+                        }
+                    val tryPrefix = if (errorType != SirType.never) "try! " else ""
+                    "$tryPrefix$selfExpr.$methodName($args)"
+                },
+                swiftDeprecation = effectiveReverseBridgeDeprecation(),
+            ).orEmpty()
+        } else {
+            emptyList()
+        }
+
+        forwardBridges + reverseBridges
+    }
+
+    private fun needsReverseBridge(): Boolean = withSessions {
+        if (!isInstance) return@withSessions false
+        if (modality != SirModality.OPEN) return@withSessions false
+        if (isUnavailable) return@withSessions false
+        val containingClass = parent as? SirClass ?: return@withSessions false
+        if (containingClass.modality != SirModality.OPEN) return@withSessions false
+        if (containingClass.isUnavailable) return@withSessions false
+        true
+    }
+
+    private fun effectiveReverseBridgeDeprecation(): SirAttribute.Available? {
+        fun SirDeclaration.deprecatedAttr(): SirAttribute.Available? =
+            attributes.firstOrNull { it is SirAttribute.Available && it.deprecated } as? SirAttribute.Available
+        return this.deprecatedAttr() ?: (parent as? SirClass)?.deprecatedAttr()
     }
 
     /**

@@ -68,8 +68,10 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.channels.Channel.Factory::class, "21KotlinxCoroutinesCore67_ExportedKotlinPackages_kotlinx_coroutines_channels_Channel_FactoryC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(kotlinx.coroutines.flow.SharingStarted.Companion::class, "21KotlinxCoroutinesCore72_ExportedKotlinPackages_kotlinx_coroutines_flow_SharingStarted_CompanionC")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -151,6 +153,198 @@ import kotlinx.coroutines.newCoroutineContext as kotlinx_coroutines_newCoroutine
 import kotlinx.coroutines.plus as kotlinx_coroutines_plus
 import kotlinx.coroutines.sync.withLock as kotlinx_coroutines_sync_withLock
 import kotlinx.coroutines.sync.withPermit as kotlinx_coroutines_sync_withPermit
+
+@ImportedBridge("kotlinx_coroutines_CloseableCoroutineDispatcher_close__reverse_swift")
+internal external fun kotlinx_coroutines_CloseableCoroutineDispatcher_close__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.CloseableCoroutineDispatcher::class, "close")
+public fun kotlinx_coroutines_CloseableCoroutineDispatcher_close__reverse(self: kotlinx.coroutines.CloseableCoroutineDispatcher): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_CloseableCoroutineDispatcher_close__reverse_swift(__self)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("kotlinx_coroutines_CoroutineDispatcher_dispatchYield__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse_swift")
+internal external fun kotlinx_coroutines_CoroutineDispatcher_dispatchYield__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse_swift(self: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr, block: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.CoroutineDispatcher::class, "dispatchYield")
+public fun kotlinx_coroutines_CoroutineDispatcher_dispatchYield__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse(self: kotlinx.coroutines.CoroutineDispatcher, context: kotlin.coroutines.CoroutineContext, block: kotlinx.coroutines.Runnable): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __context = kotlin.native.internal.ref.createRetainedExternalRCRef(context)
+    val __block = kotlin.native.internal.ref.createRetainedExternalRCRef(block)
+    val __result = kotlinx_coroutines_CoroutineDispatcher_dispatchYield__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse_swift(__self, __context, __block)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("kotlinx_coroutines_CoroutineDispatcher_dispatch__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse_swift")
+internal external fun kotlinx_coroutines_CoroutineDispatcher_dispatch__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse_swift(self: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr, block: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.CoroutineDispatcher::class, "dispatch")
+public fun kotlinx_coroutines_CoroutineDispatcher_dispatch__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse(self: kotlinx.coroutines.CoroutineDispatcher, context: kotlin.coroutines.CoroutineContext, block: kotlinx.coroutines.Runnable): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __context = kotlin.native.internal.ref.createRetainedExternalRCRef(context)
+    val __block = kotlin.native.internal.ref.createRetainedExternalRCRef(block)
+    val __result = kotlinx_coroutines_CoroutineDispatcher_dispatch__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_anyU20ExportedKotlinPackages_kotlinx_coroutines_Runnable____reverse_swift(__self, __context, __block)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("kotlinx_coroutines_CoroutineDispatcher_isDispatchNeeded__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift")
+internal external fun kotlinx_coroutines_CoroutineDispatcher_isDispatchNeeded__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift(self: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.CoroutineDispatcher::class, "isDispatchNeeded")
+public fun kotlinx_coroutines_CoroutineDispatcher_isDispatchNeeded__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse(self: kotlinx.coroutines.CoroutineDispatcher, context: kotlin.coroutines.CoroutineContext): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __context = kotlin.native.internal.ref.createRetainedExternalRCRef(context)
+    val __result = kotlinx_coroutines_CoroutineDispatcher_isDispatchNeeded__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift(__self, __context)
+    return __result
+}
+
+@ImportedBridge("kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, parallelism: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.CoroutineDispatcher::class, "limitedParallelism")
+public fun kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse(self: kotlinx.coroutines.CoroutineDispatcher, parallelism: Int): kotlinx.coroutines.CoroutineDispatcher {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_CoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift(__self, parallelism)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.CoroutineDispatcher
+}
+
+@ImportedBridge("kotlinx_coroutines_CoroutineDispatcher_toString__reverse_swift")
+internal external fun kotlinx_coroutines_CoroutineDispatcher_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.CoroutineDispatcher::class, "toString")
+public fun kotlinx_coroutines_CoroutineDispatcher_toString__reverse(self: kotlinx.coroutines.CoroutineDispatcher): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_CoroutineDispatcher_toString__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
+
+@ImportedBridge("kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, parallelism: Int): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.MainCoroutineDispatcher::class, "limitedParallelism")
+public fun kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse(self: kotlinx.coroutines.MainCoroutineDispatcher, parallelism: Int): kotlinx.coroutines.CoroutineDispatcher {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_MainCoroutineDispatcher_limitedParallelism__TypesOfArguments__Swift_Int32____reverse_swift(__self, parallelism)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.CoroutineDispatcher
+}
+
+@ImportedBridge("kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse_swift")
+internal external fun kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.MainCoroutineDispatcher::class, "toString")
+public fun kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse(self: kotlinx.coroutines.MainCoroutineDispatcher): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_MainCoroutineDispatcher_toString__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_internal_ChannelFlow_dropChannelOperators__reverse_swift")
+internal external fun kotlinx_coroutines_flow_internal_ChannelFlow_dropChannelOperators__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.internal.ChannelFlow::class, "dropChannelOperators")
+public fun kotlinx_coroutines_flow_internal_ChannelFlow_dropChannelOperators__reverse(self: kotlinx.coroutines.flow.internal.ChannelFlow<kotlin.Any?>): kotlinx.coroutines.flow.Flow<kotlin.Any?>? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_flow_internal_ChannelFlow_dropChannelOperators__reverse_swift(__self)
+    return if (__result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.Flow<kotlin.Any?>
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_internal_ChannelFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse_swift")
+internal external fun kotlinx_coroutines_flow_internal_ChannelFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse_swift(self: kotlin.native.internal.NativePtr, context: kotlin.native.internal.NativePtr, capacity: Int, onBufferOverflow: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.internal.ChannelFlow::class, "fuse")
+public fun kotlinx_coroutines_flow_internal_ChannelFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse(self: kotlinx.coroutines.flow.internal.ChannelFlow<kotlin.Any?>, context: kotlin.coroutines.CoroutineContext, capacity: Int, onBufferOverflow: kotlinx.coroutines.channels.BufferOverflow): kotlinx.coroutines.flow.Flow<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __context = kotlin.native.internal.ref.createRetainedExternalRCRef(context)
+    val __onBufferOverflow = kotlin.native.internal.ref.createRetainedExternalRCRef(onBufferOverflow)
+    val __result = kotlinx_coroutines_flow_internal_ChannelFlow_fuse__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Swift_Int32_ExportedKotlinPackages_kotlinx_coroutines_channels_BufferOverflow____reverse_swift(__self, __context, capacity, __onBufferOverflow)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.flow.Flow<kotlin.Any?>
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope____reverse_swift")
+internal external fun kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope____reverse_swift(self: kotlin.native.internal.NativePtr, scope: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.internal.ChannelFlow::class, "produceImpl")
+public fun kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope____reverse(self: kotlinx.coroutines.flow.internal.ChannelFlow<kotlin.Any?>, scope: kotlinx.coroutines.CoroutineScope): kotlinx.coroutines.channels.ReceiveChannel<kotlin.Any?> {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __scope = kotlin.native.internal.ref.createRetainedExternalRCRef(scope)
+    val __result = kotlinx_coroutines_flow_internal_ChannelFlow_produceImpl__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_coroutines_CoroutineScope____reverse_swift(__self, __scope)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlinx.coroutines.channels.ReceiveChannel<kotlin.Any?>
+}
+
+@ImportedBridge("kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse_swift")
+internal external fun kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.flow.internal.ChannelFlow::class, "toString")
+public fun kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse(self: kotlinx.coroutines.flow.internal.ChannelFlow<kotlin.Any?>): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_flow_internal_ChannelFlow_toString__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
+
+@ImportedBridge("kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, affected: kotlin.native.internal.NativePtr, failure: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.internal.AtomicOp::class, "complete")
+public fun kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.internal.AtomicOp<kotlin.Any?>, affected: kotlin.Any?, failure: kotlin.Any?): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __affected = if (affected == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(affected)
+    val __failure = if (failure == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(failure)
+    val __result = kotlinx_coroutines_internal_AtomicOp_complete__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __affected, __failure)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, affected: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.internal.AtomicOp::class, "prepare")
+public fun kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.internal.AtomicOp<kotlin.Any?>, affected: kotlin.Any?): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __affected = if (affected == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(affected)
+    val __result = kotlinx_coroutines_internal_AtomicOp_prepare__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __affected)
+    return if (__result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.Any
+}
+
+@ImportedBridge("kotlinx_coroutines_internal_LockFreeLinkedListNode_remove__reverse_swift")
+internal external fun kotlinx_coroutines_internal_LockFreeLinkedListNode_remove__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.internal.LockFreeLinkedListNode::class, "remove")
+public fun kotlinx_coroutines_internal_LockFreeLinkedListNode_remove__reverse(self: kotlinx.coroutines.internal.LockFreeLinkedListNode): Boolean {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_internal_LockFreeLinkedListNode_remove__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse_swift")
+internal external fun kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.internal.LockFreeLinkedListNode::class, "toString")
+public fun kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse(self: kotlinx.coroutines.internal.LockFreeLinkedListNode): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_internal_LockFreeLinkedListNode_toString__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
+
+@ImportedBridge("kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, affected: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.internal.OpDescriptor::class, "perform")
+public fun kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlinx.coroutines.internal.OpDescriptor, affected: kotlin.Any?): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __affected = if (affected == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(affected)
+    val __result = kotlinx_coroutines_internal_OpDescriptor_perform__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __affected)
+    return if (__result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.Any
+}
+
+@ImportedBridge("kotlinx_coroutines_internal_OpDescriptor_toString__reverse_swift")
+internal external fun kotlinx_coroutines_internal_OpDescriptor_toString__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(kotlinx.coroutines.internal.OpDescriptor::class, "toString")
+public fun kotlinx_coroutines_internal_OpDescriptor_toString__reverse(self: kotlinx.coroutines.internal.OpDescriptor): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlinx_coroutines_internal_OpDescriptor_toString__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(__result)
+}
 
 @ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_U28ExportedKotlinPackagesU2EkotlinU2EThrowableU29202D3E20SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_coroutines_selects_SelectInstance_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 @OptIn(kotlinx.coroutines.InternalCoroutinesApi::class)

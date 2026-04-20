@@ -24,7 +24,12 @@
 #import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 #include "ExternalRCRef.hpp"
+#include "WritableTypeInfo.hpp"
+#include "TypeInfoObjCExportAddition.hpp"
+#include "std_support/Atomic.hpp"
 #include "swiftExportRuntime/SwiftExport.hpp"
+
+extern "C" const TypeInfo* Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass(Class, const TypeInfo*);
 #include "StackTrace.hpp"
 
 @interface NSObject (NSObjectPrivateMethods)
@@ -251,6 +256,26 @@ using RegularRef = kotlin::mm::ObjCBackRef;
     });
 
     RuntimeCheck(shouldSubstitute || !shouldTrapOnSubstitution || newSelf == nullptr, "Newly created Kotlin object for bound bridge type should never have an associated object. Please submit a bug report.");
+
+    // For Swift subclasses of exported Kotlin classes: create a TypeInfo with patched vtable
+    // so that Kotlin virtual dispatch reaches Swift overrides via reverse bridges.
+    if (shouldTrapOnSubstitution) {
+        kotlin::CalledFromNativeGuard guard;
+        KRef obj = regularRef.ref();
+        const TypeInfo* currentTypeInfo = obj->type_info();
+        const ObjCTypeAdapter* adapter = kotlin::objCExport(currentTypeInfo).typeAdapter;
+        if (adapter != nullptr && adapter->objCName != nullptr) {
+            Class boundClass = objc_getClass(adapter->objCName);
+            if (boundClass != nil && [self class] != boundClass && [[self class] isSubclassOfClass:boundClass]) {
+                const TypeInfo* patchedTypeInfo = Kotlin_SwiftExport_getOrCreateTypeInfoForSwiftSubclass([self class], currentTypeInfo);
+                if (patchedTypeInfo != nullptr && patchedTypeInfo != currentTypeInfo) {
+                    auto* typeInfoSlot = clearPointerBits(obj->typeInfoOrMeta_, OBJECT_TAG_MASK);
+                    kotlin::std_support::atomic_ref{typeInfoSlot->typeInfo_}.store(
+                        const_cast<TypeInfo*>(patchedTypeInfo), std::memory_order_release);
+                }
+            }
+        }
+    }
 
     if (![[newSelf class] isSubclassOfClass:[self class]] || !shouldSubstitute) {
         // No previous associated object was set or it wasn't fitting for substitution.

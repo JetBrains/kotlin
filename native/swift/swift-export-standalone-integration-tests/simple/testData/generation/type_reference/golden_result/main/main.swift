@@ -22,7 +22,6 @@ open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
 public final class Class_without_package: KotlinRuntime.KotlinBase {
     public final class INNER_CLASS: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.Class_without_package.INNER_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Class_without_package.INNER_CLASS ") }
             let __kt = Class_without_package_INNER_CLASS_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { Class_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -51,7 +50,6 @@ public final class Class_without_package: KotlinRuntime.KotlinBase {
         }
     }
     public init() {
-        if Self.self != main.Class_without_package.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Class_without_package ") }
         let __kt = __root___Class_without_package_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Class_without_package_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -72,7 +70,6 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     public init(
         a: Swift.Int32
     ) {
-        if Self.self != main.DATA_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS ") }
         let __kt = __root___DATA_CLASS_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
@@ -109,7 +106,6 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
 public final class Demo: KotlinRuntime.KotlinBase {
     public final class INNER_CLASS: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.Demo.INNER_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Demo.INNER_CLASS ") }
             let __kt = Demo_INNER_CLASS_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -201,7 +197,6 @@ public final class Demo: KotlinRuntime.KotlinBase {
         arg3: main.Object_without_package,
         arg4: ExportedKotlinPackages.namespace.deeper.Object_with_package
     ) {
-        if Self.self != main.Demo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Demo ") }
         let __kt = __root___Demo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Class_without_package_ExportedKotlinPackages_namespace_deeper_Class_with_package_main_Object_without_package_ExportedKotlinPackages_namespace_deeper_Object_with_package__(__kt, arg1.__externalRCRef(), arg2.__externalRCRef(), arg3.__externalRCRef(), arg4.__externalRCRef()); return () }()
@@ -233,7 +228,6 @@ public final class Demo: KotlinRuntime.KotlinBase {
 }
 open class OPEN_CLASS: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.OPEN_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OPEN_CLASS ") }
         let __kt = __root___OPEN_CLASS_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -248,7 +242,6 @@ open class OPEN_CLASS: KotlinRuntime.KotlinBase {
 public final class Object_without_package: KotlinRuntime.KotlinBase {
     public final class INNER_CLASS: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != main.Object_without_package.INNER_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Object_without_package.INNER_CLASS ") }
             let __kt = Object_without_package_INNER_CLASS_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { Object_without_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -497,7 +490,6 @@ extension ExportedKotlinPackages.namespace.deeper {
     public final class Class_with_package: KotlinRuntime.KotlinBase {
         public final class INNER_CLASS: KotlinRuntime.KotlinBase {
             public init() {
-                if Self.self != ExportedKotlinPackages.namespace.deeper.Class_with_package.INNER_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Class_with_package.INNER_CLASS ") }
                 let __kt = namespace_deeper_Class_with_package_INNER_CLASS_init_allocate()
                 super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
                 { namespace_deeper_Class_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -526,7 +518,6 @@ extension ExportedKotlinPackages.namespace.deeper {
             }
         }
         public init() {
-            if Self.self != ExportedKotlinPackages.namespace.deeper.Class_with_package.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Class_with_package ") }
             let __kt = namespace_deeper_Class_with_package_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -579,7 +570,6 @@ extension ExportedKotlinPackages.namespace.deeper {
     public final class Object_with_package: KotlinRuntime.KotlinBase {
         public final class INNER_CLASS: KotlinRuntime.KotlinBase {
             public init() {
-                if Self.self != ExportedKotlinPackages.namespace.deeper.Object_with_package.INNER_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.Object_with_package.INNER_CLASS ") }
                 let __kt = namespace_deeper_Object_with_package_INNER_CLASS_init_allocate()
                 super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
                 { namespace_deeper_Object_with_package_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -681,7 +671,6 @@ extension ExportedKotlinPackages.ignored {
         public init(
             a: Swift.Int32
         ) {
-            if Self.self != ExportedKotlinPackages.ignored.VALUE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.ignored.VALUE_CLASS ") }
             let __kt = ignored_VALUE_CLASS_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()

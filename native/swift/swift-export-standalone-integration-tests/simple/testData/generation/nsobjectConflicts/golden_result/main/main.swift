@@ -9,7 +9,6 @@ package protocol _Semaphore {
 }
 public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main._Semaphore {
     public init() {
-        if Self.self != main.ClassA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassA ") }
         let __kt = __root___ClassA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -23,7 +22,6 @@ public final class ClassA: KotlinRuntime.KotlinBase, main.Semaphore, main._Semap
 }
 public final class ClassB: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.ClassB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassB ") }
         let __kt = __root___ClassB_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

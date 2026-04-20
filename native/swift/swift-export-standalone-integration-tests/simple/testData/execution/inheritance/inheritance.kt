@@ -3,4 +3,8 @@
 // MODULE: Inheritance
 // FILE: lib.kt
 
-open class Base
+open class Base {
+    open fun greet(): String = "Hello from Kotlin"
+}
+
+fun callGreet(base: Base): String = base.greet()
