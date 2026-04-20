@@ -11,22 +11,23 @@ import org.jetbrains.kotlin.load.java.structure.JavaRecordComponent
 import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class JavaRecordComponentOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, containingClass), JavaRecordComponent {
+) : JavaMemberOverAst(node, tree, containingClass), JavaRecordComponent {
 
     override val type: JavaType
         get() {
-            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
-                ?: throw IllegalStateException("Record component must have a type: ${node.text}")
-            return createJavaType(typeNode, containingClass.memberResolutionContext)
+            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
+                ?: throw IllegalStateException("Record component must have a type: ${tree.getText(node)}")
+            return createJavaType(typeNode, tree, containingClass.memberResolutionContext)
         }
 
     override val isVararg: Boolean
         get() {
-            if (node.findChildByType(JavaSyntaxTokenType.ELLIPSIS) != null) return true
-            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
-            return typeNode?.findChildByType(JavaSyntaxTokenType.ELLIPSIS) != null
+            if (tree.findChildByType(node, JavaSyntaxTokenType.ELLIPSIS) != null) return true
+            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
+            return typeNode?.let { tree.findChildByType(it, JavaSyntaxTokenType.ELLIPSIS) } != null
         }
 
     override val isFromSource: Boolean get() = true

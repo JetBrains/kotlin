@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -189,15 +191,16 @@ fun JavaSyntaxNode.getChildrenByType(type: SyntaxElementType): List<JavaSyntaxNo
 }
 
 internal fun computeTypeParameters(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
 ): List<JavaTypeParameter> {
-    val typeParamNodes = node.findChildByType(JavaSyntaxElementType.TYPE_PARAMETER_LIST)
-        ?.getChildrenByType(JavaSyntaxElementType.TYPE_PARAMETER)
+    val typeParamNodes = tree.findChildByType(node, JavaSyntaxElementType.TYPE_PARAMETER_LIST)
+        ?.let { tree.getChildrenByType(it, JavaSyntaxElementType.TYPE_PARAMETER) }
         ?: return emptyList()
 
     // Create type parameter instances first
-    val typeParams = typeParamNodes.map { JavaTypeParameterOverAst(it, resolutionContext) }
+    val typeParams = typeParamNodes.map { JavaTypeParameterOverAst(it, tree, resolutionContext) }
 
     // Create a resolution context with ALL type parameters in scope.
     // This is needed for resolving bounds like `<E, S extends List<E>>`.

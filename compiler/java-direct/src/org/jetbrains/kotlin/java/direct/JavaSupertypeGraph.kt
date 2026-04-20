@@ -48,9 +48,6 @@ internal class JavaSupertypeGraph(
 
     /**
      * Returns the direct supertype [ClassId]s for a class.
-     * Prefers the cached [JavaClass] instance to avoid re-parsing. Falls back to file parsing
-     * only when the class hasn't been cached yet.
-     * Resolves cross-package supertypes via imports from the file.
      */
     fun getDirectSupertypes(classId: ClassId): List<ClassId> {
         return supertypeCache.getOrPut(classId) {
@@ -63,26 +60,23 @@ internal class JavaSupertypeGraph(
             val cachedClass = classCacheLookup(classId)
             if (cachedClass is JavaClassOverAst) {
                 val (simpleImports, starImports) = cachedClass.resolutionContext.getImports()
-                return@getOrPut extractSupertypeRefsFromNode(cachedClass.node, packageFqName, simpleImports, starImports)
+                return@getOrPut extractSupertypeRefsFromNode(
+                    cachedClass.tree, cachedClass.node, packageFqName, simpleImports, starImports
+                )
             }
 
-            // Slow path: re-parse the file to extract supertype references. This fires when
-            // getDirectSupertypes is called for a class that hasn't been cached yet by
-            // parseTopLevelClassFromFile — typically during early supertype-graph construction
-            // triggered by collectInheritedInnerClasses before the class finder has had a
-            // reason to fully parse the file. In practice this is rare: once a class is
-            // requested through findClass the fast path above kicks in for all subsequent calls.
+            // Slow path: re-parse the file to extract supertype references.
             val files = filesForClassLookup(classId)
             if (files.isEmpty()) return@getOrPut emptyList()
 
             val file = files.first()
             val source = sourceFileReader.readFileContent(file) ?: return@getOrPut emptyList()
-            val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-            val root = buildSyntaxTree(builder, source)
+            val tree = parseJavaToLightTree(source, 0)
+            val root = tree.getRoot()
 
-            val (simpleImports, starImports) = JavaResolutionContext.extractImports(root)
-            val classNode = findClassInTree(root, classId) ?: return@getOrPut emptyList()
-            extractSupertypeRefsFromNode(classNode, packageFqName, simpleImports, starImports)
+            val (simpleImports, starImports) = JavaResolutionContext.extractImports(tree, root)
+            val classNode = findClassInTree(tree, root, classId) ?: return@getOrPut emptyList()
+            extractSupertypeRefsFromNode(tree, classNode, packageFqName, simpleImports, starImports)
         }
     }
 
@@ -123,14 +117,12 @@ internal class JavaSupertypeGraph(
 
             val innerClasses = getInnerClassNames(current)
             for (innerName in innerClasses) {
-                // Don't report names already declared by a closer class in this path (they're shadowed)
                 if (innerName !in shadowedNames) {
                     val innerClassId = current.createNestedClassId(Name.identifier(innerName))
                     result.getOrPut(innerName) { mutableSetOf() }.add(innerClassId)
                 }
             }
 
-            // This class's inner class names shadow same-named types from its own supertypes
             val shadowedByThisClass = shadowedNames + innerClasses
             for (supertypeId in getDirectSupertypes(current)) {
                 collectRecursive(supertypeId, shadowedByThisClass)
@@ -150,20 +142,20 @@ internal class JavaSupertypeGraph(
             return cachedClass.innerClassNames.map { it.asString() }.toSet()
         }
 
-        // Slow path: re-parse for inner class names (same rationale as getDirectSupertypes).
+        // Slow path: re-parse for inner class names.
         val files = filesForClassLookup(classId)
         if (files.isEmpty()) return emptySet()
 
         val file = files.first()
         val source = sourceFileReader.readFileContent(file) ?: return emptySet()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
+        val tree = parseJavaToLightTree(source, 0)
+        val root = tree.getRoot()
 
-        val classNode = findClassInTree(root, classId) ?: return emptySet()
+        val classNode = findClassInTree(tree, root, classId) ?: return emptySet()
 
-        return classNode.children
-            .filter { it.type == JavaSyntaxElementType.CLASS }
-            .mapNotNull { it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text }
+        return tree.getChildren(classNode)
+            .filter { tree.getType(it) == JavaSyntaxElementType.CLASS }
+            .mapNotNull { tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } }
             .toSet()
     }
 
@@ -172,37 +164,38 @@ internal class JavaSupertypeGraph(
      * Uses raw text from JAVA_CODE_REFERENCE nodes — no type resolution involved.
      */
     private fun extractSupertypeRefsFromNode(
-        classNode: JavaSyntaxNode,
+        tree: JavaLightTree,
+        classNode: JavaLightNode,
         packageFqName: FqName,
         simpleImports: Map<String, FqName> = emptyMap(),
         starImports: List<FqName> = emptyList(),
     ): List<ClassId> {
         val supertypes = mutableListOf<ClassId>()
-        classNode.findChildByType(JavaSyntaxElementType.EXTENDS_LIST)
-            ?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
-            ?.forEach { ref ->
-                resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
+        tree.findChildByType(classNode, JavaSyntaxElementType.EXTENDS_LIST)?.let { el ->
+            tree.getChildrenByType(el, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
+                resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports)?.let {
                     supertypes.add(it)
                 }
             }
-        classNode.findChildByType(JavaSyntaxElementType.IMPLEMENTS_LIST)
-            ?.getChildrenByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
-            ?.forEach { ref ->
-                resolveSupertypeReference(ref.text, packageFqName, simpleImports, starImports)?.let {
+        }
+        tree.findChildByType(classNode, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { il ->
+            tree.getChildrenByType(il, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
+                resolveSupertypeReference(tree.getText(ref).toString(), packageFqName, simpleImports, starImports)?.let {
                     supertypes.add(it)
                 }
             }
+        }
         return supertypes
     }
 
-    private fun findClassInTree(root: JavaSyntaxNode, classId: ClassId): JavaSyntaxNode? {
+    private fun findClassInTree(tree: JavaLightTree, root: JavaLightNode, classId: ClassId): JavaLightNode? {
         val segments = classId.relativeClassName.pathSegments().map { it.asString() }
         if (segments.isEmpty()) return null
 
-        var currentNode: JavaSyntaxNode = root
+        var currentNode: JavaLightNode = root
         for (segment in segments) {
-            val classNode = currentNode.getChildrenByType(JavaSyntaxElementType.CLASS).firstOrNull { node ->
-                node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.textEquals(segment) == true
+            val classNode = tree.getChildrenByType(currentNode, JavaSyntaxElementType.CLASS).firstOrNull { node ->
+                tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.textEquals(it, segment) } == true
             } ?: return null
             currentNode = classNode
         }
@@ -218,12 +211,10 @@ internal class JavaSupertypeGraph(
         val simpleName = ref.substringBefore('<').trim()
 
         if (!simpleName.contains('.')) {
-            // 1. Same-package lookup
             if (sameClassInSameFilePackage(packageFqName, simpleName)) {
                 return ClassId(packageFqName, Name.identifier(simpleName))
             }
 
-            // 2. Explicit import lookup (e.g., import base.FunctionDescriptor)
             val explicitFqName = simpleImports[simpleName]
             if (explicitFqName != null) {
                 val importPkg = explicitFqName.parent()
@@ -233,7 +224,6 @@ internal class JavaSupertypeGraph(
                 }
             }
 
-            // 3. Star import lookup (e.g., import base.*)
             for (starPkg in starImports) {
                 if (sameClassInSameFilePackage(starPkg, simpleName)) {
                     return ClassId(starPkg, Name.identifier(simpleName))

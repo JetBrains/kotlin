@@ -34,13 +34,16 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             class Base {}
             class Derived extends Base {}
         """.trimIndent()
-        val (root, context) = parseSource(source)
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
+        val context = parsed.context
 
-        val classes = root.children.filter { it.type.toString() == "CLASS" }
+        val classes = tree.getChildren(root).filter { tree.getType(it).toString() == "CLASS" }
         assert(classes.size == 2) { "Expected 2 classes, got ${classes.size}" }
 
-        val base = JavaClassOverAst(classes[0], context)
-        val derived = JavaClassOverAst(classes[1], context)
+        val base = JavaClassOverAst(classes[0], tree, context)
+        val derived = JavaClassOverAst(classes[1], tree, context)
 
         assert(base.name.asString() == "Base")
         assert(derived.name.asString() == "Derived")
@@ -66,10 +69,16 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             class Base {}
             class Derived extends Base {}
         """.trimIndent()
-        val (root1, context1) = parseSource(sourceSimpleName)
+        val parsed1 = parseSource(sourceSimpleName)
+        val root1 = parsed1.root
+        val tree1 = parsed1.tree
+        val context1 = parsed1.context
 
-        val derivedNode = root1.children.first { it.type.toString() == "CLASS" && it.findChildByType("IDENTIFIER")?.text == "Derived" }
-        val derived = JavaClassOverAst(derivedNode, context1)
+        val derivedNode = tree1.getChildren(root1).first {
+            tree1.getType(it).toString() == "CLASS" &&
+                    tree1.findChildByType(it, "IDENTIFIER")?.let { id -> tree1.getText(id).toString() } == "Derived"
+        }
+        val derived = JavaClassOverAst(derivedNode, tree1, context1)
 
         assert(derived.supertypes.size == 1) { "Expected 1 supertype" }
         val supertype = derived.supertypes.first()
@@ -215,8 +224,11 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             }
         """.trimIndent()
         
-        val (root, context) = parseSource(source)
-        val classA = JavaClassOverAst(root.children.first { it.type.toString() == "CLASS" }, context)
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
+        val context = parsed.context
+        val classA = JavaClassOverAst(tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }, tree, context)
         
         // Verify we can find nested class b
         val nestedB = classA.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("b"))
@@ -234,9 +246,17 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             }
         """.trimIndent()
         
-        val (root2, context2) = parseSource(source2)
-        val classes = root2.children.filter { it.type.toString() == "CLASS" }
-        val c2Class = JavaClassOverAst(classes.first { it.findChildByType("IDENTIFIER")?.text == "c2" }, context2)
+        val parsed2 = parseSource(source2)
+        val root2 = parsed2.root
+        val tree2 = parsed2.tree
+        val context2 = parsed2.context
+        val classes = tree2.getChildren(root2).filter { tree2.getType(it).toString() == "CLASS" }
+        val c2Class = JavaClassOverAst(
+            classes.first {
+                tree2.findChildByType(it, "IDENTIFIER")?.let { id -> tree2.getText(id).toString() } == "c2"
+            },
+            tree2, context2
+        )
         
         val getBMethod = c2Class.methods.first { it.name.asString() == "getB" }
         val returnType = getBMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -262,10 +282,13 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             }
         """.trimIndent()
         
-        val (rootC2, contextC2) = parseSource(sourceC2)
+        val parsedC2 = parseSource(sourceC2)
+        val rootC2 = parsedC2.root
+        val treeC2 = parsedC2.tree
+        val contextC2 = parsedC2.context
         val c2Class = JavaClassOverAst(
-            rootC2.children.first { it.type.toString() == "CLASS" }, 
-            contextC2
+            treeC2.getChildren(rootC2).first { treeC2.getType(it).toString() == "CLASS" },
+            treeC2, contextC2
         )
         
         val getBMethod = c2Class.methods.first { it.name.asString() == "getB" }

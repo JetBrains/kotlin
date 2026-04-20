@@ -17,36 +17,31 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class JavaMemberOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     override val containingClass: JavaClassOverAst,
-) : JavaElementOverAst(node), JavaMember {
+) : JavaElementOverAst(node, tree), JavaMember {
 
-    /**
-     * Resolution context for this member. Includes the containing class's type parameters.
-     * Subclasses (methods, constructors) may extend this with their own type parameters.
-     */
     protected open val resolutionContext: JavaResolutionContext
         get() = containingClass.memberResolutionContext
 
     override val name: Name
-        get() = Name.identifier(node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text ?: "<error>")
-
-    // Performance: manual @Volatile fields replace `by lazy(PUBLICATION)` delegates.
-    // JavaMethodOverAst (~50K instances) and JavaFieldOverAst (~30K instances) each had
-    // multiple delegates at ~32 bytes each; this saves ~13 MB total in large projects.
+        get() = Name.identifier(
+            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>"
+        )
 
     @Volatile private var _baseModifierList: Any? = NOT_COMPUTED
-    private val modifierList: JavaSyntaxNode?
+    private val modifierList: JavaLightNode?
         get() {
             val cached = _baseModifierList
-            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
-            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            if (cached !== NOT_COMPUTED) return cached as JavaLightNode?
+            val computed = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
             _baseModifierList = computed
             return computed
         }
 
     protected fun hasModifier(modifier: SyntaxElementType): Boolean {
-        return modifierList?.children?.any { it.type == modifier } ?: false
+        return modifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
     }
 
     override val isAbstract: Boolean get() = hasModifier(JavaSyntaxTokenType.ABSTRACT_KEYWORD)
@@ -68,9 +63,10 @@ abstract class JavaMemberOverAst(
     override val annotations: Collection<JavaAnnotation>
         get() {
             _baseAnnotations?.let { return it }
-            val computed = modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-                ?: emptyList()
+            val computed = modifierList?.let { ml ->
+                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            } ?: emptyList()
             _baseAnnotations = computed
             return computed
         }
@@ -82,21 +78,24 @@ abstract class JavaMemberOverAst(
 
     // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
-        get() = node.findChildByType("DOC_COMMENT")?.text?.contains("@deprecated", ignoreCase = true) == true
+        get() = tree.findChildByType(node, "DOC_COMMENT")?.let {
+            tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
+        } == true
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
 
 class JavaFieldOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, containingClass), JavaField {
+) : JavaMemberOverAst(node, tree, containingClass), JavaField {
     @Volatile private var _isEnumEntry: Int = -1
     override val isEnumEntry: Boolean
         get() {
             val cached = _isEnumEntry
             if (cached >= 0) return cached != 0
-            val computed = node.type == JavaSyntaxElementType.ENUM_CONSTANT
+            val computed = tree.getType(node) == JavaSyntaxElementType.ENUM_CONSTANT
             _isEnumEntry = if (computed) 1 else 0
             return computed
         }
@@ -104,33 +103,33 @@ class JavaFieldOverAst(
     /**
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
      * the parser only attaches MODIFIER_LIST and TYPE to the first FIELD node.
-     * Subsequent fields (B, C) have no MODIFIER_LIST or TYPE of their own.
-     * This property finds the leading FIELD sibling that carries the shared modifiers/type.
      */
     @Volatile private var _leadingFieldNode: Any? = NOT_COMPUTED
-    private val leadingFieldNode: JavaSyntaxNode?
+    private val leadingFieldNode: JavaLightNode?
         get() {
             val cached = _leadingFieldNode
-            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
+            if (cached !== NOT_COMPUTED) return cached as JavaLightNode?
             val computed = computeLeadingFieldNode()
             _leadingFieldNode = computed
             return computed
         }
 
-    private fun computeLeadingFieldNode(): JavaSyntaxNode? {
-        if (node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || node.findChildByType(JavaSyntaxElementType.TYPE) != null) {
-            return null // this node already has its own modifiers/type
+    private fun computeLeadingFieldNode(): JavaLightNode? {
+        if (tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST) != null ||
+            tree.findChildByType(node, JavaSyntaxElementType.TYPE) != null
+        ) {
+            return null
         }
-        val parent = node.parent ?: return null
-        val siblings = parent.children
-        val myIndex = siblings.indexOf(node)
+        val parent = tree.getParent(node) ?: return null
+        val siblings = tree.getChildren(parent)
+        val myIndex = siblings.indexOfFirst { it == node }
         // Walk backwards to find the nearest FIELD sibling with a MODIFIER_LIST or TYPE
         return (myIndex - 1 downTo 0)
             .map { siblings[it] }
-            .firstOrNull {
-                it.type == JavaSyntaxElementType.FIELD && (it.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) != null || it.findChildByType(
-                    JavaSyntaxElementType.TYPE
-                ) != null)
+            .firstOrNull { sibling ->
+                tree.getType(sibling) == JavaSyntaxElementType.FIELD &&
+                        (tree.findChildByType(sibling, JavaSyntaxElementType.MODIFIER_LIST) != null ||
+                                tree.findChildByType(sibling, JavaSyntaxElementType.TYPE) != null)
             }
     }
 
@@ -139,17 +138,18 @@ class JavaFieldOverAst(
      * in a multi-field declaration.
      */
     @Volatile private var _effectiveModifierList: Any? = NOT_COMPUTED
-    private val effectiveModifierList: JavaSyntaxNode?
+    private val effectiveModifierList: JavaLightNode?
         get() {
             val cached = _effectiveModifierList
-            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
-            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST) ?: leadingFieldNode?.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            if (cached !== NOT_COMPUTED) return cached as JavaLightNode?
+            val computed = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+                ?: leadingFieldNode?.let { tree.findChildByType(it, JavaSyntaxElementType.MODIFIER_LIST) }
             _effectiveModifierList = computed
             return computed
         }
 
     private fun hasFieldModifier(modifier: SyntaxElementType): Boolean {
-        return effectiveModifierList?.children?.any { it.type == modifier } ?: false
+        return effectiveModifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
     }
 
     // Enum constants are implicitly public (JLS 8.9.3)
@@ -169,9 +169,10 @@ class JavaFieldOverAst(
     override val annotations: Collection<JavaAnnotation>
         get() {
             _fieldAnnotations?.let { return it }
-            val computed = effectiveModifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-                ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-                ?: emptyList()
+            val computed = effectiveModifierList?.let { ml ->
+                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            } ?: emptyList()
             _fieldAnnotations = computed
             return computed
         }
@@ -186,39 +187,32 @@ class JavaFieldOverAst(
         }
 
     private fun computeType(): JavaType {
-        // For enum constants, the type is the containing enum class itself
         if (isEnumEntry) {
             return JavaClassifierTypeForEnumEntry(containingClass)
         }
-        // For multi-field declarations, the TYPE node is on the leading field
-        val typeSourceNode = if (node.findChildByType(JavaSyntaxElementType.TYPE) != null) node else leadingFieldNode ?: node
-        return createJavaType(typeSourceNode, resolutionContext)
+        val typeSourceNode = if (tree.findChildByType(node, JavaSyntaxElementType.TYPE) != null) node else leadingFieldNode ?: node
+        return createJavaType(typeSourceNode, tree, resolutionContext)
     }
 
     /**
      * The initializer expression node, if present.
-     * For a field like `static final int X = 1 + 2`, this is the `1 + 2` expression.
      */
-    private val initializerNode: JavaSyntaxNode?
+    private val initializerNode: JavaLightNode?
         get() {
-            // Find EQ token and get the expression after it
-            val children = node.children
-            val eqIndex = children.indexOfFirst { it.type == JavaSyntaxTokenType.EQ }
+            val children = tree.getChildren(node)
+            val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
             if (eqIndex < 0) return null
-            // The initializer is the next non-whitespace child after EQ
             return children.drop(eqIndex + 1).firstOrNull {
-                it.type != SyntaxTokenTypes.WHITE_SPACE && it.type != JavaSyntaxTokenType.SEMICOLON
+                val t = tree.getType(it)
+                t != SyntaxTokenTypes.WHITE_SPACE && t != JavaSyntaxTokenType.SEMICOLON
             }
         }
 
     override val hasConstantNotNullInitializer: Boolean
         get() {
             val init = initializerNode ?: return false
-            // Must be final and have a primitive or String type
             if (!isFinal) return false
             val fieldType = type
-            // For String, check both resolved "java.lang.String" and unresolved "String"
-            // (which implicitly refers to java.lang.String)
             val isString = fieldType is JavaClassifierType &&
                     (fieldType.classifierQualifiedName == "java.lang.String" ||
                             fieldType.classifierQualifiedName == "String")
@@ -237,22 +231,20 @@ class JavaFieldOverAst(
      * potentially constant even if we cannot evaluate them locally, since they might be resolved
      * via cross-language callback. Unresolvable simple names and method calls return false.
      */
-    private fun isInitializerPotentiallyConstant(node: JavaSyntaxNode): Boolean {
-        return when (node.type) {
+    private fun isInitializerPotentiallyConstant(n: JavaLightNode): Boolean {
+        return when (tree.getType(n)) {
             JavaSyntaxElementType.LITERAL_EXPRESSION -> {
-                val child = node.children.firstOrNull()
-                child?.type.toString() != "NULL_LITERAL"
+                val child = tree.getChildren(n).firstOrNull()
+                child?.let { tree.getType(it).toString() } != "NULL_LITERAL"
             }
             JavaSyntaxElementType.BINARY_EXPRESSION -> {
-                val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
-                // [lhs, operator, rhs] — check both operands
+                val children = tree.getChildren(n).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
                 children.size >= 3 &&
                         isInitializerPotentiallyConstant(children[0]) &&
                         isInitializerPotentiallyConstant(children[2])
             }
             JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
-                // Multiple operands with same operator; operands are at even indices
-                val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
+                val children = tree.getChildren(n).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
                 var i = 0
                 var result = true
                 while (i < children.size) {
@@ -265,38 +257,33 @@ class JavaFieldOverAst(
                 result
             }
             JavaSyntaxElementType.PREFIX_EXPRESSION -> {
-                val children = node.children.filter { it.type != SyntaxTokenTypes.WHITE_SPACE }
+                val children = tree.getChildren(n).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
                 children.size >= 2 && isInitializerPotentiallyConstant(children[1])
             }
             JavaSyntaxElementType.PARENTH_EXPRESSION -> {
-                val inner = node.children.firstOrNull {
-                    it.type != SyntaxTokenTypes.WHITE_SPACE && it.type != JavaSyntaxTokenType.LPARENTH && it.type != JavaSyntaxTokenType.RPARENTH
+                val inner = tree.getChildren(n).firstOrNull {
+                    val t = tree.getType(it)
+                    t != SyntaxTokenTypes.WHITE_SPACE && t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
                 }
                 inner != null && isInitializerPotentiallyConstant(inner)
             }
             JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
-                val refText = node.text.trim()
+                val refText = tree.getText(n).toString().trim()
                 if (refText.contains('.')) {
-                    // Qualified reference (e.g., MainKt.FOO, Foo.BAR) — might be an external
-                    // constant resolvable via the cross-language callback
                     true
                 } else {
-                    // Simple name — must be resolvable as a constant in local scope
                     isSimpleNamePotentiallyConstant(refText)
                 }
             }
-            else -> false  // method calls, new expressions, etc. are never JLS constants
+            else -> false
         }
     }
 
     private fun isSimpleNamePotentiallyConstant(name: String): Boolean {
-        // Check if the name refers to a field in the same class
         val localField = containingClass.fields.find { it.name.asString() == name } as? JavaFieldOverAst
         if (localField != null) {
-            // A field reference is only potentially constant if the field itself is final
             return localField.isFinal
         }
-        // Not in the same class — check if it's a known single-type import (e.g., static import)
         return containingClass.resolutionContext.getSimpleImport(name) != null
     }
 
@@ -323,23 +310,20 @@ class JavaFieldOverAst(
 }
 
 class JavaMethodOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, containingClass), JavaMethod {
+) : JavaMemberOverAst(node, tree, containingClass), JavaMethod {
 
     @Volatile private var _methodTypeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
         get() {
             _methodTypeParameters?.let { return it }
-            val computed = computeTypeParameters(node, containingClass.memberResolutionContext)
+            val computed = computeTypeParameters(node, tree, containingClass.memberResolutionContext)
             _methodTypeParameters = computed
             return computed
         }
 
-    /**
-     * Resolution context including both class and method type parameters.
-     * Method's own type parameters shadow class type parameters with the same name.
-     */
     @Volatile private var _methodResolutionContext: JavaResolutionContext? = null
     override val resolutionContext: JavaResolutionContext
         get() {
@@ -353,10 +337,10 @@ class JavaMethodOverAst(
     override val valueParameters: List<JavaValueParameter>
         get() {
             _methodValueParameters?.let { return it }
-            val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST)
+            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
             val computed = if (parameterList != null) {
-                parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
-                    .map { JavaValueParameterOverAst(it, resolutionContext) }
+                tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
+                    .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
             } else emptyList()
             _methodValueParameters = computed
             return computed
@@ -366,23 +350,23 @@ class JavaMethodOverAst(
     override val returnType: JavaType
         get() {
             _returnType?.let { return it }
-            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
+            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
             val computed = if (typeNode != null) {
                 // TYPE_USE annotations appear in the method modifier list but belong to the return type
-                createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
+                createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
             } else {
-                JavaPrimitiveTypeOverAst(node, resolutionContext)
+                JavaPrimitiveTypeOverAst(node, tree, resolutionContext)
             }
             _returnType = computed
             return computed
         }
 
     @Volatile private var _methodModifierList: Any? = NOT_COMPUTED
-    private val modifierList: JavaSyntaxNode?
+    private val modifierList: JavaLightNode?
         get() {
             val cached = _methodModifierList
-            if (cached !== NOT_COMPUTED) return cached as JavaSyntaxNode?
-            val computed = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+            if (cached !== NOT_COMPUTED) return cached as JavaLightNode?
+            val computed = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
             _methodModifierList = computed
             return computed
         }
@@ -397,27 +381,24 @@ class JavaMethodOverAst(
 
     private val hasDefaultKeyword: Boolean
         // DEFAULT_KEYWORD is inside MODIFIER_LIST, not a direct child of the method node
-        get() = modifierList?.children?.any { it.type == JavaSyntaxTokenType.DEFAULT_KEYWORD } ?: false
+        get() = modifierList?.let { tree.hasChildOfType(it, JavaSyntaxTokenType.DEFAULT_KEYWORD) } ?: false
 
     override val annotationParameterDefaultValue: JavaAnnotationArgument?
         get() {
-            // Only annotation interface methods can have default values
             if (!containingClass.isAnnotationType) return null
 
-            // Look for DEFAULT_KEYWORD followed by the default value
-            val defaultKeyword = node.findChildByType(JavaSyntaxTokenType.DEFAULT_KEYWORD) ?: return null
+            tree.findChildByType(node, JavaSyntaxTokenType.DEFAULT_KEYWORD) ?: return null
 
-            // Find the value node - it follows DEFAULT_KEYWORD in the children list
-            val children = node.children
-            val defaultIndex = children.indexOfFirst { it.type == JavaSyntaxTokenType.DEFAULT_KEYWORD }
+            val children = tree.getChildren(node)
+            val defaultIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.DEFAULT_KEYWORD }
             if (defaultIndex < 0) return null
 
-            // The value expression is the next non-whitespace child after DEFAULT_KEYWORD
             val valueNode = children.drop(defaultIndex + 1).firstOrNull {
-                it.type != SyntaxTokenTypes.WHITE_SPACE && it.type != JavaSyntaxTokenType.SEMICOLON
+                val t = tree.getType(it)
+                t != SyntaxTokenTypes.WHITE_SPACE && t != JavaSyntaxTokenType.SEMICOLON
             } ?: return null
 
-            return createAnnotationArgumentFromValue(null, valueNode, resolutionContext)
+            return createAnnotationArgumentFromValue(null, valueNode, tree, resolutionContext)
         }
 
     override val hasAnnotationParameterDefaultValue: Boolean get() = annotationParameterDefaultValue != null
@@ -427,10 +408,10 @@ class JavaMethodOverAst(
 }
 
 class JavaConstructorOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, containingClass), JavaConstructor {
-    // Constructors are never static, abstract, and are always final (can't be overridden)
+) : JavaMemberOverAst(node, tree, containingClass), JavaConstructor {
     override val isAbstract: Boolean get() = false
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
@@ -439,14 +420,11 @@ class JavaConstructorOverAst(
     override val typeParameters: List<JavaTypeParameter>
         get() {
             _ctorTypeParameters?.let { return it }
-            val computed = computeTypeParameters(node, containingClass.memberResolutionContext)
+            val computed = computeTypeParameters(node, tree, containingClass.memberResolutionContext)
             _ctorTypeParameters = computed
             return computed
         }
 
-    /**
-     * Resolution context including both class and constructor type parameters.
-     */
     @Volatile private var _ctorResolutionContext: JavaResolutionContext? = null
     override val resolutionContext: JavaResolutionContext
         get() {
@@ -460,10 +438,10 @@ class JavaConstructorOverAst(
     override val valueParameters: List<JavaValueParameter>
         get() {
             _ctorValueParameters?.let { return it }
-            val parameterList = node.findChildByType(JavaSyntaxElementType.PARAMETER_LIST)
+            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
             val computed = if (parameterList != null) {
-                parameterList.getChildrenByType(JavaSyntaxElementType.PARAMETER)
-                    .map { JavaValueParameterOverAst(it, resolutionContext) }
+                tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
+                    .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
             } else emptyList()
             _ctorValueParameters = computed
             return computed
@@ -473,38 +451,40 @@ class JavaConstructorOverAst(
 }
 
 class JavaValueParameterOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
-) : JavaElementOverAst(node), JavaValueParameter {
+) : JavaElementOverAst(node, tree), JavaValueParameter {
     override val name: Name?
-        get() = node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text?.let { Name.identifier(it) }
+        get() = tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { Name.identifier(tree.getText(it).toString()) }
 
     override val type: JavaType
         get() {
-            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE) ?: node
-            // Pass modifier list annotations as extra annotations to the type.
-            // Matches TreeBasedValueParameter which passes annotations to TreeBasedType.create().
-            return createJavaTypeWithAnnotations(typeNode, modifierList, resolutionContext)
+            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE) ?: node
+            return createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
         }
 
     override val isVararg: Boolean
         get() {
-            if (node.findChildByType(JavaSyntaxTokenType.ELLIPSIS) != null) return true
-            val typeNode = node.findChildByType(JavaSyntaxElementType.TYPE)
-            return typeNode?.findChildByType(JavaSyntaxTokenType.ELLIPSIS) != null
+            if (tree.findChildByType(node, JavaSyntaxTokenType.ELLIPSIS) != null) return true
+            val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
+            return typeNode?.let { tree.findChildByType(it, JavaSyntaxTokenType.ELLIPSIS) } != null
         }
 
-    private val modifierList: JavaSyntaxNode?
-        get() = node.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)
+    private val modifierList: JavaLightNode?
+        get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
 
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.map { JavaAnnotationOverAst(it, resolutionContext) }
-            ?: emptyList()
+        get() = modifierList?.let { ml ->
+            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        } ?: emptyList()
 
     // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
-        get() = node.findChildByType("DOC_COMMENT")?.text?.contains("@deprecated", ignoreCase = true) == true
+        get() = tree.findChildByType(node, "DOC_COMMENT")?.let {
+            tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
+        } == true
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true

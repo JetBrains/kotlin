@@ -197,25 +197,34 @@ class JavaClassFinderOverAstImpl(
 
     private fun indexPackageInfo(file: VirtualFile) {
         val source = sourceFileReader.readFileContent(file) ?: return
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
+        val tree = parseJavaToLightTree(source, 0)
+        val root = tree.getRoot()
 
-        val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
-        val packageName = (packageStmt ?: root).findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text ?: return
+        val packageStmt = tree.findChildByType(root, JavaSyntaxElementType.PACKAGE_STATEMENT)
+        val packageName = (packageStmt ?: root).let {
+            tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
+        } ?: return
         val packageFqName = FqName(packageName)
 
-        val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
+        val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
         val annotations = mutableListOf<JavaAnnotation>()
 
         // Annotations are in PACKAGE_STATEMENT → MODIFIER_LIST → ANNOTATION (KMP parser structure).
         // Also check other plausible locations for robustness.
-        packageStmt?.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
-        packageStmt?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
-        root.getChildrenByType(JavaSyntaxElementType.ANNOTATION).mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
-        root.findChildByType(JavaSyntaxElementType.MODIFIER_LIST)?.getChildrenByType(JavaSyntaxElementType.ANNOTATION)
-            ?.mapTo(annotations) { JavaAnnotationOverAst(it, resolutionContext) }
+        packageStmt?.let { ps ->
+            tree.findChildByType(ps, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                    .mapTo(annotations) { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            }
+            tree.getChildrenByType(ps, JavaSyntaxElementType.ANNOTATION)
+                .mapTo(annotations) { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        }
+        tree.getChildrenByType(root, JavaSyntaxElementType.ANNOTATION)
+            .mapTo(annotations) { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        tree.findChildByType(root, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                .mapTo(annotations) { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        }
 
         if (annotations.isNotEmpty()) {
             packageAnnotationNodes.getOrPut(packageFqName) { mutableListOf() }.addAll(annotations)
@@ -240,15 +249,17 @@ class JavaClassFinderOverAstImpl(
      */
     private fun tryBuildFileEntryWithFullParse(file: VirtualFile): FileEntry? {
         val source = sourceFileReader.readFileContent(file) ?: return null
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
+        val tree = parseJavaToLightTree(source, 0)
+        val root = tree.getRoot()
 
-        val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
-        val packageName = packageStmt?.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
+        val packageStmt = tree.findChildByType(root, JavaSyntaxElementType.PACKAGE_STATEMENT)
+        val packageName = packageStmt?.let {
+            tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
+        }
         val packageFqName = if (packageName != null) FqName(packageName) else FqName.ROOT
 
-        val classNames = root.getChildrenByType(JavaSyntaxElementType.CLASS).mapNotNull { node ->
-            node.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
+        val classNames = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).mapNotNull { node ->
+            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() }
         }.toSet()
 
         if (classNames.isEmpty()) return null
@@ -257,10 +268,7 @@ class JavaClassFinderOverAstImpl(
         if (!classNames.contains(fileBaseName)) return null
 
         // Eagerly create and cache all top-level JavaClass instances.
-        // Uses the resolution context's localClassProvider to ensure the same instances
-        // are shared between the class cache and the context's local class cache
-        // (FIR matches type parameters by object identity).
-        val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
+        val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
         for (className in classNames) {
             val classId = ClassId(packageFqName, FqName(className), isLocal = false)
             if (classId !in classCache) {
@@ -304,14 +312,13 @@ class JavaClassFinderOverAstImpl(
         classCache[classId]?.let { return it as? JavaClassOverAst }
 
         val source = sourceFileReader.readFileContent(file.file) ?: return null
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        val resolutionContext = JavaResolutionContext.create(root, classFinderProvider = { this })
+        val tree = parseJavaToLightTree(source, 0)
+        val root = tree.getRoot()
+        val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
 
         // Cache ALL top-level classes from this file to avoid re-parsing for sibling classes.
-        // Uses findLocalClass to ensure consistent instances with the context's local class cache.
-        val allClassNames = root.getChildrenByType(JavaSyntaxElementType.CLASS).mapNotNull {
-            it.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
+        val allClassNames = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).mapNotNull {
+            tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() }
         }
         for (className in allClassNames) {
             val cid = ClassId(file.packageFqName, FqName(className), isLocal = false)

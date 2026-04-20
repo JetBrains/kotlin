@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -14,14 +16,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JavaAnnotationOverAst(
-    node: JavaSyntaxNode,
+    node: JavaLightNode,
+    tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
-) : JavaElementOverAst(node), JavaAnnotation {
+) : JavaElementOverAst(node, tree), JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
         get() {
-            val parameterList = node.findChildByType(JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST) ?: return emptyList()
-            return parameterList.getChildrenByType(JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
-                createAnnotationArgument(nvp, resolutionContext)
+            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST) ?: return emptyList()
+            return tree.getChildrenByType(parameterList, JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
+                createAnnotationArgument(nvp, tree, resolutionContext)
             }
         }
 
@@ -31,18 +34,16 @@ class JavaAnnotationOverAst(
      * For `@java.lang.Deprecated`, returns "java.lang.Deprecated".
      */
     private val annotationName: String?
-        get() = node.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
+        get() = tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
 
     override val classId: ClassId?
         get() {
             val reference = annotationName ?: return null
 
-            // If already qualified (contains dot), parse as qualified name
             if (reference.contains('.')) {
                 return ClassId.topLevel(FqName(reference))
             }
 
-            // Try to resolve via explicit imports
             val imported = resolutionContext.getSimpleImport(reference)
             if (imported != null) {
                 return ClassId.topLevel(imported)
@@ -52,21 +53,12 @@ class JavaAnnotationOverAst(
             return ClassId.topLevel(FqName(reference))
         }
 
-    /**
-     * Whether this annotation is already resolved.
-     * Returns false when the annotation name is unqualified and not explicitly imported.
-     */
     override val isResolved: Boolean
         get() {
             val reference = annotationName ?: return true
-            // Resolved if fully qualified or explicitly imported
             return reference.contains('.') || resolutionContext.getSimpleImport(reference) != null
         }
 
-    /**
-     * Resolves this annotation's class using the provided callback.
-     * Uses the same resolution logic as types: same package, java.lang, star imports.
-     */
     override fun resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId? {
         val reference = annotationName ?: return null
         return resolutionContext.resolve(reference, tryResolve)
@@ -76,51 +68,54 @@ class JavaAnnotationOverAst(
 }
 
 private fun createAnnotationArgument(
-    nameValuePair: JavaSyntaxNode,
+    nameValuePair: JavaLightNode,
+    tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
-    val name = nameValuePair.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.let { Name.identifier(it.text) }
-
-    // Find the value expression - it's the child that's not IDENTIFIER, EQ, or whitespace
-    val valueNode = nameValuePair.children.firstOrNull { child ->
-        child.type != JavaSyntaxTokenType.IDENTIFIER && child.type != JavaSyntaxTokenType.EQ && child.type != SyntaxTokenTypes.WHITE_SPACE
+    val name = tree.findChildByType(nameValuePair, JavaSyntaxTokenType.IDENTIFIER)?.let {
+        Name.identifier(tree.getText(it).toString())
     }
 
-    return createAnnotationArgumentFromValue(name, valueNode, resolutionContext)
+    val valueNode = tree.getChildren(nameValuePair).firstOrNull { child ->
+        val t = tree.getType(child)
+        t != JavaSyntaxTokenType.IDENTIFIER && t != JavaSyntaxTokenType.EQ && t != SyntaxTokenTypes.WHITE_SPACE
+    }
+
+    return createAnnotationArgumentFromValue(name, valueNode, tree, resolutionContext)
 }
 
 internal fun createAnnotationArgumentFromValue(
     name: Name?,
-    valueNode: JavaSyntaxNode?,
+    valueNode: JavaLightNode?,
+    tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
 ): JavaAnnotationArgument {
     if (valueNode == null) {
         return JavaUnknownAnnotationArgumentOverAst(name)
     }
 
-    return when (valueNode.type) {
+    return when (tree.getType(valueNode)) {
         JavaSyntaxElementType.LITERAL_EXPRESSION -> {
-            val value = evaluateLiteral(valueNode)
+            val value = evaluateLiteral(valueNode, tree)
             JavaLiteralAnnotationArgumentOverAst(name, value)
         }
         JavaSyntaxElementType.ARRAY_INITIALIZER_EXPRESSION, JavaSyntaxElementType.ANNOTATION_ARRAY_INITIALIZER -> {
-            JavaArrayAnnotationArgumentOverAst(name, valueNode, resolutionContext)
+            JavaArrayAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
         JavaSyntaxElementType.REFERENCE_EXPRESSION -> {
             // Could be enum constant reference (e.g., RetentionPolicy.RUNTIME)
             // or constant field reference (e.g., KotlinClass.FOO_INT)
             // FIR will determine which it is during resolution
-            JavaEnumValueAnnotationArgumentOverAst(name, valueNode, resolutionContext)
+            JavaEnumValueAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
         JavaSyntaxElementType.CLASS_OBJECT_ACCESS_EXPRESSION -> {
-            JavaClassObjectAnnotationArgumentOverAst(name, valueNode, resolutionContext)
+            JavaClassObjectAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
         JavaSyntaxElementType.ANNOTATION -> {
-            JavaAnnotationAsAnnotationArgumentOverAst(name, valueNode, resolutionContext)
+            JavaAnnotationAsAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
         }
         JavaSyntaxElementType.PREFIX_EXPRESSION, JavaSyntaxElementType.BINARY_EXPRESSION -> {
-            // Constant expressions like -1 or 1 + 2
-            val value = evaluateConstantExpression(valueNode)
+            val value = evaluateConstantExpression(valueNode, tree)
             JavaLiteralAnnotationArgumentOverAst(name, value)
         }
         else -> {
@@ -129,13 +124,12 @@ internal fun createAnnotationArgumentFromValue(
     }
 }
 
-private fun evaluateLiteral(node: JavaSyntaxNode): Any? {
-    val literalChild = node.children.firstOrNull() ?: return null
-    val text = literalChild.text
+private fun evaluateLiteral(node: JavaLightNode, tree: JavaLightTree): Any? {
+    val literalChild = tree.getChildren(node).firstOrNull() ?: return null
+    val text = tree.getText(literalChild).toString()
 
-    return when (literalChild.type) {
+    return when (tree.getType(literalChild)) {
         JavaSyntaxTokenType.STRING_LITERAL -> {
-            // Remove surrounding quotes and unescape
             if (text.length >= 2) {
                 JavaLiteralParser.unescapeJavaString(text.substring(1, text.length - 1))
             } else text
@@ -154,6 +148,7 @@ private fun evaluateLiteral(node: JavaSyntaxNode): Any? {
         JavaSyntaxTokenType.DOUBLE_LITERAL -> JavaLiteralParser.parseDoubleLiteral(text)
         else -> {
             // Fallback: try to parse as number
+            // TODO: check against specs
             text.toIntOrNull() ?: text.toLongOrNull() ?: text.toDoubleOrNull() ?: text
         }
     }
@@ -164,16 +159,18 @@ private val ANNOTATION_BINARY_OPERATOR_TYPES = setOf(
     JavaSyntaxTokenType.DIV, JavaSyntaxTokenType.PERC
 )
 
-private fun evaluateConstantExpression(node: JavaSyntaxNode): Any? {
-    when (node.type) {
+// TODO: check if it needs to be replaced with ConstantEvaluator
+private fun evaluateConstantExpression(node: JavaLightNode, tree: JavaLightTree): Any? {
+    when (tree.getType(node)) {
         JavaSyntaxElementType.PREFIX_EXPRESSION -> {
-            val firstChild = node.children.firstOrNull()
-            val operand = node.children.getOrNull(1)
-            if (firstChild?.type == JavaSyntaxTokenType.MINUS && operand != null) {
-                val value = if (operand.type == JavaSyntaxElementType.LITERAL_EXPRESSION) {
-                    evaluateLiteral(operand)
+            val children = tree.getChildren(node)
+            val firstChild = children.firstOrNull()
+            val operand = children.getOrNull(1)
+            if (firstChild != null && tree.getType(firstChild) == JavaSyntaxTokenType.MINUS && operand != null) {
+                val value = if (tree.getType(operand) == JavaSyntaxElementType.LITERAL_EXPRESSION) {
+                    evaluateLiteral(operand, tree)
                 } else {
-                    evaluateConstantExpression(operand)
+                    evaluateConstantExpression(operand, tree)
                 }
                 return when (value) {
                     is Int -> -value
@@ -185,30 +182,28 @@ private fun evaluateConstantExpression(node: JavaSyntaxNode): Any? {
             }
         }
         JavaSyntaxElementType.BINARY_EXPRESSION -> {
-            val operands = node.children.filter {
-                it.type != SyntaxTokenTypes.WHITE_SPACE && it.type !in ANNOTATION_BINARY_OPERATOR_TYPES
+            val allChildren = tree.getChildren(node)
+            val operands = allChildren.filter {
+                val t = tree.getType(it)
+                t != SyntaxTokenTypes.WHITE_SPACE && t !in ANNOTATION_BINARY_OPERATOR_TYPES
             }
-            val operatorNode = node.children.firstOrNull {
-                it.type in ANNOTATION_BINARY_OPERATOR_TYPES
-            }
+            val operatorNode = allChildren.firstOrNull { tree.getType(it) in ANNOTATION_BINARY_OPERATOR_TYPES }
             if (operands.size == 2 && operatorNode != null) {
-                val left = evaluateConstantExpression(operands[0])
-                val right = evaluateConstantExpression(operands[1])
-                return evaluateBinaryExpression(left, operatorNode.type, right)
+                val left = evaluateConstantExpression(operands[0], tree)
+                val right = evaluateConstantExpression(operands[1], tree)
+                return evaluateBinaryExpression(left, tree.getType(operatorNode), right)
             }
         }
-        JavaSyntaxElementType.LITERAL_EXPRESSION -> return evaluateLiteral(node)
+        JavaSyntaxElementType.LITERAL_EXPRESSION -> return evaluateLiteral(node, tree)
     }
     return null
 }
 
 private fun evaluateBinaryExpression(left: Any?, operator: com.intellij.platform.syntax.SyntaxElementType, right: Any?): Any? {
     if (left == null || right == null) return null
-    // String concatenation
     if (operator == JavaSyntaxTokenType.PLUS && (left is String || right is String)) {
         return left.toString() + right.toString()
     }
-    // Numeric operations
     return when (operator) {
         JavaSyntaxTokenType.PLUS -> numericBinaryOp(left, right) { a, b -> a + b }
         JavaSyntaxTokenType.MINUS -> numericBinaryOp(left, right) { a, b -> a - b }
@@ -223,7 +218,6 @@ private fun numericBinaryOp(left: Any, right: Any, op: (Long, Long) -> Long): An
     val l = (left as? Number)?.toLong() ?: return null
     val r = (right as? Number)?.toLong() ?: return null
     val result = op(l, r)
-    // If either operand was Long, keep Long; otherwise try Int
     return if (left is Long || right is Long) result else result.toInt()
 }
 
@@ -235,19 +229,25 @@ class JavaLiteralAnnotationArgumentOverAst(
 
 class JavaArrayAnnotationArgumentOverAst(
     override val name: Name?,
-    private val arrayNode: JavaSyntaxNode,
+    private val arrayNode: JavaLightNode,
+    private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaArrayAnnotationArgument {
     override fun getElements(): List<JavaAnnotationArgument> {
-        return arrayNode.children
-            .filter { it.type != JavaSyntaxTokenType.LBRACE && it.type != JavaSyntaxTokenType.RBRACE && it.type != JavaSyntaxTokenType.COMMA && it.type != SyntaxTokenTypes.WHITE_SPACE }
-            .map { createAnnotationArgumentFromValue(null, it, resolutionContext) }
+        return tree.getChildren(arrayNode)
+            .filter {
+                val t = tree.getType(it)
+                t != JavaSyntaxTokenType.LBRACE && t != JavaSyntaxTokenType.RBRACE &&
+                        t != JavaSyntaxTokenType.COMMA && t != SyntaxTokenTypes.WHITE_SPACE
+            }
+            .map { createAnnotationArgumentFromValue(null, it, tree, resolutionContext) }
     }
 }
 
 class JavaEnumValueAnnotationArgumentOverAst(
     override val name: Name?,
-    private val refNode: JavaSyntaxNode,
+    private val refNode: JavaLightNode,
+    private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaEnumValueAnnotationArgument {
 
@@ -259,39 +259,28 @@ class JavaEnumValueAnnotationArgumentOverAst(
      * Returns a pair of (className, memberName) if the static import is found, null otherwise.
      */
     private val staticImportResolution: Pair<String, String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val text = refNode.text
-        if (text.contains('.')) return@lazy null // Not a bare identifier
+        val text = tree.getText(refNode).toString()
+        if (text.contains('.')) return@lazy null
         val importedFqn = resolutionContext.getSimpleImport(text) ?: return@lazy null
         val fqnStr = importedFqn.asString()
         val lastDot = fqnStr.lastIndexOf('.')
         if (lastDot < 0) return@lazy null
-        // Split: "example.KotlinDtoMapping.ID" → class="example.KotlinDtoMapping", member="ID"
         fqnStr.substring(0, lastDot) to fqnStr.substring(lastDot + 1)
     }
 
-    /**
-     * The class name part of the enum reference (everything before the last dot).
-     * For "NLS.Capitalization.NotSpecified", returns "NLS.Capitalization".
-     * For bare identifiers resolved via static import, returns the class qualifier.
-     */
     private val className: String?
         get() {
-            val text = refNode.text
+            val text = tree.getText(refNode).toString()
             val lastDot = text.lastIndexOf('.')
             if (lastDot >= 0) return text.substring(0, lastDot)
-            // Bare identifier — try static import resolution
             return staticImportResolution?.first
         }
 
     override val isResolved: Boolean
         get() {
             val name = className ?: return true
-            // Resolved if explicitly imported
             if (resolutionContext.getSimpleImport(name) != null) return true
-            // Resolved if resolved via static import
-            if (staticImportResolution != null) return false // class part still needs resolution
-            // Not resolved if it contains dots (could be nested class)
-            // and is not a simple name
+            if (staticImportResolution != null) return false
             return false
         }
 
@@ -300,21 +289,14 @@ class JavaEnumValueAnnotationArgumentOverAst(
             val className = className
 
             if (className == null) {
-                // Bare identifier (no dots) and no static import found.
-                // We can't resolve enumClassId for bare names without lazy class lookup (which is
-                // forbidden at this phase). Return null so FIR falls back to expected type;
-                // the backend will skip unresolvable error expressions in annotations (AnnotationCodegen).
                 return null
             }
 
-            // Try to resolve via explicit imports first
             val imported = resolutionContext.getSimpleImport(className)
             if (imported != null) {
                 return ClassId.topLevel(imported)
             }
 
-            // For unresolved references, return a best-effort ClassId
-            // FIR should use resolveEnumClass for proper resolution
             val packageFqName = resolutionContext.packageFqName
             return if (packageFqName.isRoot) {
                 ClassId.topLevel(FqName(className))
@@ -330,10 +312,9 @@ class JavaEnumValueAnnotationArgumentOverAst(
 
     override val entryName: Name?
         get() {
-            val text = refNode.text
+            val text = tree.getText(refNode).toString()
             val lastDot = text.lastIndexOf('.')
             if (lastDot >= 0) return Name.identifier(text.substring(lastDot + 1))
-            // Bare identifier — if resolved via static import, return the member name
             staticImportResolution?.let { return Name.identifier(it.second) }
             return Name.identifier(text)
         }
@@ -341,35 +322,33 @@ class JavaEnumValueAnnotationArgumentOverAst(
 
 class JavaClassObjectAnnotationArgumentOverAst(
     override val name: Name?,
-    private val classObjNode: JavaSyntaxNode,
+    private val classObjNode: JavaLightNode,
+    private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaClassObjectAnnotationArgument {
     override fun getReferencedType(): JavaType {
-        // CLASS_OBJECT_ACCESS_EXPRESSION typically has structure: TYPE.class
-        // Find the type reference before .class
-        val typeNode = classObjNode.findChildByType(JavaSyntaxElementType.TYPE)
-            ?: classObjNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)
+        val typeNode = tree.findChildByType(classObjNode, JavaSyntaxElementType.TYPE)
+            ?: tree.findChildByType(classObjNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
 
         return if (typeNode != null) {
-            createJavaType(typeNode, resolutionContext)
+            createJavaType(typeNode, tree, resolutionContext)
         } else {
-            // Fallback: create a classifier type from the node itself
-            JavaClassifierTypeOverAst(classObjNode, resolutionContext)
+            JavaClassifierTypeOverAst(classObjNode, tree, resolutionContext)
         }
     }
 }
 
 class JavaAnnotationAsAnnotationArgumentOverAst(
     override val name: Name?,
-    private val annotationNode: JavaSyntaxNode,
+    private val annotationNode: JavaLightNode,
+    private val tree: JavaLightTree,
     private val resolutionContext: JavaResolutionContext,
 ) : JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation(): JavaAnnotation {
-        return JavaAnnotationOverAst(annotationNode, resolutionContext)
+        return JavaAnnotationOverAst(annotationNode, tree, resolutionContext)
     }
 }
 
 class JavaUnknownAnnotationArgumentOverAst(
     override val name: Name?,
 ) : JavaUnknownAnnotationArgument
-

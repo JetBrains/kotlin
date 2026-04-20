@@ -20,26 +20,28 @@ import java.util.Collections
  * - Extracting the package name from a compilation unit
  * - Finding top-level class nodes by name
  *
- * The [extractImports] result is cached per root [JavaSyntaxNode] via a weak-keyed map so
- * repeated context creations over the same compilation unit do not re-walk the AST.
+ * The [extractImports] result is cached per [JavaLightTree] via a weak-keyed map so repeated
+ * context creations over the same compilation unit do not re-walk the AST.
  */
 internal object JavaImportResolver {
 
     /**
-     * Weak-keyed cache of extracted import data per compilation-unit root node.
-     * Entries are evicted automatically when the root `JavaSyntaxNode` becomes unreachable.
+     * Weak-keyed cache of extracted import data per compilation-unit light tree.
+     * Entries are evicted automatically when the [JavaLightTree] becomes unreachable.
      * Wrapped in [Collections.synchronizedMap] because resolution contexts may be created
      * from multiple threads during FIR analysis.
      */
-    private val importCache: MutableMap<JavaSyntaxNode, Pair<Map<String, FqName>, List<FqName>>> =
+    private val importCache: MutableMap<JavaLightTree, Pair<Map<String, FqName>, List<FqName>>> =
         Collections.synchronizedMap(WeakHashMap())
 
     /**
      * Extracts the package name from a compilation unit root node.
      */
-    fun extractPackageName(root: JavaSyntaxNode): FqName {
-        val packageStmt = root.findChildByType(JavaSyntaxElementType.PACKAGE_STATEMENT)
-        val packageName = packageStmt?.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.text
+    fun extractPackageName(tree: JavaLightTree, root: JavaLightNode): FqName {
+        val packageStmt = tree.findChildByType(root, JavaSyntaxElementType.PACKAGE_STATEMENT)
+        val packageName = packageStmt?.let {
+            tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
+        }
         return if (packageName != null) FqName(packageName) else FqName.ROOT
     }
 
@@ -56,32 +58,31 @@ internal object JavaImportResolver {
      * 3. Error-element imports (parser recovery for reserved-word packages like `kotlin`)
      * 4. Fragmented imports (parser splits import across sibling nodes)
      */
-    fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
-        importCache[root]?.let { return it }
-        val result = extractImportsUncached(root)
-        importCache[root] = result
+    fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> {
+        importCache[tree]?.let { return it }
+        val result = extractImportsUncached(tree, root)
+        importCache[tree] = result
         return result
     }
 
-    private fun extractImportsUncached(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> {
+    private fun extractImportsUncached(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> {
         val simpleImports = mutableMapOf<String, FqName>()
         val starImports = mutableListOf<FqName>()
 
-        // Handle case where root might be CLASS instead of compilation unit
-        val importList = root.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
-            ?: root.findChildByType(JavaSyntaxElementType.CLASS)?.findChildByType(JavaSyntaxElementType.IMPORT_LIST)
+        val importList = tree.findChildByType(root, JavaSyntaxElementType.IMPORT_LIST)
+            ?: tree.findChildByType(root, JavaSyntaxElementType.CLASS)?.let { tree.findChildByType(it, JavaSyntaxElementType.IMPORT_LIST) }
 
         if (importList != null) {
-            extractNormalImports(importList, simpleImports, starImports)
-            extractStaticImports(importList, simpleImports, starImports)
-            extractErrorElementImports(importList, simpleImports, starImports)
+            extractNormalImports(tree, importList, simpleImports, starImports)
+            extractStaticImports(tree, importList, simpleImports, starImports)
+            extractErrorElementImports(tree, importList, simpleImports, starImports)
         }
 
         // Fast path: fragmented imports only occur when the parser emits ERROR_ELEMENT children
         // at the root level. For well-formed files (the common case) there are none, so we can
-        // skip walking `root.children` entirely — that loop is O(N) in the file size otherwise.
-        if (root.children.any { it.type == SyntaxTokenTypes.ERROR_ELEMENT }) {
-            extractFragmentedImports(root, simpleImports, starImports)
+        // skip walking `root.children` entirely.
+        if (tree.getChildren(root).any { tree.getType(it) == SyntaxTokenTypes.ERROR_ELEMENT }) {
+            extractFragmentedImports(tree, root, simpleImports, starImports)
         }
 
         return simpleImports to starImports
@@ -91,14 +92,15 @@ internal object JavaImportResolver {
      * Pattern 1: well-formed `import pkg.Class;` / `import pkg.*;` statements.
      */
     private fun extractNormalImports(
-        importList: JavaSyntaxNode,
+        tree: JavaLightTree,
+        importList: JavaLightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
-        for (importNode in importList.getChildrenByType(JavaSyntaxElementType.IMPORT_STATEMENT)) {
-            val codeRef = importNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: continue
-            val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
-            val fqName = codeRef.text
+        for (importNode in tree.getChildrenByType(importList, JavaSyntaxElementType.IMPORT_STATEMENT)) {
+            val codeRef = tree.findChildByType(importNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: continue
+            val hasStar = tree.getChildren(importNode).any { tree.getType(it) == JavaSyntaxTokenType.ASTERISK }
+            val fqName = tree.getText(codeRef).toString()
 
             if (hasStar) {
                 starImports.add(FqName(fqName))
@@ -117,19 +119,19 @@ internal object JavaImportResolver {
      * The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
      */
     private fun extractStaticImports(
-        importList: JavaSyntaxNode,
+        tree: JavaLightTree,
+        importList: JavaLightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
-        for (importNode in importList.getChildrenByType(JavaSyntaxElementType.IMPORT_STATIC_STATEMENT)) {
-            val refNode = importNode.findChildByType(JavaSyntaxElementType.IMPORT_STATIC_REFERENCE) ?: continue
-            val hasStar = importNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
-            val fqName = refNode.text
+        for (importNode in tree.getChildrenByType(importList, JavaSyntaxElementType.IMPORT_STATIC_STATEMENT)) {
+            val refNode = tree.findChildByType(importNode, JavaSyntaxElementType.IMPORT_STATIC_REFERENCE) ?: continue
+            val hasStar = tree.getChildren(importNode).any { tree.getType(it) == JavaSyntaxTokenType.ASTERISK }
+            val fqName = tree.getText(refNode).toString()
 
             if (hasStar) {
                 starImports.add(FqName(fqName))
             } else {
-                // e.g. "example.KotlinDtoMapping.ID" → simpleName = "ID"
                 val simpleName = fqName.substringAfterLast('.')
                 simpleImports.putIfAbsent(simpleName, FqName(fqName))
             }
@@ -142,23 +144,24 @@ internal object JavaImportResolver {
      * intact but one entry became an ERROR_ELEMENT with recoverable IDENTIFIER/DOT children.
      */
     private fun extractErrorElementImports(
-        importList: JavaSyntaxNode,
+        tree: JavaLightTree,
+        importList: JavaLightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
-        for (errorNode in importList.getChildrenByType(SyntaxTokenTypes.ERROR_ELEMENT)) {
-            if (errorNode.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) == null) continue
+        for (errorNode in tree.getChildrenByType(importList, SyntaxTokenTypes.ERROR_ELEMENT)) {
+            if (tree.findChildByType(errorNode, JavaSyntaxTokenType.IMPORT_KEYWORD) == null) continue
 
             // Reconstruct the import from IDENTIFIER and DOT children
             val identifiers = mutableListOf<String>()
-            for (child in errorNode.children) {
-                if (child.type == JavaSyntaxTokenType.IDENTIFIER) {
-                    identifiers.add(child.text)
+            for (child in tree.getChildren(errorNode)) {
+                if (tree.getType(child) == JavaSyntaxTokenType.IDENTIFIER) {
+                    identifiers.add(tree.getText(child).toString())
                 }
             }
             if (identifiers.isEmpty()) continue
 
-            val hasStar = errorNode.children.any { it.type == JavaSyntaxTokenType.ASTERISK }
+            val hasStar = tree.getChildren(errorNode).any { tree.getType(it) == JavaSyntaxTokenType.ASTERISK }
             val fqName = identifiers.joinToString(".")
 
             if (hasStar) {
@@ -179,58 +182,55 @@ internal object JavaImportResolver {
      * The parser may insert MODIFIER_LIST and whitespace between the anchor and the type node.
      */
     private fun extractFragmentedImports(
-        root: JavaSyntaxNode,
+        tree: JavaLightTree,
+        root: JavaLightNode,
         simpleImports: MutableMap<String, FqName>,
         starImports: MutableList<FqName>,
     ) {
-        val allChildren = root.children
+        val allChildren = tree.getChildren(root)
         var i = 0
         while (i < allChildren.size) {
             val node = allChildren[i]
+            val nodeType = tree.getType(node)
 
-            // Check for ERROR_ELEMENT containing "import" keyword or text
-            val isImportError = node.type == SyntaxTokenTypes.ERROR_ELEMENT &&
-                    (node.findChildByType(JavaSyntaxTokenType.IMPORT_KEYWORD) != null || node.text.trim() == "import")
+            val isImportError = nodeType == SyntaxTokenTypes.ERROR_ELEMENT &&
+                    (tree.findChildByType(node, JavaSyntaxTokenType.IMPORT_KEYWORD) != null ||
+                            tree.getText(node).toString().trim() == "import")
 
             if (isImportError) {
-                // Look for the next TYPE or JAVA_CODE_REFERENCE sibling, skipping whitespace and modifier list
-                var typeNode: JavaSyntaxNode? = null
+                var typeNode: JavaLightNode? = null
                 var hasStar = false
 
                 for (j in (i + 1) until allChildren.size) {
                     val sibling = allChildren[j]
-                    // Skip whitespace, empty modifier lists, and empty error elements
-                    if (sibling.type == SyntaxTokenTypes.WHITE_SPACE || sibling.type == JavaSyntaxElementType.MODIFIER_LIST) continue
-                    if (sibling.type == SyntaxTokenTypes.ERROR_ELEMENT && sibling.text.isBlank()) continue
+                    val siblingType = tree.getType(sibling)
+                    if (siblingType == SyntaxTokenTypes.WHITE_SPACE || siblingType == JavaSyntaxElementType.MODIFIER_LIST) continue
+                    if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().isBlank()) continue
 
-                    if (sibling.type == JavaSyntaxElementType.TYPE || sibling.type == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
+                    if (siblingType == JavaSyntaxElementType.TYPE || siblingType == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
                         typeNode = sibling
-                        // Continue to check for star in following siblings (not just the next one)
                         for (k in (j + 1) until allChildren.size) {
                             val nextSib = allChildren[k]
-                            if (nextSib.type == SyntaxTokenTypes.WHITE_SPACE || nextSib.type == JavaSyntaxElementType.MODIFIER_LIST) continue
-                            if (nextSib.type == SyntaxTokenTypes.ERROR_ELEMENT && nextSib.text.isBlank()) continue
-                            if (nextSib.type == SyntaxTokenTypes.ERROR_ELEMENT && nextSib.text.contains("*")) {
+                            val nextType = tree.getType(nextSib)
+                            if (nextType == SyntaxTokenTypes.WHITE_SPACE || nextType == JavaSyntaxElementType.MODIFIER_LIST) continue
+                            if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().isBlank()) continue
+                            if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().contains("*")) {
                                 hasStar = true
                                 break
                             }
-                            // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
-                            if (nextSib.type == JavaSyntaxElementType.CLASS) break
+                            if (nextType == JavaSyntaxElementType.CLASS) break
                         }
                         break
                     }
-                    // Also check if ERROR_ELEMENT itself contains star (like "*;")
-                    if (sibling.type == SyntaxTokenTypes.ERROR_ELEMENT && sibling.text.contains("*")) {
+                    if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().contains("*")) {
                         hasStar = true
                     }
-                    // Stop at CLASS or other significant nodes (interfaces/enums are also CLASS nodes)
-                    if (sibling.type == JavaSyntaxElementType.CLASS) break
+                    if (siblingType == JavaSyntaxElementType.CLASS) break
                 }
 
                 if (typeNode != null) {
-                    val ref = typeNode.findChildByType(JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: typeNode
-                    var fqName = ref.text.trim()
-                    // Remove trailing dot if present (from fragmented star import like "org.jetbrains.annotations.")
+                    val ref = tree.findChildByType(typeNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: typeNode
+                    var fqName = tree.getText(ref).toString().trim()
                     if (fqName.endsWith('.')) {
                         fqName = fqName.dropLast(1)
                     }
@@ -252,11 +252,11 @@ internal object JavaImportResolver {
     /**
      * Finds a top-level class node by name in the compilation unit root.
      */
-    fun findClassNode(root: JavaSyntaxNode, name: org.jetbrains.kotlin.name.Name): JavaSyntaxNode? {
-        for (child in root.children) {
-            if (child.type == JavaSyntaxElementType.CLASS) {
-                val id = child.findChildByType(JavaSyntaxTokenType.IDENTIFIER)?.text
-                if (id == name.asString()) return child
+    fun findClassNode(tree: JavaLightTree, root: JavaLightNode, name: org.jetbrains.kotlin.name.Name): JavaLightNode? {
+        for (child in tree.getChildren(root)) {
+            if (tree.getType(child) == JavaSyntaxElementType.CLASS) {
+                val idNode = tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER) ?: continue
+                if (tree.textEquals(idNode, name.asString())) return child
             }
         }
         return null

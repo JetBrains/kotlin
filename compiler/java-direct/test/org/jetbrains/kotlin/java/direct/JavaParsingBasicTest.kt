@@ -42,26 +42,24 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
     fun testPackageExtraction() {
         val source = """
             package example;
-            
+
             public class Hello {
                 public void greet() {}
             }
         """.trimIndent()
-        val (root, _) = parseSource(source)
+        val parsed = parseSource(source)
+        val tree = parsed.tree
 
-        val packageStmt = root.findChildByType("PACKAGE_STATEMENT")
+        val packageStmt = tree.findChildByType(parsed.root, "PACKAGE_STATEMENT")
         assert(packageStmt != null) { "Expected PACKAGE_STATEMENT node" }
-        val packageName = packageStmt?.findChildByType("JAVA_CODE_REFERENCE")?.text
+        val packageName = packageStmt?.let {
+            tree.findChildByType(it, "JAVA_CODE_REFERENCE")?.let { ref -> tree.getText(ref).toString() }
+        }
         assert(packageName == "example") { "Expected 'example', got $packageName" }
     }
 
     @Test
     fun testPublicClassWithMalformedMembers() {
-        // Regression: public class with syntactically invalid members (nameless method/field)
-        // must have public visibility and a default constructor.
-        // Previously, `void () {}` was treated as a constructor (no TYPE node in the AST)
-        // with no IDENTIFIER, making hasDefaultConstructor() = false and causing
-        // INVISIBLE_REFERENCE in FIR when the class was used as a supertype.
         val source = """
             package p;
             public class Nameless {
@@ -69,10 +67,13 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
                 int ;
             }
         """.trimIndent()
-        val (root, context) = parseSource(source)
-        val classNode = root.getChildrenByType("CLASS")
-            .first { it.findChildByType("IDENTIFIER")?.text == "Nameless" }
-        val javaClass = JavaClassOverAst(classNode, context)
+        val parsed = parseSource(source)
+        val tree = parsed.tree
+        val classNode = tree.getChildrenByType(parsed.root, "CLASS")
+            .first {
+                tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "Nameless"
+            }
+        val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
         assert(javaClass.visibility.toString() == "public") {
             "Expected public visibility for 'public class Nameless', got ${javaClass.visibility}"
         }
@@ -96,32 +97,32 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
                 public AtomicInteger a = new AtomicInteger(1);
             }
         """.trimIndent()
-        val builder = parseJavaToSyntaxTreeBuilder(source, 0)
-        val root = buildSyntaxTree(builder, source)
-        println(root.dump())
+        val tree = parseJavaToLightTree(source, 0)
+        println(tree.dump())
     }
 
     @Test
     fun testDebugTypeArgumentsAST() {
         val source = """
             import java.util.List;
-            
+
             public class MyClass {
                 public List<String> items;
             }
         """.trimIndent()
-        val (root, _) = parseSource(source)
+        val parsed = parseSource(source)
+        val tree = parsed.tree
 
-        fun printTree(node: JavaSyntaxNode, indent: String = "") {
-            println("$indent${node.type}: '${node.text.take(50).replace("\n", "\\n")}'")
-            for (child in node.children) {
+        fun printTree(node: JavaLightNode, indent: String = "") {
+            println("$indent${tree.getType(node)}: '${tree.getText(node).toString().take(50).replace("\n", "\\n")}'")
+            for (child in tree.getChildren(node)) {
                 printTree(child, "$indent  ")
             }
         }
 
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val fieldNode = classNode.findChildByType("FIELD")!!
-        val typeNode = fieldNode.findChildByType("TYPE")!!
+        val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
+        val fieldNode = tree.findChildByType(classNode, "FIELD")!!
+        val typeNode = tree.findChildByType(fieldNode, "TYPE")!!
 
         println("=== TYPE node structure ===")
         printTree(typeNode)
@@ -131,42 +132,45 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
     fun testDebugWildcardAST() {
         val source = """
             import java.util.List;
-            
+
             interface A<T> {
                 List<? extends T> foo();
                 List<?> bar();
                 List<? super T> baz();
             }
         """.trimIndent()
-        val (root, _) = parseSource(source)
+        val parsed = parseSource(source)
+        val tree = parsed.tree
 
-        fun collectTypes(node: JavaSyntaxNode): List<String> {
-            val result = mutableListOf(node.type.toString())
-            for (child in node.children) {
+        fun collectTypes(node: JavaLightNode): List<String> {
+            val result = mutableListOf(tree.getType(node).toString())
+            for (child in tree.getChildren(node)) {
                 result.addAll(collectTypes(child))
             }
             return result
         }
 
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val methods = classNode.getChildrenByType("METHOD")
-        
-        // Check foo: List<? extends T>
-        val fooMethod = methods.first { it.findChildByType("IDENTIFIER")?.text == "foo" }
-        val fooTypeNode = fooMethod.findChildByType("TYPE")!!
+        val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
+        val methods = tree.getChildrenByType(classNode, "METHOD")
+
+        val fooMethod = methods.first {
+            tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "foo"
+        }
+        val fooTypeNode = tree.findChildByType(fooMethod, "TYPE")!!
         val fooTypes = collectTypes(fooTypeNode)
-        // Should contain QUEST for wildcard and EXTENDS_KEYWORD
         assert(fooTypes.any { it == "QUEST" }) { "foo should have QUEST in: $fooTypes" }
-        
-        // Check bar: List<?>
-        val barMethod = methods.first { it.findChildByType("IDENTIFIER")?.text == "bar" }
-        val barTypeNode = barMethod.findChildByType("TYPE")!!
+
+        val barMethod = methods.first {
+            tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "bar"
+        }
+        val barTypeNode = tree.findChildByType(barMethod, "TYPE")!!
         val barTypes = collectTypes(barTypeNode)
         assert(barTypes.any { it == "QUEST" }) { "bar should have QUEST in: $barTypes" }
-        
-        // Check baz: List<? super T>
-        val bazMethod = methods.first { it.findChildByType("IDENTIFIER")?.text == "baz" }
-        val bazTypeNode = bazMethod.findChildByType("TYPE")!!
+
+        val bazMethod = methods.first {
+            tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "baz"
+        }
+        val bazTypeNode = tree.findChildByType(bazMethod, "TYPE")!!
         val bazTypes = collectTypes(bazTypeNode)
         assert(bazTypes.any { it == "QUEST" }) { "baz should have QUEST in: $bazTypes" }
         assert(bazTypes.any { it == "SUPER_KEYWORD" }) { "baz should have SUPER_KEYWORD in: $bazTypes" }

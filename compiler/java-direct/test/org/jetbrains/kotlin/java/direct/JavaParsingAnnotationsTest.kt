@@ -222,34 +222,40 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val (root, _) = parseSource(source)
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
 
-        fun printTree(node: JavaSyntaxNode, indent: String = "") {
-            println("$indent${node.type}: '${node.text.take(80).replace("\n", "\\n")}'")
-            for (child in node.children) {
+        fun printTree(node: JavaLightNode, indent: String = "") {
+            println("$indent${tree.getType(node)}: '${tree.getText(node).toString().take(80).replace("\n", "\\n")}'")
+            for (child in tree.getChildren(node)) {
                 printTree(child, "$indent  ")
             }
         }
 
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val typeParamList = classNode.findChildByType("TYPE_PARAMETER_LIST")
+        val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
+        val typeParamList = tree.findChildByType(classNode, "TYPE_PARAMETER_LIST")
         println("=== TYPE_PARAMETER_LIST structure (full) ===")
         if (typeParamList != null) {
             printTree(typeParamList)
         }
 
         // Check the EXTENDS_BOUND_LIST structure more carefully
-        val typeParam = typeParamList?.children?.firstOrNull { it.type.toString() == "TYPE_PARAMETER" }
-        val extendsBoundList = typeParam?.findChildByType("EXTENDS_BOUND_LIST")
+        val typeParam = typeParamList?.let { tpl ->
+            tree.getChildren(tpl).firstOrNull { tree.getType(it).toString() == "TYPE_PARAMETER" }
+        }
+        val extendsBoundList = typeParam?.let { tp -> tree.findChildByType(tp, "EXTENDS_BOUND_LIST") }
         println("=== EXTENDS_BOUND_LIST children ===")
-        extendsBoundList?.children?.forEach { child ->
-            println("  ${child.type}: '${child.text}'")
-            child.children.forEach { grandchild ->
-                println("    ${grandchild.type}: '${grandchild.text}'")
+        extendsBoundList?.let { ebl ->
+            tree.getChildren(ebl).forEach { child ->
+                println("  ${tree.getType(child)}: '${tree.getText(child)}'")
+                tree.getChildren(child).forEach { grandchild ->
+                    println("    ${tree.getType(grandchild)}: '${tree.getText(grandchild)}'")
+                }
             }
         }
 
-        val javaClass = JavaClassOverAst(classNode, JavaResolutionContext.create(root))
+        val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
 
         assert(javaClass.typeParameters.size == 2) { "Expected 2 type parameters, got ${javaClass.typeParameters.size}" }
 
@@ -293,24 +299,26 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val (root, _) = parseSource(source)
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
 
-        fun printTree(node: JavaSyntaxNode, indent: String = "") {
-            println("$indent${node.type}: '${node.text.take(80).replace("\n", "\\n")}'")
-            for (child in node.children) {
+        fun printTree(node: JavaLightNode, indent: String = "") {
+            println("$indent${tree.getType(node)}: '${tree.getText(node).toString().take(80).replace("\n", "\\n")}'")
+            for (child in tree.getChildren(node)) {
                 printTree(child, "$indent  ")
             }
         }
 
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val methods = classNode.getChildrenByType("METHOD")
+        val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
+        val methods = tree.getChildrenByType(classNode, "METHOD")
         println("=== METHOD structures ===")
         methods.forEach { method ->
-            println("\n--- Method: ${method.findChildByType("IDENTIFIER")?.text} ---")
+            println("\n--- Method: ${tree.findChildByType(method, "IDENTIFIER")?.let { tree.getText(it) }} ---")
             printTree(method)
         }
 
-        val javaClass = JavaClassOverAst(classNode, JavaResolutionContext.create(root))
+        val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
 
         val fooMethod = javaClass.methods.first { it.name.asString() == "foo" }
         val fooReturnType = fooMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -351,26 +359,33 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        fun printTree(node: JavaSyntaxNode, indent: String = "") {
-            println("$indent${node.type}: '${node.text.take(60).replace("\n", "\\n")}'")
-            for (child in node.children) {
-                printTree(child, "$indent  ")
+        println("\n=== Test 1: @Nullable public String method1() ===")
+        val parsed1 = parseSource(source1)
+        val tree1 = parsed1.tree
+        fun printTree1(node: JavaLightNode, indent: String = "") {
+            println("$indent${tree1.getType(node)}: '${tree1.getText(node).toString().take(60).replace("\n", "\\n")}'")
+            for (child in tree1.getChildren(node)) {
+                printTree1(child, "$indent  ")
             }
         }
-
-        println("\n=== Test 1: @Nullable public String method1() ===")
-        val (root1, _) = parseSource(source1)
-        val classNode1 = root1.children.first { it.type.toString() == "CLASS" }
-        val methodNode1 = classNode1.findChildByType("METHOD")!!
+        val classNode1 = tree1.getChildren(parsed1.root).first { tree1.getType(it).toString() == "CLASS" }
+        val methodNode1 = tree1.findChildByType(classNode1, "METHOD")!!
         println("METHOD structure:")
-        printTree(methodNode1)
+        printTree1(methodNode1)
 
         println("\n=== Test 2: public @Nullable String method2() ===")
-        val (root2, _) = parseSource(source2)
-        val classNode2 = root2.children.first { it.type.toString() == "CLASS" }
-        val methodNode2 = classNode2.findChildByType("METHOD")!!
+        val parsed2 = parseSource(source2)
+        val tree2 = parsed2.tree
+        fun printTree2(node: JavaLightNode, indent: String = "") {
+            println("$indent${tree2.getType(node)}: '${tree2.getText(node).toString().take(60).replace("\n", "\\n")}'")
+            for (child in tree2.getChildren(node)) {
+                printTree2(child, "$indent  ")
+            }
+        }
+        val classNode2 = tree2.getChildren(parsed2.root).first { tree2.getType(it).toString() == "CLASS" }
+        val methodNode2 = tree2.findChildByType(classNode2, "METHOD")!!
         println("METHOD structure:")
-        printTree(methodNode2)
+        printTree2(methodNode2)
 
         // Now check where annotations end up in the JavaType
         val javaClass1 = parseFirstClass(source1)
@@ -398,18 +413,21 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val (root, context) = parseSource(source)
-        
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
+        val context = parsed.context
+
         // Check that star import is extracted
         val starCandidate = context.getFirstStarImportCandidate("NotNull")
         assert(starCandidate != null) { "Expected star import candidate for NotNull" }
         assert(starCandidate?.packageFqName?.asString() == "org.jetbrains.annotations") {
             "Expected package org.jetbrains.annotations, got ${starCandidate?.packageFqName}"
         }
-        
+
         // Find the class and method
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, context)
+        val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, tree, context)
         val method = javaClass.methods.first { it.name.asString() == "iteratorOfNotNull" }
         val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         
@@ -465,22 +483,26 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val (root, context) = parseSource(source)
-        
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
+        val context = parsed.context
+
         // Verify star imports are extracted
         val starCandidate1 = context.getFirstStarImportCandidate("Iterator")
         assert(starCandidate1?.packageFqName?.asString() == "java.util") {
             "First star import should be java.util, got ${starCandidate1?.packageFqName}"
         }
-        
+
         // Check if org.jetbrains.annotations is in star imports
+        @Suppress("UNUSED_VARIABLE")
         val starCandidate2 = context.getFirstStarImportCandidate("NotNull")
         // Note: getFirstStarImportCandidate returns the FIRST star import package
         // We need to check if org.jetbrains.annotations is also there
-        
+
         // Find the class and method
-        val classNode = root.children.first { it.type.toString() == "CLASS" }
-        val javaClass = JavaClassOverAst(classNode, context)
+        val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
+        val javaClass = JavaClassOverAst(classNode, tree, context)
         val method = javaClass.methods.first { it.name.asString() == "iteratorOfNotNull" }
         val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
         

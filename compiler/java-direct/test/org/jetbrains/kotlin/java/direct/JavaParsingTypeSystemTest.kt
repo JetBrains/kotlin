@@ -103,14 +103,17 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
                 public B.Y<? extends B> foo() { return null; }
             }
         """.trimIndent()
-        val (root, context) = parseSource(source)
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
+        val context = parsed.context
 
-        val classes = root.children.filter { it.type.toString() == "CLASS" }
+        val classes = tree.getChildren(root).filter { tree.getType(it).toString() == "CLASS" }
         assert(classes.size == 3) { "Expected 3 classes (A, B, BImpl), got ${classes.size}" }
 
         // Find interface A
-        val interfaceANode = classes.first { it.findChildByType("IDENTIFIER")?.text == "A" }
-        val interfaceA = JavaClassOverAst(interfaceANode, context)
+        val interfaceANode = classes.first { tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "A" }
+        val interfaceA = JavaClassOverAst(interfaceANode, tree, context)
         assert(interfaceA.isInterface) { "A should be an interface" }
         
         // Check A.foo() return type
@@ -137,8 +140,8 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         }
         
         // Find interface B
-        val interfaceBNode = classes.first { it.findChildByType("IDENTIFIER")?.text == "B" }
-        val interfaceB = JavaClassOverAst(interfaceBNode, context)
+        val interfaceBNode = classes.first { tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "B" }
+        val interfaceB = JavaClassOverAst(interfaceBNode, tree, context)
         assert(interfaceB.isInterface) { "B should be an interface" }
         
         // Check B.foo() return type
@@ -165,8 +168,8 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         }
 
         // Find class BImpl
-        val bImplNode = classes.first { it.findChildByType("IDENTIFIER")?.text == "BImpl" }
-        val bImpl = JavaClassOverAst(bImplNode, context)
+        val bImplNode = classes.first { tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "BImpl" }
+        val bImpl = JavaClassOverAst(bImplNode, tree, context)
         assert(!bImpl.isInterface) { "BImpl should be a class" }
         
         // Check BImpl.foo() return type

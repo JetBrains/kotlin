@@ -575,19 +575,20 @@ class JavaResolutionContext private constructor(
 
     companion object {
         fun create(
-            root: JavaSyntaxNode,
+            tree: JavaLightTree,
             classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
         ): JavaResolutionContext {
-            val packageFqName = JavaImportResolver.extractPackageName(root)
-            val (simpleImports, starImports) = JavaImportResolver.extractImports(root)
+            val root = tree.getRoot()
+            val packageFqName = JavaImportResolver.extractPackageName(tree, root)
+            val (simpleImports, starImports) = JavaImportResolver.extractImports(tree, root)
 
             // Local classes indexed lazily to avoid circular initialization
             var contextRef: JavaResolutionContext? = null
             val localClassCache = mutableMapOf<Name, JavaClass>()
 
             val localClassProvider: (Name) -> JavaClass? = { name ->
-                localClassCache[name] ?: JavaImportResolver.findClassNode(root, name)?.let { classNode ->
-                    JavaClassOverAst(classNode, contextRef!!, outerClass = null).also {
+                localClassCache[name] ?: JavaImportResolver.findClassNode(tree, root, name)?.let { classNode ->
+                    JavaClassOverAst(classNode, tree, contextRef!!, outerClass = null).also {
                         localClassCache[name] = it
                     }
                 }
@@ -616,7 +617,7 @@ class JavaResolutionContext private constructor(
          * Extracts imports from a root AST node.
          * Delegates to [JavaImportResolver.extractImports].
          */
-        internal fun extractImports(root: JavaSyntaxNode): Pair<Map<String, FqName>, List<FqName>> =
-            JavaImportResolver.extractImports(root)
+        internal fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> =
+            JavaImportResolver.extractImports(tree, root)
     }
 }

@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
 abstract class JavaElementOverAst(
-    val node: JavaSyntaxNode
+    val node: JavaLightNode,
+    val tree: JavaLightTree,
 ) : JavaElement {
     override fun equals(other: Any?): Boolean =
-        other is JavaElementOverAst && node == other.node
+        other is JavaElementOverAst && node == other.node && tree === other.tree
 
     override fun hashCode(): Int = node.hashCode()
 
-    override fun toString(): String = node.type.toString()
+    override fun toString(): String = tree.getType(node).toString()
 }
