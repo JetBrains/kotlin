@@ -195,7 +195,7 @@ fun assertDirectoriesExist(
     assert(notExist.isEmpty() && notDirectories.isEmpty()) {
         message ?: buildString {
             if (notExist.isNotEmpty()) {
-                appendLine("Following directories does not exist:")
+                appendLine("Following directories do not exist:")
                 appendLine(notExist.joinToString(separator = "\n"))
             }
             if (notDirectories.isNotEmpty()) {
