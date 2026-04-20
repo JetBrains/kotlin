@@ -46,12 +46,14 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "ir-output-dir"
         compilerName = "outputDir"
         description = "Destination for generated files.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<directory>".asReleaseDependent()
+        argumentType = PathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
@@ -257,12 +259,14 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "source-map-base-dirs"
         deprecatedName = "source-map-source-roots"
         description = "Base directories for calculating relative paths to source files in the source map.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = SearchPathType.defaultNull
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_60,

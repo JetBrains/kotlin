@@ -191,7 +191,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      * Destination for generated files.
      */
     @JvmField
-    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<String?> =
+    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<Path?> =
         CommonJsAndWasmArgument("IR_OUTPUT_DIR", KotlinReleaseVersion(1, 8, 20))
 
     /**
@@ -233,7 +233,7 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      * Base directories for calculating relative paths to source files in the source map.
      */
     @JvmField
-    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<String?> =
+    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<List<Path>?> =
         CommonJsAndWasmArgument("SOURCE_MAP_BASE_DIRS", KotlinReleaseVersion(1, 1, 60))
 
     /**

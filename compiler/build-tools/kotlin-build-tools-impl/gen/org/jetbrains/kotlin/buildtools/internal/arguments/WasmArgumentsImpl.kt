@@ -16,6 +16,7 @@ import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE
@@ -94,8 +95,8 @@ internal class WasmArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)}
-    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)}
+    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
+    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_WASM in this) { arguments.wasm = get(X_WASM)}
     if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
@@ -120,8 +121,8 @@ internal class WasmArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM] = arguments.wasm } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUG_INFO] = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
@@ -145,8 +146,8 @@ internal class WasmArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments()): KotlinWasmCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)}
-    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)}
+    if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
+    if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_WASM in this) { arguments.wasm = get(X_WASM)}
     if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
@@ -198,10 +199,10 @@ internal class WasmArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<String?> =
+    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<java.nio.`file`.Path?> =
         WasmArgument("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
 
-    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<String?> =
+    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<java.nio.`file`.Path?> =
         WasmArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
 
     public val X_WASM: WasmArgument<Boolean> = WasmArgument("X_WASM")

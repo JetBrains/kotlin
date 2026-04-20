@@ -114,13 +114,13 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_IR_PRODUCE_KLIB_FILE in this) { arguments.irProduceKlibFile = get(X_IR_PRODUCE_KLIB_FILE)}
     if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.irPropertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)}
     if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
-    if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)}
+    if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)?.absolutePathStringOrThrow()}
     if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
     if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (MAIN in this) { arguments.main = get(MAIN)?.stringValue}
     if (NOPACK in this) { arguments.nopack = get(NOPACK)}
     if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
-    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)}
+    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (SOURCE_MAP_EMBED_SOURCES in this) { arguments.sourceMapEmbedSources = get(SOURCE_MAP_EMBED_SOURCES)?.stringValue}
     if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
     if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}
@@ -146,13 +146,13 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[X_IR_PRODUCE_KLIB_FILE] = arguments.irProduceKlibFile } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.irPropertyLazyInitialization } catch (_: NoSuchMethodError) {  }
     try { this[X_STRICT_IMPLICIT_EXPORT_TYPES] = arguments.strictImplicitExportType } catch (_: NoSuchMethodError) {  }
-    try { this[IR_OUTPUT_DIR] = arguments.outputDir } catch (_: NoSuchMethodError) {  }
+    try { this[IR_OUTPUT_DIR] = arguments.outputDir?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[IR_OUTPUT_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[LIBRARIES] = arguments.libraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[MAIN] = arguments.main?.let { JsMainCallMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[NOPACK] = arguments.nopack } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP] = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_PREFIX] = arguments.sourceMapPrefix } catch (_: NoSuchMethodError) {  }
@@ -177,13 +177,13 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_IR_PRODUCE_KLIB_FILE in this) { arguments.irProduceKlibFile = get(X_IR_PRODUCE_KLIB_FILE)}
     if (X_IR_PROPERTY_LAZY_INITIALIZATION in this) { arguments.irPropertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION)}
     if (X_STRICT_IMPLICIT_EXPORT_TYPES in this) { arguments.strictImplicitExportType = get(X_STRICT_IMPLICIT_EXPORT_TYPES)}
-    if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)}
+    if (IR_OUTPUT_DIR in this) { arguments.outputDir = get(IR_OUTPUT_DIR)?.absolutePathStringOrThrow()}
     if (IR_OUTPUT_NAME in this) { arguments.moduleName = get(IR_OUTPUT_NAME)}
     if (LIBRARIES in this) { arguments.libraries = get(LIBRARIES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (MAIN in this) { arguments.main = get(MAIN)?.stringValue}
     if (NOPACK in this) { arguments.nopack = get(NOPACK)}
     if (SOURCE_MAP in this) { arguments.sourceMap = get(SOURCE_MAP)}
-    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)}
+    if (SOURCE_MAP_BASE_DIRS in this) { arguments.sourceMapBaseDirs = get(SOURCE_MAP_BASE_DIRS)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (SOURCE_MAP_EMBED_SOURCES in this) { arguments.sourceMapEmbedSources = get(SOURCE_MAP_EMBED_SOURCES)?.stringValue}
     if (SOURCE_MAP_NAMES_POLICY in this) { arguments.sourceMapNamesPolicy = get(SOURCE_MAP_NAMES_POLICY)?.stringValue}
     if (SOURCE_MAP_PREFIX in this) { arguments.sourceMapPrefix = get(SOURCE_MAP_PREFIX)}
@@ -247,7 +247,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     public val X_STRICT_IMPLICIT_EXPORT_TYPES: CommonJsAndWasmArgument<Boolean> =
         CommonJsAndWasmArgument("X_STRICT_IMPLICIT_EXPORT_TYPES")
 
-    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<String?> =
+    public val IR_OUTPUT_DIR: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
         CommonJsAndWasmArgument("IR_OUTPUT_DIR")
 
     public val IR_OUTPUT_NAME: CommonJsAndWasmArgument<String?> =
@@ -262,7 +262,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
     public val SOURCE_MAP: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("SOURCE_MAP")
 
-    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<String?> =
+    public val SOURCE_MAP_BASE_DIRS: CommonJsAndWasmArgument<List<java.nio.`file`.Path>?> =
         CommonJsAndWasmArgument("SOURCE_MAP_BASE_DIRS")
 
     public val SOURCE_MAP_EMBED_SOURCES: CommonJsAndWasmArgument<SourceMapEmbedSources?> =
