@@ -26,4 +26,17 @@ class CodePointJVMTest {
             }
         }
     }
+
+    @Test
+    fun appendCodePoint() {
+        val sb1 = StringBuilder()
+        val sb2 = StringBuilder()
+
+        repeat(1000) {
+            val cp = (CodePoint.MIN_VALUE..CodePoint.MAX_VALUE).random()
+            sb1.appendCodePoint(cp)
+            sb2.appendCodePoint(cp.code)
+        }
+        assertEquals(sb2.toString(), sb1.toString())
+    }
 }
