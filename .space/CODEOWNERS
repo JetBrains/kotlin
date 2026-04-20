@@ -216,7 +216,6 @@
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
 /compiler/testData/klib/ "Kotlin Common Backend"
-/compiler/testData/kotlinClassFinder/ "Kotlin Frontend"
 /compiler/testData/loadJava/ "Kotlin Frontend"
 /compiler/testData/loadJava8/ "Kotlin Frontend"
 /compiler/testData/loadJavaPackageAnnotations/ "Kotlin Frontend"
