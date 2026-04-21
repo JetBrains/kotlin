@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (lazy per-package indexing)
+**Last Updated**: 2026-04-21 (refactoring-plan Phase A: correctness + trivial perf cleanups)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -12,9 +12,147 @@ caveats have landed in code (verified against current source). What remains:
 
 - **§2 #6** — context-level `tryResolve` cache across `resolve()` calls. Deferred with
   a recorded correctness argument (see this file's 2026-04-20 entry).
-- **§2 #8** — profile `SMALL_FILE_SIZE_THRESHOLD` (still 4096, unvalidated). Low value.
+- ~~**§2 #8** — profile `SMALL_FILE_SIZE_THRESHOLD` (still 4096, unvalidated). Low value.~~
+  Rolled into `REFACTORING_PLAN.md` Phase C (item M-O6).
 - ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
+
+The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A is now
+complete; Phases B–E are pending.
+
+---
+
+## Refactoring Plan Phase A: Correctness + Trivial Perf Cleanups — 2026-04-21
+
+### Overview
+
+First phase of `REFACTORING_PLAN.md`. Fourteen low-risk, localised edits landed in two
+iterations: A.1 (correctness + dead code) and A.2 (trivial perf cleanups). Each item
+corresponds to a numbered problem in the plan's §1 table. No measurements were required —
+these are either correctness fixes or obvious micro-wins whose ROI is clear from reading
+the code. Risky or speculative perf changes are deferred to Phase C (measure) / Phase D
+(implement if measured positive).
+
+### A.1 — Correctness and dead-code fixes
+
+- **C1** (`JavaMemberOverAst.kt:203`) — `isInitializerPotentiallyConstant` compared
+  `tree.getType(child).toString() != "NULL_LITERAL"`, but the actual parser token is
+  `JavaSyntaxTokenType.NULL_KEYWORD` whose `toString()` returns `"NULL_KEYWORD"`. The check
+  therefore never matched a null literal, so `hasConstantNotNullInitializer` would silently
+  misreport `final Object x = null` as a potentially-constant non-null initializer. Replaced
+  with the typed `tree.getType(child) != JavaSyntaxTokenType.NULL_KEYWORD`, which also drops
+  a per-call `String` allocation.
+- **C2 + O5 + R13** (`JavaResolutionContext.kt:45-54`) — the single-element
+  `Array<Map<...>?>(1)` used as a mutable holder for aggregated inherited inner classes had
+  no `@Volatile` guarantee on the slot; one thread's `holder[0] = result` could be unseen
+  by another, causing either re-computation or a stale read under concurrent FIR resolution.
+  Replaced with a small internal `class AggregatedInheritedInnerClassesHolder` carrying
+  `@Volatile var value: Map<...>?`. Removed the bogus `@Suppress("ArrayInDataClass")`
+  (`JavaResolutionContext` is not a data class).
+- **C3** (`JavaClassFinderOverAstImpl.kt:285`) — `findPackage(fqName)` returned `null` whenever
+  the per-package class map was empty, even if `package-info.java` had indexed
+  package-level annotations. Now also consults `packageAnnotationNodes[fqName]` before
+  bailing, so annotation-only packages become visible to FIR.
+- **C4** (`ConstantEvaluator.kt:256-272`) — the sibling-class fallback in
+  `ConstantEvaluator.findLocalClass` constructed a fresh `JavaClassOverAst` from the AST,
+  bypassing the resolution context's class cache. That both defeated caching and broke the
+  object-identity invariant FIR relies on for type-parameter matching (same invariant
+  `localClassCache` is there to guarantee — see the 2026-04-20 entry). Routed through
+  `containingClass.resolutionContext.findLocalClass(...)` instead; the local block
+  shrinks from 20 lines to 2.
+- **O1** (`JavaLightTree.kt:56, 264, 449`) — deleted the `startForDone: IntArray` field
+  and its Pass-1 writes. It was `@Suppress("unused")` and unreferenced anywhere in the
+  module, so it was pure waste: `markerCount × 4` bytes per tree plus the Pass-1 stores.
+- **O4** (`JavaClassFinderOverAstImpl.kt:97`) — replaced the outdated
+  `Collections.newSetFromMap(ConcurrentHashMap())` idiom on `negativeClassCache` with
+  `ConcurrentHashMap.newKeySet()`, which is the direct API for this use case.
+
+### A.2 — Trivial perf cleanups
+
+- **P2** (`JavaMemberOverAst.kt:103-118`) — rewrote `computeLeadingFieldNode` as a reverse
+  `for` loop. The previous `(myIndex - 1 downTo 0).map { siblings[it] }.firstOrNull { ... }`
+  allocated an intermediate `List<JavaLightNode>` per call.
+- **P3** (`JavaResolutionContext.kt:474-486`) — `resolveAsClassId` now maps the `FqName`
+  path segments to `List<String>` once before the loop, instead of re-mapping
+  `parts.subList(...).map { it.asString() }` on every iteration.
+- **P4** (`JavaMemberOverAst.kt:170-178`) — cached `initializerNode` via `cachedNullable` +
+  `NOT_COMPUTED` sentinel. It was previously recomputed from `hasConstantNotNullInitializer`
+  and again from `initializerValue` / `resolveInitializerValue`.
+- **P5** (`JavaMemberOverAst.kt:353-355`) — `hasAnnotationParameterDefaultValue` now
+  short-circuits to a `DEFAULT_KEYWORD` presence check on the method node. The previous
+  delegation to `annotationParameterDefaultValue != null` fully constructed a
+  `JavaAnnotationArgument` for every probe just to throw it away.
+- **P6** (`JavaTypeOverAst.kt:326-330`) — `JavaClassifierTypeOverAst.isResolved` collapsed
+  to `classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null`.
+  The previous body re-called `findTypeParameter` even though `classifier` already consults
+  it; the old fall-through branches contributed nothing to the outcome.
+- **P10** (`JavaSupertypeGraph.kt:141-146`) — `getInnerClassNames` uses
+  `mapTo(HashSet(size))` on the cached-class fast path with an `isEmpty()` short-circuit
+  to `emptySet()`, instead of `.map {...}.toSet()`.
+- **P11** (`JavaClassFinderOverAstImpl.kt:297-301`) — `knownClassNamesInPackage` now uses
+  `buildSet { ... }` to build the result directly, avoiding the intermediate list and
+  `.toSet()` copy.
+- **C5** (`JavaSourceIndex.kt:103-105`) — switched the lightweight top-level declaration
+  scanner from `DECLARATION_REGEX.find(effective)` to `findAll(effective)`, so multiple
+  declarations on a single line (e.g. `class A {} class B {}`) are all indexed. Low-impact
+  in real code but removes an edge-case correctness gap.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaMemberOverAst.kt` | C1 (NULL_KEYWORD typed check), P2 (reverse for loop), P4 (`@Volatile` cache for `initializerNode`), P5 (`hasAnnotationParameterDefaultValue` is a keyword check) |
+| `JavaResolutionContext.kt` | C2+O5+R13 (`AggregatedInheritedInnerClassesHolder` replaces `Array<...>(1)` + stray `@Suppress`), P3 (pre-map `parts` in `resolveAsClassId`) |
+| `JavaClassFinderOverAstImpl.kt` | C3 (package annotations included in `findPackage`), O4 (`ConcurrentHashMap.newKeySet()`), P11 (`buildSet` in `knownClassNamesInPackage`) |
+| `JavaLightTree.kt` | O1 (dropped `startForDone` field, constructor arg, and Pass-1 writes) |
+| `ConstantEvaluator.kt` | C4 (routed `findLocalClass` through the resolution context's cache) |
+| `JavaTypeOverAst.kt` | P6 (`JavaClassifierTypeOverAst.isResolved` collapsed to two disjuncts) |
+| `JavaSupertypeGraph.kt` | P10 (`mapTo(HashSet(size))` + empty short-circuit in `getInnerClassNames`) |
+| `JavaSourceIndex.kt` | C5 (`DECLARATION_REGEX.findAll` instead of `find`) |
+
+### Test Results
+
+Gate per `REFACTORING_PLAN.md` §2.1:
+```
+./gradlew :kotlin-java-direct:test \
+  --tests JavaUsingAstPhasedTestGenerated \
+  --tests JavaUsingAstBoxTestGenerated \
+  --tests JavaParsingTest \
+  --rerun-tasks
+```
+→ **BUILD SUCCESSFUL**, `tests=2671 failures=0 errors=0 skipped=0`. No diagnostic diffs
+in the phased suite; no box regressions. IDE `build_project` on all 8 edited files
+reports 0 errors (pre-existing style warnings only).
+
+### Key Learnings
+
+- **Token `toString()` is a name, not a literal to match.** `"NULL_KEYWORD"` is the
+  `SyntaxElementType` constructor's debug label, and changing it on the `java-syntax`
+  side would silently break any `.toString()`-based caller. The C1 bug is exactly the
+  class of problem captured by `feedback_java_syntax_tokens.md`: always compare against
+  the typed constant, never the string form.
+- **`Array<T?>(1)` is not a substitute for `@Volatile`.** The array reference itself is
+  a `final` field and therefore safely published, but stores into `array[0]` have no
+  release semantics — other threads may observe the null-initialized slot indefinitely.
+  A one-field class with `@Volatile var value` is both clearer and correct; it also makes
+  the happens-before contract legible at the declaration site.
+- **`package-info.java`-only packages are a real shape.** Several JDK and Kotlin-stdlib
+  packages carry only annotations (`@kotlin.Metadata`, `@ParametersAreNonnullByDefault`,
+  etc.) without any class files. Any "package exists?" check that looks only at class
+  presence will lose those annotations — which is exactly what FIR's nullability pipeline
+  would need. Keep the two sources (classes, annotations) symmetric in every existence
+  predicate.
+- **Helper delegation preserves cache identity.** The `ConstantEvaluator.findLocalClass`
+  fix is a reminder that once a shared cache exists (`localClassCache` in the resolution
+  context), every code path that could create the cached object must go through that
+  cache. A freshly constructed `JavaClassOverAst` is not equal-by-identity to the cached
+  one, and FIR's type-parameter matching is by identity — exactly the failure mode the
+  2026-04-20 "localClassCache under concurrency" entry describes.
+- **Short-circuits on the cheap check come first.** P5 (`DEFAULT_KEYWORD` presence before
+  constructing the argument) and P6 (`classifier != null` before `getSimpleImport`) are
+  the same idea applied twice: a `Boolean` property that forwards to a heavy computation
+  is a smell; the presence/absence signal is almost always available from a cheaper
+  source.
 
 ---
 
