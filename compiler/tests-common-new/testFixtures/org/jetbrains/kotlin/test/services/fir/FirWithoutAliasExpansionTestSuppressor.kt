@@ -5,35 +5,19 @@
 
 package org.jetbrains.kotlin.test.services.fir
 
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.TestFailureSuppressor
+import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-class FirWithoutAliasExpansionTestSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
-    override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
-
-    override val order: Order
-        get() = Order.P5
-
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE !in testServices.moduleStructure.allDirectives) return failedAssertions
-
-        return when {
-            failedAssertions.isEmpty() -> testServices.assertions.fail {
-                "Test is passing. Remove $SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE directive"
-            }
-
-            else -> emptyList()
-        }
-    }
-}
+class FirWithoutAliasExpansionTestSuppressor(testServices: TestServices) : TestFailureSuppressorBySingleDirective(
+    suppressDirective = SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE,
+    directivesContainer = FirDiagnosticsDirectives,
+    testServices,
+    order = Order.P5,
+)
 
 class OnlyTestsWithTypeAliasesMetaConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun shouldSkipTest(): Boolean {

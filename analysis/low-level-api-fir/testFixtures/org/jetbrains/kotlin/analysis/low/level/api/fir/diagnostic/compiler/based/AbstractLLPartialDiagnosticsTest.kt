@@ -9,7 +9,6 @@ import com.intellij.psi.util.descendantsOfType
 import org.jetbrains.kotlin.analysis.api.platform.modification.publishGlobalSourceOutOfBlockModificationEvent
 import org.jetbrains.kotlin.analysis.low.level.api.fir.CustomOutputDiagnosticsConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.TestByDirectiveSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -62,7 +62,7 @@ abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() 
 
 private class LLFirPartialBodyTestSuppressor(
     testServices: TestServices,
-) : TestByDirectiveSuppressor(
+) : TestFailureSuppressorBySingleDirective(
     suppressDirective = Directives.IGNORE_PARTIAL_BODY_ANALYSIS,
     directivesContainer = Directives,
     testServices

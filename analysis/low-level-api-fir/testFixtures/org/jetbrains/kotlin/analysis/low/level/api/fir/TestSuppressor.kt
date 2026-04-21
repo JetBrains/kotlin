@@ -5,47 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.model.TestFailureSuppressor
+import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
-
-abstract class TestByDirectiveSuppressor(
-    val suppressDirective: StringDirective,
-    directivesContainer: DirectivesContainer,
-    testServices: TestServices,
-) : TestFailureSuppressor(testServices) {
-    init {
-        require(suppressDirective in directivesContainer)
-    }
-
-    override val directiveContainers: List<DirectivesContainer> = listOf(directivesContainer)
-
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (!isDisabled()) {
-            return failedAssertions
-        }
-
-        return if (failedAssertions.isEmpty()) {
-            listOf(
-                AssertionError(
-                    "Test contains $suppressDirective directive but no errors was reported. Please remove directive",
-                ).wrap()
-            )
-        } else {
-            emptyList()
-        }
-    }
-
-    private fun isDisabled(): Boolean = suppressDirective in testServices.moduleStructure.allDirectives
-}
 
 class LLFirTestSuppressor(
     testServices: TestServices,
-) : TestByDirectiveSuppressor(
+) : TestFailureSuppressorBySingleDirective(
     suppressDirective = Directives.MUTE_LL_FIR,
     directivesContainer = Directives,
     testServices
@@ -58,7 +24,7 @@ class LLFirTestSuppressor(
 
 class LLFirOnlyReversedTestSuppressor(
     testServices: TestServices,
-) : TestByDirectiveSuppressor(
+) : TestFailureSuppressorBySingleDirective(
     suppressDirective = Directives.IGNORE_REVERSED_RESOLVE,
     directivesContainer = Directives,
     testServices
@@ -70,7 +36,7 @@ class LLFirOnlyReversedTestSuppressor(
 
 class LLFirOnlyNonReversedTestSuppressor(
     testServices: TestServices,
-) : TestByDirectiveSuppressor(
+) : TestFailureSuppressorBySingleDirective(
     suppressDirective = Directives.IGNORE_NON_REVERSED_RESOLVE,
     directivesContainer = Directives,
     testServices
