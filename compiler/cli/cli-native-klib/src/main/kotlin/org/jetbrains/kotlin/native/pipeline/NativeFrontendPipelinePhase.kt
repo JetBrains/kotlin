@@ -133,7 +133,6 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         input: KotlinCoreEnvironment,
         configuration: CompilerConfiguration,
     ): AllModulesFrontendOutput {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         // FIR
 
         val groupedSources = collectSources(
