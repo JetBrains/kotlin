@@ -1,0 +1,20 @@
+FILE fqName:<root> fileName:/implicitCast.kt
+  FUN name:assertEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:expected index:0 type:T of <root>.assertEquals
+    VALUE_PARAMETER kind:Regular name:actual index:1 type:T of <root>.assertEquals
+    VALUE_PARAMETER kind:Regular name:message index:2 type:kotlin.String?
+      EXPRESSION_BODY
+        CONST Null type=kotlin.Nothing? value=null
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:a type:dynamic [val]
+        CONST Int type=kotlin.Int value=12
+      CALL 'public final fun assertEquals <T> (expected: T of <root>.assertEquals, actual: T of <root>.assertEquals, message: kotlin.String?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG T: dynamic
+        ARG expected: CONST Int type=kotlin.Int value=60
+        ARG actual: TYPE_OP type=T of <root>.assertEquals origin=IMPLICIT_DYNAMIC_CAST typeOperand=T of <root>.assertEquals
+          DYN_OP operator=MUL type=dynamic
+            receiver: GET_VAR 'val a: dynamic declared in <root>.test' type=dynamic origin=null
+            0: CONST Int type=kotlin.Int value=5

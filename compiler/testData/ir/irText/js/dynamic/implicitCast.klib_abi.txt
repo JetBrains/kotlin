@@ -1,0 +1,8 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun <#A: kotlin/Any?> /assertEquals(#A, #A, kotlin/String? = ...) // /assertEquals|assertEquals(0:0;0:0;kotlin.String?){0§<kotlin.Any?>}[0]
+final fun /test() // /test|test(){}[0]

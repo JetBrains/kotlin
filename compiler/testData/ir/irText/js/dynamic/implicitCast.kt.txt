@@ -1,0 +1,7 @@
+fun <T : Any?> assertEquals(expected: T, actual: T, message: String? = null) {
+}
+
+fun test() {
+  val a: dynamic = 12
+  assertEquals<dynamic>(expected = 60, actual = a * 5 /*~> T */)
+}
