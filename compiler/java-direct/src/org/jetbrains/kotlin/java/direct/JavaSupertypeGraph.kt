@@ -146,7 +146,9 @@ internal class JavaSupertypeGraph(
         // Fast path: use the cached JavaClass (no file I/O, no parsing)
         val cachedClass = classCacheLookup(classId)
         if (cachedClass != null) {
-            return cachedClass.innerClassNames.map { it.asString() }.toSet()
+            val inner = cachedClass.innerClassNames
+            if (inner.isEmpty()) return emptySet()
+            return inner.mapTo(HashSet(inner.size)) { it.asString() }
         }
 
         // Slow path: re-parse for inner class names.

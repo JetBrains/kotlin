@@ -100,8 +100,8 @@ internal fun extractFileInfoLightweight(file: VirtualFile, reader: JavaSourceFil
                 }
 
                 if (depthBeforeLine == 0) {
-                    DECLARATION_REGEX.find(effective)?.let {
-                        classNames.add(it.groupValues[2])
+                    for (match in DECLARATION_REGEX.findAll(effective)) {
+                        classNames.add(match.groupValues[2])
                     }
                 }
             }

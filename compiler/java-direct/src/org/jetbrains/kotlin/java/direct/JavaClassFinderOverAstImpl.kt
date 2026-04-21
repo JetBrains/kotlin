@@ -90,9 +90,7 @@ class JavaClassFinderOverAstImpl(
     // for *inner* ClassIds whose top-level parent is in the index but that don't actually exist
     // (e.g. typo'd inner class names or FIR probing non-existent nested types during overload
     // resolution). Without it, every miss re-parses the top-level file.
-    // Uses Collections.newSetFromMap for a thread-safe set view.
-    private val negativeClassCache: MutableSet<ClassId> =
-        java.util.Collections.newSetFromMap(ConcurrentHashMap())
+    private val negativeClassCache: MutableSet<ClassId> = ConcurrentHashMap.newKeySet()
 
     // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
@@ -281,7 +279,9 @@ class JavaClassFinderOverAstImpl(
 
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         val byName = ensurePackageIndexed(fqName)
-        if (byName.isEmpty()) return null
+        // A package with no class files may still exist via `package-info.java` carrying only
+        // package-level annotations — respect those so the annotations are not lost.
+        if (byName.isEmpty() && packageAnnotationNodes[fqName].isNullOrEmpty()) return null
         // computeIfAbsent (not getOrPut) so concurrent callers share a single JavaPackageOverAst
         // instance instead of each creating their own and racing on put.
         return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
@@ -299,12 +299,11 @@ class JavaClassFinderOverAstImpl(
         // Fixing this would mean removing the filter below so that secondary classes appear in
         // package-level name sets — but that is a deliberate Kotlin/JVM design choice, not a
         // java-direct bug, so the fix belongs in a separate task tracked by the issue.
-        return byName.entries
-            .filter { (name, fileEntries) ->
-                fileEntries.any { entry -> entry.fileBaseName == name }
+        return buildSet {
+            for ((name, fileEntries) in byName) {
+                if (fileEntries.any { it.fileBaseName == name }) add(name)
             }
-            .map { it.key }
-            .toSet()
+        }
     }
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true

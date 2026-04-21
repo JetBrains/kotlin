@@ -324,20 +324,11 @@ class JavaClassifierTypeOverAst(
         return result
     }
 
+    // `classifier` already consults `findTypeParameter` + `findLocalClass`, so a positive
+    // classifier result already implies the type-parameter / local-class paths. The only
+    // additional resolution step this property needs is the explicit-import check.
     override val isResolved: Boolean
-        get() {
-            if (classifier != null) return true
-            val parts = rawTypeNameParts
-            if (parts.size == 1 && resolutionContext.findTypeParameter(rawTypeName) != null) return true
-            if (resolutionContext.getSimpleImport(parts[0]) != null) return true
-
-            // For unqualified names (no dots), we need resolution
-            // For qualified names like "Map.Entry", we need to resolve the outer class
-            // Only fully qualified names starting with a package are considered resolved
-            // We can't reliably distinguish "java.util.Map" from "Outer.Inner" by case alone
-            // So we consider anything that didn't match above as unresolved
-            return false
-        }
+        get() = classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null
 
     @Volatile private var _containingClassIds: List<ClassId>? = null
     override val containingClassIds: List<ClassId>

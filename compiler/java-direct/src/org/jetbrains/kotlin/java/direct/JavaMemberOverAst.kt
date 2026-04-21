@@ -103,13 +103,16 @@ class JavaFieldOverAst(
         val siblings = tree.getChildren(parent)
         val myIndex = siblings.indexOfFirst { it == node }
         // Walk backwards to find the nearest FIELD sibling with a MODIFIER_LIST or TYPE
-        return (myIndex - 1 downTo 0)
-            .map { siblings[it] }
-            .firstOrNull { sibling ->
-                tree.getType(sibling) == JavaSyntaxElementType.FIELD &&
-                        (tree.findChildByType(sibling, JavaSyntaxElementType.MODIFIER_LIST) != null ||
-                                tree.findChildByType(sibling, JavaSyntaxElementType.TYPE) != null)
+        for (i in myIndex - 1 downTo 0) {
+            val sibling = siblings[i]
+            if (tree.getType(sibling) == JavaSyntaxElementType.FIELD &&
+                (tree.findChildByType(sibling, JavaSyntaxElementType.MODIFIER_LIST) != null ||
+                        tree.findChildByType(sibling, JavaSyntaxElementType.TYPE) != null)
+            ) {
+                return sibling
             }
+        }
+        return null
     }
 
     /**
@@ -164,12 +167,13 @@ class JavaFieldOverAst(
     /**
      * The initializer expression node, if present.
      */
+    @Volatile private var _initializerNode: Any? = NOT_COMPUTED
     private val initializerNode: JavaLightNode?
-        get() {
+        get() = cachedNullable({ _initializerNode }, { _initializerNode = it }) {
             val children = tree.getChildren(node)
             val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
-            if (eqIndex < 0) return null
-            return children.drop(eqIndex + 1).firstOrNull {
+            if (eqIndex < 0) null
+            else children.drop(eqIndex + 1).firstOrNull {
                 tree.getType(it) != JavaSyntaxTokenType.SEMICOLON
             }
         }
@@ -201,7 +205,7 @@ class JavaFieldOverAst(
         return when (tree.getType(n)) {
             JavaSyntaxElementType.LITERAL_EXPRESSION -> {
                 val child = tree.getChildren(n).firstOrNull()
-                child?.let { tree.getType(it).toString() } != "NULL_LITERAL"
+                child != null && tree.getType(child) != JavaSyntaxTokenType.NULL_KEYWORD
             }
             JavaSyntaxElementType.BINARY_EXPRESSION -> {
                 val children = tree.getChildren(n)
@@ -350,7 +354,9 @@ class JavaMethodOverAst(
             return createAnnotationArgumentFromValue(null, valueNode, tree, resolutionContext)
         }
 
-    override val hasAnnotationParameterDefaultValue: Boolean get() = annotationParameterDefaultValue != null
+    override val hasAnnotationParameterDefaultValue: Boolean
+        get() = containingClass.isAnnotationType &&
+                tree.findChildByType(node, JavaSyntaxTokenType.DEFAULT_KEYWORD) != null
     override val isNative: Boolean get() = hasModifier(JavaSyntaxTokenType.NATIVE_KEYWORD)
 
     override val isFromSource: Boolean get() = true

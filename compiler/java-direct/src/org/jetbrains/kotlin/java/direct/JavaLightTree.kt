@@ -52,8 +52,6 @@ class JavaLightTree(
     private val parentStartIndex: IntArray,
     /** For each marker index that is a START, the index of its matching DONE marker. */
     private val doneForStart: IntArray,
-    /** For each marker index that is a DONE, the index of its matching START marker. */
-    @Suppress("unused") private val startForDone: IntArray,
     /** For each token index, the START-marker index of its enclosing composite, or [rootIndex] for top-level tokens. */
     private val tokenParentStart: IntArray,
     /** Index used by [getRoot]: synthetic root wraps all top-level production markers. */
@@ -247,7 +245,6 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
     // ---- Pass 1: parent/done indices + extract types, offsets, error flags ----
     val parentStartIndex = IntArray(markerCount) { rootIndex }
     val doneForStart = IntArray(markerCount) { -1 }
-    val startForDone = IntArray(markerCount) { -1 }
     val compositeTypes = arrayOfNulls<SyntaxElementType>(markerCount)
     val errorFlags = BooleanArray(markerCount)
     val compositeStartOffsets = IntArray(markerCount)
@@ -273,7 +270,6 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
             productionMarkers.isDoneMarker(i) -> {
                 val startIdx = pop()
                 doneForStart[startIdx] = i
-                startForDone[i] = startIdx
                 // Record end offset for the composite (DONE marker's end offset)
                 compositeEndOffsets[startIdx] = marker.getEndOffset()
             }
@@ -451,7 +447,6 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
         source = source,
         parentStartIndex = parentStartIndex,
         doneForStart = doneForStart,
-        startForDone = startForDone,
         tokenParentStart = tokenParentStart,
         rootIndex = rootIndex,
         rootNodeType = rootNodeType,

@@ -39,17 +39,21 @@ class JavaResolutionContext private constructor(
      * Lazily computed aggregated inherited inner classes for the entire containing class chain.
      * Maps simpleName -> Set<ClassId> across the containing class and all its outer classes.
      * Cached to avoid re-walking the outer class chain on every [resolveSimpleNameToClassId] call.
-     * Shared across contexts with the same containing class (via [withTypeParameters] / [withInheritedTypeParameters]).
-     * Array of size 1 used as a mutable holder so it can be shared by reference.
+     * Shared by reference across contexts with the same containing class
+     * (via [withTypeParameters] / [withInheritedTypeParameters]).
      */
-    @Suppress("ArrayInDataClass")
-    private val aggregatedInheritedInnerClassesHolder: Array<Map<String, Set<ClassId>>?> = arrayOfNulls(1),
+    private val aggregatedInheritedInnerClassesHolder: AggregatedInheritedInnerClassesHolder =
+        AggregatedInheritedInnerClassesHolder(),
 ) {
+    private class AggregatedInheritedInnerClassesHolder {
+        @Volatile var value: Map<String, Set<ClassId>>? = null
+    }
+
     private fun getAggregatedInheritedInnerClasses(): Map<String, Set<ClassId>>? {
-        aggregatedInheritedInnerClassesHolder[0]?.let { return it }
+        aggregatedInheritedInnerClassesHolder.value?.let { return it }
         val containingClass = containingClassProvider?.invoke() as? JavaClassOverAst ?: return null
         val result = inheritedMemberResolver.computeAggregatedInheritedInnerClasses(containingClass)
-        aggregatedInheritedInnerClassesHolder[0] = result
+        aggregatedInheritedInnerClassesHolder.value = result
         return result
     }
 
@@ -501,10 +505,11 @@ class JavaResolutionContext private constructor(
     private fun resolveAsClassId(fqName: FqName, tryResolve: (ClassId) -> Boolean): ClassId? {
         val parts = fqName.pathSegments()
         if (parts.isEmpty()) return null
+        val stringParts = parts.map { it.asString() }
         for (classStartIndex in (parts.size - 1) downTo 0) {
             val pkg = if (classStartIndex == 0) FqName.ROOT
-            else FqName.fromSegments(parts.subList(0, classStartIndex).map { it.asString() })
-            val cls = FqName.fromSegments(parts.subList(classStartIndex, parts.size).map { it.asString() })
+            else FqName.fromSegments(stringParts.subList(0, classStartIndex))
+            val cls = FqName.fromSegments(stringParts.subList(classStartIndex, stringParts.size))
             val classId = ClassId(pkg, cls, false)
             if (tryResolve(classId)) return classId
         }

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.name.Name
 import kotlin.experimental.inv
 
 /**
@@ -247,24 +248,10 @@ class ConstantEvaluator(
         if (containingClass.name.asString() == name) {
             return containingClass
         }
-
-        val innerClass = containingClass.findInnerClass(org.jetbrains.kotlin.name.Name.identifier(name))
-        if (innerClass is JavaClassOverAst) {
-            return innerClass
-        }
-
-        // Check classes in the same file (siblings)
-        val root = tree.getParent(containingClass.node) ?: return null
-        for (child in tree.getChildren(root)) {
-            if (tree.getType(child) == JavaSyntaxElementType.CLASS) {
-                val className = tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() }
-                if (className == name) {
-                    return JavaClassOverAst(child, tree, containingClass.resolutionContext)
-                }
-            }
-        }
-
-        return null
+        // Route through the shared resolution context so that sibling top-level classes are
+        // retrieved from the file-level cache (same JavaClassOverAst instance, same type-parameter
+        // identity) instead of being freshly constructed here.
+        return containingClass.resolutionContext.findLocalClass(Name.identifier(name)) as? JavaClassOverAst
     }
 
     private fun resolveFieldValue(javaClass: JavaClassOverAst, fieldName: String): Any? {
