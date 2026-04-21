@@ -41,31 +41,8 @@ class ConstantEvaluator(
         }
     }
 
-    private fun evaluateLiteral(node: JavaLightNode): Any? {
-        val literalChild = tree.getChildren(node).firstOrNull() ?: return null
-        val text = tree.getText(literalChild).toString()
-
-        return when (tree.getType(literalChild)) {
-            JavaSyntaxTokenType.STRING_LITERAL -> {
-                if (text.length >= 2) {
-                    JavaLiteralParser.unescapeJavaString(text.substring(1, text.length - 1))
-                } else text
-            }
-            JavaSyntaxTokenType.CHARACTER_LITERAL -> {
-                if (text.length >= 3) {
-                    JavaLiteralParser.unescapeJavaString(text.substring(1, text.length - 1)).firstOrNull()
-                } else null
-            }
-            JavaSyntaxTokenType.TRUE_KEYWORD -> true
-            JavaSyntaxTokenType.FALSE_KEYWORD -> false
-            JavaSyntaxTokenType.NULL_KEYWORD -> null
-            JavaSyntaxTokenType.INTEGER_LITERAL -> JavaLiteralParser.parseIntegerLiteral(text)
-            JavaSyntaxTokenType.LONG_LITERAL -> JavaLiteralParser.parseLongLiteral(text)
-            JavaSyntaxTokenType.FLOAT_LITERAL -> JavaLiteralParser.parseFloatLiteral(text)
-            JavaSyntaxTokenType.DOUBLE_LITERAL -> JavaLiteralParser.parseDoubleLiteral(text)
-            else -> null
-        }
-    }
+    private fun evaluateLiteral(node: JavaLightNode): Any? =
+        JavaLiteralParser.evaluateLiteral(node, tree)
 
     private fun evaluateBinaryExpression(node: JavaLightNode): Any? {
         val children = tree.getChildren(node)
@@ -115,74 +92,22 @@ class ConstantEvaluator(
         }
 
         if (lhs is Number && rhs is Number) {
-            return evaluateNumericOp(lhs, operator, rhs)
+            return JavaLiteralParser.evaluateNumericBinaryOp(lhs, operator, rhs)
         }
 
         if (lhs is Char && rhs is Number) {
-            return evaluateNumericOp(lhs.code, operator, rhs)?.let { result ->
+            return JavaLiteralParser.evaluateNumericBinaryOp(lhs.code, operator, rhs)?.let { result ->
                 if (result is Int && operator == JavaSyntaxTokenType.PLUS) result.toChar() else result
             }
         }
         if (lhs is Number && rhs is Char) {
-            return evaluateNumericOp(lhs, operator, rhs.code)
+            return JavaLiteralParser.evaluateNumericBinaryOp(lhs, operator, rhs.code)
         }
         if (lhs is Char && rhs is Char) {
-            return evaluateNumericOp(lhs.code, operator, rhs.code)
+            return JavaLiteralParser.evaluateNumericBinaryOp(lhs.code, operator, rhs.code)
         }
 
         return null
-    }
-
-    private fun evaluateNumericOp(lhs: Number, operator: SyntaxElementType, rhs: Number): Any? {
-        val isFloat = lhs is Float || lhs is Double || rhs is Float || rhs is Double
-        val isLong = !isFloat && (lhs is Long || rhs is Long)
-        val isDouble = isFloat && (lhs is Double || rhs is Double)
-
-        return when (operator) {
-            JavaSyntaxTokenType.PLUS -> when {
-                isDouble -> lhs.toDouble() + rhs.toDouble()
-                isFloat -> lhs.toFloat() + rhs.toFloat()
-                isLong -> lhs.toLong() + rhs.toLong()
-                else -> lhs.toInt() + rhs.toInt()
-            }
-            JavaSyntaxTokenType.MINUS -> when {
-                isDouble -> lhs.toDouble() - rhs.toDouble()
-                isFloat -> lhs.toFloat() - rhs.toFloat()
-                isLong -> lhs.toLong() - rhs.toLong()
-                else -> lhs.toInt() - rhs.toInt()
-            }
-            JavaSyntaxTokenType.ASTERISK -> when {
-                isDouble -> lhs.toDouble() * rhs.toDouble()
-                isFloat -> lhs.toFloat() * rhs.toFloat()
-                isLong -> lhs.toLong() * rhs.toLong()
-                else -> lhs.toInt() * rhs.toInt()
-            }
-            JavaSyntaxTokenType.DIV -> when {
-                isDouble -> lhs.toDouble() / rhs.toDouble()
-                isFloat -> lhs.toFloat() / rhs.toFloat()
-                isLong -> lhs.toLong() / rhs.toLong()
-                else -> lhs.toInt() / rhs.toInt()
-            }
-            JavaSyntaxTokenType.PERC -> when {
-                isDouble -> lhs.toDouble() % rhs.toDouble()
-                isFloat -> lhs.toFloat() % rhs.toFloat()
-                isLong -> lhs.toLong() % rhs.toLong()
-                else -> lhs.toInt() % rhs.toInt()
-            }
-            JavaSyntaxTokenType.GTGT -> if (isLong) lhs.toLong() shr rhs.toInt() else lhs.toInt() shr rhs.toInt()
-            JavaSyntaxTokenType.LTLT -> if (isLong) lhs.toLong() shl rhs.toInt() else lhs.toInt() shl rhs.toInt()
-            JavaSyntaxTokenType.GTGTGT -> if (isLong) lhs.toLong() ushr rhs.toInt() else lhs.toInt() ushr rhs.toInt()
-            JavaSyntaxTokenType.AND -> if (isLong) lhs.toLong() and rhs.toLong() else lhs.toInt() and rhs.toInt()
-            JavaSyntaxTokenType.OR -> if (isLong) lhs.toLong() or rhs.toLong() else lhs.toInt() or rhs.toInt()
-            JavaSyntaxTokenType.XOR -> if (isLong) lhs.toLong() xor rhs.toLong() else lhs.toInt() xor rhs.toInt()
-            JavaSyntaxTokenType.EQEQ -> if (isFloat) lhs.toDouble() == rhs.toDouble() else lhs.toLong() == rhs.toLong()
-            JavaSyntaxTokenType.NE -> if (isFloat) lhs.toDouble() != rhs.toDouble() else lhs.toLong() != rhs.toLong()
-            JavaSyntaxTokenType.LT -> if (isFloat) lhs.toDouble() < rhs.toDouble() else lhs.toLong() < rhs.toLong()
-            JavaSyntaxTokenType.LE -> if (isFloat) lhs.toDouble() <= rhs.toDouble() else lhs.toLong() <= rhs.toLong()
-            JavaSyntaxTokenType.GT -> if (isFloat) lhs.toDouble() > rhs.toDouble() else lhs.toLong() > rhs.toLong()
-            JavaSyntaxTokenType.GE -> if (isFloat) lhs.toDouble() >= rhs.toDouble() else lhs.toLong() >= rhs.toLong()
-            else -> null
-        }
     }
 
     private fun evaluatePrefixExpression(node: JavaLightNode): Any? {

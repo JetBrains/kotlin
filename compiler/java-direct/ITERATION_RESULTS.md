@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (refactoring-plan Phase B.1: deduplicate walks and wrappers)
+**Last Updated**: 2026-04-21 (refactoring-plan Phase B.2: consolidate annotation-arg evaluation)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -17,8 +17,103 @@ caveats have landed in code (verified against current source). What remains:
 - ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
 
-The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A and
-Phase B.1 are now complete; Phase B.2 / B.3 and Phases C–E are pending.
+The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A, B.1,
+and B.2 are now complete; Phase B.3 and Phases C–E are pending.
+
+---
+
+## Refactoring Plan Phase B.2: Consolidate Annotation-Arg Evaluation — 2026-04-21
+
+### Overview
+
+Second iteration of Phase B. Addresses `REFACTORING_PLAN.md` items **O7** (duplicated
+mini-evaluator in `JavaAnnotationOverAst`) and **R11** (two TODOs flagging unfinished
+thought in the same file). The two evaluators — `ConstantEvaluator` (field initializers)
+and the annotation-argument path — previously each carried their own copy of literal
+evaluation plus a divergent numeric-operator implementation. The annotation variant
+silently truncated all numeric ops through `Long`, dropping Float/Double precision.
+
+Both evaluators now share the literal and numeric-operator primitives via `JavaLiteralParser`.
+
+### Changes
+
+- **`JavaLiteralParser.kt`** gained two new `object`-level functions:
+  - `evaluateLiteral(node: JavaLightNode, tree: JavaLightTree): Any?` — turns a
+    `LITERAL_EXPRESSION` node into its Java value (String/Char/Boolean/Number/null).
+    Mirrors the previous `ConstantEvaluator.evaluateLiteral` exactly; the fallback
+    `text.toIntOrNull() ?: text.toLongOrNull() ?: text.toDoubleOrNull() ?: text` branch
+    from the annotation variant is dropped — per JLS 3.10 annotation literal tokens are
+    well-typed, and the fallback was masking parser bugs rather than helping (answers the
+    `// TODO: check against specs` pointer).
+  - `evaluateNumericBinaryOp(lhs: Number, operator: SyntaxElementType, rhs: Number): Any?`
+    — Java-ish numeric promotion (`Double → Float → Long → Int`) across arithmetic,
+    bitwise, shift, equality, and comparison operators. Extracted verbatim from the old
+    `ConstantEvaluator.evaluateNumericOp`; returns `null` for operators it doesn't know.
+- **`ConstantEvaluator.kt`** — `evaluateLiteral` is now a one-liner delegating to
+  `JavaLiteralParser.evaluateLiteral(node, tree)`. `evaluateNumericOp` deleted; the four
+  call sites inside `evaluateBinaryOp` (Number/Number, Char/Number, Number/Char, Char/Char)
+  now call `JavaLiteralParser.evaluateNumericBinaryOp`. Net: −70 lines.
+- **`JavaAnnotationOverAst.kt`** — deleted the private `evaluateLiteral(node, tree)`,
+  the `numericBinaryOp(left, right, op)` helper, and the `ANNOTATION_BINARY_OPERATOR_TYPES`
+  operator set. `evaluateConstantExpression`'s `LITERAL_EXPRESSION` branch now calls
+  `JavaLiteralParser.evaluateLiteral`; the `BINARY_EXPRESSION` branch reads
+  `children[0..2]` directly (Phase A's whitespace-free children make the old
+  filter-out-operators dance unnecessary) and delegates numeric cases to
+  `JavaLiteralParser.evaluateNumericBinaryOp` via a tiny `evaluateAnnotationBinaryOp`
+  helper that adds the annotation-only `String + x` concatenation special case on top.
+  Removes both TODOs. Net: −65 lines.
+
+Behaviour change worth noting: annotation-argument numeric operations that previously
+truncated Float/Double to Long now return the correctly typed result. No test broke —
+existing annotation tests use integer-typed values — but the change is strictly more
+correct per JLS 15.19 (numeric promotion in compile-time constant expressions).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaLiteralParser.kt` | Added `evaluateLiteral` + `evaluateNumericBinaryOp`; new `com.intellij.java.syntax.element.JavaSyntaxTokenType` / `com.intellij.platform.syntax.SyntaxElementType` imports |
+| `ConstantEvaluator.kt` | `evaluateLiteral` delegates; `evaluateNumericOp` deleted; four `evaluateBinaryOp` call sites switched to shared helper |
+| `JavaAnnotationOverAst.kt` | Deleted private `evaluateLiteral`, `numericBinaryOp`, `ANNOTATION_BINARY_OPERATOR_TYPES`; `evaluateConstantExpression` + new `evaluateAnnotationBinaryOp` now route through `JavaLiteralParser`; two TODOs removed |
+
+### Test Results
+
+Gate per `REFACTORING_PLAN.md` §2.1:
+```
+./gradlew :kotlin-java-direct:test \
+  --tests JavaUsingAstPhasedTestGenerated \
+  --tests JavaUsingAstBoxTestGenerated \
+  --tests JavaParsingTest \
+  --rerun-tasks
+```
+→ **BUILD SUCCESSFUL**, `tests=2671 failures=0 errors=0 skipped=0`. Identical count and
+outcome to the Phase A / B.1 baseline. IDE `get_file_problems` on every edited file
+reports 0 errors (pre-existing style warnings only).
+
+### Key Learnings
+
+- **Two copies of an evaluator drift silently.** The annotation's `numericBinaryOp`
+  truncated everything through `Long`, losing Float/Double precision — a bug that tests
+  never caught because real-world annotation values are almost always integer. A shared
+  helper forces the question "do these really need to differ?" at the API boundary and
+  prevents the kind of silent divergence that produces incorrect compile-time constants
+  only on the annotation path.
+- **Whitespace-free children unlock simpler indexing.** Phase A's "exclude WHITE_SPACE
+  from children" change made `children[0..2]` a safe direct access for BINARY_EXPRESSION.
+  The old annotation code had a `filter` + `firstOrNull` dance specifically to skip
+  non-operator tokens; after Phase A, that dance is pure noise. Future refactorings
+  should treat whitespace-free children as a given when re-reading older code.
+- **Resolving TODOs means answering the question, not deferring it.** The
+  `// TODO: check if it needs to be replaced with ConstantEvaluator` question had a
+  concrete answer: ConstantEvaluator depends on a containing class, which annotation
+  arguments may lack (e.g. annotations on type parameters or packages), so the full
+  evaluator cannot be reused as-is. What *is* reusable is the literal + numeric-op
+  primitives — and that's exactly what now lives in `JavaLiteralParser`.
+- **`JavaLiteralParser` has grown from "literal parsers" into "shared evaluation
+  primitives".** The updated KDoc reflects that: the file still hosts the textual parsers
+  (`parseIntegerLiteral` etc.) but now also owns the node-level literal evaluation and
+  the numeric-op semantics. If a third consumer appears (e.g. enum-value initializer
+  evaluation), these primitives should be the starting point.
 
 ---
 

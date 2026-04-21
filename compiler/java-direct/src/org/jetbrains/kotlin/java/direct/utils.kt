@@ -7,8 +7,22 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaDocSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+
+/**
+ * Returns `true` if [node] has a `DOC_COMMENT` child containing the `@deprecated` javadoc tag.
+ * The KMP parser attaches the doc comment as a direct child of the declaration node.
+ *
+ * Shared by every [org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner] that implements
+ * `isDeprecatedInJavaDoc` over the AST — classes, members, value parameters. Packages
+ * ([JavaPackageOverAst]) return `false` unconditionally and don't use this helper.
+ */
+internal fun isDeprecatedInJavaDoc(tree: JavaLightTree, node: JavaLightNode): Boolean =
+    tree.findChildByType(node, JavaDocSyntaxElementType.DOC_COMMENT)?.let {
+        tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
+    } == true
 
 internal fun computeTypeParameters(
     node: JavaLightNode,

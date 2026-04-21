@@ -110,7 +110,7 @@ internal fun createAnnotationArgumentFromValue(
 
     return when (tree.getType(valueNode)) {
         JavaSyntaxElementType.LITERAL_EXPRESSION -> {
-            val value = evaluateLiteral(valueNode, tree)
+            val value = JavaLiteralParser.evaluateLiteral(valueNode, tree)
             JavaLiteralAnnotationArgumentOverAst(name, value)
         }
         JavaSyntaxElementType.ARRAY_INITIALIZER_EXPRESSION, JavaSyntaxElementType.ANNOTATION_ARRAY_INITIALIZER -> {
@@ -138,42 +138,15 @@ internal fun createAnnotationArgumentFromValue(
     }
 }
 
-private fun evaluateLiteral(node: JavaLightNode, tree: JavaLightTree): Any? {
-    val literalChild = tree.getChildren(node).firstOrNull() ?: return null
-    val text = tree.getText(literalChild).toString()
-
-    return when (tree.getType(literalChild)) {
-        JavaSyntaxTokenType.STRING_LITERAL -> {
-            if (text.length >= 2) {
-                JavaLiteralParser.unescapeJavaString(text.substring(1, text.length - 1))
-            } else text
-        }
-        JavaSyntaxTokenType.CHARACTER_LITERAL -> {
-            if (text.length >= 3) {
-                JavaLiteralParser.unescapeJavaString(text.substring(1, text.length - 1)).firstOrNull()
-            } else null
-        }
-        JavaSyntaxTokenType.TRUE_KEYWORD -> true
-        JavaSyntaxTokenType.FALSE_KEYWORD -> false
-        JavaSyntaxTokenType.NULL_KEYWORD -> null
-        JavaSyntaxTokenType.INTEGER_LITERAL -> JavaLiteralParser.parseIntegerLiteral(text)
-        JavaSyntaxTokenType.LONG_LITERAL -> JavaLiteralParser.parseLongLiteral(text)
-        JavaSyntaxTokenType.FLOAT_LITERAL -> JavaLiteralParser.parseFloatLiteral(text)
-        JavaSyntaxTokenType.DOUBLE_LITERAL -> JavaLiteralParser.parseDoubleLiteral(text)
-        else -> {
-            // Fallback: try to parse as number
-            // TODO: check against specs
-            text.toIntOrNull() ?: text.toLongOrNull() ?: text.toDoubleOrNull() ?: text
-        }
-    }
-}
-
-private val ANNOTATION_BINARY_OPERATOR_TYPES = setOf(
-    JavaSyntaxTokenType.PLUS, JavaSyntaxTokenType.MINUS, JavaSyntaxTokenType.ASTERISK,
-    JavaSyntaxTokenType.DIV, JavaSyntaxTokenType.PERC
-)
-
-// TODO: check if it needs to be replaced with ConstantEvaluator
+/**
+ * Evaluates a prefix/binary/literal constant expression used as an annotation argument.
+ *
+ * Supports the subset of constant expressions that can legally appear in a Java annotation
+ * value (JLS 9.6.1): literals, unary minus, and binary string concatenation / arithmetic.
+ * Unlike [ConstantEvaluator] this does not require a containing class — annotation arguments
+ * cannot reference local fields — which is why the two evaluators coexist. The numeric and
+ * literal primitives live in [JavaLiteralParser] so the semantics match across both.
+ */
 private fun evaluateConstantExpression(node: JavaLightNode, tree: JavaLightTree): Any? {
     when (tree.getType(node)) {
         JavaSyntaxElementType.PREFIX_EXPRESSION -> {
@@ -182,7 +155,7 @@ private fun evaluateConstantExpression(node: JavaLightNode, tree: JavaLightTree)
             val operand = children.getOrNull(1)
             if (firstChild != null && tree.getType(firstChild) == JavaSyntaxTokenType.MINUS && operand != null) {
                 val value = if (tree.getType(operand) == JavaSyntaxElementType.LITERAL_EXPRESSION) {
-                    evaluateLiteral(operand, tree)
+                    JavaLiteralParser.evaluateLiteral(operand, tree)
                 } else {
                     evaluateConstantExpression(operand, tree)
                 }
@@ -196,43 +169,26 @@ private fun evaluateConstantExpression(node: JavaLightNode, tree: JavaLightTree)
             }
         }
         JavaSyntaxElementType.BINARY_EXPRESSION -> {
-            val allChildren = tree.getChildren(node)
-            val operands = allChildren.filter {
-                val t = tree.getType(it)
-                t !in ANNOTATION_BINARY_OPERATOR_TYPES
-            }
-            val operatorNode = allChildren.firstOrNull { tree.getType(it) in ANNOTATION_BINARY_OPERATOR_TYPES }
-            if (operands.size == 2 && operatorNode != null) {
-                val left = evaluateConstantExpression(operands[0], tree)
-                val right = evaluateConstantExpression(operands[1], tree)
-                return evaluateBinaryExpression(left, tree.getType(operatorNode), right)
-            }
+            val children = tree.getChildren(node)
+            if (children.size < 3) return null
+            val left = evaluateConstantExpression(children[0], tree) ?: return null
+            val operator = tree.getType(children[1])
+            val right = evaluateConstantExpression(children[2], tree) ?: return null
+            return evaluateAnnotationBinaryOp(left, operator, right)
         }
-        JavaSyntaxElementType.LITERAL_EXPRESSION -> return evaluateLiteral(node, tree)
+        JavaSyntaxElementType.LITERAL_EXPRESSION -> return JavaLiteralParser.evaluateLiteral(node, tree)
     }
     return null
 }
 
-private fun evaluateBinaryExpression(left: Any?, operator: com.intellij.platform.syntax.SyntaxElementType, right: Any?): Any? {
-    if (left == null || right == null) return null
+private fun evaluateAnnotationBinaryOp(left: Any, operator: com.intellij.platform.syntax.SyntaxElementType, right: Any): Any? {
     if (operator == JavaSyntaxTokenType.PLUS && (left is String || right is String)) {
         return left.toString() + right.toString()
     }
-    return when (operator) {
-        JavaSyntaxTokenType.PLUS -> numericBinaryOp(left, right) { a, b -> a + b }
-        JavaSyntaxTokenType.MINUS -> numericBinaryOp(left, right) { a, b -> a - b }
-        JavaSyntaxTokenType.ASTERISK -> numericBinaryOp(left, right) { a, b -> a * b }
-        JavaSyntaxTokenType.DIV -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a / b else 0L }
-        JavaSyntaxTokenType.PERC -> numericBinaryOp(left, right) { a, b -> if (b != 0L) a % b else 0L }
-        else -> null
+    if (left is Number && right is Number) {
+        return JavaLiteralParser.evaluateNumericBinaryOp(left, operator, right)
     }
-}
-
-private fun numericBinaryOp(left: Any, right: Any, op: (Long, Long) -> Long): Any? {
-    val l = (left as? Number)?.toLong() ?: return null
-    val r = (right as? Number)?.toLong() ?: return null
-    val result = op(l, r)
-    return if (left is Long || right is Long) result else result.toInt()
+    return null
 }
 
 

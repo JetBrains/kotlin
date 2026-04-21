@@ -3,17 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import com.intellij.platform.syntax.SyntaxElementType
+
 /**
- * Shared Java literal parsing helpers used by both [ConstantEvaluator] and
- * annotation argument evaluation in [JavaAnnotationOverAst].
+ * Shared Java literal parsing and constant-expression helpers used by both
+ * [ConstantEvaluator] (field initializers) and annotation argument evaluation in
+ * [JavaAnnotationOverAst].
  *
- * These functions parse the textual form of Java literal tokens (integer, long,
- * float, double) and unescape string/character literal contents. They are
- * intentionally forgiving: on malformed input a zero/empty value is returned
- * rather than throwing, because upstream AST nodes may carry partially-recovered
- * text from the KMP Java parser.
+ * The [parseIntegerLiteral] / [parseLongLiteral] / [parseFloatLiteral] / [parseDoubleLiteral]
+ * / [unescapeJavaString] methods turn the textual form of Java literal tokens into Kotlin
+ * values. They are intentionally forgiving: on malformed input a zero/empty value is returned
+ * rather than throwing, because upstream AST nodes may carry partially-recovered text from
+ * the KMP Java parser.
+ *
+ * The [evaluateLiteral] and [evaluateNumericBinaryOp] methods are the higher-level building
+ * blocks both evaluators share so that literal and numeric-operator semantics cannot drift
+ * between the two contexts.
  */
 internal object JavaLiteralParser {
     /**
@@ -139,5 +149,102 @@ internal object JavaLiteralParser {
             }
         }
         return sb.toString()
+    }
+
+    /**
+     * Evaluates a `LITERAL_EXPRESSION` AST node to its Java value (String, Char, Boolean,
+     * Number, or `null`). The single token child's type determines the kind:
+     * string/character literals are unescaped via [unescapeJavaString]; numeric literal
+     * tokens are routed through the [parseIntegerLiteral] / [parseLongLiteral] /
+     * [parseFloatLiteral] / [parseDoubleLiteral] helpers; boolean and null keywords
+     * produce the obvious constants.
+     *
+     * Returns `null` when the literal is the `null` keyword **or** when the child token type
+     * is not a recognised literal kind; callers that need to distinguish those two cases must
+     * inspect the node structure directly.
+     */
+    fun evaluateLiteral(node: JavaLightNode, tree: JavaLightTree): Any? {
+        val literalChild = tree.getChildren(node).firstOrNull() ?: return null
+        val text = tree.getText(literalChild).toString()
+
+        return when (tree.getType(literalChild)) {
+            JavaSyntaxTokenType.STRING_LITERAL -> {
+                if (text.length >= 2) unescapeJavaString(text.substring(1, text.length - 1)) else text
+            }
+            JavaSyntaxTokenType.CHARACTER_LITERAL -> {
+                if (text.length >= 3) unescapeJavaString(text.substring(1, text.length - 1)).firstOrNull() else null
+            }
+            JavaSyntaxTokenType.TRUE_KEYWORD -> true
+            JavaSyntaxTokenType.FALSE_KEYWORD -> false
+            JavaSyntaxTokenType.NULL_KEYWORD -> null
+            JavaSyntaxTokenType.INTEGER_LITERAL -> parseIntegerLiteral(text)
+            JavaSyntaxTokenType.LONG_LITERAL -> parseLongLiteral(text)
+            JavaSyntaxTokenType.FLOAT_LITERAL -> parseFloatLiteral(text)
+            JavaSyntaxTokenType.DOUBLE_LITERAL -> parseDoubleLiteral(text)
+            else -> null
+        }
+    }
+
+    /**
+     * Evaluates a numeric binary operation with Java-ish promotion
+     * (`Double → Float → Long → Int`). Supports the full set of numeric operators plus
+     * shifts, bitwise ops, equality, and comparisons. Returns `null` for an operator that
+     * doesn't produce a numeric/boolean result on two numeric operands.
+     *
+     * Shared between [ConstantEvaluator] (field initializer evaluation) and
+     * [JavaAnnotationOverAst] (annotation argument evaluation) so that numeric semantics stay
+     * consistent. Callers that need special cases (e.g. `String + x` for annotations) handle
+     * those before delegating here.
+     */
+    fun evaluateNumericBinaryOp(lhs: Number, operator: SyntaxElementType, rhs: Number): Any? {
+        val isFloat = lhs is Float || lhs is Double || rhs is Float || rhs is Double
+        val isLong = !isFloat && (lhs is Long || rhs is Long)
+        val isDouble = isFloat && (lhs is Double || rhs is Double)
+
+        return when (operator) {
+            JavaSyntaxTokenType.PLUS -> when {
+                isDouble -> lhs.toDouble() + rhs.toDouble()
+                isFloat -> lhs.toFloat() + rhs.toFloat()
+                isLong -> lhs.toLong() + rhs.toLong()
+                else -> lhs.toInt() + rhs.toInt()
+            }
+            JavaSyntaxTokenType.MINUS -> when {
+                isDouble -> lhs.toDouble() - rhs.toDouble()
+                isFloat -> lhs.toFloat() - rhs.toFloat()
+                isLong -> lhs.toLong() - rhs.toLong()
+                else -> lhs.toInt() - rhs.toInt()
+            }
+            JavaSyntaxTokenType.ASTERISK -> when {
+                isDouble -> lhs.toDouble() * rhs.toDouble()
+                isFloat -> lhs.toFloat() * rhs.toFloat()
+                isLong -> lhs.toLong() * rhs.toLong()
+                else -> lhs.toInt() * rhs.toInt()
+            }
+            JavaSyntaxTokenType.DIV -> when {
+                isDouble -> lhs.toDouble() / rhs.toDouble()
+                isFloat -> lhs.toFloat() / rhs.toFloat()
+                isLong -> lhs.toLong() / rhs.toLong()
+                else -> lhs.toInt() / rhs.toInt()
+            }
+            JavaSyntaxTokenType.PERC -> when {
+                isDouble -> lhs.toDouble() % rhs.toDouble()
+                isFloat -> lhs.toFloat() % rhs.toFloat()
+                isLong -> lhs.toLong() % rhs.toLong()
+                else -> lhs.toInt() % rhs.toInt()
+            }
+            JavaSyntaxTokenType.GTGT -> if (isLong) lhs.toLong() shr rhs.toInt() else lhs.toInt() shr rhs.toInt()
+            JavaSyntaxTokenType.LTLT -> if (isLong) lhs.toLong() shl rhs.toInt() else lhs.toInt() shl rhs.toInt()
+            JavaSyntaxTokenType.GTGTGT -> if (isLong) lhs.toLong() ushr rhs.toInt() else lhs.toInt() ushr rhs.toInt()
+            JavaSyntaxTokenType.AND -> if (isLong) lhs.toLong() and rhs.toLong() else lhs.toInt() and rhs.toInt()
+            JavaSyntaxTokenType.OR -> if (isLong) lhs.toLong() or rhs.toLong() else lhs.toInt() or rhs.toInt()
+            JavaSyntaxTokenType.XOR -> if (isLong) lhs.toLong() xor rhs.toLong() else lhs.toInt() xor rhs.toInt()
+            JavaSyntaxTokenType.EQEQ -> if (isFloat) lhs.toDouble() == rhs.toDouble() else lhs.toLong() == rhs.toLong()
+            JavaSyntaxTokenType.NE -> if (isFloat) lhs.toDouble() != rhs.toDouble() else lhs.toLong() != rhs.toLong()
+            JavaSyntaxTokenType.LT -> if (isFloat) lhs.toDouble() < rhs.toDouble() else lhs.toLong() < rhs.toLong()
+            JavaSyntaxTokenType.LE -> if (isFloat) lhs.toDouble() <= rhs.toDouble() else lhs.toLong() <= rhs.toLong()
+            JavaSyntaxTokenType.GT -> if (isFloat) lhs.toDouble() > rhs.toDouble() else lhs.toLong() > rhs.toLong()
+            JavaSyntaxTokenType.GE -> if (isFloat) lhs.toDouble() >= rhs.toDouble() else lhs.toLong() >= rhs.toLong()
+            else -> null
+        }
     }
 }
