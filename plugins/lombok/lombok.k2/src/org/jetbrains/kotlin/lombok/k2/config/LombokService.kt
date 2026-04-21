@@ -11,11 +11,11 @@ import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
-import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent.Factory
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.GlobalAccessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Data
@@ -42,12 +42,8 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     val config = configFile?.let(LombokConfig::parse) ?: LombokConfig.Empty
     private val cachesFactory = session.firCachesFactory
 
-    private val accessorsCache: Cache<Accessors> = cachesFactory.createCache { symbol ->
-        Accessors.get(symbol.fir, config, session)
-    }
-
-    private val accessorsIfAnnotatedCache: Cache<Accessors?> = cachesFactory.createCache { symbol ->
-        Accessors.getIfAnnotated(symbol.fir, config, session)
+    private val accessorsCache: Cache<Accessors?> = cachesFactory.createCache { symbol ->
+        Accessors.getOrNull(symbol.fir, session)
     }
 
     private val getterCache: Cache<Getter?> = cachesFactory.createCache { symbol ->
@@ -102,8 +98,8 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         ToString.getIfAnnotated(symbol.fir, config, session)
     }
 
-    fun getAccessors(symbol: FirBasedSymbol<*>): Accessors = accessorsCache.getValue(symbol)
-    fun getAccessorsIfAnnotated(symbol: FirBasedSymbol<*>): Accessors? = accessorsIfAnnotatedCache.getValue(symbol)
+    fun getAccessors(symbol: FirBasedSymbol<*>): Accessors? = accessorsCache.getValue(symbol)
+    val globalAccessors: GlobalAccessors by lazy { GlobalAccessors.get(config, session) }
     fun getGetter(symbol: FirBasedSymbol<*>): Getter? = getterCache.getValue(symbol)
     fun getSetter(symbol: FirBasedSymbol<*>): Setter? = setterCache.getValue(symbol)
     fun getWith(symbol: FirBasedSymbol<*>): With? = withCache.getValue(symbol)

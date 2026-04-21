@@ -57,11 +57,9 @@ import org.jetbrains.kotlin.name.ClassId
  * Not all things can be configured in annotations
  * So to make things easier I put all configuration in 'annotations' classes, but populate them from config too. So far it allows
  * keeping processors' code unaware about configuration origin.
- *
  */
 
 abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
-
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
     fun getOrNull(annotated: FirAnnotationContainer, session: FirSession): T? {
@@ -70,14 +68,7 @@ abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
 }
 
 abstract class ConeAnnotationAndConfigCompanion<T>(val annotationName: ClassId) {
-
     abstract fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): T
-
-    /**
-     * Get from annotation or config or default
-     */
-    fun get(annotated: FirAnnotationContainer, config: LombokConfig, session: FirSession): T =
-        extract(annotated.getAnnotationByClassId(annotationName, session), config, session)
 
     /**
      * If element is annotated, get from it or config or default
@@ -86,7 +77,16 @@ abstract class ConeAnnotationAndConfigCompanion<T>(val annotationName: ClassId) 
         annotated.annotations.getAnnotationByClassId(annotationName, session)?.let { annotation ->
             extract(annotation, config, session)
         }
+}
 
+abstract class ConeConfigCompanion<T> {
+    abstract fun extract(config: LombokConfig, session: FirSession): T
+
+    /**
+     * Get from config or default
+     */
+    fun get(config: LombokConfig, session: FirSession): T =
+        extract(config, session)
 }
 
 @OptIn(DirectDeclarationsAccess::class)
@@ -95,19 +95,32 @@ object ConeLombokAnnotations {
         val fluent: Boolean? = null,
         val chain: Boolean? = null,
         val prefix: List<String>? = null,
-        val noIsPrefix: Boolean = false,
     ) {
-        companion object : ConeAnnotationAndConfigCompanion<Accessors>(LombokNames.ACCESSORS_ID) {
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Accessors {
-                val fluent = annotation?.getBooleanArgument(FLUENT)
-                    ?: config.getBoolean(FLUENT_CONFIG)
-                val chain = annotation?.getBooleanArgument(CHAIN)
-                    ?: config.getBoolean(CHAIN_CONFIG)
-                val prefix = annotation?.getStringArrayArgument(PREFIX)
-                    ?: config.getMultiString(PREFIX_CONFIG)
+        companion object : ConeAnnotationCompanion<Accessors>(LombokNames.ACCESSORS_ID) {
+            override fun extract(annotation: FirAnnotation, session: FirSession): Accessors {
+                val fluent = annotation.getBooleanArgument(FLUENT)
+                val chain = annotation.getBooleanArgument(CHAIN)
+                val prefix = annotation.getStringArrayArgument(PREFIX)
+
+                return Accessors(fluent, chain, prefix)
+            }
+        }
+    }
+
+    class GlobalAccessors(
+        val fluent: Boolean,
+        val chain: Boolean,
+        val prefix: List<String>,
+        val noIsPrefix: Boolean,
+    ) {
+        companion object : ConeConfigCompanion<GlobalAccessors>() {
+            override fun extract(config: LombokConfig, session: FirSession): GlobalAccessors {
+                val fluent = config.getBoolean(FLUENT_CONFIG) ?: false
+                val chain = config.getBoolean(CHAIN_CONFIG) ?: false
+                val prefix = config.getMultiString(PREFIX_CONFIG) ?: emptyList()
                 val noIsPrefix = config.getBoolean(NO_IS_PREFIX_CONFIG) ?: false
 
-                return Accessors(fluent, chain, prefix, noIsPrefix)
+                return GlobalAccessors(fluent, chain, prefix, noIsPrefix)
             }
         }
     }
