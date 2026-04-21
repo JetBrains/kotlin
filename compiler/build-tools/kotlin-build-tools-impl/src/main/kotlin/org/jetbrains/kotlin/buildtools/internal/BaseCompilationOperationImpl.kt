@@ -19,13 +19,10 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_SIZE_LIMIT
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_PATH
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.arguments.reportRestrictedViolations
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.Option
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -81,6 +78,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
         compilerArguments.reportRestrictedViolations(kotlinLogger)
+        if (compilerArguments.hasValidationErrors()) {
+            compilerArguments.reportValidationErrors(kotlinLogger)
+            return CompilationResult.COMPILATION_ERROR
+        }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
 
         return when (executionPolicy) {

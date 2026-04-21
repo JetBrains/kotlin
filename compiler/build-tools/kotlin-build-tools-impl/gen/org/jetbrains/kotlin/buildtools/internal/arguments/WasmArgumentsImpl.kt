@@ -14,7 +14,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
@@ -52,8 +54,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class WasmArgumentsImpl(
   private val adapter: WasmArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     WasmArguments,
     WasmArguments.Builder,
     DeepCopyable<WasmArgumentsImpl> {
@@ -86,7 +89,7 @@ internal class WasmArgumentsImpl(
 
   public operator fun contains(key: WasmArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): WasmArguments = deepCopy()
 
@@ -174,10 +177,14 @@ internal class WasmArgumentsImpl(
   }
 
   override fun applyArgumentStrings(arguments: List<String>) {
-    val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
-    collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
-    applyCompilerArguments(compilerArgs)
+    try {
+      val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
+      collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
+      validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+      applyCompilerArguments(compilerArgs)
+    } catch (e: org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException) {
+      _argumentValidationErrors.add(e.message ?: "Error parsing compiler arguments")
+    }
   }
 
   override fun toArgumentStrings(): List<String> {

@@ -25,6 +25,15 @@ internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLo
     }
 }
 
+internal fun CommonToolArgumentsImpl.hasValidationErrors(): Boolean =
+    argumentValidationErrors.isNotEmpty()
+
+internal fun CommonToolArgumentsImpl.reportValidationErrors(logger: KotlinLogger) {
+    for (error in argumentValidationErrors) {
+        logger.error(error)
+    }
+}
+
 internal fun <T> CommonToolArguments.setUsingReflection(propertyName: String, value: T) {
     this::class.declaredMemberProperties.filterIsInstance<KMutableProperty<T>>().firstOrNull { it.name == propertyName }
         ?.let { property: KMutableProperty<T> ->

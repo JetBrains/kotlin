@@ -66,6 +66,7 @@ internal class BtaImplOptionsGenerator(
                     superclass(parentClass)
                     addSuperclassConstructorParameter("adapter")
                     if (!generateCompatLayer) {
+                        addSuperclassConstructorParameter("argumentValidationErrors")
                         addSuperclassConstructorParameter("restrictedArgViolations")
                     }
                 } else {
@@ -120,7 +121,8 @@ internal class BtaImplOptionsGenerator(
                     function("deepCopy") {
                         addModifiers(KModifier.OVERRIDE)
                         returns(ClassName(targetPackage, implClassName))
-                        val constructorArgs = if (!generateCompatLayer) "adapter, restrictedArgViolations.toList()" else "adapter"
+                        val constructorArgs =
+                            if (!generateCompatLayer) "adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()" else "adapter"
                         addStatement(
                             "return %T($constructorArgs).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }",
                             ClassName(targetPackage, implClassName)
@@ -191,6 +193,12 @@ internal class BtaImplOptionsGenerator(
         )
 
         if (!generateCompatLayer) {
+            addParameter(
+                ParameterSpec.builder("argumentValidationErrors", setTypeNameOf<String>())
+                    .defaultValue("%M()", MemberName("kotlin.collections", "emptySet"))
+                    .build()
+            )
+
             addParameter(
                 ParameterSpec.builder(
                     "restrictedArgViolations",
@@ -690,6 +698,25 @@ internal class BtaImplOptionsGenerator(
                     .getter(FunSpec.getterBuilder().addStatement("return _restrictedArgViolations").build())
                     .build()
             )
+            property(
+                "_argumentValidationErrors",
+                ClassName("kotlin.collections", "MutableSet").parameterizedBy(typeNameOf<String>()),
+                KModifier.PROTECTED,
+            ) {
+                initializer(
+                    "argumentValidationErrors.%M()",
+                    MemberName("kotlin.collections", "toMutableSet"),
+                )
+            }
+            addProperty(
+                PropertySpec.builder(
+                    "argumentValidationErrors",
+                    ClassName("kotlin.collections", "Set").parameterizedBy(typeNameOf<String>()),
+                )
+                    .addModifiers(KModifier.INTERNAL)
+                    .getter(FunSpec.getterBuilder().addStatement("return _argumentValidationErrors").build())
+                    .build()
+            )
             function("collectRestrictedArgViolations") {
                 addModifiers(KModifier.INTERNAL, KModifier.OPEN)
                 addParameter("compilerArgs", rootCompilerArgsClass)
@@ -882,20 +909,41 @@ private fun TypeSpec.Builder.maybeAddApplyArgumentStringsFun(
             addModifiers(KModifier.OPEN)
         }
         addParameter("arguments", listTypeNameOf<String>())
-        addStatement(
-            "val compilerArgs: %T = %M(arguments)",
-            compilerArgumentsClass,
-            MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
-        )
+        val bodyCode = CodeBlock.builder().apply {
+            addStatement(
+                "val compilerArgs: %T = %M(arguments)",
+                compilerArgumentsClass,
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+            )
+            if (!generateCompatLayer) {
+                addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+            }
+            addStatement(
+                "%M(compilerArgs.errors)?.let { throw %M(it) }",
+                MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
+                MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
+            )
+            addStatement("applyCompilerArguments(compilerArgs)")
+        }.build()
         if (!generateCompatLayer) {
-            addStatement("collectRestrictedArgViolations(compilerArgs, %T())", compilerArgumentsClass)
+            addCode(
+                CodeBlock.builder()
+                    .beginControlFlow("try")
+                    .add(bodyCode)
+                    .nextControlFlow(
+                        "catch (e: %T)",
+                        ClassName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException")
+                    )
+                    .addStatement(
+                        "_argumentValidationErrors.add(e.message ?: %S)",
+                        "Error parsing compiler arguments"
+                    )
+                    .endControlFlow()
+                    .build()
+            )
+        } else {
+            addCode(bodyCode)
         }
-        addStatement(
-            "%M(compilerArgs.errors)?.let { throw %M(it) }",
-            MemberName("org.jetbrains.kotlin.cli.common.arguments", "validateArguments"),
-            MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
-        )
-        addStatement("applyCompilerArguments(compilerArgs)")
     }
 }
 

@@ -19,7 +19,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
@@ -135,8 +137,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JvmCompilerArgumentsImpl(
   private val adapter: JvmCompilerArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonCompilerArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonCompilerArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     JvmCompilerArguments,
     JvmCompilerArguments.Builder,
     DeepCopyable<JvmCompilerArgumentsImpl> {
@@ -175,7 +178,7 @@ internal class JvmCompilerArgumentsImpl(
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JvmCompilerArguments = deepCopy()
 
@@ -438,10 +441,14 @@ internal class JvmCompilerArgumentsImpl(
   }
 
   override fun applyArgumentStrings(arguments: List<String>) {
-    val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
-    collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
-    applyCompilerArguments(compilerArgs)
+    try {
+      val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
+      collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
+      validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+      applyCompilerArguments(compilerArgs)
+    } catch (e: org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException) {
+      _argumentValidationErrors.add(e.message ?: "Error parsing compiler arguments")
+    }
   }
 
   override fun toArgumentStrings(): List<String> {

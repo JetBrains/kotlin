@@ -15,7 +15,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
@@ -63,8 +65,9 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonJsAndWasmArgumentsImpl(
   private val adapter: CommonJsAndWasmArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonKlibBasedArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonKlibBasedArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     CommonJsAndWasmArguments,
     CommonJsAndWasmArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
