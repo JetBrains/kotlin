@@ -24,9 +24,8 @@ fun CompilationOutcome.assertAddedOutputs(vararg addedOutputs: String) {
  */
 context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertAddedOutputs(addedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl().outputs
-    outputs.addAll(addedOutputs)
-    assertOutputs(outputs)
+    requireScenarioModuleImpl().addOutputFiles(addedOutputs)
+    assertOutputs(requireScenarioModuleImpl().outputFiles)
 }
 
 /**
@@ -44,21 +43,21 @@ fun CompilationOutcome.assertRemovedOutputs(vararg removedOutputs: String) {
  */
 context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertRemovedOutputs(removedOutputs: Set<String>) {
-    val outputs = requireScenarioModuleImpl().outputs
+    val outputs = requireScenarioModuleImpl().outputFiles
     val notPresentOutputs = removedOutputs - outputs
     assert(notPresentOutputs.isEmpty()) {
         "The following files were expected to be removed, however they weren't even produced: $notPresentOutputs"
     }
-    outputs.removeAll(removedOutputs)
-    assertOutputs(outputs)
+    requireScenarioModuleImpl().removeOutputFiles(removedOutputs)
+    assertOutputs(requireScenarioModuleImpl().outputFiles)
 }
 
 context(module: Module<*, *, *>, scenarioModule: ScenarioModule)
 fun CompilationOutcome.assertNoOutputSetChanges() {
-    val outputs = requireScenarioModuleImpl().outputs
+    val outputs = requireScenarioModuleImpl().outputFiles
     assertOutputs(outputs)
 }
 
 context(scenarioModule: ScenarioModule)
 private fun requireScenarioModuleImpl() =
-    (scenarioModule as? BaseScenarioModule<*,*> ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))
+    (scenarioModule as? BaseScenarioModule<*, *> ?: error("Expected an instance of ${BaseScenarioModule::class.simpleName}}"))

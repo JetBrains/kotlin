@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinJsStdlibKlibLocation
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 
 class JsProject(
@@ -51,6 +53,7 @@ class JsProject(
 }
 
 fun BaseCompilationTest.jsProject(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: JsProject.() -> Unit) {
+    kotlinToolchain.assumeJsIsSupported()
     JsProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
@@ -58,4 +61,14 @@ fun BaseCompilationTest.jsProject(kotlinToolchain: KotlinToolchains, strategyCon
 
 fun BaseCompilationTest.jsProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: JsProject.() -> Unit) {
     jsProject(executionStrategy.first, executionStrategy.second, action)
+}
+
+fun KotlinToolchains.assumeJsIsSupported() {
+    try {
+        js
+    } catch (e: Throwable) {
+        if (e.message?.startsWith("Unsupported") == true) {
+            assumeTrue(false) { "Kotlin/JS is not supported on this version" }
+        } else throw e
+    }
 }

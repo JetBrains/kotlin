@@ -51,12 +51,12 @@ class JvmProject(
     }
 }
 
-fun BaseCompilationTest.project(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: JvmProject.() -> Unit) {
+fun BaseCompilationTest.jvmProject(kotlinToolchain: KotlinToolchains, strategyConfig: ExecutionPolicy, action: JvmProject.() -> Unit) {
     JvmProject(kotlinToolchain, strategyConfig, workingDirectory).use { project ->
         project.action()
     }
 }
 
-fun BaseCompilationTest.project(executionStrategy: CompilerExecutionStrategyConfiguration, action: JvmProject.() -> Unit) {
-    project(executionStrategy.first, executionStrategy.second, action)
+fun BaseCompilationTest.jvmProject(executionStrategy: CompilerExecutionStrategyConfiguration, action: JvmProject.() -> Unit) {
+    jvmProject(executionStrategy.first, executionStrategy.second, action)
 }

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -100,7 +100,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (combo BTA + modern way)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationComboModernArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("compiler-plugins")
             module.compile(compilationConfigAction = {
                 val compilerPluginArgs = buildList {
@@ -131,7 +131,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @DisplayName("Smoke test of compiler plugins application through applyArgumentStrings (legacy + modern mixed)")
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplicationLegacyModernMixedArgumentsString(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("compiler-plugins")
             module.compile(compilationConfigAction = {
                 val legacyArgs = buildList {
@@ -169,7 +169,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @DisplayName("Smoke test of no-arg plugin with JPA preset")
     @TestMetadata("compiler-plugins-jpa")
     fun smokeTestNoArgPluginWithJpaPreset(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("compiler-plugins-jpa")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_JPA_PLUGIN)
@@ -220,7 +220,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
         strategyConfig: CompilerExecutionStrategyConfiguration,
         pluginsConfiguration: (JvmCompilationOperation.Builder) -> Unit,
     ) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("compiler-plugins")
             module.compile(compilationConfigAction = pluginsConfiguration) {
                 assertOutputs(

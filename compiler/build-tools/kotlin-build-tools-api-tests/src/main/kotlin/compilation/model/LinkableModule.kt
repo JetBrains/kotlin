@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 
 interface LinkableModule<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder> {
+    val defaultStrategyConfig: ExecutionPolicy
+
     fun link(
-        strategyConfig: ExecutionPolicy,
-        forceOutput: LogLevel?,
-        compilationConfigAction: (B) -> Unit,
-        compilationAction: (O) -> Unit,
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
+        strategyConfig: ExecutionPolicy = defaultStrategyConfig,
+        forceOutput: LogLevel? = null,
+        compilationConfigAction: (B) -> Unit = {},
+        compilationAction: (O) -> Unit = {},
+        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 }

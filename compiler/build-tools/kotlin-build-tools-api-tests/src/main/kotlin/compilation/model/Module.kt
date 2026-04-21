@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
 import java.nio.file.Path
 
-interface Module<out O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder> :
+interface Module<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> :
     Dependency {
     val project: Project
     val moduleName: String

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTestArgumentProvider.Companion.namedStrategyArguments
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -143,7 +143,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val lib = module("empty")
             val app = module(
                 "empty2",
@@ -180,7 +180,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val lib = module("empty")
             val app = module(
                 "empty2",
@@ -217,7 +217,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val lib = module("empty")
             val app = module(
                 "empty2",
@@ -281,7 +281,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
         granularity: ClassSnapshotGranularity,
         snapshotInlinedClasses: Boolean,
     ) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val lib = module("empty")
             val app = module(
                 "empty2",

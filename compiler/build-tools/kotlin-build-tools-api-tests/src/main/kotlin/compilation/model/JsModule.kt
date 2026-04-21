@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperat
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.historyBasedIcConfiguration
 import java.nio.file.Path
-import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
@@ -105,7 +104,7 @@ class JsModule(
             compilerArguments[LIBRARIES] = dependencyFiles
             compilerArguments[IR_OUTPUT_NAME] = moduleName
 
-            lastCompileProducedPackedKlib = compilerArguments[NOPACK]
+            lastCompileProducedPackedKlib = !compilerArguments[NOPACK]
         }
 
         return compilationOperation.let {
@@ -132,10 +131,6 @@ class JsModule(
                     it.buildDirectory,
                     it.icCachesDir,
                 )
-            }
-
-            modulesInfo.forEach {
-                println(it)
             }
 
             val icConfig = compilationOperation.historyBasedIcConfiguration(

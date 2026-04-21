@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.COMPILER_PLUGINS
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,7 +23,7 @@ class CompilerPluginsUnsupportedTest : BaseCompilationTest() {
     fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val kotlinToolchain = strategyConfig.first
         assumeTrue(KotlinToolingVersion(kotlinToolchain.getCompilerVersion()) < KotlinToolingVersion(2, 3, 20, "dev-6376"))
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("compiler-plugins")
             val exception = assertThrows<IllegalStateException> {
                 module.compile(compilationConfigAction = { it.compilerArguments[COMPILER_PLUGINS] = emptyList() })

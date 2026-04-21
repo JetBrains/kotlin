@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jv
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.TestKotlinLogger
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -39,7 +38,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     fun nonIncrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
-        project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
+        jvmProject(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             assumeTrue(hasCancellationSupport)
             module1.compileAndThrow(compilationAction = { operation ->
@@ -68,7 +67,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         }, additionalCleanupActions = { daemonRunPath ->
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         }) { daemonPolicy, daemonRunPath ->
-            project(kotlinToolchains, daemonPolicy) {
+            jvmProject(kotlinToolchains, daemonPolicy) {
                 val module1 = module("jvm-module-1")
                 val operationWasCancelled = AtomicBoolean(false)
                 with(module1) {
@@ -106,7 +105,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     fun incrementalInProcessWithCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
-        project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
+        jvmProject(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             assumeTrue(hasCancellationSupport)
             assertThrows<OperationCancelledException> {
@@ -131,7 +130,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         }, additionalCleanupActions = { daemonRunPath ->
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         }) { daemonPolicy, daemonRunPath ->
-            project(kotlinToolchains, daemonPolicy) {
+            jvmProject(kotlinToolchains, daemonPolicy) {
                 val module1 = module("jvm-module-1")
                 val operationWasCancelled = AtomicBoolean(false)
                 with(module1) {
@@ -177,7 +176,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
     fun nonIncrementalWithoutCancellation() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
-        project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
+        jvmProject(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             assumeFalse(hasCancellationSupport)
             val exception = assertThrows<IllegalStateException> {

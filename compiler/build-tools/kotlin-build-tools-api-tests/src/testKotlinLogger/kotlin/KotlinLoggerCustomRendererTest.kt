@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.SourceLocatio
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 
@@ -28,7 +28,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
             }
         }
 
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 it[BaseCompilationOperation.COMPILER_MESSAGE_RENDERER] = renderer

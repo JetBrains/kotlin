@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain.Companion.abiValidation
 import org.jetbrains.kotlin.buildtools.api.abi.dumpJvmAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +26,7 @@ class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
     @DisplayName("Smoke test of ABI validation for JVM")
     fun test() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        project(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
+        jvmProject(kotlinToolchains, kotlinToolchains.createInProcessExecutionPolicy()) {
             val module = module("jvm-module-1")
             module.compile()
 

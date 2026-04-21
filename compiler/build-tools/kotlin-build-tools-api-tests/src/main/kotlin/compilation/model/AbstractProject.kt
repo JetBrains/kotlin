@@ -22,7 +22,7 @@ interface Project {
     val projectDirectory: Path
 }
 
-abstract class AbstractProject<out O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder>(
+abstract class AbstractProject<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder>(
     override val kotlinToolchain: KotlinToolchains,
     override val defaultStrategyConfig: ExecutionPolicy,
     override val projectDirectory: Path,
@@ -38,7 +38,7 @@ abstract class AbstractProject<out O : BaseCompilationOperation, B : BaseCompila
         moduleCompilationConfigAction: (B) -> Unit = {},
     ): Module<O, B, IC>
 
-    protected fun initModule(module: AbstractModule<in O, B, IC>, moduleName: String) {
+    protected fun initModule(module: AbstractModule<in O, in B, in IC>, moduleName: String) {
         module.sourcesDirectory.createDirectories()
         val templatePath = Paths.get(System.getProperty("kotlin.test.templates.classpath") + "/modules/$moduleName")
         assert(templatePath.isDirectory()) {

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgno
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
@@ -46,7 +46,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     }
 
     private fun testBuildFile(strategyConfig: CompilerExecutionStrategyConfiguration, argument: String, additionalArg: String? = null) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             val moduleFile = workingDirectory.resolve("some/path.xml")
             module.checkRestrictedArgument(
@@ -66,7 +66,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-d emits a warning")
     fun testDestinationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArgument(
                 "-d",
@@ -87,7 +87,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-include-runtime emits a warning")
     fun testIncludeRuntimeWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArgument(
                 "-include-runtime",
@@ -110,7 +110,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     }
 
     private fun testExpression(strategyConfig: CompilerExecutionStrategyConfiguration, actualArgs: List<String>) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArgument(
                 "-expression", "-e",
@@ -126,7 +126,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xrepl emits a warning")
     fun testXReplWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArgument(
                 "-Xrepl",
@@ -142,7 +142,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xenable-incremental-compilation emits a warning")
     fun testEnableIncrementalCompilationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArgument(
                 "-Xenable-incremental-compilation",
@@ -162,7 +162,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Multiple restricted arguments emit warnings for each")
     fun testMultipleRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArguments(
                 listOf("-include-runtime") to KotlinReleaseVersion.v2_5_0,
@@ -175,7 +175,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Non-restricted arguments do not produce warnings about unsupported arguments")
     fun testNonRestrictedArgumentsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-no-stdlib"))
@@ -189,7 +189,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Dropped argument does not produce a warning about unsupported arguments")
     fun testDroppedArgumentNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xallow-kotlin-package"))

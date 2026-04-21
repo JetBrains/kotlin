@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.writeText
 
@@ -19,7 +19,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
@@ -38,7 +38,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Verify that test infra supports packages")
     @DefaultStrategyAgnosticCompilationTest
     fun simpleMultiPackageTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("empty")
 
             val deepDir = module1.sourcesDirectory.resolve("org/example/packages")
@@ -67,7 +67,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with a single module and a compilation error")
     @DefaultStrategyAgnosticCompilationTest
     fun failedCompilationTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
 
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
