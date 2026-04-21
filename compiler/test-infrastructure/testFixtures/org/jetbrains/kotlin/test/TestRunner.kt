@@ -133,7 +133,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
             block()
             false
         } catch (e: Throwable) {
-            allFailedExceptions += exceptionWrapper(e)
+            testServices.assertions.unfoldException(e).mapTo(allFailedExceptions) { exceptionWrapper(it) }
             true
         }
     }
