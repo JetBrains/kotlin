@@ -68,7 +68,7 @@ abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
 }
 
 abstract class ConeAnnotationAndConfigCompanion<T>(val annotationName: ClassId) {
-    abstract fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): T
+    abstract fun extract(annotation: FirAnnotation, config: LombokConfig, session: FirSession): T
 
     /**
      * If element is annotated, get from it or config or default
@@ -246,17 +246,17 @@ object ConeLombokAnnotations {
 
         abstract class BuilderConeAnnotationAndConfigCompanion<T : AbstractBuilder>(annotationName: ClassId) :
             ConeAnnotationAndConfigCompanion<T>(annotationName) {
-            protected fun getBuildMethodName(annotation: FirAnnotation?): String =
-                annotation?.getStringArgument(BUILD_METHOD_NAME) ?: DEFAULT_BUILD_METHOD_NAME
+            protected fun getBuildMethodName(annotation: FirAnnotation): String =
+                annotation.getStringArgument(BUILD_METHOD_NAME) ?: DEFAULT_BUILD_METHOD_NAME
 
-            protected fun getBuilderMethodName(annotation: FirAnnotation?): String =
-                annotation?.getStringArgument(BUILDER_METHOD_NAME) ?: DEFAULT_BUILDER_METHOD_NAME
+            protected fun getBuilderMethodName(annotation: FirAnnotation): String =
+                annotation.getStringArgument(BUILDER_METHOD_NAME) ?: DEFAULT_BUILDER_METHOD_NAME
 
-            protected fun getRequiresToBuilder(annotation: FirAnnotation?): Boolean =
-                annotation?.getBooleanArgument(TO_BUILDER) ?: DEFAULT_REQUIRES_TO_BUILDER
+            protected fun getRequiresToBuilder(annotation: FirAnnotation): Boolean =
+                annotation.getBooleanArgument(TO_BUILDER) ?: DEFAULT_REQUIRES_TO_BUILDER
 
-            protected fun getSetterPrefix(annotation: FirAnnotation?): String? =
-                annotation?.getStringArgument(SETTER_PREFIX)
+            protected fun getSetterPrefix(annotation: FirAnnotation): String? =
+                annotation.getStringArgument(SETTER_PREFIX)
         }
     }
 
@@ -278,8 +278,8 @@ object ConeLombokAnnotations {
         hasSpecifiedBuilderClassName
     ) {
         companion object : BuilderConeAnnotationAndConfigCompanion<Builder>(LombokNames.BUILDER_ID) {
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): Builder {
-                val specifiedBuilderClassName = annotation?.getStringArgument(BUILDER_CLASS_NAME)
+            override fun extract(annotation: FirAnnotation, config: LombokConfig, session: FirSession): Builder {
+                val specifiedBuilderClassName = annotation.getStringArgument(BUILDER_CLASS_NAME)
                 return Builder(
                     builderClassName = specifiedBuilderClassName
                         ?: config.getString(BUILDER_CLASS_NAME_CONFIG)
@@ -312,7 +312,7 @@ object ConeLombokAnnotations {
         hasSpecifiedBuilderClassName,
     ) {
         companion object : BuilderConeAnnotationAndConfigCompanion<SuperBuilder>(LombokNames.SUPER_BUILDER_ID) {
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): SuperBuilder {
+            override fun extract(annotation: FirAnnotation, config: LombokConfig, session: FirSession): SuperBuilder {
                 return SuperBuilder(
                     builderClassName = config.getString(BUILDER_CLASS_NAME_CONFIG) ?: DEFAULT_BUILDER_CLASS_NAME,
                     buildMethodName = getBuildMethodName(annotation),
@@ -356,14 +356,10 @@ object ConeLombokAnnotations {
         override val flagUsage: FlagUsageValue?,
     ) : FlagUsage {
         companion object : ConeAnnotationAndConfigCompanion<Log>(LombokNames.LOG_ID) {
-            override fun extract(
-                annotation: FirAnnotation?,
-                config: LombokConfig,
-                session: FirSession,
-            ): Log {
+            override fun extract(annotation: FirAnnotation, config: LombokConfig, session: FirSession): Log {
                 return Log(
                     visibility = annotation.getVisibility(ACCESS, defaultAccessLevel = AccessLevel.PRIVATE),
-                    topic = annotation?.getStringArgument(TOPIC) ?: "",
+                    topic = annotation.getStringArgument(TOPIC) ?: "",
                     fieldName = config.getString(FIELD_NAME_CONFIG) ?: "log",
                     fieldIsStatic = config.getBoolean(FIELD_IS_STATIC_CONFIG) ?: true,
                     flagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),
@@ -387,19 +383,19 @@ object ConeLombokAnnotations {
         }
 
         companion object : ConeAnnotationAndConfigCompanion<ToString>(LombokNames.TO_STRING_ID) {
-            override fun extract(annotation: FirAnnotation?, config: LombokConfig, session: FirSession): ToString {
+            override fun extract(annotation: FirAnnotation, config: LombokConfig, session: FirSession): ToString {
                 val callSuperConfigValue = config.getString(TO_STRING_CALL_SUPER_CONFIG)
                 return ToString(
-                    includeFieldNames = annotation?.getBooleanArgument(INCLUDE_FIELD_NAMES)
+                    includeFieldNames = annotation.getBooleanArgument(INCLUDE_FIELD_NAMES)
                         ?: config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
-                    callSuper = annotation?.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip }
+                    callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip }
                         ?: CallSuperMode.entries.find { it.name.equals(callSuperConfigValue, ignoreCase = true) }
                         ?: CallSuperMode.Skip,
-                    doNotUseGetters = annotation?.getBooleanArgument(DO_NOT_USE_GETTERS)
+                    doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS)
                         ?: config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG) ?: false,
-                    onlyExplicitlyIncluded = annotation?.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED)
+                    onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED)
                         ?: config.getBoolean(TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
-                    excludeFields = annotation?.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
+                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
                     flagUsage = parseFlagUsage(config, TO_STRING_FLAG_USAGE_CONFIG),
                 )
             }
