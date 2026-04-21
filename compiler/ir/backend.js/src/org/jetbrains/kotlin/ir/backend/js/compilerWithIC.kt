@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -33,10 +34,9 @@ class JsICContext(private val granularity: JsGenerationGranularity) : PlatformDe
     override fun createBackendContext(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
         configuration: CompilerConfiguration,
     ): JsCommonBackendContext {
-        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
-
         return JsIrBackendContext(
             mainModule.descriptor,
             irBuiltIns,

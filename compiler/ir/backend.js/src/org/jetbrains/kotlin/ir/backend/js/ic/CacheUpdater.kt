@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
 import org.jetbrains.kotlin.js.config.includes
@@ -71,6 +72,7 @@ interface PlatformDependentICContext {
     fun createBackendContext(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
         configuration: CompilerConfiguration,
     ): JsCommonBackendContext
 
@@ -771,7 +773,7 @@ class CacheUpdater(
 
         stopwatch.startNext("Processing IR - initializing the compiler")
         val mainModuleFragment = loadedIr.orderedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        val compilerContext = icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
+        val compilerContext = icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, loadedIr.symbolTable, compilerConfiguration)
         val compilerForIC = icContext.createCompiler(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration, compilerContext)
 
         // Load declarations referenced during `context` initialization
@@ -871,7 +873,7 @@ fun rebuildCacheForDirtyFiles(
         currentIrModule.files.memoryOptimizedFilter { irFile -> irFile.fileEntry.name in files }
     } ?: currentIrModule.files
 
-    val backendContext = icContext.createBackendContext(currentIrModule, loadedIr.irBuiltIns, configuration)
+    val backendContext = icContext.createBackendContext(currentIrModule, loadedIr.irBuiltIns, loadedIr.symbolTable, configuration)
     val compilerWithIC = icContext.createCompiler(currentIrModule, loadedIr.irBuiltIns, configuration, backendContext)
 
     // Load declarations referenced during `context` initialization

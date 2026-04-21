@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
@@ -64,7 +65,12 @@ internal class LoadedJsIr(
         orderedLoadedFragments
     }
 
-    val irBuiltIns = linker.builtIns
+    val irBuiltIns: IrBuiltIns
+        get() = linker.builtIns
+
+    val symbolTable: SymbolTable
+        get() = linker.symbolTable
+
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
 
     private val irFileSourceNames = hashMapOf<IrModuleFragment, Map<IrFile, KotlinSourceFile>>()
@@ -241,7 +247,7 @@ internal class JsIrLinkerLoader(
         // This should be done because referenced declaration from the compiler should be loaded as well
         val mainLibraryFile = KotlinLibraryFile(mainLibrary)
         val mainModuleFragment = loadedIr.orderedFragments[mainLibraryFile] ?: notFoundIcError("main module fragment", mainLibraryFile)
-        icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, compilerConfiguration)
+        icContext.createBackendContext(mainModuleFragment, loadedIr.irBuiltIns, loadedIr.symbolTable, compilerConfiguration)
 
         loadedIr.loadUnboundSymbols()
         return loadedIr

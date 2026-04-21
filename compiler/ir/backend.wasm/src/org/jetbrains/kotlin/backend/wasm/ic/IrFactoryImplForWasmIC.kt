@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import java.io.File
 
@@ -38,10 +39,9 @@ abstract class WasmICContextBase : PlatformDependentICContext {
     override fun createBackendContext(
         mainModule: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
+        symbolTable: SymbolTable,
         configuration: CompilerConfiguration,
     ): JsCommonBackendContext {
-        val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
-
         //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
         repeat(25) {
             irBuiltIns.functionN(it)
