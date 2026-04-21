@@ -246,7 +246,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 private fun assertCompiledSources(
     logger: TestKotlinLogger,
     expectedCompiledSources: List<String>,
-    appModule: Module,
+    appModule: Module<*, *, *>,
 ) {
     val actualCompiledSources = (logger.logMessagesByLevel[LogLevel.DEBUG] ?: emptyList())
         .map { it.removePrefix("[KOTLIN] ") }

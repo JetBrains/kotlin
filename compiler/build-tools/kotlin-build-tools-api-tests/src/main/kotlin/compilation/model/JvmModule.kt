@@ -30,7 +30,7 @@ import kotlin.io.path.walk
 class JvmModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,
-    project: Project,
+    project: JvmProject,
     moduleName: String,
     moduleDirectory: Path,
     dependencies: List<Dependency>,
@@ -38,7 +38,7 @@ class JvmModule(
     private val snapshotConfig: SnapshotConfig,
     moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
     private val stdlibLocation: List<Path>,
-) : AbstractModule(
+) : AbstractModule<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>(
     project,
     moduleName,
     moduleDirectory,
@@ -112,7 +112,7 @@ class JvmModule(
         compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
         compilationAction: (JvmCompilationOperation) -> Unit,
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-        assertions: context(Module) CompilationOutcome.() -> Unit,
+        assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val snapshots = dependencies.map {

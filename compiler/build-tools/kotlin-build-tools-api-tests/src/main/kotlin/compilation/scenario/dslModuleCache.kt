@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
@@ -18,10 +20,10 @@ import kotlin.io.path.isRegularFile
 import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
 
-private data class GlobalCompiledProjectsCacheKey(
+private data class GlobalCompiledProjectsCacheKey<IC : BaseIncrementalCompilationConfiguration.Builder>(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
-    val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit)?,
+    val icOptionsConfigAction: ((IC) -> Unit)?,
     val icSourceTracking: Boolean,
 )
 
@@ -29,15 +31,15 @@ internal object GlobalCompiledProjectsCache {
     private val globalTempDirectory = Files.createTempDirectory("compiled-test-projects-cache").apply {
         toFile().deleteOnExit()
     }
-    private val compiledProjectsCache = mutableMapOf<GlobalCompiledProjectsCacheKey, Pair<MutableSet<String>, Path>>()
+    private val compiledProjectsCache = mutableMapOf<GlobalCompiledProjectsCacheKey<*>, Pair<MutableSet<String>, Path>>()
 
-    fun getProjectFromCache(
-        module: Module,
+    fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> getProjectFromCache(
+        module: Module<*, B, IC>,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+        icOptionsConfigAction: ((IC) -> Unit),
         icSourceTracking: Boolean,
-    ): BaseScenarioModule? {
+    ): BaseScenarioModule<B, IC>? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             snapshotConfig,
@@ -52,13 +54,13 @@ internal object GlobalCompiledProjectsCache {
         }
     }
 
-    fun putProjectIntoCache(
-        module: Module,
+    fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> putProjectIntoCache(
+        module: Module<*, B, IC>,
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+        icOptionsConfigAction: (IC) -> Unit,
         icSourceTracking: Boolean,
-    ): BaseScenarioModule {
+    ): BaseScenarioModule<B, IC> {
         module.compileIncrementally(
             if (icSourceTracking) SourcesChanges.ToBeCalculated else SourcesChanges.Unknown,
             strategyConfig,

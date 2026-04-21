@@ -5,22 +5,19 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
 import java.nio.file.Path
 
-interface Module : Dependency {
+interface Module<out O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder> :
+    Dependency {
     val project: Project
     val moduleName: String
 
     /**
      * Hook for any additional configuration for the compilation operations within this module.
      */
-    val moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit
+    val moduleCompilationConfigAction: (B) -> Unit
 
     /**
      * Directory containing all the source (.kt) files of the module
@@ -52,17 +49,17 @@ interface Module : Dependency {
     fun compileAndThrow(
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        compilationAction: (JvmCompilationOperation) -> Unit = {},
-        assertions: context(Module) CompilationOutcome.(Throwable) -> Unit = {},
+        compilationConfigAction: (B) -> Unit = {},
+        compilationAction: (O) -> Unit = {},
+        assertions: context(Module<O, B, IC>) CompilationOutcome.(Throwable) -> Unit = {},
     ): Throwable
 
     fun compile(
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        compilationAction: (JvmCompilationOperation) -> Unit = {},
-        assertions: context(Module) CompilationOutcome.() -> Unit = {},
+        compilationConfigAction: (B) -> Unit = {},
+        compilationAction: (O) -> Unit = {},
+        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     fun compileIncrementally(
@@ -70,10 +67,10 @@ interface Module : Dependency {
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         forceNonIncrementalCompilation: Boolean = false,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit = {},
-        compilationAction: (JvmCompilationOperation) -> Unit = {},
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit = {},
-        assertions: context(Module) CompilationOutcome.() -> Unit = {},
+        compilationConfigAction: (B) -> Unit = {},
+        compilationAction: (O) -> Unit = {},
+        icOptionsConfigAction: (IC) -> Unit = {},
+        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     /**

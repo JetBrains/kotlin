@@ -69,7 +69,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         }) { daemonPolicy, daemonRunPath ->
             project(kotlinToolchains, daemonPolicy) {
-                val module1 = module("jvm-module-1") as JvmModule
+                val module1 = module("jvm-module-1")
                 val operationWasCancelled = AtomicBoolean(false)
                 with(module1) {
                     val allowedExtensions = setOf("kt", "kts", "java")
@@ -132,7 +132,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         }) { daemonPolicy, daemonRunPath ->
             project(kotlinToolchains, daemonPolicy) {
-                val module1 = module("jvm-module-1") as JvmModule
+                val module1 = module("jvm-module-1")
                 val operationWasCancelled = AtomicBoolean(false)
                 with(module1) {
                     val allowedExtensions = setOf("kt", "kts", "java")

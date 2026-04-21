@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
@@ -20,18 +22,18 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
-internal abstract class BaseScenarioModule private constructor(
-    internal val module: Module,
+internal abstract class BaseScenarioModule<B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder> private constructor(
+    internal val module: Module<*, B, IC>,
     internal val outputs: MutableSet<String>,
     private val strategyConfig: ExecutionPolicy,
-    private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+    private val icOptionsConfigAction: ((IC) -> Unit),
 ) : ScenarioModule {
     // make a copy of the outputs to avoid them being shared between different tests
     constructor(
-        module: Module,
+        module: Module<*, B, IC>,
         outputs: Collection<String>,
         strategyConfig: ExecutionPolicy,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+        icOptionsConfigAction: (IC) -> Unit,
     ) : this(module, outputs.toMutableSet(), strategyConfig, icOptionsConfigAction)
 
     override fun changeFile(
@@ -73,7 +75,7 @@ internal abstract class BaseScenarioModule private constructor(
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
+        assertions: context(Module<*, *, *>, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
@@ -96,12 +98,12 @@ internal abstract class BaseScenarioModule private constructor(
     }
 }
 
-internal class ExternallyTrackedScenarioModuleImpl(
-    module: Module,
+internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder>(
+    module: Module<*, B, IC>,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
-) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
+    icOptionsConfigAction: (IC) -> Unit,
+) : BaseScenarioModule<B, IC>(module, outputs, strategyConfig, icOptionsConfigAction) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
     override fun replaceFileWithVersion(fileName: String, version: String) {
@@ -130,7 +132,7 @@ internal class ExternallyTrackedScenarioModuleImpl(
 
     override fun getSourcesChanges() = sourcesChanges
 
-    override fun compile(forceOutput: LogLevel?, assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit) {
+    override fun compile(forceOutput: LogLevel?, assertions: context(Module<*, *, *>, ScenarioModule) CompilationOutcome.() -> Unit) {
         super.compile(forceOutput) {
             assertions()
 
@@ -155,17 +157,17 @@ internal class ExternallyTrackedScenarioModuleImpl(
     }
 }
 
-internal class AutoTrackedScenarioModuleImpl(
-    module: Module,
+internal class AutoTrackedScenarioModuleImpl<B : BaseCompilationOperation.Builder, out IC : BaseIncrementalCompilationConfiguration.Builder>(
+    module: Module<*, B, IC>,
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
-) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
+    icOptionsConfigAction: (IC) -> Unit,
+) : BaseScenarioModule<B, IC>(module, outputs, strategyConfig, icOptionsConfigAction) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
 
 private class ScenarioDsl(
-    private val project: Project,
+    private val project: JvmProject,
     private val strategyConfig: ExecutionPolicy,
 ) : Scenario {
     @Synchronized
@@ -176,7 +178,7 @@ private class ScenarioDsl(
         compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
     ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
+        val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
         val module =
             project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, false)
@@ -191,7 +193,7 @@ private class ScenarioDsl(
         compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
     ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
+        val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
         val module =
             project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, true)
@@ -200,7 +202,7 @@ private class ScenarioDsl(
 }
 
 fun BaseCompilationTest.scenario(kotlinToolchains: KotlinToolchains, strategyConfig: ExecutionPolicy, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig))
+    action(ScenarioDsl(JvmProject(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig))
 }
 
 fun BaseCompilationTest.scenario(executionStrategy: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {

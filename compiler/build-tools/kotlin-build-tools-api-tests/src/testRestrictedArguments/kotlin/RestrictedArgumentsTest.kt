@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.restricted
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
@@ -223,7 +224,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         }
     }
 
-    private fun Module.checkRestrictedArgument(
+    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.checkRestrictedArgument(
         vararg argumentAliases: String,
         errorSince: KotlinReleaseVersion,
         configuredArgs: List<String>,
@@ -236,7 +237,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         additionalCompilationAssertions = additionalCompilationAssertions,
     )
 
-    private fun Module.checkRestrictedArguments(
+    private fun Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.checkRestrictedArguments(
         vararg restrictedArgs: Pair<List<String>, KotlinReleaseVersion>,
         configuredArgs: List<String>,
         expectedCompilationError: Boolean = false,

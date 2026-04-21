@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.JvmModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,17 +18,17 @@ import kotlin.io.path.walk
 /**
  * Equivalent to [assertNoCompiledSources] with an empty array/set
  */
-context(module: Module)
+context(module: Module<*, *, *>)
 fun CompilationOutcome.assertNoCompiledSources() {
     assertCompiledSources()
 }
 
-context(module: Module)
+context(module: Module<*, *, *>)
 fun CompilationOutcome.assertCompiledSources(vararg expectedCompiledSources: String) {
     assertCompiledSources(expectedCompiledSources.toSet())
 }
 
-context(module: Module)
+context(module: Module<*, *, *>)
 fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String>) {
     val actualCompiledSources = parseCompilationSteps().flatten().toSet()
     val normalizedPaths = normalizeFileNames(expectedCompiledSources)
@@ -49,7 +50,7 @@ fun CompilationOutcome.assertCompiledSources(expectedCompiledSources: Set<String
  *
  * @param steps each set contains file names expected in the corresponding compile iteration
  */
-context(module: Module)
+context(module: Module<*, *, *>)
 fun CompilationOutcome.assertCompilationSteps(vararg steps: Set<String>) {
     val actualSteps = parseCompilationSteps()
     val expectedSteps = steps.map { normalizeFileNames(it) }
@@ -67,7 +68,7 @@ fun CompilationOutcome.assertCompilationSteps(vararg steps: Set<String>) {
     }
 }
 
-context(module: Module)
+context(module: Module<*, *, *>)
 private fun normalizeFileNames(fileNames: Set<String>): Set<String> =
     fileNames.map { fileName ->
         module.sourcesDirectory.resolve(fileName)
@@ -89,7 +90,7 @@ private fun CompilationOutcome.parseCompilationSteps(): List<Set<String>> {
  * Asserts that the compiler produces all files declared as expected outputs.
  * Unless there's explicit expected output for the module's Kotlin module files, the default matching [Module.moduleName] will be added automatically.
  */
-context(module: Module)
+context(module: Module<*, *, *>)
 fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
     assertOutputs(expectedOutputs.toSet())
 }
@@ -98,12 +99,12 @@ fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
  * Asserts that the compiler produces all files declared as expected outputs.
  * Unless there's explicit expected output for the module's Kotlin module files, the default matching [Module.moduleName] will be added automatically.
  */
-context(module: Module)
+context(module: Module<*, *, *>)
 fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
-            if (none { it.fileName.toString().endsWith(".kotlin_module") }) {
+            if (module is JvmModule && none { it.fileName.toString().endsWith(".kotlin_module") }) {
                 add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
             }
         }

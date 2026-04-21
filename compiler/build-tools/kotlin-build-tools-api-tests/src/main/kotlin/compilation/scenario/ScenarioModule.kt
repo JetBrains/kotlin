@@ -52,7 +52,7 @@ interface ScenarioModule {
 
     fun compile(
         forceOutput: LogLevel? = null,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module<*, *, *>, ScenarioModule) CompilationOutcome.() -> Unit = {},
     )
 
     fun executeCompiledCode(
