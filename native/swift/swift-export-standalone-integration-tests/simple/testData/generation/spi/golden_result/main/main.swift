@@ -1,7 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
-@_spi(ExperimentalLibApi) @_spi(InternalLibApi) import lib
+@_spi(ExperimentalLibApi) @_spi(InternalLibApi) @_spi(OpenClassOptIn) @_spi(InterfaceOptInOne) @_spi(InterfaceOptInTwo) import lib
 
 @_spi(InternalLibApi)
 public typealias MyAliasAlias = lib.InternalLibAlias
@@ -46,6 +46,38 @@ public final class MyOptInClass: KotlinRuntime.KotlinBase {
         let __kt = __root___MyOptInClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___MyOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+@_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
+public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOne {
+    @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
+    public override init() {
+        if Self.self != main.MySubClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.MySubClass ") }
+        let __kt = __root___MySubClass_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___MySubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+@_spi(InterfaceOptInTwo)
+public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib._InterfaceTwo {
+    @_spi(InterfaceOptInTwo)
+    public init() {
+        if Self.self != main.MySubInterface.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.MySubInterface ") }
+        let __kt = __root___MySubInterface_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___MySubInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

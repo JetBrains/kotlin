@@ -17,6 +17,14 @@ void * __root___MyOptInClass_init_allocate();
 
 _Bool __root___MyOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
+void * __root___MySubClass_init_allocate();
+
+_Bool __root___MySubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___MySubInterface_init_allocate();
+
+_Bool __root___MySubInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 _Bool __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__(void * (^action)(void));
 
 void * __root___functionalTypePropertyA_get();

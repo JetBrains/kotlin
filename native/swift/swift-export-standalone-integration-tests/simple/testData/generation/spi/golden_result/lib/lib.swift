@@ -4,6 +4,12 @@ import KotlinRuntimeSupport
 
 @_spi(InternalLibApi)
 public typealias InternalLibAlias = Swift.String
+@_spi(InterfaceOptInOne)
+public protocol InterfaceOne: KotlinRuntime.KotlinBase {
+}
+@_spi(InterfaceOptInTwo)
+public protocol InterfaceTwo: KotlinRuntime.KotlinBase {
+}
 @_spi(InternalLibApi)
 public protocol InternalLibInterface: KotlinRuntime.KotlinBase {
     @_spi(InternalLibApi)
@@ -15,6 +21,12 @@ public protocol InternalLibInterface: KotlinRuntime.KotlinBase {
     }
     @_spi(InternalLibApi)
     func bar() -> Swift.Void
+}
+@objc(_InterfaceOne)
+package protocol _InterfaceOne {
+}
+@objc(_InterfaceTwo)
+package protocol _InterfaceTwo {
 }
 @objc(_InternalLibInterface)
 package protocol _InternalLibInterface {
@@ -48,6 +60,22 @@ public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
     @_spi(ExperimentalLibApi)
     public func bar() -> Swift.Void {
         return { ExperimentalLibClass_bar(self.__externalRCRef()); return () }()
+    }
+}
+@_spi(OpenClassOptIn)
+open class OpenClass: KotlinRuntime.KotlinBase {
+    @_spi(OpenClassOptIn)
+    public init() {
+        if Self.self != lib.OpenClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from lib.OpenClass ") }
+        let __kt = __root___OpenClass_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
 public final class RegularLibClass: KotlinRuntime.KotlinBase {
@@ -176,6 +204,14 @@ public func normalLibFunction() -> Swift.Void {
 public func returnAlias() -> lib.InternalLibAlias {
     return __root___returnAlias()
 }
+extension lib.InterfaceOne where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension lib.InterfaceOne {
+}
+extension lib.InterfaceTwo where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension lib.InterfaceTwo {
+}
 extension lib.InternalLibInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
     @_spi(InternalLibApi)
     public var foo: Swift.String {
@@ -197,4 +233,10 @@ extension lib.InternalLibInterface {
 }
 @_spi(InternalLibApi)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InternalLibInterface where Wrapped : lib._InternalLibInterface {
+}
+@_spi(InterfaceOptInOne)
+extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceOne where Wrapped : lib._InterfaceOne {
+}
+@_spi(InterfaceOptInTwo)
+extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceTwo where Wrapped : lib._InterfaceTwo {
 }

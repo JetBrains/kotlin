@@ -75,7 +75,7 @@ internal open class SirProtocolFromKtSymbol(
             }
             .mapNotNull {
                 it.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()?.also {
-                    ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
+                    ktSymbol.containingModule.sirModule().updateImportFor(it)
                 }
             }
     }
