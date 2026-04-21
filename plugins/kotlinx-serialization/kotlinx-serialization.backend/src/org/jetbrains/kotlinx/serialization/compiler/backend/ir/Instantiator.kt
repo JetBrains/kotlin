@@ -36,6 +36,28 @@ internal class Instantiator(
     val compilerContext: SerializationPluginContext,
     val rootSerializableClass: IrClass? = null,
     val genericGetter: ((Int, IrType) -> IrExpression)? = null,
+    /**
+     * When non-null, overrides the type arguments passed to the serializer constructor in [callConstructor]
+     * and returned by [regularArgs], while leaving the VALUE argument computation (via [genericGetter])
+     * unaffected.
+     *
+     * **Why this separation is needed**: [regularArgs] uses [typeArgumentsAsTypes] both to compute serializer
+     * VALUE expressions and to populate the [Args.typeArgs] list that ends up as constructor `typeArguments`
+     * and `returnTypeHint` in [callConstructor]. In contexts where the original [typeArgumentsAsTypes] contain
+     * type parameters that are out of scope at the call site (e.g. when building a sealed-class serializer for
+     * a non-generic sealed parent that has a generic subclass), we cannot simply substitute those type params
+     * with upper bounds in the list passed to value computation: [findTypeSerializerOrContext] throws for
+     * `Any?` because it has no standard serializer, whereas for actual type parameters it returns `null` and
+     * lets [genericGetter] handle the value.
+     *
+     * By separating the two concerns — keeping the original type params for value computation, but supplying
+     * in-scope (e.g. upper-bound-substituted) types for constructor type arguments — we satisfy the IR
+     * validator without disrupting how KSerializer values are dispatched.
+     *
+     * Set via [instantiateWithNewGetter] when generating the subclass-serializer array in
+     * [instantiateSealedSerializer].
+     */
+    val typeArgsForConstructorOverride: List<IrType>? = null,
 ) {
     val nullableSerClass = compilerContext.finderForBuiltins().findProperties(SerialEntityNames.wrapIntoNullableCallableId).single()
 
@@ -275,7 +297,10 @@ internal class Instantiator(
             )
             instantiate(argSer, it) ?: return null
         }
-        return Args(args, typeArgumentsAsTypes)
+        // Use the override for TYPE args if one was supplied (see [typeArgsForConstructorOverride] KDoc).
+        // VALUE args always use the original `typeArgumentsAsTypes` so that genericGetter dispatch
+        // (which relies on IrTypeParameter.index) is not affected.
+        return Args(args, typeArgsForConstructorOverride ?: typeArgumentsAsTypes)
     }
 
     context(irBuilder: IrBuilderWithScope) private fun instantiateSealedSerializer(
@@ -317,7 +342,7 @@ internal class Instantiator(
                     }
                 }
             }
-            generator.callSerializerFromCompanion(kType, typeArgs, args, sealedSerializerId)?.let { return it }
+            generator.callSerializerFromCompanion(kType, kType.argumentTypesOrUpperBounds(), args, sealedSerializerId)?.let { return it }
         }
 
 
@@ -346,10 +371,49 @@ internal class Instantiator(
 
                         val path = if (kType.arguments.isNotEmpty()) findPath(type, kType) else null
 
+                        // Build `safeTypeArgs`: the in-scope type arguments to use for the subclass serializer's
+                        // constructor call (typeArguments field + returnType).
+                        //
+                        // Problem: the subclass type from `allSealedSerializableSubclassesFor` is e.g.
+                        // `Value<T of Value>`, where `T of Value` is the CLASS type parameter of `Value`.
+                        // That type parameter is out of scope in the sealed class's Companion (or $serializer),
+                        // so passing it directly as a constructor type argument would fail the IR validator.
+                        //
+                        // Two cases:
+                        //  (a) The sealed parent is GENERIC and `path` connects the subclass to the parent
+                        //      (e.g. `ParametrizedInterface<T>` sealed, `Value<T>` subclass).
+                        //      Here `mapTypeParameterIndex` maps the subclass type param index to the parent's
+                        //      index, so we replace `T of Value` with the corresponding in-scope type argument
+                        //      from `kType` (e.g. `T of $serializer`).
+                        //  (b) The sealed parent is NON-GENERIC (`path == null`).
+                        //      The subclass's type params don't map to any parent type arg, so they have no
+                        //      in-scope representative.  We fall back to the upper bound (usually `Any?`),
+                        //      which is always in scope.
+                        //
+                        // NOTE: we intentionally keep the original `type` (not the substituted version) for the
+                        // call to `instantiateWithNewGetter`.  The VALUE expressions produced by `genericGetter`
+                        // operate on `IrTypeParameter.index` (a 0-based slot number), which is the same
+                        // regardless of which concrete type is substituted.  Only the TYPE annotations of the
+                        // constructor call node need to be fixed; the serializer VALUES are dispatched correctly
+                        // through the `genericGetter` lambda regardless.
+                        val safeTypeArgs: List<IrType>? = if (type.arguments.isNotEmpty()) {
+                            val typeClass = type.classOrUpperBound()!!.owner
+                            typeClass.typeParameters.map { param ->
+                                val indexInParent = path?.let { mapTypeParameterIndex(param.index, it) }
+                                if (indexInParent != null && indexInParent < kType.arguments.size) {
+                                    kType.arguments[indexInParent].typeOrNull ?: param.representativeUpperBound
+                                } else {
+                                    // Type param has no counterpart in the sealed parent — use upper bound.
+                                    param.representativeUpperBound
+                                }
+                            }
+                        } else null
+
                         val expr = instantiateWithNewGetter(
                             serializer,
                             type,
                             type.genericIndex,
+                            safeTypeArgs,
                         ) { index, genericType ->
                             val indexInParent = path?.let { mapTypeParameterIndex(index, it) }
 
@@ -389,9 +453,21 @@ internal class Instantiator(
         serializerClass: IrClassSymbol?,
         kType: IrType,
         genericIndex: Int?,
+        /**
+         * Optional override for the type arguments passed to the serializer constructor (see
+         * [typeArgsForConstructorOverride] on [Instantiator]).  Pass non-null when the type
+         * parameters carried in [kType] are out of scope at the call site and need to be replaced
+         * with in-scope equivalents (e.g. upper bounds) before being emitted into the IR.
+         *
+         * **Important**: [typeArgsForConstructorOverride] is placed BEFORE [genericGetter] in the
+         * parameter list so that callers can use trailing-lambda syntax for [genericGetter] while
+         * still passing a non-default value for this parameter.
+         */
+        typeArgsForConstructorOverride: List<IrType>? = null,
         genericGetter: ((Int, IrType) -> IrExpression)?,
     ): IrExpression? {
-        return Instantiator(generator, compilerContext, rootSerializableClass, genericGetter).serializerInstance(serializerClass, kType, genericIndex)
+        return Instantiator(generator, compilerContext, rootSerializableClass, genericGetter, typeArgsForConstructorOverride)
+            .serializerInstance(serializerClass, kType, genericIndex)
     }
 
 

@@ -182,7 +182,22 @@ class SerializableCompanionIrGenerator(
     private fun generateSerializerGetter(serializer: IrClassSymbol, methodDescriptor: IrSimpleFunction) {
         addFunctionBody(methodDescriptor) { getter ->
             val args: List<IrExpression> = getter.nonDispatchParameters.map { irGet(it) }
-            val expr = serializerInstance(serializer, compilerContext, serializableIrClass.defaultType) { it, _ -> args[it] }
+            // IR validator requires that all type parameter references in an IR node are in scope at that point.
+            // `serializableIrClass.defaultType` is e.g. `GenericBox<T of GenericBox, V of GenericBox>`, where
+            // `T of GenericBox` and `V of GenericBox` are the CLASS-level type parameters. These are out of scope
+            // inside the body of `GenericBox.Companion.serializer<T, V>()` — only the FUNCTION's type parameters
+            // (`T of Companion.serializer`, `V of Companion.serializer`) are valid there.
+            //
+            // We substitute the class type parameters with the getter function's own type parameters to produce
+            // e.g. `GenericBox<T of Companion.serializer, V of Companion.serializer>`. The `genericGetter` lambda
+            // (which maps indices to the KSerializer value arguments) uses `IrTypeParameter.index`, which is the
+            // same for both the class and the function type parameters (both T's have index 0, both V's index 1),
+            // so the value arguments are still correctly wired up after the substitution.
+            val kType = serializableIrClass.defaultType.substitute(
+                serializableIrClass.typeParameters,
+                getter.typeParameters.map { it.defaultType }
+            )
+            val expr = serializerInstance(serializer, compilerContext, kType) { it, _ -> args[it] }
             +irReturn(requireNotNull(expr))
         }
     }
