@@ -7,8 +7,13 @@ package org.jetbrains.kotlin.buildtools.tests.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
@@ -117,9 +122,13 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
     }
 
     @InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
-    @DisplayName("Raw argument with non-existent BTA argument value fails conversion")
+    @DisplayName("Raw argument with non-existent BTA argument value is rejected at configuration or execution time")
     fun <T> JvmArgumentConfiguration<T>.testInvalidRawArgumentConversionFails() {
         assumeArgumentSupported()
+        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        val kotlinToolingVersion = KotlinToolingVersion(kotlinToolchain.getCompilerVersion())
+        assumeTrue { kotlinToolingVersion < KotlinToolingVersion(2, 4, 20, "snapshot") }
+
         for (invalidValue in invalidRawValues) {
             assertThrows<CompilerArgumentsParseException> {
                 kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
@@ -128,6 +137,28 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
                     )
                     compilerArguments[argumentKey]
                 }.build()
+            }
+        }
+    }
+
+    @InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticTest
+    @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
+    fun testInvalidRawArgumentCompilationFails(config: Pair<JvmArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>) {
+        val (argumentConfig, strategyConfig) = config
+        argumentConfig.assumeArgumentSupported()
+        // Old BTA versions throw from applyArgumentStrings; new versions store the error and report it during executeOperation
+        val kotlinToolingVersion = KotlinToolingVersion(argumentConfig.kotlinToolchain.getCompilerVersion())
+        assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
+
+        project(strategyConfig) {
+            val module = module("jvm-module-1")
+            for (invalidValue in argumentConfig.invalidRawValues) {
+                module.compile(compilationConfigAction = {
+                    it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+                }) {
+                    expectFail()
+                    assertLogContainsPatterns(LogLevel.ERROR, Regex(".*${Regex.escape(invalidValue)}.*"))
+                }
             }
         }
     }

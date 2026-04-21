@@ -5,20 +5,25 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.AllJvmCompilerArgumentsWithBtaVersionsTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
-import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
+import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.InvalidRawValueJvmCompilerArgumentsStrategyAgnosticTest
 import org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm.JvmArgumentConfiguration
 import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import java.nio.file.Paths
+import java.util.concurrent.CopyOnWriteArrayList
 
 @OptIn(ExperimentalCompilerArgument::class)
 @Suppress("DEPRECATION")
@@ -110,17 +115,22 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
         )
     }
 
-    @InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
-    @DisplayName("Raw argument with non-existent BTA argument value fails conversion")
-    fun <T> JvmArgumentConfiguration<T>.testInvalidRawArgumentConversionFails() {
-        assumeArgumentSupported()
-        for (invalidValue in invalidRawValues) {
-            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+    @InvalidRawValueJvmCompilerArgumentsStrategyAgnosticTest
+    @DisplayName("Raw argument with non-existent BTA argument value is rejected at compilation time")
+    fun testInvalidRawArgumentCompilationFails(config: Pair<JvmArgumentConfiguration<*>, ExecutionPolicy>) {
+        val (argumentConfig, executionPolicy) = config
+        argumentConfig.assumeArgumentSupported()
 
-            assertThrows<CompilerArgumentsParseException> {
-                operation.compilerArguments.applyArgumentStrings(
-                    expectedArgumentStringsFor(invalidValue)
-                )
+        for (invalidValue in argumentConfig.invalidRawValues) {
+            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+            operation.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
+            val logger = CapturingLogger()
+            val result = toolchain.createBuildSession().use {
+                it.executeOperation(operation, executionPolicy, logger)
+            }
+            assertEquals(CompilationResult.COMPILATION_ERROR, result)
+            assertTrue(logger.errors.any { it.contains(invalidValue) }) {
+                "Expected error containing '$invalidValue', but errors were: ${logger.errors}"
             }
         }
     }
@@ -152,6 +162,19 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
             expectedArgumentStringsFor(getValueString(null)),
             actualArgumentStrings,
         )
+    }
+
+    private class CapturingLogger : KotlinLogger {
+        override val isDebugEnabled = false
+        val errors = CopyOnWriteArrayList<String>()
+        override fun debug(msg: String) {}
+        override fun error(msg: String, throwable: Throwable?) {
+            errors.add(msg)
+        }
+
+        override fun info(msg: String) {}
+        override fun lifecycle(msg: String) {}
+        override fun warn(msg: String, throwable: Throwable?) {}
     }
 
     private fun JvmArgumentConfiguration<*>.assumeArgumentSupported() {

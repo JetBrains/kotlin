@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WarningLevel
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
+import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTestArgumentProvider
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaVersionsCompilationTestArgumentProvider
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
@@ -58,6 +60,28 @@ internal class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsArgumentProv
 internal class NullableCommonCompilerArgumentsWithBtaVersionsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsNullableTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueCommonCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedInvalidRawValueBtaV2ArgumentConfigurations().map { Arguments.of(it) }.stream()
+    }
+}
+
+private fun namedInvalidRawValueBtaV2ArgumentConfigurations(): List<Named<Pair<CommonArgumentConfiguration<*>, CompilerExecutionStrategyConfiguration>>> {
+    val btaV2Strategies = BtaV2StrategyAgnosticCompilationTestArgumentProvider.namedStrategyArguments()
+    val compilerArguments = commonCompilerArguments
+        .filter { it.runsInvalidRawValueTest }
+        .map { named("[${it.argumentName}]", it) }
+
+    return btaV2Strategies.flatMap { namedStrategy ->
+        compilerArguments.map { namedArgDescriptor ->
+            named(
+                namedStrategy.name + namedArgDescriptor.name,
+                CommonArgumentConfiguration(namedStrategy.payload.first, namedArgDescriptor.payload) to namedStrategy.payload
+            )
+        }
     }
 }
 
@@ -232,6 +256,7 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
             )
         ),
         argumentRawValues = listOf("DEPRECATION:error,UNUSED_VARIABLE:disabled"),
+        invalidRawValues = listOf("DEPRECATION:non-existent-level", "CONTEXTUAL_OVERLOAD_SHADOWED=error"),
         valueString = { value -> value?.joinToString(",") { "${it.warningName}:${it.severity.stringValue}" } },
         expectedArgumentStringsFor = { value -> listOf("-Xwarning-level=$value") },
     ),

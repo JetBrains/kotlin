@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_VERIFY_IR
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -47,6 +49,28 @@ internal class InvalidArgumentValueCommonCompilerArgumentsArgumentProvider : Arg
 internal class InvalidRawValueCommonCompilerArgumentsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueCommonCompilerArgumentsStrategyAgnosticArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedInvalidRawValueStrategicArgumentConfigurations().map { Arguments.of(it) }.stream()
+    }
+}
+
+private fun namedInvalidRawValueStrategicArgumentConfigurations(): List<Named<Pair<CommonArgumentConfiguration<*>, ExecutionPolicy>>> {
+    val strategies: List<Named<ExecutionPolicy>> = listOf(
+        named("[in-process]", toolchain.createInProcessExecutionPolicy()),
+        named("[daemon]", toolchain.daemonExecutionPolicyBuilder().build()),
+    )
+    val compilerArguments = namedArgumentConfiguration { it.runsInvalidRawValueTest }
+    return strategies.flatMap { namedStrategy ->
+        compilerArguments.map { namedArgConfig ->
+            named(
+                namedArgConfig.name + namedStrategy.name,
+                namedArgConfig.payload to namedStrategy.payload
+            )
+        }
     }
 }
 
@@ -202,7 +226,7 @@ internal val commonCompilerArgumentTestDescriptors: List<CommonArgumentTestDescr
         argumentValues = listOf(arrayOf("DEPRECATION:error", "UNUSED_VARIABLE:disabled")),
         argumentRawValues = listOf(arrayOf("DEPRECATION:error", "UNUSED_VARIABLE:disabled").joinToString(",")),
         invalidArgumentValues = listOf(arrayOf("DEPRECATION:non-existent-level")),
-        invalidRawValues = listOf("DEPRECATION:non-existent-level"),
+        invalidRawValues = listOf("DEPRECATION:non-existent-level", "CONTEXTUAL_OVERLOAD_SHADOWED=error"),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xwarning-level=$value") },
     ),

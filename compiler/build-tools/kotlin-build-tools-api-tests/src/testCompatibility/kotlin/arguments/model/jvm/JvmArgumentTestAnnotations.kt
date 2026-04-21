@@ -60,6 +60,20 @@ annotation class InvalidArgumentValueJvmCompilerArgumentsWithBtaVersionsTest
 annotation class InvalidRawValueJvmCompilerArgumentsWithBtaVersionsTest
 
 /**
+ * Parameterized test annotation for validating that JVM compiler arguments with invalid raw values
+ * produce a compilation error (not a crash) using only BTAv2 and both execution strategies.
+ *
+ * @see InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider::class
+)
+annotation class InvalidRawValueJvmCompilerArgumentsBtaV2StrategyAgnosticTest
+
+/**
  * Parameterized test annotation for validating backward compatibility of nullable JVM compiler arguments
  * across Build Tools API versions (BTAv1 and BTAv2).
  *
