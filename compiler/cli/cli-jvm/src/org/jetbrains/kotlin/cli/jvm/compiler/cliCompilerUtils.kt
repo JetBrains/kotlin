@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.cli.CliDiagnostics.JAVAC_INTEGRATION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
+import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.VirtualJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -73,7 +73,6 @@ private fun writeOutput(
 ) {
     val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
     val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
-    val messageCollector = configuration.messageCollector
     if (jarPath != null) {
         val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
         val noReflect = configuration.get(JVMConfigurationKeys.NO_REFLECT, false)
@@ -94,7 +93,7 @@ private fun writeOutput(
         )
         if (reportOutputFiles) {
             val message = OutputMessageUtil.formatOutputMessage(sourceFiles, jarPath)
-            messageCollector.report(CompilerMessageSeverity.OUTPUT, message)
+            configuration.reportOutput(message)
         }
         return
     }
@@ -113,12 +112,11 @@ private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =
 fun writeOutputsIfNeeded(
     project: Project,
     configuration: CompilerConfiguration,
-    messageCollector: MessageCollector,
     hasPendingErrors: Boolean,
     outputs: Collection<GenerationState>,
     mainClassFqName: FqName?
 ): Boolean {
-    if (hasPendingErrors || messageCollector.hasErrors()) {
+    if (hasPendingErrors || configuration.hasMessageCollectorErrors()) {
         return false
     }
 
