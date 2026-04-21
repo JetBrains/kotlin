@@ -112,7 +112,7 @@ class JvmModule(
         compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
         compilationAction: (JvmCompilationOperation) -> Unit,
         icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-        assertions: context(Module<JvmCompilationOperation, JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>) CompilationOutcome.() -> Unit,
+        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val snapshots = dependencies.map {

@@ -98,7 +98,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         forceOutput: LogLevel?,
         compilationConfigAction: (B) -> Unit,
         compilationAction: (O) -> Unit,
-        assertions: context(Module<O, B, IC>) CompilationOutcome.(Throwable) -> Unit,
+        assertions: context(Module<*, *, *>) CompilationOutcome.(Throwable) -> Unit,
     ): Throwable {
         val kotlinLogger = TestKotlinLogger()
         try {
@@ -118,7 +118,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         forceOutput: LogLevel?,
         compilationConfigAction: (B) -> Unit,
         compilationAction: (O) -> Unit,
-        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit,
+        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(
@@ -131,10 +131,10 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         return result
     }
 
-    private fun processOutcome(
+    protected fun processOutcome(
         kotlinLogger: TestKotlinLogger,
         result: CompilationResult?,
-        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit,
+        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
         forceOutput: LogLevel?,
     ) {
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)
@@ -199,7 +199,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
     }
 
     protected abstract fun prepareExecutionProcessBuilder(
-        mainClassFqn: String
+        mainClassFqn: String,
     ): ProcessBuilder
 
     override fun toString() = moduleName

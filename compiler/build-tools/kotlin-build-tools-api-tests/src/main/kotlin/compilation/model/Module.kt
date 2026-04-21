@@ -51,7 +51,7 @@ interface Module<out O : BaseCompilationOperation, B : BaseCompilationOperation.
         forceOutput: LogLevel? = null,
         compilationConfigAction: (B) -> Unit = {},
         compilationAction: (O) -> Unit = {},
-        assertions: context(Module<O, B, IC>) CompilationOutcome.(Throwable) -> Unit = {},
+        assertions: context(Module<*, *, *>) CompilationOutcome.(Throwable) -> Unit = {},
     ): Throwable
 
     fun compile(
@@ -59,7 +59,7 @@ interface Module<out O : BaseCompilationOperation, B : BaseCompilationOperation.
         forceOutput: LogLevel? = null,
         compilationConfigAction: (B) -> Unit = {},
         compilationAction: (O) -> Unit = {},
-        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     fun compileIncrementally(
@@ -70,7 +70,7 @@ interface Module<out O : BaseCompilationOperation, B : BaseCompilationOperation.
         compilationConfigAction: (B) -> Unit = {},
         compilationAction: (O) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
-        assertions: context(Module<O, B, IC>) CompilationOutcome.() -> Unit = {},
+        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     /**

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.util
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import java.io.File
 import java.net.URLClassLoader
+import java.nio.file.Paths
 import kotlin.io.path.toPath
 
 private const val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
@@ -28,3 +29,6 @@ val btaClassloader = initializeBtaClassloader()
 
 val currentKotlinStdlibLocation
     get() = btaClassloader.loadClass(KotlinVersion::class.qualifiedName).protectionDomain.codeSource.location.toURI().toPath()
+
+val currentKotlinJsStdlibKlibLocation
+    get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.jsStdlibClasspath"))
