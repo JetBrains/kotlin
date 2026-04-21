@@ -107,9 +107,9 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
     }
 
     protected fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
-        return testConfiguration.afterAnalysisCheckers
-            .fold(failedExceptions) { assertions, checker ->
-                checker.suppressIfNeeded(assertions)
+        return testConfiguration.failureSuppressors
+            .fold(failedExceptions) { assertions, suppressor ->
+                suppressor.suppressIfNeeded(assertions)
             }
             .sorted()
             .map { it.cause }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.ModuleStructureExtractorImpl
@@ -37,6 +38,7 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
     moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
+    failureSuppressors: List<Constructor<TestFailureSuppressor>>,
 
     compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
     runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
@@ -117,6 +119,7 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
 
     final override val steps: List<Step>
     final override val afterAnalysisCheckers: List<AfterAnalysisChecker>
+    final override val failureSuppressors: List<TestFailureSuppressor>
 
     init {
         val afterAnalysisCheckerConstructors = mutableSetOf<Constructor<AfterAnalysisChecker>>()
@@ -134,6 +137,10 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
             }
         afterAnalysisCheckerConstructors.addAll(afterAnalysisCheckers)
         this.afterAnalysisCheckers = afterAnalysisCheckerConstructors.map { constructor ->
+            constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
+        }.sortedBy { it.order }
+
+        this.failureSuppressors = failureSuppressors.map { constructor ->
             constructor.invoke(testServices).also { it.registerDirectivesAndServices() }
         }.sortedBy { it.order }
     }
@@ -164,6 +171,7 @@ class NonGroupingPhaseTestConfigurationImpl(
     moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
+    failureSuppressors: List<Constructor<TestFailureSuppressor>>,
     compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
     runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
     metaInfoHandlerEnabled: Boolean,
@@ -175,8 +183,8 @@ class NonGroupingPhaseTestConfigurationImpl(
 ) : TestConfigurationImplBase<TestStep.NonGroupingStep<*, *>>(
     testInfo, defaultsProvider, assertions, steps, sourcePreprocessors, additionalMetaInfoProcessors, environmentConfigurators,
     additionalSourceProviders, preAnalysisHandlers, moduleStructureTransformers, metaTestConfigurators, afterAnalysisCheckers,
-    compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives, defaultRegisteredDirectives,
-    additionalServices
+    failureSuppressors, compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives,
+    defaultRegisteredDirectives, additionalServices
 ), NonGroupingPhaseTestConfiguration
 
 @OptIn(TestInfrastructureInternals::class)
@@ -193,6 +201,7 @@ class GroupingPhaseTestConfigurationImpl(
     moduleStructureTransformers: List<Constructor<ModuleStructureTransformer>>,
     metaTestConfigurators: List<Constructor<MetaTestConfigurator>>,
     afterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>,
+    failureSuppressors: List<Constructor<TestFailureSuppressor>>,
     compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)?,
     runtimeClasspathProviders: List<Constructor<RuntimeClasspathProvider>>,
     metaInfoHandlerEnabled: Boolean,
@@ -203,8 +212,8 @@ class GroupingPhaseTestConfigurationImpl(
 ) : TestConfigurationImplBase<TestStep.GroupingPhaseStep<*, *>>(
     testInfo, defaultsProvider, assertions, steps, sourcePreprocessors, additionalMetaInfoProcessors, environmentConfigurators,
     additionalSourceProviders, preAnalysisHandlers, moduleStructureTransformers, metaTestConfigurators, afterAnalysisCheckers,
-    compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives, defaultRegisteredDirectives,
-    additionalServices,
+    failureSuppressors, compilerConfigurationProvider, runtimeClasspathProviders, metaInfoHandlerEnabled, directives,
+    defaultRegisteredDirectives, additionalServices,
 ), GroupingPhaseTestConfiguration {
     override val mergerWorkers: List<GroupingPhaseInputsMerger.Worker> = mergerWorkers.map { it.invoke(testServices) }
 }

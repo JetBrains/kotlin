@@ -9,8 +9,8 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataHandler
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
 import org.jetbrains.kotlin.test.impl.GroupingPhaseTestConfigurationImpl
+import org.jetbrains.kotlin.test.impl.NonGroupingPhaseTestConfigurationImpl
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -32,6 +32,7 @@ abstract class TestConfigurationBuilderBase<Self : TestConfigurationBuilderBase<
 
     protected val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
     protected val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
+    protected val failureSuppressors: MutableList<Constructor<TestFailureSuppressor>> = mutableListOf()
 
     protected var metaInfoHandlerEnabled: Boolean = false
 
@@ -121,6 +122,13 @@ abstract class TestConfigurationBuilderBase<Self : TestConfigurationBuilderBase<
         when (insertAtFirst) {
             false -> afterAnalysisCheckers += checkers
             true -> afterAnalysisCheckers.addAll(0, checkers.asList())
+        }
+    }
+
+    fun useFailureSuppressors(vararg suppressors: Constructor<TestFailureSuppressor>, insertAtFirst: Boolean = false) {
+        when (insertAtFirst) {
+            false -> failureSuppressors += suppressors
+            true -> failureSuppressors.addAll(0, suppressors.asList())
         }
     }
 
@@ -289,6 +297,7 @@ class NonGroupingPhaseTestConfigurationBuilder :
             moduleStructureTransformers,
             metaTestConfigurators,
             afterAnalysisCheckers,
+            failureSuppressors,
             compilerConfigurationProvider,
             runtimeClasspathProviders,
             metaInfoHandlerEnabled,
@@ -427,6 +436,7 @@ class GroupingPhaseTestConfigurationBuilder :
             moduleStructureTransformers,
             metaTestConfigurators,
             afterAnalysisCheckers,
+            failureSuppressors,
             compilerConfigurationProvider,
             runtimeClasspathProviders,
             metaInfoHandlerEnabled,

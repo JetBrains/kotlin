@@ -78,7 +78,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
     }
 
     /**
-     * Consider [org.jetbrains.kotlin.test.model.AfterAnalysisChecker.suppressIfNeeded] firstly
+     * Consider [org.jetbrains.kotlin.test.model.TestFailureSuppressor.suppressIfNeeded] firstly
      */
     protected open fun shouldSkipTest(filePath: String, configuration: NonGroupingPhaseTestConfiguration): Boolean = false
 
