@@ -155,7 +155,6 @@ fun generateCodeFromIr(
             writeOutputsIfNeeded(
                 environment.projectEnvironment.project,
                 input.configuration,
-                input.configuration.messageCollector,
                 environment.diagnosticsReporter.hasErrors,
                 listOf(generationState),
                 mainClassFqName = null,

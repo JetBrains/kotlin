@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -75,7 +73,6 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         check(compilerConfiguration.useFir == false)
-        val messageCollector = environment.messageCollector
         val diagnosticsReporter = DiagnosticsCollectorImpl()
         val backendInputForMultiModuleChunk =
             runFrontendAndGenerateIrUsingClassicFrontend(environment, compilerConfiguration, chunk, diagnosticsReporter) ?: return true
@@ -84,7 +81,6 @@ object KotlinToJVMBytecodeCompiler {
             project,
             chunk,
             compilerConfiguration,
-            messageCollector,
             diagnosticsReporter,
             buildFile,
             allSourceFiles = environment.getSourceFiles(),
@@ -95,7 +91,6 @@ object KotlinToJVMBytecodeCompiler {
         project: Project,
         chunk: List<Module>,
         compilerConfiguration: CompilerConfiguration,
-        messageCollector: MessageCollector,
         diagnosticsReporter: BaseDiagnosticsCollector,
         buildFile: File?,
         allSourceFiles: List<KtFile>?,
@@ -150,7 +145,6 @@ object KotlinToJVMBytecodeCompiler {
         return writeOutputsIfNeeded(
             project,
             compilerConfiguration,
-            messageCollector,
             hasPendingErrors = false,
             outputs,
             mainClassFqName
@@ -389,11 +383,7 @@ object KotlinToJVMBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         if (reportDiagnosticsToMessageCollector) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                diagnosticsReporter,
-                configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY),
-                configuration.renderDiagnosticInternalName,
-            )
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, configuration)
         }
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
