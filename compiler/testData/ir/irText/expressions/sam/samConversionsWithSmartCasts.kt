@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // WITH_JDK
 // FILE: samConversionsWithSmartCasts.kt

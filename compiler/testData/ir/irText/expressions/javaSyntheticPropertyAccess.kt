@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // FILE: javaSyntheticPropertyAccess.kt
 fun test(j: J) {

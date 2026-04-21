@@ -18,9 +18,13 @@ import org.jetbrains.kotlin.test.model.BackendKinds.IrBackend
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.TestArtifactKind
+import org.jetbrains.kotlin.test.model.ArtifactKind
 
+@Suppress("UNCHECKED_CAST")
 class SerializationCliJKlibFacade(testServices: TestServices) :
-    BackendFacade<IrBackendInput, JKlibKLibWithArtifact>(testServices, IrBackend, JKlibKLibWithArtifact.Kind) {
+    BackendFacade<IrBackendInput, JKlibKLibWithArtifact>(testServices, IrBackend, ArtifactKinds.KLib as ArtifactKind<JKlibKLibWithArtifact>) {
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): JKlibKLibWithArtifact {
         if (inputArtifact !is Fir2IrCliBasedOutputArtifact<*>) {
             error("input artifact is not a Fir2IrCliBasedOutputArtifact")
@@ -28,13 +32,7 @@ class SerializationCliJKlibFacade(testServices: TestServices) :
         val cliArtifact = inputArtifact.cliArtifact
         require(cliArtifact is JKlibFir2IrPipelineArtifact)
 
-        val phaseConfig = PhaseConfig()
-        val context = PipelineContext(
-            object : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Test") {},
-            kaptMode = false
-        )
-
-        val serializationArtifact = JKlibKlibSerializationPhase.invokeToplevel(phaseConfig, context, cliArtifact)
+        val serializationArtifact = JKlibKlibSerializationPhase.executePhase(cliArtifact)
 
         return JKlibKLibWithArtifact(serializationArtifact)
     }

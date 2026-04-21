@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // DUMP_EXTERNAL_CLASS: Base, Derived
 // FILE: javaNestedClassesInHierarchy.kt

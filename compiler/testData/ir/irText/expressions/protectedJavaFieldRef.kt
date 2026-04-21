@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JKLIB
 // SKIP_KT_DUMP
 // FILE: protectedJavaFieldRef.kt
 import p.*

@@ -23,20 +23,18 @@ import org.jetbrains.kotlin.test.model.BackendKinds.IrBackend
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.test.model.ArtifactKinds
+import org.jetbrains.kotlin.test.model.TestArtifactKind
+import org.jetbrains.kotlin.test.model.ArtifactKind
 
+@Suppress("UNCHECKED_CAST")
 class JKlibIrCompilationCliFacade(testServices: TestServices) :
-    DeserializerFacade<JKlibKLibWithArtifact, IrBackendInput>(testServices, JKlibKLibWithArtifact.Kind, IrBackend) {
+    DeserializerFacade<JKlibKLibWithArtifact, IrBackendInput>(testServices, ArtifactKinds.KLib as ArtifactKind<JKlibKLibWithArtifact>, IrBackend) {
 
     override fun transform(module: TestModule, inputArtifact: JKlibKLibWithArtifact): IrBackendInput {
         val serializationArtifact = inputArtifact.cliArtifact
 
-        val phaseConfig = PhaseConfig()
-        val context = PipelineContext(
-            object : PerformanceManager(JvmPlatforms.defaultJvmPlatform, "Test") {},
-            kaptMode = false
-        )
-
-        val compilationArtifact = JKlibIrCompilationPhase.invokeToplevel(phaseConfig, context, serializationArtifact)
+        val compilationArtifact = JKlibIrCompilationPhase.executePhase(serializationArtifact)
 
         val diagnosticsReporter = serializationArtifact.configuration.diagnosticsCollector
 
