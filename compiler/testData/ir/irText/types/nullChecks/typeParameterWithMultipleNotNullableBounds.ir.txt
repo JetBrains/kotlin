@@ -35,9 +35,11 @@ FILE fqName:<root> fileName:/typeParameterWithMultipleNotNullableBounds.kt
         CALL 'public final fun f2 <T> (vararg x: T of <root>.f2): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           TYPE_ARG T: @[FlexibleNullability] kotlin.String?
           ARG x: VARARG type=kotlin.Array<out @[FlexibleNullability] kotlin.String?> varargElementType=@[FlexibleNullability] kotlin.String?
-            CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+            TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+              CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun f2 <T> (vararg x: T of <root>.f2): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           TYPE_ARG T: @[FlexibleNullability] kotlin.String?
           ARG x: VARARG type=kotlin.Array<out @[FlexibleNullability] kotlin.String?> varargElementType=@[FlexibleNullability] kotlin.String?
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static] declared in <root>.J' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.J origin=null
+            TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static] declared in <root>.J' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.J origin=null

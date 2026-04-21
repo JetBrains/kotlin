@@ -29,7 +29,12 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
 ): IrExpression {
     if (this is IrVararg) {
         return applyConversionOnVararg(expression) {
-            prepareExpressionForGivenExpectedType(expression = it, expectedType = substitutedExpectedType, forReceiver = forReceiver)
+            prepareExpressionForGivenExpectedType(
+                expression = it,
+                expectedType = expectedType,
+                substitutedExpectedType = substitutedExpectedType,
+                forReceiver = forReceiver
+            )
         }
     }
 
