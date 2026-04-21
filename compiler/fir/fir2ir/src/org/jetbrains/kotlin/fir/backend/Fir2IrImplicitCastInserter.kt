@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScope: Fir2IrConversionScope) : Fir2IrComponents by c {
 
@@ -45,7 +44,8 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
     internal fun IrExpression.insertSpecialCast(
         expression: FirExpression,
         valueType: ConeKotlinType,
-        expectedType: ConeKotlinType,
+        unsubstitutedExpectedType: ConeKotlinType,
+        substitutedExpectedType: ConeKotlinType,
     ): IrExpression {
         if (this is IrTypeOperatorCall) {
             return this
@@ -56,13 +56,14 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
         }
 
         val expandedValueType = valueType.fullyExpandedType()
-        val expandedExpectedType = expectedType.fullyExpandedType()
+        val expandedExpectedType = substitutedExpectedType.fullyExpandedType()
 
         return when {
             expandedExpectedType.isUnit -> {
                 coerceToUnitIfNeeded(this)
             }
             expandedValueType is ConeDynamicType -> {
+                // No fall through because `isEnhancedOrFlexibleMarkedNullable` returns true for `dynamic`.
                 if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
                     generateImplicitCast(this, expandedExpectedType.toIrType(conversionScope.defaultConversionTypeOrigin()))
                 } else {
@@ -70,7 +71,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
                 }
             }
             // If the value has a flexible or enhanced type, it could contain null (Java nullability isn't checked).
-            expandedValueType.isEnhancedOrFlexibleMarkedNullable() && !expandedExpectedType.acceptsNullValues() &&
+            expandedValueType.isEnhancedOrFlexibleMarkedNullable() && !unsubstitutedExpectedType.fullyExpandedType().acceptsNullValues() &&
                     // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
                     // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
                     expression.source != null && this !is IrGetEnumValue -> {

@@ -14,7 +14,6 @@ FILE fqName:<root> fileName:/implicitCast.kt
       CALL 'public final fun assertEquals <T> (expected: T of <root>.assertEquals, actual: T of <root>.assertEquals, message: kotlin.String?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         TYPE_ARG T: dynamic
         ARG expected: CONST Int type=kotlin.Int value=60
-        ARG actual: TYPE_OP type=T of <root>.assertEquals origin=IMPLICIT_DYNAMIC_CAST typeOperand=T of <root>.assertEquals
-          DYN_OP operator=MUL type=dynamic
-            receiver: GET_VAR 'val a: dynamic declared in <root>.test' type=dynamic origin=null
-            0: CONST Int type=kotlin.Int value=5
+        ARG actual: DYN_OP operator=MUL type=dynamic
+          receiver: GET_VAR 'val a: dynamic declared in <root>.test' type=dynamic origin=null
+          0: CONST Int type=kotlin.Int value=5

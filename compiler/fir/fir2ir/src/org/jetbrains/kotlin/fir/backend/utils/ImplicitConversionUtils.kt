@@ -39,7 +39,12 @@ fun IrExpression.prepareExpressionForGivenExpectedType(
             insertCastForReceiver(valueType, substitutedExpectedType)
         } else {
             insertCastForIntersectionTypeOrSelf(valueType, substitutedExpectedType)
-        }.insertSpecialCast(expression, valueType, expectedType)
+        }.insertSpecialCast(
+            expression,
+            valueType = valueType,
+            unsubstitutedExpectedType = expectedType,
+            substitutedExpectedType = substitutedExpectedType
+        )
     }
 
     return expressionWithCast
