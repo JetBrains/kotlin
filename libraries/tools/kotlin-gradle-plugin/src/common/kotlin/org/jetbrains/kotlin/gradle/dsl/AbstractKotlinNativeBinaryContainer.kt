@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 abstract class AbstractKotlinNativeBinaryContainer : DomainObjectSet<NativeBinary> {
 
+    /* dummy */
     abstract val project: Project
     abstract val target: KotlinNativeTarget
 
