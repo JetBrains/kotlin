@@ -55,7 +55,7 @@ open class SerializerIrGenerator(
     protected val serializableIrClass = getSerializableClassDescriptorBySerializer(irClass)!!
 
     protected val serialName: String = serializableIrClass.serialName()
-    protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin)
+    protected val properties = serializablePropertiesForIrBackend(serializableIrClass, metadataPlugin, buildSerializerTypeReplacement())
     protected val serializableProperties = properties.serializableProperties
     protected val isGeneratedSerializer = irClass.superTypes.any(IrType::isGeneratedKSerializer)
 
@@ -72,6 +72,49 @@ open class SerializerIrGenerator(
         isReturnTypeOk: (IrProperty) -> Boolean
     ): IrProperty? {
         return irClass.properties.singleOrNull { it.name.asString() == name && isReturnTypeOk(it) }
+    }
+
+    /**
+     * Builds the `typeReplacement` map consumed by [serializablePropertiesForIrBackend].
+     *
+     * **Problem**: The `$serializer` nested class has its OWN type parameters (e.g. `T of GenericBox.$serializer`)
+     * that are separate from the enclosing serializable class's type parameters (`T of GenericBox`).
+     * IR generated inside `$serializer` (the `deserialize` function, local variables, etc.) must reference
+     * `T of $serializer`, which is in scope there, not `T of GenericBox`, which is NOT in scope inside the
+     * nested class.
+     *
+     * `serializablePropertiesForIrBackend` uses a `typeReplacement` map to resolve property types:
+     * when provided, `typeReplacement[originalProp]` overrides the property's own getter return type.
+     * By mapping each property's type from `T of GenericBox` to `T of $serializer`, we ensure that
+     * all local variable declarations and field accesses generated in `deserialize` carry in-scope types.
+     *
+     * **Key for fake overrides**: `serializablePropertiesForIrBackend` stores inherited properties keyed by
+     * `resolveFakeOverride()` (the original parent declaration), not by the fake-override itself.
+     * If we insert the fake override object as the key, the lookup miss would leave the type unreplaced,
+     * causing out-of-scope references for inherited generic properties (e.g. `val a: T` defined in a parent).
+     */
+    private fun buildSerializerTypeReplacement(): Map<IrProperty, IrSimpleType>? {
+        if (serializableIrClass.typeParameters.isEmpty()) return null
+        if (irClass.typeParameters.size != serializableIrClass.typeParameters.size) return null
+        val fromTypeParams = serializableIrClass.typeParameters
+        val toTypeParams = irClass.typeParameters.map { it.defaultType }
+        return buildMap {
+            serializableIrClass.properties.forEach { prop ->
+                if (prop.isFakeOverride) {
+                    // Inherited properties: serializablePropertiesForIrBackend looks up by the original (parent) declaration.
+                    // Using the fake-override itself as the key would result in a lookup miss.
+                    val orig = prop.resolveFakeOverride() ?: return@forEach
+                    val type = prop.getter?.returnType as? IrSimpleType ?: return@forEach
+                    val substituted = type.substitute(fromTypeParams, toTypeParams) as? IrSimpleType ?: return@forEach
+                    put(orig, substituted)
+                } else {
+                    // Own (non-inherited) properties: looked up by the property itself.
+                    val type = prop.getter?.returnType as? IrSimpleType ?: return@forEach
+                    val substituted = type.substitute(fromTypeParams, toTypeParams) as? IrSimpleType ?: return@forEach
+                    put(prop, substituted)
+                }
+            }
+        }
     }
 
     var localSerializersFieldsDescriptors: List<IrProperty> = emptyList()
@@ -507,12 +550,20 @@ open class SerializerIrGenerator(
             irGet(localSerialDesc)
         )
 
+        // typeArgs are derived from `loadFunc.returnType` (the `deserialize` function's declared return type),
+        // which already uses `$serializer`'s own type parameters (e.g. `T of GenericBox.$serializer`).
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         val deserCtor: IrConstructorSymbol? = serializableIrClass.findSerializableSyntheticConstructor()
         if (serializableIrClass.shouldHaveGeneratedMethods() && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
-            +irReturn(irInvoke(deserCtor, args, typeArgs))
+            // `returnTypeHint` must be explicitly supplied here (and in the `else` branch below).
+            // Without it, `irInvoke` falls back to `callee.owner.returnType` — the constructor's own return type —
+            // which is `GenericBox<T of GenericBox, V of GenericBox>` (the CLASS type parameters).
+            // Those are out of scope inside the `$serializer` nested class body.
+            // `loadFunc.returnType` is `GenericBox<T of $serializer, V of $serializer>` — the function's
+            // declared return type — which IS in scope here and is exactly what the IR should carry.
+            +irReturn(irInvoke(deserCtor, args, typeArgs, returnTypeHint = loadFunc.returnType))
         } else {
             if (irClass.isLocal) {
                 // if the serializer is local, then the serializable class too, since they must be in the same scope
@@ -576,7 +627,8 @@ open class SerializerIrGenerator(
                 }
             }
 
-            val serializerVar = irTemporary(irInvoke(ctor, ctorArgs, typeArgs), "serializable")
+            // Same `returnTypeHint` rationale as in the synthetic-constructor branch above.
+            val serializerVar = irTemporary(irInvoke(ctor, ctorArgs, typeArgs, returnTypeHint = loadFunc.returnType), "serializable")
             generateSetStandaloneProperties(serializerVar, serialPropertiesMap::getValue, serialPropertiesIndexes::getValue, bitMasks)
             +irReturn(irGet(serializerVar))
         }

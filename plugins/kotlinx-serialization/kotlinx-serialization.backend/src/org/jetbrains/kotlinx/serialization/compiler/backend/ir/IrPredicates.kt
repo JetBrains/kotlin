@@ -311,5 +311,22 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
     }
 }
 
+/**
+ * Returns `true` if this type is itself a type parameter, or if any of its type arguments
+ * (transitively) is a type parameter.
+ *
+ * This is used to decide whether a serializer for a given type can be cached in a Companion object.
+ * A Companion is a static context in which no enclosing class type parameters are in scope, so any
+ * type that references a type parameter (at any nesting depth) cannot be given a concrete, cacheable
+ * serializer there.
+ *
+ * Example: `List<Schema<T>>` — the immediate argument `Schema<T>` is not a type parameter, but it
+ * contains `T`, so this function returns `true` for it.
+ */
+internal fun IrType.containsTypeParameter(): Boolean {
+    if (isTypeParameter()) return true
+    return (this as? IrSimpleType)?.arguments?.any { it.typeOrNull?.containsTypeParameter() == true } == true
+}
+
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
     !isSingleFieldValueClass && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
