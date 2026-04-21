@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.regist
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.applicationDisposableProvider
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") // Use `testServices` name instead of `data`
 abstract class AnalysisApiTestServiceRegistrar : AnalysisApiServiceRegistrar<TestServices> {
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {}
 
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
 
@@ -37,7 +38,9 @@ fun List<AnalysisApiServiceRegistrar<TestServices>>.registerAllServices(
     project: MockProject,
     testServices: TestServices,
 ) {
-    registerApplicationServices(application, testServices)
+    val applicationRootDisposable = testServices.applicationDisposableProvider.getApplicationRootDisposable()
+
+    registerApplicationServices(application, applicationRootDisposable, testServices)
     registerProjectExtensionPoints(project, testServices)
     registerProjectServices(project, testServices)
     registerProjectModelServices(project, testServices)

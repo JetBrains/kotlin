@@ -175,7 +175,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
     }
 
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {
         val applicationEnvironment = testServices.environmentManager.getApplicationEnvironment()
         val applicationDisposable = testServices.disposableProvider.getApplicationDisposable()
 

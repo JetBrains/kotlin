@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fir-standalone-base.xml"
 
-    override fun registerApplicationServices(application: MockApplication) {
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable) {
         PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH)
     }
 

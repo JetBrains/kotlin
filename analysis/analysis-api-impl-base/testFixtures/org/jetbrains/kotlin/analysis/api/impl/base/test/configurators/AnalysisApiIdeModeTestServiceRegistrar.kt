@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions
@@ -27,7 +28,7 @@ object AnalysisApiIdeModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar(
         }
     }
 
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
+    override fun registerApplicationServices(application: MockApplication, disposable: Disposable, testServices: TestServices) {
         application.apply {
             registerService(KotlinAnalysisPermissionOptions::class.java, KotlinDefaultAnalysisPermissionOptions::class.java)
         }
