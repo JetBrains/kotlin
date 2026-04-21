@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.FrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.SingleModuleFrontendOutput
@@ -99,7 +98,7 @@ fun SingleModuleFrontendOutput.toTestOutputPart(
 
 fun processErrorFromCliPhase(configuration: CompilerConfiguration, testServices: TestServices): Nothing? {
     CheckDiagnosticCollector.reportToMessageCollector(configuration)
-    if (configuration.messageCollector.hasErrors()) {
+    if (configuration.hasMessageCollectorErrors()) {
         if (CHECK_COMPILER_OUTPUT in testServices.moduleStructure.allDirectives) {
             // errors from message collector would be checked separately
             return null

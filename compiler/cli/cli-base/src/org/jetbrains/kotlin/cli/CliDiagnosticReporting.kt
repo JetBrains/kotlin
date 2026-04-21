@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -47,4 +50,20 @@ fun CompilerConfiguration.reportLog(message: String, location: CompilerMessageSo
 
 fun CompilerConfiguration.reportOutput(message: String, location: CompilerMessageSourceLocation? = null) {
     messageCollector.report(CompilerMessageSeverity.OUTPUT, message, location)
+}
+
+fun CompilerConfiguration.reportException(message: String, location: CompilerMessageSourceLocation? = null) {
+    messageCollector.report(CompilerMessageSeverity.EXCEPTION, message, location)
+}
+
+fun CompilerConfiguration.reportException(e: CompilationException) {
+    reportException(OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
+}
+
+fun CompilerConfiguration.reportException(e: Throwable) {
+    reportException(OutputMessageUtil.renderException(e), location = null)
+}
+
+fun CompilerConfiguration.hasMessageCollectorErrors(): Boolean {
+    return messageCollector.hasErrors()
 }

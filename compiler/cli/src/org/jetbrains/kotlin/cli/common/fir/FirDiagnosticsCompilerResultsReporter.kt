@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -20,8 +23,15 @@ import java.util.*
 object FirDiagnosticsCompilerResultsReporter {
     fun reportToMessageCollector(
         diagnosticsCollector: BaseDiagnosticsCollector,
+        configuration: CompilerConfiguration,
+    ): Boolean {
+        return reportToMessageCollector(diagnosticsCollector, configuration.messageCollector, configuration.renderDiagnosticInternalName)
+    }
+
+    fun reportToMessageCollector(
+        diagnosticsCollector: BaseDiagnosticsCollector,
         messageCollector: MessageCollector,
-        renderDiagnosticName: Boolean
+        renderDiagnosticName: Boolean,
     ): Boolean {
         return reportByFile(diagnosticsCollector) { diagnostic, location ->
             reportDiagnosticToMessageCollector(diagnostic, location, messageCollector, renderDiagnosticName)
