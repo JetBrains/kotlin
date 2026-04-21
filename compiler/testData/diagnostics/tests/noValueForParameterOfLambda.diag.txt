@@ -1,15 +1,15 @@
-/noValueForParameterOfLambda.kt:6:12: error: No value passed for parameter 'p2'.
+/noValueForParameterOfLambda.kt:6:5: error: No value passed for parameter 'p2'.
 
 /noValueForParameterOfLambda.kt:7:15: error: Named arguments are prohibited for function types.
 
-/noValueForParameterOfLambda.kt:11:12: error: No value passed for parameter 's'.
+/noValueForParameterOfLambda.kt:11:5: error: No value passed for parameter 's'.
 
 /noValueForParameterOfLambda.kt:12:15: error: Named arguments are prohibited for function types.
 
-/noValueForParameterOfLambda.kt:16:12: error: No value passed for parameter 'x'.
+/noValueForParameterOfLambda.kt:16:5: error: No value passed for parameter 'x'.
 
 /noValueForParameterOfLambda.kt:17:15: error: Named arguments are prohibited for function types.
 
-/noValueForParameterOfLambda.kt:22:12: error: No value passed for parameter 'y'.
+/noValueForParameterOfLambda.kt:22:5: error: No value passed for parameter 'y'.
 
 /noValueForParameterOfLambda.kt:23:15: error: Named arguments are prohibited for function types.

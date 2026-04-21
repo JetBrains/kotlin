@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-val (a, b, c) = A<!NO_VALUE_FOR_PARAMETER!>()<!>
+val (a, b, c) = <!NO_VALUE_FOR_PARAMETER!>A<!>()
 
 class A(val a: Int) {
     operator fun component1() {}

@@ -39,12 +39,12 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun Int.Foo(content: @Composable Int.(foo: String) -> Unit) {
-                content<!NO_VALUE_FOR_PARAMETER!>()<!>
+                <!NO_VALUE_FOR_PARAMETER!>content<!>()
             }
 
             @Composable
             fun Bar(content: @Composable Int.() -> Unit) {
-                content<!NO_VALUE_FOR_PARAMETER!>()<!>
+                <!NO_VALUE_FOR_PARAMETER!>content<!>()
             }
         """
     )
@@ -244,7 +244,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
             @Composable fun Test() {
                 <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Foo()<!>
-                <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Bar<!NO_VALUE_FOR_PARAMETER!>()<!><!>
+                <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!><!NO_VALUE_FOR_PARAMETER!>Bar<!>()<!>
             }
 
         """.trimIndent()
@@ -326,7 +326,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     // TODO(lmr): this triggers an exception!
     @Test
     fun testEmptyAttributeValue() = check(
-        """
+            """
             import androidx.compose.runtime.*
 
             @Composable fun Foo(abc: Int, xyz: Int) {
@@ -335,7 +335,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             }
 
             @Composable fun Test() {
-                Foo(<!NO_VALUE_FOR_PARAMETER!>abc=)<!>
+                <!NO_VALUE_FOR_PARAMETER!>Foo<!>(abc=)
 
                 // NOTE(lmr): even though there is NO diagnostic here, there *is* a parse
                 // error. This is intentional and done to mimic how kotlin handles function
@@ -485,7 +485,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
                 @Composable fun Test() {
                     ChildrenRequired2 {}
-                    ChildrenRequired2<!NO_VALUE_FOR_PARAMETER!>()<!>
+                    <!NO_VALUE_FOR_PARAMETER!>ChildrenRequired2<!>()
 
                     ChildrenOptional3 {}
                     ChildrenOptional3()

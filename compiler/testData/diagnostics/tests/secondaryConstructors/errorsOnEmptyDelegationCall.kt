@@ -4,7 +4,7 @@ open class B0(x: Int)
 
 class A0 : B0 {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(x: Int) : super<!NO_VALUE_FOR_PARAMETER!>()<!>
+    constructor(x: Int) : <!NO_VALUE_FOR_PARAMETER!>super<!>()
 }
 
 // --------------------------

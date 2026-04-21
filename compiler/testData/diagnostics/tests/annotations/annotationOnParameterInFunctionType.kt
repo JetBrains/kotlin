@@ -33,17 +33,17 @@ fun (@TypeAnn A).extFun(@Ann a: @TypeAnn A): @TypeAnn A? = null
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnnWithArg(val arg: String)
 
-fun badArgs(a: (@TypeAnnWithArg(<!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = "")<!> Int) -> Unit) {}
+fun badArgs(a: (@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!>(<!NAMED_PARAMETER_NOT_FOUND!>unresolved<!> = "") Int) -> Unit) {}
 
-typealias BadArgsInTypeAlias = (<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int) -> Unit
+typealias BadArgsInTypeAlias = (@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int) -> Unit
 fun badArgsInTypeAlias(a: BadArgsInTypeAlias) {}
 
 typealias T<X> = (X) -> Unit
 fun badArgsInTypeAliasInstance(a: T<@TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int>) {}
 
-typealias BadArgsInRecursive = (((<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int) -> Unit) -> <!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> String) -> Unit
+typealias BadArgsInRecursive = (((@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int) -> Unit) -> @<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> String) -> Unit
 
-typealias BadArgsMultiple = (<!NO_VALUE_FOR_PARAMETER!>@TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int) -> Unit
+typealias BadArgsMultiple = (@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!ARGUMENT_TYPE_MISMATCH!>123<!>) Int) -> Unit
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
 functionalType, getter, integerLiteral, lambdaLiteral, localProperty, nullableType, operator, override,

@@ -14,11 +14,11 @@ open class C2(val x: Int) {
 typealias C2_Alias = C2
 
 val test1 = <!UNRESOLVED_REFERENCE!>C1_Alias<!>()
-val test2 = C2_Alias<!NO_VALUE_FOR_PARAMETER!>()<!>
+val test2 = <!NO_VALUE_FOR_PARAMETER!>C2_Alias<!>()
 
 class Test3 : <!API_NOT_AVAILABLE!>C1_Alias<!>()
 
-class Test4 : C2_Alias<!NO_VALUE_FOR_PARAMETER!>()<!>
+class Test4 : <!NO_VALUE_FOR_PARAMETER!>C2_Alias<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, secondaryConstructor,
 stringLiteral, typeAliasDeclaration */

@@ -26,7 +26,7 @@ annotation class BadDefaultParametert(val arg: Array<String> <!INITIALIZER_TYPE_
 @IntArrayAnno(intArrayOf(1, 2, 3))
 @StringArrayAnno(["1", "2", "3"])
 @StringArrayAnno([])
-<!NO_VALUE_FOR_PARAMETER!>@StringArrayAnno<!>
+@<!NO_VALUE_FOR_PARAMETER!>StringArrayAnno<!>
 @StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>[[]]<!>)
 @StringArrayAnno(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
 @StringArrayAnno(arrayOf())

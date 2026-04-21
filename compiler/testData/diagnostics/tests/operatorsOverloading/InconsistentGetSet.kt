@@ -35,8 +35,8 @@ object MismatchingArities2 {
 }
 
 fun testMismatchingArities() {
-    <!NO_VALUE_FOR_PARAMETER!>++MismatchingArities1[0]<!>
-    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities1[0]++<!>
+    <!NO_VALUE_FOR_PARAMETER!>++<!>MismatchingArities1[0]
+    MismatchingArities1[0]<!NO_VALUE_FOR_PARAMETER!>++<!>
     MismatchingArities1[0] <!UNRESOLVED_REFERENCE!>+=<!> 1
 
     ++<!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!>

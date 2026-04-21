@@ -176,11 +176,6 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.NAME_OF_NAMED_ARGUMENT
     )
 
-    val VALUE_ARGUMENTS = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.VALUE_ARGUMENTS,
-        PositioningStrategies.VALUE_ARGUMENTS
-    )
-
     val VALUE_ARGUMENTS_LIST = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VALUE_ARGUMENTS_LIST,
         PositioningStrategies.VALUE_ARGUMENTS_LIST
