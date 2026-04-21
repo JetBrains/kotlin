@@ -300,7 +300,9 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.map {
                         val parts = it.split(":", limit = 2)
-                        require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+                        if (parts.size != 2) {
+                            throw CompilerArgumentsParseException("Invalid -Xwarning-level format: $it")
+                        }
                         val severity = WarningLevel.Severity.values().firstOrNull { entry -> entry.stringValue == parts[1] }
                             ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
                         WarningLevel(parts[0], severity)
@@ -392,7 +394,9 @@ internal class KotlinWrapperPre2_4_0(
 
                     val stringValue = delegate[key] as String
                     val parts = stringValue.split(File.pathSeparator)
-                    require(parts.size == 3) { "Invalid -Xprofile format: $this" }
+                    if (parts.size != 3) {
+                        throw CompilerArgumentsParseException("Invalid -Xprofile format: $stringValue")
+                    }
 
                     ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as V
                 }
@@ -523,7 +527,9 @@ internal class KotlinWrapperPre2_4_0(
                     val arrayValue = delegate[key] as Array<String>
                     arrayValue.map {
                         val parts = it.split(":")
-                        require(parts.size == 2) { "Invalid -Xnullability-annotations format: $this" }
+                        if (parts.size != 2) {
+                            throw CompilerArgumentsParseException("Invalid -Xnullability-annotations format: $this")
+                        }
 
                         val nullabilityAnnotationMode =
                             NullabilityAnnotation.Mode.values().firstOrNull { entry -> entry.stringValue == parts[1] }

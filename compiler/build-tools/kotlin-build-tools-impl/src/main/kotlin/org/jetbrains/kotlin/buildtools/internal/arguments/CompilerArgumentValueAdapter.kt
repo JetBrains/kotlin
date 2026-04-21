@@ -216,7 +216,9 @@ private abstract class CommonCompilerArgumentPre2_4_0ValueAdapter : CommonToolAr
                 val arrayValue = value as Array<String>
                 arrayValue.map {
                     val parts = it.split(":", limit = 2)
-                    require(parts.size == 2) { "Invalid -Xwarning-level format: $it" }
+                    if (parts.size != 2) {
+                        throw CompilerArgumentsParseException("Invalid -Xwarning-level format: $it")
+                    }
 
                     val level = WarningLevel.Severity.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
                         ?: throw CompilerArgumentsParseException("Unknown -Xwarning-level level: $it")
@@ -397,7 +399,9 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
 
                 val stringValue = value as String
                 val parts = stringValue.split(File.pathSeparator)
-                require(parts.size == 3) { "Invalid -Xprofile format: $stringValue" }
+                if (parts.size != 3) {
+                    throw CompilerArgumentsParseException("Invalid -Xprofile format: $stringValue")
+                }
                 ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2])) as T
             }
 
@@ -517,7 +521,9 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                 val arrayValue = value as Array<String>
                 arrayValue.map {
                     val parts = it.split(":")
-                    require(parts.size == 2) { "Invalid -Xnullability-annotations format: $this" }
+                    if (parts.size != 2) {
+                        throw CompilerArgumentsParseException("Invalid -Xnullability-annotations format: $it")
+                    }
 
                     val nullabilityAnnotationMode =
                         NullabilityAnnotation.Mode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }

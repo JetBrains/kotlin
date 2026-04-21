@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.arguments
 
+import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.ProfileCompilerCommand
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -25,7 +26,9 @@ internal fun applyProfileCompilerCommand(
 ): ProfileCompilerCommand? {
     val stringValue = compilerArgs.profileCompilerCommand ?: return null
     val parts = stringValue.split(File.pathSeparator)
-    require(parts.size == 3) { "Invalid -Xprofile format: $stringValue" }
+    if (parts.size != 3) {
+        throw CompilerArgumentsParseException("Invalid -Xprofile format: $stringValue")
+    }
 
     return ProfileCompilerCommand(Path(parts[0]), parts[1], Path(parts[2]))
 }
