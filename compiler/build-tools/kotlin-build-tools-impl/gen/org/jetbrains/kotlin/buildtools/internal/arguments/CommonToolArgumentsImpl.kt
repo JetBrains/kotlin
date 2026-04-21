@@ -17,9 +17,10 @@ import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
-import kotlin.collections.mutableListOf
+import kotlin.collections.emptyList
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.collections.toMutableList
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.HELP
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.NOWARN
@@ -37,13 +38,15 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonToolArgumentsImpl(
   private val adapter: CommonToolArgumentValueAdapter? = null,
+  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
   protected val internalArguments: MutableSet<String> = mutableSetOf()
 
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
-  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> = mutableListOf()
+  protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> =
+      restrictedArgViolations.toMutableList()
 
   internal val restrictedArgViolations: List<RestrictedArgViolation>
     get() = _restrictedArgViolations
