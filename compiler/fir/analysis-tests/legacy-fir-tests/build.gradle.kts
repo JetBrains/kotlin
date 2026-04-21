@@ -25,8 +25,7 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testFixturesCompileOnly(intellijCore())
-    testCompileOnly(intellijCore())
-    testRuntimeOnly(intellijCore())
+    testImplementation(intellijCore())
 }
 
 optInToK1Deprecation()
