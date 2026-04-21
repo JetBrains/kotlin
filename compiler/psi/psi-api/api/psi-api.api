@@ -1,10 +1,12 @@
 public class org/jetbrains/kotlin/KtNodeType : com/intellij/psi/tree/IElementType {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/function/Function;)V
 	public fun createPsi (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElement;
 }
 
 public class org/jetbrains/kotlin/KtNodeType$KtLeftBoundNodeType : org/jetbrains/kotlin/KtNodeType {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/function/Function;)V
 	public fun isLeftBound ()Z
 }
 
