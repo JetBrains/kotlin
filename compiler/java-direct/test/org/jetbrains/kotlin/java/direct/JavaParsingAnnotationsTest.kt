@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.name.ClassId
 import org.junit.jupiter.api.Test
 
@@ -234,7 +236,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         }
 
         val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
-        val typeParamList = tree.findChildByType(classNode, "TYPE_PARAMETER_LIST")
+        val typeParamList = tree.findChildByType(classNode, JavaSyntaxElementType.TYPE_PARAMETER_LIST)
         println("=== TYPE_PARAMETER_LIST structure (full) ===")
         if (typeParamList != null) {
             printTree(typeParamList)
@@ -244,7 +246,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val typeParam = typeParamList?.let { tpl ->
             tree.getChildren(tpl).firstOrNull { tree.getType(it).toString() == "TYPE_PARAMETER" }
         }
-        val extendsBoundList = typeParam?.let { tp -> tree.findChildByType(tp, "EXTENDS_BOUND_LIST") }
+        val extendsBoundList = typeParam?.let { tp -> tree.findChildByType(tp, JavaSyntaxElementType.EXTENDS_BOUND_LIST) }
         println("=== EXTENDS_BOUND_LIST children ===")
         extendsBoundList?.let { ebl ->
             tree.getChildren(ebl).forEach { child ->
@@ -311,10 +313,10 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         }
 
         val classNode = tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }
-        val methods = tree.getChildrenByType(classNode, "METHOD")
+        val methods = tree.getChildrenByType(classNode, JavaSyntaxElementType.METHOD)
         println("=== METHOD structures ===")
         methods.forEach { method ->
-            println("\n--- Method: ${tree.findChildByType(method, "IDENTIFIER")?.let { tree.getText(it) }} ---")
+            println("\n--- Method: ${tree.findChildByType(method, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it) }} ---")
             printTree(method)
         }
 
@@ -369,7 +371,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         }
         val classNode1 = tree1.getChildren(parsed1.root).first { tree1.getType(it).toString() == "CLASS" }
-        val methodNode1 = tree1.findChildByType(classNode1, "METHOD")!!
+        val methodNode1 = tree1.findChildByType(classNode1, JavaSyntaxElementType.METHOD)!!
         println("METHOD structure:")
         printTree1(methodNode1)
 
@@ -383,7 +385,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             }
         }
         val classNode2 = tree2.getChildren(parsed2.root).first { tree2.getType(it).toString() == "CLASS" }
-        val methodNode2 = tree2.findChildByType(classNode2, "METHOD")!!
+        val methodNode2 = tree2.findChildByType(classNode2, JavaSyntaxElementType.METHOD)!!
         println("METHOD structure:")
         printTree2(methodNode2)
 

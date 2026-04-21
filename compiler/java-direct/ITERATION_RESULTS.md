@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (refactoring-plan Phase A: correctness + trivial perf cleanups)
+**Last Updated**: 2026-04-21 (refactoring-plan Phase B.1: deduplicate walks and wrappers)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -17,8 +17,118 @@ caveats have landed in code (verified against current source). What remains:
 - ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
 
-The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A is now
-complete; Phases B–E are pending.
+The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A and
+Phase B.1 are now complete; Phase B.2 / B.3 and Phases C–E are pending.
+
+---
+
+## Refactoring Plan Phase B.1: Deduplicate Walks and Wrappers — 2026-04-21
+
+### Overview
+
+First iteration of Phase B. Five items grouped around the theme "two or more code
+fragments doing the same work" (see `REFACTORING_PLAN.md` §2.2 Iteration B.1). The aim is
+readability + a small memory/allocation win; no measurements were required because no
+tree-walk count changes (confirmed by the test suite running identically after the
+changes).
+
+### Changes
+
+- **P1** (`JavaTypeOverAst.kt:30-73`) — introduced a `@Volatile`-cached
+  `typePositionAnnotations` that holds `extraAnnotations + modifierListAnnotations +
+  directAnnotations`. `override val annotations` now returns
+  `memberAnnotations + typePositionAnnotations`; `filterTypeUseAnnotations` returns
+  `typePositionAnnotations + memberAnnotations.filter { ... }`. Previously both entry points
+  walked `MODIFIER_LIST` and direct-children independently, rebuilding
+  `JavaAnnotationOverAst` wrappers on each call. Now the wrapper list is allocated once per
+  type instance.
+- **P7 + R6** (`JavaTypeOverAst.kt:455-564`) — split `createJavaType` into a top-level
+  dispatcher plus three `private` helpers:
+  - `tryCreateArrayOrVarargFromTypeNode(typeNode, ..., extraAnnotations, memberAnnotations)`
+    handles the array/vararg case and returns `null` when `typeNode` encodes neither. The
+    vararg annotation split (component vs. array wrapper) lives in one place now, used by
+    both the TYPE-input path and the derived-`typeNode` path — Path 2's formerly-empty
+    component annotations become a no-op split (`hasVarargEllipsis = false`) with no
+    behavior change.
+  - `createWildcardType(typeNode, ..., extraAnnotations, memberAnnotations)` replaces two
+    4-line copies of the wildcard construction.
+  - `createClassifierOrPrimitive(typeNode, ..., extraAnnotations, memberAnnotations)`
+    handles the primitive / `JAVA_CODE_REFERENCE` branches at the bottom.
+  `createJavaType` itself is now ~25 lines and reads top-to-bottom as a dispatch chain.
+- **O8** (`JavaMemberOverAst.kt:34-37, 322-326`) — promoted the base class's `modifierList`
+  getter from `private` to `protected` (backing field `_baseModifierList` stays `private`)
+  and deleted `JavaMethodOverAst._methodModifierList` plus its override. One fewer
+  `@Volatile` field per method instance; the base-class cache is reused.
+- **O9** (`JavaLightTree.kt`; three call sites) — deleted the `String` overloads of
+  `findChildByType` and `getChildrenByType`. The three `"DOC_COMMENT"` call sites
+  (`JavaClassOverAst.kt:382`, `JavaMemberOverAst.kt:69, 441`) now go through the shared
+  helper (R3) which uses the typed constant `JavaDocSyntaxElementType.DOC_COMMENT`.
+  Updated five test files that still used the String overload for other KMP node types
+  (`CLASS`, `METHOD`, `FIELD`, `TYPE`, `IDENTIFIER`, `PACKAGE_STATEMENT`, `JAVA_CODE_REFERENCE`,
+  `TYPE_PARAMETER_LIST`, `EXTENDS_BOUND_LIST`) to use
+  `JavaSyntaxElementType.*` / `JavaSyntaxTokenType.*` directly. Removes the per-child
+  `SyntaxElementType.toString()` allocation and one code path in the tree accessor layer.
+- **R3** (`utils.kt:14-24`) — added `internal fun isDeprecatedInJavaDoc(tree, node):
+  Boolean` with the canonical implementation. The three duplicate `override val
+  isDeprecatedInJavaDoc` bodies in `JavaClassOverAst`, `JavaMemberOverAst` (members and
+  value parameters) are now one-liners delegating to the helper.
+  `JavaPackageOverAst.isDeprecatedInJavaDoc` (always `false`) is intentionally left as-is —
+  it doesn't touch the AST and doesn't need the helper.
+
+### Files Modified
+
+| File | Items |
+|------|-------|
+| `JavaTypeOverAst.kt` | P1 (cache `typePositionAnnotations`); P7+R6 (extract `tryCreateArrayOrVarargFromTypeNode` / `createWildcardType` / `createClassifierOrPrimitive`) |
+| `JavaMemberOverAst.kt` | O8 (drop `_methodModifierList`, promote base `modifierList` to `protected`); O9+R3 (three call sites delegate to `isDeprecatedInJavaDoc` helper) |
+| `JavaClassOverAst.kt` | O9+R3 (delegate to `isDeprecatedInJavaDoc` helper) |
+| `JavaLightTree.kt` | O9 (delete String overloads of `findChildByType` / `getChildrenByType`) |
+| `utils.kt` | R3 (add `isDeprecatedInJavaDoc(tree, node)` helper) |
+| `JavaParsingBasicTest.kt`, `JavaParsingModifiersAndSpecialClassesTest.kt`, `JavaParsingTypeResolutionTest.kt`, `JavaParsingTypeSystemTest.kt`, `JavaParsingAnnotationsTest.kt` | O9 follow-up: switched remaining String-overload calls to typed constants |
+
+### Test Results
+
+Gate per `REFACTORING_PLAN.md` §2.1 / Phase A baseline:
+```
+./gradlew :kotlin-java-direct:test \
+  --tests JavaUsingAstPhasedTestGenerated \
+  --tests JavaUsingAstBoxTestGenerated \
+  --tests JavaParsingTest \
+  --rerun-tasks
+```
+→ **BUILD SUCCESSFUL**, `tests=2671 failures=0 errors=0 skipped=0`. Identical count and
+outcome to the Phase A baseline. IDE `get_file_problems` on every edited source and test
+file reports 0 errors (pre-existing style warnings only).
+
+### Key Learnings
+
+- **Deleting a typed-API convenience overload has a blast radius beyond the main module.**
+  The three `"DOC_COMMENT"` usages were the reason the `String` overloads existed, but
+  five test files had come to depend on them too — for unrelated node types (CLASS,
+  METHOD, FIELD, …). Removing the overload surfaced those dependencies as compile errors
+  that Phase A's more conservative review hadn't flagged. In retrospect, any "delete the
+  convenience overload" refactor should be preceded by a repo-wide grep of
+  `, "[A-Z_]+")` to size the cleanup budget correctly.
+- **Visibility promotion is a better fix than a redundant subclass cache.** The
+  `JavaMethodOverAst._methodModifierList` duplication existed purely because the base
+  class's `modifierList` was `private`. Promoting the *getter* to `protected` (the backing
+  field can stay `private`) is strictly better than keeping parallel caches — the two
+  caches would eventually drift if the definition of "modifier list" changed, and the
+  per-method memory cost is real (tens of thousands of `JavaMethodOverAst` instances per
+  large compilation).
+- **Symmetry at the helper boundary beats two ad-hoc branches.** `createJavaType`'s two
+  paths (TYPE-input vs. derived-`typeNode`) had identical structure but slightly different
+  behaviour: Path 1 did the vararg annotation split, Path 2 didn't. Extracting the
+  behaviour into a single helper forces the question "are these actually the same?" —
+  and in this case they *are*, because Path 2's callers never pass a vararg node in the
+  first place (fields can't be vararg). The non-applicable branch becomes a no-op instead
+  of dead code.
+- **`filterTypeUseAnnotations` is a good test case for "cache the unfiltered slice, filter
+  the variable part".** The method's contract splits cleanly along "always include"
+  (type-position annotations) and "maybe include" (member annotations with callback). P1
+  makes that split visible in the code: the unfiltered slice is a property with a name,
+  the filtered member set is computed inline where the callback enters. Same output,
+  easier to read.
 
 ---
 

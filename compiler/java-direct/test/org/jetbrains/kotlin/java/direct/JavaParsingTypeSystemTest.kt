@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.junit.jupiter.api.Test
 
 class JavaParsingTypeSystemTest : JavaParsingTestBase() {
@@ -112,7 +113,7 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         assert(classes.size == 3) { "Expected 3 classes (A, B, BImpl), got ${classes.size}" }
 
         // Find interface A
-        val interfaceANode = classes.first { tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "A" }
+        val interfaceANode = classes.first { tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "A" }
         val interfaceA = JavaClassOverAst(interfaceANode, tree, context)
         assert(interfaceA.isInterface) { "A should be an interface" }
         
@@ -140,7 +141,7 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         }
         
         // Find interface B
-        val interfaceBNode = classes.first { tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "B" }
+        val interfaceBNode = classes.first { tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "B" }
         val interfaceB = JavaClassOverAst(interfaceBNode, tree, context)
         assert(interfaceB.isInterface) { "B should be an interface" }
         
@@ -168,7 +169,7 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
         }
 
         // Find class BImpl
-        val bImplNode = classes.first { tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "BImpl" }
+        val bImplNode = classes.first { tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "BImpl" }
         val bImpl = JavaClassOverAst(bImplNode, tree, context)
         assert(!bImpl.isInterface) { "BImpl should be a class" }
         

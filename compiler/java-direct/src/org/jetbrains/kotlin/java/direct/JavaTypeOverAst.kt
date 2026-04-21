@@ -27,34 +27,36 @@ abstract class JavaTypeOverAst(
     // These need callback-based filtering since they may or may not be TYPE_USE.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
-    // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
-    // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
-    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
-    override val annotations: Collection<JavaAnnotation>
-        get() = cachedNonNull({ _annotations }, { _annotations = it }) {
+    // Type-position annotations: the union of `extraAnnotations` (passed by the caller),
+    // annotations inside the type node's own MODIFIER_LIST, and annotations that are direct
+    // children of the type node. Always TYPE_USE by syntactic position — no callback filtering
+    // is needed.
+    //
+    // Cached because both `annotations` and `filterTypeUseAnnotations` need this slice, and
+    // FIR tends to call them in succession during nullability resolution. Without caching each
+    // call re-walks MODIFIER_LIST + direct ANNOTATION children and rebuilds every wrapper.
+    @Volatile private var _typePositionAnnotations: Collection<JavaAnnotation>? = null
+    private val typePositionAnnotations: Collection<JavaAnnotation>
+        get() = cachedNonNull({ _typePositionAnnotations }, { _typePositionAnnotations = it }) {
             val modifierListAnnotations =
                 tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
                     tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
                         .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
                 } ?: emptyList()
-
             val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
                 .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            extraAnnotations + modifierListAnnotations + directAnnotations
+        }
 
-            memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
+    // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
+    // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
+    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
+    override val annotations: Collection<JavaAnnotation>
+        get() = cachedNonNull({ _annotations }, { _annotations = it }) {
+            memberAnnotations + typePositionAnnotations
         }
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
-        // Type-position annotations (from the type node itself) are TYPE_USE by syntax.
-        val modifierListAnnotations =
-            tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            } ?: emptyList()
-        val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
-            .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        val typePositionAnnotations = extraAnnotations + modifierListAnnotations + directAnnotations
-
         // Member modifier list annotations need callback filtering.
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
             val fqName = if (annotation.isResolved) {
@@ -450,79 +452,100 @@ fun createJavaType(
     extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ): JavaType {
-    // If input node is a TYPE with array brackets or vararg ellipsis, handle it directly
-    // (don't look for nested TYPE first, as that would skip the array dimension)
+    // If input node is a TYPE with array brackets, vararg ellipsis, or '?' wildcard, handle it
+    // directly. Don't look for a nested TYPE first — that would skip the outer array dimension
+    // or mistake a wildcard-bound TYPE child for the wildcard itself.
     if (tree.getType(node) == JavaSyntaxElementType.TYPE) {
-        val arrayDimensions = tree.getChildren(node).count { tree.getType(it) == JavaSyntaxTokenType.LBRACKET }
-        val hasVarargEllipsis = tree.findChildByType(node, JavaSyntaxTokenType.ELLIPSIS) != null
-        if (arrayDimensions > 0 || hasVarargEllipsis) {
-            val componentTypeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
-            if (componentTypeNode != null) {
-                // The KMP parser places all [] pairs as siblings under the same TYPE node
-                // (e.g., List<Double>[][] → TYPE[TYPE[List<Double>], [], []]).
-                // We need to wrap the inner type in N array dimensions, innermost first.
-                //
-                // For varargs (@NonNull String... args), member annotations (from the parameter's
-                // MODIFIER_LIST) apply to the component type, not the array wrapper. This matches
-                // PSI/javac-wrapper behavior where TYPE_USE annotations like @NonNull enhance the
-                // component type's nullability, not the array's.
-                val dims = if (hasVarargEllipsis) 1 else arrayDimensions
-                val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
-                val arrayMemberAnnotations = if (hasVarargEllipsis) emptyList() else memberAnnotations
-                var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
-                repeat(dims) { i ->
-                    result = JavaArrayTypeOverAst(
-                        node, tree, resolutionContext, result,
-                        if (i == dims - 1) extraAnnotations else emptyList(),
-                        if (i == dims - 1) arrayMemberAnnotations else emptyList(),
-                    )
-                }
-                return result
-            }
-        }
+        val arrayOrVararg = tryCreateArrayOrVarargFromTypeNode(node, tree, resolutionContext, extraAnnotations, memberAnnotations)
+        if (arrayOrVararg != null) return arrayOrVararg
 
-        // Wildcard type: TYPE contains QUEST (the '?'), optionally with EXTENDS_KEYWORD or SUPER_KEYWORD
-        // AST structure: TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]
-        // Must check on the input TYPE node BEFORE looking for nested TYPE (which would be the bound type)
         if (tree.findChildByType(node, JavaSyntaxTokenType.QUEST) != null) {
-            val hasSuper = tree.findChildByType(node, JavaSyntaxTokenType.SUPER_KEYWORD) != null
-            val boundTypeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
-            val bound = boundTypeNode?.let { createJavaType(it, tree, resolutionContext) }
-            val isExtends = !hasSuper
-            return JavaWildcardTypeOverAst(node, tree, resolutionContext, bound, isExtends, extraAnnotations, memberAnnotations)
+            return createWildcardType(node, tree, resolutionContext, extraAnnotations, memberAnnotations)
         }
     }
 
     val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE) ?: node
 
-    // Also check for wildcard on the derived typeNode (for non-TYPE input nodes)
     if (tree.findChildByType(typeNode, JavaSyntaxTokenType.QUEST) != null) {
-        val hasSuper = tree.findChildByType(typeNode, JavaSyntaxTokenType.SUPER_KEYWORD) != null
-        val boundTypeNode = tree.findChildByType(typeNode, JavaSyntaxElementType.TYPE)
-        val bound = boundTypeNode?.let { createJavaType(it, tree, resolutionContext) }
-        val isExtends = !hasSuper
-        return JavaWildcardTypeOverAst(typeNode, tree, resolutionContext, bound, isExtends, extraAnnotations, memberAnnotations)
+        return createWildcardType(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
     }
 
-    // Array type or vararg: TYPE contains nested TYPE + LBRACKET/RBRACKET or ELLIPSIS
-    val arrayDims = tree.getChildren(typeNode).count { tree.getType(it) == JavaSyntaxTokenType.LBRACKET }
+    val arrayOrVararg = tryCreateArrayOrVarargFromTypeNode(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+    if (arrayOrVararg != null) return arrayOrVararg
+
+    return createClassifierOrPrimitive(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
+}
+
+/**
+ * If [typeNode] encodes an array (one or more `[]`) or vararg (`...`) wrapping another TYPE,
+ * returns the wrapped [JavaArrayTypeOverAst] chain. Returns `null` when [typeNode] is neither.
+ *
+ * The KMP parser places all `[]` pairs as siblings under the same TYPE node
+ * (e.g. `List<Double>[][]` → `TYPE[TYPE[List<Double>], [], []]`), so we wrap the inner type in
+ * N array dimensions, innermost first.
+ *
+ * For varargs (`@NonNull String... args`), member annotations (from the parameter's
+ * MODIFIER_LIST) apply to the component type, not the array wrapper — matching
+ * PSI/javac-wrapper behaviour where TYPE_USE annotations like `@NonNull` enhance the component
+ * type's nullability, not the array's. For non-vararg arrays the split is a no-op
+ * (`hasVarargEllipsis = false` leaves member annotations on the outer wrapper), so the same
+ * helper is safe for both the TYPE-input and derived-`typeNode` paths of [createJavaType].
+ */
+private fun tryCreateArrayOrVarargFromTypeNode(
+    typeNode: JavaLightNode,
+    tree: JavaLightTree,
+    resolutionContext: JavaResolutionContext,
+    extraAnnotations: Collection<JavaAnnotation>,
+    memberAnnotations: Collection<JavaAnnotation>,
+): JavaType? {
+    val arrayDimensions = tree.getChildren(typeNode).count { tree.getType(it) == JavaSyntaxTokenType.LBRACKET }
     val hasVarargEllipsis = tree.findChildByType(typeNode, JavaSyntaxTokenType.ELLIPSIS) != null
-    if (arrayDims > 0 || hasVarargEllipsis) {
-        val componentTypeNode = tree.findChildByType(typeNode, JavaSyntaxElementType.TYPE)
-        if (componentTypeNode != null) {
-            val dims = if (hasVarargEllipsis) 1 else arrayDims
-            var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext)
-            repeat(dims) { i ->
-                result = JavaArrayTypeOverAst(
-                    typeNode, tree, resolutionContext, result,
-                    if (i == dims - 1) extraAnnotations else emptyList(),
-                    if (i == dims - 1) memberAnnotations else emptyList(),
-                )
-            }
-            return result
-        }
-    }
+    if (arrayDimensions == 0 && !hasVarargEllipsis) return null
+    val componentTypeNode = tree.findChildByType(typeNode, JavaSyntaxElementType.TYPE) ?: return null
 
+    val dims = if (hasVarargEllipsis) 1 else arrayDimensions
+    val componentMemberAnnotations = if (hasVarargEllipsis) memberAnnotations else emptyList()
+    val arrayMemberAnnotations = if (hasVarargEllipsis) emptyList() else memberAnnotations
+    var result: JavaType = createJavaType(componentTypeNode, tree, resolutionContext, memberAnnotations = componentMemberAnnotations)
+    repeat(dims) { i ->
+        result = JavaArrayTypeOverAst(
+            typeNode, tree, resolutionContext, result,
+            if (i == dims - 1) extraAnnotations else emptyList(),
+            if (i == dims - 1) arrayMemberAnnotations else emptyList(),
+        )
+    }
+    return result
+}
+
+/**
+ * Builds a [JavaWildcardTypeOverAst] from [typeNode], which must contain a `?` child (QUEST).
+ * AST structure: `TYPE -> [QUEST, (EXTENDS_KEYWORD|SUPER_KEYWORD)?, TYPE?]`.
+ */
+private fun createWildcardType(
+    typeNode: JavaLightNode,
+    tree: JavaLightTree,
+    resolutionContext: JavaResolutionContext,
+    extraAnnotations: Collection<JavaAnnotation>,
+    memberAnnotations: Collection<JavaAnnotation>,
+): JavaWildcardTypeOverAst {
+    val hasSuper = tree.findChildByType(typeNode, JavaSyntaxTokenType.SUPER_KEYWORD) != null
+    val boundTypeNode = tree.findChildByType(typeNode, JavaSyntaxElementType.TYPE)
+    val bound = boundTypeNode?.let { createJavaType(it, tree, resolutionContext) }
+    val isExtends = !hasSuper
+    return JavaWildcardTypeOverAst(typeNode, tree, resolutionContext, bound, isExtends, extraAnnotations, memberAnnotations)
+}
+
+/**
+ * Falls through to a primitive ([JavaPrimitiveTypeOverAst]) or classifier
+ * ([JavaClassifierTypeOverAst]) type depending on which child [typeNode] has.
+ */
+private fun createClassifierOrPrimitive(
+    typeNode: JavaLightNode,
+    tree: JavaLightTree,
+    resolutionContext: JavaResolutionContext,
+    extraAnnotations: Collection<JavaAnnotation>,
+    memberAnnotations: Collection<JavaAnnotation>,
+): JavaType {
     val primitiveNode = tree.getChildren(typeNode).find {
         val t = tree.getType(it)
         t in SyntaxElementTypes.PRIMITIVE_TYPE_BIT_SET || t == JavaSyntaxTokenType.VOID_KEYWORD
@@ -533,12 +556,11 @@ fun createJavaType(
 
     val referenceNode = tree.findChildByType(typeNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
     if (referenceNode != null) {
-        // TYPE_USE annotations on type arguments appear directly under the TYPE node (not in MODIFIER_LIST)
-        // Extract them here and pass as extraAnnotations since we're using JAVA_CODE_REFERENCE as the node
+        // TYPE_USE annotations on type arguments appear directly under the TYPE node (not in MODIFIER_LIST).
+        // Pass them as extraAnnotations since we're using JAVA_CODE_REFERENCE as the node.
         val typeNodeAnnotations = tree.getChildrenByType(typeNode, JavaSyntaxElementType.ANNOTATION)
             .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        val allAnnotations = extraAnnotations + typeNodeAnnotations
-        return JavaClassifierTypeOverAst(referenceNode, tree, resolutionContext, allAnnotations, memberAnnotations)
+        return JavaClassifierTypeOverAst(referenceNode, tree, resolutionContext, extraAnnotations + typeNodeAnnotations, memberAnnotations)
     }
     return JavaClassifierTypeOverAst(typeNode, tree, resolutionContext, extraAnnotations, memberAnnotations)
 }

@@ -32,7 +32,7 @@ abstract class JavaMemberOverAst(
         )
 
     @Volatile private var _baseModifierList: Any? = NOT_COMPUTED
-    private val modifierList: JavaLightNode?
+    protected val modifierList: JavaLightNode?
         get() = cachedNullable({ _baseModifierList }, { _baseModifierList = it }) {
             tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
         }
@@ -65,11 +65,8 @@ abstract class JavaMemberOverAst(
             } ?: emptyList()
         }
 
-    // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
-        get() = tree.findChildByType(node, "DOC_COMMENT")?.let {
-            tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
-        } == true
+        get() = isDeprecatedInJavaDoc(tree, node)
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 }
@@ -319,12 +316,6 @@ class JavaMethodOverAst(
             }
         }
 
-    @Volatile private var _methodModifierList: Any? = NOT_COMPUTED
-    private val modifierList: JavaLightNode?
-        get() = cachedNullable({ _methodModifierList }, { _methodModifierList = it }) {
-            tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
-        }
-
     // Interface methods are abstract unless they have 'default' or 'static' keyword.
     // Note: in Java, a non-default interface method body is a compile error, but we still see
     // the body in the AST. We must NOT use hasBody to determine abstractness — interface
@@ -437,11 +428,8 @@ class JavaValueParameterOverAst(
             } ?: emptyList()
         }
 
-    // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
-        get() = tree.findChildByType(node, "DOC_COMMENT")?.let {
-            tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
-        } == true
+        get() = isDeprecatedInJavaDoc(tree, node)
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
     override val isFromSource: Boolean get() = true

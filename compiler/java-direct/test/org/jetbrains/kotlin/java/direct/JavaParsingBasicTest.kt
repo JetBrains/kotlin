@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.junit.jupiter.api.Test
 
 class JavaParsingBasicTest : JavaParsingTestBase() {
@@ -50,10 +52,10 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         val parsed = parseSource(source)
         val tree = parsed.tree
 
-        val packageStmt = tree.findChildByType(parsed.root, "PACKAGE_STATEMENT")
+        val packageStmt = tree.findChildByType(parsed.root, JavaSyntaxElementType.PACKAGE_STATEMENT)
         assert(packageStmt != null) { "Expected PACKAGE_STATEMENT node" }
         val packageName = packageStmt?.let {
-            tree.findChildByType(it, "JAVA_CODE_REFERENCE")?.let { ref -> tree.getText(ref).toString() }
+            tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
         }
         assert(packageName == "example") { "Expected 'example', got $packageName" }
     }
@@ -69,9 +71,9 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         """.trimIndent()
         val parsed = parseSource(source)
         val tree = parsed.tree
-        val classNode = tree.getChildrenByType(parsed.root, "CLASS")
+        val classNode = tree.getChildrenByType(parsed.root, JavaSyntaxElementType.CLASS)
             .first {
-                tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "Nameless"
+                tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "Nameless"
             }
         val javaClass = JavaClassOverAst(classNode, tree, parsed.context)
         assert(javaClass.visibility.toString() == "public") {
@@ -121,8 +123,8 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         }
 
         val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
-        val fieldNode = tree.findChildByType(classNode, "FIELD")!!
-        val typeNode = tree.findChildByType(fieldNode, "TYPE")!!
+        val fieldNode = tree.findChildByType(classNode, JavaSyntaxElementType.FIELD)!!
+        val typeNode = tree.findChildByType(fieldNode, JavaSyntaxElementType.TYPE)!!
 
         println("=== TYPE node structure ===")
         printTree(typeNode)
@@ -151,26 +153,26 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         }
 
         val classNode = tree.getChildren(parsed.root).first { tree.getType(it).toString() == "CLASS" }
-        val methods = tree.getChildrenByType(classNode, "METHOD")
+        val methods = tree.getChildrenByType(classNode, JavaSyntaxElementType.METHOD)
 
         val fooMethod = methods.first {
-            tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "foo"
+            tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "foo"
         }
-        val fooTypeNode = tree.findChildByType(fooMethod, "TYPE")!!
+        val fooTypeNode = tree.findChildByType(fooMethod, JavaSyntaxElementType.TYPE)!!
         val fooTypes = collectTypes(fooTypeNode)
         assert(fooTypes.any { it == "QUEST" }) { "foo should have QUEST in: $fooTypes" }
 
         val barMethod = methods.first {
-            tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "bar"
+            tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "bar"
         }
-        val barTypeNode = tree.findChildByType(barMethod, "TYPE")!!
+        val barTypeNode = tree.findChildByType(barMethod, JavaSyntaxElementType.TYPE)!!
         val barTypes = collectTypes(barTypeNode)
         assert(barTypes.any { it == "QUEST" }) { "bar should have QUEST in: $barTypes" }
 
         val bazMethod = methods.first {
-            tree.findChildByType(it, "IDENTIFIER")?.let { id -> tree.getText(id).toString() } == "baz"
+            tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "baz"
         }
-        val bazTypeNode = tree.findChildByType(bazMethod, "TYPE")!!
+        val bazTypeNode = tree.findChildByType(bazMethod, JavaSyntaxElementType.TYPE)!!
         val bazTypes = collectTypes(bazTypeNode)
         assert(bazTypes.any { it == "QUEST" }) { "baz should have QUEST in: $bazTypes" }
         assert(bazTypes.any { it == "SUPER_KEYWORD" }) { "baz should have SUPER_KEYWORD in: $bazTypes" }

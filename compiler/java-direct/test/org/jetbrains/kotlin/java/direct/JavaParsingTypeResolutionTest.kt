@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -76,7 +77,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
         val derivedNode = tree1.getChildren(root1).first {
             tree1.getType(it).toString() == "CLASS" &&
-                    tree1.findChildByType(it, "IDENTIFIER")?.let { id -> tree1.getText(id).toString() } == "Derived"
+                    tree1.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree1.getText(id).toString() } == "Derived"
         }
         val derived = JavaClassOverAst(derivedNode, tree1, context1)
 
@@ -253,7 +254,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val classes = tree2.getChildren(root2).filter { tree2.getType(it).toString() == "CLASS" }
         val c2Class = JavaClassOverAst(
             classes.first {
-                tree2.findChildByType(it, "IDENTIFIER")?.let { id -> tree2.getText(id).toString() } == "c2"
+                tree2.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree2.getText(id).toString() } == "c2"
             },
             tree2, context2
         )

@@ -378,11 +378,8 @@ class JavaClassOverAst(
             } ?: emptyList()
         }
 
-    // Javadoc @deprecated tag: DOC_COMMENT is bound as a child of the declaration node
     override val isDeprecatedInJavaDoc: Boolean
-        get() = tree.findChildByType(node, "DOC_COMMENT")?.let {
-            tree.getText(it).toString().contains("@deprecated", ignoreCase = true)
-        } == true
+        get() = isDeprecatedInJavaDoc(tree, node)
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
         annotations.find { it.classId?.asSingleFqName() == fqName }

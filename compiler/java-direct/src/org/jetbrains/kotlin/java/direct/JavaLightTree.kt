@@ -176,15 +176,6 @@ class JavaLightTree(
         return null
     }
 
-    fun findChildByType(node: JavaLightNode, typeName: String): JavaLightNode? {
-        val children = getChildren(node)
-        for (i in children.indices) {
-            val child = children[i]
-            if (getType(child).toString() == typeName) return child
-        }
-        return null
-    }
-
     fun getChildrenByType(node: JavaLightNode, type: SyntaxElementType): List<JavaLightNode> {
         val children = getChildren(node)
         if (children.isEmpty()) return emptyList()
@@ -192,17 +183,6 @@ class JavaLightTree(
         for (i in children.indices) {
             val child = children[i]
             if (getType(child) == type) result.add(child)
-        }
-        return result
-    }
-
-    fun getChildrenByType(node: JavaLightNode, typeName: String): List<JavaLightNode> {
-        val children = getChildren(node)
-        if (children.isEmpty()) return emptyList()
-        val result = ArrayList<JavaLightNode>(4)
-        for (i in children.indices) {
-            val child = children[i]
-            if (getType(child).toString() == typeName) result.add(child)
         }
         return result
     }

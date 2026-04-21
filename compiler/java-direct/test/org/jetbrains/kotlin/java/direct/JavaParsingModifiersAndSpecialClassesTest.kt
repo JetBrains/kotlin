@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.java.syntax.element.JavaSyntaxElementType
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 
@@ -294,7 +295,7 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         val root = parsed.root
         val tree = parsed.tree
         val context = parsed.context
-        val classes = tree.getChildrenByType(root, "CLASS").map { JavaClassOverAst(it, tree, context) }
+        val classes = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).map { JavaClassOverAst(it, tree, context) }
 
         val day = classes.first { it.name.asString() == "Day" }
         assert(day.isEnum) { "Day should be enum" }
