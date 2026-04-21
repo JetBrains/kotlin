@@ -456,3 +456,61 @@ Run the test, then `cat /tmp/java_direct_debug.log`. Remember to remove the logg
 11. **`update.test.data=true` corrupts test data** - It modifies files in BOTH `compiler/testData/` and `compiler/fir/analysis-tests/testData/`. Never use it.
 
 12. **Binary class finder can return wrong-package classes** - When requesting `ClassId("", "NotNull")`, PSI binary finder may return `org.jetbrains.annotations.NotNull`. Always verify FQN matches requested ClassId.
+
+---
+
+## Debugging Recipes (Cheatsheet)
+
+**Exception-based** (preferred — output appears in the test failure):
+```kotlin
+throw IllegalStateException("DEBUG: propertyName=$value")
+```
+
+**AST dump**:
+```kotlin
+throw IllegalStateException("DEBUG AST:\n${node.dump()}")
+```
+
+**File-based logging** (when exception debugging is too disruptive). Write to the
+session temp dir (`$JD_TMP` — see `AGENT_INSTRUCTIONS.md` / Shell Discipline), never
+directly to `/tmp/`:
+```kotlin
+java.io.File("<JD_TMP>/debug.log").appendText("DEBUG: $message\n")
+```
+`println()` is swallowed by Gradle — never use it for debugging.
+
+**AtomicLong counters + shutdown hook** (for performance profiling — thread-safe,
+survives Gradle output swallowing):
+```kotlin
+import java.util.concurrent.atomic.AtomicLong
+
+object ResolutionCounters {
+    val someCallCount = AtomicLong()
+    val otherCallCount = AtomicLong()
+
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            java.io.File("/tmp/jd_resolution_counters.txt").writeText(buildString {
+                appendLine("someCallCount: ${someCallCount.get()}")
+                appendLine("otherCallCount: ${otherCallCount.get()}")
+            })
+        })
+    }
+}
+
+// Usage at call sites:
+ResolutionCounters.someCallCount.incrementAndGet()
+```
+After the test run, read `/tmp/jd_resolution_counters.txt`. The shutdown hook fires in
+the forked JVM after all tests complete. `AtomicLong` is thread-safe for parallel test
+execution. **Always remove counters after investigation** — they are diagnostic-only.
+
+**Unique vs duplicate calls** (cache-hit potential): wrap a callback with a `HashSet`:
+```kotlin
+val seen = HashSet<ClassId>()
+val counting: (ClassId) -> Boolean = { id ->
+    counters.totalCalls.incrementAndGet()
+    if (seen.add(id)) counters.uniqueCalls.incrementAndGet()
+    originalCallback(id)
+}
+```

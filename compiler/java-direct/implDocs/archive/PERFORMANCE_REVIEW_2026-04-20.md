@@ -1,7 +1,7 @@
 # Java-Direct Performance Review
 
 **Date**: 2026-04-20
-**Previous version**: archive/PERFORMANCE_REVIEW.md (2026-04-17)
+**Previous version**: archive/PERFORMANCE_REVIEW_2026-04-17.md (2026-04-17)
 
 **Context**: java-direct is ~20% slower than the PSI-based approach on large pipeline tests
 (`KotlinFullPipelineTestsGenerated` and similar). The original review (archived) identified a set

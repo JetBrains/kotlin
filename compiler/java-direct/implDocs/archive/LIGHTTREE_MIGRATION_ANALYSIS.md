@@ -470,12 +470,12 @@ For a project with 500 Java source files (typical large module):
 
 ### 6.4 Estimated Contribution to Closing the 20% Gap
 
-From PERFORMANCE_REVIEW.md's breakdown:
+From PERFORMANCE_REVIEW_2026-04-17.md's breakdown:
 - Memory/GC pressure accounts for ~40% of the gap (~8% absolute)
 - The materialized tree is the largest contributor to memory pressure
 - LightTree migration addresses ~60-70% of the memory category
 
-**Expected improvement: 4-6% of total compilation time**, bringing the gap from ~20% to ~14-16%. Combined with the other quick wins from PERFORMANCE_REVIEW.md (cached splits, annotations caching, basename precomputation), the total gap could narrow to ~10-12%.
+**Expected improvement: 4-6% of total compilation time**, bringing the gap from ~20% to ~14-16%. Combined with the other quick wins from PERFORMANCE_REVIEW_2026-04-17.md (cached splits, annotations caching, basename precomputation), the total gap could narrow to ~10-12%.
 
 ---
 

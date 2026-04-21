@@ -23,11 +23,15 @@ Java Model provides names (`classifierQualifiedName`), FIR resolves them via `se
 
 | Feature | Interface Method | FIR Callback |
 |---------|-----------------|--------------|
-| Type resolution | `JavaClassifierType.resolve(tryResolve: (ClassId) -> Boolean): ClassId?` | `symbolProvider.getClassLikeSymbolByClassId` |
+| Type resolution | `JavaClassifierType.resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null): ClassId?` | `symbolProvider.getClassLikeSymbolByClassId` |
 | Annotation resolution | `JavaAnnotation.resolveAnnotation(tryResolve: (ClassId) -> Boolean): ClassId?` | `symbolProvider.getClassLikeSymbolByClassId` |
 | Enum class resolution | `JavaEnumValueAnnotationArgument.resolveEnumClass(tryResolve)` | `findClassId()` in `JavaTypeConversion.kt` |
 | TYPE_USE filtering | `JavaType.filterTypeUseAnnotations(isTypeUse)` | `isTypeUseAnnotationClass()` |
 | Constant evaluation | `JavaField.resolveInitializerValue(resolveReference)` | `resolveExternalFieldValue()` in `FirJavaFacade.kt` |
+
+The second `getSupertypeClassIds` parameter (added later) lets java-direct walk
+already-resolved supertype chains transitively when resolving inherited inner classes
+(e.g., `Derived → Base → Map → Entry`) without re-entering full FIR resolution.
 
 **Why callbacks**: Allows java-direct to handle its own resolution without affecting PSI-based or javac-wrapper implementations.
 
@@ -59,15 +63,48 @@ Java classes have implicit inheritance:
 
 ## Key Files
 
+### Model layer (over AST)
 | File | Purpose |
 |------|---------|
-| `JavaClassFinderOverAstImpl.kt` | Source class finder, file indexing |
-| `JavaClassOverAst.kt` | Java class model, `memberResolutionContext` |
-| `JavaTypeOverAst.kt` | Type representations, `classifierQualifiedName`, wildcards |
-| `JavaMemberOverAst.kt` | Methods, fields, parameters |
-| `JavaResolutionContext.kt` | Import/type parameter scope management |
+| `JavaClassOverAst.kt` | Java class model, `memberResolutionContext`, `innerClassCache` |
+| `JavaTypeOverAst.kt` | Type representations, `classifierQualifiedName`, wildcards, type parameters |
+| `JavaMemberOverAst.kt` | Methods, fields, value parameters |
 | `JavaAnnotationOverAst.kt` | Annotation parsing and resolution |
-| `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder setup |
+| `JavaPackageOverAst.kt` | Package model |
+| `JavaRecordComponentOverAst.kt` | Record component model |
+| `JavaElementOverAst.kt` | Common base for `*OverAst` classes |
+
+### Parsing & AST
+| File | Purpose |
+|------|---------|
+| `parse.kt` | KMP parser invocation |
+| `JavaLightTree.kt` | Flat-array AST (`JavaLightNode` value class), `childrenCache` memoizes child lists |
+| `JavaSourceFileReader.kt` | VFS-backed file reads |
+
+### Indexing & class finding
+| File | Purpose |
+|------|---------|
+| `JavaClassFinderOverAstImpl.kt` | Source class finder, on-demand lookups over a built index |
+| `JavaSourceIndex.kt` | Source-tree indexing (files per package, class names per file) |
+| `CombinedJavaClassFinder.kt` | Source-first, binary-fallback hybrid |
+| `JavaDirectComponentRegistrar.kt` | Plugin registration, hybrid finder wiring |
+
+### Resolution
+| File | Purpose |
+|------|---------|
+| `JavaResolutionContext.kt` | Import/type-parameter scope management, `resolve()` entry point |
+| `JavaScopeResolver.kt` | Local-class / type-parameter scope lookup (`findLocalClassCache`) |
+| `JavaImportResolver.kt` | Single-type + on-demand import handling, JLS priority |
+| `JavaInheritedMemberResolver.kt` | Inherited-inner-class resolution, aggregated-inner handling |
+| `JavaSupertypeGraph.kt` | Cross-file supertype graph, `supertypeCache`, `inheritedInnerClassesCache` |
+
+### Utilities
+| File | Purpose |
+|------|---------|
+| `CacheHelpers.kt` | `cachedNonNull` / `cachedNullable` / `cachedBoolean` for the `@Volatile` caching pattern |
+| `JavaLiteralParser.kt` | Shared literal parsing (integer/long/float/double/unescape) |
+| `ConstantEvaluator.kt` | Java field initializer constant evaluation (JLS §15.29 subset) |
+| `utils.kt` | Misc shared helpers, `computeTypeParameters` factory |
 
 ## Reference Implementations
 
@@ -101,8 +138,12 @@ Check these BEFORE implementing new features:
 - **Nested classes in interfaces**: implicitly `static` (JLS 9.5)
 - **Nested classes**: only static if explicitly marked
 
-## KMP Parser Edge Cases
+## KMP Parser & AST Edge Cases
 
+- **AST representation**: The module uses `JavaLightTree` (flat-array LightTree) with
+  `JavaLightNode` value-class handles, not a materialized tree. `getChildren()` results
+  are memoized per node via `JavaLightTree.childrenCache`; prefer `findChildByType` /
+  `getChildrenByType` (direct-scan on cache miss, filtered fast path on hit).
 - **Reserved words in imports**: `import kotlin.*` may parse as `ERROR_ELEMENT`, not `IMPORT_STATEMENT`
 - **Fragmented imports**: Parser may split constructs across sibling nodes
 - **Recovery needed**: `ERROR_ELEMENT` nodes often contain recoverable info
@@ -134,4 +175,4 @@ Check these BEFORE implementing new features:
 
 ---
 
-*Extracted from AGENT_INSTRUCTIONS.md — 2026-03-13*
+*Last updated: 2026-04-21 (refreshed for LightTree + split-file layout)*
