@@ -1225,8 +1225,9 @@ class BodyGenerator(
             }
 
             wasmSymbols.wasmArrayNewData0CharArray -> {
+                val wasmArrayNewData0CharArray = wasmSymbols.wasmArrayNewData0CharArray!!
                 val arrayGcType = typeCodegenContext.referenceGcType(
-                    wasmSymbols.wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
+                    wasmArrayNewData0CharArray.owner.returnType.getRuntimeClass(irBuiltIns).symbol,
                 )
                 body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
             }

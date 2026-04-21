@@ -478,9 +478,10 @@ class IrModuleToJsTransformer(
         backendContext.testFunsPerFile[fileExports.file]
             ?.let { definitionSet.computeTag(it) }
             ?.let {
-                val suiteFunctionTag = definitionSet.computeTag(backendContext.symbols.suiteFun!!.owner)
+                val suiteFun = backendContext.symbols.suiteFun!!
+                val suiteFunctionTag = definitionSet.computeTag(suiteFun.owner)
                     ?: irError("Expect suite function tag exists") {
-                        withIrEntry("backendContext.suiteFun.owner", backendContext.symbols.suiteFun.owner)
+                        withIrEntry("backendContext.suiteFun.owner", suiteFun.owner)
                     }
                 result.testEnvironment = JsIrProgramTestEnvironment(it, suiteFunctionTag)
             }

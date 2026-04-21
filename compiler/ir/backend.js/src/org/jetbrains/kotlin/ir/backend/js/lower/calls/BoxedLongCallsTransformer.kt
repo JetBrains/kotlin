@@ -84,13 +84,15 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
     }
 
     override fun transformFieldAccess(access: IrFieldAccessExpression): IrExpression {
-        if (symbols.longLowBits != null && access.symbol == longLowField) {
-            return IrCallImpl(access.startOffset, access.endOffset, longLowField.owner.type, symbols.longLowBits).apply {
+        val longLowBits = symbols.longLowBits
+        if (longLowBits != null && access.symbol == longLowField) {
+            return IrCallImpl(access.startOffset, access.endOffset, longLowField.owner.type, longLowBits).apply {
                 arguments[0] = access.receiver
             }
         }
-        if (symbols.longHighBits != null && access.symbol == longHighField) {
-            return IrCallImpl(access.startOffset, access.endOffset, longHighField.owner.type, symbols.longHighBits).apply {
+        val longHighBits = symbols.longHighBits
+        if (longHighBits != null && access.symbol == longHighField) {
+            return IrCallImpl(access.startOffset, access.endOffset, longHighField.owner.type, longHighBits).apply {
                 arguments[0] = access.receiver
             }
         }
