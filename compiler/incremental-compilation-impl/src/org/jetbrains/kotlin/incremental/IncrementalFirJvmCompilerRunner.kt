@@ -306,7 +306,6 @@ open class IncrementalFirJvmCompilerRunner(
             writeOutputsIfNeeded(
                 projectEnvironment.project,
                 configuration,
-                messageCollector,
                 hasPendingErrors = false,
                 listOf(generationState),
                 mainClassFqName

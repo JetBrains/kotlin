@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.messageCollector
 
 object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinaryPipelineArtifact>(
     name = "JvmWriteOutputsPhase",
@@ -18,7 +17,6 @@ object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinar
         writeOutputsIfNeeded(
             environment.project,
             configuration,
-            configuration.messageCollector,
             hasPendingErrors = configuration.diagnosticsCollector.hasErrors,
             outputs,
             mainClassFqName

@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.cli.common.modules;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.modules.JavaRootPath;
 import org.jetbrains.kotlin.modules.Module;
 import org.xml.sax.Attributes;
@@ -35,8 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
+import java.util.function.Consumer;
 
 public class ModuleXmlParser {
 
@@ -59,23 +56,26 @@ public class ModuleXmlParser {
     @NotNull
     public static ModuleChunk parseModuleScript(
             @NotNull String xmlFile,
-            @NotNull MessageCollector messageCollector
+            @NotNull Consumer<String> errorConsumer,
+            @NotNull Consumer<Exception> exceptionConsumer
     ) {
         try (FileInputStream stream = new FileInputStream(xmlFile)) {
-            return new ModuleXmlParser(messageCollector).parse(new BufferedInputStream(stream));
+            return new ModuleXmlParser(errorConsumer, exceptionConsumer).parse(new BufferedInputStream(stream));
         }
         catch (IOException e) {
-            MessageCollectorUtil.reportException(messageCollector, e);
+            exceptionConsumer.accept(e);
             return ModuleChunk.EMPTY;
         }
     }
 
-    private final MessageCollector messageCollector;
+    private final Consumer<String> errorConsumer;
+    @NotNull private final Consumer<Exception> exceptionConsumer;
     private final List<Module> modules = new SmartList<>();
     private DefaultHandler currentState;
 
-    private ModuleXmlParser(@NotNull MessageCollector messageCollector) {
-        this.messageCollector = messageCollector;
+    private ModuleXmlParser(@NotNull Consumer<String> errorConsumer, @NotNull Consumer<Exception> exceptionConsumer) {
+        this.errorConsumer = errorConsumer;
+        this.exceptionConsumer = exceptionConsumer;
     }
 
     private void setCurrentState(@NotNull DefaultHandler currentState) {
@@ -101,10 +101,10 @@ public class ModuleXmlParser {
             return new ModuleChunk(modules);
         }
         catch (ParserConfigurationException | IOException e) {
-            MessageCollectorUtil.reportException(messageCollector, e);
+            exceptionConsumer.accept(e);
         }
         catch (SAXException e) {
-            messageCollector.report(ERROR, "Build file does not have a valid XML: " + e, null);
+            errorConsumer.accept("Build file does not have a valid XML: " + e);
         }
         return ModuleChunk.EMPTY;
     }
