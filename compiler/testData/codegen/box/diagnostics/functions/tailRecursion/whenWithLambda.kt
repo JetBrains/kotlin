@@ -4,7 +4,7 @@ tailrec fun withWhen(counter: Int): Int {
     return when (counter) {
         0 -> withWhen(1)
         1 -> counter
-        else -> run { null } ?: <!NON_TAIL_RECURSIVE_CALL!>withWhen<!>(counter - 1)
+        else -> run { null } ?: withWhen(counter - 1)
     }
 }
 
