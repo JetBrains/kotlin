@@ -96,10 +96,18 @@ class SerializerForInlineClassGenerator(
     // Compiler will elide these in corresponding inline class lowerings (when serialize/deserialize functions will be split in two)
 
     private fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, inlineClassBoxType: IrType): IrExpression =
+        // `returnTypeHint` must be supplied explicitly here.
+        // Without it, `irInvoke` falls back to `callee.owner.returnType` — the primary constructor's own return
+        // type — which for a generic value class like `Parametrized<T>` is `Parametrized<T of Parametrized>`,
+        // referencing the CLASS-level type parameter. That parameter is out of scope inside the `$serializer`
+        // nested class where this call is generated.
+        // `inlineClassBoxType` is derived from `loadFunc.returnType` (`Parametrized<T of $serializer>`), which
+        // uses the serializer's own type parameter that IS in scope — the correct type to use here.
         irInvoke(
             serializableIrClass.constructors.single { it.isPrimary }.symbol,
             listOf(expression),
             (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull },
+            returnTypeHint = inlineClassBoxType,
         )
 
 }
