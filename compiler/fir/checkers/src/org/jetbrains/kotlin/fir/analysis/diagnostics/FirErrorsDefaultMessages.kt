@@ -2314,7 +2314,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NULLABLE_ON_DEFINITELY_NOT_NULLABLE,
-            "'!!' type cannot be marked as nullable.",
+            "Definitely non-nullable type cannot be marked as nullable.",
         )
         map.put(
             REDUNDANT_NULLABLE,
