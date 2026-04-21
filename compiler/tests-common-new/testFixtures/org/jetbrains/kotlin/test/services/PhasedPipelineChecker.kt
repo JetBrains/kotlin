@@ -40,6 +40,8 @@ class PhasedPipelineChecker(
         }
     }
 
+    override fun checkIfTestShouldBeUnmuted() {}
+
     private fun getTargetedPhase(): TestPhase? {
         return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].lastOrNull() ?: defaultRunPipelineTill
     }

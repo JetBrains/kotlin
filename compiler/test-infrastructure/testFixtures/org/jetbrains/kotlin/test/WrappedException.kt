@@ -107,6 +107,12 @@ sealed class WrappedException(
         }
     }
 
+    class FromFailingTestSuppressor(cause: Throwable) : WrappedExceptionWithoutModule(cause, 2, 2) {
+        override fun withReplacedCause(newCause: Throwable): WrappedException {
+            return FromFailingTestSuppressor(newCause)
+        }
+    }
+
     class FromModuleStructureTransformer(cause: Throwable) : WrappedExceptionWithoutModule(cause, 2, 1) {
         override fun withReplacedCause(newCause: Throwable): WrappedException {
             return FromModuleStructureTransformer(newCause)

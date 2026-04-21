@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KL
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
 
@@ -33,14 +34,6 @@ class CustomKlibCompilerSecondStageTestSuppressor(
         get() = listOf(CustomKlibCompilerTestDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (failedAssertions.isEmpty()) {
-            return buildList {
-                addAll(testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion))
-                addAll(testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion))
-                addAll(testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion))
-            }.map { it.wrap() }
-        }
-
         val newFailedAssertions = failedAssertions.flatMap { wrappedException ->
             when (wrappedException) {
                 is WrappedException.FromHandler -> when (wrappedException.handler) {
@@ -76,6 +69,14 @@ class CustomKlibCompilerSecondStageTestSuppressor(
         } else {
             return newFailedAssertions
         }
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        testServices.assertions.assertAll(
+            { testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion) },
+            { testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion) },
+            { testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE, defaultLanguageVersion) },
+        )
     }
 
     private fun processException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {

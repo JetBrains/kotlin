@@ -18,19 +18,19 @@ class FirMetaInfoDiffSuppressor(testServices: TestServices) : TestFailureSuppres
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
+    private val ignoreErrors: Boolean get() = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS in it.directives }
+    private val ignoreDiff: Boolean get() = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS_DIFF in it.directives }
+
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val ignoreErrors = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS in it.directives }
-        val ignoreDiff = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS_DIFF in it.directives }
         if (!(ignoreErrors || ignoreDiff)) {
             return failedAssertions
         }
-        val filteredAssertions = failedAssertions.filterNot { it is WrappedException.FromMetaInfoHandler }
-        return if (failedAssertions.size == filteredAssertions.size && ignoreDiff) {
-            failedAssertions + AssertionError(
-                "Test contains $IGNORE_FIR_DIAGNOSTICS_DIFF directive but no errors was reported. Please remove directive"
-            ).wrap()
-        } else {
-            filteredAssertions
+        return failedAssertions.filterNot { it is WrappedException.FromMetaInfoHandler }
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        if (ignoreDiff) {
+            throw AssertionError("Test contains $IGNORE_FIR_DIAGNOSTICS_DIFF directive but no errors was reported. Please remove directive")
         }
     }
 }

@@ -42,7 +42,16 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
      */
     fun reportFailures(): Boolean {
         val hadFailures = allFailedExceptions.isNotEmpty()
-        val filteredFailedAssertions = filterFailedExceptions(allFailedExceptions)
+        val filteredFailedAssertions = if (hadFailures) {
+            filterFailedExceptions(allFailedExceptions)
+        } else {
+            for (suppressor in testConfiguration.failureSuppressors) {
+                withAssertionCatching(WrappedException::FromFailingTestSuppressor) {
+                    suppressor.checkIfTestShouldBeUnmuted()
+                }
+            }
+            allFailedExceptions.map { it.cause }
+        }
         filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
             throw it
         }
@@ -109,6 +118,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
     protected fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
         return testConfiguration.failureSuppressors
             .fold(failedExceptions) { assertions, suppressor ->
+                if (assertions.isEmpty()) return@fold assertions
                 suppressor.suppressIfNeeded(assertions)
             }
             .sorted()

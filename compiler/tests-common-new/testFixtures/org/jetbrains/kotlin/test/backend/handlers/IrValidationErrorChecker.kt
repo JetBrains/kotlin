@@ -34,4 +34,6 @@ class IrValidationErrorChecker(testServices: TestServices) : TestFailureSuppress
             }
         }
     }
+
+    override fun checkIfTestShouldBeUnmuted() {}
 }

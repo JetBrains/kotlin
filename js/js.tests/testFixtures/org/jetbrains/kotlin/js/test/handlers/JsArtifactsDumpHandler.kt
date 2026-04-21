@@ -42,6 +42,8 @@ object JsArtifactsDumpHandler {
                 )
             }
         }
+
+        override fun checkIfTestShouldBeUnmuted() {}
     }
 
     class Checker(testServices: TestServices) : AfterAnalysisChecker(testServices) {

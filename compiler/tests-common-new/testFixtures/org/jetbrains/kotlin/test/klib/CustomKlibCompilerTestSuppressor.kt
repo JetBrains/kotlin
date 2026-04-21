@@ -31,9 +31,6 @@ class CustomKlibCompilerTestSuppressor(testServices: TestServices) : TestFailure
         get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null, emptyList())))
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (failedAssertions.isEmpty())
-            return emptyList()
-
         val suppressionChecker = testServices.codegenSuppressionChecker
         val modules = testServices.moduleStructure.modules
 
@@ -43,4 +40,6 @@ class CustomKlibCompilerTestSuppressor(testServices: TestServices) : TestFailure
         } else
             failedAssertions
     }
+
+    override fun checkIfTestShouldBeUnmuted() {}
 }

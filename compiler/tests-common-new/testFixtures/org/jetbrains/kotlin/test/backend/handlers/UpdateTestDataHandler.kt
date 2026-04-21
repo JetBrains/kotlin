@@ -58,6 +58,8 @@ class UpdateTestDataHandler(
         }
         return failedAssertions
     }
+
+    override fun checkIfTestShouldBeUnmuted() {}
 }
 
 private fun Throwable.tryUpdateTestData() {

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.isLLFirTestData
+import java.io.File
 
 class FirFailingTestSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     private val facadeKind: TestArtifactKind<*>
@@ -21,10 +22,8 @@ class FirFailingTestSuppressor(testServices: TestServices) : TestFailureSuppress
         get() = Order.P5
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val testFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val failFile = testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail").takeIf { it.exists() }
-            ?: return failedAssertions
-        val (suppressible, notSuppressible) = failedAssertions.partition {
+        if (findFailFile() == null) return failedAssertions
+        return failedAssertions.filterNot {
             when (it) {
                 is WrappedException.FromFacade -> it.facade.outputKind == facadeKind
                 is WrappedException.FromHandler -> it.handler.artifactKind == facadeKind
@@ -32,13 +31,19 @@ class FirFailingTestSuppressor(testServices: TestServices) : TestFailureSuppress
                 else -> false
             }
         }
+    }
 
-        return when {
-            suppressible.isNotEmpty() -> notSuppressible
+    override fun checkIfTestShouldBeUnmuted() {
+        val failFile = findFailFile() ?: return
 
-            // do not mute ll tests as they might behave differently
-            testServices.moduleStructure.originalTestDataFiles.first().isLLFirTestData -> failedAssertions
-            else -> failedAssertions + AssertionError("Fail file exists but no exceptions was thrown. Please remove ${failFile.name}").wrap()
-        }
+        // do not mute ll tests as they might behave differently
+        if (testServices.moduleStructure.originalTestDataFiles.first().isLLFirTestData) return
+
+        throw AssertionError("Fail file exists but no exceptions was thrown. Please remove ${failFile.name}")
+    }
+
+    private fun findFailFile(): File? {
+        val testFile = testServices.moduleStructure.originalTestDataFiles.first()
+        return testFile.parentFile.resolve("${testFile.nameWithoutExtension}.fail").takeIf { it.exists() }
     }
 }

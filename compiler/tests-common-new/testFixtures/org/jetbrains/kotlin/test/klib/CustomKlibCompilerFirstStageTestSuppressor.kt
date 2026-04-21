@@ -32,11 +32,6 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         get() = listOf(CustomKlibCompilerTestDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (failedAssertions.isEmpty()) {
-            return testServices.createUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion)
-                .map { it.wrap() }
-        }
-
         val newFailedAssertions = failedAssertions.asSequence().flatMap { wrappedException ->
             if (wrappedException is WrappedException.FromFacade) {
                 if (wrappedException.facade is CustomKlibCompilerFirstStageFacade) {
@@ -117,6 +112,10 @@ class CustomKlibCompilerFirstStageTestSuppressor(
         }
 
         return listOf(wrappedException)
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        testServices.throwUnmutingErrorIfNeeded(IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE, defaultLanguageVersion)
     }
 
     companion object {

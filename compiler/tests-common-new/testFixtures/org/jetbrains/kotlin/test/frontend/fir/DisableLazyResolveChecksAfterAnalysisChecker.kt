@@ -23,8 +23,8 @@ class DisableLazyResolveChecksAfterAnalysisChecker(
         private val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
     }
 
-    private fun checkIfTestCouldBeUnmuted(failedAssertions: List<WrappedException>) {
-        if (failedAssertions.isNotEmpty()) return
+    override fun checkIfTestShouldBeUnmuted() {
+        if (!isDisableLazyResolveDirectivePresent()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         if (!isTeamCityBuild) {
@@ -53,7 +53,6 @@ class DisableLazyResolveChecksAfterAnalysisChecker(
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return if (isDisableLazyResolveDirectivePresent()) {
-            checkIfTestCouldBeUnmuted(failedAssertions)
             failedAssertions.filterNot { it is WrappedException.FromHandler && it.handler is FirResolveContractViolationErrorHandler }
         } else {
             failedAssertions

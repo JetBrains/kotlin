@@ -31,15 +31,24 @@ class BlackBoxCodegenSuppressor(
         val suppressionChecker = testServices.codegenSuppressionChecker
         val moduleStructure = testServices.moduleStructure
         val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.firstOrNull()) ?: return failedAssertions
-        return suppressionChecker.processAllDirectives(ignoreDirectives) { directive, suppressionResult ->
-            listOfNotNull(
-                suppressionChecker.processMutedTest(
-                    failed = failedAssertions.isNotEmpty(),
-                    directive,
-                    suppressionResult,
-                )?.wrap()
-            )
+        return suppressionChecker.processAllDirectives(ignoreDirectives) { _, _ ->
+            emptyList()
         } ?: failedAssertions
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        val suppressionChecker = testServices.codegenSuppressionChecker
+        val moduleStructure = testServices.moduleStructure
+        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.firstOrNull()) ?: return
+        val failures = mutableListOf<Throwable>()
+        suppressionChecker.processAllDirectives(ignoreDirectives) { directive, suppressionResult ->
+            try {
+                suppressionChecker.throwThatTestCouldBeUnmuted(directive, suppressionResult)
+            } catch (e: Throwable) {
+                failures += e
+            }
+        }
+        testServices.assertions.assertAll(failures.map { { throw it } })
     }
 
     class SuppressionChecker(
@@ -94,17 +103,12 @@ class BlackBoxCodegenSuppressor(
         }
 
         /**
-         * Returns `null` if [failed] is `true`, otherwise returns an [AssertionError] with a message reminding to remove [directive]
-         * from the test to unmute it.
+         * Throws an [AssertionError] with a message reminding to remove [directive] from the test to unmute it.
          */
-        @PublishedApi
-        internal fun processMutedTest(
-            failed: Boolean,
+        internal fun throwThatTestCouldBeUnmuted(
             directive: ValueDirective<TargetBackend>,
             suppressionResult: SuppressionResult,
-        ): AssertionError? {
-            if (failed) return null
-
+        ): Nothing {
             val targetBackend = testServices.defaultsProvider.targetBackend
             val message = buildString {
                 append("Looks like this test can be unmuted. Remove ")
@@ -123,41 +127,7 @@ class BlackBoxCodegenSuppressor(
                     append(it)
                 }
             }
-            return AssertionError(message)
-        }
-
-        /**
-         * Runs [block]. If this test has been muted by one of [ignoreDirectives] **and** [block] returns without throwing an exception,
-         * throws an [AssertionError] reminding you to unmute the test.
-         *
-         * If this test has been muted by one of [ignoreDirectives] **and** [block] throws an exception of type [ExpectedError],
-         * catches that exception and returns normally.
-         *
-         * If [block] throws an exception of some other type, rethrows it.
-         *
-         * If this test hasn't been muted **and** [block] throws any exception, rethrows that exception as well.
-         */
-        inline fun <reified ExpectedError : Throwable> checkMuted(
-            ignoreDirectives: List<ValueDirective<TargetBackend>>,
-            block: () -> Unit,
-        ) {
-            val expectedError: ExpectedError? = try {
-                block()
-                null
-            } catch (e: Throwable) {
-                e as? ExpectedError ?: throw e
-            }
-
-            processAllDirectives<Unit>(ignoreDirectives) { ignoreDirective, suppressionResult ->
-                processMutedTest(
-                    failed = expectedError != null,
-                    ignoreDirective,
-                    suppressionResult
-                )?.let { throw it }
-                return
-            }
-
-            expectedError?.let { throw it }
+            throw AssertionError(message)
         }
 
         data class SuppressionResult(val testMuted: Boolean, val matchedBackend: TargetBackend?) {

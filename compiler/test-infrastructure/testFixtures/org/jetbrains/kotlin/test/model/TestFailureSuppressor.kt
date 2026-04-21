@@ -13,7 +13,19 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class TestFailureSuppressor(protected val testServices: TestServices) : ServicesAndDirectivesContainer {
+    /**
+     * This function should be used to suppress test failures if there were any.
+     * It's guaranteed that the [failedAssertions] list will not be empty.
+     */
     abstract fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException>
+
+    /**
+     * This function should be used to check if the test is muted by some means (e.g., using ignore directives),
+     * but the test actually passed. In such a situation the assertion error about test unmuting should be thrown.
+     *
+     * It's guaranteed that this function is called only when no exceptions were thrown during the test.
+     */
+    abstract fun checkIfTestShouldBeUnmuted()
 
     typealias Order = AfterAnalysisChecker.Order
 
@@ -36,18 +48,16 @@ abstract class TestFailureSuppressorBySingleDirective(
     override val directiveContainers: List<DirectivesContainer> = listOf(directivesContainer)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (!isDisabled()) {
-            return failedAssertions
-        }
-
-        return if (failedAssertions.isEmpty()) {
-            listOf(
-                AssertionError(
-                    "Test contains $suppressDirective directive but no errors was reported. Please remove directive",
-                ).wrap()
-            )
-        } else {
+        return if (isDisabled()) {
             emptyList()
+        } else {
+            failedAssertions
+        }
+    }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        if (isDisabled()) {
+            throw AssertionError("Test contains $suppressDirective directive but no errors was reported. Please remove the directive")
         }
     }
 
