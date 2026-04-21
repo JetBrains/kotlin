@@ -68,6 +68,19 @@ typealias TypealiasWithFactoryWithoutParameters2 = ClassWithFactoryWithoutParame
 //fun TypealiasWithFactoryWithoutParameters2(): ClassWithFactoryWithoutParameters =
 //    TypealiasWithFactoryWithoutParameters2(321)
 
+// FILE: subclass.kt
+
+interface Job
+
+interface CompletableJob: Job
+
+typealias TCJ = CompletableJob
+
+// Should be mangled because CompletableJob is a Job
+fun Job(parent: Job?): CompletableJob = TODO()
+
+fun Job(): TCJ = TODO()
+
 // FILE: enum.kt
 
 enum class EnumWithFactory {

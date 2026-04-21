@@ -23,6 +23,10 @@ void * __root___InterfaceWithFactory();
 
 void * __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * arg);
 
+void * __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(void * _Nullable parent);
+
+void * __root___Job();
+
 void * __root___ObjectWithFactory();
 
 void * __root___ObjectWithFactory_get();

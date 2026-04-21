@@ -5,7 +5,9 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(ClassWithFactoryWithoutParameters::class, "4main33ClassWithFactoryWithoutParametersC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ObjectWithFactory::class, "4main17ObjectWithFactoryC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(UtcOffset::class, "4main9UtcOffsetC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(CompletableJob::class, "_CompletableJob")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceWithFactory::class, "_InterfaceWithFactory")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Job::class, "_Job")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
@@ -75,6 +77,19 @@ public fun __root___InterfaceWithFactory(): kotlin.native.internal.NativePtr {
 public fun __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val _result = run { InterfaceWithFactory(__arg) }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___")
+public fun __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __parent = if (parent == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(parent) as Job
+    val _result = run { Job(__parent) }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Job")
+public fun __root___Job(): kotlin.native.internal.NativePtr {
+    val _result = run { Job() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

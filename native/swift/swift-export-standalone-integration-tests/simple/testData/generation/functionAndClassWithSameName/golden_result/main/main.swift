@@ -53,10 +53,21 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         }
     }
 }
+public typealias TCJ = any main.CompletableJob
+public protocol CompletableJob: KotlinRuntime.KotlinBase, main.Job {
+}
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
+}
+public protocol Job: KotlinRuntime.KotlinBase {
+}
+@objc(_CompletableJob)
+package protocol _CompletableJob: main._Job {
 }
 @objc(_InterfaceWithFactory)
 package protocol _InterfaceWithFactory {
+}
+@objc(_Job)
+package protocol _Job {
 }
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {
@@ -136,6 +147,14 @@ public func interfaceWithFactory(
 ) -> any main.InterfaceWithFactory {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef())) as! any main.InterfaceWithFactory
 }
+public func job() -> main.TCJ {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job()) as! any main.CompletableJob
+}
+public func job(
+    parent: (any main.Job)?
+) -> any main.CompletableJob {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___Job__TypesOfArguments__Swift_Optional_anyU20main_Job___(parent.map { it in it.__externalRCRef() } ?? nil)) as! any main.CompletableJob
+}
 public func objectWithFactory() -> main.ObjectWithFactory {
     return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory())
 }
@@ -144,9 +163,21 @@ public func utcOffset(
 ) -> main.UtcOffset {
     return main.UtcOffset.__createClassWrapper(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
+extension main.CompletableJob where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension main.CompletableJob {
+}
 extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.InterfaceWithFactory {
+}
+extension main.Job where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension main.Job {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.Job where Wrapped : main._Job {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.CompletableJob where Wrapped : main._CompletableJob {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
