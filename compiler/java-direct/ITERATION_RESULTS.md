@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (precomputed children/types/offsets + whitespace exclusion)
+**Last Updated**: 2026-04-21 (lazy per-package indexing)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -13,9 +13,91 @@ caveats have landed in code (verified against current source). What remains:
 - **§2 #6** — context-level `tryResolve` cache across `resolve()` calls. Deferred with
   a recorded correctness argument (see this file's 2026-04-20 entry).
 - **§2 #8** — profile `SMALL_FILE_SIZE_THRESHOLD` (still 4096, unvalidated). Low value.
-- **§5 architectural** — lazy per-package indexing and AST release after extraction.
-  Weeks-scale; only worthwhile if profiling shows memory/cold-start dominates the
-  residual gap vs. PSI.
+- ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
+  **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
+
+---
+
+## Lazy Per-Package Indexing — 2026-04-21
+
+### Overview
+
+`buildIndex()` was the single most expensive method in java-direct: it ran in `init {}` and
+eagerly walked **every** `.java` file across all source roots. For `testFrontend` (141 Java
+files), profiling measured `buildIndex` at **156ms CPU** — roughly **40%** of java-direct's
+total 389ms. PSI-based class finders skip this entirely because the IDE has pre-built indexes.
+
+Replaced eager full-tree walking with **lazy per-package indexing**: the finder navigates to
+the directory corresponding to a package on demand using `VirtualFile.findChild()` chains and
+indexes only that directory's `.java` files. Packages never queried by the compiler are never
+scanned.
+
+Design doc: `implDocs/LAZY_PACKAGE_INDEXING_PLAN.md`.
+
+### Changes
+
+**Removed `buildIndex()`** (`JavaClassFinderOverAstImpl.kt`): The `init {}` block no longer
+walks all files. Instead, source roots are classified: directory roots (production) are left
+for lazy indexing; file-type roots (rare test-only edge case) are indexed eagerly into a
+separate `fileRootIndex`.
+
+**Lazy per-package indexing**: Three new methods form the core:
+- `findPackageDirectories(fqName)` — navigates from each source root to the package directory
+  via `findChild` chains (e.g., `root/"com"/"example"` for `com.example`). Results cached in
+  a `ConcurrentHashMap`.
+- `ensurePackageIndexed(fqName)` — `index.computeIfAbsent` that calls
+  `indexPackageFromDirectories` and merges with `fileRootIndex` entries. Atomic: each package
+  indexed at most once.
+- `indexPackageFromDirectories(fqName)` — lists `.java` files in the package directory, applies
+  existing size-based strategy (full parse ≤4096 bytes, lightweight scan otherwise). Validates
+  that each file's declared package matches the directory-derived package (mismatched files
+  skipped, matching javac behavior).
+
+**All public API methods now call `ensurePackageIndexed`**: `isClassInIndex`, `findClass`,
+`findClasses`, `findPackage`, `knownClassNamesInPackage`, `classesInPackage`,
+`getPackageAnnotations`. Also the `sameClassInSameFilePackage` and `findFilesForClass`
+callbacks used by `JavaSupertypeGraph`.
+
+**`subPackagesOf` rewritten**: Uses directory listing directly (via `VirtualFile.children`)
+instead of iterating all index keys with `asString().startsWith(prefix)` matching. Simpler
+and O(children_in_directory) instead of O(total_packages × string_length).
+
+**Thread safety**: `index` type changed from `HashMap` to
+`ConcurrentHashMap<FqName, Map<String, List<FileEntry>>>` with immutable inner maps built
+atomically inside `computeIfAbsent`. `packageAnnotationNodes` upgraded to `ConcurrentHashMap`
+with `merge` for thread-safe concurrent writes from different packages.
+
+**Package validation on `tryBuildFileEntry`**: `tryBuildFileEntry`, `tryBuildFileEntryWithFullParse`,
+`tryBuildFileEntryLightweight`, and `indexPackageInfo` accept an optional `expectedPackage`
+parameter. When non-null, files whose declared package doesn't match the directory are skipped.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaClassFinderOverAstImpl.kt` | Replaced `buildIndex()` with lazy per-package indexing; added `findPackageDirectories`, `ensurePackageIndexed`, `indexPackageFromDirectories`; all API methods call `ensurePackageIndexed`; `subPackagesOf` rewritten to use directory listing; `index` → `ConcurrentHashMap`; `packageAnnotationNodes` → `ConcurrentHashMap`; `tryBuildFileEntry`/`indexPackageInfo` gain `expectedPackage` validation |
+
+### Test Results
+
+- `./gradlew :kotlin-java-direct:test` — **BUILD SUCCESSFUL**, 2769 tests, 0 failures, 0 errors.
+
+### Key Learnings
+
+- `VirtualFile.findChild()` is O(1) on VFS-cached directories (`CoreLocalVirtualFile` caches
+  `File.listFiles()` results). Navigating a 5-segment package path costs 5 cached lookups —
+  far cheaper than scanning all files in all directories to build a global index.
+- `ConcurrentHashMap.computeIfAbsent` is the right primitive for lazy per-entry initialization:
+  it is atomic per key, blocks concurrent callers for the same key, and establishes
+  happens-before for subsequent reads. No separate "indexed" flag set is needed.
+- `subPackagesOf` was O(total_packages) with string prefix matching — a hidden quadratic cost
+  for deep package hierarchies. Replacing it with a single directory listing is both simpler
+  and faster.
+- File-type source roots (passing a `.java` file instead of a directory as a source root) are
+  a test-only pattern. Handling them separately in init (via `fileRootIndex`) avoids
+  complicating the main lazy-indexing path while preserving test compatibility.
+- Validating declared package against directory structure (skipping mismatched files) matches
+  javac behavior and avoids subtle indexing bugs where a file found in directory A would be
+  indexed under package B.
 
 ---
 

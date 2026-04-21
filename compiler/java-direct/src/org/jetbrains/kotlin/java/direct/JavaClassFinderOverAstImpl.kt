@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -22,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Size threshold (in bytes) for eager vs. lightweight indexing.
- * Files at or below this size are parsed fully during [JavaClassFinderOverAstImpl.buildIndex],
+ * Files at or below this size are parsed fully during per-package indexing,
  * and the resulting [JavaClass] instances are cached immediately (no re-parse on first access).
  * Files above this size are indexed via a lightweight line scanner that extracts only the package
  * name and top-level class names without invoking the parser.
@@ -35,8 +37,14 @@ private const val SMALL_FILE_SIZE_THRESHOLD = 4096L
  * It scans provided [sourceRoots] for `.java` files, indexes packages and top-level class names,
  * and lazily parses files to produce [JavaClassOverAst] instances. Results are cached by [ClassId].
  *
- * Indexing strategy depends on file size:
- * - **Small files** (≤ [SMALL_FILE_SIZE_THRESHOLD] bytes): parsed eagerly during index build;
+ * Indexing is **lazy per-package**: instead of walking all source files at construction time,
+ * the finder navigates to the directory corresponding to a package on demand using
+ * [VirtualFile.findChild] and indexes only that directory's `.java` files. Each package is
+ * indexed at most once (via [ConcurrentHashMap.computeIfAbsent]). Packages never queried by
+ * the compiler are never scanned.
+ *
+ * Within a package directory, file indexing depends on size:
+ * - **Small files** (≤ [SMALL_FILE_SIZE_THRESHOLD] bytes): parsed eagerly during package indexing;
  *   [JavaClass] instances are created and cached immediately, so the first [findClass] call is
  *   a cache hit with no additional parsing.
  * - **Large files**: indexed via lightweight line scanning ([extractFileInfoLightweight]) that
@@ -58,11 +66,18 @@ class JavaClassFinderOverAstImpl(
         val fileBaseName: String = file.name.removeSuffix(".java"),
     )
 
-    // package -> className -> list of files that declare such class.
-    // Built only during [buildIndex] (single-threaded in `init`), frozen afterwards —
-    // publication is guaranteed by the `init{}` block running before the reference escapes
-    // (`this` is not leaked during construction).
-    private val index: MutableMap<FqName, MutableMap<String, MutableList<FileEntry>>> = HashMap()
+    // Directory source roots for lazy per-package indexing.
+    // File-type source roots (rare, test-only) are indexed eagerly in init via fileRootIndex.
+    private val directoryRoots: List<VirtualFile>
+
+    // Entries from file-type source roots, populated in init (single-threaded).
+    // Immutable after init. Merged into the per-package index during ensurePackageIndexed.
+    private val fileRootIndex: Map<FqName, Map<String, List<FileEntry>>>
+
+    // Package → className → list of file entries.
+    // Populated lazily per-package via ensurePackageIndexed / computeIfAbsent.
+    // Inner maps are immutable after creation — built atomically inside computeIfAbsent.
+    private val index: ConcurrentHashMap<FqName, Map<String, List<FileEntry>>> = ConcurrentHashMap()
 
     // class cache for already created JavaClassOverAst.
     // Note: ConcurrentHashMap disallows null values, so this map stores only *positive* hits;
@@ -83,32 +98,138 @@ class JavaClassFinderOverAstImpl(
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
 
     // Package-level annotations from package-info.java files.
-    // Populated only during [buildIndex] (single-threaded in `init`), read-only afterwards.
-    private val packageAnnotationNodes: MutableMap<FqName, MutableList<JavaAnnotation>> = HashMap()
+    // ConcurrentHashMap because different packages can be indexed concurrently by different threads.
+    private val packageAnnotationNodes: ConcurrentHashMap<FqName, List<JavaAnnotation>> = ConcurrentHashMap()
+
+    // Cache: package FqName → list of directories (one per source root that contains this package).
+    // Populated via computeIfAbsent — each package resolved at most once.
+    private val packageDirectoryCache: ConcurrentHashMap<FqName, List<VirtualFile>> = ConcurrentHashMap()
 
     // Supertype graph queries (direct supertypes, inherited inner classes).
     // Extracted into a focused collaborator in Step 1.6 of the refactoring plan.
     private val supertypeGraph = JavaSupertypeGraph(
         classCacheLookup = { classCache[it] },
         filesForClassLookup = { classId -> findFilesForClass(classId).map { it.file } },
-        sameClassInSameFilePackage = { pkg, name -> index[pkg]?.containsKey(name) == true },
+        sameClassInSameFilePackage = { pkg, name -> ensurePackageIndexed(pkg).containsKey(name) },
         sourceFileReader = sourceFileReader,
     )
 
     private val debugLogFile: File? = debugLogFilePath?.toFile()
 
     init {
-        buildIndex()
+        // Classify source roots: directory roots use lazy per-package indexing,
+        // file-type roots (rare, test-only) are indexed eagerly.
+        val (fileRoots, dirRoots) = sourceRoots.partition { !it.isDirectory }
+        directoryRoots = dirRoots
+
+        val fri = HashMap<FqName, MutableMap<String, MutableList<FileEntry>>>()
+        for (fileRoot in fileRoots) {
+            if (!fileRoot.name.endsWith(".java")) continue
+            if (fileRoot.name == "package-info.java") {
+                indexPackageInfo(fileRoot)
+                continue
+            }
+            val entry = tryBuildFileEntry(fileRoot) ?: continue
+            val byName = fri.getOrPut(entry.packageFqName) { HashMap() }
+            for (className in entry.topLevelClassNames) {
+                byName.getOrPut(className) { mutableListOf() }.add(entry)
+            }
+        }
+        fileRootIndex = fri
+    }
+
+    // ---- Directory navigation ----
+
+    /**
+     * Returns the directories corresponding to [packageFqName] across all directory source roots.
+     * Navigates via [VirtualFile.findChild] chains (e.g. `root/"com"/"example"` for `com.example`).
+     * Results are cached — each package is resolved at most once.
+     */
+    private fun findPackageDirectories(packageFqName: FqName): List<VirtualFile> {
+        if (packageFqName.isRoot) return directoryRoots
+        return packageDirectoryCache.computeIfAbsent(packageFqName) {
+            val segments = it.pathSegments().map { s -> s.asString() }
+            directoryRoots.mapNotNull { root ->
+                var dir: VirtualFile = root
+                for (segment in segments) {
+                    dir = dir.findChild(segment) ?: return@mapNotNull null
+                    if (!dir.isDirectory) return@mapNotNull null
+                }
+                dir
+            }
+        }
+    }
+
+    // ---- Lazy per-package indexing ----
+
+    /**
+     * Ensures the given package has been indexed. Returns the package's class-name-to-file-entries
+     * map. Indexing happens at most once per package (via [ConcurrentHashMap.computeIfAbsent]).
+     *
+     * The returned map is immutable — it is created inside the `computeIfAbsent` lambda and
+     * never modified afterward.
+     */
+    private fun ensurePackageIndexed(packageFqName: FqName): Map<String, List<FileEntry>> {
+        return index.computeIfAbsent(packageFqName) { fqName ->
+            val dirEntries = indexPackageFromDirectories(fqName)
+            val fileEntries = fileRootIndex[fqName]
+            when {
+                fileEntries == null -> dirEntries
+                dirEntries.isEmpty() -> fileEntries
+                else -> {
+                    // Merge directory-scanned entries with file-root entries (rare edge case)
+                    val merged = HashMap(dirEntries)
+                    for ((className, entries) in fileEntries) {
+                        merged.merge(className, entries) { a, b -> a + b }
+                    }
+                    merged
+                }
+            }
+        }
     }
 
     /**
+     * Indexes a single package by scanning its directory in each source root.
+     * Only files whose declared package matches [packageFqName] are included (files with
+     * mismatched package/directory are skipped, matching javac behavior).
+     */
+    private fun indexPackageFromDirectories(packageFqName: FqName): Map<String, List<FileEntry>> {
+        val dirs = findPackageDirectories(packageFqName)
+        if (dirs.isEmpty()) return emptyMap()
+
+        val byName = HashMap<String, MutableList<FileEntry>>()
+
+        for (dir in dirs) {
+            val children = dir.children ?: continue
+            for (file in children) {
+                if (file.isDirectory) continue
+                if (!file.name.endsWith(".java")) continue
+
+                if (file.name == "package-info.java") {
+                    indexPackageInfo(file, packageFqName)
+                    continue
+                }
+
+                val entry = tryBuildFileEntry(file, packageFqName) ?: continue
+                for (className in entry.topLevelClassNames) {
+                    byName.getOrPut(className) { mutableListOf() }.add(entry)
+                }
+            }
+        }
+
+        return if (byName.isEmpty()) emptyMap() else byName
+    }
+
+    // ---- Public API ----
+
+    /**
      * Checks if a top-level class with the given ClassId is present in the source index.
-     * Pure index lookup — no file I/O, no class instantiation.
+     * Triggers lazy indexing for the class's package on first access.
      * Safe to call at any point, including during FIR type processing.
      */
     fun isClassInIndex(classId: ClassId): Boolean {
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString() ?: return false
-        return index[classId.packageFqName]?.containsKey(topLevelName) == true
+        return ensurePackageIndexed(classId.packageFqName).containsKey(topLevelName)
     }
 
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
@@ -136,7 +257,8 @@ class JavaClassFinderOverAstImpl(
         val topLevelName = segments.first()
         val innerNames = segments.drop(1)
 
-        val candidates = index[packageFqName]?.get(topLevelName) ?: return emptyList()
+        val byName = ensurePackageIndexed(packageFqName)
+        val candidates = byName[topLevelName] ?: return emptyList()
 
         val result = mutableListOf<JavaClass>()
         for (file in candidates) {
@@ -158,14 +280,16 @@ class JavaClassFinderOverAstImpl(
     }
 
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
-        if (!index.containsKey(fqName)) return null
+        val byName = ensurePackageIndexed(fqName)
+        if (byName.isEmpty()) return null
         // computeIfAbsent (not getOrPut) so concurrent callers share a single JavaPackageOverAst
         // instance instead of each creating their own and racing on put.
         return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
-        val byName = index[packageFqName] ?: return emptySet()
+        val byName = ensurePackageIndexed(packageFqName)
+        if (byName.isEmpty()) return emptySet()
         // Only return canonical class names (where the class name matches the file's basename).
         // Secondary classes (e.g., class B defined alongside class A in A.java) are accessible
         // when their ClassId is known directly (e.g., as return type from the same file's API)
@@ -185,23 +309,16 @@ class JavaClassFinderOverAstImpl(
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
 
-    private fun buildIndex() {
-        for (file in sourceFileReader.walkSourceRoots(sourceRoots)) {
-            // Special handling for package-info.java — extract package-level annotations
-            if (file.name == "package-info.java") {
-                indexPackageInfo(file)
-                continue
-            }
-            val entry = tryBuildFileEntry(file) ?: continue
-            val byName = index.getOrPut(entry.packageFqName) { HashMap() }
-            for (name in entry.topLevelClassNames) {
-                val list = byName.getOrPut(name) { mutableListOf() }
-                list.add(entry)
-            }
-        }
-    }
+    // ---- Package info ----
 
-    private fun indexPackageInfo(file: VirtualFile) {
+    /**
+     * Indexes package-level annotations from a `package-info.java` file.
+     *
+     * @param expectedPackage When non-null, validates that the file's declared package matches.
+     *   Used during directory-based lazy indexing to skip files with mismatched package/directory.
+     *   When null (file-type source roots in init), any package is accepted.
+     */
+    private fun indexPackageInfo(file: VirtualFile, expectedPackage: FqName? = null) {
         val source = sourceFileReader.readFileContent(file) ?: return
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
@@ -211,6 +328,9 @@ class JavaClassFinderOverAstImpl(
             tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
         } ?: return
         val packageFqName = FqName(packageName)
+
+        // Validate against expected directory-derived package if specified.
+        if (expectedPackage != null && packageFqName != expectedPackage) return
 
         val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
         val annotations = mutableListOf<JavaAnnotation>()
@@ -233,19 +353,30 @@ class JavaClassFinderOverAstImpl(
         }
 
         if (annotations.isNotEmpty()) {
-            packageAnnotationNodes.getOrPut(packageFqName) { mutableListOf() }.addAll(annotations)
+            packageAnnotationNodes.merge(packageFqName, annotations.toList()) { existing, new -> existing + new }
         }
     }
 
-    internal fun getPackageAnnotations(packageFqName: FqName): List<JavaAnnotation> =
-        packageAnnotationNodes[packageFqName] ?: emptyList()
+    internal fun getPackageAnnotations(packageFqName: FqName): List<JavaAnnotation> {
+        ensurePackageIndexed(packageFqName)
+        return packageAnnotationNodes[packageFqName] ?: emptyList()
+    }
 
-    private fun tryBuildFileEntry(file: VirtualFile): FileEntry? {
+    // ---- File entry building ----
+
+    /**
+     * Builds a [FileEntry] for the given file.
+     *
+     * @param expectedPackage When non-null, validates that the file's declared package matches.
+     *   Files with mismatched packages return null (matching javac behavior, which requires
+     *   directory structure to mirror package declarations).
+     */
+    private fun tryBuildFileEntry(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
         val fileSize = file.length
         return if (fileSize <= SMALL_FILE_SIZE_THRESHOLD) {
-            tryBuildFileEntryWithFullParse(file)
+            tryBuildFileEntryWithFullParse(file, expectedPackage)
         } else {
-            tryBuildFileEntryLightweight(file)
+            tryBuildFileEntryLightweight(file, expectedPackage)
         }
     }
 
@@ -253,7 +384,7 @@ class JavaClassFinderOverAstImpl(
      * Small-file path: parse the file fully and cache all [JavaClassOverAst] instances
      * so that subsequent [findClass] calls are pure cache hits.
      */
-    private fun tryBuildFileEntryWithFullParse(file: VirtualFile): FileEntry? {
+    private fun tryBuildFileEntryWithFullParse(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
         val source = sourceFileReader.readFileContent(file) ?: return null
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
@@ -263,6 +394,9 @@ class JavaClassFinderOverAstImpl(
             tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
         }
         val packageFqName = if (packageName != null) FqName(packageName) else FqName.ROOT
+
+        // Validate against expected directory-derived package if specified.
+        if (expectedPackage != null && packageFqName != expectedPackage) return null
 
         val classNames = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).mapNotNull { node ->
             tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() }
@@ -293,9 +427,12 @@ class JavaClassFinderOverAstImpl(
      * the file line by line without invoking the parser.
      * The full parse is deferred to [parseTopLevelClassFromFile] on first access.
      */
-    private fun tryBuildFileEntryLightweight(file: VirtualFile): FileEntry? {
+    private fun tryBuildFileEntryLightweight(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
         val info = extractFileInfoLightweight(file, sourceFileReader) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
+
+        // Validate against expected directory-derived package if specified.
+        if (expectedPackage != null && packageFqName != expectedPackage) return null
 
         // Only create an entry when the file's base name matches at least one declared class.
         // This matches PSI's behavior per KT-4455: a file like "E.java" that only declares
@@ -339,9 +476,11 @@ class JavaClassFinderOverAstImpl(
         return classCache[classId] as? JavaClassOverAst
     }
 
+    // ---- Internal API used by JavaPackageOverAst ----
 
     internal fun classesInPackage(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<JavaClass> {
-        val byName = index[fqName] ?: return emptyList()
+        val byName = ensurePackageIndexed(fqName)
+        if (byName.isEmpty()) return emptyList()
         val result = mutableListOf<JavaClass>()
         for ((simpleName, files) in byName) {
             val name = Name.identifier(simpleName)
@@ -353,27 +492,26 @@ class JavaClassFinderOverAstImpl(
         return result
     }
 
+    /**
+     * Returns the direct sub-packages of [fqName] by listing subdirectories in the source roots.
+     * Does NOT trigger per-package indexing — uses directory structure directly, which is simpler
+     * and faster than the previous approach of iterating all index keys with string prefix matching.
+     */
     internal fun subPackagesOf(fqName: FqName): Collection<FqName> {
-        if (fqName.isRoot) {
-            // immediate top-level packages present in index
-            val top = mutableSetOf<FqName>()
-            for (pkg in index.keys) {
-                val first = pkg.pathSegments().firstOrNull() ?: continue
-                top.add(FqName(first.asString()))
-            }
-            return top
-        }
-        val prefix = fqName.asString() + "."
-        val direct = mutableSetOf<FqName>()
-        for (pkg in index.keys) {
-            if (pkg.asString().startsWith(prefix) && pkg != fqName) {
-                val tail = pkg.asString().removePrefix(prefix)
-                val firstSegment = tail.substringBefore('.', missingDelimiterValue = tail)
-                if (firstSegment.isNotEmpty()) direct.add(FqName(prefix + firstSegment))
+        val dirs = if (fqName.isRoot) directoryRoots else findPackageDirectories(fqName)
+        val result = mutableSetOf<FqName>()
+        for (dir in dirs) {
+            val children = dir.children ?: continue
+            for (child in children) {
+                if (child.isDirectory) {
+                    result.add(fqName.child(Name.identifier(child.name)))
+                }
             }
         }
-        return direct
+        return result
     }
+
+    // ---- Supertype graph delegation ----
 
     /**
      * Returns the direct supertype [ClassId]s for a class.
@@ -390,9 +528,9 @@ class JavaClassFinderOverAstImpl(
         supertypeGraph.collectInheritedInnerClasses(classId)
 
     private fun findFilesForClass(classId: ClassId): List<FileEntry> {
-        val packageFqName = classId.packageFqName
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString()
             ?: return emptyList()
-        return index[packageFqName]?.get(topLevelName) ?: emptyList()
+        val byName = ensurePackageIndexed(classId.packageFqName)
+        return byName[topLevelName] ?: emptyList()
     }
 }
