@@ -62,13 +62,10 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
             expandedExpectedType.isUnit -> {
                 coerceToUnitIfNeeded(this)
             }
-            expandedValueType is ConeDynamicType -> {
-                // No fall through because `isEnhancedOrFlexibleMarkedNullable` returns true for `dynamic`.
-                if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
-                    generateImplicitCast(this, expandedExpectedType.toIrType(conversionScope.defaultConversionTypeOrigin()))
-                } else {
-                    this
-                }
+            expandedValueType is ConeDynamicType &&
+                    expandedExpectedType !is ConeDynamicType &&
+                    !expandedExpectedType.isNullableAny -> {
+                generateImplicitCast(this, expandedExpectedType.toIrType(conversionScope.defaultConversionTypeOrigin()))
             }
             // If the value has a flexible or enhanced type, it could contain null (Java nullability isn't checked).
             expandedValueType.isEnhancedOrFlexibleMarkedNullable() && !unsubstitutedExpectedType.fullyExpandedType().acceptsNullValues() &&

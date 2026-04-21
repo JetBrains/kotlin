@@ -20,8 +20,40 @@ FILE fqName:<root> fileName:/typeParameterWithMultipleNullableBounds.kt
                   GET_VAR 'val tmp_0: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
                 ARG other: TYPE_OP type={T of <root>.f & Any} origin=IMPLICIT_CAST typeOperand={T of <root>.f & Any}
                   GET_VAR 'x: T of <root>.f declared in <root>.f' type=T of <root>.f origin=null
+  FUN name:f2 visibility:public modality:FINAL returnType:kotlin.Int?
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence?; kotlin.Comparable<T of <root>.f2>?] reified:false
+    VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Array<out T of <root>.f2> varargElementType:T of <root>.f2 [vararg]
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun f2 <T> (vararg x: T of <root>.f2): kotlin.Int? declared in <root>'
+        BLOCK type=kotlin.Int? origin=SAFE_CALL
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:T of <root>.f2 [val]
+            CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of <root>.f2 origin=GET_ARRAY_ELEMENT
+              ARG <this>: GET_VAR 'x: kotlin.Array<out T of <root>.f2> declared in <root>.f2' type=kotlin.Array<out T of <root>.f2> origin=null
+              ARG index: CONST Int type=kotlin.Int value=0
+          WHEN type=kotlin.Int? origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                ARG arg0: GET_VAR 'val tmp_1: T of <root>.f2 declared in <root>.f2' type=T of <root>.f2 origin=null
+                ARG arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Null type=kotlin.Nothing? value=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public abstract fun compareTo (other: T of kotlin.Comparable): kotlin.Int declared in kotlin.Comparable' type=kotlin.Int origin=null
+                ARG <this>: TYPE_OP type={T of <root>.f2 & Any} origin=IMPLICIT_CAST typeOperand={T of <root>.f2 & Any}
+                  GET_VAR 'val tmp_1: T of <root>.f2 declared in <root>.f2' type=T of <root>.f2 origin=null
+                ARG other: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=T of <root>.f2 origin=GET_ARRAY_ELEMENT
+                  ARG <this>: GET_VAR 'x: kotlin.Array<out T of <root>.f2> declared in <root>.f2' type=kotlin.Array<out T of <root>.f2> origin=null
+                  ARG index: CONST Int type=kotlin.Int value=0
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
+          TYPE_ARG T: @[FlexibleNullability] kotlin.String?
+          ARG x: CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
+          TYPE_ARG T: @[FlexibleNullability] kotlin.String?
+          ARG x: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static] declared in <root>.J' type=@[FlexibleNullability] kotlin.String? superQualifierSymbol=<root>.J origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun f <T> (x: T of <root>.f): kotlin.Int? declared in <root>' type=kotlin.Int? origin=null
           TYPE_ARG T: @[FlexibleNullability] kotlin.String?
