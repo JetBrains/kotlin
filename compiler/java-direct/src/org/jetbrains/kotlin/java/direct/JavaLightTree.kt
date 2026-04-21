@@ -12,6 +12,7 @@ import com.intellij.platform.syntax.lexer.TokenList
 import com.intellij.platform.syntax.parser.ProductionMarkerList
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.prepareProduction
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Identifier for a node within a [JavaLightTree], encoded as a single [Int].
@@ -147,23 +148,45 @@ class JavaLightTree(
         }
     }
 
+    // ---- Children cache ----
+    // The tree is immutable so caching is safe. Only composite nodes that are actually queried
+    // enter the cache. Concurrent FIR resolution may access the same tree from multiple threads.
+    private val childrenCache = ConcurrentHashMap<Int, List<JavaLightNode>>()
+
     /**
      * Returns the immediate children of [node] in source order.
      *
-     * For tokens, returns an empty list (tokens are leaves). For composites, walks the marker
-     * list between the START marker and its matching DONE marker, collecting:
-     *  - Direct child START markers (whose parent is [node]) — recorded as composite child nodes,
-     *    skipping their interior markers via [doneForStart].
-     *  - Direct child ERROR markers (whose parent is [node]).
-     *  - Tokens in the gaps between child markers (empty tokens such as DANGLING_NEWLINE and
-     *    whitespace with `start == end` are skipped).
-     *
-     * For the synthetic root, walks all top-level markers and the surrounding tokens.
+     * Results are cached per node — repeated calls return the same [List] instance.
+     * For tokens, returns an empty list (tokens are leaves).
      */
     fun getChildren(node: JavaLightNode): List<JavaLightNode> {
         if (!isComposite(node)) return emptyList()
-        // Error markers have no done-pair — they are treated as leaves with no children.
         if (isErrorMarker(node)) return emptyList()
+        return childrenCache.computeIfAbsent(node.index) { computeChildrenImpl(node) }
+    }
+
+    private fun computeChildrenImpl(node: JavaLightNode): List<JavaLightNode> {
+        val result = ArrayList<JavaLightNode>(8)
+        forEachDirectChild(node) { child ->
+            result.add(child)
+            false // continue — collect all children
+        }
+        return result
+    }
+
+    /**
+     * Core iteration primitive: walks direct children of [node] in source order, invoking
+     * [action] for each. If [action] returns `true`, iteration stops immediately (early return).
+     *
+     * Both [computeChildrenImpl] (builds list) and direct-scan methods ([findChildByType],
+     * [getChildrenByType]) use this to avoid duplicating the marker-walking logic.
+     *
+     * `inline` so the lambda is eliminated at every call site.
+     */
+    private inline fun forEachDirectChild(
+        node: JavaLightNode,
+        action: (JavaLightNode) -> Boolean,
+    ) {
         val firstTokenIndex: Int
         val lastTokenIndex: Int
         val startIdx: Int
@@ -180,21 +203,19 @@ class JavaLightTree(
             lastTokenIndex = productionMarkers.getMarker(doneIdx).getEndTokenIndex()
         }
 
-        val result = ArrayList<JavaLightNode>(8)
-
         var prevTokenIndex = firstTokenIndex
         var i = startIdx + 1
         while (i < doneIdx) {
             val marker = productionMarkers.getMarker(i)
             val isDone = productionMarkers.isDoneMarker(i)
             if (marker.isErrorMarker()) {
-                appendTokensRange(result, prevTokenIndex, marker.getStartTokenIndex())
-                result.add(JavaLightNode(i))
+                if (scanTokensFor(prevTokenIndex, marker.getStartTokenIndex(), action)) return
+                if (action(JavaLightNode(i))) return
                 prevTokenIndex = marker.getStartTokenIndex()
                 i++
             } else if (!isDone) {
-                appendTokensRange(result, prevTokenIndex, marker.getStartTokenIndex())
-                result.add(JavaLightNode(i))
+                if (scanTokensFor(prevTokenIndex, marker.getStartTokenIndex(), action)) return
+                if (action(JavaLightNode(i))) return
                 val childDone = doneForStart[i]
                 prevTokenIndex = productionMarkers.getMarker(childDone).getEndTokenIndex()
                 i = childDone + 1
@@ -203,52 +224,84 @@ class JavaLightTree(
                 i++
             }
         }
-        appendTokensRange(result, prevTokenIndex, lastTokenIndex)
-        return result
+        scanTokensFor(prevTokenIndex, lastTokenIndex, action)
     }
 
-    private fun appendTokensRange(out: MutableList<JavaLightNode>, fromInclusive: Int, toExclusive: Int) {
+    /** Walks tokens in [fromInclusive, toExclusive), invoking [action] for each non-empty token. */
+    private inline fun scanTokensFor(
+        fromInclusive: Int, toExclusive: Int,
+        action: (JavaLightNode) -> Boolean,
+    ): Boolean {
         for (t in fromInclusive until toExclusive) {
             tokens.getTokenType(t) ?: continue
             val s = tokens.getTokenStart(t)
             val e = tokens.getTokenEnd(t)
             if (s == e) continue
-            out.add(JavaLightNode(-(t + 1)))
+            if (action(JavaLightNode(-(t + 1)))) return true
         }
+        return false
     }
 
     fun findChildByType(node: JavaLightNode, type: SyntaxElementType): JavaLightNode? {
         if (!isComposite(node)) return null
-        for (child in getChildren(node)) {
-            if (getType(child) == type) return child
+        if (isErrorMarker(node)) return null
+        // Fast path: if children are already cached, scan the cached list.
+        childrenCache[node.index]?.let { cached ->
+            return cached.firstOrNull { getType(it) == type }
         }
-        return null
+        // Slow path: walk markers directly, return on first match — no list allocation.
+        var result: JavaLightNode? = null
+        forEachDirectChild(node) { child ->
+            if (getType(child) == type) {
+                result = child
+                true  // found — stop iteration
+            } else false
+        }
+        return result
     }
 
     fun findChildByType(node: JavaLightNode, typeName: String): JavaLightNode? {
         if (!isComposite(node)) return null
-        for (child in getChildren(node)) {
-            if (getType(child).toString() == typeName) return child
+        if (isErrorMarker(node)) return null
+        childrenCache[node.index]?.let { cached ->
+            return cached.firstOrNull { getType(it).toString() == typeName }
         }
-        return null
+        var result: JavaLightNode? = null
+        forEachDirectChild(node) { child ->
+            if (getType(child).toString() == typeName) {
+                result = child
+                true
+            } else false
+        }
+        return result
     }
 
     fun getChildrenByType(node: JavaLightNode, type: SyntaxElementType): List<JavaLightNode> {
         if (!isComposite(node)) return emptyList()
-        val all = getChildren(node)
+        if (isErrorMarker(node)) return emptyList()
+        // Fast path: filter the cached children list.
+        childrenCache[node.index]?.let { cached ->
+            return cached.filter { getType(it) == type }
+        }
+        // Slow path: walk markers directly, collect only matching children.
         val result = ArrayList<JavaLightNode>(4)
-        for (child in all) {
+        forEachDirectChild(node) { child ->
             if (getType(child) == type) result.add(child)
+            false // continue — collect all matches
         }
         return result
     }
 
     fun getChildrenByType(node: JavaLightNode, typeName: String): List<JavaLightNode> {
         if (!isComposite(node)) return emptyList()
-        val all = getChildren(node)
+        if (isErrorMarker(node)) return emptyList()
+        childrenCache[node.index]?.let { cached ->
+            return cached.filter { getType(it).toString() == typeName }
+        }
         val result = ArrayList<JavaLightNode>(4)
-        for (child in all) {
+        forEachDirectChild(node) { child ->
             if (getType(child).toString() == typeName) result.add(child)
+            false
         }
         return result
     }

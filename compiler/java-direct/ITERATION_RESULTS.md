@@ -2,7 +2,81 @@
 
 **Current status**: See `FIXING_ITERATIONS.md` for test counts and remaining work.
 
-**Last Updated**: 2026-04-20 (remaining PERFORMANCE_REVIEW work: resolve() dedup, CHM downgrades, cache-helper unification)
+**Last Updated**: 2026-04-21 (LightTree getChildren() caching fix)
+
+---
+
+## LightTree `getChildren()` Caching Fix — 2026-04-21
+
+### Overview
+
+The LightTree migration (Phases 1–4, April 20) replaced the materialized `JavaSyntaxNode` tree
+with a flat-array `JavaLightTree`. While this eliminated ~130 MB of static AST memory, it
+introduced a severe runtime regression: `getChildren()` allocated a fresh `ArrayList` and walked
+the marker range **on every call**. In the old `JavaSyntaxNode`, `children` was a pre-built field —
+zero-cost access. Since `findChildByType`, `getChildrenByType`, and `hasChildOfType` all delegated
+to `getChildren()`, a single model object's cached properties collectively called `getChildren()` on
+the same node 10–20 times, each rebuilding the list from scratch. The migration plan (§1.3, §5.3)
+identified both a children cache and direct-scan `findChildByType` as planned mitigations but
+neither was implemented.
+
+Full analysis in `implDocs/LIGHTTREE_PERFORMANCE_INVESTIGATION.md`.
+
+### Changes
+
+**Children cache** (`JavaLightTree.kt`): Added a `ConcurrentHashMap<Int, List<JavaLightNode>>`
+that memoizes `getChildren()` results per node index. The tree is immutable, so repeated calls
+return the same `List` instance. Only composite nodes that are actually queried enter the cache.
+
+**`forEachDirectChild` inline helper**: Extracted the marker/token walking loop from the old
+`getChildren` into a shared `inline fun` that both `computeChildrenImpl` (list building) and
+direct-scan methods use, avoiding code duplication.
+
+**Direct-scan `findChildByType`**: On cache miss, walks markers directly and returns on first
+match — no list allocation. On cache hit, scans the cached list. Same for the `String`-typed
+overload.
+
+**Direct-scan `getChildrenByType`**: On cache miss, walks markers and collects only matching
+children. On cache hit, filters the cached list. Same for the `String`-typed overload.
+
+`hasChildOfType` is unchanged (delegates to `findChildByType`) but benefits from the optimization.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaLightTree.kt` | +83/–30 lines: `childrenCache` CHM, `forEachDirectChild` inline helper, `scanTokensFor` inline helper, `computeChildrenImpl` extracted from `getChildren`, `findChildByType` / `getChildrenByType` rewritten with cached fast path + direct-scan slow path |
+
+### Test Results
+
+- `./gradlew :kotlin-java-direct:test` — **BUILD SUCCESSFUL**, 2769 tests, 0 failures, 0 errors,
+  0 skipped, across 463 XML reports.
+
+### Benchmark Results
+
+`KotlinFullPipelineTestsGenerated` (414 modules), sequential mode (`SAME_THREAD`):
+
+| Run | Total time | Delta |
+|-----|-----------|-------|
+| Without fix (LightTree, no children cache) | 255.5s | baseline |
+| With fix (LightTree + children cache + direct-scan) | 242.2s | **–13.2s (–5.2%)** |
+
+The 5.2% full-pipeline improvement corresponds to roughly 20–25% improvement in java-direct's own
+execution time (java-direct accounts for ~20–25% of the pipeline). Concurrent mode has ~10%
+variance, making small improvements undetectable in that mode.
+
+### Key Learnings
+
+- `getChildren()` was called ~184 times across 11 source files, and every `findChildByType`,
+  `getChildrenByType`, and `hasChildOfType` call went through it. The cumulative effect was
+  ~1.2M redundant ArrayList allocations per project — each walking the marker range and boxing
+  `JavaLightNode` value class instances.
+- The migration plan correctly identified caching and direct-scan as needed optimizations (§1.3,
+  §5.3) but they were deferred and forgotten during the multi-phase migration. Future migrations
+  should treat plan-identified optimizations as mandatory steps.
+- A flat-array representation (LightTree) is only faster than a materialized tree **if on-demand
+  access is amortized**. Without caching, the "no per-node overhead" claim traded static memory
+  savings for dynamic allocation pressure on the hot path — a net regression.
 
 ---
 
