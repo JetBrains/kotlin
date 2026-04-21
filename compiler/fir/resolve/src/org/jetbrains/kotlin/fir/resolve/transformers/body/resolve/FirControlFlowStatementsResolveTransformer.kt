@@ -204,7 +204,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     ): FirStatement {
         return throwExpression.apply {
             transformAnnotations(transformer, data)
-            transformException(transformer, withExpectedType(session.builtinTypes.throwableType))
+            transformException(transformer, ResolutionMode.ContextIndependent)
             dataFlowAnalyzer.exitThrowExceptionNode(this)
         }
     }
