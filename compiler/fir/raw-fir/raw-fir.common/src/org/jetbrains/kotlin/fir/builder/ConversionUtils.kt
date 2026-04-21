@@ -443,6 +443,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             isGetter = true
             status = FirDeclarationStatusImpl(getterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = getterStatus?.isInline ?: isInline
+                isStatic = getterStatus?.isStatic == true
             }
             symbol = FirPropertyAccessorSymbol()
             body = lazyBodyForGeneratedAccessors ?: FirSingleExpressionBlock(
@@ -485,6 +486,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             isGetter = false
             status = FirDeclarationStatusImpl(setterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = setterStatus?.isInline ?: isInline
+                isStatic = setterStatus?.isStatic == true
             }
             symbol = FirPropertyAccessorSymbol()
             val parameter = buildValueParameter {

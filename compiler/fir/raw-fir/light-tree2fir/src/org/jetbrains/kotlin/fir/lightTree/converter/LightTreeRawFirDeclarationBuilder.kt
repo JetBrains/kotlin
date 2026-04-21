@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class LightTreeRawFirDeclarationBuilder(
@@ -1543,12 +1544,14 @@ class LightTreeRawFirDeclarationBuilder(
 
                         val propertyVisibility = calculatedModifiers.getVisibility()
 
+                        val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+
                         fun defaultAccessorStatus() =
                             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
                             FirDeclarationStatusImpl(propertyVisibility, null).apply {
                                 isInline = calculatedModifiers.hasInline()
                                 isExternal = calculatedModifiers.hasExternal()
-                                isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+                                this.isStatic = isStatic
                             }
 
                         val convertedAccessors = accessors.map {
@@ -1596,15 +1599,15 @@ class LightTreeRawFirDeclarationBuilder(
                             isConst = calculatedModifiers.isConst()
                             isLateInit = calculatedModifiers.hasLateinit()
                             isExternal = calculatedModifiers.hasExternal()
-                            isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
+                            this.isStatic = isStatic
                         }
 
                         generateAccessorsByDelegate(
                             delegateBuilder,
                             baseModuleData,
-                            classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+                            runUnless(isStatic) { classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol },
                             context,
-                            isExtension = receiverTypeNode != null,
+                            isExtension = receiverTypeNode != null && !isStatic,
                             explicitDeclarationSource = propertySource,
                         )
                     }

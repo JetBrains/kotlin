@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -2699,6 +2700,7 @@ open class PsiRawFirBuilder(
                                 isCompanionBlockMember,
                             )
 
+                            val isStatic = hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
                             status = FirDeclarationStatusImpl(getVisibility(), modality).apply {
                                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                                 isActual = hasActualModifier()
@@ -2706,7 +2708,7 @@ open class PsiRawFirBuilder(
                                 isConst = hasModifier(CONST_KEYWORD)
                                 isLateInit = hasModifier(LATEINIT_KEYWORD)
                                 isExternal = hasModifier(EXTERNAL_KEYWORD)
-                                isStatic = hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
+                                this.isStatic = isStatic
                             }
 
                             if (hasDelegate()) {
@@ -2741,9 +2743,9 @@ open class PsiRawFirBuilder(
                                 generateAccessorsByDelegate(
                                     delegateBuilder,
                                     baseModuleData,
-                                    ownerRegularOrAnonymousObjectSymbol,
+                                    runUnless(isStatic) { ownerRegularOrAnonymousObjectSymbol },
                                     context,
-                                    isExtension = receiverTypeReference != null,
+                                    isExtension = receiverTypeReference != null && !isStatic,
                                     lazyDelegateExpression = lazyDelegateExpression,
                                     lazyBodyForGeneratedAccessors = lazyBody,
                                     bindFunction = ::bindFunctionTarget,
