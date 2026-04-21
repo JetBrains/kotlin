@@ -8,25 +8,27 @@ package org.jetbrains.kotlin.abi.tools.impl
 import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.abi.tools.impl.klib.DeclarationType
 import org.jetbrains.kotlin.abi.tools.impl.klib.KlibAbiDumpMerger
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.UUID
 import kotlin.random.Random
-import kotlin.test.*
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 class KlibAbiMergingTest {
-    @JvmField
-    @Rule
-    val tempDir = TemporaryFolder()
+    @TempDir
+    lateinit var tempDir: Path
 
     private fun file(name: String): File {
         val res = KlibAbiMergingTest::class.java.getResourceAsStream(name)
             ?: throw IllegalStateException("Resource not found: $name")
-        val tempFile = File(tempDir.root, UUID.randomUUID().toString())
+        val tempFile = File(tempDir.toFile(), UUID.randomUUID().toString())
         Files.copy(res, tempFile.toPath())
         return tempFile
     }
@@ -38,7 +40,7 @@ class KlibAbiMergingTest {
     }
 
     private fun dumpToFile(klib: KlibAbiDumpMerger): File {
-        val file = tempDir.newFile()
+        val file = Files.createTempFile(tempDir, "klib", ".abi").toFile()
         FileWriter(file).use {
             klib.dump(it)
         }

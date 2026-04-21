@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.KlibDump
 import org.jetbrains.kotlin.abi.tools.KlibTarget
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.FileNotFoundException
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
+import kotlin.io.path.createFile
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -176,9 +178,8 @@ private val mergedMultitargetDumpFiltered = """
 
 // Note that some cases are already covered in KlibDumpSamples.kt and not duplicated here
 class KlibDumpTest {
-    @JvmField
-    @Rule
-    var tmpFolder = TemporaryFolder()
+    @TempDir
+    lateinit var tempDir: Path
 
     @Test
     fun emptyDump() {
@@ -188,42 +189,42 @@ class KlibDumpTest {
         assertEquals("", dump)
 
         assertFailsWith<IllegalArgumentException> {
-            AbiToolsImpl.loadKlibDump(tmpFolder.newFile())
+            AbiToolsImpl.loadKlibDump(tempDir.resolve("empty.dump").createFile().toFile())
         }
     }
 
     @Test
     fun loadFromNonExistingFile() {
         assertFailsWith<FileNotFoundException> {
-            AbiToolsImpl.loadKlibDump(tmpFolder.root.resolve(UUID.randomUUID().toString()))
+            AbiToolsImpl.loadKlibDump(tempDir.resolve(UUID.randomUUID().toString()).toFile())
         }
         assertFailsWith<FileNotFoundException> {
-            AbiToolsImpl.createKlibDump().merge(tmpFolder.root.resolve(UUID.randomUUID().toString()))
+            AbiToolsImpl.createKlibDump().merge(tempDir.resolve(UUID.randomUUID().toString()).toFile())
         }
         assertFailsWith<FileNotFoundException> {
-            AbiToolsImpl.loadKlibDump(tmpFolder.root.resolve(UUID.randomUUID().toString()))
+            AbiToolsImpl.loadKlibDump(tempDir.resolve(UUID.randomUUID().toString()).toFile())
         }
         assertFailsWith<FileNotFoundException> {
-            AbiToolsImpl.createKlibDump().mergeFromKlib(tmpFolder.root.resolve(UUID.randomUUID().toString()))
+            AbiToolsImpl.createKlibDump().mergeFromKlib(tempDir.resolve(UUID.randomUUID().toString()).toFile())
         }
     }
 
     @Test
     fun loadKlibFromNonKlib() {
-        assertFailsWith<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tmpFolder.root) }
-        assertFailsWith<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tmpFolder.newFile()) }
+        assertFailsWith<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tempDir.toFile()) }
+        assertFailsWith<IllegalArgumentException> { AbiToolsImpl.loadKlibDump(tempDir.resolve("empty").createFile().toFile()) }
 
-        assertFailsWith<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tmpFolder.root) } }
-        assertFailsWith<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tmpFolder.newFile()) } }
+        assertFailsWith<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tempDir.toFile()) } }
+        assertFailsWith<IllegalStateException> { AbiToolsImpl.createKlibDump().also { it.mergeFromKlib(tempDir.resolve("empty2").createFile().toFile()) } }
     }
 
     @Test
     fun loadFromDirectory() {
         assertFailsWith<IllegalArgumentException> {
-            AbiToolsImpl.loadKlibDump(tmpFolder.root)
+            AbiToolsImpl.loadKlibDump(tempDir.toFile())
         }
         assertFailsWith<IllegalArgumentException> {
-            AbiToolsImpl.createKlibDump().merge(tmpFolder.root)
+            AbiToolsImpl.createKlibDump().merge(tempDir.toFile())
         }
     }
 
@@ -635,7 +636,7 @@ class KlibDumpTest {
     @Test
     fun saveToFile() {
         val dump = AbiToolsImpl.loadKlibDump(mergedMultitargetDump)
-        val tempFile = tmpFolder.newFile()
+        val tempFile = Files.createTempFile(tempDir, "dump", ".abi").toFile()
         dump.print(tempFile)
 
         assertEquals(

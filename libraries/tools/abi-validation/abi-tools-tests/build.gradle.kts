@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 // source set for test cases
@@ -37,7 +38,7 @@ configurations.getByName("testEmbeddableImplementation").extendsFrom(configurati
 dependencies {
     // common dependencies for all tests
     testImplementation(kotlinStdlib())
-    testImplementation(kotlinTest("junit"))
+    testImplementation(kotlinTest("junit5"))
 
     "compilingImplementation"(kotlinStdlib())
 
@@ -57,24 +58,24 @@ tasks.test {
 }
 
 projectTests {
-    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
+    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit5) {
         group = "verification"
         testClassesDirs = testOriginalSourceSet.output.classesDirs
         classpath = testOriginalSourceSet.runtimeClasspath
 
-        useJUnit()
+        useJUnitPlatform()
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
 
         dependsOn(compilingSourceSet.output)
     }
 
-    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
+    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit5) {
         group = "verification"
         testClassesDirs = testEmbeddableSourceSet.output.classesDirs
         classpath = testEmbeddableSourceSet.runtimeClasspath
 
-        useJUnit()
+        useJUnitPlatform()
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
 
@@ -85,4 +86,13 @@ projectTests {
 tasks.check {
     dependsOn("testOriginal")
     dependsOn("testEmbeddable")
+}
+
+tasks.withType<Test>().configureEach {
+    extensions.configure<TestInputsCheckExtension> {
+        with(extraPermissions) {
+            add("permission java.io.FilePermission \"src/compiling/kotlin/cases/-\", \"read\";")
+            add("permission java.io.FilePermission \"src/sharedTests/resources/precompiled/-\", \"read\";")
+        }
+    }
 }

@@ -6,76 +6,63 @@
 package org.jetbrains.kotlin.abi.tools.tests
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
-import org.junit.*
-import org.junit.rules.TestName
+import org.junit.jupiter.api.*
 import java.io.File
 import kotlin.io.walk
+import kotlin.test.Test
 import kotlin.test.fail
 
 class CasesPublicAPITest {
 
-    companion object {
-        val baseClassPaths: List<File> =
-            System.getProperty("testCasesClassesDirs")
-                .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property" } }
-                .split(File.pathSeparator)
-                .map { File(it, "cases").canonicalFile }
-        val baseOutputPath = File("src/compiling/kotlin/cases")
-    }
-
-    @Rule
-    @JvmField
-    val testName = TestName()
-
     @Test
-    fun annotations() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun annotations(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun syntheticConstructors() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun syntheticConstructors(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun companions() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
+    fun companions(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
     }
 
     @Test
-    fun default() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.default.PrivateApi"))
+    fun default(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo, excludedAnnotatedWith = setOf("cases.default.PrivateApi"))
     }
 
     @Test
-    fun inline() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun inline(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun interfaces() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun interfaces(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun internal() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun internal(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun java() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun java(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun localClasses() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun localClasses(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun marker() {
+    fun marker(testInfo: TestInfo) {
         snapshotAPIAndCompare(
-            testName.methodName,
+            testInfo,
             excludedAnnotatedWith = setOf(
                 "cases.marker.HiddenField",
                 "cases.marker.HiddenProperty",
@@ -85,108 +72,119 @@ class CasesPublicAPITest {
     }
 
     @Test
-    fun nestedClasses() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun nestedClasses(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun packageAnnotations() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.packageAnnotations.PrivateApi"))
+    fun packageAnnotations(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo, excludedAnnotatedWith = setOf("cases.packageAnnotations.PrivateApi"))
     }
 
     @Test
-    fun private() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun private(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun protected() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun protected(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun public() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun public(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun special() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun special(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun suspend() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun suspend(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun whenMappings() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun whenMappings(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun enums() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun enums(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun repeatable() {
-        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
+    fun repeatable(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
     }
 
     @Test
-    fun included() {
-        snapshotAPIAndCompare(testName.methodName, includedClasses = setOf("cases.included.subpackage.*"))
+    fun included(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo, includedClasses = setOf("cases.included.subpackage.*"))
     }
 
     @Test
-    fun root() {
-        snapshotAPIAndCompareRoot(testName.methodName, excludedClasses = setOf("RootClass1", "*Tests"), includedClasses = setOf("*"))
+    fun root(testInfo: TestInfo) {
+        snapshotAPIAndCompareRoot(testInfo, excludedClasses = setOf("RootClass1", "*Tests"), includedClasses = setOf("*"))
     }
 
     @Test
-    fun file() {
-        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.file.FileFacade1Kt"))
+    fun file(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo, excludedClasses = setOf("cases.file.FileFacade1Kt"))
     }
 
     @Test
-    fun jvmOverloads() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun jvmOverloads(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     @Test
-    fun consts() {
-        snapshotAPIAndCompare(testName.methodName)
+    fun consts(testInfo: TestInfo) {
+        snapshotAPIAndCompare(testInfo)
     }
 
     private fun snapshotAPIAndCompareRoot(
-        testClassRelativePath: String,
+        testInfo: TestInfo,
         includedClasses: Set<String> = emptySet(),
         excludedClasses: Set<String> = emptySet(),
         includedAnnotatedWith: Set<String> = emptySet(),
         excludedAnnotatedWith: Set<String> = emptySet(),
     ) {
+        val methodName = testInfo.testMethod.get().name
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
         val testClassPaths = baseClassPaths.map { it.resolve("..") }
-        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
+        val target = baseOutputPath.resolve(methodName).resolve("$methodName.txt")
 
         doCheck(testClassPaths, target, filters)
     }
 
     private fun snapshotAPIAndCompare(
-        testClassRelativePath: String,
+        testInfo: TestInfo,
         includedClasses: Set<String> = emptySet(),
         excludedClasses: Set<String> = emptySet(),
         includedAnnotatedWith: Set<String> = emptySet(),
         excludedAnnotatedWith: Set<String> = emptySet(),
     ) {
+        val methodName = testInfo.testMethod.get().name
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
-        val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
-        val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
+        val testClassPaths = baseClassPaths.map { it.resolve(methodName) }
+        val target = baseOutputPath.resolve(methodName).resolve("$methodName.txt")
 
         doCheck(testClassPaths, target, filters)
+    }
+
+    companion object {
+        val baseClassPaths: List<File> =
+            System.getProperty("testCasesClassesDirs")
+                .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property" } }
+                .split(File.pathSeparator)
+                .map { File(it, "cases").canonicalFile }
+        val baseOutputPath = File("src/compiling/kotlin/cases")
     }
 }
 

@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.abi.tools
 
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+
 
 class KlibTargetNameTest {
     @Test
@@ -17,11 +18,11 @@ class KlibTargetNameTest {
         assertEquals("a", KlibTarget("a").toString())
         assertEquals("a", KlibTarget("a", "a").toString())
 
-        assertFailsWith<IllegalArgumentException> { KlibTarget.parse("") }
-        assertFailsWith<IllegalArgumentException> { KlibTarget.parse(" ") }
-        assertFailsWith<IllegalArgumentException> { KlibTarget.parse("a.b.c") }
-        assertFailsWith<IllegalArgumentException> { KlibTarget.parse("a.") }
-        assertFailsWith<IllegalArgumentException> { KlibTarget.parse(".a") }
+        assertThrows<IllegalArgumentException> { KlibTarget.parse("") }
+        assertThrows<IllegalArgumentException> { KlibTarget.parse(" ") }
+        assertThrows<IllegalArgumentException> { KlibTarget.parse("a.b.c") }
+        assertThrows<IllegalArgumentException> { KlibTarget.parse("a.") }
+        assertThrows<IllegalArgumentException> { KlibTarget.parse(".a") }
 
         KlibTarget.parse("a.b").also {
             assertEquals("b", it.configurableName)
@@ -41,10 +42,10 @@ class KlibTargetNameTest {
 
     @Test
     fun validate() {
-        assertFailsWith<IllegalArgumentException> {
+        assertThrows<IllegalArgumentException> {
             KlibTarget("a.b", "c")
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertThrows<IllegalArgumentException> {
             KlibTarget("a", "b.c")
         }
     }

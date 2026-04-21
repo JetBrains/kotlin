@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -12,10 +13,7 @@ publish()
 standardPublicJars()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        useJUnit()
-        jvmArgs("-ea")
-    }
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 dependencies {
@@ -30,9 +28,8 @@ dependencies {
 
     implementation(libs.diff.utils)
 
-    testImplementation(kotlinTest("junit"))
-    testImplementation(libs.junit4)
     testImplementation(kotlinStdlib())
+    testImplementation(kotlinTest("junit5"))
     testImplementation(libs.intellij.asm)
     // using `KonanTarget` class
     testImplementation(project(":native:kotlin-native-utils"))

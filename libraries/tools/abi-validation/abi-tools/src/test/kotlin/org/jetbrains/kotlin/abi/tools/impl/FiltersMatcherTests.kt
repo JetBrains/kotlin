@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.abi.tools.impl
 
 import org.jetbrains.kotlin.abi.tools.AbiFilters
 import org.jetbrains.kotlin.abi.tools.impl.filtering.compileMatcher
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -287,26 +284,4 @@ class FiltersMatcherTests {
             return "{includedClasses=$includedClasses, excludedClasses=$excludedClasses, includedAnnotatedWith=$includedAnnotatedWith, excludedAnnotatedWith=$excludedAnnotatedWith}"
         }
     }
-
-
-    @JvmField
-    @Rule
-    val tempDir = TemporaryFolder()
-
-    @Test
-    fun test() {
-        val output = tmpFile()
-//        val classes = root.resolve("simple").walk().filter { it.isFile && it.name.endsWith(".class") }.toList()
-//
-//
-//        AbiTools.jvm.dumpTo(output, listOf(JvmAbiSuit("jvm", classes)), AbiFilters.EMPTY)
-//
-//        println(output.readText())
-    }
-
-    fun tmpFile(): File {
-        return tempDir.newFile()
-    }
-
-    private val root = File("src/test/resources/compiled")
 }

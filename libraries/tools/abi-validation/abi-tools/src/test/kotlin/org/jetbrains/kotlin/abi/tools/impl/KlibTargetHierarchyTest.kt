@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.abi.tools.impl
 import org.jetbrains.kotlin.abi.tools.KlibTarget
 import org.jetbrains.kotlin.abi.tools.impl.klib.TargetHierarchy
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 class KlibTargetHierarchyTest {
     @Test
