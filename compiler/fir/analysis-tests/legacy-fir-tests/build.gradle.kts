@@ -38,8 +38,8 @@ sourceSets {
 
 projectTests {
     testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
-        workingDir = rootDir
         dependsOn(":dist")
+        inputs.files(rootDir.resolve("libraries/stdlib")).withPathSensitivity(PathSensitivity.RELATIVE)
     }
 
     testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt", generateTestsInBuildDirectory = true)
