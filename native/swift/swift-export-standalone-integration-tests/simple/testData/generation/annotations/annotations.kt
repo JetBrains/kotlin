@@ -390,6 +390,14 @@ fun acceptPublicClassImplHiddenInterface(arg: PublicClassImplHiddenInterface): U
 
 class HiddenInterfaceWrapper(val hiddenInterface: HiddenInterface)
 
+interface SomeInterface {
+    fun fooA(): obsoletedT
+    fun fooB(): String
+    var barA: obsoletedT
+    var String.barB: obsoletedT
+    var barC: String
+}
+
 // FILE: annotations_replacewith.kt
 
 const val MESSAGE = "message"

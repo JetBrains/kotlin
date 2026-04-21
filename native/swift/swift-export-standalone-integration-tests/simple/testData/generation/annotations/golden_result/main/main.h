@@ -67,6 +67,12 @@ _Bool PublicDeprecatedClassImplDeprecatedInterface_foo(void * self);
 
 _Bool PublicSubClassImplHiddenInterface_foo(void * self);
 
+NSString * SomeInterface_barC_get(void * self);
+
+_Bool SomeInterface_barC_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
+NSString * SomeInterface_fooB(void * self);
+
 _Bool SubDeprecatedInterface_baz(void * self);
 
 _Bool WithCompanion_Companion_companionMethod(void * self);

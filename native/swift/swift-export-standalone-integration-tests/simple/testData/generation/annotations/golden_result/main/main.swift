@@ -22,6 +22,13 @@ public protocol InterfaceWithDeprecatedMembers: KotlinRuntime.KotlinBase {
 public protocol NonDeprecatedInterface: KotlinRuntime.KotlinBase {
     func bar() -> Swift.Void
 }
+public protocol SomeInterface: KotlinRuntime.KotlinBase {
+    var barC: Swift.String {
+        get
+        set
+    }
+    func fooB() -> Swift.String
+}
 @available(*, unavailable, message: "Obsoleted")
 public protocol SubDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface {
     func baz() -> Swift.Void
@@ -42,6 +49,9 @@ package protocol _InterfaceWithDeprecatedMembers {
 }
 @objc(_NonDeprecatedInterface)
 package protocol _NonDeprecatedInterface: main._DeprecatedInterface {
+}
+@objc(_SomeInterface)
+package protocol _SomeInterface {
 }
 @objc(_SubDeprecatedInterface)
 package protocol _SubDeprecatedInterface: main._DeprecatedInterface {
@@ -1278,6 +1288,21 @@ extension main.NonDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinB
 }
 extension main.NonDeprecatedInterface {
 }
+extension main.SomeInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public var barC: Swift.String {
+        get {
+            return SomeInterface_barC_get(self.__externalRCRef())
+        }
+        set {
+            return { SomeInterface_barC_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+    public func fooB() -> Swift.String {
+        return SomeInterface_fooB(self.__externalRCRef())
+    }
+}
+extension main.SomeInterface {
+}
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
 extension main.SubDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func baz() -> Swift.Void {
@@ -1310,6 +1335,8 @@ extension KotlinRuntimeSupport._KotlinExistential: main.NonDeprecatedInterface w
 }
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
 extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface where Wrapped : main._SubDeprecatedInterface {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.SomeInterface where Wrapped : main._SomeInterface {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }

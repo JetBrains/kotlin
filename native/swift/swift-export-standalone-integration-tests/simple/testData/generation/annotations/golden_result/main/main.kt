@@ -22,6 +22,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(DeprecatedInterface::class, "_DeprecatedInterface")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InterfaceWithDeprecatedMembers::class, "_InterfaceWithDeprecatedMembers")
 @file:kotlin.native.internal.objc.BindClassToObjCName(NonDeprecatedInterface::class, "_NonDeprecatedInterface")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SomeInterface::class, "_SomeInterface")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SubDeprecatedInterface::class, "_SubDeprecatedInterface")
 @file:kotlin.native.internal.objc.BindClassToObjCName(KotlinInterfaceC::class, "_SwiftInterfaceC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedChildT::class, "4main16deprecatedChildTC")
@@ -271,6 +272,28 @@ public fun PublicSubClassImplHiddenInterface_foo(self: kotlin.native.internal.Na
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as PublicSubClassImplHiddenInterface
     val _result = run { __self.foo() }
     return run { _result; true }
+}
+
+@ExportedBridge("SomeInterface_barC_get")
+public fun SomeInterface_barC_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
+    val _result = run { __self.barC }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("SomeInterface_barC_set__TypesOfArguments__Swift_String__")
+public fun SomeInterface_barC_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.barC = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("SomeInterface_fooB")
+public fun SomeInterface_fooB(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
+    val _result = run { __self.fooB() }
+    return _result.objcPtr()
 }
 
 @ExportedBridge("SubDeprecatedInterface_baz")
