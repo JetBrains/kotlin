@@ -294,9 +294,6 @@ val DaemonOptions.runFilesPathOrDefault: String
 fun Iterable<String>.distinctStringsDigest(): ByteArray =
     MessageDigest.getInstance(CLASSPATH_ID_DIGEST).digest(this.distinct().sorted().joinToString("").toByteArray())
 
-fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
-
-
 data class CompilerId(
     var compilerClasspath: List<String> = listOf(),
     var compilerVersion: String = "",
