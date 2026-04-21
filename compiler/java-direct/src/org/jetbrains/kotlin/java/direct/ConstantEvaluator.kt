@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
-import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import kotlin.experimental.inv
 
 /**
@@ -68,7 +67,7 @@ class ConstantEvaluator(
     }
 
     private fun evaluateBinaryExpression(node: JavaLightNode): Any? {
-        val children = tree.getChildren(node).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
+        val children = tree.getChildren(node)
         if (children.size < 3) return null
 
         val lhs = evaluate(children[0]) ?: return null
@@ -79,7 +78,7 @@ class ConstantEvaluator(
     }
 
     private fun evaluatePolyadicExpression(node: JavaLightNode): Any? {
-        val children = tree.getChildren(node).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
+        val children = tree.getChildren(node)
         if (children.size < 3) return null
 
         var result = evaluate(children[0]) ?: return null
@@ -186,7 +185,7 @@ class ConstantEvaluator(
     }
 
     private fun evaluatePrefixExpression(node: JavaLightNode): Any? {
-        val children = tree.getChildren(node).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
+        val children = tree.getChildren(node)
         if (children.size < 2) return null
 
         val operator = tree.getType(children[0])
@@ -216,7 +215,7 @@ class ConstantEvaluator(
     private fun evaluateParensExpression(node: JavaLightNode): Any? {
         val innerExpr = tree.getChildren(node).firstOrNull {
             val t = tree.getType(it)
-            t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH && t != SyntaxTokenTypes.WHITE_SPACE
+            t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
         } ?: return null
         return evaluate(innerExpr)
     }

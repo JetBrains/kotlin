@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
@@ -204,7 +206,7 @@ internal object JavaImportResolver {
                 for (j in (i + 1) until allChildren.size) {
                     val sibling = allChildren[j]
                     val siblingType = tree.getType(sibling)
-                    if (siblingType == SyntaxTokenTypes.WHITE_SPACE || siblingType == JavaSyntaxElementType.MODIFIER_LIST) continue
+                    if (siblingType == JavaSyntaxElementType.MODIFIER_LIST) continue
                     if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().isBlank()) continue
 
                     if (siblingType == JavaSyntaxElementType.TYPE || siblingType == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
@@ -212,7 +214,7 @@ internal object JavaImportResolver {
                         for (k in (j + 1) until allChildren.size) {
                             val nextSib = allChildren[k]
                             val nextType = tree.getType(nextSib)
-                            if (nextType == SyntaxTokenTypes.WHITE_SPACE || nextType == JavaSyntaxElementType.MODIFIER_LIST) continue
+                            if (nextType == JavaSyntaxElementType.MODIFIER_LIST) continue
                             if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().isBlank()) continue
                             if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().contains("*")) {
                                 hasStar = true

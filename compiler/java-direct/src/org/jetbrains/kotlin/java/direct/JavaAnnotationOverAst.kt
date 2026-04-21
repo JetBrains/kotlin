@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
-import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -93,7 +92,7 @@ private fun createAnnotationArgument(
 
     val valueNode = tree.getChildren(nameValuePair).firstOrNull { child ->
         val t = tree.getType(child)
-        t != JavaSyntaxTokenType.IDENTIFIER && t != JavaSyntaxTokenType.EQ && t != SyntaxTokenTypes.WHITE_SPACE
+        t != JavaSyntaxTokenType.IDENTIFIER && t != JavaSyntaxTokenType.EQ
     }
 
     return createAnnotationArgumentFromValue(name, valueNode, tree, resolutionContext)
@@ -200,7 +199,7 @@ private fun evaluateConstantExpression(node: JavaLightNode, tree: JavaLightTree)
             val allChildren = tree.getChildren(node)
             val operands = allChildren.filter {
                 val t = tree.getType(it)
-                t != SyntaxTokenTypes.WHITE_SPACE && t !in ANNOTATION_BINARY_OPERATOR_TYPES
+                t !in ANNOTATION_BINARY_OPERATOR_TYPES
             }
             val operatorNode = allChildren.firstOrNull { tree.getType(it) in ANNOTATION_BINARY_OPERATOR_TYPES }
             if (operands.size == 2 && operatorNode != null) {
@@ -253,7 +252,7 @@ class JavaArrayAnnotationArgumentOverAst(
             .filter {
                 val t = tree.getType(it)
                 t != JavaSyntaxTokenType.LBRACE && t != JavaSyntaxTokenType.RBRACE &&
-                        t != JavaSyntaxTokenType.COMMA && t != SyntaxTokenTypes.WHITE_SPACE
+                        t != JavaSyntaxTokenType.COMMA
             }
             .map { createAnnotationArgumentFromValue(null, it, tree, resolutionContext) }
     }

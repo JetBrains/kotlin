@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
-import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -171,8 +170,7 @@ class JavaFieldOverAst(
             val eqIndex = children.indexOfFirst { tree.getType(it) == JavaSyntaxTokenType.EQ }
             if (eqIndex < 0) return null
             return children.drop(eqIndex + 1).firstOrNull {
-                val t = tree.getType(it)
-                t != SyntaxTokenTypes.WHITE_SPACE && t != JavaSyntaxTokenType.SEMICOLON
+                tree.getType(it) != JavaSyntaxTokenType.SEMICOLON
             }
         }
 
@@ -206,13 +204,13 @@ class JavaFieldOverAst(
                 child?.let { tree.getType(it).toString() } != "NULL_LITERAL"
             }
             JavaSyntaxElementType.BINARY_EXPRESSION -> {
-                val children = tree.getChildren(n).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
+                val children = tree.getChildren(n)
                 children.size >= 3 &&
                         isInitializerPotentiallyConstant(children[0]) &&
                         isInitializerPotentiallyConstant(children[2])
             }
             JavaSyntaxElementType.POLYADIC_EXPRESSION -> {
-                val children = tree.getChildren(n).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
+                val children = tree.getChildren(n)
                 var i = 0
                 var result = true
                 while (i < children.size) {
@@ -225,13 +223,13 @@ class JavaFieldOverAst(
                 result
             }
             JavaSyntaxElementType.PREFIX_EXPRESSION -> {
-                val children = tree.getChildren(n).filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE }
+                val children = tree.getChildren(n)
                 children.size >= 2 && isInitializerPotentiallyConstant(children[1])
             }
             JavaSyntaxElementType.PARENTH_EXPRESSION -> {
                 val inner = tree.getChildren(n).firstOrNull {
                     val t = tree.getType(it)
-                    t != SyntaxTokenTypes.WHITE_SPACE && t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
+                    t != JavaSyntaxTokenType.LPARENTH && t != JavaSyntaxTokenType.RPARENTH
                 }
                 inner != null && isInitializerPotentiallyConstant(inner)
             }
@@ -346,8 +344,7 @@ class JavaMethodOverAst(
             if (defaultIndex < 0) return null
 
             val valueNode = children.drop(defaultIndex + 1).firstOrNull {
-                val t = tree.getType(it)
-                t != SyntaxTokenTypes.WHITE_SPACE && t != JavaSyntaxTokenType.SEMICOLON
+                tree.getType(it) != JavaSyntaxTokenType.SEMICOLON
             } ?: return null
 
             return createAnnotationArgumentFromValue(null, valueNode, tree, resolutionContext)

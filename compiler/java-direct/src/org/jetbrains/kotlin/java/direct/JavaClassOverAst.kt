@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
-import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -259,17 +258,13 @@ class JavaClassOverAst(
         get() = cachedBoolean({ _isAnnotationType }, { _isAnnotationType = it }) { computeIsAnnotationType() }
 
     private fun computeIsAnnotationType(): Boolean {
+        // Whitespace is excluded from children by JavaLightTree, so AT is directly
+        // followed by INTERFACE_KEYWORD for `@interface` declarations.
         val children = tree.getChildren(node)
-        var i = 0
-        while (i < children.size - 1) {
-            if (tree.getType(children[i]) == JavaSyntaxTokenType.AT) {
-                // Skip whitespace/comments between AT and the next significant token.
-                // TODO: consider more robust approach
-                var j = i + 1
-                while (j < children.size && tree.getType(children[j]) == SyntaxTokenTypes.WHITE_SPACE) j++
-                if (j < children.size && tree.getType(children[j]) == JavaSyntaxTokenType.INTERFACE_KEYWORD) return true
-            }
-            i++
+        for (i in 0 until children.size - 1) {
+            if (tree.getType(children[i]) == JavaSyntaxTokenType.AT &&
+                tree.getType(children[i + 1]) == JavaSyntaxTokenType.INTERFACE_KEYWORD
+            ) return true
         }
         return false
     }

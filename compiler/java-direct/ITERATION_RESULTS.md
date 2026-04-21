@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (LightTree getChildren() caching fix; top-level docs cleanup)
+**Last Updated**: 2026-04-21 (precomputed children/types/offsets + whitespace exclusion)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -19,7 +19,96 @@ caveats have landed in code (verified against current source). What remains:
 
 ---
 
-## LightTree `getChildren()` Caching Fix — 2026-04-21
+## Precomputed Children + Types + Whitespace Exclusion — 2026-04-21
+
+### Overview
+
+The CHM-based children cache from the previous entry was tested on CI and showed no improvement
+(slightly worse). Investigation with `ThreadMXBean.currentThreadCpuTime` counters revealed two
+things:
+
+1. **java-direct is only ~6% of pipeline CPU** (`testFrontend`: ~392ms java-direct vs ~6.9s
+   total). So even large relative improvements in java-direct produce small absolute pipeline
+   improvements that are within measurement noise.
+2. **`getType()` was called 3.27M times** for a single module — the hottest method by far.
+   Most calls came from linear scans inside `findChildByType` (111K calls × avg 29 children)
+   and `getChildrenByType` (33K calls). Whitespace tokens, which are NEVER matched positively
+   by any caller, accounted for ~44% of these `getType()` calls.
+
+### Changes
+
+**Precomputed children, types, offsets, and error flags** (`JavaLightTree.kt`): Replaced the
+`ConcurrentHashMap`-based children cache with eager precomputation during `buildJavaLightTree`.
+Pass 1 now also extracts `compositeTypes[]`, `compositeStartOffsets[]`, `compositeEndOffsets[]`,
+and `errorFlags[]` alongside the existing parent/done indices. Pass 3 (new) builds children for
+every composite node into `IntArray`-backed `ChildrenList` instances. All accessors —
+`getChildren()`, `getType()`, `getStartOffset()`, `getEndOffset()` — are now plain array lookups
+with no hashing, no marker-pool dispatch, and no `ConcurrentHashMap` overhead.
+
+Memory cost: ~30 KB per file (vs ~1 MB for old `JavaSyntaxNode` tree) — still **97% reduction**.
+
+**Whitespace exclusion from children**: `WHITE_SPACE` tokens are filtered out during children
+construction (Pass 3). Every caller that previously did
+`tree.getChildren(n).filter { tree.getType(it) != WHITE_SPACE }` now gets whitespace-free
+children directly. This eliminated **1.44M `getType()` calls** (44% reduction) for the
+`testFrontend` module.
+
+**Caller cleanup** (6 files): Removed 15+ manual `filter { getType != WHITE_SPACE }` patterns
+and unused `SyntaxTokenTypes` imports across `ConstantEvaluator.kt`, `JavaAnnotationOverAst.kt`,
+`JavaClassOverAst.kt`, `JavaImportResolver.kt`, `JavaMemberOverAst.kt`, `JavaTypeOverAst.kt`.
+Simplified `computeIsAnnotationType()` — no longer needs whitespace-skip loop since AT is
+directly adjacent to INTERFACE_KEYWORD in whitespace-free children.
+
+### Profiling Data (`testFrontend`, 141 Java files)
+
+| Metric | Before (CHM cache) | After (precomputed + WS exclusion) | Delta |
+|--------|-------------------|------------------------------------|-------|
+| `getType()` calls | 3,269,891 | 1,825,500 | **–44%** |
+| `getChildren()` calls | 222,506 | 222,506 | same |
+| `findChildByType` calls | 111,454 | 111,454 | same |
+| Children list sizes | ~k (incl. whitespace) | ~k/2 (WS excluded) | **–30-50%** |
+| `buildLightTree` CPU | 75ms | 95ms | +20ms (WS filtering + precomputation) |
+| `buildIndex` CPU | 172ms | 156ms | –16ms |
+| `findClass` CPU | 145ms | 138ms | –7ms |
+| java-direct total CPU | ~392ms | ~389ms | –3ms measured |
+| java-direct fraction of pipeline | ~6% | ~6% | — |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `JavaLightTree.kt` | Major rewrite: precomputed `compositeTypes[]`, `compositeStartOffsets[]`, `compositeEndOffsets[]`, `errorFlags[]`, `childrenByIndex[]`; `ChildrenList` IntArray-backed wrapper; Pass 3 children construction with whitespace exclusion; removed CHM cache, `forEachDirectChild`, `scanTokensFor` |
+| `ConstantEvaluator.kt` | Removed 3× `filter { getType != WHITE_SPACE }` + unused import |
+| `JavaAnnotationOverAst.kt` | Removed 2× whitespace filter + unused import |
+| `JavaClassOverAst.kt` | Simplified `computeIsAnnotationType` (no WS skip loop) + unused import |
+| `JavaImportResolver.kt` | Removed 2× whitespace filter from fragmented-import recovery |
+| `JavaMemberOverAst.kt` | Removed 5× whitespace filter + unused import |
+| `JavaTypeOverAst.kt` | Removed 1× whitespace filter from `upperBounds` + unused import |
+
+### Test Results
+
+- `./gradlew :kotlin-java-direct:test` — **BUILD SUCCESSFUL**, 2769 tests, 0 failures, 0 errors.
+
+### Key Learnings
+
+- `ConcurrentHashMap` per-lookup overhead (hashing, volatile reads, key boxing) can negate caching
+  benefits when the cached values are cheap to compute. Array-indexed precomputation avoids all
+  three costs: `children[idx]` is a single memory load vs. CHM's hash→bucket→compare→return chain.
+- Whitespace tokens were the single largest waste in `getType()` call volume. They comprised
+  ~30-50% of children lists but were **never** matched positively — every caller either ignored
+  them or explicitly filtered them. Excluding them at construction time is a one-time O(n) cost
+  that pays off across all subsequent O(n) scans.
+- `ThreadMXBean.currentThreadCpuTime` is essential for profiling in a Gradle test context: it
+  measures only the calling thread's CPU, excluding system load, GC pauses, and Gradle overhead
+  that make `System.nanoTime()` unreliable.
+- java-direct accounts for only ~6% of full-pipeline CPU. Accessor-level optimizations (children
+  caching, type precomputation) can improve that 6% but cannot close the 20-25% gap vs. PSI,
+  which is dominated by `buildIndex` (eager file scanning that PSI skips entirely via pre-built
+  IDE indexes) and per-file parsing cost.
+
+---
+
+## LightTree `getChildren()` Caching Fix (first attempt) — 2026-04-21
 
 ### Overview
 

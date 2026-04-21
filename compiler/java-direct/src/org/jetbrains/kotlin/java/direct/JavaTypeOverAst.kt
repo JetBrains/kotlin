@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
-import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
@@ -622,7 +621,7 @@ class JavaTypeParameterOverAst(
     override val upperBounds: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val extendsList = tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_BOUND_LIST) ?: return@lazy emptyList()
         tree.getChildren(extendsList)
-            .filter { tree.getType(it) != SyntaxTokenTypes.WHITE_SPACE && tree.getType(it) != JavaSyntaxTokenType.AND }
+            .filter { tree.getType(it) != JavaSyntaxTokenType.AND }
             .mapNotNull { child ->
                 when (tree.getType(child)) {
                     JavaSyntaxElementType.TYPE -> createJavaType(child, tree, resolutionContext) as? JavaClassifierType
