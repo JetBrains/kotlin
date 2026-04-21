@@ -181,6 +181,18 @@ public func kotlin_Number_toByte__reverse_swift(_ `self`: Swift.UnsafeMutableRaw
     return _result
 }
 
+@available(*, deprecated, message: """
+Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
+If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
+""")
+@_cdecl("kotlin_Number_toChar__reverse_swift")
+public func kotlin_Number_toChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
+    let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Unicode.UTF16.CodeUnit = _self.toChar()
+    return _result
+}
+
 @_cdecl("kotlin_Number_toDouble__reverse_swift")
 public func kotlin_Number_toDouble__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Double {
     let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!

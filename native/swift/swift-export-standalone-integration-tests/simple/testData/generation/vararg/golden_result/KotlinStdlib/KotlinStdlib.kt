@@ -21,6 +21,16 @@ public fun kotlin_Number_toByte__reverse(self: kotlin.Number): Byte {
     return __result
 }
 
+@ImportedBridge("kotlin_Number_toChar__reverse_swift")
+internal external fun kotlin_Number_toChar__reverse_swift(self: kotlin.native.internal.NativePtr): Char
+
+@BindReverseBridgeToMethod(kotlin.Number::class, "toChar")
+public fun kotlin_Number_toChar__reverse(self: kotlin.Number): Char {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = kotlin_Number_toChar__reverse_swift(__self)
+    return __result
+}
+
 @ImportedBridge("kotlin_Number_toDouble__reverse_swift")
 internal external fun kotlin_Number_toDouble__reverse_swift(self: kotlin.native.internal.NativePtr): Double
 

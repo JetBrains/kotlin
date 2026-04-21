@@ -5,6 +5,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 int8_t kotlin_Number_toByte__reverse_swift(void * self);
 
+uint16_t kotlin_Number_toChar__reverse_swift(void * self);
+
 double kotlin_Number_toDouble__reverse_swift(void * self);
 
 float kotlin_Number_toFloat__reverse_swift(void * self);

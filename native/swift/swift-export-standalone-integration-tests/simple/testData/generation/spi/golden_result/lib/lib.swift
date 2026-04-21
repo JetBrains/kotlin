@@ -34,7 +34,6 @@ public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
     }
     @_spi(ExperimentalLibApi)
     public init() {
-        if Self.self != lib.ExperimentalLibClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from lib.ExperimentalLibClass ") }
         let __kt = __root___ExperimentalLibClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -52,7 +51,6 @@ public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
 }
 public final class RegularLibClass: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != lib.RegularLibClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from lib.RegularLibClass ") }
         let __kt = __root___RegularLibClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -61,7 +59,6 @@ public final class RegularLibClass: KotlinRuntime.KotlinBase {
     public init(
         a: Swift.String
     ) {
-        if Self.self != lib.RegularLibClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from lib.RegularLibClass ") }
         let __kt = __root___RegularLibClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt, a); return () }()

@@ -3,7 +3,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool PublicClassImplHiddenInterface_bar__reverse_swift(void * self);
+
+_Bool PublicClassImplHiddenInterface_foo__reverse_swift(void * self);
+
 _Bool deprecatedT_deprecationInheritedF__reverse_swift(void * self);
+
+_Bool deprecatedT_deprecationRestatedF__reverse_swift(void * self);
+
+_Bool normalT_deprecatedF__reverse_swift(void * self);
 
 _Bool normalT_deprecatedInFutureF__reverse_swift(void * self);
 

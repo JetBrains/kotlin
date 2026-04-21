@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.sir.util.swiftStringLiteral
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
@@ -158,6 +159,7 @@ public interface BridgeFunctionProxy {
         targetClassFqName: String,
         targetMethodName: String,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
+        swiftDeprecation: SirAttribute.Available? = null,
     ): List<SirBridge>
 }
 
@@ -309,6 +311,7 @@ private class BridgeFunctionDescriptor(
         targetClassFqName: String,
         targetMethodName: String,
         swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
+        swiftDeprecation: SirAttribute.Available?,
     ): List<SirBridge> {
         val cBridgeName = "${this@BridgeFunctionDescriptor.cBridgeName}__reverse"
         val swiftBridgeName = "${this@BridgeFunctionDescriptor.cBridgeName}__reverse_swift"
@@ -319,7 +322,7 @@ private class BridgeFunctionDescriptor(
             SirReverseFunctionBridge(
                 name = cBridgeName,
                 kotlinFunctionBridge = createReverseKotlinBridge(cLevelParams, cBridgeName, swiftBridgeName, targetClassFqName, targetMethodName),
-                swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall),
+                swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall, swiftDeprecation),
                 cDeclarationBridge = createReverseCBridge(cLevelParams, swiftBridgeName)
             )
         )
@@ -348,13 +351,15 @@ private class BridgeFunctionDescriptor(
     private fun createReverseSwiftBridge(
         cLevelParams: List<BridgedParameter>,
         swiftBridgeName: String,
-        swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String
+        swiftDynamicCall: (selfExpr: String, paramExprs: List<String>) -> String,
+        swiftDeprecation: SirAttribute.Available?,
     ): SwiftFunctionBridge {
         val swiftLines = buildList {
             val swiftCParams = cLevelParams.joinToString {
                 "_ ${it.name.swiftIdentifier}: ${it.bridge.cType.toSwiftTypeName()}"
             }
             val swiftReturnType = returnType.cType.toSwiftTypeName()
+            swiftDeprecation?.let { add(it.renderSwiftSourceLine()) }
             add("@_cdecl(\"${swiftBridgeName}\")")
             add("public func ${swiftBridgeName}($swiftCParams) -> $swiftReturnType {")
 
@@ -634,4 +639,15 @@ private fun String.prependIndentToTrailingLines(indent: String): String = this.l
             append(line)
         }
     }
+}
+
+private fun SirAttribute.renderSwiftSourceLine(): String {
+    val renderedArgs = arguments?.joinToString(", ") { arg ->
+        val value = when (val expr = arg.expression) {
+            is SirExpression.Raw -> expr.raw
+            is SirExpression.StringLiteral -> expr.value.swiftStringLiteral
+        }
+        if (arg.name != null) "${arg.name}: $value" else value
+    }
+    return if (renderedArgs == null) "@$identifier" else "@$identifier($renderedArgs)"
 }

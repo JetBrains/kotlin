@@ -165,6 +165,7 @@ internal open class SirFunctionFromKtSymbol(
                     val tryPrefix = if (errorType != SirType.never) "try! " else ""
                     "$tryPrefix$selfExpr.$methodName($args)"
                 },
+                swiftDeprecation = effectiveReverseBridgeDeprecation(),
             ).orEmpty()
         } else {
             emptyList()
@@ -176,9 +177,17 @@ internal open class SirFunctionFromKtSymbol(
     private fun needsReverseBridge(): Boolean = withSessions {
         if (!isInstance) return@withSessions false
         if (modality != SirModality.OPEN) return@withSessions false
-        if (attributes.any { it is SirAttribute.Available && (it.unavailable || it.deprecated) }) return@withSessions false
+        if (attributes.any { it is SirAttribute.Available && it.unavailable }) return@withSessions false
         val containingClass = parent as? SirClass ?: return@withSessions false
-        containingClass.modality == SirModality.OPEN
+        if (containingClass.modality != SirModality.OPEN) return@withSessions false
+        if (containingClass.attributes.any { it is SirAttribute.Available && it.unavailable }) return@withSessions false
+        true
+    }
+
+    private fun effectiveReverseBridgeDeprecation(): SirAttribute.Available? {
+        fun SirDeclaration.deprecatedAttr(): SirAttribute.Available? =
+            attributes.firstOrNull { it is SirAttribute.Available && it.deprecated } as? SirAttribute.Available
+        return this.deprecatedAttr() ?: (parent as? SirClass)?.deprecatedAttr()
     }
 
     /**
