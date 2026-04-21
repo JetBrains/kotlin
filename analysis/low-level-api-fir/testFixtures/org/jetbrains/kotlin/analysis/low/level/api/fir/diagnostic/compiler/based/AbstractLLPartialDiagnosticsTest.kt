@@ -55,7 +55,8 @@ abstract class AbstractLLPartialDiagnosticsTest : AbstractLLCompilerBasedTest() 
             testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
         )
 
-        useAfterAnalysisCheckers(::LLFirPartialBodyTestSuppressor, ::ControlFlowGraphConsistencyChecker)
+        useFailureSuppressors(::LLFirPartialBodyTestSuppressor)
+        useAfterAnalysisCheckers(::ControlFlowGraphConsistencyChecker)
         useMetaTestConfigurators({ testServices -> CustomOutputDiagnosticsConfigurator(".partialBody.", testServices) })
     }
 }

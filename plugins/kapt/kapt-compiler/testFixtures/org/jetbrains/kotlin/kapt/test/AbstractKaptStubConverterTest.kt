@@ -47,6 +47,6 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
             useHandlers(::KaptStubConverterHandler)
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
     }
 }

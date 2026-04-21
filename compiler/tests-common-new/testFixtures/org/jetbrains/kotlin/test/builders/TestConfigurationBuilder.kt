@@ -281,7 +281,7 @@ class NonGroupingPhaseTestConfigurationBuilder :
 
         // UpdateTestDataHandler should be _the very last_ handler at all times to avoid false-positive test data changes,
         // so it is added after all configuration callbacks have already been executed
-        useAfterAnalysisCheckers(::UpdateTestDataHandler)
+        useFailureSuppressors(::UpdateTestDataHandler)
 
         @Suppress("UNCHECKED_CAST")
         return NonGroupingPhaseTestConfigurationImpl(
@@ -420,7 +420,7 @@ class GroupingPhaseTestConfigurationBuilder :
 
         // UpdateTestDataHandler should be _the very last_ handler at all times to avoid false-positive test data changes,
         // so it is added after all configuration callbacks have already been executed
-        useAfterAnalysisCheckers(::UpdateTestDataHandler)
+        useFailureSuppressors(::UpdateTestDataHandler)
 
         @Suppress("UNCHECKED_CAST")
         return GroupingPhaseTestConfigurationImpl(

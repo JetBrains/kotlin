@@ -70,7 +70,7 @@ abstract class AbstractNativeLoadCompiledKotlinTest :
         klibArtifactsHandlersStep {
             useHandlers(::KlibNativeLoadedMetadataDumpHandler)
         }
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             { testServices -> FirMetadataLoadingTestSuppressor(testServices, CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2) }
         )
     }

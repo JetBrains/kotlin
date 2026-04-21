@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS_DIFF
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-class FirMetaInfoDiffSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class FirMetaInfoDiffSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

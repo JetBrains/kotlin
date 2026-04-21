@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.bind
@@ -41,13 +41,13 @@ abstract class AbstractLLDiagnosticsTest : AbstractLLCompilerBasedTest() {
                 testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
             )
 
-            useAfterAnalysisCheckers(::ContractViolationSuppressor)
-            useAfterAnalysisCheckers(::LLFirOnlyNonReversedTestSuppressor)
+            useFailureSuppressors(::ContractViolationSuppressor)
+            useFailureSuppressors(::LLFirOnlyNonReversedTestSuppressor)
         }
     }
 }
 
-private class ContractViolationSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+private class ContractViolationSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer> get() = listOf(Companion)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {

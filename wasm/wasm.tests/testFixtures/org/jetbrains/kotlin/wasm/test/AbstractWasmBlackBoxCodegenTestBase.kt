@@ -139,7 +139,7 @@ fun <R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput
 
     useAdditionalService(::LibraryProvider)
 
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
 

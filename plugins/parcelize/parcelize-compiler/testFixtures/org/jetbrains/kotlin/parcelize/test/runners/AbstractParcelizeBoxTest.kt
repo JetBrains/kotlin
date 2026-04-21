@@ -60,7 +60,7 @@ abstract class AbstractParcelizeBoxTest : AbstractKotlinCompilerWithTargetBacken
         useConfigurators(::ParcelizeEnvironmentConfigurator)
         useAdditionalSourceProviders(::ParcelizeUtilSourcesProvider, ::MainFunctionForBlackBoxTestsSourceProvider)
         useAdditionalServices(service<JvmBoxMainClassProvider>(::ParcelizeMainClassProvider))
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, ::FirMetaInfoDiffSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor, ::FirMetaInfoDiffSuppressor)
         enableMetaInfoHandler()
     }
 }

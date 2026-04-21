@@ -48,7 +48,7 @@ open class AbstractFirLightTreeDiagnosticsWithoutAliasExpansionTest : AbstractFi
                 +DISABLE_TYPEALIAS_EXPANSION
             }
 
-            useAfterAnalysisCheckers(::FirWithoutAliasExpansionTestSuppressor)
+            useFailureSuppressors(::FirWithoutAliasExpansionTestSuppressor)
             useMetaTestConfigurators(::OnlyTestsWithTypeAliasesMetaConfigurator)
         }
     }

@@ -21,7 +21,7 @@ abstract class AbstractLLReversedSpecTest : AbstractLLCompilerBasedTest() {
             )
 
             baseFirSpecDiagnosticTestConfigurationForIde()
-            useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
+            useFailureSuppressors(::LLFirOnlyReversedTestSuppressor)
             useMetaTestConfigurators(::reversedDiagnosticsConfigurator)
         }
     }

@@ -177,9 +177,8 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
         )
     }
 
-    useAfterAnalysisCheckers(
-        ::JsArtifactsDumpHandler
-    )
+    useFailureSuppressors(JsArtifactsDumpHandler::Suppressor)
+    useAfterAnalysisCheckers(JsArtifactsDumpHandler::Checker)
 }
 
 /**
@@ -289,7 +288,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
         useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
     }
 
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
 

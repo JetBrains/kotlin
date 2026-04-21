@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.test.utils.compiledTestOutputDirectory
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
@@ -19,7 +20,7 @@ import java.io.File
 /**
  * Copy JS artifacts from the temporary directory to the `js/js.tests/build/out` directory.
  */
-class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+object JsArtifactsDumpHandler {
     private val supportedTranslationModes = listOf(
         TranslationMode.FULL_DEV,
         TranslationMode.FULL_PROD_MINIMIZED_NAMES,
@@ -29,27 +30,31 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
         TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES,
     )
 
-    override fun check(failedAssertions: List<WrappedException>) {
-        for (translationMode in supportedTranslationModes) {
-            val outputDir = getOutputDir(translationMode)
-            copy(from = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode), into = outputDir)
+    class Suppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
+        override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+            // Replace paths to the temporary directory with paths to the dump directory so that JS stack traces are navigatable in the IDE.
+            return failedAssertions.map {
+                val cause = it.cause as? ScriptExecutionException ?: return@map it
+                it.withReplacedCause(
+                    ScriptExecutionException(cause.stdout, cause.stderr.replacePaths(testServices)).apply {
+                        stackTrace = cause.stackTrace
+                    }
+                )
+            }
         }
     }
 
-    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        // Replace paths to the temporary directory with paths to the dump directory so that JS stack traces are navigatable in the IDE.
-        return failedAssertions.map {
-            val cause = it.cause as? ScriptExecutionException ?: return@map it
-            it.withReplacedCause(
-                ScriptExecutionException(cause.stdout, cause.stderr.replacePaths()).apply {
-                    stackTrace = cause.stackTrace
-                }
-            )
+    class Checker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+        override fun check(failedAssertions: List<WrappedException>) {
+            for (translationMode in supportedTranslationModes) {
+                val outputDir = getOutputDir(translationMode, testServices)
+                copy(from = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode), into = outputDir)
+            }
         }
     }
 
-    private fun String.replacePaths(): String = supportedTranslationModes.fold(this) { s, translationMode ->
-        val outputDir = getOutputDir(translationMode)
+    private fun String.replacePaths(testServices: TestServices): String = supportedTranslationModes.fold(this) { s, translationMode ->
+        val outputDir = getOutputDir(translationMode, testServices)
         JsEnvironmentConfigurator
             .getJsArtifactsOutputDir(testServices, translationMode)
             .listFiles { it.isFile }!!
@@ -58,7 +63,7 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
             }
     }
 
-    private fun getOutputDir(translationMode: TranslationMode): File {
+    private fun getOutputDir(translationMode: TranslationMode, testServices: TestServices): File {
         val prefix = when (translationMode) {
             TranslationMode.FULL_DEV -> "out"
             TranslationMode.FULL_PROD -> unreachableBranch(translationMode)

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractLLCompilerBasedTest
 import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.baseFirBlackBoxCodegenTestDirectivesConfiguration
 import org.jetbrains.kotlin.test.configuration.configureModernJavaWhenNeeded
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -30,7 +30,7 @@ import java.io.File
  */
 abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
     abstract fun facade(): Constructor<LowLevelFirFrontendFacade>
-    abstract fun facadeSpecificSuppressor(): Constructor<AfterAnalysisChecker>
+    abstract fun facadeSpecificSuppressor(): Constructor<TestFailureSuppressor>
 
     override fun configure(builder: TestConfigurationBuilder) {
         with(builder) {
@@ -57,7 +57,7 @@ abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
                 )
             }
 
-            useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, facadeSpecificSuppressor())
+            useFailureSuppressors(::BlackBoxCodegenSuppressor, facadeSpecificSuppressor())
         }
     }
 

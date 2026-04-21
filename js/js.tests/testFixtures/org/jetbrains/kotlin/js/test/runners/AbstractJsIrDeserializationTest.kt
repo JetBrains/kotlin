@@ -47,7 +47,7 @@ abstract class AbstractJsIrDeserializationTest(
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
             }
-            useAfterAnalysisCheckers(
+            useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor
             )
         }

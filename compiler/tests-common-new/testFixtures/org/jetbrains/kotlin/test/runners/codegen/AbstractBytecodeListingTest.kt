@@ -35,7 +35,7 @@ abstract class AbstractBytecodeListingTestBase(val parser: FirParser) : Abstract
             useHandlers(::BytecodeListingHandler)
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
     }
 }
 

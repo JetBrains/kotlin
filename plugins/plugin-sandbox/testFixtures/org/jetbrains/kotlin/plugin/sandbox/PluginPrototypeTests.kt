@@ -81,7 +81,7 @@ abstract class AbstractFirPsiPluginDiagnosticTest : AbstractPhasedJvmDiagnosticP
         super.configure(builder)
         with(builder) {
             commonFirWithPluginFrontendConfiguration()
-            useAfterAnalysisCheckers(::FirFailingTestSuppressor)
+            useFailureSuppressors(::FirFailingTestSuppressor)
         }
     }
 }
@@ -148,7 +148,7 @@ fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration(dumpFir: B
         ::PluginRuntimeAnnotationsProvider
     )
 
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         ::FirFailingTestSuppressor,
     )
 }

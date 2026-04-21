@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Assumptions
  * - Does not support custom ignore directives. Only the standard ones: `IGNORE_BACKEND*`.
  * - Does not offer to unmute the test if it happens to be successful.
  */
-class CustomKlibCompilerTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class CustomKlibCompilerTestSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

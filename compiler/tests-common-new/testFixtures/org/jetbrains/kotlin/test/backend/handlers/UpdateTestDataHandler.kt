@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.TestExecutionExceptionHandler
@@ -49,7 +49,7 @@ class UpdateTestDataSupport : TestExecutionExceptionHandler {
 
 class UpdateTestDataHandler(
     testServices: TestServices
-) : AfterAnalysisChecker(testServices) {
+) : TestFailureSuppressor(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         if (updateTestData) {
             failedAssertions.forEach {

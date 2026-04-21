@@ -100,7 +100,7 @@ abstract class AbstractForeignAnnotationsTestBase(
             )
         }
 
-        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
+        useFailureSuppressors(::FirFailingTestSuppressor)
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
 

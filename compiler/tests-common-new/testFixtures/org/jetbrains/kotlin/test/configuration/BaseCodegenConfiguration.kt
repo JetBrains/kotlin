@@ -192,7 +192,7 @@ fun TestConfigurationBuilder.configureBlackBoxTestSettings() {
         -USE_PSI_CLASS_FILES_READING
     }
 
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         ::FirMetaInfoDiffSuppressor
     )
 

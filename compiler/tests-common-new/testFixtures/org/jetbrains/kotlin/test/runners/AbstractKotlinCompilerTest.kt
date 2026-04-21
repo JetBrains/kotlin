@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.test.runners
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.ExecutionListenerBasedDisposableProvider
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.NonGroupingTestRunner
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
@@ -57,6 +57,7 @@ abstract class AbstractKotlinCompilerTest {
                 ::ClassicUnstableAndK2LanguageFeaturesSkipConfigurator,
                 ::TargetBackendTestSkipper,
             )
+            useFailureSuppressors(::IrValidationErrorChecker)
             configureDebugFlags()
         }
     }
@@ -69,7 +70,6 @@ abstract class AbstractKotlinCompilerTest {
         testInfo = this@AbstractKotlinCompilerTest.testInfo
         @OptIn(TestInfrastructureInternals::class)
         configureInternal(this)
-        useAfterAnalysisCheckers(::IrValidationErrorChecker)
     }
 
     private lateinit var testInfo: KotlinTestInfo

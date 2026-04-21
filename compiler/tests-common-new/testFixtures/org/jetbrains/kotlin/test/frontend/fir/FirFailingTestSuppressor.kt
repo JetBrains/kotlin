@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestArtifactKind
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.isLLFirTestData
 
-class FirFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class FirFailingTestSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     private val facadeKind: TestArtifactKind<*>
         get() = FrontendKinds.FIR
 

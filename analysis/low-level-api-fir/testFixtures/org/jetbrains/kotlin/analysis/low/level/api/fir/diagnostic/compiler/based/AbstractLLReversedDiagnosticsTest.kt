@@ -43,7 +43,7 @@ abstract class AbstractLLReversedDiagnosticsTest : AbstractLLCompilerBasedTest()
                 testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
             )
 
-            useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
+            useFailureSuppressors(::LLFirOnlyReversedTestSuppressor)
             useMetaTestConfigurators(::reversedDiagnosticsConfigurator)
         }
     }

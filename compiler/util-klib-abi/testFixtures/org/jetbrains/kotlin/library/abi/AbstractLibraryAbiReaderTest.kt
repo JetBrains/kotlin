@@ -66,7 +66,7 @@ abstract class AbstractLibraryAbiReaderTest(
             )
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
         useAdditionalService(::LibraryProvider)
 
         facadeStep(frontendFacade)

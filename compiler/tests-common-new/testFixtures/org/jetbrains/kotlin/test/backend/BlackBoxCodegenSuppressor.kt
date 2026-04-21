@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.extractIgnoredDirectiveForTargetBackend
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.bind
@@ -20,7 +20,7 @@ class BlackBoxCodegenSuppressor(
     testServices: TestServices,
     private val customIgnoreDirective: ValueDirective<TargetBackend>? = null,
     private val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
-) : AfterAnalysisChecker(testServices) {
+) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

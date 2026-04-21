@@ -34,6 +34,6 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
 
         useConfigurators(::ParcelizeEnvironmentConfigurator)
 
-        useAfterAnalysisCheckers(::FirFailingTestSuppressor)
+        useFailureSuppressors(::FirFailingTestSuppressor)
     }
 }

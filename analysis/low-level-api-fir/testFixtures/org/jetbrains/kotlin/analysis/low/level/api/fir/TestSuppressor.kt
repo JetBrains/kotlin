@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
@@ -17,7 +17,7 @@ abstract class TestByDirectiveSuppressor(
     val suppressDirective: StringDirective,
     directivesContainer: DirectivesContainer,
     testServices: TestServices,
-) : AfterAnalysisChecker(testServices) {
+) : TestFailureSuppressor(testServices) {
     init {
         require(suppressDirective in directivesContainer)
     }

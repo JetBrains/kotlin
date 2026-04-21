@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Assumptions
 class CustomKlibCompilerFirstStageTestSuppressor(
     testServices: TestServices,
     private val defaultLanguageVersion: LanguageVersion,
-) : AfterAnalysisChecker(testServices) {
+) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CustomKlibCompilerTestDirectives)
 

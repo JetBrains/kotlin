@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class TestFailureSuppressor(protected val testServices: TestServices) : ServicesAndDirectivesContainer {
     abstract fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException>
 
-    open val order: AfterAnalysisChecker.Order
-        get() = AfterAnalysisChecker.Order.P3
+    typealias Order = AfterAnalysisChecker.Order
+
+    open val order: Order
+        get() = Order.P3
+
+    protected fun Throwable.wrap(): WrappedException = WrappedException.FromAfterAnalysisChecker(this)
 }

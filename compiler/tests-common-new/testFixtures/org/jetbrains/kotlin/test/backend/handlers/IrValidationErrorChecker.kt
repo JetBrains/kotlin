@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 
 /**
  * Produces a helpful hint in case a test fails due to [IrValidationException].
  */
-class IrValidationErrorChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class IrValidationErrorChecker(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val targetBackend = testServices.defaultsProvider.targetBackend ?: TargetBackend.ANY
         return failedAssertions.map {

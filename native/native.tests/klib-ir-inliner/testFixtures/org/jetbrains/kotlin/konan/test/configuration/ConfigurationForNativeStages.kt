@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilderBase
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
-import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -69,7 +65,7 @@ fun TestConfigurationBuilderBase<*, *>.commonConfigurationForNativeCodegenTest(
         ::CoroutineHelpersSourceFilesProvider,
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
     )
 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirective
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.ir.WasmModule
@@ -308,7 +308,10 @@ object DirectiveTestUtils {
     }
 }
 
-private class IgnoredTestSuppressor(testServices: TestServices, private val directive: SimpleDirective) : AfterAnalysisChecker(testServices) {
+private class IgnoredTestSuppressor(
+    testServices: TestServices,
+    private val directive: SimpleDirective,
+) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(WasmEnvironmentConfigurationDirectives)
 
@@ -322,7 +325,7 @@ private class IgnoredTestSuppressor(testServices: TestServices, private val dire
 }
 
 fun TestConfigurationBuilder.configureIgnoredTestSuppressor(directive: SimpleDirective) {
-    useAfterAnalysisCheckers(
+    useFailureSuppressors(
         { IgnoredTestSuppressor(it, directive) },
     )
 }

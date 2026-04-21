@@ -114,7 +114,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             useHandlers(::WasmFolderBoxRunner)
         }
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             // Suppress all tests that failed on the first stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,
             // Suppress failed tests having `// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: X.Y.Z`,

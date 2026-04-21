@@ -43,7 +43,7 @@ abstract class AbstractJsES6CodegenBoxTest : AbstractJsES6Test(
             commonFirHandlersForCodegenTest()
         }
 
-        builder.useAfterAnalysisCheckers(
+        builder.useFailureSuppressors(
             ::FirMetaInfoDiffSuppressor
         )
     }

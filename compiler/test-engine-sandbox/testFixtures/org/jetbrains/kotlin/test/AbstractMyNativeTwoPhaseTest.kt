@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
-import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
-import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
-import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
@@ -67,7 +63,7 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
             commonConfigurationForNativeCodegenTest()
 
             useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
-            useAfterAnalysisCheckers(
+            useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,
                 // TODO(KT-84712): Currently the native-specific test suppressor doesn't work correctly in grouping setup
 //                ::NativeTestsSuppressor,

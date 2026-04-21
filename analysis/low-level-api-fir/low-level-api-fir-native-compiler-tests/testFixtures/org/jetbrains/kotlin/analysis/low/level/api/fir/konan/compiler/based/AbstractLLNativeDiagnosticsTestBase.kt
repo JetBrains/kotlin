@@ -26,10 +26,8 @@ abstract class AbstractLLNativeDiagnosticsTestBase : AbstractLLCompilerBasedTest
             }
 
             baseFirNativeDiagnosticTestConfiguration()
-            useAfterAnalysisCheckers(
-                ::FirFailingTestSuppressor,
-                ::ReversedFirIdenticalChecker,
-            )
+            useFailureSuppressors(::FirFailingTestSuppressor)
+            useAfterAnalysisCheckers(::ReversedFirIdenticalChecker)
         }
     }
 }
@@ -39,7 +37,7 @@ abstract class AbstractLLNativeDiagnosticsTest : AbstractLLNativeDiagnosticsTest
         with(builder) {
             baseNativeDiagnosticTestConfiguration(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
             super.configure(builder)
-            useAfterAnalysisCheckers(::LLFirOnlyNonReversedTestSuppressor)
+            useFailureSuppressors(::LLFirOnlyNonReversedTestSuppressor)
         }
     }
 }
@@ -49,7 +47,7 @@ abstract class AbstractLLReversedNativeDiagnosticsTest : AbstractLLNativeDiagnos
         with(builder) {
             baseNativeDiagnosticTestConfiguration(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder))
             super.configure(builder)
-            useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
+            useFailureSuppressors(::LLFirOnlyReversedTestSuppressor)
         }
     }
 }

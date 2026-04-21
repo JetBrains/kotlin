@@ -105,7 +105,7 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
             )
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
         enableMetaInfoHandler()
         useConfigurators(
             ::CommonEnvironmentConfigurator,

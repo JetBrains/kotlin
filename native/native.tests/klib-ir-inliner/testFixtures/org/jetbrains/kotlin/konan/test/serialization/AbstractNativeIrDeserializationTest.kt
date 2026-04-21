@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironm
 open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(::CommonEnvironmentConfigurator, ::NativeFirstStageEnvironmentConfigurator)
-        useAfterAnalysisCheckers(::FirMetaInfoDiffSuppressor)
+        useFailureSuppressors(::FirMetaInfoDiffSuppressor)
         commonConfigurationForNativeFirstStageUpToSerialization(
             customIgnoreDirective = IGNORE_IR_DESERIALIZATION_TEST,
         )

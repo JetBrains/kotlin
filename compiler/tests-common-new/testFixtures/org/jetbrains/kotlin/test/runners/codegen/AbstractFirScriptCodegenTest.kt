@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.test.runners.codegen
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -32,11 +33,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendFacade
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -92,7 +89,7 @@ open class AbstractFirScriptAndReplCodegenTest(
 
         enableMetaInfoHandler()
 
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::FirFailingTestSuppressor,
             ::BlackBoxCodegenSuppressor
         )

@@ -32,7 +32,7 @@ abstract class AbstractAtomicfuFirCheckerTest : AbstractFirPsiDiagnosticTest() {
         super.configure(builder)
         with(builder) {
             configureForKotlinxAtomicfu()
-            useAfterAnalysisCheckers(::FirFailingTestSuppressor)
+            useFailureSuppressors(::FirFailingTestSuppressor)
         }
     }
 }

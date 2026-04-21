@@ -30,7 +30,7 @@ abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : Abstr
             }
             useSourcePreprocessor(::PackageNamePreprocessor)
             useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
-            useAfterAnalysisCheckers(
+            useFailureSuppressors(
                 ::FirFailingTestSuppressor,
                 ::BlackBoxCodegenSuppressor,
             )

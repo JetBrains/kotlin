@@ -28,7 +28,7 @@ abstract class AbstractTwoStageKotlinCompilerTest {
             }
             useAdditionalService { createApplicationDisposableProvider() }
             useAdditionalService { createKotlinStandardLibrariesPathProvider() }
-            useAfterAnalysisCheckers(::IrValidationErrorChecker)
+            useFailureSuppressors(::IrValidationErrorChecker)
         }
 
         nonGroupingPhase {

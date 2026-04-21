@@ -54,7 +54,7 @@ abstract class AbstractWasmDiagnosticTestBase(
             LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
-        useAfterAnalysisCheckers(
+        useFailureSuppressors(
             ::PhasedPipelineChecker,
         )
         configureFirParser(parser)

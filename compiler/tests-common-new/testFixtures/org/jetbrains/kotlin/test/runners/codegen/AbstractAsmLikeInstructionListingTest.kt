@@ -45,7 +45,7 @@ abstract class AbstractAsmLikeInstructionListingTestBase(val parser: FirParser) 
             DIAGNOSTICS with "-warnings"
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
+        useFailureSuppressors(::BlackBoxCodegenSuppressor)
         enableMetaInfoHandler()
     }
 }
