@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isNativeSecondStage
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.ir.validation.IrValidationException
@@ -102,7 +104,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
             val enoughArguments = arguments.freeArgs.isNotEmpty() || arguments.isUsefulWithoutFreeArgs
             if (!enoughArguments) {
-                configuration.messageCollector.report(ERROR, "You have not specified any compilation arguments. No output has been produced.")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_ERROR, "You have not specified any compilation arguments. No output has been produced.")
             }
             val environment = prepareEnvironment(arguments, configuration, rootDisposable)
             if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
@@ -135,12 +137,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 return ExitCode.COMPILATION_ERROR
 
             if (e is KonanPendingCompilationError) {
-                configuration.report(ERROR, e.message)
+                configuration.report(CliDiagnostics.KONAN_COMPILATION_ERROR, e.message)
                 return ExitCode.COMPILATION_ERROR
             }
 
             configuration.report(
-                ERROR, """
+                CliDiagnostics.KONAN_COMPILATION_ERROR, """
                 |Compilation failed: ${e.message}
 
                 | * Compiler version: ${KotlinCompilerVersion.getVersion()}

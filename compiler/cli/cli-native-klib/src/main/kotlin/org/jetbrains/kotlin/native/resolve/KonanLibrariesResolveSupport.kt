@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.native.resolve
 
-import org.jetbrains.kotlin.cli.common.messages.getLogger
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.config.KlibConfigurationKeys
-import org.jetbrains.kotlin.config.zipFileSystemAccessor
-import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
-import org.jetbrains.kotlin.konan.config.konanLibraries
-import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
-import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
-import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
-import org.jetbrains.kotlin.konan.config.konanNoStdlib
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportLog
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -24,6 +20,7 @@ import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.library.validateNoLibrariesWerePassedViaCliByUniqueName
+import org.jetbrains.kotlin.util.Logger
 
 class KonanLibrariesResolveSupport(
     configuration: CompilerConfiguration,
@@ -45,7 +42,7 @@ class KonanLibrariesResolveSupport(
         libraryPaths + includedLibraryFiles.map { it.absolutePath },
         target,
         distribution,
-        configuration.getLogger(),
+        CompilerLoggerAdapter(configuration),
         false,
         configuration.zipFileSystemAccessor
     ).libraryResolver(resolveManifestDependenciesLenient)
@@ -68,5 +65,21 @@ class KonanLibrariesResolveSupport(
         ).also { resolvedLibraries ->
             validateNoLibrariesWerePassedViaCliByUniqueName(libraryPaths, resolvedLibraries.getFullList(), resolver.logger)
         }
+    }
+}
+
+private class CompilerLoggerAdapter(
+    private val configuration: CompilerConfiguration
+) : Logger {
+    override fun log(message: String) = configuration.reportLog(message)
+    override fun warning(message: String) = configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, message)
+    override fun strongWarning(message: String) = configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
+    override fun error(message: String) = configuration.report(CliDiagnostics.KONAN_ARGUMENT_ERROR, message)
+
+    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
+    override fun fatal(message: String): Nothing {
+        configuration.report(CliDiagnostics.KONAN_COMPILATION_ERROR, message)
+        (configuration.messageCollector as? GroupingMessageCollector)?.flush()
+        throw CompilationErrorException(message)
     }
 }
