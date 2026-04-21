@@ -74,7 +74,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration, rootDisposable)
-        if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
+        if (pluginLoadResult != OK) return pluginLoadResult
 
         val moduleName = arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
         configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
@@ -135,7 +135,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             // should be called after configuring jdk home from build file
             configuration.configureJdkClasspathRoots()
 
-            val dumpModelDir = configuration.get(CommonConfigurationKeys.DUMP_MODEL)
+            val dumpModelDir = configuration[CommonConfigurationKeys.DUMP_MODEL]
             val environment = createCoreEnvironment(
                 rootDisposable, configuration, moduleChunk.targetDescription()
             ) ?: run {
@@ -169,14 +169,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     }
 
     override fun MutableList<String>.addPlatformOptions(arguments: K2JVMCompilerArguments) {
-        if (arguments.scriptTemplates?.isNotEmpty() == true) {
-            add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
+        if (arguments.scriptTemplates.isNotEmpty()) {
+            add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates.joinToString(",")}")
         }
-        if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
+        if (arguments.scriptResolverEnvironment.isNotEmpty()) {
             add(
-                "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(
-                    ","
-                )}"
+                "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment.joinToString(",")}"
             )
         }
     }
@@ -237,7 +235,11 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
 
-            val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+            val environment = KotlinCoreEnvironment.createForProduction(
+                rootDisposable,
+                configuration,
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            )
 
             val sourceFiles = environment.getSourceFiles()
             perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))

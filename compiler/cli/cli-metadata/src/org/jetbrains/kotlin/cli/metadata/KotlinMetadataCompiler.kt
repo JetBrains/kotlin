@@ -51,7 +51,7 @@ class KotlinMetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         arguments: K2MetadataCompilerArguments,
         services: Services,
         basicMessageCollector: MessageCollector,
-    ): ExitCode? {
+    ): ExitCode {
         val pipeline = MetadataCliPipeline(defaultPerformanceManager)
         return pipeline.execute(arguments, services, basicMessageCollector)
     }
