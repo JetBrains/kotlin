@@ -28,23 +28,10 @@ abstract class AbstractAlternativeKtFileIdenticalChecker(testServices: TestServi
     override val order: Order
         get() = Order.P5
 
-    /**
-     * [org.jetbrains.kotlin.test.NonGroupingTestRunner] runs `check` for all checkers and then `suppressIfNeeded`
-     * for all checkers. Since this checker relies on the fact that there are no other failures in the
-     * test, we need to run it after all other suppressing checkers already suppressed all required
-     * failures
-     */
-    final override fun check(failedAssertions: List<WrappedException>) {}
-
-    final override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (failedAssertions.isNotEmpty()) return failedAssertions
+    final override fun check(failedAssertions: List<WrappedException>) {
+        if (failedAssertions.isNotEmpty()) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        return try {
-            checkTestDataFile(testDataFile)
-            emptyList()
-        } catch (e: Throwable) {
-            listOf(WrappedException.FromAfterAnalysisChecker(e))
-        }
+        checkTestDataFile(testDataFile)
     }
 
     /**
