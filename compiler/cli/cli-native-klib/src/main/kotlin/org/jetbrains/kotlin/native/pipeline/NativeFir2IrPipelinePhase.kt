@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.native.pipeline
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
+import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
@@ -33,7 +33,7 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
                 fir2IrResult.fir2irActualizedResult.irBuiltIns,
             ).lower(fir2IrResult.fir2irActualizedResult.irModuleFragment)
         } catch (_: KonanCompilationException) {
-            require(configuration.messageCollector.hasErrors())
+            require(configuration.hasMessageCollectorErrors())
             return null
         }
 
