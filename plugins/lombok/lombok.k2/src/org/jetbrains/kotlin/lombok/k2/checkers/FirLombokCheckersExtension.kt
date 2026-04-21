@@ -21,6 +21,7 @@ class FirLombokCheckersExtension(session: FirSession) : FirAdditionalCheckersExt
             FirLombokUsageChecker,
             FirLombokConflictingLogFieldChecker,
             FirLombokConflictingToStringChecker,
+            FirLombokCallSuperToStringChecker,
         )
     }
 }

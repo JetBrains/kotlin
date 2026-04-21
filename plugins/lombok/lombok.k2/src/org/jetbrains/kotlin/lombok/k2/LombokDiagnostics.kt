@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUP
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_CALL_SUPER_NOT_CALLED
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -41,6 +42,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val LOG_PROPERTY_ALREADY_EXISTS by warning1<KtAnnotationEntry, Name>()
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
+    val TO_STRING_CALL_SUPER_NOT_CALLED by warning0<KtAnnotationEntry>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -62,5 +64,10 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
 
         map.put(LOG_PROPERTY_ALREADY_EXISTS, "Property ''{0}'' already exists.", CommonRenderers.NAME)
         map.put(TO_STRING_FUNCTION_ALREADY_EXISTS, "Not generating 'toString()': A method with that name already exists.")
+        map.put(
+            TO_STRING_CALL_SUPER_NOT_CALLED,
+            "Generating 'toString' implementation but without a call to superclass, even though this class does not extend 'java.lang.Object'. " +
+                    "If this is intentional, add '@ToString(callSuper=false)' to your type."
+        )
     }
 }

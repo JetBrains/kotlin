@@ -46,6 +46,15 @@ class WithNonConflictingContextualFunction(val b: String) {
     fun toString(): String = "Contex"
 }
 
+@ToString
+open class CallSuperBase(val baseProp: Int)
+
+@ToString(callSuper = true)
+class CallSuperDerived(val ownProp: String) : CallSuperBase(10)
+
+@ToString(callSuper = true)
+class CallSuperWithOnlyAnyParent(val x: Int)
+
 fun box(): String {
     assertEquals("Simple(name=Alice, age=30)", Simple("Alice", 30).toString())
     assertEquals("NoFieldNames(1, 2)", NoFieldNames(1, 2).toString())
@@ -62,6 +71,10 @@ fun box(): String {
     @ToString()
     class LocalClass(val prop: String)
     assertEquals("LocalClass(prop=TestLocalClass)", LocalClass("TestLocalClass").toString())
+
+    assertEquals("CallSuperBase(baseProp=10)", CallSuperBase(10).toString())
+    assertEquals("CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", CallSuperDerived("hello").toString())
+    assertEquals("CallSuperWithOnlyAnyParent(x=5)", CallSuperWithOnlyAnyParent(5).toString())
 
     return "OK"
 }

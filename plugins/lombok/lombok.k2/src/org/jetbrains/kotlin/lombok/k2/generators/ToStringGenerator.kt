@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
+import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.CallSuperMode
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.LombokNames
@@ -57,6 +58,7 @@ data class ToStringPropertyInfo(
 class ToStringGeneratorKey(
     val className: String,
     val propertyInfos: List<ToStringPropertyInfo>,
+    val callSuper: Boolean,
 ) : GeneratedDeclarationKey()
 
 val FirDeclarationOrigin.isToString get() = this is FirDeclarationOrigin.Plugin && this.key is ToStringGeneratorKey
@@ -109,6 +111,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
             key = ToStringGeneratorKey(
                 className = classSymbol.classId.shortClassName.asString(),
                 propertyInfos = propertyInfos,
+                callSuper = toStringConfig.callSuper == CallSuperMode.Call,
             ),
             name = TO_STRING_NAME,
             returnType = StandardTypes.String,
