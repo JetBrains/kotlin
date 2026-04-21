@@ -1138,8 +1138,8 @@ class CallAndReferenceGenerator(
 
             irArgument = irArgument.prepareExpressionForGivenExpectedType(
                 expression = argument,
-                expectedType = unsubstitutedParameterTypeConsideringVararg,
-                substitutedExpectedType = substitutedParameterType,
+                expectedType = substitutedParameterType,
+                unsubstitutedExpectedType = unsubstitutedParameterTypeConsideringVararg,
                 forReceiver = false,
             )
         }
