@@ -47,6 +47,7 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
     val KONAN_ARGUMENT_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
     val KONAN_ARGUMENT_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
+    val KONAN_COMPILATION_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
 
     val JVM_CLI_ERROR: KtSourcelessDiagnosticFactory by errorWithoutSource()
     val JVM_CLI_WARNING: KtSourcelessDiagnosticFactory by strongWarningWithoutSource()
@@ -93,6 +94,7 @@ object CliDiagnostics : KtDiagnosticsContainer() {
 
             map.put(KONAN_ARGUMENT_WARNING, MESSAGE_PLACEHOLDER)
             map.put(KONAN_ARGUMENT_ERROR, MESSAGE_PLACEHOLDER)
+            map.put(KONAN_COMPILATION_ERROR, MESSAGE_PLACEHOLDER)
 
             map.put(JVM_CLI_ERROR, MESSAGE_PLACEHOLDER)
             map.put(JVM_CLI_WARNING, MESSAGE_PLACEHOLDER)
