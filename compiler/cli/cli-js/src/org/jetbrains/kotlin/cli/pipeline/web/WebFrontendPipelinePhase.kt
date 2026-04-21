@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.js.platformChecker
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.useLightTree
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -56,7 +56,6 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             it.notifyCurrentPhaseFinishedIfNeeded()
             it.notifyPhaseStarted(PhaseType.Analysis)
         }
-        val messageCollector = configuration.messageCollector
         val diagnosticsCollector = configuration.diagnosticsCollector
         val libraries = configuration.libraries
         val friendLibraries = configuration.friendLibraries
@@ -142,7 +141,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
             analyzedOutput,
             configuration,
             moduleStructure,
-            hasErrors = messageCollector.hasErrors() || diagnosticsCollector.hasErrors,
+            hasErrors = configuration.hasMessageCollectorErrors() || diagnosticsCollector.hasErrors,
         )
     }
 
