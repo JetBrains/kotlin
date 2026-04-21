@@ -5,7 +5,6 @@
 // FILE: l.kt
 @file:Suppress("EXTERNAL_DELEGATION")
 
-@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 external interface MySymbol {
     companion object : MySymbolConstructor by definedExternally
 }
