@@ -7,7 +7,7 @@ public record MyRecord(String str) {}
 
 fun foo() {
     MyRecord("") // OK
-    MyRecord<!NO_VALUE_FOR_PARAMETER!>()<!> // error
+    <!NO_VALUE_FOR_PARAMETER!>MyRecord<!>() // error
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

@@ -2,9 +2,9 @@
 // FIR_DUMP
 
 fun test1(f: String.() -> Unit) {
-    (f)<!NO_VALUE_FOR_PARAMETER!>()<!>
+    (<!NO_VALUE_FOR_PARAMETER!>f<!>)()
 
-    f<!NO_VALUE_FOR_PARAMETER!>()<!>
+    <!NO_VALUE_FOR_PARAMETER!>f<!>()
 }
 
 fun test2(f: (Int) -> Int) {

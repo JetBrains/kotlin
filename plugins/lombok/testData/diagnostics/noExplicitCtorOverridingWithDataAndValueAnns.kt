@@ -42,6 +42,6 @@ public class ValueExplicitCtorUsage {
 
 // FILE: test.kt
 fun usage() {
-    DataExplicitCtor(<!NO_VALUE_FOR_PARAMETER!>"John")<!>
+    <!NO_VALUE_FOR_PARAMETER!>DataExplicitCtor<!>("John")
     ValueExplicitCtor(1, <!TOO_MANY_ARGUMENTS!>"y"<!>)
 }

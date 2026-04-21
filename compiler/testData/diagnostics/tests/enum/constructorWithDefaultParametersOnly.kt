@@ -6,8 +6,8 @@ enum class TestOk(val x: String = "OK") {
 }
 
 enum class TestErrors(val x: String) {
-    <!NO_VALUE_FOR_PARAMETER!>TEST1,<!>
-    TEST2<!NO_VALUE_FOR_PARAMETER!>()<!>,
+    <!NO_VALUE_FOR_PARAMETER!>TEST1<!>,
+    <!NO_VALUE_FOR_PARAMETER!>TEST2<!>(),
     TEST3("Hello")
 }
 
