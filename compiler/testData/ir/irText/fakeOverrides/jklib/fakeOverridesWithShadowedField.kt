@@ -1,9 +1,9 @@
 // TARGET_BACKEND: JKLIB
 
-// FILE: ktjstypeshadowedfield/BaseJsTypeClass.java
-package ktjstypeshadowedfield;
+// FILE: fakeOverridesWithShadowedField/BaseTypeClass.java
+package fakeOverridesWithShadowedField;
 
-public class BaseJsTypeClass {
+public class BaseTypeClass {
   public String foo = "abc";
 
   public String getFoo() {
@@ -15,24 +15,24 @@ public class BaseJsTypeClass {
   }
 }
 
-// FILE: ktjstypeshadowedfield/JavaJsTypeShadowsField.java
-package ktjstypeshadowedfield;
+// FILE: fakeOverridesWithShadowedField/JavaTypeShadowsField.java
+package fakeOverridesWithShadowedField;
 
-public class JavaJsTypeShadowsField extends BaseJsTypeClass {
+public class JavaTypeShadowsField extends BaseTypeClass {
   public String foo = "ijk";
 }
 
-// FILE: ktjstypeshadowedfield/Main.kt
-package ktjstypeshadowedfield
+// FILE: fakeOverridesWithShadowedField/Main.kt
+package fakeOverridesWithShadowedField
 
 fun assertEquals(expected: Any?, actual: Any?) {
     if (expected != actual) throw AssertionError("Expected $expected but got $actual")
 }
 
-class KtJsTypeShadowedFieldInParent : JavaJsTypeShadowsField()
+class KtTypeShadowedFieldInParent : JavaTypeShadowsField()
 
 fun main(vararg unused: String) {
-  val shadowedFieldInParent = KtJsTypeShadowedFieldInParent()
+  val shadowedFieldInParent = KtTypeShadowedFieldInParent()
 
   assertEquals("ijk", shadowedFieldInParent.foo)
   assertEquals("get:abc", shadowedFieldInParent.getFoo())

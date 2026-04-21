@@ -203,15 +203,9 @@ private fun CallableDescriptor.computeJvmSignature(): String? = signatures {
     val classDescriptor = containingDeclaration as? ClassDescriptor ?: return null
     if (classDescriptor.name.isSpecial) return null
 
-    val jvmDescriptor = when (val original = original) {
-        is FunctionDescriptor -> original.computeJvmDescriptor()
-        is PropertyDescriptor -> original.name.asString()
-        else -> return null
-    }
-
     signature(
         classDescriptor,
-        jvmDescriptor
+        (original as? FunctionDescriptor ?: return null).computeJvmDescriptor()
     )
 }
 
@@ -234,7 +228,7 @@ private fun IrDeclaration.isDeclaredInJava(): Boolean {
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 private fun IrDeclaration.isJavaBackedCallable(): Boolean {
     if (isDeclaredInJava()) return true
-
+    
     val functions = when (this) {
         is IrSimpleFunction -> {
             // Check if the function a fake override of a Java declaration.
@@ -242,16 +236,12 @@ private fun IrDeclaration.isJavaBackedCallable(): Boolean {
         }
         is IrProperty -> {
             // Check property accessors.
-            val accessors = listOfNotNull(getter, setter)
-            if (accessors.isEmpty() && isFakeOverride) {
-                return overriddenSymbols.any { it.owner.isDeclaredInJava() }
-            }
-            accessors
+            listOfNotNull(getter, setter)
         }
         else -> emptyList()
     }
 
-    if (functions.isNotEmpty() && functions.any { it.isFakeOverride }) {
+    if (functions.any { it.isFakeOverride }) {
         return ifAnyDFS(
             functions,
             { current ->
@@ -260,5 +250,16 @@ private fun IrDeclaration.isJavaBackedCallable(): Boolean {
             { current -> current.isDeclaredInJava() },
         )
     }
+
+    if (this is IrProperty && isFakeOverride) {
+        return ifAnyDFS(
+            listOf(this),
+            { current ->
+                if (current.isFakeOverride) current.overriddenSymbols.map { it.owner } else emptyList()
+            },
+            { current -> current.isDeclaredInJava() },
+        )
+    }
+
     return false
 }
