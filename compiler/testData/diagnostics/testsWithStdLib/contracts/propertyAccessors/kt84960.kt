@@ -14,7 +14,7 @@ fun works() {
 fun fails() {
     val foo: Foo<Unit> = BarImpl
     foo.foo2
-    val bar: Bar<Unit> <!INITIALIZER_TYPE_MISMATCH!>=<!> foo // Initializer type mismatch: expected 'Bar<Unit>', actual 'Bar<T (of val <T> Foo<T>.foo2)> & Foo<Unit>'.
+    val bar: Bar<Unit> = foo
 }
 
 interface Foo<T>

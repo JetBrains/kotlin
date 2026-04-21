@@ -1293,7 +1293,10 @@ abstract class FirDataFlowAnalyzer(
         qualifiedAccess: FirStatement,
         originalFunction: FirFunction?,
     ): ConeSubstitutor {
-        val typeParameters = callee.typeParameters
+        val typeParameters = when {
+            callee is FirPropertyAccessor -> callee.propertySymbol.fir.typeParameters
+            else -> callee.typeParameters
+        }
         val typeArgumentsSubstitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
             @Suppress("UNCHECKED_CAST")
             val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
