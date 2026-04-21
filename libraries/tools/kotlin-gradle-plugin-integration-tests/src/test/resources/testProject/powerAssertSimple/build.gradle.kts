@@ -3,11 +3,6 @@ plugins {
     kotlin("plugin.power-assert")
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
 kotlin {
     jvm()
     js()

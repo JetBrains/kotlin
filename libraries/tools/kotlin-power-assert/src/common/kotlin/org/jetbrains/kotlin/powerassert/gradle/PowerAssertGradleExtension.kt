@@ -20,6 +20,7 @@
 package org.jetbrains.kotlin.powerassert.gradle
 
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import javax.inject.Inject
@@ -28,6 +29,13 @@ import javax.inject.Inject
 abstract class PowerAssertGradleExtension @Inject constructor(
     objectFactory: ObjectFactory,
 ) {
+    /**
+     * Enables (`true`) or disables (`false`) adding the Power-Assert runtime library as a dependency. Defaults to `true`.
+     * When enabled, the runtime library is automatically added as an `implementation` dependency to [source sets][includedSourceSets] the
+     * compiler plugin will transform.
+     */
+    val addRuntimeDependency: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(true)
+
     /**
      * Defines the fully-qualified path of functions which should be transformed by the Power-Assert compiler plugin.
      * If nothing is defined, defaults to [`kotlin.assert`][assert].
