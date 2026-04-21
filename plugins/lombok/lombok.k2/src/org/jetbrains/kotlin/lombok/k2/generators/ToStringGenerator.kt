@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.CallSuperMode
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_NAME
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.CallableId
@@ -155,8 +156,17 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     null
                 }
 
-                add(ToStringPropertyInfo(propertyIdentifier, displayName))
+                val rank = toStringIncludeAnnotation
+                    ?.findArgumentByName(INCLUDE_RANK)
+                    ?.let { arg ->
+                        val literal = arg as? FirLiteralExpression ?: return@let null
+                        (literal.value as? Int) ?: (literal.value as? Long)?.toInt()
+                    }
+                    ?: 0
+
+                add(ToStringPropertyInfo(propertyIdentifier, displayName) to rank)
             }
-        }
+            sortByDescending { it.second }
+        }.map { it.first }
     }
 }

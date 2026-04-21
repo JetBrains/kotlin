@@ -47,6 +47,27 @@ class WithNonConflictingContextualFunction(val b: String) {
 }
 
 @ToString
+class WithRank(
+    @ToString.Include(rank = -1) val lowRank: String,
+    val defaultRank: String,
+    @ToString.Include(rank = 1) val highRank: String,
+)
+
+@ToString
+class WithSameRank(
+    @ToString.Include(rank = 2) val a: String,
+    @ToString.Include(rank = 2) val b: String,
+    val c: String,
+)
+
+@ToString(onlyExplicitlyIncluded = true)
+class WithRankOnlyIncluded(
+    @ToString.Include val second: String,
+    @ToString.Include(rank = 5) val first: String,
+    val excluded: String,
+)
+
+@ToString
 open class CallSuperBase(val baseProp: Int)
 
 @ToString(callSuper = true)
@@ -71,6 +92,10 @@ fun box(): String {
     @ToString()
     class LocalClass(val prop: String)
     assertEquals("LocalClass(prop=TestLocalClass)", LocalClass("TestLocalClass").toString())
+
+    assertEquals("WithRank(highRank=hi, defaultRank=mid, lowRank=lo)", WithRank(lowRank = "lo", defaultRank = "mid", highRank = "hi").toString())
+    assertEquals("WithSameRank(a=1, b=2, c=3)", WithSameRank(a = "1", b = "2", c = "3").toString())
+    assertEquals("WithRankOnlyIncluded(first=x, second=y)", WithRankOnlyIncluded(first = "x", second = "y", excluded = "z").toString())
 
     assertEquals("CallSuperBase(baseProp=10)", CallSuperBase(10).toString())
     assertEquals("CallSuperDerived(super=CallSuperBase(baseProp=10), ownProp=hello)", CallSuperDerived("hello").toString())

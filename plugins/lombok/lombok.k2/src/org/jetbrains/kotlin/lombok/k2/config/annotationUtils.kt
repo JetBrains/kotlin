@@ -75,6 +75,7 @@ object LombokConfigNames {
     val ONLY_EXPLICITLY_INCLUDED = Name.identifier("onlyExplicitlyIncluded")
     val EXCLUDE = Name.identifier("exclude")
     val INCLUDE_NAME = Name.identifier("name")
+    val INCLUDE_RANK = Name.identifier("rank")
 
     const val TO_STRING_INCLUDE_FIELD_NAMES_CONFIG = "lombok.toString.includeFieldNames"
     const val TO_STRING_CALL_SUPER_CONFIG = "lombok.toString.callSuper"
