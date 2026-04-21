@@ -81,7 +81,7 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     val extensionToString: IrSimpleFunctionSymbol by CallableIds.extensionToString.functionSymbol {
         it.hasShape(extensionReceiver = true, parameterTypes = listOf(irBuiltIns.anyNType))
     }
-    val memberToString: IrSimpleFunctionSymbol = CallableIds.memberToString.functionSymbol()
+    val memberToString: IrSimpleFunctionSymbol by CallableIds.memberToString.functionSymbol()
     val extensionStringPlus: IrSimpleFunctionSymbol by CallableIds.extensionStringPlus.functionSymbol {
         it.hasShape(
             extensionReceiver = true,
@@ -89,7 +89,7 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
             parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), irBuiltIns.anyNType)
         )
     }
-    val memberStringPlus: IrSimpleFunctionSymbol = CallableIds.memberPlus.functionSymbol()
+    val memberStringPlus: IrSimpleFunctionSymbol by CallableIds.memberPlus.functionSymbol()
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol

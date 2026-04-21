@@ -171,7 +171,7 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
         ulongArray?.let { array -> put(array, ulongType) }
     }
 
-    override val booleanNotSymbol: IrSimpleFunctionSymbol = CallableId(StandardClassIds.Boolean, OperatorNameConventions.NOT).functionSymbol()
+    override val booleanNotSymbol: IrSimpleFunctionSymbol by CallableId(StandardClassIds.Boolean, OperatorNameConventions.NOT).functionSymbol()
 
     override val enumClass: IrClassSymbol = StandardClassIds.Enum.classSymbol()
 
@@ -184,8 +184,8 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
     override val intAndSymbol: IrSimpleFunctionSymbol by CallableId(StandardClassIds.Int, OperatorNameConventions.AND)
         .functionSymbol { it.parameters[1].type == intType }
 
-    override val arrayOf: IrSimpleFunctionSymbol = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_FUNCTION).functionSymbol()
-    override val arrayOfNulls: IrSimpleFunctionSymbol = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).functionSymbol()
+    override val arrayOf: IrSimpleFunctionSymbol by CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_FUNCTION).functionSymbol()
+    override val arrayOfNulls: IrSimpleFunctionSymbol by CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, ArrayFqNames.ARRAY_OF_NULLS_FUNCTION).functionSymbol()
 
     override val deprecatedSymbol: IrClassSymbol = StandardClassIds.Annotations.Deprecated.classSymbol()
     override val deprecationLevelSymbol: IrClassSymbol = StandardClassIds.DeprecationLevel.classSymbol()

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.callableId
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.name.CallableId
@@ -58,10 +60,49 @@ fun ClassId.lazyClassSymbol(languageFeature: LanguageFeature): Lazy<IrClassSymbo
     }
 
 context(holder: SymbolFinderHolder)
-fun CallableId.propertySymbols(): List<IrPropertySymbol> = holder.symbolFinder.findProperties(this).toList()
+private fun CallableId.propertySymbols(): Lazy<List<IrPropertySymbol>> {
+    // Symbol for top-level property can be acquired right away
+    val topLevelClassId = this.classId
+    if (topLevelClassId == null) {
+        val symbols = holder.symbolFinder.findProperties(this).toList()
+        return lazyOf(symbols)
+    }
+
+    // If property is a member, then the class must be loaded first and then the property can be found lazily
+    val klass = holder.symbolFinder.findClass(topLevelClassId)
+    return lazy {
+        if (klass == null) return@lazy emptyList()
+        klass.owner.declarations
+            .filter {
+                // Property can be asked for much later in the pipeline where we transformed all properties into fields with accessors.
+                it is IrProperty && it.callableId == this@propertySymbols ||
+                        it is IrSimpleFunction && it.correspondingPropertySymbol?.owner?.callableId == this@propertySymbols
+            }
+            .map { if (it is IrSimpleFunction) it.correspondingPropertySymbol!! else (it as IrProperty).symbol }
+            .toSet()
+            .toList()
+    }
+}
 
 context(holder: SymbolFinderHolder)
-fun CallableId.functionSymbols(): List<IrSimpleFunctionSymbol> = holder.symbolFinder.findFunctions(this).toList()
+fun CallableId.functionSymbols(): Lazy<List<IrSimpleFunctionSymbol>> {
+    // Symbol for top-level function can be acquired right away
+    val topLevelClassId = this.classId
+    if (topLevelClassId == null) {
+        val symbols = holder.symbolFinder.findFunctions(this).toList()
+        return lazyOf(symbols)
+    }
+
+    // If function is a member, then the class must be loaded first and then the function can be found lazily
+    val klass = holder.symbolFinder.findClass(topLevelClassId)
+    return lazy {
+        if (klass == null) return@lazy emptyList()
+        klass.owner.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .filter { it.callableId == this@functionSymbols }
+            .map { it.symbol }
+    }
+}
 
 context(holder: SymbolFinderHolder)
 fun ClassId.primaryConstructorSymbol(): Lazy<IrConstructorSymbol> {
@@ -82,35 +123,41 @@ fun ClassId.defaultType(): Lazy<IrType> {
 }
 
 context(holder: SymbolFinderHolder)
-fun CallableId.propertySymbol(): IrPropertySymbol {
-    val elements = propertySymbols()
-    require(elements.isNotEmpty()) { "No property $this found" }
-    require(elements.size == 1) {
-        "Several properties $this found:\n${elements.joinToString("\n")}"
+fun CallableId.propertySymbol(): Lazy<IrPropertySymbol> {
+    val elements by propertySymbols()
+    return lazy {
+        require(elements.isNotEmpty()) { "No property $this found" }
+        require(elements.size == 1) {
+            "Several properties $this found:\n${elements.joinToString("\n")}"
+        }
+        elements.single()
     }
-    return elements.single()
 }
 
 context(holder: SymbolFinderHolder)
-fun CallableId.functionSymbolOrNull(): IrSimpleFunctionSymbol? {
-    val elements = functionSymbols()
-    require(elements.size <= 1) {
-        "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
-    return elements.singleOrNull()
+fun CallableId.functionSymbolOrNull(): Lazy<IrSimpleFunctionSymbol?> {
+    val elements by functionSymbols()
+    return lazy {
+        require(elements.size <= 1) {
+            "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
+        elements.singleOrNull()
+    }
 }
 
 context(holder: SymbolFinderHolder)
-fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
-    val elements = functionSymbols()
-    require(elements.isNotEmpty()) { "No function $this found" }
-    require(elements.size == 1) {
-        "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
-    return elements.single()
+fun CallableId.functionSymbol(): Lazy<IrSimpleFunctionSymbol> {
+    val elements by functionSymbols()
+    return lazy {
+        require(elements.isNotEmpty()) { "No function $this found" }
+        require(elements.size == 1) {
+            "Several functions $this found:\n${elements.joinToString("\n")}\nTry using functionSymbol(condition) instead to filter" }
+        elements.single()
+    }
 }
 
 context(holder: SymbolFinderHolder)
 inline fun CallableId.functionSymbol(crossinline condition: (IrSimpleFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
-    val unfilteredElements = functionSymbols()
+    val unfilteredElements by functionSymbols()
     return lazy {
         val elements = unfilteredElements.filter { condition(it.owner) }
         require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
@@ -124,7 +171,7 @@ inline fun <K> CallableId.functionSymbolAssociatedBy(
     crossinline condition: (IrSimpleFunction) -> Boolean = { true },
     crossinline getKey: (IrSimpleFunction) -> K
 ): Lazy<Map<K, IrSimpleFunctionSymbol>> {
-    val unfilteredElements = functionSymbols()
+    val unfilteredElements by functionSymbols()
     return lazy {
         val elements = unfilteredElements.filter { condition(it.owner) }
         elements.associateBy { getKey(it.owner) }
@@ -133,29 +180,29 @@ inline fun <K> CallableId.functionSymbolAssociatedBy(
 
 context(holder: SymbolFinderHolder)
 fun CallableId.getterSymbol(): Lazy<IrSimpleFunctionSymbol> {
-    val elements = propertySymbols()
-    require(elements.isNotEmpty()) { "No properties $this found" }
-    require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+    val elements by propertySymbols()
     return lazy {
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
         elements.single().owner.getter!!.symbol
     }
 }
 
 context(holder: SymbolFinderHolder)
 fun CallableId.setterSymbol(): Lazy<IrSimpleFunctionSymbol> {
-    val elements = propertySymbols()
-    require(elements.isNotEmpty()) { "No properties $this found" }
-    require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
+    val elements by propertySymbols()
     return lazy {
+        require(elements.isNotEmpty()) { "No properties $this found" }
+        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
         elements.single().owner.setter!!.symbol
     }
 }
 
 context(holder: SymbolFinderHolder)
 fun CallableId.getterSymbol(extensionReceiverClass: IrClassSymbol?): Lazy<IrSimpleFunctionSymbol> {
-    val unfilteredElements = propertySymbols()
-    require(unfilteredElements.isNotEmpty()) { "No properties $this found" }
+    val unfilteredElements by propertySymbols()
     return lazy {
+        require(unfilteredElements.isNotEmpty()) { "No properties $this found" }
         val elements = unfilteredElements.filter { it.owner.getter?.extensionReceiverClass == extensionReceiverClass }
         require(elements.isNotEmpty()) { "No properties $this found with ${extensionReceiverClass} receiver" }
         require(elements.size == 1) { "Several properties $this found with ${extensionReceiverClass} receiver:\n${elements.joinToString("\n")}" }

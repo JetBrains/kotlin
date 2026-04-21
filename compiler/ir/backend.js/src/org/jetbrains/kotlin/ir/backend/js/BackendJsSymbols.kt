@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.functionSymbols
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -45,8 +46,8 @@ abstract class BackendWebSymbols(
     val coroutineImplExceptionStatePropertyGetter by CallableIds.coroutineExceptionState.getterSymbol()
     val coroutineImplExceptionStatePropertySetter by CallableIds.coroutineExceptionState.setterSymbol()
 
-    val testFun = CallableIds.test.functionSymbolOrNull()
-    val suiteFun = CallableIds.suite.functionSymbolOrNull()
+    val testFun by CallableIds.test.functionSymbolOrNull()
+    val suiteFun by CallableIds.suite.functionSymbolOrNull()
     val enumEntries: IrClassSymbol = ClassIds.EnumEntries.classSymbol()
     val createEnumEntries: IrSimpleFunctionSymbol by CallableIds.enumEntries
         .functionSymbol { it.parameters.firstOrNull()?.type?.isFunctionOrKFunction() == false }
@@ -58,27 +59,27 @@ class BackendJsSymbols(
     private val stageController: StageController,
     private val compileLongAsBigint: Boolean
 ) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), BackendWebSymbols(irBuiltIns) {
-    val noWhenBranchMatchedException = CallableIds.noWhenBranchMatchedException.functionSymbol()
+    val noWhenBranchMatchedException by CallableIds.noWhenBranchMatchedException.functionSymbol()
 
-    override val throwNullPointerException = CallableIds.throwNpe.functionSymbol()
+    override val throwNullPointerException by CallableIds.throwNpe.functionSymbol()
 
-    override val throwTypeCastException = CallableIds.throwCce.functionSymbol()
+    override val throwTypeCastException by CallableIds.throwCce.functionSymbol()
 
-    override val throwKotlinNothingValueException: IrSimpleFunctionSymbol = CallableIds.throwKotlinNothingValueException.functionSymbol()
+    override val throwKotlinNothingValueException: IrSimpleFunctionSymbol by CallableIds.throwKotlinNothingValueException.functionSymbol()
 
-    override val throwISE: IrSimpleFunctionSymbol = CallableIds.throwIse.functionSymbol()
+    override val throwISE: IrSimpleFunctionSymbol by CallableIds.throwIse.functionSymbol()
 
-    override val throwIAE: IrSimpleFunctionSymbol = CallableIds.throwIae.functionSymbol()
+    override val throwIAE: IrSimpleFunctionSymbol by CallableIds.throwIae.functionSymbol()
 
     private val _stringBuilder = ClassIds.StringBuilder.classSymbolOrNull()
     override val stringBuilder: IrClassSymbol
         get() = _stringBuilder ?: TODO("Not implemented")
 
-    override val getContinuation = CallableIds.getContinuation.functionSymbol()
+    override val getContinuation by CallableIds.getContinuation.functionSymbol()
 
-    val coroutineEmptyContinuation: IrPropertySymbol = CallableIds.EmptyContinuation.propertySymbol()
+    val coroutineEmptyContinuation: IrPropertySymbol by CallableIds.EmptyContinuation.propertySymbol()
 
-    override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
+    override val returnIfSuspended by CallableIds.returnIfSuspended.functionSymbol()
 
     override val functionAdapter = ClassIds.FunctionAdapter.classSymbol()
 
@@ -101,116 +102,116 @@ class BackendJsSymbols(
 
     // --- JS symbols ---
     // Modes
-    val jsIsEs6 = CallableIds.jsIsEs6.functionSymbol()
+    val jsIsEs6 by CallableIds.jsIsEs6.functionSymbol()
 
     // Global variables
-    val void = CallableIds.VOID.propertySymbol()
-    val globalThis = CallableIds.globalThis.propertySymbol()
+    val void by CallableIds.VOID.propertySymbol()
+    val globalThis by CallableIds.globalThis.propertySymbol()
 
     // Equality operations:
 
-    val jsEqeq = CallableIds.jsEqeq.functionSymbol()
-    val jsNotEq = CallableIds.jsNotEq.functionSymbol()
-    val jsEqeqeq = CallableIds.jsEqeqeq.functionSymbol()
-    val jsNotEqeq = CallableIds.jsNotEqeq.functionSymbol()
+    val jsEqeq by CallableIds.jsEqeq.functionSymbol()
+    val jsNotEq by CallableIds.jsNotEq.functionSymbol()
+    val jsEqeqeq by CallableIds.jsEqeqeq.functionSymbol()
+    val jsNotEqeq by CallableIds.jsNotEqeq.functionSymbol()
 
-    val jsGt = CallableIds.jsGt.functionSymbol()
-    val jsGtEq = CallableIds.jsGtEq.functionSymbol()
-    val jsLt = CallableIds.jsLt.functionSymbol()
-    val jsLtEq = CallableIds.jsLtEq.functionSymbol()
+    val jsGt by CallableIds.jsGt.functionSymbol()
+    val jsGtEq by CallableIds.jsGtEq.functionSymbol()
+    val jsLt by CallableIds.jsLt.functionSymbol()
+    val jsLtEq by CallableIds.jsLtEq.functionSymbol()
 
 
     // Unary operations:
 
-    val jsNot = CallableIds.jsNot.functionSymbol()
+    val jsNot by CallableIds.jsNot.functionSymbol()
 
-    val jsUnaryPlus = CallableIds.jsUnaryPlus.functionSymbol()
-    val jsUnaryMinus = CallableIds.jsUnaryMinus.functionSymbol()
+    val jsUnaryPlus by CallableIds.jsUnaryPlus.functionSymbol()
+    val jsUnaryMinus by CallableIds.jsUnaryMinus.functionSymbol()
 
-    val jsPrefixInc = CallableIds.jsPrefixInc.functionSymbol()
-    val jsPostfixInc = CallableIds.jsPostfixInc.functionSymbol()
-    val jsPrefixDec = CallableIds.jsPrefixDec.functionSymbol()
-    val jsPostfixDec = CallableIds.jsPostfixDec.functionSymbol()
+    val jsPrefixInc by CallableIds.jsPrefixInc.functionSymbol()
+    val jsPostfixInc by CallableIds.jsPostfixInc.functionSymbol()
+    val jsPrefixDec by CallableIds.jsPrefixDec.functionSymbol()
+    val jsPostfixDec by CallableIds.jsPostfixDec.functionSymbol()
 
-    val jsDelete = CallableIds.jsDelete.functionSymbol()
+    val jsDelete by CallableIds.jsDelete.functionSymbol()
 
-    val longUnaryMinus = CallableIds.negate(compileLongAsBigint).functionSymbol()
+    val longUnaryMinus by CallableIds.negate(compileLongAsBigint).functionSymbol()
 
     // Binary operations:
 
-    val jsPlus = CallableIds.jsPlus.functionSymbol()
-    val jsMinus = CallableIds.jsMinus.functionSymbol()
-    val jsMult = CallableIds.jsMult.functionSymbol()
-    val jsDiv = CallableIds.jsDiv.functionSymbol()
-    val jsMod = CallableIds.jsMod.functionSymbol()
+    val jsPlus by CallableIds.jsPlus.functionSymbol()
+    val jsMinus by CallableIds.jsMinus.functionSymbol()
+    val jsMult by CallableIds.jsMult.functionSymbol()
+    val jsDiv by CallableIds.jsDiv.functionSymbol()
+    val jsMod by CallableIds.jsMod.functionSymbol()
 
-    val jsPlusAssign = CallableIds.jsPlusAssign.functionSymbol()
-    val jsMinusAssign = CallableIds.jsMinusAssign.functionSymbol()
-    val jsMultAssign = CallableIds.jsMultAssign.functionSymbol()
-    val jsDivAssign = CallableIds.jsDivAssign.functionSymbol()
-    val jsModAssign = CallableIds.jsModAssign.functionSymbol()
+    val jsPlusAssign by CallableIds.jsPlusAssign.functionSymbol()
+    val jsMinusAssign by CallableIds.jsMinusAssign.functionSymbol()
+    val jsMultAssign by CallableIds.jsMultAssign.functionSymbol()
+    val jsDivAssign by CallableIds.jsDivAssign.functionSymbol()
+    val jsModAssign by CallableIds.jsModAssign.functionSymbol()
 
-    val jsAnd = CallableIds.jsAnd.functionSymbol()
-    val jsOr = CallableIds.jsOr.functionSymbol()
+    val jsAnd by CallableIds.jsAnd.functionSymbol()
+    val jsOr by CallableIds.jsOr.functionSymbol()
 
-    val jsIn = CallableIds.jsIn.functionSymbol()
+    val jsIn by CallableIds.jsIn.functionSymbol()
 
-    val longAdd = CallableIds.add(compileLongAsBigint).functionSymbol()
-    val longSubtract = CallableIds.subtract(compileLongAsBigint).functionSymbol()
-    val longMultiply = CallableIds.multiply(compileLongAsBigint).functionSymbol()
-    val longDivide = CallableIds.divide(compileLongAsBigint).functionSymbol()
-    val longModulo = CallableIds.modulo(compileLongAsBigint).functionSymbol()
+    val longAdd by CallableIds.add(compileLongAsBigint).functionSymbol()
+    val longSubtract by CallableIds.subtract(compileLongAsBigint).functionSymbol()
+    val longMultiply by CallableIds.multiply(compileLongAsBigint).functionSymbol()
+    val longDivide by CallableIds.divide(compileLongAsBigint).functionSymbol()
+    val longModulo by CallableIds.modulo(compileLongAsBigint).functionSymbol()
 
     // Bit operations:
 
-    val jsBitAnd = CallableIds.jsBitAnd.functionSymbol()
-    val jsBitOr = CallableIds.jsBitOr.functionSymbol()
-    val jsBitXor = CallableIds.jsBitXor.functionSymbol()
-    val jsBitNot = CallableIds.jsBitNot.functionSymbol()
+    val jsBitAnd by CallableIds.jsBitAnd.functionSymbol()
+    val jsBitOr by CallableIds.jsBitOr.functionSymbol()
+    val jsBitXor by CallableIds.jsBitXor.functionSymbol()
+    val jsBitNot by CallableIds.jsBitNot.functionSymbol()
 
-    val jsBitShiftR = CallableIds.jsBitShiftR.functionSymbol()
-    val jsBitShiftRU = CallableIds.jsBitShiftRU.functionSymbol()
-    val jsBitShiftL = CallableIds.jsBitShiftL.functionSymbol()
+    val jsBitShiftR by CallableIds.jsBitShiftR.functionSymbol()
+    val jsBitShiftRU by CallableIds.jsBitShiftRU.functionSymbol()
+    val jsBitShiftL by CallableIds.jsBitShiftL.functionSymbol()
 
-    val longAnd = CallableIds.bitwiseAnd(compileLongAsBigint).functionSymbolOrNull()
-    val longOr = CallableIds.bitwiseOr(compileLongAsBigint).functionSymbolOrNull()
-    val longXor = CallableIds.bitwiseXor(compileLongAsBigint).functionSymbolOrNull()
-    val longInv = CallableIds.invert(compileLongAsBigint).functionSymbolOrNull()
-    val longShiftLeft = CallableIds.shiftLeft(compileLongAsBigint).functionSymbol()
-    val longShiftRight = CallableIds.shiftRight(compileLongAsBigint).functionSymbol()
-    val longShiftRightUnsigned = CallableIds.shiftRightUnsigned(compileLongAsBigint).functionSymbol()
+    val longAnd by CallableIds.bitwiseAnd(compileLongAsBigint).functionSymbolOrNull()
+    val longOr by CallableIds.bitwiseOr(compileLongAsBigint).functionSymbolOrNull()
+    val longXor by CallableIds.bitwiseXor(compileLongAsBigint).functionSymbolOrNull()
+    val longInv by CallableIds.invert(compileLongAsBigint).functionSymbolOrNull()
+    val longShiftLeft by CallableIds.shiftLeft(compileLongAsBigint).functionSymbol()
+    val longShiftRight by CallableIds.shiftRight(compileLongAsBigint).functionSymbol()
+    val longShiftRightUnsigned by CallableIds.shiftRightUnsigned(compileLongAsBigint).functionSymbol()
 
     // Type checks:
 
-    val jsInstanceOf = CallableIds.jsInstanceOfIntrinsic.functionSymbol()
-    val jsTypeOf = CallableIds.jsTypeOf.functionSymbol()
-    val isExternalObject = CallableIds.isExternalObject.functionSymbol()
+    val jsInstanceOf by CallableIds.jsInstanceOfIntrinsic.functionSymbol()
+    val jsTypeOf by CallableIds.jsTypeOf.functionSymbol()
+    val isExternalObject by CallableIds.isExternalObject.functionSymbol()
 
-    val jsIsFunction = CallableIds.jsIsFunction.functionSymbol()
-    val jsMethodReference = CallableIds.jsMethodReference.functionSymbol()
+    val jsIsFunction by CallableIds.jsIsFunction.functionSymbol()
+    val jsMethodReference by CallableIds.jsMethodReference.functionSymbol()
 
     // Number conversions:
 
-    val jsNumberToByte = CallableIds.numberToByte.functionSymbol()
-    val jsNumberToDouble = CallableIds.numberToDouble.functionSymbol()
-    val jsNumberToInt = CallableIds.numberToInt.functionSymbol()
-    val jsNumberToShort = CallableIds.numberToShort.functionSymbol()
-    val jsNumberToLong = CallableIds.numberToLong(compileLongAsBigint).functionSymbol()
-    val jsNumberToChar = CallableIds.numberToChar.functionSymbol()
-    val jsToByte = CallableIds.toByte.functionSymbol()
-    val jsToShort = CallableIds.toShort.functionSymbol()
+    val jsNumberToByte by CallableIds.numberToByte.functionSymbol()
+    val jsNumberToDouble by CallableIds.numberToDouble.functionSymbol()
+    val jsNumberToInt by CallableIds.numberToInt.functionSymbol()
+    val jsNumberToShort by CallableIds.numberToShort.functionSymbol()
+    val jsNumberToLong by CallableIds.numberToLong(compileLongAsBigint).functionSymbol()
+    val jsNumberToChar by CallableIds.numberToChar.functionSymbol()
+    val jsToByte by CallableIds.toByte.functionSymbol()
+    val jsToShort by CallableIds.toShort.functionSymbol()
 
-    val longFromInt = CallableIds.fromInt(compileLongAsBigint).functionSymbol()
+    val longFromInt by CallableIds.fromInt(compileLongAsBigint).functionSymbol()
 
-    val longToByte = CallableIds.convertToByte(compileLongAsBigint).functionSymbol()
-    val longToNumber = CallableIds.toNumber(compileLongAsBigint).functionSymbol()
-    val longToShort = CallableIds.convertToShort(compileLongAsBigint).functionSymbol()
-    val longToInt = CallableIds.convertToInt(compileLongAsBigint).functionSymbol()
-    val longToChar = CallableIds.convertToChar(compileLongAsBigint).functionSymbol()
+    val longToByte by CallableIds.convertToByte(compileLongAsBigint).functionSymbol()
+    val longToNumber by CallableIds.toNumber(compileLongAsBigint).functionSymbol()
+    val longToShort by CallableIds.convertToShort(compileLongAsBigint).functionSymbol()
+    val longToInt by CallableIds.convertToInt(compileLongAsBigint).functionSymbol()
+    val longToChar by CallableIds.convertToChar(compileLongAsBigint).functionSymbol()
 
-    val longFromTwoInts = CallableIds.longFromTwoInts(compileLongAsBigint).functionSymbolOrNull()
-    val longLowBits = CallableIds.lowBits(compileLongAsBigint).functionSymbolOrNull()
-    val longHighBits = CallableIds.highBits(compileLongAsBigint).functionSymbolOrNull()
+    val longFromTwoInts by CallableIds.longFromTwoInts(compileLongAsBigint).functionSymbolOrNull()
+    val longLowBits by CallableIds.lowBits(compileLongAsBigint).functionSymbolOrNull()
+    val longHighBits by CallableIds.highBits(compileLongAsBigint).functionSymbolOrNull()
 
     // RTTI:
     enum class RuntimeMetadataKind(val namePart: String, val isSpecial: Boolean = false) {
@@ -223,98 +224,122 @@ class BackendJsSymbols(
         COMPANION_OBJECT("Companion", isSpecial = true)
     }
 
-    private val initMetadataSymbols: Map<RuntimeMetadataKind, IrSimpleFunctionSymbol> = buildMap {
+    private val initMetadataSymbols: Map<RuntimeMetadataKind, Lazy<IrSimpleFunctionSymbol>> = buildMap {
         for (kind in RuntimeMetadataKind.entries) {
             put(kind, "initMetadataFor${kind.namePart}".jsCallableId.functionSymbol())
         }
     }
 
     fun getInitMetadataSymbol(kind: RuntimeMetadataKind): IrSimpleFunctionSymbol? =
-        initMetadataSymbols[kind]
+        initMetadataSymbols[kind]?.value
 
-    val makeAssociatedObjectMapES5 = CallableIds.makeAssociatedObjectMapES5.functionSymbol()
-    val getAssociatedObjectId = CallableIds.getAssociatedObjectId.functionSymbol()
-    val nextAssociatedObjectId = CallableIds.nextAssociatedObjectId.functionSymbol()
+    val makeAssociatedObjectMapES5 by CallableIds.makeAssociatedObjectMapES5.functionSymbol()
+    val getAssociatedObjectId by CallableIds.getAssociatedObjectId.functionSymbol()
+    val nextAssociatedObjectId by CallableIds.nextAssociatedObjectId.functionSymbol()
 
-    val isInterfaceSymbol = CallableIds.isInterface.functionSymbol()
-    val isArraySymbol = CallableIds.isArray.functionSymbol()
+    val isInterfaceSymbol by CallableIds.isInterface.functionSymbol()
+    val isArraySymbol by CallableIds.isArray.functionSymbol()
     //    val isCharSymbol = CallableIds.isChar.functionSymbol()
-    val isSuspendFunctionSymbol = CallableIds.isSuspendFunction.functionSymbol()
+    val isSuspendFunctionSymbol by CallableIds.isSuspendFunction.functionSymbol()
 
-    val isNumberSymbol = CallableIds.isNumber.functionSymbol()
-    val isComparableSymbol = CallableIds.isComparable.functionSymbol()
-    val isCharSequenceSymbol = CallableIds.isCharSequence.functionSymbol()
+    val isNumberSymbol by CallableIds.isNumber.functionSymbol()
+    val isComparableSymbol by CallableIds.isComparable.functionSymbol()
+    val isCharSequenceSymbol by CallableIds.isCharSequence.functionSymbol()
 
-    val longCopyOfRange = CallableIds.longCopyOfRange.functionSymbol()
+    val longCopyOfRange by CallableIds.longCopyOfRange.functionSymbol()
 
-    val longCopyOfRangeForBoxedLong = CallableIds.longCopyOfRange(compileLongAsBigint).functionSymbolOrNull()
+    val longCopyOfRangeForBoxedLong by CallableIds.longCopyOfRange(compileLongAsBigint).functionSymbolOrNull()
 
-    val isPrimitiveArray = mapOf(
-        PrimitiveType.BOOLEAN to CallableIds.isBooleanArray.functionSymbol(),
-        PrimitiveType.BYTE to CallableIds.isByteArray.functionSymbol(),
-        PrimitiveType.SHORT to CallableIds.isShortArray.functionSymbol(),
-        PrimitiveType.CHAR to CallableIds.isCharArray.functionSymbol(),
-        PrimitiveType.INT to CallableIds.isIntArray.functionSymbol(),
-        PrimitiveType.FLOAT to CallableIds.isFloatArray.functionSymbol(),
-        PrimitiveType.LONG to CallableIds.isLongArray(compileLongAsBigint).functionSymbolOrNull(),
-        PrimitiveType.DOUBLE to CallableIds.isDoubleArray.functionSymbol()
-    )
+    val isPrimitiveArray by run {
+        val isBooleanArray by CallableIds.isBooleanArray.functionSymbol()
+        val isByteArray by CallableIds.isByteArray.functionSymbol()
+        val isShortArray by CallableIds.isShortArray.functionSymbol()
+        val isCharArray by CallableIds.isCharArray.functionSymbol()
+        val isIntArray by CallableIds.isIntArray.functionSymbol()
+        val isFloatArray by CallableIds.isFloatArray.functionSymbol()
+        val isLongArray by CallableIds.isLongArray(compileLongAsBigint).functionSymbolOrNull()
+        val isDoubleArray by CallableIds.isDoubleArray.functionSymbol()
+        lazy {
+            mapOf(
+                PrimitiveType.BOOLEAN to isBooleanArray,
+                PrimitiveType.BYTE to isByteArray,
+                PrimitiveType.SHORT to isShortArray,
+                PrimitiveType.CHAR to isCharArray,
+                PrimitiveType.INT to isIntArray,
+                PrimitiveType.FLOAT to isFloatArray,
+                PrimitiveType.LONG to isLongArray,
+                PrimitiveType.DOUBLE to isDoubleArray,
+            )
+        }
+    }
 
     // Enum
 
-    val enumValueOfIntrinsic = CallableIds.enumValueOfIntrinsic.functionSymbol()
-    val enumValuesIntrinsic = CallableIds.enumValuesIntrinsic.functionSymbol()
-    val enumEntriesIntrinsic = CallableIds.enumEntriesIntrinsic.functionSymbol()
+    val enumValueOfIntrinsic by CallableIds.enumValueOfIntrinsic.functionSymbol()
+    val enumValuesIntrinsic by CallableIds.enumValuesIntrinsic.functionSymbol()
+    val enumEntriesIntrinsic by CallableIds.enumEntriesIntrinsic.functionSymbol()
 
     // Other:
 
-    override val jsCode = CallableIds.js.functionSymbol()
-    val jsHashCode = CallableIds.hashCode.functionSymbol()
-    val jsGetBooleanHashCode = CallableIds.getBooleanHashCode.functionSymbol()
-    val jsGetNumberHashCode = CallableIds.getNumberHashCode.functionSymbol()
-    val jsGetObjectHashCode = CallableIds.getObjectHashCode.functionSymbol()
-    val jsGetStringHashCode = CallableIds.getStringHashCode.functionSymbol()
-    val jsBigIntHashCode = CallableIds.bigIntHashCode.functionSymbol()
-    val jsToString = CallableIds.toString.functionSymbol()
-    val jsAnyToString = CallableIds.anyToString.functionSymbol()
-    val jsCompareTo = CallableIds.compareTo.functionSymbol()
-    val jsEquals = CallableIds.equals.functionSymbol()
-    val jsNewTarget = CallableIds.jsNewTarget.functionSymbol()
-    val jsEmptyObject = CallableIds.emptyObject.functionSymbol()
-    val jsOpenInitializerBox = CallableIds.openInitializerBox.functionSymbol()
+    override val jsCode by CallableIds.js.functionSymbol()
+    val jsHashCode by CallableIds.hashCode.functionSymbol()
+    val jsGetBooleanHashCode by CallableIds.getBooleanHashCode.functionSymbol()
+    val jsGetNumberHashCode by CallableIds.getNumberHashCode.functionSymbol()
+    val jsGetObjectHashCode by CallableIds.getObjectHashCode.functionSymbol()
+    val jsGetStringHashCode by CallableIds.getStringHashCode.functionSymbol()
+    val jsBigIntHashCode by CallableIds.bigIntHashCode.functionSymbol()
+    val jsToString by CallableIds.toString.functionSymbol()
+    val jsAnyToString by CallableIds.anyToString.functionSymbol()
+    val jsCompareTo by CallableIds.compareTo.functionSymbol()
+    val jsEquals by CallableIds.equals.functionSymbol()
+    val jsNewTarget by CallableIds.jsNewTarget.functionSymbol()
+    val jsEmptyObject by CallableIds.emptyObject.functionSymbol()
+    val jsOpenInitializerBox by CallableIds.openInitializerBox.functionSymbol()
 
-    val longEquals = CallableIds.equalsLong(compileLongAsBigint).functionSymbolOrNull()
+    val longEquals by CallableIds.equalsLong(compileLongAsBigint).functionSymbolOrNull()
 
-    val jsImul = CallableIds.imul.functionSymbol()
+    val jsImul by CallableIds.imul.functionSymbol()
 
-    val jsUnreachableDeclarationLog = CallableIds.unreachableDeclarationLog.functionSymbol()
-    val jsUnreachableDeclarationException = CallableIds.unreachableDeclarationException.functionSymbol()
+    val jsUnreachableDeclarationLog by CallableIds.unreachableDeclarationLog.functionSymbol()
+    val jsUnreachableDeclarationException by CallableIds.unreachableDeclarationException.functionSymbol()
 
-    val jsNativeBoolean = CallableIds.nativeBoolean.functionSymbol()
-    val jsBooleanInExternalLog = CallableIds.booleanInExternalLog.functionSymbol()
-    val jsBooleanInExternalException = CallableIds.booleanInExternalException.functionSymbol()
+    val jsNativeBoolean by CallableIds.nativeBoolean.functionSymbol()
+    val jsBooleanInExternalLog by CallableIds.booleanInExternalLog.functionSymbol()
+    val jsBooleanInExternalException by CallableIds.booleanInExternalException.functionSymbol()
 
-    val jsNewAnonymousClass = CallableIds.jsNewAnonymousClass.functionSymbol()
+    val jsNewAnonymousClass by CallableIds.jsNewAnonymousClass.functionSymbol()
 
-    val longBoxedOne = CallableIds.longBoxedOne.propertySymbol()
+    val longBoxedOne by CallableIds.longBoxedOne.propertySymbol()
 
-    val jsGenerateInterfaceSymbol = CallableIds.jsGenerateInterfaceSymbol.functionSymbol()
-    val generateInterfaceSymbolById = CallableIds.generateInterfaceSymbolById.functionSymbol()
+    val jsGenerateInterfaceSymbol by CallableIds.jsGenerateInterfaceSymbol.functionSymbol()
+    val generateInterfaceSymbolById by CallableIds.generateInterfaceSymbolById.functionSymbol()
 
     // Coroutines
 
-    val jsYieldFunctionSymbol = CallableIds.jsYield.functionSymbol()
-    val jsYieldStarFunctionSymbol = CallableIds.jsYieldStar.functionSymbol()
+    val jsYieldFunctionSymbol by CallableIds.jsYield.functionSymbol()
+    val jsYieldStarFunctionSymbol by CallableIds.jsYieldStar.functionSymbol()
 
-    val jsInvokeSuspendSuperType: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperType.functionSymbol()
-    val jsInvokeSuspendSuperTypeWithReceiver: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperTypeWithReceiver.functionSymbol()
-    val jsInvokeSuspendSuperTypeWithReceiverAndParam: IrSimpleFunctionSymbol = CallableIds.invokeSuspendSuperTypeWithReceiverAndParam.functionSymbol()
+    val jsInvokeSuspendSuperType: IrSimpleFunctionSymbol by CallableIds.invokeSuspendSuperType.functionSymbol()
+    val jsInvokeSuspendSuperTypeWithReceiver: IrSimpleFunctionSymbol by CallableIds.invokeSuspendSuperTypeWithReceiver.functionSymbol()
+    val jsInvokeSuspendSuperTypeWithReceiverAndParam: IrSimpleFunctionSymbol by CallableIds.invokeSuspendSuperTypeWithReceiverAndParam.functionSymbol()
 
-    val createCoroutineUnintercepted: Set<IrSimpleFunctionSymbol> = CallableIds.createCoroutineUnintercepted.functionSymbols().toHashSet()
-    val startCoroutineUninterceptedOrReturnNonGeneratorVersion: Set<IrSimpleFunctionSymbol> = CallableIds.startCoroutineUninterceptedOrReturnNonGeneratorVersion.functionSymbols().toHashSet()
+    val createCoroutineUnintercepted: Set<IrSimpleFunctionSymbol> by run {
+        val list by CallableIds.createCoroutineUnintercepted.functionSymbols()
+        lazy { list.toHashSet() }
+    }
+    val startCoroutineUninterceptedOrReturnNonGeneratorVersion: Set<IrSimpleFunctionSymbol> by run {
+        val list by CallableIds.startCoroutineUninterceptedOrReturnNonGeneratorVersion.functionSymbols()
+        lazy { list.toHashSet() }
+    }
 
-    val createCoroutineUninterceptedGeneratorVersion: Set<IrSimpleFunctionSymbol> = CallableIds.createCoroutineUninterceptedGeneratorVersion.functionSymbols().toHashSet()
-    val startCoroutineUninterceptedOrReturnGeneratorVersion: Set<IrSimpleFunctionSymbol> = CallableIds.startCoroutineUninterceptedOrReturnGeneratorVersion.functionSymbols().toHashSet()
+    val createCoroutineUninterceptedGeneratorVersion: Set<IrSimpleFunctionSymbol> by run {
+        val list by CallableIds.createCoroutineUninterceptedGeneratorVersion.functionSymbols()
+        lazy { list.toHashSet() }
+    }
+    val startCoroutineUninterceptedOrReturnGeneratorVersion: Set<IrSimpleFunctionSymbol> by run {
+        val list by CallableIds.startCoroutineUninterceptedOrReturnGeneratorVersion.functionSymbols()
+        lazy { list.toHashSet() }
+    }
 
     val startCoroutineUninterceptedOrReturnGeneratorVersion1 by lazy(LazyThreadSafetyMode.NONE) {
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 1) }
@@ -323,14 +348,14 @@ class BackendJsSymbols(
         startCoroutineUninterceptedOrReturnGeneratorVersion.single { it.owner.hasShape(extensionReceiver = true, regularParameters = 2) }
     }
 
-    val awaitFunctionSymbol = CallableIds.await.functionSymbol()
-    val promisifyFunctionSymbol = CallableIds.promisify.functionSymbol()
-    val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol = CallableIds.suspendOrReturn.functionSymbol()
+    val awaitFunctionSymbol by CallableIds.await.functionSymbol()
+    val promisifyFunctionSymbol by CallableIds.promisify.functionSymbol()
+    val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol by CallableIds.suspendOrReturn.functionSymbol()
 
-    val jsNumberRangeToNumber = CallableIds.numberRangeToNumber.functionSymbol()
-    val jsNumberRangeToLong = CallableIds.numberRangeToLong.functionSymbol()
-    val jsLongRangeToNumber = CallableIds.longRangeToNumber.functionSymbol()
-    val jsLongRangeToLong = CallableIds.longRangeToLong.functionSymbol()
+    val jsNumberRangeToNumber by CallableIds.numberRangeToNumber.functionSymbol()
+    val jsNumberRangeToLong by CallableIds.numberRangeToLong.functionSymbol()
+    val jsLongRangeToNumber by CallableIds.longRangeToNumber.functionSymbol()
+    val jsLongRangeToLong by CallableIds.longRangeToLong.functionSymbol()
 
     val rangeUntilFunctions: Map<Pair<IrType, IrType>, IrSimpleFunctionSymbol> by CallableIds.until.functionSymbolAssociatedBy(
         condition = { it.hasShape(extensionReceiver = true, regularParameters = 1) },
@@ -339,12 +364,12 @@ class BackendJsSymbols(
 
     val promiseClassSymbol: IrClassSymbol = JsStandardClassIds.Promise.classSymbol()
 
-    val longCompareToLong: IrSimpleFunctionSymbol? = CallableIds.compare(compileLongAsBigint).functionSymbolOrNull()
+    val longCompareToLong: IrSimpleFunctionSymbol? by CallableIds.compare(compileLongAsBigint).functionSymbolOrNull()
 
-    val jsLongToString: IrSimpleFunctionSymbol = CallableIds.jsLongToString.functionSymbol()
-    val longToStringImpl: IrSimpleFunctionSymbol = CallableIds.toStringImpl(compileLongAsBigint).functionSymbol()
+    val jsLongToString: IrSimpleFunctionSymbol by CallableIds.jsLongToString.functionSymbol()
+    val longToStringImpl: IrSimpleFunctionSymbol by CallableIds.toStringImpl(compileLongAsBigint).functionSymbol()
 
-    val isLongCompiledToBigInt: IrSimpleFunctionSymbol = CallableIds.isLongCompiledToBigInt.functionSymbol()
+    val isLongCompiledToBigInt: IrSimpleFunctionSymbol by CallableIds.isLongCompiledToBigInt.functionSymbol()
 
     val stringConstructorSymbol by StandardClassIds.String.primaryConstructorSymbol()
 
@@ -354,42 +379,44 @@ class BackendJsSymbols(
 
     val jsObjectConstructorSymbol by JsStandardClassIds.JsObject.primaryConstructorSymbol()
 
-    val unreachable = CallableIds.unreachable.functionSymbol()
+    val unreachable by CallableIds.unreachable.functionSymbol()
 
-    val jsArguments = CallableIds.jsArguments.functionSymbol()
+    val jsArguments by CallableIds.jsArguments.functionSymbol()
 
-    val jsEnsureNonNull = CallableIds.ensureNotNull.functionSymbol()
+    val jsEnsureNonNull by CallableIds.ensureNotNull.functionSymbol()
 
     // Arrays:
-    val jsArrayLength = CallableIds.jsArrayLength.functionSymbol()
-    val jsArrayGet = CallableIds.jsArrayGet.functionSymbol()
-    val jsArraySet = CallableIds.jsArraySet.functionSymbol()
+    val jsArrayLength by CallableIds.jsArrayLength.functionSymbol()
+    val jsArrayGet by CallableIds.jsArrayGet.functionSymbol()
+    val jsArraySet by CallableIds.jsArraySet.functionSymbol()
 
-    val jsArrayIteratorFunction = CallableIds.arrayIterator.functionSymbol()
+    val jsArrayIteratorFunction by CallableIds.arrayIterator.functionSymbol()
 
-    val jsPrimitiveArrayIteratorFunctions =
-        PrimitiveType.entries.associate { it to "${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator".jsCallableId.functionSymbol() }
+    val jsPrimitiveArrayIteratorFunctions: Map<PrimitiveType, IrSimpleFunctionSymbol> by run {
+        val lazyValues = PrimitiveType.entries.map { "${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator".jsCallableId.functionSymbol() }
+        lazy { PrimitiveType.entries.zip(lazyValues) { type, lazy -> type to lazy.value }.toMap() }
+    }
 
-    val jsClass = CallableIds.jsClassIntrinsic.functionSymbol()
-    val arrayLiteral: IrSimpleFunctionSymbol = CallableIds.arrayLiteral.functionSymbol()
+    val jsClass by CallableIds.jsClassIntrinsic.functionSymbol()
+    val arrayLiteral: IrSimpleFunctionSymbol by CallableIds.arrayLiteral.functionSymbol()
 
     // The following 3 functions are all lowered into [].slice.call(...), they only differ
     // in the number of arguments.
     // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
-    val jsArrayLike2Array = CallableIds.jsArrayLike2Array.functionSymbol()
-    val jsSliceArrayLikeFromIndex = CallableIds.jsSliceArrayLikeFromIndex.functionSymbol()
-    val jsSliceArrayLikeFromIndexToIndex = CallableIds.jsSliceArrayLikeFromIndexToIndex.functionSymbol()
+    val jsArrayLike2Array by CallableIds.jsArrayLike2Array.functionSymbol()
+    val jsSliceArrayLikeFromIndex by CallableIds.jsSliceArrayLikeFromIndex.functionSymbol()
+    val jsSliceArrayLikeFromIndexToIndex by CallableIds.jsSliceArrayLikeFromIndexToIndex.functionSymbol()
 
     internal inner class JsReflectionSymbols : ReflectionSymbols {
-        override val createKType: IrSimpleFunctionSymbol = CallableIds.createKType.functionSymbol()
-        override val createDynamicKType: IrSimpleFunctionSymbol = CallableIds.createDynamicKType.functionSymbol()
-        override val createKTypeParameter: IrSimpleFunctionSymbol = CallableIds.createKTypeParameter.functionSymbol()
-        override val getStarKTypeProjection: IrSimpleFunctionSymbol = CallableIds.getStarKTypeProjection.functionSymbol()
-        override val createCovariantKTypeProjection: IrSimpleFunctionSymbol = CallableIds.createCovariantKTypeProjection.functionSymbol()
-        override val createInvariantKTypeProjection: IrSimpleFunctionSymbol = CallableIds.createInvariantKTypeProjection.functionSymbol()
-        override val createContravariantKTypeProjection: IrSimpleFunctionSymbol = CallableIds.createContravariantKTypeProjection.functionSymbol()
-        override val getKClass: IrSimpleFunctionSymbol = CallableIds.getKClass.functionSymbol()
-        override val getKClassFromExpression: IrSimpleFunctionSymbol = CallableIds.getKClassFromExpression.functionSymbol()
+        override val createKType: IrSimpleFunctionSymbol by CallableIds.createKType.functionSymbol()
+        override val createDynamicKType: IrSimpleFunctionSymbol by CallableIds.createDynamicKType.functionSymbol()
+        override val createKTypeParameter: IrSimpleFunctionSymbol by CallableIds.createKTypeParameter.functionSymbol()
+        override val getStarKTypeProjection: IrSimpleFunctionSymbol by CallableIds.getStarKTypeProjection.functionSymbol()
+        override val createCovariantKTypeProjection: IrSimpleFunctionSymbol by CallableIds.createCovariantKTypeProjection.functionSymbol()
+        override val createInvariantKTypeProjection: IrSimpleFunctionSymbol by CallableIds.createInvariantKTypeProjection.functionSymbol()
+        override val createContravariantKTypeProjection: IrSimpleFunctionSymbol by CallableIds.createContravariantKTypeProjection.functionSymbol()
+        override val getKClass: IrSimpleFunctionSymbol by CallableIds.getKClass.functionSymbol()
+        override val getKClassFromExpression: IrSimpleFunctionSymbol by CallableIds.getKClassFromExpression.functionSymbol()
         override val kTypeClass: IrClassSymbol = StandardClassIds.KType.classSymbol()
 
         val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbol()
@@ -412,28 +439,30 @@ class BackendJsSymbols(
         }
     )
 
-    val primitiveToSizeConstructor =
-        PrimitiveType.entries.associate { type ->
-            type to (primitiveToTypedArrayMap[type]?.let {
-                "${it.toLowerCaseAsciiOnly()}Array".jsCallableId.functionSymbol()
-            } ?: "${type.typeName.asString().toLowerCaseAsciiOnly()}Array".jsCallableId.functionSymbol())
+    val primitiveToSizeConstructor: Map<PrimitiveType, IrSimpleFunctionSymbol> by run {
+        val lazyValues = PrimitiveType.entries.map { type ->
+            (primitiveToTypedArrayMap[type]?.let { "${it.toLowerCaseAsciiOnly()}Array".jsCallableId.functionSymbol() }
+                ?: "${type.typeName.asString().toLowerCaseAsciiOnly()}Array".jsCallableId.functionSymbol())
         }
+        lazy { PrimitiveType.entries.zip(lazyValues) { type, lazy -> type to lazy.value }.toMap() }
+    }
 
-    val primitiveToLiteralConstructor =
-        PrimitiveType.entries.associate { type ->
-            type to (primitiveToTypedArrayMap[type]?.let {
-                "${it.toLowerCaseAsciiOnly()}ArrayOf".jsCallableId.functionSymbol()
-            } ?: "${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf".jsCallableId.functionSymbol())
+    val primitiveToLiteralConstructor: Map<PrimitiveType, IrSimpleFunctionSymbol> by run {
+        val lazyValues = PrimitiveType.entries.map { type ->
+            (primitiveToTypedArrayMap[type]?.let { "${it.toLowerCaseAsciiOnly()}ArrayOf".jsCallableId.functionSymbol() }
+                ?: "${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf".jsCallableId.functionSymbol())
         }
+        lazy { PrimitiveType.entries.zip(lazyValues) { type, lazy -> type to lazy.value }.toMap() }
+    }
 
-    val arrayConcat: IrSimpleFunctionSymbol = CallableIds.arrayConcat.functionSymbol()
-    val primitiveArrayConcat: IrSimpleFunctionSymbol = CallableIds.primitiveArrayConcat.functionSymbol()
-    val taggedArrayCopy: IrSimpleFunctionSymbol = CallableIds.taggedArrayCopy.functionSymbol()
+    val arrayConcat: IrSimpleFunctionSymbol by CallableIds.arrayConcat.functionSymbol()
+    val primitiveArrayConcat: IrSimpleFunctionSymbol by CallableIds.primitiveArrayConcat.functionSymbol()
+    val taggedArrayCopy: IrSimpleFunctionSymbol by CallableIds.taggedArrayCopy.functionSymbol()
 
-    val jsArraySlice = CallableIds.slice.functionSymbol()
+    val jsArraySlice by CallableIds.slice.functionSymbol()
 
-    val jsCall = CallableIds.jsCall.functionSymbol()
-    val jsBind = CallableIds.jsBind.functionSymbol()
+    val jsCall by CallableIds.jsCall.functionSymbol()
+    val jsBind by CallableIds.jsBind.functionSymbol()
 
     val jsNameAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsName.classSymbol()
     val jsStaticAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsStatic.classSymbol()
@@ -444,36 +473,36 @@ class BackendJsSymbols(
     val jsImplicitExportAnnotationSymbol: IrClassSymbol = JsStandardClassIds.Annotations.JsImplicitExport.classSymbol()
 
     val charSequenceLengthPropertyGetterSymbol by CallableIds.charSequenceClassLength.getterSymbol()
-    val charSequenceGetFunctionSymbol = CallableIds.charSequenceClassGet.functionSymbol()
-    val charSequenceSubSequenceFunctionSymbol = CallableIds.charSequenceClassSubSequence.functionSymbol()
+    val charSequenceGetFunctionSymbol by CallableIds.charSequenceClassGet.functionSymbol()
+    val charSequenceSubSequenceFunctionSymbol by CallableIds.charSequenceClassSubSequence.functionSymbol()
 
-    val jsCharSequenceGet = CallableIds.charSequenceGet.functionSymbol()
-    val jsCharCodeAt = CallableIds.charCodeAt.functionSymbol()
-    val jsCharSequenceLength = CallableIds.charSequenceLength.functionSymbol()
-    val jsCharSequenceSubSequence = CallableIds.charSequenceSubSequence.functionSymbol()
+    val jsCharSequenceGet by CallableIds.charSequenceGet.functionSymbol()
+    val jsCharCodeAt by CallableIds.charCodeAt.functionSymbol()
+    val jsCharSequenceLength by CallableIds.charSequenceLength.functionSymbol()
+    val jsCharSequenceSubSequence by CallableIds.charSequenceSubSequence.functionSymbol()
 
-    val jsContexfulRef = CallableIds.jsContextfulRef.functionSymbol()
-    val jsBoxIntrinsic = CallableIds.boxIntrinsic.functionSymbol()
-    val jsUnboxIntrinsic = CallableIds.unboxIntrinsic.functionSymbol()
+    val jsContexfulRef by CallableIds.jsContextfulRef.functionSymbol()
+    val jsBoxIntrinsic by CallableIds.boxIntrinsic.functionSymbol()
+    val jsUnboxIntrinsic by CallableIds.unboxIntrinsic.functionSymbol()
 
-    val captureStack = CallableIds.captureStack.functionSymbol()
+    val captureStack by CallableIds.captureStack.functionSymbol()
 
-    val linkageErrorSymbol = CallableIds.throwIrLinkageError.functionSymbol()
+    val linkageErrorSymbol by CallableIds.throwIrLinkageError.functionSymbol()
 
-    val jsPrototypeOfSymbol = CallableIds.protoOf.functionSymbol()
-    val jsDefinePropertySymbol = CallableIds.defineProp.functionSymbol()
-    val jsObjectCreateSymbol = CallableIds.objectCreate.functionSymbol()
-    val jsCreateThisSymbol = CallableIds.createThis.functionSymbol()
-    val jsBoxApplySymbol = CallableIds.boxApply.functionSymbol()
-    val jsCreateExternalThisSymbol = CallableIds.createExternalThis.functionSymbol()
+    val jsPrototypeOfSymbol by CallableIds.protoOf.functionSymbol()
+    val jsDefinePropertySymbol by CallableIds.defineProp.functionSymbol()
+    val jsObjectCreateSymbol by CallableIds.objectCreate.functionSymbol()
+    val jsCreateThisSymbol by CallableIds.createThis.functionSymbol()
+    val jsBoxApplySymbol by CallableIds.boxApply.functionSymbol()
+    val jsCreateExternalThisSymbol by CallableIds.createExternalThis.functionSymbol()
 
     // Collections interop:
-    val jsCreateListFrom = CallableIds.createListFrom.functionSymbol()
-    val jsCreateMutableListFrom = CallableIds.createMutableListFrom.functionSymbol()
-    val jsCreateSetFrom = CallableIds.createSetFrom.functionSymbol()
-    val jsCreateMutableSetFrom = CallableIds.createMutableSetFrom.functionSymbol()
-    val jsCreateMapFrom = CallableIds.createMapFrom.functionSymbol()
-    val jsCreateMutableMapFrom = CallableIds.createMutableMapFrom.functionSymbol()
+    val jsCreateListFrom by CallableIds.createListFrom.functionSymbol()
+    val jsCreateMutableListFrom by CallableIds.createMutableListFrom.functionSymbol()
+    val jsCreateSetFrom by CallableIds.createSetFrom.functionSymbol()
+    val jsCreateMutableSetFrom by CallableIds.createMutableSetFrom.functionSymbol()
+    val jsCreateMapFrom by CallableIds.createMapFrom.functionSymbol()
+    val jsCreateMutableMapFrom by CallableIds.createMutableMapFrom.functionSymbol()
 
     val throwableClass = StandardClassIds.Throwable.classSymbol()
     val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
@@ -488,19 +517,19 @@ class BackendJsSymbols(
         return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
     }
 
-    val newThrowableSymbol = CallableIds.newThrowable.functionSymbol()
-    val extendThrowableSymbol = CallableIds.extendThrowable.functionSymbol()
-    val setupCauseParameterSymbol = CallableIds.setupCauseParameter.functionSymbol()
-    val setPropertiesToThrowableInstanceSymbol = CallableIds.setPropertiesToThrowableInstance.functionSymbol()
+    val newThrowableSymbol by CallableIds.newThrowable.functionSymbol()
+    val extendThrowableSymbol by CallableIds.extendThrowable.functionSymbol()
+    val setupCauseParameterSymbol by CallableIds.setupCauseParameter.functionSymbol()
+    val setPropertiesToThrowableInstanceSymbol by CallableIds.setPropertiesToThrowableInstance.functionSymbol()
 
-    val kpropertyBuilder = CallableIds.getPropertyCallableRef.functionSymbol()
-    val klocalDelegateBuilder = CallableIds.getLocalDelegateReference.functionSymbol()
+    val kpropertyBuilder by CallableIds.getPropertyCallableRef.functionSymbol()
+    val klocalDelegateBuilder by CallableIds.getLocalDelegateReference.functionSymbol()
 
     val eagerInitialization: IrClassSymbol = ClassIds.EagerInitialization.classSymbol()
 
-    val signatureIdSymbol = CallableIds.signatureIdIntrinsic.functionSymbol()
+    val signatureIdSymbol by CallableIds.signatureIdIntrinsic.functionSymbol()
 
-    val constructCallableReferenceSymbol = CallableIds.constructCallableReference.functionSymbol()
+    val constructCallableReferenceSymbol by CallableIds.constructCallableReference.functionSymbol()
 }
 
 private object ClassIds {
