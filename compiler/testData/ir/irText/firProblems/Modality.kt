@@ -1,4 +1,4 @@
-// JAVA_DEPENDS_ON_KOTLIN
+// DONT_TARGET_EXACT_BACKEND: JKLIB
 // TARGET_BACKEND: JVM
 // FILE: Modality.java
 public interface Modality {}

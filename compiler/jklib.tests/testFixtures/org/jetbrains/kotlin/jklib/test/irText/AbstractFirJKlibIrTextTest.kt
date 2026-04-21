@@ -56,7 +56,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper, ::JavaDependsOnKotlinSkipper)
+        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
@@ -107,17 +107,4 @@ class WithReflectSkipper(testServices: TestServices) : MetaTestConfigurator(test
     }
 }
 
-object JKlibTestDirectives : SimpleDirectivesContainer() {
-    val JAVA_DEPENDS_ON_KOTLIN by directive(
-        "The test contains Java classes that depend on Kotlin classes, which is unsupported in jklib tests."
-    )
-}
-
-class JavaDependsOnKotlinSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JKlibTestDirectives)
-
-    override fun shouldSkipTest(): Boolean {
-        return testServices.moduleStructure.allDirectives.contains(JKlibTestDirectives.JAVA_DEPENDS_ON_KOTLIN)
-    }
-}
+object JKlibTestDirectives : SimpleDirectivesContainer()

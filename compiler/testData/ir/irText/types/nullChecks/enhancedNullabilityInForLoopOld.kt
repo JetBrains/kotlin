@@ -1,4 +1,4 @@
-// JAVA_DEPENDS_ON_KOTLIN
+// DONT_TARGET_EXACT_BACKEND: JKLIB
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
 // WITH_JDK
