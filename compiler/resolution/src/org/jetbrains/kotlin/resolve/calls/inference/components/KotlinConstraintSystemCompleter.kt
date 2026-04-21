@@ -144,6 +144,7 @@ class KotlinConstraintSystemCompleter(
             }
 
             // Stage 5: analyze the next ready postponed argument
+            @OptIn(K1Deprecation::class)
             if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode, analyze))
                 continue
 
