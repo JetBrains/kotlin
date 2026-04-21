@@ -106,14 +106,14 @@ class JavaClassifierTypeOverAst(
      * - Generic: "List<String>" → "List"
      * - Nested generic: "Outer<T>.Inner<U>" → "Outer.Inner"
      */
-    private fun extractTypeName(n: JavaLightNode): String {
+    private fun extractTypeName(node: JavaLightNode): String {
         val parts = mutableListOf<String>()
-        collectIdentifiers(n, parts)
+        collectIdentifiers(node, parts)
         return parts.joinToString(".")
     }
 
-    private fun collectIdentifiers(n: JavaLightNode, parts: MutableList<String>) {
-        for (child in tree.getChildren(n)) {
+    private fun collectIdentifiers(node: JavaLightNode, parts: MutableList<String>) {
+        for (child in tree.getChildren(node)) {
             when (tree.getType(child)) {
                 JavaSyntaxTokenType.IDENTIFIER -> parts.add(tree.getText(child).toString())
                 JavaSyntaxElementType.JAVA_CODE_REFERENCE -> collectIdentifiers(child, parts)

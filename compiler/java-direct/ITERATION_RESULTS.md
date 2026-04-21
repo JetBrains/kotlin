@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (refactoring-plan Phase B.2: consolidate annotation-arg evaluation)
+**Last Updated**: 2026-04-21 (refactoring-plan Phase B.3: split large functions)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -17,8 +17,134 @@ caveats have landed in code (verified against current source). What remains:
 - ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
 
-The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A, B.1,
-and B.2 are now complete; Phase B.3 and Phases C–E are pending.
+The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A and
+the three iterations of Phase B (B.1, B.2, B.3) are now complete; Phases C–E are pending.
+
+---
+
+## Refactoring Plan Phase B.3: Split Large Functions — 2026-04-21
+
+### Overview
+
+Third and final iteration of Phase B. Addresses `REFACTORING_PLAN.md` items **R5** (split
+`buildJavaLightTree`), **R10** (rename cryptic identifiers), **R7** (split
+`resolveInheritedInnerClassToClassId`), **R8** (extract "find TYPE node and optional star"
+helper), and **R12 + O10** (split `resolveSimpleNameToClassIdImpl` and extract the
+`checkInheritance = false` flavor). Pure readability work — each edit is an
+in-file factoring with unchanged behaviour.
+
+### Changes
+
+- **R5** (`JavaLightTree.kt`) — `buildJavaLightTree` shrank from ~220 inline lines to a
+  ~40-line orchestrator that allocates the output arrays and calls three new file-private
+  top-level functions:
+  - `buildCompositeIndices(...)` — Pass 1: stack-walks production markers to produce
+    `parentStartIndex` / `doneForStart` / `compositeTypes` / `errorFlags` /
+    `compositeStartOffsets` / `compositeEndOffsets`.
+  - `assignTokenParents(...)` — Pass 2: interleaves the marker walk with the token stream
+    to populate `tokenParentStart`.
+  - `buildChildrenIndex(...)` — Pass 3: precomputes every composite's children list plus
+    the synthetic root's via a **generalized** `buildChildrenFor` that accepts
+    `startIdx = -1` for the root case. A single `val slot = if (startIdx < 0) rootIndex
+    else startIdx` guard picks the output slot, and the existing `i = startIdx + 1`
+    starting condition already yields `i = 0` for the root — so the 27-line duplicate
+    synthetic-root block disappears entirely.
+- **R10** — renamed cryptic identifiers:
+  - `JavaClassFinderOverAstImpl.kt:123, 136` — the `fri` local in the init block became
+    `fileRootIndexBuilder` (mirroring the field name `fileRootIndex` it feeds into).
+  - `JavaClassFinderOverAstImpl.kt` (seven sites) — every `byName` local (the per-package
+    map of class simple name → `List<FileEntry>`) became `classesByName`.
+  - `JavaTypeOverAst.kt:109, 115` — the single-letter `n: JavaLightNode` parameters on
+    `extractTypeName` / `collectIdentifiers` became `node`.
+  - `JavaLightTree.kt` (inside the new `assignTokenParents`) — the `top2` / `push2` /
+    `pop2` suffix is gone; once Pass 2 lives in its own function, the `2` was pure
+    accidental naming and drops to `top` / `push` / `pop`.
+- **R7** (`JavaInheritedMemberResolver.kt`) — `resolveInheritedInnerClassToClassId`
+  became a short driver that collects `initialSupertypes` and delegates to two new
+  private methods:
+  - `findInPhase1JavaModel(...)` — BFS through `JavaClassifierType` objects from the
+    Java model; populates `nonSourceSupertypeIds` for Phase 2.
+  - `findInPhase2ClassIdWalk(...)` — deque-based BFS over the ClassIds of non-source
+    supertypes using the `getSupertypeClassIds` callback.
+  Both phases share `visited` (so cross-phase ambiguity detection still works) and the
+  new `MAX_SUPERTYPE_DEPTH = 5` companion constant (replacing an inline `maxDepth` local).
+- **R8** (`JavaImportResolver.kt`) — extracted the nested "find TYPE node and optional
+  star" lookahead (~25 lines) out of `extractFragmentedImports` into a new
+  `findTypeNodeAndStar(tree, allChildren, startIdx): FragmentedImportTarget?` helper
+  plus a `FragmentedImportTarget(typeNode, hasStar)` data class. The main loop no longer
+  juggles indices and lookahead at the same time.
+- **R12 + O10** (`JavaResolutionContext.kt`) — `resolveSimpleNameToClassIdImpl` now reads
+  as a linear sequence of five `try*` helpers matching the JLS 6.5.2 scoping steps:
+  `tryImport` (step 1), `tryLocalAndInherited` (steps 2 + 2b), `trySamePackage` (step 3),
+  `tryJavaLang` (step 4), `tryStarImports` (step 5). Two of those take a
+  `checkInheritance: Boolean` — `tryImport` (nested vs. simple FQN split) and
+  `tryStarImports` (ambiguity + class-level handling vs. linear probe) — because the
+  two modes are fundamentally different there; steps 2/2b only run in the true mode.
+  A new thin `resolveSimpleNameToClassIdWithoutInheritance` workhorse composes the four
+  inheritance-independent steps, and a parallel
+  `resolveNestedClassToClassIdFromPartsWithoutInheritance` replaces the former
+  `checkInheritance = false` branches of `resolveNestedClassToClassIdFromParts`. The
+  `checkInheritance` parameter on `resolveNestedClassToClassIdFromParts` and all its
+  conditionals are gone — the method is now single-mode, called only from
+  `resolveNestedClassToClassId`. The `resolveWithoutInheritance` callback inside
+  `resolveInheritedInnerClassToClassId` routes through the two `WithoutInheritance`
+  methods directly; no boolean flags leak into the callback site.
+
+### Files Modified
+
+| File | Item(s) |
+|------|---------|
+| `JavaLightTree.kt` | R5 (buildJavaLightTree split + generalized `buildChildrenFor`); R10 (pass-2 helpers drop `2` suffix) |
+| `JavaClassFinderOverAstImpl.kt` | R10 (`fri` → `fileRootIndexBuilder`, `byName` → `classesByName` across 7 sites) |
+| `JavaTypeOverAst.kt` | R10 (`n` → `node` on `extractTypeName` / `collectIdentifiers`) |
+| `JavaInheritedMemberResolver.kt` | R7 (extract `findInPhase1JavaModel` + `findInPhase2ClassIdWalk`; `MAX_SUPERTYPE_DEPTH` companion constant) |
+| `JavaImportResolver.kt` | R8 (extract `findTypeNodeAndStar` + `FragmentedImportTarget` data class) |
+| `JavaResolutionContext.kt` | R12 + O10 (extract `tryImport` / `tryLocalAndInherited` / `trySamePackage` / `tryJavaLang` / `tryStarImports`; add `resolveSimpleNameToClassIdWithoutInheritance` + `resolveNestedClassToClassIdFromPartsWithoutInheritance`; drop `checkInheritance` parameter from `resolveNestedClassToClassIdFromParts`) |
+
+### Test Results
+
+Gate per `REFACTORING_PLAN.md` §2.1:
+```
+./gradlew :kotlin-java-direct:test \
+  --tests JavaUsingAstPhasedTestGenerated \
+  --tests JavaUsingAstBoxTestGenerated \
+  --tests JavaParsingTest \
+  --rerun-tasks
+```
+→ **BUILD SUCCESSFUL**, `tests=2671 failures=0 errors=0 skipped=0`. Identical count and
+outcome to the Phase B.2 baseline. IDE `get_file_problems` on every edited file reports
+0 errors (pre-existing style warnings only).
+
+### Key Learnings
+
+- **A "can't quite share this" duplication usually can, with one parameter or one
+  conditional.** The synthetic-root children block in `buildJavaLightTree` looked like it
+  genuinely needed its own copy because the main helper's `var i = startIdx + 1` didn't
+  support a "start from 0" semantics. Actually, passing `startIdx = -1` yields the same
+  `i = 0` and the only real difference was the output slot — one `if (startIdx < 0)
+  rootIndex else startIdx` line. Before committing to "this path can't reuse the helper",
+  it pays to try substituting the sentinel value and see what actually breaks.
+- **Boolean parameters that gate multiple independent branches are a splitting signal.**
+  `resolveSimpleNameToClassIdImpl`'s `checkInheritance` parameter gated steps 1, 2, 2b,
+  and 5 — four distinct branches. After splitting into named `try*` helpers, only two of
+  them still take the flag (steps 1 and 5, where the two modes really are different);
+  steps 2/2b moved under an `if (checkInheritance) { tryLocalAndInherited(...) }` guard
+  in the caller, which reads better than a parameter buried inside the helper. When the
+  flag gates everything uniformly, keep it; when it gates discrete branches, split the
+  branches.
+- **Accidental suffixes outlive the scope that motivated them.** `push2` / `pop2` / `top2`
+  existed because Pass 1's `push` / `pop` / `peekOrRoot` lived in the same function
+  scope. The `2` was solved-at-one-moment disambiguation that never got cleaned up.
+  Extracting Pass 2 into its own function erases the name clash and the suffix
+  simultaneously — a reminder that renames and scope extractions are often the same
+  refactor.
+- **Two-phase algorithms want two names.** `resolveInheritedInnerClassToClassId` did
+  Phase 1 (Java model BFS) and Phase 2 (ClassId BFS via FIR callback) in one body
+  separated only by a comment. Extracting them into `findInPhase1JavaModel` and
+  `findInPhase2ClassIdWalk` makes the hand-off explicit: Phase 1 writes
+  `nonSourceSupertypeIds`, Phase 2 reads it; the outer driver picks up the
+  "Phase-1-returned-null means continue, not give up" contract in one visible place
+  instead of hidden in a BFS loop's fall-through.
 
 ---
 

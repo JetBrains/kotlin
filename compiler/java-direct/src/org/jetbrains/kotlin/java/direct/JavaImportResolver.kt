@@ -200,45 +200,16 @@ internal object JavaImportResolver {
                             tree.getText(node).toString().trim() == "import")
 
             if (isImportError) {
-                var typeNode: JavaLightNode? = null
-                var hasStar = false
-
-                for (j in (i + 1) until allChildren.size) {
-                    val sibling = allChildren[j]
-                    val siblingType = tree.getType(sibling)
-                    if (siblingType == JavaSyntaxElementType.MODIFIER_LIST) continue
-                    if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().isBlank()) continue
-
-                    if (siblingType == JavaSyntaxElementType.TYPE || siblingType == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
-                        typeNode = sibling
-                        for (k in (j + 1) until allChildren.size) {
-                            val nextSib = allChildren[k]
-                            val nextType = tree.getType(nextSib)
-                            if (nextType == JavaSyntaxElementType.MODIFIER_LIST) continue
-                            if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().isBlank()) continue
-                            if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().contains("*")) {
-                                hasStar = true
-                                break
-                            }
-                            if (nextType == JavaSyntaxElementType.CLASS) break
-                        }
-                        break
-                    }
-                    if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().contains("*")) {
-                        hasStar = true
-                    }
-                    if (siblingType == JavaSyntaxElementType.CLASS) break
-                }
-
-                if (typeNode != null) {
-                    val ref = tree.findChildByType(typeNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: typeNode
+                val target = findTypeNodeAndStar(tree, allChildren, i)
+                if (target != null) {
+                    val ref = tree.findChildByType(target.typeNode, JavaSyntaxElementType.JAVA_CODE_REFERENCE) ?: target.typeNode
                     var fqName = tree.getText(ref).toString().trim()
                     if (fqName.endsWith('.')) {
                         fqName = fqName.dropLast(1)
                     }
 
                     if (fqName.contains('.')) {
-                        if (hasStar) {
+                        if (target.hasStar) {
                             starImports.add(FqName(fqName))
                         } else {
                             val simpleName = fqName.substringAfterLast('.')
@@ -249,6 +220,57 @@ internal object JavaImportResolver {
             }
             i++
         }
+    }
+
+    /**
+     * Holder for the two pieces of information recovered from a fragmented import's sibling
+     * scan: the TYPE / JAVA_CODE_REFERENCE node carrying the fully-qualified name, and whether
+     * a trailing `*` (making it a star import) was seen before the next top-level declaration.
+     */
+    private data class FragmentedImportTarget(val typeNode: JavaLightNode, val hasStar: Boolean)
+
+    /**
+     * Scans the siblings of an `import`-shaped ERROR_ELEMENT at `allChildren[startIdx]` for the
+     * import's target. Skips MODIFIER_LIST and blank ERROR_ELEMENTs that the parser may have
+     * emitted between the anchor and the type reference. Stops at the first TYPE /
+     * JAVA_CODE_REFERENCE (captured) and then scans once more for an optional `*` marker before
+     * the next top-level declaration.
+     *
+     * Returns `null` when no TYPE / JAVA_CODE_REFERENCE is found before a CLASS boundary —
+     * meaning this was not actually a fragmented import but some unrelated parser error.
+     */
+    private fun findTypeNodeAndStar(
+        tree: JavaLightTree,
+        allChildren: List<JavaLightNode>,
+        startIdx: Int,
+    ): FragmentedImportTarget? {
+        var hasStar = false
+        for (j in (startIdx + 1) until allChildren.size) {
+            val sibling = allChildren[j]
+            val siblingType = tree.getType(sibling)
+            if (siblingType == JavaSyntaxElementType.MODIFIER_LIST) continue
+            if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().isBlank()) continue
+
+            if (siblingType == JavaSyntaxElementType.TYPE || siblingType == JavaSyntaxElementType.JAVA_CODE_REFERENCE) {
+                for (k in (j + 1) until allChildren.size) {
+                    val nextSib = allChildren[k]
+                    val nextType = tree.getType(nextSib)
+                    if (nextType == JavaSyntaxElementType.MODIFIER_LIST) continue
+                    if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().isBlank()) continue
+                    if (nextType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(nextSib).toString().contains("*")) {
+                        hasStar = true
+                        break
+                    }
+                    if (nextType == JavaSyntaxElementType.CLASS) break
+                }
+                return FragmentedImportTarget(sibling, hasStar)
+            }
+            if (siblingType == SyntaxTokenTypes.ERROR_ELEMENT && tree.getText(sibling).toString().contains("*")) {
+                hasStar = true
+            }
+            if (siblingType == JavaSyntaxElementType.CLASS) break
+        }
+        return null
     }
 
     /**

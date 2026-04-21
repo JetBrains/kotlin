@@ -120,7 +120,7 @@ class JavaClassFinderOverAstImpl(
         val (fileRoots, dirRoots) = sourceRoots.partition { !it.isDirectory }
         directoryRoots = dirRoots
 
-        val fri = HashMap<FqName, MutableMap<String, MutableList<FileEntry>>>()
+        val fileRootIndexBuilder = HashMap<FqName, MutableMap<String, MutableList<FileEntry>>>()
         for (fileRoot in fileRoots) {
             if (!fileRoot.name.endsWith(".java")) continue
             if (fileRoot.name == "package-info.java") {
@@ -128,12 +128,12 @@ class JavaClassFinderOverAstImpl(
                 continue
             }
             val entry = tryBuildFileEntry(fileRoot) ?: continue
-            val byName = fri.getOrPut(entry.packageFqName) { HashMap() }
+            val classesByName = fileRootIndexBuilder.getOrPut(entry.packageFqName) { HashMap() }
             for (className in entry.topLevelClassNames) {
-                byName.getOrPut(className) { mutableListOf() }.add(entry)
+                classesByName.getOrPut(className) { mutableListOf() }.add(entry)
             }
         }
-        fileRootIndex = fri
+        fileRootIndex = fileRootIndexBuilder
     }
 
     // ---- Directory navigation ----
@@ -195,7 +195,7 @@ class JavaClassFinderOverAstImpl(
         val dirs = findPackageDirectories(packageFqName)
         if (dirs.isEmpty()) return emptyMap()
 
-        val byName = HashMap<String, MutableList<FileEntry>>()
+        val classesByName = HashMap<String, MutableList<FileEntry>>()
 
         for (dir in dirs) {
             val children = dir.children ?: continue
@@ -210,12 +210,12 @@ class JavaClassFinderOverAstImpl(
 
                 val entry = tryBuildFileEntry(file, packageFqName) ?: continue
                 for (className in entry.topLevelClassNames) {
-                    byName.getOrPut(className) { mutableListOf() }.add(entry)
+                    classesByName.getOrPut(className) { mutableListOf() }.add(entry)
                 }
             }
         }
 
-        return if (byName.isEmpty()) emptyMap() else byName
+        return if (classesByName.isEmpty()) emptyMap() else classesByName
     }
 
     // ---- Public API ----
@@ -255,8 +255,8 @@ class JavaClassFinderOverAstImpl(
         val topLevelName = segments.first()
         val innerNames = segments.drop(1)
 
-        val byName = ensurePackageIndexed(packageFqName)
-        val candidates = byName[topLevelName] ?: return emptyList()
+        val classesByName = ensurePackageIndexed(packageFqName)
+        val candidates = classesByName[topLevelName] ?: return emptyList()
 
         val result = mutableListOf<JavaClass>()
         for (file in candidates) {
@@ -278,18 +278,18 @@ class JavaClassFinderOverAstImpl(
     }
 
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
-        val byName = ensurePackageIndexed(fqName)
+        val classesByName = ensurePackageIndexed(fqName)
         // A package with no class files may still exist via `package-info.java` carrying only
         // package-level annotations — respect those so the annotations are not lost.
-        if (byName.isEmpty() && packageAnnotationNodes[fqName].isNullOrEmpty()) return null
+        if (classesByName.isEmpty() && packageAnnotationNodes[fqName].isNullOrEmpty()) return null
         // computeIfAbsent (not getOrPut) so concurrent callers share a single JavaPackageOverAst
         // instance instead of each creating their own and racing on put.
         return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
-        val byName = ensurePackageIndexed(packageFqName)
-        if (byName.isEmpty()) return emptySet()
+        val classesByName = ensurePackageIndexed(packageFqName)
+        if (classesByName.isEmpty()) return emptySet()
         // Only return canonical class names (where the class name matches the file's basename).
         // Secondary classes (e.g., class B defined alongside class A in A.java) are accessible
         // when their ClassId is known directly (e.g., as return type from the same file's API)
@@ -300,7 +300,7 @@ class JavaClassFinderOverAstImpl(
         // package-level name sets — but that is a deliberate Kotlin/JVM design choice, not a
         // java-direct bug, so the fix belongs in a separate task tracked by the issue.
         return buildSet {
-            for ((name, fileEntries) in byName) {
+            for ((name, fileEntries) in classesByName) {
                 if (fileEntries.any { it.fileBaseName == name }) add(name)
             }
         }
@@ -478,10 +478,10 @@ class JavaClassFinderOverAstImpl(
     // ---- Internal API used by JavaPackageOverAst ----
 
     internal fun classesInPackage(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<JavaClass> {
-        val byName = ensurePackageIndexed(fqName)
-        if (byName.isEmpty()) return emptyList()
+        val classesByName = ensurePackageIndexed(fqName)
+        if (classesByName.isEmpty()) return emptyList()
         val result = mutableListOf<JavaClass>()
-        for ((simpleName, files) in byName) {
+        for ((simpleName, files) in classesByName) {
             val name = Name.identifier(simpleName)
             if (!nameFilter(name)) continue
             for (file in files) {
@@ -529,7 +529,7 @@ class JavaClassFinderOverAstImpl(
     private fun findFilesForClass(classId: ClassId): List<FileEntry> {
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString()
             ?: return emptyList()
-        val byName = ensurePackageIndexed(classId.packageFqName)
-        return byName[topLevelName] ?: emptyList()
+        val classesByName = ensurePackageIndexed(classId.packageFqName)
+        return classesByName[topLevelName] ?: emptyList()
     }
 }

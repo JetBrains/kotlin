@@ -45,13 +45,10 @@ value class JavaLightNode(val index: Int)
  * have been produced by it; mixing nodes between trees is an error (no runtime check).
  */
 class JavaLightTree(
-    val productionMarkers: ProductionMarkerList,
     val tokens: TokenList,
     val source: CharSequence,
     /** For each START-marker index, the START-marker index of its parent (or [rootIndex] for top-level markers). */
     private val parentStartIndex: IntArray,
-    /** For each marker index that is a START, the index of its matching DONE marker. */
-    private val doneForStart: IntArray,
     /** For each token index, the START-marker index of its enclosing composite, or [rootIndex] for top-level tokens. */
     private val tokenParentStart: IntArray,
     /** Index used by [getRoot]: synthetic root wraps all top-level production markers. */
@@ -72,11 +69,6 @@ class JavaLightTree(
      * Error markers and tokens map to [emptyList].
      */
     private val childrenByIndex: Array<List<JavaLightNode>>,
-    /**
-     * Per-marker error flag. `true` at index `i` means marker `i` is an error marker
-     * (leaf, no done-pair). Avoids [ProductionMarkerList.getMarker] calls in hot paths.
-     */
-    private val errorFlags: BooleanArray,
     /**
      * Precomputed end offsets for composite nodes, indexed by START-marker index.
      * For normal composites this is the DONE marker's end offset; for error markers
@@ -222,14 +214,65 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
     val markerCount = productionMarkers.size
     val rootIndex = markerCount
 
-    // ---- Pass 1: parent/done indices + extract types, offsets, error flags ----
     val parentStartIndex = IntArray(markerCount) { rootIndex }
     val doneForStart = IntArray(markerCount) { -1 }
     val compositeTypes = arrayOfNulls<SyntaxElementType>(markerCount)
     val errorFlags = BooleanArray(markerCount)
     val compositeStartOffsets = IntArray(markerCount)
     val compositeEndOffsets = IntArray(markerCount)
+    buildCompositeIndices(
+        productionMarkers, markerCount, rootIndex,
+        parentStartIndex, doneForStart, compositeTypes, errorFlags, compositeStartOffsets, compositeEndOffsets,
+    )
 
+    val tokenParentStart = IntArray(tokens.tokenCount) { rootIndex }
+    assignTokenParents(productionMarkers, tokens, markerCount, rootIndex, tokenParentStart)
+
+    @Suppress("UNCHECKED_CAST")
+    val childrenByIndex = arrayOfNulls<List<JavaLightNode>>(rootIndex + 1) as Array<List<JavaLightNode>>
+    val emptyChildren: List<JavaLightNode> = emptyList()
+    for (idx in 0..rootIndex) {
+        childrenByIndex[idx] = emptyChildren
+    }
+    buildChildrenIndex(
+        productionMarkers, tokens, markerCount, rootIndex, doneForStart, errorFlags, childrenByIndex, emptyChildren,
+    )
+
+    val rootNodeType = if (markerCount > 0)
+        productionMarkers.getMarker(markerCount - 1).getNodeType()
+    else
+        error("No production markers")
+
+    return JavaLightTree(
+        tokens = tokens,
+        source = source,
+        parentStartIndex = parentStartIndex,
+        tokenParentStart = tokenParentStart,
+        rootIndex = rootIndex,
+        rootNodeType = rootNodeType,
+        compositeTypes = compositeTypes,
+        childrenByIndex = childrenByIndex,
+        compositeEndOffsets = compositeEndOffsets,
+        compositeStartOffsets = compositeStartOffsets,
+    )
+}
+
+/**
+ * Pass 1 of [buildJavaLightTree]. Walks the production markers once, using a stack of pending
+ * START-marker indices to determine each composite's parent, populate [doneForStart], and
+ * extract node type / error flag / start / end offsets. Mutates all nine output arrays in place.
+ */
+private fun buildCompositeIndices(
+    productionMarkers: ProductionMarkerList,
+    markerCount: Int,
+    rootIndex: Int,
+    parentStartIndex: IntArray,
+    doneForStart: IntArray,
+    compositeTypes: Array<SyntaxElementType?>,
+    errorFlags: BooleanArray,
+    compositeStartOffsets: IntArray,
+    compositeEndOffsets: IntArray,
+) {
     var openStack = IntArray(64)
     var stackSize = 0
     fun push(v: Int) {
@@ -250,7 +293,7 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
             productionMarkers.isDoneMarker(i) -> {
                 val startIdx = pop()
                 doneForStart[startIdx] = i
-                // Record end offset for the composite (DONE marker's end offset)
+                // Record end offset for the composite (DONE marker's end offset).
                 compositeEndOffsets[startIdx] = marker.getEndOffset()
             }
             marker.isErrorMarker() -> {
@@ -271,72 +314,91 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
     }
 
     require(stackSize == 0) { "Unbalanced production markers: $stackSize unmatched START markers remain" }
+}
 
-    // ---- Pass 2: token-to-parent mapping ----
-    val tokenParentStart = IntArray(tokens.tokenCount) { rootIndex }
-    run {
-        var stack2 = IntArray(64)
-        var size2 = 0
-        fun push2(v: Int) {
-            if (size2 >= stack2.size) {
-                val grown = IntArray(stack2.size * 2)
-                stack2.copyInto(grown)
-                stack2 = grown
-            }
-            stack2[size2++] = v
+/**
+ * Pass 2 of [buildJavaLightTree]. Walks the production markers again, this time stepping
+ * through the token stream alongside: every token gets assigned the innermost START-marker
+ * that encloses it. Whitespace and zero-length tokens are left pointing at the default
+ * `rootIndex`. Mutates [tokenParentStart] in place.
+ */
+private fun assignTokenParents(
+    productionMarkers: ProductionMarkerList,
+    tokens: TokenList,
+    markerCount: Int,
+    rootIndex: Int,
+    tokenParentStart: IntArray,
+) {
+    var stack = IntArray(64)
+    var size = 0
+    fun push(v: Int) {
+        if (size >= stack.size) {
+            val grown = IntArray(stack.size * 2)
+            stack.copyInto(grown)
+            stack = grown
         }
-
-        fun pop2() {
-            --size2
-        }
-
-        fun top2(): Int = if (size2 == 0) rootIndex else stack2[size2 - 1]
-
-        var prevTokenIndex = 0
-        fun assignTokens(upToExclusive: Int) {
-            val parent = top2()
-            for (t in prevTokenIndex until upToExclusive) {
-                tokens.getTokenType(t) ?: continue
-                val s = tokens.getTokenStart(t)
-                val e = tokens.getTokenEnd(t)
-                if (s == e) continue
-                tokenParentStart[t] = parent
-            }
-            prevTokenIndex = upToExclusive
-        }
-
-        for (i in 0 until markerCount) {
-            val marker = productionMarkers.getMarker(i)
-            when {
-                productionMarkers.isDoneMarker(i) -> {
-                    assignTokens(marker.getEndTokenIndex())
-                    pop2()
-                }
-                marker.isErrorMarker() -> {
-                    assignTokens(marker.getStartTokenIndex())
-                }
-                else -> {
-                    assignTokens(marker.getStartTokenIndex())
-                    push2(i)
-                }
-            }
-        }
-        assignTokens(tokens.tokenCount)
+        stack[size++] = v
     }
 
-    // ---- Pass 3: precompute children for every composite node ----
-    // Uses the same algorithm as the old on-demand getChildren, but runs once for all nodes.
-    // Whitespace tokens are EXCLUDED from children — they are never matched positively by any
-    // caller (always filtered out), so including them only inflates children lists and wastes
-    // getType() calls during findChildByType/getChildrenByType scans.
-    @Suppress("UNCHECKED_CAST")
-    val childrenByIndex = arrayOfNulls<List<JavaLightNode>>(rootIndex + 1) as Array<List<JavaLightNode>>
-    val emptyChildren: List<JavaLightNode> = emptyList()
-    for (idx in 0..rootIndex) {
-        childrenByIndex[idx] = emptyChildren
+    fun pop() {
+        --size
     }
 
-    /** Returns true if token [t] should be included as a child (non-null type, non-empty, non-whitespace). */
+    fun top(): Int = if (size == 0) rootIndex else stack[size - 1]
+
+    var prevTokenIndex = 0
+    fun assignTokens(upToExclusive: Int) {
+        val parent = top()
+        for (t in prevTokenIndex until upToExclusive) {
+            tokens.getTokenType(t) ?: continue
+            val s = tokens.getTokenStart(t)
+            val e = tokens.getTokenEnd(t)
+            if (s == e) continue
+            tokenParentStart[t] = parent
+        }
+        prevTokenIndex = upToExclusive
+    }
+
+    for (i in 0 until markerCount) {
+        val marker = productionMarkers.getMarker(i)
+        when {
+            productionMarkers.isDoneMarker(i) -> {
+                assignTokens(marker.getEndTokenIndex())
+                pop()
+            }
+            marker.isErrorMarker() -> {
+                assignTokens(marker.getStartTokenIndex())
+            }
+            else -> {
+                assignTokens(marker.getStartTokenIndex())
+                push(i)
+            }
+        }
+    }
+    assignTokens(tokens.tokenCount)
+}
+
+/**
+ * Pass 3 of [buildJavaLightTree]. Precomputes the children list for every composite node plus
+ * the synthetic root. Whitespace tokens are excluded from children — they are never matched
+ * positively by any caller (always filtered out), so including them only inflates children
+ * lists and wastes `getType()` calls during `findChildByType` / `getChildrenByType` scans.
+ *
+ * The same buildChildrenFor helper covers both regular composites (`startIdx >= 0`) and the
+ * synthetic root (`startIdx = -1`); buildChildrenFor's starting `i = startIdx + 1` naturally
+ * becomes `i = 0` for root, and the `slot = if (startIdx < 0) rootIndex else startIdx` guard
+ * selects the right output slot.
+ */
+private fun buildChildrenIndex(
+    productionMarkers: ProductionMarkerList,
+    tokens: TokenList,
+    markerCount: Int,
+    rootIndex: Int,
+    doneForStart: IntArray,
+    errorFlags: BooleanArray,
+    childrenByIndex: Array<List<JavaLightNode>>,
+    emptyChildren: List<JavaLightNode>,
+) {
     fun isIncludedToken(t: Int): Boolean {
         val type = tokens.getTokenType(t) ?: return false
         if (tokens.getTokenStart(t) == tokens.getTokenEnd(t)) return false
@@ -375,11 +437,12 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
         }
         addTokensInRange(childIndices, prevTokenIndex, lastTokenIndex)
 
-        childrenByIndex[startIdx] = if (childIndices.isEmpty()) emptyChildren
+        val slot = if (startIdx < 0) rootIndex else startIdx
+        childrenByIndex[slot] = if (childIndices.isEmpty()) emptyChildren
         else ChildrenList(childIndices.toIntArray())
     }
 
-    // Build children for each non-error, non-DONE composite
+    // Build children for each non-error, non-DONE composite.
     for (i in 0 until markerCount) {
         if (productionMarkers.isDoneMarker(i) || errorFlags[i]) continue
         val doneIdx = doneForStart[i]
@@ -388,55 +451,8 @@ fun buildJavaLightTree(builder: SyntaxTreeBuilder, source: CharSequence): JavaLi
         buildChildrenFor(i, doneIdx, firstToken, lastToken)
     }
 
-    // Build children for synthetic root (startIdx=-1, so can't use buildChildrenFor)
-    run {
-        val childIndices = ArrayList<Int>(8)
-        var prevTokenIndex = 0
-        var i = 0
-        while (i < markerCount) {
-            if (errorFlags[i]) {
-                val errTokenStart = productionMarkers.getMarker(i).getStartTokenIndex()
-                addTokensInRange(childIndices, prevTokenIndex, errTokenStart)
-                childIndices.add(i)
-                prevTokenIndex = errTokenStart
-                i++
-            } else if (!productionMarkers.isDoneMarker(i)) {
-                val childStartToken = productionMarkers.getMarker(i).getStartTokenIndex()
-                addTokensInRange(childIndices, prevTokenIndex, childStartToken)
-                childIndices.add(i)
-                val childDone = doneForStart[i]
-                prevTokenIndex = productionMarkers.getMarker(childDone).getEndTokenIndex()
-                i = childDone + 1
-            } else {
-                i++
-            }
-        }
-        addTokensInRange(childIndices, prevTokenIndex, tokens.tokenCount)
-        childrenByIndex[rootIndex] = if (childIndices.isEmpty()) emptyChildren
-        else ChildrenList(childIndices.toIntArray())
-    }
-
-    val rootNodeType = if (markerCount > 0)
-        productionMarkers.getMarker(markerCount - 1).getNodeType()
-    else
-        error("No production markers")
-
-    val tree = JavaLightTree(
-        productionMarkers = productionMarkers,
-        tokens = tokens,
-        source = source,
-        parentStartIndex = parentStartIndex,
-        doneForStart = doneForStart,
-        tokenParentStart = tokenParentStart,
-        rootIndex = rootIndex,
-        rootNodeType = rootNodeType,
-        compositeTypes = compositeTypes,
-        childrenByIndex = childrenByIndex,
-        errorFlags = errorFlags,
-        compositeEndOffsets = compositeEndOffsets,
-        compositeStartOffsets = compositeStartOffsets,
-    )
-    return tree
+    // Build children for the synthetic root (startIdx=-1 routes to childrenByIndex[rootIndex]).
+    buildChildrenFor(startIdx = -1, doneIdx = markerCount, firstTokenIndex = 0, lastTokenIndex = tokens.tokenCount)
 }
 
 /**
