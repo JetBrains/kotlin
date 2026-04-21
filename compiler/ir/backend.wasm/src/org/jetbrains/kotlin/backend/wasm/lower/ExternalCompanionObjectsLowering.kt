@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -88,8 +90,27 @@ private class ExternalCompanionObjectsLoweringTransformer : IrElementTransformer
 
         // Null out initializers of tmp vars, if companion object instance isn't required
         if (!receiverUsed) {
-            receiverVar.initializer = null
-            helperVarForReceiver.initializer = null
+            val excludedVars = listOf(receiverVar, helperVarForReceiver)
+
+            inlinedBlock.transformChildrenVoid(object : IrElementTransformerVoid() {
+                override fun visitBlock(expression: IrBlock): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    expression.statements.removeAll { it in excludedVars }
+                    return expression
+                }
+
+                override fun visitComposite(expression: IrComposite): IrExpression {
+                    expression.transformChildrenVoid(this)
+                    expression.statements.removeAll { it in excludedVars }
+                    return expression
+                }
+
+                override fun visitBlockBody(body: IrBlockBody): IrBody {
+                    body.transformChildrenVoid(this)
+                    body.statements.removeAll { it in excludedVars }
+                    return body
+                }
+            })
         }
 
         expression.transformChildrenVoid(this)

@@ -264,6 +264,5 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmInlineObjectsWithPureInitializationLowering,
 
     ::WhenBranchOptimiserLowering,
-    ::WasmEliminateUnusedLocalVariables,
     ::IrValidationAfterLoweringPhase,
 )
