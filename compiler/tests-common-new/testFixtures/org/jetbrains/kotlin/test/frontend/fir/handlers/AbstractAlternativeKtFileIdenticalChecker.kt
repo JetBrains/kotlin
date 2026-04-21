@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
@@ -28,8 +27,8 @@ abstract class AbstractAlternativeKtFileIdenticalChecker(testServices: TestServi
     override val order: Order
         get() = Order.P5
 
-    final override fun check(failedAssertions: List<WrappedException>) {
-        if (failedAssertions.isNotEmpty()) return
+    final override fun check(thereWereFailures: Boolean) {
+        if (thereWereFailures) return
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         checkTestDataFile(testDataFile)
     }

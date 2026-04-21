@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -25,7 +24,7 @@ class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisC
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 
-    override fun check(failedAssertions: List<WrappedException>) {
+    override fun check(thereWereFailures: Boolean) {
         if (CHECK_COMPILER_OUTPUT !in testServices.moduleStructure.allDirectives) return
 
         val dump = testServices.moduleStructure.modules.map { module ->

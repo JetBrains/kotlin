@@ -217,7 +217,7 @@ class NonGroupingTestRunner(
 
         testConfiguration.afterAnalysisCheckers.forEach {
             withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
-                it.check(allFailedExceptions)
+                it.check(thereWereFailures = allFailedExceptions.isNotEmpty())
             }
         }
     }

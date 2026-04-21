@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -169,10 +168,8 @@ private object LLFirPartialBodyAnalysisAnalyzerFacadeFactory : LLFirAnalyzerFaca
 }
 
 private class ControlFlowGraphConsistencyChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun check(failedAssertions: List<WrappedException>) {
-        if (failedAssertions.isNotEmpty()) {
-            return
-        }
+    override fun check(thereWereFailures: Boolean) {
+        if (thereWereFailures) return
 
         val partialAnalysisControlFlowGraphText = renderControlFlowGraph(forceAnalysis = false)
 

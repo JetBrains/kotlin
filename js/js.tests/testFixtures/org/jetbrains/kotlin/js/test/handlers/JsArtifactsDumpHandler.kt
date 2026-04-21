@@ -45,7 +45,7 @@ object JsArtifactsDumpHandler {
     }
 
     class Checker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-        override fun check(failedAssertions: List<WrappedException>) {
+        override fun check(thereWereFailures: Boolean) {
             for (translationMode in supportedTranslationModes) {
                 val outputDir = getOutputDir(translationMode, testServices)
                 copy(from = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode), into = outputDir)
