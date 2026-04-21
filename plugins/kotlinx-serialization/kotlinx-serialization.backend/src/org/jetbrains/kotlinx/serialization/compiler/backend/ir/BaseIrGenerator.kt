@@ -300,10 +300,20 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         with(serializerProviderFunction as IrFunction) {
             // Note that [typeArgs] may be unused if we short-cut to e.g. SealedClassSerializer
+            val typeArgsForCall = adjustedTypeArgs.takeIf { it.size == typeParameters.size }.orEmpty()
+            // `returnTypeHint` must be set explicitly here.
+            // Without it, `irInvoke` uses `callee.owner.returnType` — the raw, unsubstituted return type of
+            // `Companion.serializer()` — which still contains the COMPANION FUNCTION's own type parameters
+            // (e.g. `T of ParametrizedInterface2.Companion.serializer`).
+            // When this call appears inside a `$serializer.deserialize()` body or a `$childSerializers`
+            // initializer, those type parameters are not in scope, so the IR validator rejects them.
+            // By substituting `typeParameters` with `typeArgsForCall` we get the correctly specialised return
+            // type that only references types valid at the call site.
             return irInvoke(
                 symbol,
                 listOf(irBuilder.irGetObject(companionClass)) + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
-                adjustedTypeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
+                typeArgsForCall,
+                returnTypeHint = returnType.substitute(typeParameters, typeArgsForCall),
             )
         }
     }
@@ -435,7 +445,14 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         return { index: Int ->
             if (cacheableSerializers[index]) {
-                val lazyDelegate = irInvoke(compilerContext.arrayValueGetter.symbol, irGet(variable), irInt(index))
+                // `returnTypeHint` on both calls below is required to keep the IR types in scope.
+                // `irInvoke` sets `call.type = returnTypeHint ?: callee.owner.returnType`. Without the hint:
+                //   - `Array<T>.get()` would produce a call typed `T of Array` (the Array class's type param),
+                //     which is never in scope for callers.
+                //   - `Lazy<T>.value` getter would produce a call typed `T of Lazy`, also out of scope.
+                // Passing `lazyType(kSerializerType)` and `kSerializerType` (both erased to `KSerializer<Any>`)
+                // keeps the IR types concrete and unconditionally in scope.
+                val lazyDelegate = irInvoke(compilerContext.arrayValueGetter.symbol, irGet(variable), irInt(index), returnTypeHint = lazyType(kSerializerType))
                 irInvoke(
                     compilerContext.lazyValueGetter,
                     lazyDelegate,
@@ -491,8 +508,15 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
     // create serializers for type arguments if all arguments are classes, `null` otherwise
     private fun IrBuilderWithScope.createSerializerOnlyForClasses(type: IrSimpleType, serializableClass: IrClass): List<IrExpression>? {
-        // arguments contain star projections or type parameter
-        if (!type.arguments.all { it is IrSimpleType && it.typeOrNull?.isTypeParameter() != true }) {
+        // Child serializers are cached in the Companion object (see `$childSerializers` property).
+        // The Companion is a static context where NO class-level type parameters are in scope.
+        // A property type that contains a type parameter anywhere in its tree (e.g. `List<Schema<T>>`)
+        // cannot be given a concrete serializer there, so we must not attempt to cache it.
+        //
+        // The original check only tested whether an immediate type argument WAS a type parameter (shallow check).
+        // That missed nested cases: `List<Schema<T>>` has immediate argument `Schema<T>`, which is not a type
+        // parameter itself but CONTAINS `T`.  `containsTypeParameter()` checks recursively.
+        if (!type.arguments.all { it is IrSimpleType && it.typeOrNull?.containsTypeParameter() != true }) {
             return null
         }
 
