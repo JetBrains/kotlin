@@ -734,6 +734,8 @@ dependencies {
     }
     implementation(intellijPlatformUtil())
     implementation(libs.junit.jupiter.engine)
+
+    implementation("com.microsoft.playwright:playwright:1.59.0")
 }
 
 tasks.named("check") {

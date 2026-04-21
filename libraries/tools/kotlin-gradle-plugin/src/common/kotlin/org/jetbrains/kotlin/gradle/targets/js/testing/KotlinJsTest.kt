@@ -168,4 +168,19 @@ internal constructor(
             debug = debug
         )
     }
+
+    var playwright = false
+
+    @TaskAction
+    override fun executeTests() {
+        if (!playwright) {
+            super.executeTests()
+        } else {
+            playwright()
+        }
+    }
+
+    private fun playwright() {
+
+    }
 }
