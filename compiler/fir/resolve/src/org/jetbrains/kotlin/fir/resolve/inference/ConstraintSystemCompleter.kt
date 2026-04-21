@@ -174,13 +174,13 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     if (argumentWasTransformed)
                         continue@completion
                 }
-            }
 
-            // Stage 5: analyze the next ready postponed argument
-            if (analyzeNextReadyPostponedArgument(postponedArguments, completionMode) {
-                    analyzer.analyze(it)
-                }
-            ) continue
+                // Stage 5: analyze the next ready postponed argument with revisable expected type
+                if (analyzeNextReadyPostponedArgumentWithRevisableExpectedType(postponedArguments) {
+                        analyzer.analyze(it)
+                    }
+                ) continue
+            }
 
             // Stage 6: fix the next ready type variable with proper constraints
             if (variableForFixation != null && fixVariableIfReady(variableForFixation))
