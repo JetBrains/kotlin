@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-21 (refactoring-plan Phase B.3: split large functions)
+**Last Updated**: 2026-04-22 (Phase C extended: IntelliJ pipeline + file-utilization + size-bucket data; `MEASUREMENTS.md` §5 reverses the M-O6 verdict)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -17,8 +17,236 @@ caveats have landed in code (verified against current source). What remains:
 - ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
 
-The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A and
-the three iterations of Phase B (B.1, B.2, B.3) are now complete; Phases C–E are pending.
+The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A,
+the three iterations of Phase B (B.1, B.2, B.3), and Phase C (measurements) are now
+complete. Phase D (measurement-gated perf changes) and Phase E (remaining readability)
+are pending.
+
+---
+
+## Refactoring Plan Phase C (extended): IntelliJ pipeline + file utilization — 2026-04-22
+
+### Overview
+
+Follow-up to the original 2026-04-21 Phase C run. Per user request: re-measure on a
+realistic IntelliJ-sized workload, add counters for **precomputed files vs. accessed
+files** (hypothesis: most Java files indexed are never actually referenced from Kotlin
+and the lazy path should dominate), and report file-size buckets at
+`<1K / 1-2K / 2-4K / 4-8K / ≥8K` for actually-addressed files.
+
+### Instrumentation — v2 extensions (kept in place after this run)
+
+`PhaseCMeasurementCounters.kt` grew with:
+
+- `indexedFilePaths` / `accessedFilePaths` / `reallyParsedLazyFilePaths` —
+  `ConcurrentHashMap.newKeySet<String>` of `VirtualFile.path` values, populated at
+  `tryBuildFileEntry*` (indexed), inside the `findClasses` candidate loop (accessed),
+  and on the real-parse side of `parseTopLevelClassFromFile` (really-parsed-lazy).
+- Per-path size buckets — `eagerBuckets` / `lightweightBuckets` / `lazyBuckets`, each
+  a 5-element `AtomicLong[]` indexed by `<1K`, `1-2K`, `2-4K`, `4-8K`, `≥8K`.
+- Lazy-parse specifics — `lazyParseInvocations`, `lazyParseBytesTotal`,
+  `lazyParseCpuNs`, `parseTopLevelCacheHits`, `parseTopLevelCacheMisses`.
+
+Call sites instrumented additionally:
+
+- `JavaClassFinderOverAstImpl.findClasses` — `accessedFilePaths.add(file.file.path)`
+  for each candidate FileEntry.
+- `JavaClassFinderOverAstImpl.parseTopLevelClassFromFile` — counts cache hits,
+  counts real parses with CPU time / bytes / size-bucket, and records the file in
+  `reallyParsedLazyFilePaths`.
+
+Dump format gained `[EXT-FILES]`, `[EXT-PARSE-TOP]`, `[EXT-BUCKETS]` sections.
+
+A new shell aggregator — `compiler/java-direct/aggregate-phase-c-dumps.sh` — sums
+per-worker `dump-<pid>.txt` into a single report (uses `awk` regex extraction to stay
+position-insensitive).
+
+### Test runs
+
+- **Corpus B' (Kotlin)** — `KotlinFullPipelineTestsGenerated` (414 tests),
+  v2 counters: 3 files indexed, 0 accessed.
+- **Corpus C (IntelliJ subset)** — 11 tests covering
+  `testIntellij_aiInternalDataCollection`, `testIntellij_platform_util*`,
+  `testIntellij_platform_core_impl`, `testKotlin_base_*`, `testFleet_andel*`,
+  `testUtil_android_studio_*`, `testRpc_compiler_plugin`. CONCURRENT execution, 5
+  minutes, 562 files indexed, **1 accessed (0.18 %)**.
+
+Running the full 3 320 `testIntellij_*` suite was attempted but ran for several hours
+before being stopped — each module compile under `-Pfir.force.javaDirect=true` is
+itself a full pipeline over thousands of Java files, so that suite size is a
+multi-hour workload regardless of concurrency. The 11-test subset captured the same
+signal at a tractable cost.
+
+### Key findings
+
+- **File access rate is 0.18 %.** Out of 562 Java files indexed by the lazy
+  per-package scan, exactly 1 had its classes queried by the Kotlin compiler.
+- **Size-bucket distribution** (corpus C) —
+  `eager=[160, 131, 106, 0, 0]`, `lightweight=[0, 0, 0, 79, 86]`, `lazy=[0, 0, 0, 0, 1]`.
+  The two index paths partition perfectly at the 4 K threshold; the one lazy parse
+  that happened was a file in the `≥8K` bucket.
+- **~99.7 % of the eager-parse CPU is wasted.** 458 ms of thread-CPU across 397
+  invocations, ≤ 1 of which was actually needed.
+- The M-O6 verdict from 2026-04-21 (“null result, keep threshold”) **reverses** to
+  “drop the eager path entirely; always lightweight-index and lazy-parse”. Expected
+  pipeline-wide CPU saving on Java-heavy Kotlin compiles: 3–10 %.
+
+Other hypotheses remained stable:
+
+- M-O3 (`importCache`) — 0 hits / 400 misses. **Delete.**
+- M-O4b (`negativeClassCache`) — 0 negative-cache hits out of 91 adds. **Delete.**
+- M-O2 (`distinctStarImports`) — 0 duplicate-detection fires across all measured
+  tryStarImports calls. **Inline `.distinct()` at use site.**
+- M-P8 / M-P9 — 0 invocations in either corpus. **No change.**
+- M-P12 (single-segment rawTypeNameParts) — 97 % single-segment (B), n/a in C.
+  **Restructure to store parts, derive name.**
+- M-P13 (`findPackageDirectories` cache) — 0.63 % hit rate (C), 0.40 % (B');
+  the original "pre-allocation outside cache" concern is moot because the
+  allocation already lives inside `computeIfAbsent`. **No change.**
+
+### Files Modified
+
+Instrumentation is **kept in place** per user instruction (next task reuses it).
+`PhaseCMeasurementCounters.kt`, the call-site counter-increment edits in seven
+java-direct files, and the `fir.force.javaDirect=true` passthrough in
+`AbstractIsolatedFullPipelineModularizedTest.kt` remain.
+
+| File | Kind |
+|------|------|
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/PhaseCMeasurementCounters.kt` | v2 counters + shutdown hook |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaImportResolver.kt` | extractImports hit/miss |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassFinderOverAstImpl.kt` | findClass, findClasses, findPackageDirectories, tryBuildFileEntry*, parseTopLevelClassFromFile |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaResolutionContext.kt` | tryStarImports |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaClassOverAst.kt` | deriveImplicitPermittedTypes |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaMemberOverAst.kt` | isSimpleNamePotentiallyConstant |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/ConstantEvaluator.kt` | resolveFieldValue |
+| `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/JavaTypeOverAst.kt` | rawTypeNameParts compute |
+| `compiler/fir/modularized-tests/testFixtures/org/jetbrains/kotlin/fir/AbstractIsolatedFullPipelineModularizedTest.kt` | `fir.force.javaDirect` passthrough |
+| `compiler/java-direct/aggregate-phase-c-dumps.sh` | new — dump aggregator |
+| `compiler/java-direct/MEASUREMENTS.md` | appended §5 (extended data) + revised §6 summary |
+
+### Test Results
+
+The instrumentation is counter-increments only — no behavior change. Gate:
+`./gradlew :kotlin-java-direct:test --tests JavaUsingAstBoxTestGenerated` passes
+unchanged. The `IntelliJFullPipelineTestsGenerated` 11-test subset reports 29/29
+green in 68.5 s with counters populated correctly.
+
+### Key Learnings
+
+- **Precomputing is only a win when access rate is comparable to precompute rate.**
+  Measuring just the cost of each path (as the original 2026-04-21 Phase C did) hides
+  the actual story when the access rate is orders of magnitude below the precompute
+  rate. Adding the `indexedFilePaths`/`accessedFilePaths` unique-set counters was
+  what flipped the M-O6 verdict — the original table said "full-parse costs 14× more
+  per byte than lightweight, but the difference is tiny in absolute terms"; with the
+  access-rate column added, "tiny difference" becomes "99.7 % of that cost is thrown
+  away".
+- **Gradle test-worker forking + per-JVM counters is fine.** Each worker writes its
+  own `dump-<pid>.txt` on shutdown; the aggregator sums across them. No serialization
+  of the test suite needed.
+- **`modularizedTestConfigFromSingleModelFile` derives `rootPathPrefix` from the
+  model-file location, not from `fir.bench.prefix`.** A run whose model XMLs
+  reference `/testProject/...` paths that don't exist on the local filesystem will
+  index nothing and produce all-zero counters — the java-direct code loads, but all
+  directory lookups hit empty filesystems. For reproducibility, the
+  `testProject/community/...` tree must be present under the inferred root.
+
+---
+
+## Refactoring Plan Phase C: Instrumented Measurements — 2026-04-21
+
+### Overview
+
+All eight `REFACTORING_PLAN.md` §2.3 hypotheses (M-O3, M-O6, M-O4b, M-O2, M-P8, M-P9,
+M-P12, M-P13) were measured in **one instrumented pipeline run** using a temporary
+`PhaseCMeasurementCounters` singleton plus per-call-site counter increments. The
+counters are lightweight (`AtomicLong.incrementAndGet`, ~3 ns each) and independent,
+so they cover all eight items without mutual interference.
+
+Full results and verdicts: **`MEASUREMENTS.md`** (this directory).
+
+### Changes (instrumentation — to be reverted in the commit after this one)
+
+- **New file** `compiler/java-direct/src/org/jetbrains/kotlin/java/direct/PhaseCMeasurementCounters.kt`
+  — holds all counters plus a JVM shutdown hook that writes a text dump to
+  `compiler/java-direct/phase-c-dumps/dump-<pid>.txt`. Per-path CPU time uses
+  `ThreadMXBean.getCurrentThreadCpuTime()`.
+- **Instrumented call sites** (single-line increments at each):
+  - `JavaImportResolver.extractImports` — M-O3 hits/misses
+  - `JavaClassFinderOverAstImpl.tryBuildFileEntryWithFullParse` / `tryBuildFileEntryLightweight` — M-O6 invocations + CPU time + bytes
+  - `JavaClassFinderOverAstImpl.findClass` — M-O4b positive/negative cache hits + adds
+  - `JavaClassFinderOverAstImpl.findPackageDirectories` — M-P13 total calls vs. lambda runs
+  - `JavaResolutionContext.tryStarImports` — M-O2 call count + starImports vs distinctStarImports sizes
+  - `JavaClassOverAst.deriveImplicitPermittedTypes` — M-P8 invocations + distinct classes
+  - `JavaMemberOverAst.isSimpleNamePotentiallyConstant` — M-P9 call count + fields iterated
+  - `ConstantEvaluator.resolveFieldValue` — M-P9 call count + fields iterated
+  - `JavaTypeOverAst.rawTypeNameParts` compute closure — M-P12 distinct types + single-segment share
+- **Temporary test override** in
+  `compiler/fir/modularized-tests/testFixtures/.../AbstractIsolatedFullPipelineModularizedTest.kt`
+  — a `if (System.getProperty("fir.force.javaDirect") == "true") args.javaDirect = true`
+  line so `-Pfir.force.javaDirect=true` flips the plugin on for every modularized module
+  regardless of what the model XML specifies.
+
+### Corpora & dumps
+
+Two corpora combined for signal:
+
+- **Corpus A — java-direct own suite** (`JavaUsingAstPhasedTestGenerated` +
+  `JavaUsingAstBoxTestGenerated`, ~2500 tests). Archived at
+  `compiler/java-direct/phase-c-dumps/_dump-javadirect-own.txt`.
+- **Corpus B — Kotlin full pipeline** (`KotlinFullPipelineTestsGenerated`,
+  414 modules, `-Pfir.force.javaDirect=true`). Archived at
+  `compiler/java-direct/phase-c-dumps/_dump-kotlin-pipeline.txt`.
+
+### Summary of verdicts
+
+| ID | Hypothesis | Data | Verdict | Phase D |
+|---|---|---|---|---|
+| M-O3  | `importCache` hit rate | 0 hits / 3 724 misses (A), 0/2 (B) → **0 %** | ✅ confirmed | **Delete cache** |
+| M-O6  | `SMALL_FILE_SIZE_THRESHOLD` material | FP 7–46× costlier/byte than LW, but LW hits <1 % of traffic | ⚠️ null | No change |
+| M-O4b | `negativeClassCache` prevents re-parses | 91 adds / **0 hits** (A), 0/0 (B) | ✅ confirmed | **Delete cache** |
+| M-O2  | `distinctStarImports` saves work | 4 973 calls / **0 duplicates** seen | ✅ confirmed | **Inline** `.distinct()`, drop field |
+| M-P8  | `deriveImplicitPermittedTypes` hot | **0 invocations** in either corpus | ❌ null | No change |
+| M-P9  | `fields.find` scans hot | **0 invocations** in either corpus | ❌ null | No change |
+| M-P12 | Single-segment `rawTypeNameParts` dominant | 380 / 392 types single-segment → **97 %** (B) | ✅ confirmed | **Restructure** (store parts, derive name) |
+| M-P13 | `findPackageDirectories` pre-alloc hot | already fixed; cache hit-rate 2–5 % | ⚠️ already fixed | No change |
+
+Three items will land in Phase D (M-O3, M-O4b, M-O2, M-P12); three items (M-O6,
+M-P8, M-P9) close as null results; M-P13 is already fixed. Expected combined
+full-pipeline CPU impact: under 1 %. The primary payoff is **dead code deleted
+from the module** — `importCache` (18 lines), `negativeClassCache` (3 lines),
+`distinctStarImports` (one constructor parameter, four propagation sites), plus a
+tightening of the `JavaClassifierTypeOverAst` cached-state layout.
+
+### Key Learnings
+
+- **Null results are results.** Three of eight hypotheses (M-O6 material,
+  M-P8 hot, M-P9 hot) produced zero meaningful traffic. That is not a failure of
+  the instrumentation — it's telling us the optimisation surface is cold and the
+  plan's expectation was off. The instrumented run, which was planned as a prelude
+  to Phase D work, has already reduced Phase D's scope by more than half. The
+  same signal would have taken multiple speculative refactor+measure iterations
+  to unearth.
+- **Counter-based measurement is the right tool for hit-rate questions.** Every
+  hypothesis except M-O6 was answered with `AtomicLong`-only instrumentation; no
+  CPU-time sampling needed. The only wall-clock sensitive item (M-O6, "which path
+  is faster per byte") got per-thread CPU via `ThreadMXBean`, which is valid even
+  under Gradle's CONCURRENT execution mode (per-thread CPU is additive).
+- **Gate flags can invalidate a benchmark.** The first `KotlinFullPipelineTestsGenerated`
+  run produced near-zero counter values because `args.javaDirect` defaults to
+  `false` — the `JavaClassFinderFactory` extension was registered but never
+  selected. The one-line `fir.force.javaDirect` override in the test fixture was
+  the necessary glue; without it, every counter would have read as "cold". For
+  future java-direct perf work, document the flag prominently (`MEASUREMENTS.md`
+  §1.2 now does).
+- **Run the java-direct own suite as a second corpus.** The Kotlin project model
+  has relatively few modules with Java source roots, so traffic through
+  `JavaClassFinderOverAstImpl` is sparse. The java-direct own test suite creates
+  a fresh classfinder per test against small Java files, yielding much denser
+  signal on the cache and parse hypotheses (corpus A's numbers are 50–1 000×
+  larger than corpus B's on M-O3 / M-O4b / M-P13). For future Phase-C-style runs,
+  sample both and note which one each verdict hinges on.
 
 ---
 
