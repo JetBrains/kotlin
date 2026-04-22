@@ -35,7 +35,7 @@ fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
     // recursively find ObjCMethod annotation in getDirectOverriddenFunctions() (same as `overriddenDescriptors` in K1)
     return when (val symbol = this) {
         is FirNamedFunctionSymbol -> {
-            val firClassSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>?
+            val firClassSymbol = getContainingClassSymbol() as? FirClassSymbol<*>
             firClassSymbol?.let {
                 val unsubstitutedScope = it.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
 

@@ -1,9 +1,0 @@
-Caused by: java.lang.ClassCastException: class org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol cannot be cast to class org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol (org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol and org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol are in unnamed module of loader 'app')
-	at org.jetbrains.kotlin.fir.backend.native.interop.FirObjCInteropKt.getObjCMethodInfoFromOverriddenFunctions(FirObjCInterop.kt:38)
-	at org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjcOverrideApplicabilityCheckerKt.isInheritedFromObjc(FirNativeObjcOverrideApplicabilityChecker.kt:27)
-	at org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjcOverrideApplicabilityCheckerKt.access$isInheritedFromObjc(FirNativeObjcOverrideApplicabilityChecker.kt:1)
-	at org.jetbrains.kotlin.fir.analysis.native.checkers.NativeConflictDeclarationsDiagnosticDispatcher.getDiagnostic(FirNativeObjcOverrideApplicabilityChecker.kt:49)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConflictsDeclarationChecker.reportConflicts(FirConflictsDeclarationChecker.kt:143)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConflictsDeclarationChecker.check(FirConflictsDeclarationChecker.kt:75)
-	at org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent.visitRegularClass(DeclarationCheckersDiagnosticComponent.kt:264)
-	... 45 more
