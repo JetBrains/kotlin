@@ -67,7 +67,7 @@ KtConstructorDelegationCall(76,84): 'this(10)'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
-    isInBestCandidates = false
+    isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
@@ -122,7 +122,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
     diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
-    isInBestCandidates = false
+    isInBestCandidates = true
 
   KaInapplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:

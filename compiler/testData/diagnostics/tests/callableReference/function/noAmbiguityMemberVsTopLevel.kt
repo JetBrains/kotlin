@@ -25,8 +25,8 @@ class A {
 
         expectFunction0Unit(::foo)
         expectFunction0String(::foo)
-        expectFunction1Unit(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
-        expectFunction1String(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
+        expectFunction1Unit(::<!NONE_APPLICABLE!>foo<!>)
+        expectFunction1String(::<!NONE_APPLICABLE!>foo<!>)
     }
 }
 

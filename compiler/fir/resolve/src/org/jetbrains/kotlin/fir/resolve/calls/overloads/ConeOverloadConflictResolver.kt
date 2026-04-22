@@ -86,7 +86,7 @@ class ConeOverloadConflictResolver(
     ): Set<Candidate> {
         if (candidates.size == 1) return candidates
         val fixedCandidates =
-            if (candidates.first().callInfo.candidateForCommonInvokeReceiver != null)
+            if (candidates.first().let { it.isSuccessful && it.callInfo.candidateForCommonInvokeReceiver != null})
                 chooseCandidatesWithMostSpecificInvokeReceiver(candidates)
             else
                 candidates

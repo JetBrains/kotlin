@@ -17,8 +17,8 @@ fun test(short: Short, long: Long, float: Float,
 
     string.<!UNRESOLVED_REFERENCE!>describeConstable<!>()
     string.<!UNRESOLVED_REFERENCE!>resolveConstantDesc<!>(x)
-    string.<!NO_VALUE_FOR_PARAMETER!>indexOf<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>,1,1)
-    string.<!NO_VALUE_FOR_PARAMETER!>indexOf<!>("", 1,2)
+    string.<!NONE_APPLICABLE!>indexOf<!>(1,1,<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    string.<!NONE_APPLICABLE!>indexOf<!>("", 1,<!ARGUMENT_TYPE_MISMATCH!>2<!>)
     string.<!UNRESOLVED_REFERENCE!>splitWithDelimiters<!>("", 1)
     string.<!UNRESOLVED_REFERENCE!>strip<!>()
     string.<!UNRESOLVED_REFERENCE!>stripLeading<!>()

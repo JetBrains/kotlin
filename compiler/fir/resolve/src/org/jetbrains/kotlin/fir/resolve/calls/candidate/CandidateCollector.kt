@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 
@@ -84,10 +82,8 @@ open class CandidateCollector(
          *   to fix the KT-65218, which provoked by different stdlib declarations order in CLI compilation mode and AA mode (see
          *   the issue for more details)
          */
-        if (
-            (applicability == currentApplicability && group == bestGroup) ||
-            (currentApplicability == INAPPLICABLE_ARGUMENTS_MAPPING_ERROR && applicability == INAPPLICABLE_WRONG_RECEIVER)
-        ) {
+        @OptIn(ApplicabilityDetail::class)
+        if ((applicability == currentApplicability && group == bestGroup) || currentApplicability < CandidateApplicability.RESOLVED_LOW_PRIORITY) {
             candidates.add(candidate)
         }
 
