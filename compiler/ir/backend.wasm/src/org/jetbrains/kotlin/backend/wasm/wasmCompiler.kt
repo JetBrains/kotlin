@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
+import org.jetbrains.kotlin.backend.wasm.WasmBackendErrors.WASM_BACKEND_MISSING_RESOURCE_FROM_COMPILER
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
@@ -17,8 +18,7 @@ import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -725,7 +725,7 @@ fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
     fileNameBase: String,
-    messageCollector: MessageCollector? = null
+    configuration: CompilerConfiguration? = null
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -746,10 +746,7 @@ fun writeCompilationResult(
         val classLoader = WasmCompilerResult::class.java.classLoader
         val customFormattersInputStream = classLoader.getResourceAsStream(fileName) ?: run {
             val message = "Custom formatters won't work because a required resource is missing from the compiler: $fileName"
-            messageCollector?.report(
-                CompilerMessageSeverity.STRONG_WARNING,
-                message
-            )
+            configuration?.report(WASM_BACKEND_MISSING_RESOURCE_FROM_COMPILER, message)
             "console.warn(\"$message\");".byteInputStream()
         }
 

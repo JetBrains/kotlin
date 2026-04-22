@@ -42,6 +42,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 result = compileResult,
                 dir = outputDir,
                 fileNameBase = result.baseFileName,
+                configuration = configuration,
             )
             compileResult
         }
