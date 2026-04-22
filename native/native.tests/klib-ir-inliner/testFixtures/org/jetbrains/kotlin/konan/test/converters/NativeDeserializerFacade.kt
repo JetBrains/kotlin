@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.konan.test.converters
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.sortDependencies
-import org.jetbrains.kotlin.backend.konan.KonanStubGeneratorExtensions
 import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
@@ -103,12 +100,6 @@ class NativeDeserializerFacade(
         )
 
         val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
-        val stubGenerator = DeclarationStubGeneratorImpl(
-            moduleDescriptor, symbolTable,
-            irBuiltIns,
-            DescriptorByIdSignatureFinderImpl(moduleDescriptor, KonanManglerDesc),
-            KonanStubGeneratorExtensions
-        )
 
         val irLinker = KonanIrLinker(
             currentModule = moduleDescriptor,
@@ -116,7 +107,6 @@ class NativeDeserializerFacade(
             symbolTable = symbolTable,
             friendModules = friendModules,
             forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
-            stubGenerator = stubGenerator,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
             partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
