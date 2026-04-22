@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analyzer.ResolverForSingleModuleProject
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -36,10 +37,11 @@ import java.util.regex.Pattern
 
 object BuiltinsTestUtils {
     fun compileBuiltinsModule(environment: KotlinCoreEnvironment, stdlibPath: String): ModuleDescriptor {
+        val stdlibSourceRoot = ForTestCompileRuntime.stdlibSourceRootForTests()
         val files = KotlinTestUtils.loadToKtFiles(
             environment, ContainerUtil.concat<File>(
-                allFilesUnder("$stdlibPath/jvm/"),
-                allFilesUnder("$stdlibPath/src/")
+                allFilesUnder(stdlibSourceRoot.resolve("jvm").path),
+                allFilesUnder(stdlibSourceRoot.resolve("src").path)
             )
         ).filter {
             it.annotationEntries.any { annotation ->

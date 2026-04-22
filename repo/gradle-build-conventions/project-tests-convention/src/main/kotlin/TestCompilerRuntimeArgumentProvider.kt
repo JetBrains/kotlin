@@ -18,6 +18,7 @@ import TestCompilePaths.KOTLIN_MOCKJDK_RUNTIME_PATH
 import TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
 import TestCompilePaths.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH
 import TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH
+import TestCompilePaths.KOTLIN_STDLIB_SOURCES_ROOT_PATH
 import TestCompilePaths.KOTLIN_TESTDATA_ROOTS
 import TestCompilePaths.KOTLIN_TEST_JAR_PATH
 import TestCompilePaths.KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH
@@ -51,6 +52,10 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
     @get:InputFiles
     @get:Classpath
     abstract val stdlibRuntimeSourcesForTests: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:Classpath
+    abstract val stdlibSourceRootForTests: ConfigurableFileCollection
 
     @get:InputFiles
     @get:Classpath
@@ -194,6 +199,7 @@ abstract class TestCompilerRuntimeArgumentProvider : CommandLineArgumentProvider
             // JVM libs
             argument(KOTLIN_FULL_STDLIB_PATH, stdlibRuntimeForTests),
             argument(KOTLIN_FULL_STDLIB_SOURCES_PATH, stdlibRuntimeSourcesForTests),
+            argument(KOTLIN_STDLIB_SOURCES_ROOT_PATH, stdlibSourceRootForTests),
             argument(KOTLIN_MINIMAL_STDLIB_PATH, stdlibMinimalRuntimeForTests),
             argument(KOTLIN_REFLECT_JAR_PATH, kotlinReflectJarForTests),
             ifNotEmpty(KOTLIN_COMMON_STDLIB_PATH, stdlibCommonRuntimeForTests),

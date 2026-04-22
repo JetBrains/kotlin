@@ -135,6 +135,16 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File stdlibSourceRootForTests() {
+        String path = getProperty(KOTLIN_STDLIB_SOURCES_ROOT_PATH, "libraries/stdlib");
+        File file = new File(path);
+        assert (file.exists()) : path + " doesn't exist; property: " +
+                                 KOTLIN_STDLIB_SOURCES_ROOT_PATH + "; distPath: " +
+                                 "libraries/stdlib";
+        return file;
+    }
+
+    @NotNull
     public static File stdlibCommonForTests() {
         return propertyOrDist(KOTLIN_COMMON_STDLIB_PATH, "dist/common/kotlin-stdlib-common.klib");
     }

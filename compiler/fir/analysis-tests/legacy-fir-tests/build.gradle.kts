@@ -1,3 +1,5 @@
+import TestCompilePaths.KOTLIN_STDLIB_SOURCES_ROOT_PATH
+
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -39,6 +41,7 @@ sourceSets {
 projectTests {
     testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
         dependsOn(":dist")
+        addClasspathProperty(stdlibSourceRootForTests, KOTLIN_STDLIB_SOURCES_ROOT_PATH)
         inputs.files(rootDir.resolve("libraries/stdlib/src"), rootDir.resolve("libraries/stdlib/jvm"))
             .withPathSensitivity(PathSensitivity.RELATIVE)
     }

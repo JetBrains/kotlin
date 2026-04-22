@@ -50,6 +50,9 @@ abstract class ProjectTestsExtension(val project: Project) {
     val stdlibRuntimeSourcesForTests: Configuration = project.configurations.create("stdlibRuntimeSourcesForTests") {
         isTransitive = false
     }
+    val stdlibSourceRootForTests: Configuration = project.configurations.create("stdlibSourceRootForTests") {
+        isTransitive = false
+    }
     val stdlibMinimalRuntimeForTests: Configuration = project.configurations.create("stdlibMinimalRuntimeForTests") {
         isTransitive = false
     }
