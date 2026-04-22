@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -23,6 +24,25 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
+
+    init {
+        target.compilations.configureEach { compilation ->
+            target.project.tasks.withType<ProcessResources>()
+                .matching { it.name == compilation.processResourcesTaskName }
+                .configureEach { processResources ->
+                    processResources.eachFile { resource ->
+                        if (resource.file.name == "index.html") {
+                            // replace `outputModuleName.get()` with `outputModuleName` when https://github.com/gradle/gradle/issues/24268 is fixed
+                            resource.expand(
+                                mapOf(
+                                    "kotlinJsModuleName" to compilation.target.outputModuleName.get()
+                                )
+                            )
+                        }
+                    }
+                }
+        }
+    }
 
     override fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary) {
         with(nodeJsEnvSpec) {
