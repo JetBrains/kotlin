@@ -194,7 +194,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 irProviderForCEnumsAndCStructs.referenceAllEnumsAndStructsFrom(libraryToCacheModule)
 
             translator.addPostprocessingStep {
-                irProviderForCEnumsAndCStructs.generateBodies()
+                irProviderForCEnumsAndCStructs.generateBodies(linker.builtIns, symbols)
             }
         }
     }

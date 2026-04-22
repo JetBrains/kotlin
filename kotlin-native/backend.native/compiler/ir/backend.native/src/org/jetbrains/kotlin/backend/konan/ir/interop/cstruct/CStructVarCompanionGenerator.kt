@@ -38,7 +38,7 @@ internal class CStructVarCompanionGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
 
     fun generate(structDescriptor: ClassDescriptor): IrClass =
             createClass(structDescriptor.companionObjectDescriptor!!) { companionIrClass ->
@@ -63,7 +63,7 @@ internal class CStructVarCompanionGenerator(
 
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor, size: Long, align: Int): IrConstructor {
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
-            postLinkageSteps.add {
+            postLinkageSteps.add { irBuiltIns, symbols ->
                 irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                             startOffset, endOffset, context.irBuiltIns.unitType,

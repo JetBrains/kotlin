@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.backend.konan.ir.interop
 
 import org.jetbrains.kotlin.backend.konan.InteropFqNames
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -38,10 +39,10 @@ internal interface DescriptorToIrTranslationMixin {
 
     val typeTranslator: TypeTranslator
 
-    val postLinkageSteps: MutableList<() -> Unit>
+    val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit>
 
-    fun invokePostLinkageSteps() {
-        postLinkageSteps.forEach { it() }
+    fun invokePostLinkageSteps(irBuiltIns: IrBuiltIns, symbols: BackendNativeSymbols) {
+        postLinkageSteps.forEach { it(irBuiltIns, symbols) }
     }
 
     fun KotlinType.toIrType() = typeTranslator.translateType(this)

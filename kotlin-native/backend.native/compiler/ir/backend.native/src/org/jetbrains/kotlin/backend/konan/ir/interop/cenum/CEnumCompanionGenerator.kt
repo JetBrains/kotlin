@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -36,7 +37,7 @@ internal class CEnumCompanionGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
 
     // Depends on already generated `.values()` irFunction.
     fun generate(enumClass: IrClass): IrClass =
@@ -57,7 +58,7 @@ internal class CEnumCompanionGenerator(
         val superConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(anyPrimaryConstructor)
         val classSymbol = symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
-            postLinkageSteps.add {
+            postLinkageSteps.add { irBuiltIns, _ ->
                 it.body = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                             startOffset, endOffset, context.irBuiltIns.unitType,
@@ -86,8 +87,8 @@ internal class CEnumCompanionGenerator(
                 .single { it.name.identifier == enumEntryName }.symbol
     }
 
-    private fun generateAliasGetterBody(getter: IrSimpleFunction, entrySymbol: IrEnumEntrySymbol, enumClass: IrClass): IrBody =
-            irBuiltIns.createIrBuilder(getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+    private fun IrBuiltIns.generateAliasGetterBody(getter: IrSimpleFunction, entrySymbol: IrEnumEntrySymbol, enumClass: IrClass): IrBody =
+            createIrBuilder(getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(
                         IrGetEnumValueImpl(startOffset, endOffset, enumClass.defaultType, entrySymbol)
                 )
@@ -96,8 +97,8 @@ internal class CEnumCompanionGenerator(
     private fun declareEntryAliasProperty(propertyDescriptor: PropertyDescriptor, enumClass: IrClass): IrProperty {
         val entrySymbol = fundCorrespondingEnumEntrySymbol(propertyDescriptor, enumClass)
         return createProperty(propertyDescriptor).also {
-            postLinkageSteps.add {
-                it.getter!!.body = generateAliasGetterBody(it.getter!!, entrySymbol, enumClass)
+            postLinkageSteps.add { irBuiltIns, _ ->
+                it.getter!!.body = irBuiltIns.generateAliasGetterBody(it.getter!!, entrySymbol, enumClass)
             }
         }
     }

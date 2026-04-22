@@ -37,7 +37,7 @@ internal class CEnumByValueFunctionGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
 
     fun generateByValueFunction(
             companionIrClass: IrClass,
@@ -57,7 +57,7 @@ internal class CEnumByValueFunctionGenerator(
         //      i++
         // }
         // throw NPE
-        postLinkageSteps.add {
+        postLinkageSteps.add { irBuiltIns, symbols ->
             byValueIrFunction.body = irBuiltIns.createIrBuilder(byValueIrFunction.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(irBlock {
                     val values = irTemporary(irCall(valuesIrFunctionSymbol), isMutable = true)

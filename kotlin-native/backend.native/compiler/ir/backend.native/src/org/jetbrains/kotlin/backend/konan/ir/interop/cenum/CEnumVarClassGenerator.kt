@@ -40,7 +40,7 @@ internal class CEnumVarClassGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
 
     fun generate(enumIrClass: IrClass): IrClass {
         val enumVarClassDescriptor = enumIrClass.descriptor.unsubstitutedMemberScope
@@ -61,7 +61,7 @@ internal class CEnumVarClassGenerator(
     private fun createPrimaryConstructor(enumVarClass: IrClass): IrConstructor {
         val irConstructor = createConstructor(enumVarClass.descriptor.unsubstitutedPrimaryConstructor!!)
         val classSymbol = symbolTable.descriptorExtension.referenceClass(enumVarClass.descriptor)
-        postLinkageSteps.add {
+        postLinkageSteps.add { irBuiltIns, symbols ->
             irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                     startOffset, endOffset, context.irBuiltIns.unitType, symbols.enumVarConstructorSymbol
@@ -85,7 +85,7 @@ internal class CEnumVarClassGenerator(
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor, typeSize: Int): IrConstructor {
         val classSymbol = symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
-            postLinkageSteps.add {
+            postLinkageSteps.add { irBuiltIns, symbols ->
                 it.body = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                         startOffset, endOffset, context.irBuiltIns.unitType,

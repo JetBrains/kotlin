@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
+import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.findDeclarationByName
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
@@ -51,7 +52,7 @@ internal class CEnumClassGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
 
     private val enumClassMembersGenerator = EnumClassMembersGenerator(DeclarationGenerator(context))
 
@@ -101,7 +102,7 @@ internal class CEnumClassGenerator(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                     propertyDescriptor, propertyDescriptor.type.toIrType(), DescriptorVisibilities.PRIVATE
             ).also {
-                postLinkageSteps.add {
+                postLinkageSteps.add { irBuiltIns, _ ->
                     it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                         irExprBody(irGet(irClass.primaryConstructor!!.parameters[0]))
                     }
@@ -110,7 +111,7 @@ internal class CEnumClassGenerator(
         }
         val getter = irProperty.getter!!
         getter.correspondingPropertySymbol = irProperty.symbol
-        postLinkageSteps.add {
+        postLinkageSteps.add { irBuiltIns, _ ->
             getter.body = irBuiltIns.createIrBuilder(getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(
                         irGetField(
@@ -128,7 +129,7 @@ internal class CEnumClassGenerator(
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, entryDescriptor
         )
         val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
-        postLinkageSteps.add {
+        postLinkageSteps.add { irBuiltIns, _ ->
             enumEntry.initializerExpression = context.irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
                             SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
@@ -162,7 +163,7 @@ internal class CEnumClassGenerator(
         val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumConstructor)
         val classSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
         val type = descriptor.defaultType.toIrType()
-        postLinkageSteps.add {
+        postLinkageSteps.add { irBuiltIns, _ ->
             irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                     .irBlockBody {
                         +IrEnumConstructorCallImpl(
