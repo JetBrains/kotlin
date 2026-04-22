@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_CALL_SUPER_NOT_CALLED
+import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_EXCLUDE_AND_INCLUDE
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.name.Name
@@ -45,6 +46,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
     val TO_STRING_CALL_SUPER_NOT_CALLED by warning0<KtAnnotationEntry>()
     val TO_STRING_EXCLUDE_AND_INCLUDE by warning0<KtAnnotationEntry>()
+    val TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT by warning0<KtAnnotationEntry>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -74,6 +76,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(
             TO_STRING_EXCLUDE_AND_INCLUDE,
             "@ToString.Exclude and @ToString.Include are mutually exclusive; the @Include annotation will be ignored."
+        )
+        map.put(
+            TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT,
+            "The 'doNotUseGetters' parameter has no effect in Kotlin. " +
+                    "Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls."
         )
     }
 }

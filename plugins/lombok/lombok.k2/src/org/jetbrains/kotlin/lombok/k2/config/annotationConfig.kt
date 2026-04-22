@@ -398,7 +398,7 @@ object ConeLombokAnnotations {
     class ToString(
         val includeFieldNames: Boolean,
         val callSuper: CallSuperMode,
-        val doNotUseGetters: Boolean,
+        val doNotUseGetters: Boolean?,
         val onlyExplicitlyIncluded: Boolean,
         val excludeFields: Set<String>,
         override val flagUsage: FlagUsageValue?,
@@ -420,7 +420,7 @@ object ConeLombokAnnotations {
                         ?: CallSuperMode.entries.find { it.name.equals(callSuperConfigValue, ignoreCase = true) }
                         ?: CallSuperMode.Skip,
                     doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS)
-                        ?: config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG) ?: false,
+                        ?: config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED)
                         ?: config.getBoolean(TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
                     excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),

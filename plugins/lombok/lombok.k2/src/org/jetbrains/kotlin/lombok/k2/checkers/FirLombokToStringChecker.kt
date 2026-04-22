@@ -56,6 +56,15 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
         }
 
         /**
+         * The `doNotUseGetters` flag is a Java-only concept. In Kotlin, properties are always accessed
+         * through a unified property mechanism — there is no distinction between backing-field access
+         * and a getter call. Warn so users know the parameter has no effect.
+         */
+        if (toStringAnnInfo.doNotUseGetters != null) {
+            reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT, context)
+        }
+
+        /**
          * Mirrors Lombok Java behaviour: "Having both @ToString.Exclude and @ToString.Include on a member
          * generates a warning; the member will be excluded in this case."
          */
