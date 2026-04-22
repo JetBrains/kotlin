@@ -31,8 +31,7 @@ private val varTypeAnnotationFqName = FqName("kotlinx.cinterop.internal.CStruct.
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CStructVarCompanionGenerator(
-        context: GeneratorContext,
-        private val symbols: BackendNativeSymbols
+        context: GeneratorContext
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

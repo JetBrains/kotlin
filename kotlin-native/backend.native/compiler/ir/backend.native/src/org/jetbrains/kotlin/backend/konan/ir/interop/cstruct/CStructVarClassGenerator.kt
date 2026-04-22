@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
-        private val companionGenerator: CStructVarCompanionGenerator,
-        private val symbols: BackendNativeSymbols
+        private val companionGenerator: CStructVarCompanionGenerator
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

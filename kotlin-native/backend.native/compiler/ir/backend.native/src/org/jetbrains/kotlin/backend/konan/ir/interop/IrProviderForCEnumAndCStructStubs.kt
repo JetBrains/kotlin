@@ -35,8 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class IrProviderForCEnumAndCStructStubs(
-        context: GeneratorContext,
-        symbols: BackendNativeSymbols
+        context: GeneratorContext
 ) {
 
     /**
@@ -45,17 +44,17 @@ internal class IrProviderForCEnumAndCStructStubs(
     private val symbolTable: SymbolTable = context.symbolTable
 
     private val cEnumByValueFunctionGenerator =
-            CEnumByValueFunctionGenerator(context, symbols)
+            CEnumByValueFunctionGenerator(context)
     private val cEnumCompanionGenerator =
             CEnumCompanionGenerator(context, cEnumByValueFunctionGenerator)
     private val cEnumVarClassGenerator =
-            CEnumVarClassGenerator(context, symbols)
+            CEnumVarClassGenerator(context)
     private val cEnumClassGenerator =
             CEnumClassGenerator(context, cEnumCompanionGenerator, cEnumVarClassGenerator)
     private val cStructCompanionGenerator =
-            CStructVarCompanionGenerator(context, symbols)
+            CStructVarCompanionGenerator(context)
     private val cStructClassGenerator =
-            CStructVarClassGenerator(context, cStructCompanionGenerator, symbols)
+            CStructVarClassGenerator(context, cStructCompanionGenerator)
 
     fun isCEnumOrCStruct(declarationDescriptor: DeclarationDescriptor): Boolean =
             declarationDescriptor.run { findCEnumDescriptor() ?: findCStructDescriptor() } != null

@@ -21,17 +21,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * Generate IR for function that returns appropriate enum entry for the provided integral value.
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumByValueFunctionGenerator(
-        context: GeneratorContext,
-        private val symbols: BackendNativeSymbols
+        context: GeneratorContext
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
@@ -119,7 +118,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val irDeserializer = run {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
-                IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
+                IrProviderForCEnumAndCStructStubs(generatorContext)
         val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
                 cachedLibraries = config.cachedLibraries,
                 cenumsProvider = irProviderForCEnumsAndCStructs,

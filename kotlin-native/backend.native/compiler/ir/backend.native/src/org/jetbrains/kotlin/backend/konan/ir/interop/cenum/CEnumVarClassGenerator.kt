@@ -33,8 +33,7 @@ private val typeSizeAnnotation = FqName("kotlinx.cinterop.internal.CEnumVarTypeS
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumVarClassGenerator(
-        context: GeneratorContext,
-        private val symbols: BackendNativeSymbols
+        context: GeneratorContext
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
