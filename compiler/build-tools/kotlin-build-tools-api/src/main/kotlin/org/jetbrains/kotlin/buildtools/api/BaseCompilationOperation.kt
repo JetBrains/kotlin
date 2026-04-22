@@ -27,7 +27,7 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
      * @see set
      * @see BaseCompilationOperation.Companion
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(id: String, public val availableSinceVersion: KotlinReleaseVersion) : BaseOption<V>(id)
 
     /**
      * A builder for configuring a [BaseCompilationOperation].
@@ -58,7 +58,7 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * Adds a tracker that will be informed whenever the compiler makes lookups for references.
          */
         @JvmField
-        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
+        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Controls at which logging level to display the command line arguments passed to the compiler.
@@ -66,13 +66,13 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * Defaults to [CompilerArgumentsLogLevel.DEBUG].
          */
         @JvmField
-        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
+        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> = Option("COMPILER_ARGUMENTS_LOG_LEVEL", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Enables the Compiler Reference Index generation during the compilation.
          */
         @JvmField
-        public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
+        public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
 
         /**
          * Transform compiler diagnostics into formatted strings for output.
@@ -86,6 +86,6 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * @see CompilerMessageRenderer
          */
         @JvmField
-        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER")
+        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER", KotlinReleaseVersion(2, 4, 0))
     }
 }

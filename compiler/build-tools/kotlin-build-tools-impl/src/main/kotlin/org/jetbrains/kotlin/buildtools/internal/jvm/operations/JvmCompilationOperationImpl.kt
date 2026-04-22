@@ -101,6 +101,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

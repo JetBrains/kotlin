@@ -67,6 +67,7 @@ internal class JsHistoryBasedIncrementalCompilationConfigurationImpl private con
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsHistoryBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

@@ -49,6 +49,7 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: DiscoverScriptExtensionsOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

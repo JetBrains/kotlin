@@ -23,6 +23,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

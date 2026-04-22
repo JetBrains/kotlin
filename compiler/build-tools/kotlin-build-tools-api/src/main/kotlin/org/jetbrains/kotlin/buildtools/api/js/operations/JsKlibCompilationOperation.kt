@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.js.operations
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
@@ -109,7 +105,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
     /**
      * An option for configuring a [JsKlibCompilationOperation].
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(id: String, public val availableSinceVersion: KotlinReleaseVersion) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -121,7 +117,8 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
 
     public companion object {
         @JvmField
-        public val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
+        public val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> =
+            Option("INCREMENTAL_COMPILATION", KotlinReleaseVersion(2, 4, 20))
     }
 }
 

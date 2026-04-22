@@ -21,6 +21,7 @@ internal abstract class BaseIncrementalCompilationConfigurationImpl : BaseIncrem
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

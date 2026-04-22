@@ -36,7 +36,7 @@ public interface BaseIncrementalCompilationConfiguration {
      * @see get
      * @see set
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(id: String, public val availableSinceVersion: KotlinReleaseVersion) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -53,7 +53,7 @@ public interface BaseIncrementalCompilationConfiguration {
          * If it is not specified, incremental compilation caches will be non-relocatable.
          */
         @JvmField
-        public val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
+        public val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * The build directory, used for computing relative paths for output files in the incremental compilation caches.
@@ -61,21 +61,21 @@ public interface BaseIncrementalCompilationConfiguration {
          * If it is not specified, incremental compilation caches will be non-relocatable.
          */
         @JvmField
-        public val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR")
+        public val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Controls whether incremental compilation should perform file-by-file backup of previously compiled files
          * and revert them in the case of a compilation failure
          */
         @JvmField
-        public val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES")
+        public val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Controls whether caches should remain in memory
          * and not be flushed to the disk until the compilation can be marked as successful.
          */
         @JvmField
-        public val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY")
+        public val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Controls whether the non-incremental mode of the incremental compiler is forced.
@@ -83,7 +83,7 @@ public interface BaseIncrementalCompilationConfiguration {
          * the compiler will collect enough information to perform subsequent builds incrementally.
          */
         @JvmField
-        public val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION")
+        public val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * The directories that the compiler will clean in the case of fallback to non-incremental compilation.
@@ -94,7 +94,7 @@ public interface BaseIncrementalCompilationConfiguration {
          * If the value is set explicitly, it must contain the above-mentioned default directories.
          */
         @JvmField
-        public val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS")
+        public val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * By default, with the K2 compiler and KMP, we recompile the whole module if any common sources are recompiled.
@@ -104,7 +104,7 @@ public interface BaseIncrementalCompilationConfiguration {
         @JvmField
         @ExperimentalCompilerArgument
         public val UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM: Option<Boolean> =
-            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM")
+            Option("UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * When this option is enabled, the incremental compilation scope is always expanded monotonously (see explanation below).
@@ -117,7 +117,8 @@ public interface BaseIncrementalCompilationConfiguration {
          */
         @JvmField
         @ExperimentalCompilerArgument
-        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION")
+        public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> =
+            Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", KotlinReleaseVersion(2, 3, 0))
 
         /**
          * Controls whether configuration inputs should be tracked to automatically trigger a full recompilation
@@ -138,6 +139,6 @@ public interface BaseIncrementalCompilationConfiguration {
          * @since 2.4.0
          */
         @JvmField
-        public val TRACK_CONFIGURATION_INPUTS: Option<Boolean> = Option("TRACK_CONFIGURATION_INPUTS")
+        public val TRACK_CONFIGURATION_INPUTS: Option<Boolean> = Option("TRACK_CONFIGURATION_INPUTS", KotlinReleaseVersion(2, 4, 0))
     }
 }

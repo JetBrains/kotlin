@@ -63,6 +63,7 @@ internal class JsLinkingOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsLinkingOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

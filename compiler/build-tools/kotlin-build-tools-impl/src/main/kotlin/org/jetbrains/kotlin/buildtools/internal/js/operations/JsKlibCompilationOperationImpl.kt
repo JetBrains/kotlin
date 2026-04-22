@@ -101,6 +101,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsKlibCompilationOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

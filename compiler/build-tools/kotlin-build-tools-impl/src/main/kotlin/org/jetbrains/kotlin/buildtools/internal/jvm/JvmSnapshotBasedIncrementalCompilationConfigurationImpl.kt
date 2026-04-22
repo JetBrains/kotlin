@@ -67,6 +67,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options2[key] = value
     }
 
@@ -83,6 +84,7 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options2[key] = value
     }
 

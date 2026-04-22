@@ -41,6 +41,7 @@ internal class JvmClasspathSnapshottingOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 

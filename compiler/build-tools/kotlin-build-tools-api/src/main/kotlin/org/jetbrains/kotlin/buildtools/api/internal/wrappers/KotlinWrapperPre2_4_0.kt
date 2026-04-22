@@ -78,7 +78,7 @@ internal class KotlinWrapperPre2_4_0(
         override val compilerArguments: JvmCompilerArguments = JvmCompilerArgumentsWrapper(base.compilerArguments)
 
         override fun <V> get(key: BaseCompilationOperation.Option<V>): V {
-            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
             return base[jvmOption]
         }
     }
@@ -124,12 +124,12 @@ internal class KotlinWrapperPre2_4_0(
         }
 
         override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
-            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
             base[jvmOption] = value
         }
 
         override fun <V> get(key: BaseCompilationOperation.Option<V>): V {
-            val jvmOption = JvmCompilationOperation.Option<V>(key.id)
+            val jvmOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
             return base[jvmOption]
         }
 
@@ -151,7 +151,7 @@ internal class KotlinWrapperPre2_4_0(
             override fun toBuilder(): Builder = JvmSnapshotBasedIncrementalCompilationConfigurationBuilderWrapper(base.toBuilder())
 
             override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-                val oldOption = Option<V>(key.id)
+                val oldOption = Option<V>(key.id, key.availableSinceVersion)
                 return base[oldOption]
             }
 
@@ -164,12 +164,12 @@ internal class KotlinWrapperPre2_4_0(
             val base: JvmSnapshotBasedIncrementalCompilationConfiguration.Builder,
         ) : JvmSnapshotBasedIncrementalCompilationConfiguration.Builder by base {
             override fun <V> get(key: BaseIncrementalCompilationConfiguration.Option<V>): V {
-                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id)
+                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id, key.availableSinceVersion)
                 return base[oldOption]
             }
 
             override fun <V> set(key: BaseIncrementalCompilationConfiguration.Option<V>, value: V) {
-                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id)
+                val oldOption = JvmSnapshotBasedIncrementalCompilationConfiguration.Option<V>(key.id, key.availableSinceVersion)
                 base[oldOption] = value
             }
 
