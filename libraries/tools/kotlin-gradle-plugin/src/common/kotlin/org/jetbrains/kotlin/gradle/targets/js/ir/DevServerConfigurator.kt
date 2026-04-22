@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.ir.SimpleDistributionTask.Companion.VENDORS_FOLDER
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
@@ -83,7 +84,7 @@ internal class DevServerConfigurator(
                     it.pathPrefix.set("./$VENDORS_FOLDER")
                 }
 
-                subTarget.registerSubTargetTask<Sync>(
+                subTarget.registerSubTargetTask<SimpleDistributionTask>(
                     subTarget.disambiguateCamelCased(
                         if (binary.mode == KotlinJsBinaryMode.PRODUCTION && binary.compilation.isMain())
                             ""
@@ -91,60 +92,13 @@ internal class DevServerConfigurator(
                             binary.name,
                         "Simple" + DISTRIBUTION_TASK_NAME
                     )
-                ) { copy ->
-                    copy.from(binary.linkSyncTask) {
-                        it.exclude("importmap-loader.js")
-                    }
-                    copy.from(importMapDistTaskHolder.map { it.importMapLoaderFile })
-                    val rootDir = project.rootDir
-                    copy.from(
-                        importMapTaskHolder.map { task ->
-                            task.importMapFile.map { importMapFile ->
-                                parseImportMapModuleDirectories(importMapFile.asFile, rootDir)
-                            }
-                        }
-                    ) {
-                        it.includeEmptyDirs = false
-                        it.into(VENDORS_FOLDER)
-                        it.eachFile { file ->
-                            file.path = File(VENDORS_FOLDER).resolve(file.file.relativeTo(file.file.closestNodeModules())).path
-                        }
-                    }
-                    copy.into(binary.distribution.outputDirectory)
+                ) {
+                    it.mainDirectory.fileProvider(binary.linkSyncTask.flatMap { it.destinationDirectory })
+                    it.importMapLoader.set(importMapDistTaskHolder.flatMap { it.importMapLoaderFile })
+                    it.importMapFile.set(importMapTaskHolder.flatMap { it.importMapFile })
+                    it.outputDirectory.set(binary.distribution.outputDirectory)
                 }
             }
-    }
-
-    private fun parseImportMapModuleDirectories(importMapFile: File, rootDir: File): Set<File> {
-        val importMapContent = importMapFile.readText()
-        val importMapObject = JsonParser.parseString(importMapContent).asJsonObject
-        val imports = importMapObject.getAsJsonObject("imports") ?: error("No imports in import map $importMapFile")
-
-        return imports.entrySet()
-            .map { (_, path) ->
-                val relativePath = path.asString.trimStart('/')
-                val moduleMainFile = rootDir.resolve(relativePath)
-                moduleMainFile.resolveModuleDirectory()
-            }.distinct()
-            .toSet()
-    }
-
-    private fun File.resolveModuleDirectory(): File {
-        var packageJsonCandidate = resolveSibling(PACKAGE_JSON)
-        while (!packageJsonCandidate.exists()) {
-            packageJsonCandidate = packageJsonCandidate.parentFile.resolveSibling(PACKAGE_JSON)
-        }
-
-        return packageJsonCandidate.parentFile
-    }
-
-    private fun File.closestNodeModules(): File {
-        var packageJsonCandidate = this
-        while (packageJsonCandidate.name != NODE_MODULES) {
-            packageJsonCandidate = packageJsonCandidate.parentFile
-        }
-
-        return packageJsonCandidate
     }
 
     override fun setupRun(compilation: KotlinJsIrCompilation) {
@@ -198,6 +152,5 @@ internal class DevServerConfigurator(
 
     companion object {
         const val DEV_SERVER_TASK_NAME = "devServer"
-        private const val VENDORS_FOLDER = "vendors"
     }
 }
