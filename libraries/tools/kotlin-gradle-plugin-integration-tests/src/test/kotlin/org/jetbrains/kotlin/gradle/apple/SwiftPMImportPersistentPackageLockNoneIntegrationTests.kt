@@ -261,11 +261,11 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
 
 
     /**
-     * Ensures that if the project directory Package_resolved is removed after a newer tag is released, the next run locks to the latest tag.
+     * Ensures that if the project directory Package_resolved and build directory removed after a newer tag is released, the next run locks to the latest tag.
      */
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `fetchSyntheticImportProjectPackages writes latest tag to Package_resolved at project directory when it is removed after newer tag is released`(
+    fun `fetchSyntheticImportProjectPackages writes latest tag to Package_resolved at project directory when it and build directory removed after newer tag is released`(
         version: GradleVersion,
     ) {
         project("empty", version) {
@@ -303,8 +303,6 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                  */
                 persistedPackageResolvedSyncPath.deleteIfExists()
 
-
-                // FIXME: KT-85078 This clean step shouldn't be required
                 build(
                     "clean"
                 )
@@ -506,6 +504,138 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                         )
                     )
                     assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                }
+            }
+        }
+    }
+
+    /**
+     * Ensures that if the project directory Package_resolved is removed after a newer tag is released, the next run locks to the latest tag.
+     */
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `KT-85078 - fetchSyntheticImportProjectPackages writes latest tag to Package_resolved at project directory when it is removed after newer tag is released`(
+        version: GradleVersion,
+    ) {
+        project("empty", version) {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
+                val repoName = "TestPackage"
+
+                createRepo(repoName, listOf("1.0.0"))
+
+                val repo = repoRef(repoName)
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(repo.url), version = from("1.0.0"), products = listOf(product(repo.name))
+                        )
+
+                        packageResolvedSynchronization = noSynchronization()
+                    }
+                }
+
+                build("fetchSyntheticImportProjectPackages") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath, projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                            repo to "1.0.0",
+                        )
+                    )
+                }
+
+                releaseTag(repoName, "1.0.1")
+
+                persistedPackageResolvedSyncPath.deleteIfExists()
+
+                assertFileNotExists(persistedPackageResolvedSyncPath, "Project directory Package.resolved should be deleted")
+
+
+                build("fetchSyntheticImportProjectPackages") {
+                    assertResolvedVersions(
+                        persistedPackageResolvedSyncPath,
+                        projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
+                            repo to "1.0.0",
+                        )
+                    )
+
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+                }
+
+            }
+
+        }
+    }
+
+
+    /**
+     * After the persisted lock is deleted, the next fetch should pick a newer compatible tag and
+     * update the checkout to a different revision.
+     */
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `KT-85078 - fetchSyntheticImportProjectPackages picks newer compatible revision after persisted Package resolved is removed`(
+        version: GradleVersion,
+    ) {
+
+        val initialAlamofireRevision = "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88"
+
+        project("empty", version) {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.None
+            ) {
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url("https://github.com/Alamofire/Alamofire.git"),
+                            version = from("5.11.0"),
+                            products = listOf(product("Alamofire"))
+                        )
+                        packageResolvedSynchronization = noSynchronization()
+                    }
+                }
+
+                projectPath.resolve("Package.resolved").createFile().writeText(
+                    """
+                        {
+                          "pins" : [
+                            {
+                              "identity" : "alamofire",
+                              "kind" : "remoteSourceControl",
+                              "location" : "https://github.com/Alamofire/Alamofire.git",
+                              "state" : {
+                                "revision" : "$initialAlamofireRevision",
+                                "version" : "5.11.0"
+                              }
+                            }
+                          ],
+                          "version" : 2
+                        }
+                    """.trimIndent()
+                )
+
+
+                build("fetchSyntheticImportProjectPackages")
+
+                persistedPackageResolvedSyncPath.deleteIfExists()
+                assertFileNotExists(persistedPackageResolvedSyncPath, "Project directory Package.resolved should be deleted")
+
+
+                build("fetchSyntheticImportProjectPackages") {
+
+                    assertDirectoryExists(
+                        projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts/Alamofire"),
+                        "Alamofire should be listed under build/kotlin/swiftPMCheckout/checkouts"
+                    )
+
+                    assertGitRevisionEquals(
+                        initialAlamofireRevision,
+                        projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts/Alamofire"),
+                        "The initial alamofire revision should be different from expected"
+                    )
                 }
             }
         }

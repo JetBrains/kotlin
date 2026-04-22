@@ -43,6 +43,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.writeText
 import kotlin.io.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @Suppress("INVISIBLE_REFERENCE")
@@ -106,7 +107,11 @@ fun createLocalSwiftPackageWithResources(
 
             @objc public class ResourceAccessor: NSObject {
                 @objc public static func resourceContent() -> String {
-                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${resourceFileName.substringAfterLast(".")}") else {
+                    guard let url = Bundle.module.url(forResource: "${resourceFileName.substringBeforeLast(".")}", withExtension: "${
+            resourceFileName.substringAfterLast(
+                "."
+            )
+        }") else {
                         return "RESOURCE_NOT_FOUND"
                     }
                     return (try? String(contentsOf: url)) ?? "RESOURCE_READ_ERROR"
@@ -266,7 +271,7 @@ internal fun swiftSourceContent(): String = """
 fun createLocalSwiftPackageWithBinaryTarget(
     localPackageDir: Path,
     packageName: String,
-    xcframeworkPath: Path
+    xcframeworkPath: Path,
 ) {
     localPackageDir.createDirectories()
     writePackageManifest(
@@ -531,9 +536,45 @@ private fun assertCheckoutVersion(checkoutRepoDir: Path, repoRef: RepoRef, versi
     )
 }
 
+private fun areGitRevisionsSame(
+    expectedRevision: String,
+    gitCommandDir: Path,
+): Boolean {
+    val gitRevision = runGit(
+        "-C", ".", "rev-parse", "head", repoDir = gitCommandDir,
+    ).trimIndent()
+    return expectedRevision == gitRevision
+}
+
+internal fun assertGitRevisionEquals(
+    expectedRevision: String,
+    gitCommandDir: Path,
+    message: String,
+) {
+    assertTrue(
+        areGitRevisionsSame(
+            expectedRevision,
+            gitCommandDir,
+        ), message
+    )
+}
+
+internal fun assertGitRevisionNotEquals(
+    expectedRevision: String,
+    gitCommandDir: Path,
+    message: String,
+) {
+    assertFalse(
+        areGitRevisionsSame(
+            expectedRevision,
+            gitCommandDir,
+        ), message
+    )
+}
+
 internal fun assertGitIgnoreEquals(
     gitIgnorePath: Path,
-    expectedGitIgnoreContent: String
+    expectedGitIgnoreContent: String,
 ) {
     val actualGitIgnoreContent = gitIgnorePath.toFile().readText()
 
