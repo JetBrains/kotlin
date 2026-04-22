@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -13,12 +14,13 @@ import org.jetbrains.kotlin.cli.common.defaultExtensionForScripts
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.freeArgsForScript
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportException
+import org.jetbrains.kotlin.cli.reportInfo
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.expressionToEvaluate
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
@@ -91,10 +93,9 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         scriptMode: Boolean,
         freeArgs: List<String>,
     ): ExitCode {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(projectEnvironment.project)
         if (scriptDefinitionProvider == null) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Unable to process the script, scripting plugin is not configured")
+            configuration.report(CliDiagnostics.SCRIPTING_ERROR, "Unable to process the script, scripting plugin is not configured")
             return ExitCode.COMPILATION_ERROR
         }
 
@@ -115,8 +116,8 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                                 ?.let { it.size == 1 && it.first().isDefault } == true
                         ) " (.kts)"
                         else ""
-                    messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                    configuration.report(
+                        CliDiagnostics.SCRIPTING_ERROR,
                         "$error; Specify path to the script file$extensionHint as the first argument"
                     )
                     return ExitCode.COMPILATION_ERROR
@@ -139,8 +140,8 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                 script ?: return invalidScript("Unrecognized script type: ${scriptFile.name}")
             }
             else -> {
-                messageCollector.report(
-                    CompilerMessageSeverity.ERROR,
+                configuration.report(
+                    CliDiagnostics.SCRIPTING_ERROR,
                     "Illegal set of arguments: either -script or -expression arguments expected at this point"
                 )
                 return ExitCode.COMPILATION_ERROR
@@ -165,7 +166,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
             platformEvaluationConfiguration()
 
         }
-        return doEval(script, scriptCompilationConfiguration, evaluationConfiguration, environment, messageCollector)
+        return doEval(script, scriptCompilationConfiguration, evaluationConfiguration, environment, configuration)
     }
 
     private fun doEval(
@@ -173,7 +174,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
         evaluationConfiguration: ScriptEvaluationConfiguration,
         environment: KotlinCoreEnvironment,
-        messageCollector: MessageCollector
+        configuration: CompilerConfiguration,
     ): ExitCode {
         val scriptCompiler = createScriptCompiler(environment, scriptCompilationConfiguration)
 
@@ -184,8 +185,8 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
                 for (report in it.reports) {
                     val location = report.location
                     val sourcePath = report.sourcePath
-                    messageCollector.report(
-                        report.severity.toCompilerMessageSeverity(),
+                    configuration.report(
+                        report.severity,
                         report.render(withSeverity = false, withLocation = location == null || sourcePath == null),
                         if (location != null && sourcePath != null) {
                             CompilerMessageLocation.create(
@@ -201,7 +202,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
 
             val evalResult = createScriptEvaluator().invoke(compiledScript, evaluationConfiguration).valueOr {
                 for (report in it.reports) {
-                    messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                    configuration.report(report.severity, report.render(withSeverity = false), null)
                 }
                 return@internalScriptingRunSuspend ExitCode.INTERNAL_ERROR
             }
@@ -222,14 +223,19 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
     }
 }
 
-fun ScriptDiagnostic.Severity.toCompilerMessageSeverity(): CompilerMessageSeverity =
-    when (this) {
-        ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.EXCEPTION
-        ScriptDiagnostic.Severity.ERROR -> CompilerMessageSeverity.ERROR
-        ScriptDiagnostic.Severity.WARNING -> CompilerMessageSeverity.WARNING
-        ScriptDiagnostic.Severity.INFO -> CompilerMessageSeverity.INFO
-        ScriptDiagnostic.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
+internal fun CompilerConfiguration.report(
+    severity: ScriptDiagnostic.Severity,
+    message: String,
+    compilerMessageLocation: CompilerMessageLocation?,
+) {
+    when (severity) {
+        ScriptDiagnostic.Severity.DEBUG -> reportLog(message, compilerMessageLocation)
+        ScriptDiagnostic.Severity.INFO -> reportInfo(message, compilerMessageLocation)
+        ScriptDiagnostic.Severity.WARNING -> report(CliDiagnostics.SCRIPTING_WARNING, message, compilerMessageLocation)
+        ScriptDiagnostic.Severity.ERROR -> report(CliDiagnostics.SCRIPTING_ERROR, message, compilerMessageLocation)
+        ScriptDiagnostic.Severity.FATAL -> reportException(message, compilerMessageLocation)
     }
+}
 
 open class ExplicitlyNamedFileScriptSource(
     override val name: String, file: File, preloadedText: String? = null
