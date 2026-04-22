@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_COUNT_LIMIT
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_DIRECTORY
 import org.jetbrains.kotlin.daemon.common.DEFAULT_LOG_FILE_SIZE_LIMIT
 import org.jetbrains.kotlin.daemon.common.DaemonOptions
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.nio.file.Path
 import kotlin.io.path.Path
 
@@ -48,10 +46,7 @@ internal class DaemonExecutionPolicyImpl private constructor(private val options
         return DaemonExecutionPolicyImpl(options.deepCopy())
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
         /**

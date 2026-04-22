@@ -63,10 +63,7 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
         options[key] = value
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
         val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =

@@ -16,6 +16,7 @@ public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilationConfiguration {
@@ -41,6 +42,7 @@ public final class org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilatio
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilationConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BuildOperation {
@@ -59,6 +61,7 @@ public final class org/jetbrains/kotlin/buildtools/api/BuildOperation$Companion 
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/BuildOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
@@ -170,6 +173,7 @@ public final class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemo
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/ExperimentalBuildToolsApi : java/lang/annotation/Annotation {
@@ -1313,6 +1317,7 @@ public final class org/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncremen
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/js/JsHistoryBasedIncrementalCompilationConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsIncrementalCompilationConfiguration {
@@ -1360,6 +1365,7 @@ public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompi
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsKlibCompilationOperationKt {
@@ -1385,6 +1391,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/js/operation
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/js/operations/JsLinkingOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/AccessibleClassSnapshot : org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
@@ -1527,6 +1534,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncre
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationOptions : org/jetbrains/kotlin/buildtools/api/BaseIncrementalCompilationConfiguration {
@@ -1571,6 +1579,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverSc
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
@@ -1593,6 +1602,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspa
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmClasspathSnapshottingOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
@@ -1633,6 +1643,7 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperationKt {
