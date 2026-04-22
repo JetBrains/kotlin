@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import java.io.File
+import java.security.MessageDigest
 
 private val MODULE_NAME_REGEX = Regex("\\bmodule ([A-Za-z0-9_.]+) ")
 
@@ -200,27 +201,26 @@ internal object XcodebuildDefFileUtils {
         discoverModulesImplicitly: Boolean,
     ) {
         val defFileSearchPaths = parsedClangCall.cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
-        val modules = clangModules.joinToString(" ") { "\"${it}\"" }
+        val modules = clangModules.toSortedSet().joinToString(" ") { "\"${it}\"" }
 
         val defFile = defFilesDir.resolve("${architecture.xcodebuildArch}.def")
-        defFile.writeText(
+        val header = buildString {
+            appendLine("language = Objective-C")
+            appendLine("compilerOpts = -fmodules $defFileSearchPaths")
+            appendLine("package = $cinteropNamespace")
+            if (modules.isNotEmpty()) {
+                appendLine("modules = $modules")
+            }
+            if (discoverModulesImplicitly) {
+                appendLine("skipNonImportableModules = true")
+            }
+        }
+        val stableFingerprint = stableFingerprint(header)
+        defFile.writeTextIfChanged(
             buildString {
-                appendLine("language = Objective-C")
-                appendLine("compilerOpts = -fmodules $defFileSearchPaths")
-                appendLine("package = $cinteropNamespace")
-                if (modules.isNotEmpty()) {
-                    appendLine("modules = $modules")
-                }
-                val invalidateDownstreamCinterops = System.currentTimeMillis()
-                if (discoverModulesImplicitly) {
-                    appendLine("skipNonImportableModules = true")
-                }
-                appendLine(
-                    """
-                        ---
-                        // $invalidateDownstreamCinterops
-                    """.trimIndent()
-                )
+                append(header)
+                appendLine("---")
+                append("// $stableFingerprint")
             }
         )
     }
@@ -242,4 +242,15 @@ internal object XcodebuildDefFileUtils {
 
         clang "$@"
     """.trimIndent()
+
+    fun stableFingerprint(value: String): String =
+        MessageDigest.getInstance("SHA-256")
+            .digest(value.toByteArray())
+            .joinToString("") { "%02x".format(it) }
+
+    fun File.writeTextIfChanged(content: String) {
+        if (exists() && readText() == content) return
+        parentFile?.mkdirs()
+        writeText(content)
+    }
 }

@@ -11,6 +11,8 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.stableFingerprint
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.writeTextIfChanged
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 
@@ -36,17 +38,29 @@ internal abstract class XcodebuildLinkerOutputWorkAction : WorkAction<Xcodebuild
             }
 
             val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())
+            val ldArgsContent = parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR)
+            val frameworkLdArgsContent = parsedLdCall.frameworkLdArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR)
+            val frameworkSearchPathsContent = parsedLdCall.linkTimeFrameworkSearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR)
+            val librarySearchPathsContent = parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR)
+            val fingerprintContent = stableFingerprint(
+                listOf(
+                    ldArgsContent,
+                    frameworkLdArgsContent,
+                    frameworkSearchPathsContent,
+                    librarySearchPathsContent,
+                ).joinToString("\n")
+            )
 
             ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture))
-                .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+                .writeTextIfChanged(ldArgsContent)
             ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture))
-                .writeText(parsedLdCall.frameworkLdArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+                .writeTextIfChanged(frameworkLdArgsContent)
             ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture))
-                .writeText(System.currentTimeMillis().toString())
+                .writeTextIfChanged(fingerprintContent)
             ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture))
-                .writeText(parsedLdCall.linkTimeFrameworkSearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+                .writeTextIfChanged(frameworkSearchPathsContent)
             ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture))
-                .writeText(parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+                .writeTextIfChanged(librarySearchPathsContent)
         }
     }
 }
