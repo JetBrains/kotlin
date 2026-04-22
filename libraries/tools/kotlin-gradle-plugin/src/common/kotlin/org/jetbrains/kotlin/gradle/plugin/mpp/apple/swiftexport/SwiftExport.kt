@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
+/** dummy change */
+
 internal object SwiftExportConstants {
     const val SWIFT_EXPORT_COMPILATION = "swiftExportMain"
     const val SWIFT_EXPORT_BINARY = "SwiftExportBinary"
