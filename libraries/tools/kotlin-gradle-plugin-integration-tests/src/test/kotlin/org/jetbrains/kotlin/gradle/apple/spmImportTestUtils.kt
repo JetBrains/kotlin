@@ -5,18 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.apple
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuildArgsDumpFingerprint
+import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
+import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.boot
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
@@ -28,10 +35,15 @@ import org.jetbrains.kotlin.gradle.uklibs.Variant
 import org.jetbrains.kotlin.gradle.uklibs.VariantFile
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.Closeable
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.file.Path
 import java.util.concurrent.Semaphore
 import kotlin.concurrent.thread
@@ -375,6 +387,162 @@ internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -
     }
 }
 
+internal val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clang_args_dump", "ld_args_dump")
+
+
+internal fun parseSwiftPMXcodeBuildExecutionHash(hashFile: Path): String =
+    hashFile.toFile().readText()
+
+internal fun swiftPMXcodeBuildExecutionHashFile(
+    projectDir: Path,
+    sdk: String,
+): Path =
+    projectDir.resolve("build/kotlin/swiftPMXcodeBuildExecutionHashes/$sdk")
+
+private fun swiftPMXcodeDumpRoot(
+    rootDir: Path,
+    hashFile: Path,
+): Path =
+    rootDir.resolve(
+        "build/kotlin/swiftPMXcodeDumps/${parseSwiftPMXcodeBuildExecutionHash(hashFile)}"
+    )
+
+private fun swiftPMXcodeDumpPath(
+    rootDir: Path,
+    hashFile: Path,
+    relativePath: String,
+): Path =
+    swiftPMXcodeDumpRoot(rootDir, hashFile).resolve(relativePath)
+
+internal fun swiftPMXcodebuildClangDumpPath(
+    rootDir: Path,
+    hashFile: Path,
+    sdk: String,
+): Path =
+    swiftPMXcodeDumpPath(
+        rootDir,
+        hashFile,
+        "swiftImportClangDump/$sdk",
+    )
+
+internal fun swiftPMXcodebuildDerivedDataPath(
+    rootDir: Path,
+    hashFile: Path,
+    sdk: String,
+): Path =
+    swiftPMXcodeDumpPath(
+        rootDir,
+        hashFile,
+        "swiftImportDd/dd_$sdk",
+    )
+
+internal fun TestProject.localXcodebuildExecutionHashFile(
+    projectName: String? = null,
+    sdk: String,
+): Path =
+    swiftPMXcodeBuildExecutionHashFile(
+        projectDir = projectName?.let(projectPath::resolve) ?: projectPath,
+        sdk = sdk,
+    )
+
+internal fun TestProject.localDumpDir(
+    sdk: String,
+    projectName: String? = null,
+): Path =
+    swiftPMXcodebuildClangDumpPath(
+        rootDir = projectPath,
+        hashFile = localXcodebuildExecutionHashFile(projectName, sdk),
+        sdk = sdk,
+    )
+
+internal fun TestProject.localDerivedDataDir(
+    sdk: String,
+    projectName: String? = null,
+): Path =
+    swiftPMXcodebuildDerivedDataPath(
+        rootDir = projectPath,
+        hashFile = localXcodebuildExecutionHashFile(projectName, sdk),
+        sdk = sdk,
+    )
+
+internal fun TestProject.localIphoneosDumpFingerprintFile(
+    projectName: String? = null,
+): Path =
+    localXcodebuildExecutionHashFile(projectName, "iphoneos")
+
+internal fun TestProject.localIphonesimulatorDumpFingerprintFile(
+    projectName: String? = null,
+): Path =
+    localXcodebuildExecutionHashFile(projectName, "iphonesimulator")
+
+internal fun TestProject.localIphoneosDumpDir(
+    projectName: String? = null,
+): Path =
+    localDumpDir("iphoneos", projectName)
+
+internal fun TestProject.localIphonesimulatorDumpDir(
+    projectName: String? = null,
+): Path =
+    localDumpDir("iphonesimulator", projectName)
+
+internal fun TestProject.localIphoneosDerivedDataDir(
+    projectName: String? = null,
+): Path =
+    localDerivedDataDir("iphoneos", projectName)
+
+internal fun TestProject.localIphonesimulatorDerivedDataDir(
+    projectName: String? = null,
+): Path =
+    localDerivedDataDir("iphonesimulator", projectName)
+
+internal fun sharedRootBucketDir(dumpDir: Path): Path =
+    dumpDir.parent.parent
+
+internal fun xcodeDumpFingerprintStamp(dumpDir: Path): Path =
+    dumpDir.resolve("xcode-dump-fingerprint.json")
+
+internal fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir: Path) {
+    assertDirectoryExists(dumpDir)
+    assertFileExists(dumpDir.resolve("clangDump.sh"))
+    assertFileExists(dumpDir.resolve("ldDump.sh"))
+    assertDirectoryExists(dumpDir.resolve("clang_args_dump"))
+    assertDirectoryExists(dumpDir.resolve("ld_args_dump"))
+}
+
+internal fun assertSharedDumpDirsHaveSameFiles(
+    referenceDumpDir: Path,
+    vararg dumpDirs: Path,
+) {
+    val referenceDumpFiles = materializedDumpFilesByRelativePath(referenceDumpDir)
+    assertTrue(referenceDumpFiles.isNotEmpty(), "Reference dump directory should contain dump files")
+
+    dumpDirs.forEach { dumpDir ->
+        assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir)
+        assertEquals(
+            referenceDumpFiles.keys,
+            materializedDumpFilesByRelativePath(dumpDir).keys,
+            "Shared dump directory should contain the same dump files"
+        )
+    }
+}
+
+internal fun assertLocalDerivedDataDirsExist(vararg localDerivedDataDirs: Path) {
+    localDerivedDataDirs.forEach { localDerivedDataDir ->
+        assertDirectoryExists(localDerivedDataDir)
+        assertDirectoryExists(localDerivedDataDir.resolve("Build"))
+    }
+}
+
+internal fun materializedDumpFilesByRelativePath(dumpDir: Path): Map<String, String> =
+    materializedDumpEntries.asSequence()
+        .map { dumpDir.resolve(it).toFile() }
+        .filter { it.exists() }
+        .flatMap { it.walkTopDown().asSequence() }
+        .filter { it.isFile }
+        .associate { file ->
+            file.relativeTo(dumpDir.toFile()).invariantSeparatorsPath to file.readText()
+        }
+
 internal class LockFileTestFixture(
     val project: TestProject,
     val cacheDirFile: File,
@@ -441,7 +609,17 @@ internal fun TestProject.initSwiftPmProject(
             }
 
         project.tasks
-            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+            .withType(DumpXcodeBuildArgs::class.java)
+            .configureEach { task ->
+                task.additionalXcodeArgs.set(
+                    listOf(
+                        "-packageFingerprintPolicy", "warn",
+                        "-packageCachePath", cacheDirFile.path,
+                    )
+                )
+            }
+        project.tasks
+            .withType(PrepareXcodeBuildArgsDumpFingerprint::class.java)
             .configureEach { task ->
                 task.additionalXcodeArgs.set(
                     listOf(
@@ -597,7 +775,6 @@ internal data class SwiftPmPinState(
 private val swiftPmJson = Json {
     ignoreUnknownKeys = true
 }
-
 
 internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
     copy(pins = pins.map { it.copy(state = it.state.copy(revision = "<ignored>")) })

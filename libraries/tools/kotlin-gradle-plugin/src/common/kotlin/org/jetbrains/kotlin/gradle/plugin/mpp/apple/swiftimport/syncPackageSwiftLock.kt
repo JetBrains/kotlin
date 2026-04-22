@@ -139,7 +139,6 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
     }
 
 
-
     companion object {
         private const val SERVICE_NAME = "swiftPmLockTaskAggregationService"
 
@@ -151,6 +150,3 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
             ) {}
     }
 }
-
-
-

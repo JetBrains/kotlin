@@ -10,9 +10,12 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuildArgsDumpFingerprint
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectories
 
@@ -163,6 +166,20 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
             writeTestSource("2")
 
             build(":iosSimulatorArm64Test") {
+                assertTasksExecuted(
+                    ":${
+                        lowerCamelCaseName(
+                            PrepareXcodeBuildArgsDumpFingerprint.TASK_NAME,
+                            "iphonesimulator",
+                        )
+                    }",
+                    ":${
+                        lowerCamelCaseName(
+                            DumpXcodeBuildArgs.TASK_NAME,
+                            "iphonesimulator",
+                        )
+                    }"
+                )
                 assertOutputContains("FromSwift: 2")
             }
         }
