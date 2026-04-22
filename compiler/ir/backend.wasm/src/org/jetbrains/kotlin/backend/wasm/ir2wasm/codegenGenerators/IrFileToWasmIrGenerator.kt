@@ -52,6 +52,13 @@ class IrFileToWasmIrGenerator(
         }
     }
 
+    override fun visitConstructor(declaration: IrConstructor) {
+        super.visitConstructor(declaration)
+    }
+
+    // TODO maybe explicitly overload constructor visitor instead
+    //      would have to see how to minimize code duplication with visit function
+
     override fun visitFunction(declaration: IrFunction) {
         // Constructor of inline class or with `@WasmPrimitiveConstructor` is empty
         if (declaration is IrConstructor &&
