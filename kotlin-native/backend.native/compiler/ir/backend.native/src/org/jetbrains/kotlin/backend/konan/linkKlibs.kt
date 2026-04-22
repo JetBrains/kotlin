@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -111,12 +109,6 @@ internal fun LinkKlibsContext.linkKlibs(
     val stdlibIsBeingCached = libraryToCacheModule == stdlibModule
     require(!(stdlibIsCached && stdlibIsBeingCached)) { "The cache for stdlib is already built" }
 
-    val stubGenerator = DeclarationStubGeneratorImpl(
-            moduleDescriptor, symbolTable,
-            generatorContext.irBuiltIns,
-            DescriptorByIdSignatureFinderImpl(moduleDescriptor, KonanManglerDesc),
-            KonanStubGeneratorExtensions
-    )
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
 
     val irDeserializer = run {
@@ -148,7 +140,6 @@ internal fun LinkKlibsContext.linkKlibs(
                 symbolTable = symbolTable,
                 friendModules = friendModulesMap,
                 forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
-                stubGenerator = stubGenerator,
                 cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,
                 exportedDependencies = exportedDependencies,
                 partialLinkageConfig = config.configuration.partialLinkageConfig,
@@ -200,9 +191,6 @@ internal fun LinkKlibsContext.linkKlibs(
     irDeserializer.postProcess(generatorContext.irBuiltIns, inOrAfterLinkageStep = true)
 
     generateImplForCStructsAndEnums(irDeserializer, generatorContext.irBuiltIns, symbols)
-
-    // Enable lazy IR genration for newly-created symbols inside BE
-    stubGenerator.unboundSymbolGeneration = true
 
     config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
