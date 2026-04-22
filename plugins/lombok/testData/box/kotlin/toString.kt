@@ -35,6 +35,17 @@ class WithImplicitReturnTypeProperty {
     val implicitReturnTypeProp = "implicit return type"
 }
 
+@ToString
+class WithNonConflictingExtensionFunction(val a: Int) {
+    fun WithNonConflictingExtensionFunction.toString(): String = "Ext"
+}
+
+@ToString
+class WithNonConflictingContextualFunction(val b: String) {
+    context(p: WithNonConflictingContextualFunction)
+    fun toString(): String = "Contex"
+}
+
 fun box(): String {
     Simple("Alice", 30).toString().let { if (it != "Simple(name=Alice, age=30)") return it }
     NoFieldNames(1, 2).toString().let { if (it != "NoFieldNames(1, 2)") return it }
@@ -45,6 +56,8 @@ fun box(): String {
     WithExistingNonConflictingToString(5).toString().let { if (it != "WithExistingNonConflictingToString(x=5)") return it }
     WithComputedProperties().toString().let { if (it != "WithComputedProperties()") return it }
     WithImplicitReturnTypeProperty().toString().let { if (it != "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)") return it }
+    WithNonConflictingExtensionFunction(6).toString().let { if (it != "WithNonConflictingExtensionFunction(a=6)") return it }
+    WithNonConflictingContextualFunction("str").toString().let { if (it != "WithNonConflictingContextualFunction(b=str)") return it }
 
     @ToString()
     class LocalClass(val prop: String)

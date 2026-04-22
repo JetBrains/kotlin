@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
@@ -156,7 +155,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         // Ignore generation if a property with the same name already exists (but warn about it in a checker)
         var propertyAlreadyExists = false
         context.declaredScope?.processPropertiesByName(logPropertyName) {
-            propertyAlreadyExists = propertyAlreadyExists || !it.isExtension && !it.hasContextParameters
+            propertyAlreadyExists = propertyAlreadyExists || it.isRelevantForConflictsCheck
         }
         if (propertyAlreadyExists) return null
 

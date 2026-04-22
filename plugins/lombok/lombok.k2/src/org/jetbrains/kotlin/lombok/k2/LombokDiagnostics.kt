@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
+import org.jetbrains.kotlin.diagnostics.warning0
 import org.jetbrains.kotlin.diagnostics.warning1
 import org.jetbrains.kotlin.diagnostics.warningWithoutSource
 import org.jetbrains.kotlin.lombok.k2.LombokCliDiagnostics.LOMBOK_CONFIG_IS_MISSING
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUP
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import kotlin.getValue
@@ -38,6 +40,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
     val LOG_PROPERTY_ALREADY_EXISTS by warning1<KtAnnotationEntry, Name>()
+    val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -58,5 +61,6 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         map.put(FLAG_USAGE_ERROR, FLAG_USAGE_MESSAGE, CommonRenderers.NAME)
 
         map.put(LOG_PROPERTY_ALREADY_EXISTS, "Property ''{0}'' already exists.", CommonRenderers.NAME)
+        map.put(TO_STRING_FUNCTION_ALREADY_EXISTS, "Not generating 'toString()': A method with that name already exists.")
     }
 }

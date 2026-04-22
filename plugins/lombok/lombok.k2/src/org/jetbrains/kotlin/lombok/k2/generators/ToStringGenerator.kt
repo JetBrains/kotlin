@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
@@ -58,12 +59,14 @@ class ToStringGeneratorKey(
     val propertyInfos: List<ToStringPropertyInfo>,
 ) : GeneratedDeclarationKey()
 
+val FirDeclarationOrigin.isToString get() = this is FirDeclarationOrigin.Plugin && this.key is ToStringGeneratorKey
+
 /**
  * See https://projectlombok.org/features/ToString
  */
 class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val TO_STRING_NAME = Name.identifier("toString")
+        val TO_STRING_NAME = Name.identifier("toString")
 
         private val PREDICATE = DeclarationPredicate.create { annotated(listOf(LombokNames.TO_STRING)) }
     }
@@ -93,7 +96,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         // Don't generate if toString() already exists in sources
         var functionWithoutParametersAlreadyExists = false
         declaredScope?.processFunctionsByName(TO_STRING_NAME) {
-            if (it.valueParameterSymbols.isEmpty()) {
+            if (it.valueParameterSymbols.isEmpty() && it.isRelevantForConflictsCheck) {
                 functionWithoutParametersAlreadyExists = true
             }
         }

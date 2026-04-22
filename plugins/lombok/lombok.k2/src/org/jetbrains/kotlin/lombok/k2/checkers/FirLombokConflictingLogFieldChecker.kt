@@ -12,12 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.k2.generators.isLogger
+import org.jetbrains.kotlin.lombok.k2.generators.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.Name
 
@@ -48,7 +47,7 @@ object FirLombokConflictingLogFieldChecker : FirRegularClassChecker(MppCheckerKi
         val declaredMemberScope = context.session.declaredMemberScope(container, memberRequiredPhase = null)
         var hasConflict = false
         declaredMemberScope.processPropertiesByName(fieldName) {
-            hasConflict = hasConflict || !it.isExtension && !it.hasContextParameters && !it.origin.isLogger
+            hasConflict = hasConflict || it.isRelevantForConflictsCheck && !it.origin.isLogger
         }
         if (!hasConflict) return
 
