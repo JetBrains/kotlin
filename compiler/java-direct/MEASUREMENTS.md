@@ -563,3 +563,215 @@ Phase D commit sequence:
 
 Expected combined impact: up to ~10 % on Java-heavy Kotlin module compiles (M-O6
 dominates); other items are simplifications.
+
+---
+
+## 7. Corrected Kotlin-pipeline measurements — 2026-04-22 (v5)
+
+**Date**: 2026-04-22
+**Prompted by**: discovery that the original Corpus B (§2) and §5 measurements were
+unreliable due to Gradle's per-test classloader isolation. Each of the 414 test
+methods loads java-direct code in its own classloader; the original single-dump
+approach captured only one classloader's data, producing near-zero counters that
+were mistaken for "no traffic". The per-classloader filename fix
+(`dump-$pid-$cl-$ts.txt`) was applied, and this section documents a fresh rerun
+that confirms the corrected data.
+
+### 7.1 Methodology fix
+
+The `PhaseCMeasurementCounters.dump()` method writes to
+`dump-$pid-$cl-$ts.txt` where `$cl = System.identityHashCode(class)` and
+`$ts = System.nanoTime()`. This produces one dump file per classloader instance.
+The shell aggregator `aggregate-phase-c-dumps.sh` sums across all dump files.
+
+### 7.2 Fresh run (v5)
+
+- Corpus: `KotlinFullPipelineTestsGenerated` (414 modules), `SAME_THREAD`,
+  `-Pfir.force.javaDirect=true`.
+- Wall-clock: 7 min 48 s.
+- Dump files produced: **109** (one per module with Java source roots).
+- Archive: `compiler/java-direct/phase-c-dumps/_v5-kotlin-pipeline-fresh-rerun.txt`.
+
+The v5 run reproduces the v4 data exactly (all invocation counts identical; CPU
+timing varies by ±5%, expected noise).
+
+### 7.3 Original vs. corrected Corpus B data
+
+| Metric | Original §2 Corpus B | Corrected (v5) | Factor |
+|---|---:|---:|---:|
+| importCache misses | 2 | 1,360 | 680× |
+| full-parse invocations | 2 | 1,079 | 540× |
+| lightweight invocations | 1 | 995 | 995× |
+| findClass calls | 0 | 63,570 | — |
+| positive-cache hits | 0 | 58,979 | — |
+| negative-cache hits | 0 | 0 | — |
+| tryStarImports calls | 4,949 | 953,835 | 193× |
+| rawTypeNameParts computed | 392 | 13,431 | 34× |
+| single-segment share | 96.94 % | 83.52 % | — |
+| findPackageDirectories calls | 44 | 11,457 | 260× |
+| files indexed | 3 | 2,074 | 691× |
+| files accessed | 0 | 493 | — |
+| **access rate** | **0 %** | **23.77 %** | — |
+| lazy parses | 0 | 266 | — |
+
+The original Corpus B captured one classloader's data. The corrected data
+aggregates all 109 modules with Java source roots.
+
+### 7.4 Revised verdicts
+
+**M-O3 (importCache)** — verdict **unchanged**: 0 hits / 1,360 misses. **Delete.**
+
+**M-O6 (SMALL_FILE_SIZE_THRESHOLD)** — verdict **revised downward** from §5:
+
+The §5 data (IntelliJ 11-subset, 0.18 % access rate) led to the conclusion that
+99.7 % of eager-parse CPU was wasted. The corrected Kotlin-pipeline data shows a
+**23.77 % access rate** — still a minority, but dramatically higher.
+
+Cost breakdown (v5, 109 modules aggregate):
+
+| Path | Invocations | Total CPU (ms) | Total bytes |
+|---|---:|---:|---:|
+| Eager (full-parse) | 1,079 | 6,357 | 2.3 MB |
+| Lightweight | 995 | 1,446 | 94.4 MB |
+| Lazy parse | 266 | 1,711 | 8.7 MB |
+| **Total** | **2,074** | **9,514** | — |
+
+Of 493 accessed files, 227 were served from the eager cache (no lazy parse needed)
+and 266 required lazy parsing (from lightweight-indexed files). This means:
+
+- 852 of 1,079 eager parses (79 %) were wasted (files never accessed).
+- Wasted eager CPU ≈ 852/1,079 × 6,357 = **5,019 ms**.
+
+If the eager path were removed (all files lightweight-indexed, lazy-parse on demand):
+
+| Component | Current (ms) | Proposed (ms) | Delta |
+|---|---:|---:|---:|
+| Eager parse | 6,357 | 0 | −6,357 |
+| Lightweight (existing) | 1,446 | 1,446 | 0 |
+| Lightweight (new, for <4K files) | — | ~33 | +33 |
+| Lazy parse (existing) | 1,711 | 1,711 | 0 |
+| Lazy parse (new, for 227 ex-eager files) | — | ~1,373 | +1,373 |
+| **Total** | **9,514** | **4,563** | **−4,951** |
+
+**Net savings: ~4,951 ms (52 % of indexing/parse time).**
+
+On the full 7m 48s pipeline: 4,951 / 468,000 ≈ **1.1 %** — below the 2 %
+measurement floor for declaring a performance improvement, but a meaningful code
+simplification (removes one entire indexing code path).
+
+**Revised M-O6 verdict**: ✅ still confirmed — drop the eager path for code
+simplification. The performance benefit is 52 % of indexing CPU (not 99.7 % as §5
+claimed) and translates to ~1 % pipeline-wide. The primary payoff is simpler code,
+not speed. The §5 "3–10 % on Java-heavy Kotlin compilations" estimate should be
+revised to "~1–2 % on Kotlin-pipeline; potentially higher on genuinely Java-heavy
+workloads like IntelliJ".
+
+**M-O4b (negativeClassCache)** — verdict **unchanged**: 0 negative-cache hits
+despite 4,103 adds and 63,570 findClass calls. **Delete negative cache.**
+
+New finding: the **positive** class cache has a 92.8 % hit rate (58,979 / 63,570).
+This is a critical hot cache and must be preserved.
+
+**M-O2 (distinctStarImports)** — verdict **unchanged**: 953,835 calls, 0
+duplicates. **Inline/drop field.**
+
+**M-P8, M-P9** — verdicts **unchanged**: 0 invocations. **No change.**
+
+**M-P12 (rawTypeNameParts)** — verdict **confirmed but weakened**:
+- Single-segment share: 83.52 % (not 96.94 % as §2 reported).
+- 2,213 multi-segment types (not 12).
+- Still a majority single-segment; the restructure is beneficial but the savings
+  per type are less dominant. **Still proceed with restructure.**
+
+**M-P13 (findPackageDirectories)** — verdict **unchanged**: 0.95 % hit rate.
+**No change.**
+
+### 7.5 Corrected summary table
+
+| ID | Hypothesis | Corrected verdict | Phase D action |
+|---|---|---|---|
+| **M-O3**  | `importCache` hit rate near 0 | ✅ confirmed (0/1,360) | **Delete** |
+| **M-O6**  | Eager path wasted | ✅ confirmed (79 % waste) | **Drop eager path** (code simplification; ~1 % pipeline-wide) |
+| **M-O4b** | `negativeClassCache` prevents re-parses | ✅ confirmed (0 prevented) | **Delete negative cache** |
+| **M-O2**  | `distinctStarImports` field saves work | ✅ confirmed (0 duplicates / 954 K calls) | **Inline/drop field** |
+| **M-P8**  | `deriveImplicitPermittedTypes` hot | ❌ null (0 invocations) | **No change** |
+| **M-P9**  | `fields.find` scans hot | ❌ null (0 invocations) | **No change** |
+| **M-P12** | Single-segment `rawTypeNameParts` dominant | ✅ confirmed (83.5 %, weaker than 97 %) | **Restructure** |
+| **M-P13** | `findPackageDirectories` pre-alloc hot | ⚠️ already fixed | **No change** |
+
+### 7.6 Revised landing order
+
+Phase D commit sequence (unchanged from §6 except for softened performance claims):
+
+1. **Deletions (M-O3, M-O4b, M-O2)** — 5–20 lines each, lowest risk.
+2. **Eager path removal (M-O6)** — 60–80 lines in `JavaClassFinderOverAstImpl.kt`.
+   Code simplification with modest (~1 %) pipeline-wide speedup.
+3. **`rawTypeNameParts` restructure (M-P12)** — ~20 lines in `JavaTypeOverAst.kt`.
+4. **Plan cleanup + instrumentation removal** — delete `PhaseCMeasurementCounters.kt`
+   and all call-site counter increments.
+
+**Expected combined impact**: code simplification with ~1–2 % pipeline-wide CPU
+reduction on the Kotlin-pipeline corpus. The §5 "up to 10 %" estimate was based on
+the IntelliJ 11-subset's 0.18 % access rate; the Kotlin pipeline's 23.77 % access
+rate is a more representative baseline for that corpus. See §7.7 for the IntelliJ
+platform data which reinstates a low access rate.
+
+### 7.7 IntelliJ platform corpus (v6)
+
+- Corpus: `IntelliJFullPipelineTestsGenerated.testIntellij_platform_*`
+  (446 modules), `CONCURRENT`, `-Pfir.force.javaDirect=true`.
+- Wall-clock: 4 min 30 s.
+- Dump files produced: **446**.
+- Archive: `compiler/java-direct/phase-c-dumps/_v6-intellij-platform-446-concurrent.txt`.
+
+| Metric | Kotlin pipeline (v5, 109) | IntelliJ platform (v6, 446) |
+|---|---:|---:|
+| importCache misses | 1,360 | 9,422 |
+| full-parse invocations | 1,079 | **9,046** |
+| lightweight invocations | 995 | **3,998** |
+| full-parse CPU (ms) | 6,357 | **28,862** |
+| lightweight CPU (ms) | 1,446 | 2,943 |
+| findClass calls | 63,570 | 828 |
+| positive-cache hit rate | 92.8 % | 4.7 % |
+| negative-cache hits | 0 | 0 |
+| tryStarImports calls | 953,835 | 0 |
+| rawTypeNameParts computed | 13,431 | 0 |
+| files indexed | 2,074 | **13,044** |
+| files accessed | 493 | **115** |
+| **access rate** | **23.77 %** | **0.88 %** |
+| lazy parses | 266 | 76 |
+| lazy CPU (ms) | 1,711 | 507 |
+
+**Key observations:**
+
+1. **Access rate is 0.88 %** — only 115 of 13,044 indexed files are accessed. This is
+   dramatically lower than the Kotlin pipeline's 23.77 %, and consistent with the
+   original §5 IntelliJ 11-subset (0.18 %). IntelliJ platform modules are Java-heavy
+   but Kotlin code in them rarely references Java source classes directly (it references
+   JDK/classpath classes instead).
+
+2. **Eager path waste is extreme.** 9,046 eager parses costing 28.9 seconds; at 0.88 %
+   access rate, ~99 % of that CPU is wasted. Removing the eager path would save
+   ~28.6 seconds across 446 modules (64 ms per module average).
+
+3. **Type resolution paths are cold.** `tryStarImports` = 0, `rawTypeNameParts` = 0.
+   M-O2 and M-P12 do not affect this workload at all.
+
+4. **Positive class cache is cold.** Only 4.7 % hit rate (39/828) vs 92.8 % on the
+   Kotlin pipeline. Most `findClass` calls are first-and-only lookups.
+
+**M-O6 revised verdict (combining all corpora):**
+
+The access rate is workload-dependent:
+- Kotlin pipeline (Kotlin project, mixed Java/Kotlin): **23.77 %** → 52 % indexing savings
+- IntelliJ platform (Java-heavy, Kotlin rarely references Java sources): **0.88 %** → 99 % indexing savings
+
+Both workloads benefit from dropping the eager path, but the IntelliJ workload
+benefits far more. The eager path is the dominant java-direct cost on IntelliJ:
+28.9 seconds out of ~32.3 seconds total indexing+parse (89 %).
+
+On Kotlin pipeline: savings ≈ 5.0 s / 468 s total = **~1 % pipeline-wide**.
+On IntelliJ platform 446-test subset: savings ≈ 28.6 s / 270 s total = **~10.6 % pipeline-wide**.
+
+This confirms the original §5 magnitude estimate for Java-heavy workloads while
+showing the Kotlin pipeline is a lower-bound case.
