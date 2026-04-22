@@ -11,8 +11,6 @@ import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
 import org.jetbrains.kotlin.name.FqName
-import java.util.WeakHashMap
-import java.util.Collections
 
 /**
  * Handles extraction and lookup of Java import declarations from AST nodes.
@@ -22,19 +20,8 @@ import java.util.Collections
  * - Extracting the package name from a compilation unit
  * - Finding top-level class nodes by name
  *
- * The [extractImports] result is cached per [JavaLightTree] via a weak-keyed map so repeated
- * context creations over the same compilation unit do not re-walk the AST.
  */
 internal object JavaImportResolver {
-
-    /**
-     * Weak-keyed cache of extracted import data per compilation-unit light tree.
-     * Entries are evicted automatically when the [JavaLightTree] becomes unreachable.
-     * Wrapped in [Collections.synchronizedMap] because resolution contexts may be created
-     * from multiple threads during FIR analysis.
-     */
-    private val importCache: MutableMap<JavaLightTree, Pair<Map<String, FqName>, List<FqName>>> =
-        Collections.synchronizedMap(WeakHashMap())
 
     /**
      * Extracts the package name from a compilation unit root node.
@@ -61,13 +48,6 @@ internal object JavaImportResolver {
      * 4. Fragmented imports (parser splits import across sibling nodes)
      */
     fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> {
-        importCache[tree]?.let { return it }
-        val result = extractImportsUncached(tree, root)
-        importCache[tree] = result
-        return result
-    }
-
-    private fun extractImportsUncached(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> {
         val simpleImports = mutableMapOf<String, FqName>()
         val starImports = mutableListOf<FqName>()
 

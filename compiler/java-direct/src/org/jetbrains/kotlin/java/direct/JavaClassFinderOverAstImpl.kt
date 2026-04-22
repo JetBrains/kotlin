@@ -23,15 +23,6 @@ import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Size threshold (in bytes) for eager vs. lightweight indexing.
- * Files at or below this size are parsed fully during per-package indexing,
- * and the resulting [JavaClass] instances are cached immediately (no re-parse on first access).
- * Files above this size are indexed via a lightweight line scanner that extracts only the package
- * name and top-level class names without invoking the parser.
- */
-private const val SMALL_FILE_SIZE_THRESHOLD = 4096L
-
-/**
  * A simple JavaClassFinder implementation over the direct Java AST parser used in this module.
  *
  * It scans provided [sourceRoots] for `.java` files, indexes packages and top-level class names,
@@ -43,14 +34,10 @@ private const val SMALL_FILE_SIZE_THRESHOLD = 4096L
  * indexed at most once (via [ConcurrentHashMap.computeIfAbsent]). Packages never queried by
  * the compiler are never scanned.
  *
- * Within a package directory, file indexing depends on size:
- * - **Small files** (≤ [SMALL_FILE_SIZE_THRESHOLD] bytes): parsed eagerly during package indexing;
- *   [JavaClass] instances are created and cached immediately, so the first [findClass] call is
- *   a cache hit with no additional parsing.
- * - **Large files**: indexed via lightweight line scanning ([extractFileInfoLightweight]) that
- *   extracts only the package name and top-level class names without invoking the parser.
- *   The full parse happens lazily on first [findClass] access, at which point **all** top-level
- *   classes in the file are cached to avoid re-parsing for sibling classes.
+ * Files are indexed via lightweight line scanning ([extractFileInfoLightweight]) that extracts
+ * only the package name and top-level class names without invoking the parser. The full parse
+ * happens lazily on first [findClass] access, at which point **all** top-level classes in the
+ * file are cached to avoid re-parsing for sibling classes.
  */
 class JavaClassFinderOverAstImpl(
     private val sourceRoots: List<VirtualFile>,
@@ -80,17 +67,7 @@ class JavaClassFinderOverAstImpl(
     private val index: ConcurrentHashMap<FqName, Map<String, List<FileEntry>>> = ConcurrentHashMap()
 
     // class cache for already created JavaClassOverAst.
-    // Note: ConcurrentHashMap disallows null values, so this map stores only *positive* hits;
-    // negative results (ClassId definitely not in source) are tracked in [negativeClassCache] below.
     private val classCache: MutableMap<ClassId, JavaClass> = ConcurrentHashMap()
-
-    // Negative cache for Step 2.5: avoids re-parsing candidate files for ClassIds that were
-    // already looked up and found absent. The top-level "definitely not in source" check is
-    // handled much earlier by [isClassInIndex] (pure index hit), so this set only really matters
-    // for *inner* ClassIds whose top-level parent is in the index but that don't actually exist
-    // (e.g. typo'd inner class names or FIR probing non-existent nested types during overload
-    // resolution). Without it, every miss re-parses the top-level file.
-    private val negativeClassCache: MutableSet<ClassId> = ConcurrentHashMap.newKeySet()
 
     // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
@@ -233,14 +210,11 @@ class JavaClassFinderOverAstImpl(
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
         val classId = request.classId
         classCache[classId]?.let { return it }
-        if (classId in negativeClassCache) return null
 
         val classes = findClasses(request)
         val result = classes.firstOrNull()
         if (result != null) {
             classCache[classId] = result
-        } else {
-            negativeClassCache.add(classId)
         }
         return result
     }
@@ -364,69 +338,15 @@ class JavaClassFinderOverAstImpl(
     // ---- File entry building ----
 
     /**
-     * Builds a [FileEntry] for the given file.
+     * Builds a [FileEntry] for the given file using lightweight line scanning that extracts
+     * only the package name and top-level class names without invoking the parser.
+     * The full parse is deferred to [parseTopLevelClassFromFile] on first access.
      *
      * @param expectedPackage When non-null, validates that the file's declared package matches.
      *   Files with mismatched packages return null (matching javac behavior, which requires
      *   directory structure to mirror package declarations).
      */
     private fun tryBuildFileEntry(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
-        val fileSize = file.length
-        return if (fileSize <= SMALL_FILE_SIZE_THRESHOLD) {
-            tryBuildFileEntryWithFullParse(file, expectedPackage)
-        } else {
-            tryBuildFileEntryLightweight(file, expectedPackage)
-        }
-    }
-
-    /**
-     * Small-file path: parse the file fully and cache all [JavaClassOverAst] instances
-     * so that subsequent [findClass] calls are pure cache hits.
-     */
-    private fun tryBuildFileEntryWithFullParse(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
-        val source = sourceFileReader.readFileContent(file) ?: return null
-        val tree = parseJavaToLightTree(source, 0)
-        val root = tree.getRoot()
-
-        val packageStmt = tree.findChildByType(root, JavaSyntaxElementType.PACKAGE_STATEMENT)
-        val packageName = packageStmt?.let {
-            tree.findChildByType(it, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { ref -> tree.getText(ref).toString() }
-        }
-        val packageFqName = if (packageName != null) FqName(packageName) else FqName.ROOT
-
-        // Validate against expected directory-derived package if specified.
-        if (expectedPackage != null && packageFqName != expectedPackage) return null
-
-        val classNames = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).mapNotNull { node ->
-            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() }
-        }.toSet()
-
-        if (classNames.isEmpty()) return null
-
-        val fileBaseName = file.name.removeSuffix(".java")
-        if (!classNames.contains(fileBaseName)) return null
-
-        // Eagerly create and cache all top-level JavaClass instances.
-        val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
-        for (className in classNames) {
-            val classId = ClassId(packageFqName, FqName(className), isLocal = false)
-            if (classId !in classCache) {
-                val javaClass = resolutionContext.findLocalClass(Name.identifier(className))
-                if (javaClass != null) {
-                    classCache[classId] = javaClass
-                }
-            }
-        }
-
-        return FileEntry(file, packageFqName, classNames)
-    }
-
-    /**
-     * Large-file path: extract package name and top-level class names by scanning
-     * the file line by line without invoking the parser.
-     * The full parse is deferred to [parseTopLevelClassFromFile] on first access.
-     */
-    private fun tryBuildFileEntryLightweight(file: VirtualFile, expectedPackage: FqName? = null): FileEntry? {
         val info = extractFileInfoLightweight(file, sourceFileReader) ?: return null
         val packageFqName = if (info.packageName != null) FqName(info.packageName) else FqName.ROOT
 

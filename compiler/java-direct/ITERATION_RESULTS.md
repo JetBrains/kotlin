@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-22 (Phase B regression investigation: per-function CPU attribution under sequential `KotlinFullPipelineTestsGenerated`; see the "Phase B regression investigation" entry below)
+**Last Updated**: 2026-04-22 (Phase D: measurement-gated performance changes landed)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -18,9 +18,113 @@ caveats have landed in code (verified against current source). What remains:
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
 
 The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A,
-the three iterations of Phase B (B.1, B.2, B.3), and Phase C (measurements) are now
-complete. Phase D (measurement-gated perf changes) and Phase E (remaining readability)
-are pending.
+the three iterations of Phase B (B.1, B.2, B.3), Phase C (measurements), and Phase D
+(measurement-gated changes) are now complete. Phase E (remaining readability) is pending.
+
+---
+
+## Refactoring Plan Phase D: Measurement-Gated Performance Changes — 2026-04-22
+
+### Overview
+
+Implements `REFACTORING_PLAN.md` §2.4 — the five Phase C items whose measurements
+confirmed the hypothesis. Full measurement data is in `MEASUREMENTS.md` §7 (corrected
+Kotlin-pipeline data) and §7.7 (IntelliJ platform data). Instrumentation was stashed
+beforehand (`git stash: phase-c-instrumentation-v5-v6-measurements`); all changes in
+this iteration are against the clean (uninstrumented) codebase.
+
+### Changes
+
+**M-O3 — Delete `importCache`** (`JavaImportResolver.kt`)
+
+Removed the `WeakHashMap`-backed synchronized cache from `JavaImportResolver`.
+Measurement: 0 hits / 1,360 misses on Kotlin pipeline (109 modules), 0 / 9,422 on
+IntelliJ platform (446 modules). Each `JavaLightTree` is passed to `extractImports`
+exactly once (at `JavaResolutionContext.create` time), so the cache never has an
+opportunity to return a hit. Deleted: the `importCache` field, `WeakHashMap`/
+`Collections` imports, cache lookup/store in `extractImports()`, and the
+`extractImportsUncached` indirection (inlined into `extractImports`).
+
+**M-O4b — Delete `negativeClassCache`** (`JavaClassFinderOverAstImpl.kt`)
+
+Removed `negativeClassCache` (`ConcurrentHashMap.newKeySet`). Measurement: 0 hits
+despite 4,103 adds and 63,570 `findClass` calls on the Kotlin pipeline. The classes
+that miss (inner ClassIds probed during FIR overload resolution) are each looked up at
+most once per compilation — the second probe that would produce a hit doesn't happen.
+Deleted: the field, the `if (classId in negativeClassCache) return null` early-return
+in `findClass()`, and the `negativeClassCache.add(classId)` on miss. The positive
+`classCache` (92.8% hit rate on Kotlin pipeline) is preserved.
+
+**M-O2 — Drop `distinctStarImports` field** (`JavaResolutionContext.kt`)
+
+Removed the `distinctStarImports` constructor parameter and replaced all usages with
+`starImports`. Measurement: 0 duplicates across 953,835 `tryStarImports` calls on
+the Kotlin pipeline. No Java compilation unit in any measured corpus has duplicate
+star imports. This simplifies the 10-parameter constructor by one, and removes one
+`List<FqName>` copy from each `withTypeParameters` / `withInheritedTypeParameters` /
+`withContainingClass` call.
+
+**M-O6 — Drop eager full-parse path** (`JavaClassFinderOverAstImpl.kt`)
+
+Removed `tryBuildFileEntryWithFullParse`, `SMALL_FILE_SIZE_THRESHOLD`, and the
+size-dispatching `tryBuildFileEntry` method. All files now go through the lightweight
+line-scanning path (`extractFileInfoLightweight`), with full parsing deferred to
+`parseTopLevelClassFromFile` on first access. Measurement:
+- Kotlin pipeline: 23.77% access rate, 79% of eager parses wasted, ~5.0 s saved
+  (1.1% pipeline-wide).
+- IntelliJ platform: 0.88% access rate, ~99% of eager parses wasted, ~28.6 s saved
+  (10.6% pipeline-wide).
+
+The primary payoff is code simplification (one indexing path instead of two). The
+performance benefit is workload-dependent: modest on the Kotlin pipeline, significant
+on Java-heavy workloads.
+
+**M-P12 — Restructure `rawTypeNameParts`** (`JavaTypeOverAst.kt`)
+
+Made `rawTypeNameParts` the canonical cached form in `JavaClassifierTypeOverAst`.
+Previously, `rawTypeName` (joined string) was computed first, then `rawTypeNameParts`
+was derived via `split('.')`. Now `rawTypeNameParts` is computed directly from the AST
+via `extractTypeNameParts()`, and `rawTypeName` is derived from it — for single-segment
+types (83.5% on Kotlin pipeline), the join is a no-op that returns `parts[0]` directly.
+Saves one `String` allocation per single-segment type.
+
+### Items NOT changed (measurement rejected hypothesis)
+
+| ID | Reason | Action |
+|---|---|---|
+| M-P8 | `deriveImplicitPermittedTypes` — 0 invocations in all corpora | No change |
+| M-P9 | `fields.find` scans — 0 invocations in all corpora | No change |
+| M-P13 | `findPackageDirectories` pre-alloc — already fixed in Phase B.3 | No change |
+
+### Test Results
+
+Full suite: `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` —
+**BUILD SUCCESSFUL**, 0 failures.
+
+### Files Modified
+
+| File | Change | Lines |
+|------|--------|-------|
+| `JavaImportResolver.kt` | Delete `importCache`, `WeakHashMap`/`Collections` imports, cache logic | −20 |
+| `JavaClassFinderOverAstImpl.kt` | Delete `negativeClassCache`, `SMALL_FILE_SIZE_THRESHOLD`, `tryBuildFileEntryWithFullParse`, size dispatcher | −62 |
+| `JavaResolutionContext.kt` | Remove `distinctStarImports` parameter; replace usages with `starImports` | −5, +4 |
+| `JavaTypeOverAst.kt` | Restructure `rawTypeNameParts` as canonical; derive `rawTypeName` | −14, +18 |
+| **Net** | | **−97 lines** |
+
+### Key Learnings
+
+- **Measurement gates work.** Phase C originally scoped 8 items for Phase D; measurements
+  eliminated 3 (M-P8, M-P9, M-P13) and weakened 1 (M-P12: 83.5% single-segment, not 97%).
+  Without the Phase C gate, all 8 would have been implemented — 3 of them for zero benefit.
+- **The corrected Kotlin-pipeline data (§7) changed the M-O6 story.** The original §2 data
+  (single classloader dump) showed near-zero traffic and led to "null result". The corrected
+  109-module aggregate showed 23.77% access rate — still a minority, but enough to confirm
+  the eager path is wasteful. The IntelliJ platform data (0.88% access rate) then confirmed
+  the original §5 magnitude for Java-heavy workloads.
+- **Dead code deletion is the primary payoff.** None of the 5 changes individually reaches
+  the 2% measurement floor on the Kotlin pipeline. The combined value is simpler code
+  (−97 lines, 3 caches deleted, 1 constructor parameter removed, 1 entire indexing path
+  eliminated) rather than measurable speedup.
 
 ---
 

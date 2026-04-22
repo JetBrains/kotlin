@@ -30,7 +30,6 @@ class JavaResolutionContext private constructor(
     val packageFqName: FqName,
     private val simpleImports: Map<String, FqName>,
     private val starImports: List<FqName>,
-    private val distinctStarImports: List<FqName> = starImports.distinct(),
     private val scopeResolver: JavaScopeResolver,
     private val inheritedMemberResolver: JavaInheritedMemberResolver,
     private val containingClassProvider: (() -> JavaClass?)? = null,
@@ -178,7 +177,7 @@ class JavaResolutionContext private constructor(
     fun withTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
         if (typeParams.isEmpty()) return this
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, distinctStarImports,
+            packageFqName, simpleImports, starImports,
             scopeResolver.withTypeParameters(typeParams),
             inheritedMemberResolver,
             containingClassProvider, classFinderProvider,
@@ -194,7 +193,7 @@ class JavaResolutionContext private constructor(
     fun withInheritedTypeParameters(typeParams: List<JavaTypeParameter>): JavaResolutionContext {
         if (typeParams.isEmpty()) return this
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, distinctStarImports,
+            packageFqName, simpleImports, starImports,
             scopeResolver.withInheritedTypeParameters(typeParams),
             inheritedMemberResolver,
             containingClassProvider, classFinderProvider,
@@ -208,7 +207,7 @@ class JavaResolutionContext private constructor(
      */
     fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
         return JavaResolutionContext(
-            packageFqName, simpleImports, starImports, distinctStarImports,
+            packageFqName, simpleImports, starImports,
             scopeResolver.withContainingClass(containingClass),
             inheritedMemberResolver,
             containingClassProvider = { containingClass },
@@ -444,7 +443,7 @@ class JavaResolutionContext private constructor(
         // outer call).
         if (checkInheritance) {
             var foundClassId: ClassId? = null
-            for (starPackage in distinctStarImports) {
+            for (starPackage in starImports) {
                 val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
                 if (tryResolve(candidateClassId)) {
                     if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
@@ -464,7 +463,7 @@ class JavaResolutionContext private constructor(
             }
             if (foundClassId != null) return foundClassId
         } else {
-            for (starPackage in distinctStarImports) {
+            for (starPackage in starImports) {
                 val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
                 if (tryResolve(candidateClassId)) return candidateClassId
             }
