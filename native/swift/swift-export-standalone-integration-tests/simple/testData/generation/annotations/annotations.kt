@@ -87,6 +87,9 @@ open class normalT {
     open var removedP: Int
         @Deprecated("Removed", level = DeprecationLevel.HIDDEN) get() = 42
         @Deprecated("Removed", level = DeprecationLevel.HIDDEN) set(new) {}
+
+    @Deprecated("Obsoleted", level = DeprecationLevel.ERROR)
+    operator fun plus(increment: normalT): normalT = TODO()
 }
 
 class normalChildT : normalT() {

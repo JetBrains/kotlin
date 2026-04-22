@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.allParameters
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.name
 import kotlin.getValue
 
@@ -70,11 +71,14 @@ internal abstract class SirClassOperatorTrampolineFunction(
     override val bridges: List<SirBridge> get() = emptyList()
 
     override var body: SirFunctionBody?
-        get() = SirFunctionBody(
-            listOf(
-                "this.${source.name}(${this.allParameters.drop(1).joinToString { it.forward ?: error("unreachable") }})"
-            )
-        )
+        get() = SirFunctionBody(buildList {
+            if (isUnavailable) {
+                add("fatalError()")
+            } else {
+                val args = this@SirClassOperatorTrampolineFunction.allParameters.drop(1)
+                add("this.${source.name}(${args.joinToString { it.forward ?: error("unreachable") }})")
+            }
+        })
         set(_) = Unit
 }
 

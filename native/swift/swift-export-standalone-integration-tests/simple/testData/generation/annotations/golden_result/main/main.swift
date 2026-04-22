@@ -814,6 +814,19 @@ open class normalT: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    @available(*, unavailable, message: "Obsoleted")
+    public static func +(
+        this: main.normalT,
+        increment: main.normalT.normalT
+    ) -> main.normalT.normalT {
+        fatalError()
+    }
+    @available(*, unavailable, message: "Obsoleted")
+    public final func _plus(
+        increment: main.normalT.normalT
+    ) -> main.normalT.normalT {
+        fatalError()
+    }
     @available(*, deprecated, message: "Deprecated")
     open func deprecatedF() -> Swift.Void {
         return { normalT_deprecatedF(self.__externalRCRef()); return () }()
