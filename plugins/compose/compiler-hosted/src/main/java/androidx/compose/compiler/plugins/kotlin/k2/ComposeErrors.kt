@@ -114,6 +114,9 @@ object ComposeErrors : KtDiagnosticsContainer() {
         )
     )
 
+    val COMPOSE_CONFIGURATION_ERROR by errorWithoutSource()
+    val COMPOSE_CONFIGURATION_WARNING by warningWithoutSource()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = ComposeErrorMessages
 }
 
