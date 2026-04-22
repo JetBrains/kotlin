@@ -716,27 +716,128 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
     targetSdk: String,
     targetPlatform: String,
 ): TaskProvider<ConvertSyntheticSwiftPMImportProjectIntoDefFile> {
-    return project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
-        lowerCamelCaseName(
-            ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
-            targetSdk,
-        )
-    ) {
+    val convertTaskName = lowerCamelCaseName(
+        ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
+        targetSdk,
+    )
+    val xcodebuildDumpTaskName = lowerCamelCaseName(
+        ConvertSyntheticSwiftPMImportProjectIntoDefFile.RUN_XCODEBUILD_TASK_NAME,
+        targetSdk,
+    )
+    val writeDefTaskName = lowerCamelCaseName(
+        ConvertSyntheticSwiftPMImportProjectIntoDefFile.WRITE_DEF_FILE_TASK_NAME,
+        targetSdk,
+    )
+    val writeEmptyOutputsTaskName = lowerCamelCaseName(
+        ConvertSyntheticSwiftPMImportProjectIntoDefFile.WRITE_EMPTY_OUTPUTS_TASK_NAME,
+        targetSdk,
+    )
+
+    val convertTask = project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(convertTaskName) {
         it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-        it.dependsOn(fetchSyntheticImportProjectPackages)
-        it.dependsOn(computeLocalPackageDependencyInputFiles)
         it.resolvedPackagesState.from(
-            fetchSyntheticImportProjectPackages.map { it.inputManifests },
-            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
+            fetchSyntheticImportProjectPackages.map { task -> task.inputManifests },
+            fetchSyntheticImportProjectPackages.map { task -> task.syntheticLockFile },
         )
         it.xcodebuildPlatform.set(targetPlatform)
         it.xcodebuildSdk.set(targetSdk)
-        it.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
-        it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
+        it.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { task -> task.swiftPMDependenciesCheckout.get() })
+        it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { task -> task.syntheticImportProjectRoot.get() })
         it.discoverModulesImplicitly.set(discoverModulesImplicitly)
-        it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
+        it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { task -> task.filesToTrackFromLocalPackages })
         it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
     }
+
+    val xcodebuildDumpTask = project.locateOrRegisterTask<RunXcodebuildForSwiftPMDefFile>(xcodebuildDumpTaskName) {
+        it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+        it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
+        it.dependsOn(fetchSyntheticImportProjectPackages)
+        it.dependsOn(computeLocalPackageDependencyInputFiles)
+        it.resolvedPackagesState.from(
+            fetchSyntheticImportProjectPackages.map { task -> task.inputManifests },
+            fetchSyntheticImportProjectPackages.map { task -> task.syntheticLockFile },
+        )
+        it.xcodebuildPlatform.set(convertTask.flatMap { task -> task.xcodebuildPlatform })
+        it.xcodebuildSdk.set(convertTask.flatMap { task -> task.xcodebuildSdk })
+        it.architectures.set(convertTask.flatMap { task -> task.architectures })
+        it.filesToTrackFromLocalPackages.set(convertTask.flatMap { task -> task.filesToTrackFromLocalPackages })
+        it.additionalXcodeArgs.set(convertTask.flatMap { task -> task.additionalXcodeArgs })
+        it.swiftPMDependenciesCheckout.set(convertTask.flatMap { task -> task.swiftPMDependenciesCheckout })
+        it.syntheticImportProjectRoot.set(convertTask.flatMap { task -> task.syntheticImportProjectRoot })
+        it.syntheticImportDd.set(convertTask.flatMap { task -> task.syntheticImportDd })
+        it.clangDumpIntermediatesDir.set(
+            convertTask.flatMap { task ->
+                task.xcodebuildSdk.map { sdk ->
+                    project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk)).get()
+                }
+            }
+        )
+    }
+
+    val cinteropNamespaceProvider = project.provider {
+        listOf(
+            "swiftPMImport",
+            project.group.toString(),
+            if (project.path == ":") project.name else project.path.drop(1)
+        ).filter {
+            it.isNotEmpty()
+        }.joinToString(".") {
+            it.replace(Regex("[^a-zA-Z0-9_.]"), ".")
+        }.replace(Regex("\\.{2,}"), ".").trim('.')
+    }
+
+    val writeDefTask = project.locateOrRegisterTask<WriteSwiftPMDefFileFromXcodebuildDumps>(writeDefTaskName) {
+        it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+        it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
+        it.dependsOn(xcodebuildDumpTask)
+        it.architectures.set(convertTask.flatMap { task -> task.architectures })
+        it.clangModules.set(convertTask.flatMap { task -> task.clangModules })
+        it.discoverModulesImplicitly.set(convertTask.flatMap { task -> task.discoverModulesImplicitly })
+        it.cinteropNamespace.set(cinteropNamespaceProvider)
+        it.clangDumpIntermediatesDir.set(xcodebuildDumpTask.flatMap { task -> task.clangDumpIntermediatesDir })
+        it.defFilesOutputDir.set(
+            convertTask.flatMap { task ->
+                task.xcodebuildSdk.map { sdk ->
+                    project.layout.buildDirectory.dir(XcodebuildDefFileUtils.defFilesRelativeDir(sdk)).get()
+                }
+            }
+        )
+        it.ldDumpOutputDir.set(
+            convertTask.flatMap { task ->
+                task.xcodebuildSdk.map { sdk ->
+                    project.layout.buildDirectory.dir(XcodebuildDefFileUtils.ldDumpRelativeDir(sdk)).get()
+                }
+            }
+        )
+    }
+
+    val writeEmptyOutputsTask = project.locateOrRegisterTask<WriteEmptySwiftPMDefFileOutputs>(writeEmptyOutputsTaskName) {
+        it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+        it.onlyIf { !hasDirectOrTransitiveSwiftPMDependencies.get() }
+        it.architectures.set(convertTask.flatMap { task -> task.architectures })
+        it.cinteropNamespace.set(cinteropNamespaceProvider)
+        it.defFilesOutputDir.set(
+            convertTask.flatMap { task ->
+                task.xcodebuildSdk.map { sdk ->
+                    project.layout.buildDirectory.dir(XcodebuildDefFileUtils.defFilesRelativeDir(sdk)).get()
+                }
+            }
+        )
+        it.ldDumpOutputDir.set(
+            convertTask.flatMap { task ->
+                task.xcodebuildSdk.map { sdk ->
+                    project.layout.buildDirectory.dir(XcodebuildDefFileUtils.ldDumpRelativeDir(sdk)).get()
+                }
+            }
+        )
+    }
+
+    convertTask.configure {
+        it.dependsOn(writeDefTask)
+        it.dependsOn(writeEmptyOutputsTask)
+    }
+
+    return convertTask
 }
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
