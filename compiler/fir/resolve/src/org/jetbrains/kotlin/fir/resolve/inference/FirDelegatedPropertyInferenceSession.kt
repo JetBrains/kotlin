@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -170,28 +171,36 @@ class FirDelegatedPropertyInferenceSession(
         }
 
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
+            val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
+                override fun analyze(
+                    postponedResolvedAtom: ConePostponedResolvedAtom,
+                    withPCLASession: Boolean,
+                    precalculatedBoundsForCL: CollectionLiteralBounds?,
+                ) {
+                    // Reversed here bc we want top-most call to avoid exponential visit
+                    val containingCandidateForPostponedAtom = notCompletedCalls.asReversed().first {
+                        var found = false
+                        it.processPostponedAtoms { atom ->
+                            found = found || atom == postponedResolvedAtom
+                        }
+                        found
+                    }.candidate
+                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
+                        parentSystem,
+                        postponedResolvedAtom,
+                        containingCandidateForPostponedAtom,
+                        withPCLASession,
+                        precalculatedBoundsForCL,
+                    )
+                }
+            }
             components.callCompleter.completer.complete(
                 parentSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
                 notCompletedCalls,
-                unitType, resolutionContext
-            ) { lambdaAtom, withPCLASession, precalculatedBoundsForCL ->
-                // Reversed here bc we want top-most call to avoid exponential visit
-                val containingCandidateForLambda = notCompletedCalls.asReversed().first {
-                    var found = false
-                    it.processPostponedAtoms { postponedAtom ->
-                        found = found || postponedAtom == lambdaAtom
-                    }
-                    found
-                }.candidate
-                callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
-                    parentSystem,
-                    lambdaAtom,
-                    containingCandidateForLambda,
-                    withPCLASession,
-                    precalculatedBoundsForCL,
-                )
-            }
+                unitType, resolutionContext,
+                postponedAtomAnalyzer,
+            )
         }
 
         for (candidate in notCompletedCalls.mapNotNull { (it.expression as FirResolvable).candidate() }) {

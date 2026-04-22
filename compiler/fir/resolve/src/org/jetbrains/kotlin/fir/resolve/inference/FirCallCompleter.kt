@@ -331,15 +331,24 @@ class FirCallCompleter(
     ) {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
+
+        val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
+            override fun analyze(
+                postponedResolvedAtom: ConePostponedResolvedAtom,
+                withPCLASession: Boolean,
+                precalculatedBoundsForCL: CollectionLiteralBounds?,
+            ) {
+                analyzer.analyze(candidate.system, postponedResolvedAtom, candidate, withPCLASession, precalculatedBoundsForCL)
+            }
+        }
         completer.complete(
             candidate.system.asConstraintSystemCompleterContext(),
             completionMode,
             listOf(ConeAtomWithCandidate(call, candidate)),
             initialType,
-            transformer.resolutionContext
-        ) { atom, withPCLASession, precalculatedBoundsForCL ->
-            analyzer.analyze(candidate.system, atom, candidate, withPCLASession, precalculatedBoundsForCL)
-        }
+            transformer.resolutionContext,
+            postponedAtomAnalyzer,
+        )
     }
 
     fun prepareLambdaAtomForFactoryPattern(
