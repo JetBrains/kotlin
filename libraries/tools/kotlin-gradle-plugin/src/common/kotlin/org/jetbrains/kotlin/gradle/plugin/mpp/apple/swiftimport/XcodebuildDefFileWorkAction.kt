@@ -44,29 +44,56 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
 ) : WorkAction<XcodebuildDefFileWorkParameters> {
 
     override fun execute() {
-        val sdk = parameters.xcodebuildSdk.get()
         val architectures = parameters.architectures.get()
         val cinteropNamespace = parameters.cinteropNamespace.get()
         val defFilesDir = parameters.defFilesOutputDir.getFile()
         val ldDumpDir = parameters.ldDumpOutputDir.getFile()
 
         if (!parameters.hasSwiftPMDependencies.get()) {
-            architectures.forEach { architecture ->
-                defFilesDir.resolve(XcodebuildDefFileUtils.defFileName(architecture)).writeText(
-                    """
-                        language = Objective-C
-                        package = $cinteropNamespace
-                    """.trimIndent()
-                )
-                ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture)).writeText("\n")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture)).writeText("\n")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture)).writeText("0")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture)).writeText("\n")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture)).writeText("\n")
-            }
+            writeEmptyOutputs(
+                architectures = architectures,
+                cinteropNamespace = cinteropNamespace,
+                defFilesDir = defFilesDir,
+                ldDumpDir = ldDumpDir,
+            )
             return
         }
+        dumpXcodebuildOutputs(
+            architectures = architectures,
+            cinteropNamespace = cinteropNamespace,
+            defFilesDir = defFilesDir,
+            ldDumpDir = ldDumpDir,
+        )
+    }
 
+    private fun writeEmptyOutputs(
+        architectures: Set<AppleArchitecture>,
+        cinteropNamespace: String,
+        defFilesDir: File,
+        ldDumpDir: File,
+    ) {
+        architectures.forEach { architecture ->
+            defFilesDir.resolve(XcodebuildDefFileUtils.defFileName(architecture)).writeText(
+                """
+                    language = Objective-C
+                    package = $cinteropNamespace
+                """.trimIndent()
+            )
+            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture)).writeText("\n")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture)).writeText("\n")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture)).writeText("0")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture)).writeText("\n")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture)).writeText("\n")
+        }
+    }
+
+    private fun dumpXcodebuildOutputs(
+        architectures: Set<AppleArchitecture>,
+        cinteropNamespace: String,
+        defFilesDir: File,
+        ldDumpDir: File,
+    ) {
+        val sdk = parameters.xcodebuildSdk.get()
         val dumpIntermediates = parameters.clangDumpIntermediatesDir.getFile().also {
             if (it.exists()) {
                 it.deleteRecursively()
