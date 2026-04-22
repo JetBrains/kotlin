@@ -20,13 +20,13 @@ import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.*
+import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -60,7 +60,7 @@ class ClassStabilityTransformer(
     stabilityInferencer: StabilityInferencer,
     private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
     featureFlags: FeatureFlags,
-    private val messageCollector: MessageCollector,
+    private val reporter: IrDiagnosticReporter,
 ) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
     ClassLoweringPass,
     ModuleLoweringPass {
@@ -77,8 +77,8 @@ class ClassStabilityTransformer(
         if (!context.platform.isJvm() && !unstableClassesWarning.isNullOrEmpty()) {
             val classIds = unstableClassesWarning.mapTo(mutableSetOf()) { it.fqNameSafe.toString() }
             val classesConcatenated = classIds.sorted().joinToString("\n")
-            messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            reporter.report(
+                ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
                 "Some of the dependencies were build using an older version of the Compose compiler plugin, " +
                         "which may cause additional (or endless) recompositions on non-JVM targets. " +
                         "To prevent that consider updating dependency libraries to versions built with a newer Compose compiler. " +
