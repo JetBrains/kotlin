@@ -27,36 +27,34 @@ abstract class JavaTypeOverAst(
     // These need callback-based filtering since they may or may not be TYPE_USE.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
-    // Type-position annotations: the union of `extraAnnotations` (passed by the caller),
-    // annotations inside the type node's own MODIFIER_LIST, and annotations that are direct
-    // children of the type node. Always TYPE_USE by syntactic position — no callback filtering
-    // is needed.
-    //
-    // Cached because both `annotations` and `filterTypeUseAnnotations` need this slice, and
-    // FIR tends to call them in succession during nullability resolution. Without caching each
-    // call re-walks MODIFIER_LIST + direct ANNOTATION children and rebuilds every wrapper.
-    @Volatile private var _typePositionAnnotations: Collection<JavaAnnotation>? = null
-    private val typePositionAnnotations: Collection<JavaAnnotation>
-        get() = cachedNonNull({ _typePositionAnnotations }, { _typePositionAnnotations = it }) {
-            val modifierListAnnotations =
-                tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                    tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                        .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-                } ?: emptyList()
-            val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            extraAnnotations + modifierListAnnotations + directAnnotations
-        }
-
     // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
     // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
     @Volatile private var _annotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() = cachedNonNull({ _annotations }, { _annotations = it }) {
-            memberAnnotations + typePositionAnnotations
+            val modifierListAnnotations =
+                tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+                    tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                        .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+                } ?: emptyList()
+
+            val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
+                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+
+            memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
         }
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
+        // Type-position annotations (from the type node itself) are TYPE_USE by syntax.
+        val modifierListAnnotations =
+            tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+            } ?: emptyList()
+        val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
+            .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        val typePositionAnnotations = extraAnnotations + modifierListAnnotations + directAnnotations
+
         // Member modifier list annotations need callback filtering.
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
             val fqName = if (annotation.isResolved) {

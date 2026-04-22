@@ -267,19 +267,25 @@ class JavaResolutionContext private constructor(
         name: String,
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
-    ): ClassId? = resolveNestedClassToClassIdFromParts(name.split('.'), tryResolve, getSupertypeClassIds)
+    ): ClassId? {
+        return resolveNestedClassToClassIdFromParts(name.split('.'), tryResolve, getSupertypeClassIds, checkInheritance = true)
+    }
 
     /**
-     * Main nested-class resolver. Operates on a pre-split parts list to avoid O(n²)
-     * [String.split] + [joinToString] allocations on recursive calls. The reentrance-safe
-     * fallback used from [resolveInheritedInnerClassToClassId] lives in
-     * [resolveNestedClassToClassIdFromPartsWithoutInheritance] and duplicates only the
-     * two inheritance-independent branches (prefix loop + fully-qualified-name fallback).
+     * Unified internal workhorse for nested-class resolution.
+     * [checkInheritance] controls whether inherited-inner-class lookup is enabled (false → the
+     * `WithoutInheritance` flavor used as a reentrance-safe fallback from
+     * [resolveInheritedInnerClassToClassId]). Keeping a single implementation prevents the two
+     * copies from drifting when one is updated.
+     *
+     * Operates on a pre-split parts list to avoid O(n²) [String.split] + [joinToString]
+     * allocations on recursive calls.
      */
     private fun resolveNestedClassToClassIdFromParts(
         parts: List<String>,
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
+        checkInheritance: Boolean,
     ): ClassId? {
         // Try resolving increasing prefixes as outer classes using normal resolution rules.
         // This respects JLS 6.5.2: nested class takes priority when the outer class is in scope.
@@ -288,9 +294,9 @@ class JavaResolutionContext private constructor(
             val nestedParts = parts.subList(i, parts.size)
 
             val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassIdFromParts(outerParts, tryResolve, getSupertypeClassIds)
+                resolveNestedClassToClassIdFromParts(outerParts, tryResolve, getSupertypeClassIds, checkInheritance)
             } else {
-                resolveSimpleNameToClassId(outerParts[0], tryResolve)
+                resolveSimpleNameToClassIdImpl(outerParts[0], tryResolve, getSupertypeClassIds = null, checkInheritance = checkInheritance)
             }
 
             if (outerClassId != null) {
@@ -303,7 +309,7 @@ class JavaResolutionContext private constructor(
                 // Nested class not directly declared — search supertypes for inherited inner classes.
                 // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
                 // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
-                if (nestedParts.size == 1 && getSupertypeClassIds != null) {
+                if (checkInheritance && nestedParts.size == 1 && getSupertypeClassIds != null) {
                     val inherited = findInheritedNestedClass(
                         outerClassId, nestedParts[0], tryResolve, getSupertypeClassIds, mutableSetOf()
                     )
@@ -314,8 +320,8 @@ class JavaResolutionContext private constructor(
 
         // Also try inherited inner class resolution via the aggregated map from the class finder.
         // Covers same-package source supertypes that the [getSupertypeClassIds] callback does not see.
-        if (getSupertypeClassIds == null && classFinderProvider != null && parts.size == 2) {
-            val outerClassId = resolveSimpleNameToClassId(parts[0], tryResolve)
+        if (checkInheritance && getSupertypeClassIds == null && classFinderProvider != null && parts.size == 2) {
+            val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, getSupertypeClassIds = null, checkInheritance = true)
             if (outerClassId != null) {
                 val classFinder = classFinderProvider.invoke()
                 val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
@@ -344,50 +350,6 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Reentrance-safe nested-class resolver (no inheritance lookups, no aggregated-inherited
-     * fallback). Used by the `resolveWithoutInheritance` callback in
-     * [resolveInheritedInnerClassToClassId]. Operates on a pre-split parts list.
-     *
-     * Kept small and parallel to [resolveNestedClassToClassIdFromParts]; every prefix resolves
-     * via [resolveSimpleNameToClassIdWithoutInheritance] (or recursive
-     * [resolveNestedClassToClassIdFromPartsWithoutInheritance]), and the fully-qualified-name
-     * fallback (longest package to shortest) is identical.
-     */
-    private fun resolveNestedClassToClassIdFromPartsWithoutInheritance(
-        parts: List<String>,
-        tryResolve: (ClassId) -> Boolean,
-    ): ClassId? {
-        for (i in 1 until parts.size) {
-            val outerParts = parts.subList(0, i)
-            val nestedParts = parts.subList(i, parts.size)
-
-            val outerClassId = if (outerParts.size > 1) {
-                resolveNestedClassToClassIdFromPartsWithoutInheritance(outerParts, tryResolve)
-            } else {
-                resolveSimpleNameToClassIdWithoutInheritance(outerParts[0], tryResolve)
-            }
-
-            if (outerClassId != null) {
-                val nestedClassName = FqName.fromSegments(
-                    outerClassId.relativeClassName.pathSegments().map { it.asString() } + nestedParts
-                )
-                val nestedClassId = ClassId(outerClassId.packageFqName, nestedClassName, isLocal = false)
-                if (tryResolve(nestedClassId)) return nestedClassId
-            }
-        }
-
-        for (classStartIndex in (parts.size - 1) downTo 0) {
-            val packageFqName = if (classStartIndex == 0) FqName.ROOT
-            else FqName.fromSegments(parts.subList(0, classStartIndex))
-            val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
-            val classId = ClassId(packageFqName, relativeClassName, isLocal = false)
-            if (tryResolve(classId)) return classId
-        }
-
-        return null
-    }
-
-    /**
      * Resolve a simple (non-nested) type name to ClassId.
      */
     private fun resolveSimpleNameToClassId(
@@ -397,11 +359,15 @@ class JavaResolutionContext private constructor(
     ): ClassId? = resolveSimpleNameToClassIdImpl(simpleName, tryResolve, getSupertypeClassIds, checkInheritance = true)
 
     /**
-     * Main simple-name resolution workhorse (runs the 5 JLS 6.5.2 scoping steps in order).
-     * The reentrance-safe fallback used from [resolveInheritedInnerClassToClassId] goes through
-     * [resolveSimpleNameToClassIdWithoutInheritance] instead, which shares the three
-     * inheritance-independent steps ([tryImport] for the simple-split variant, [trySamePackage],
-     * [tryJavaLang], [tryStarImports] in simple-probe mode).
+     * Unified workhorse for simple-name resolution. [checkInheritance] gates:
+     * - step 2 (local/inner class lookup through [findLocalClass]),
+     * - step 2b (aggregated inherited inner classes + BFS fallback),
+     * - the class-level / ambiguity-checking behaviour of step 5 (star imports).
+     *
+     * Also, when [checkInheritance] is true the explicit-import step uses [resolveAsClassId]
+     * (which handles nested-class FQNs like `a.x.b.b.b`); the `WithoutInheritance` flavour uses
+     * the simpler [ClassId.topLevel] split because it is only ever entered as a reentrance-safe
+     * fallback from [resolveInheritedInnerClassToClassId] where the exotic split is not needed.
      */
     private fun resolveSimpleNameToClassIdImpl(
         simpleName: String,
@@ -409,162 +375,107 @@ class JavaResolutionContext private constructor(
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
         checkInheritance: Boolean,
     ): ClassId? {
-        tryImport(simpleName, tryResolve, checkInheritance)?.let { return it }
-        if (checkInheritance) {
-            tryLocalAndInherited(simpleName, tryResolve, getSupertypeClassIds)?.let { return it }
-        }
-        trySamePackage(simpleName, tryResolve)?.let { return it }
-        tryJavaLang(simpleName, tryResolve)?.let { return it }
-        tryStarImports(simpleName, tryResolve, checkInheritance)?.let { return it }
-        return null
-    }
-
-    /**
-     * Reentrance-safe simple-name resolver (no inheritance lookups). Called by the
-     * `resolveWithoutInheritance` callback inside [resolveInheritedInnerClassToClassId] and by
-     * [resolveNestedClassToClassIdFromPartsWithoutInheritance]; must never recurse back into
-     * the inheritance-aware path.
-     */
-    private fun resolveSimpleNameToClassIdWithoutInheritance(
-        simpleName: String,
-        tryResolve: (ClassId) -> Boolean,
-    ): ClassId? {
-        tryImport(simpleName, tryResolve, checkInheritance = false)?.let { return it }
-        trySamePackage(simpleName, tryResolve)?.let { return it }
-        tryJavaLang(simpleName, tryResolve)?.let { return it }
-        tryStarImports(simpleName, tryResolve, checkInheritance = false)?.let { return it }
-        return null
-    }
-
-    /**
-     * Step 1 (JLS 7.5.1): explicit single-type imports.
-     *
-     * When [checkInheritance] is true the imported `FqName` may itself be a nested-class FQN
-     * (e.g. `a.x.b.b.b`), so we defer to [resolveAsClassId] which probes every possible
-     * package/class split. The `WithoutInheritance` flavour uses the simpler [ClassId.topLevel]
-     * split because it is only ever entered from the reentrance-safe fallback where the exotic
-     * split is not needed.
-     */
-    private fun tryImport(
-        simpleName: String,
-        tryResolve: (ClassId) -> Boolean,
-        checkInheritance: Boolean,
-    ): ClassId? {
-        val imported = simpleImports[simpleName] ?: return null
-        return if (checkInheritance) {
-            resolveAsClassId(imported, tryResolve)
-        } else {
-            val classId = ClassId.topLevel(imported)
-            if (tryResolve(classId)) classId else null
-        }
-    }
-
-    /**
-     * Steps 2 + 2b: local/inner classes (JLS 6.5.2 — same compilation unit, containing class
-     * hierarchy, supertypes) and inherited inner classes from supertypes (cross-file, e.g.
-     * Kotlin classes).
-     *
-     * The aggregated inherited inner classes map (cached per context) is used both for
-     * ambiguity detection and as a fast path; the BFS fallback only runs when the map is
-     * unavailable (no class finder) or indicates no candidates.
-     */
-    private fun tryLocalAndInherited(
-        simpleName: String,
-        tryResolve: (ClassId) -> Boolean,
-        getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
-    ): ClassId? {
-        findLocalClass(Name.identifier(simpleName))?.let { localClass ->
-            val fqName = localClass.fqName
-            if (fqName != null) {
-                val classId = fqNameToClassId(fqName)
+        // 1. Explicit single-type imports take highest priority (JLS 7.5.1)
+        simpleImports[simpleName]?.let { imported ->
+            if (checkInheritance) {
+                // Use resolveAsClassId to handle nested class FQNs like "a.x.b.b.b" where
+                // ClassId.topLevel would incorrectly split as package="a.x.b.b", class="b".
+                resolveAsClassId(imported, tryResolve)?.let { return it }
+            } else {
+                val classId = ClassId.topLevel(imported)
                 if (tryResolve(classId)) return classId
             }
         }
 
-        val aggregatedInherited = getAggregatedInheritedInnerClasses()
-        if (aggregatedInherited != null) {
-            val allCandidates = aggregatedInherited[simpleName] ?: emptySet()
-            return when {
-                allCandidates.size > 1 -> null // Ambiguously inherited — don't resolve.
-                allCandidates.size == 1 -> {
-                    val candidateClassId = allCandidates.first()
-                    if (tryResolve(candidateClassId)) candidateClassId else null
+        if (checkInheritance) {
+            // 2. Local/inner classes (same compilation unit, containing class hierarchy, supertypes)
+            // Handles inner classes and inherited member types (JLS 6.5.2)
+            findLocalClass(Name.identifier(simpleName))?.let { localClass ->
+                val fqName = localClass.fqName
+                if (fqName != null) {
+                    val classId = fqNameToClassId(fqName)
+                    if (tryResolve(classId)) return classId
                 }
-                // allCandidates.isEmpty(): fall back to BFS only when [getSupertypeClassIds] is
-                // available, since Phase 2 of the BFS needs it for non-source supertypes.
-                else -> if (getSupertypeClassIds != null) {
-                    resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
-                } else null
+            }
+
+            // 2b. Inherited inner classes from supertypes (cross-file, e.g., Kotlin classes).
+            // Use the aggregated inherited inner classes map (cached per context) for BOTH
+            // ambiguity detection AND as a fast path.
+            val aggregatedInherited = getAggregatedInheritedInnerClasses()
+            if (aggregatedInherited != null) {
+                val allCandidates = aggregatedInherited[simpleName] ?: emptySet()
+                when {
+                    allCandidates.size > 1 -> return null // Ambiguously inherited – don't resolve
+                    allCandidates.size == 1 -> {
+                        val candidateClassId = allCandidates.first()
+                        if (tryResolve(candidateClassId)) return candidateClassId
+                    }
+                    // allCandidates.isEmpty(): fall back to BFS only when [getSupertypeClassIds]
+                    // is available, since Phase 2 of the BFS needs it for non-source
+                    // (Kotlin/binary) supertypes.
+                    else -> {
+                        if (getSupertypeClassIds != null) {
+                            val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+                            if (inheritedResult != null) return inheritedResult
+                        }
+                    }
+                }
+            } else {
+                // No class finder available — use the full BFS as fallback.
+                val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
+                if (inheritedResult != null) return inheritedResult
             }
         }
-        // No class finder available — use the full BFS as fallback.
-        return resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)
-    }
 
-    /** Step 3: same-package. */
-    private fun trySamePackage(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
+        // 3. Same package
         val samePackageClassId = ClassId(packageFqName, Name.identifier(simpleName))
-        return if (tryResolve(samePackageClassId)) samePackageClassId else null
-    }
+        if (tryResolve(samePackageClassId)) return samePackageClassId
 
-    /** Step 4: implicit `java.lang.*` import. */
-    private fun tryJavaLang(simpleName: String, tryResolve: (ClassId) -> Boolean): ClassId? {
+        // 4. java.lang.*
         val javaLangClassId = ClassId(FqName("java.lang"), Name.identifier(simpleName))
-        return if (JavaToKotlinClassMap.mapJavaToKotlin(javaLangClassId.asSingleFqName()) != null ||
-            tryResolve(javaLangClassId)) javaLangClassId else null
-    }
+        if (JavaToKotlinClassMap.mapJavaToKotlin(javaLangClassId.asSingleFqName()) != null || tryResolve(javaLangClassId)) {
+            return javaLangClassId
+        }
 
-    /**
-     * Step 5: explicit star imports.
-     *
-     * With [checkInheritance] = true: handle class-level star imports (`import a.D.*`) and
-     * check ambiguity across multiple star packages.
-     * With [checkInheritance] = false: simple linear probe (used only on the reentrance-safe
-     * fallback path, where ambiguity has already been handled by the outer call).
-     */
-    private fun tryStarImports(
-        simpleName: String,
-        tryResolve: (ClassId) -> Boolean,
-        checkInheritance: Boolean,
-    ): ClassId? {
-        if (!checkInheritance) {
+        // 5. Explicit star imports.
+        // With [checkInheritance]: handle class-level star imports (`import a.D.*`) and check
+        // ambiguity across multiple star packages. Without it: simple linear probe (used only
+        // on the reentrance-safe fallback path, where ambiguity would have been handled by the
+        // outer call).
+        if (checkInheritance) {
+            var foundClassId: ClassId? = null
+            for (starPackage in distinctStarImports) {
+                val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
+                if (tryResolve(candidateClassId)) {
+                    if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
+                    foundClassId = candidateClassId
+                } else {
+                    // Try class-level star import: `import a.D.*` → resolve a.D as a class,
+                    // then look for nested class [simpleName] within it.
+                    val outerClassId = resolveAsClassId(starPackage, tryResolve)
+                    if (outerClassId != null) {
+                        val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
+                        if (tryResolve(nestedClassId)) {
+                            if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
+                            foundClassId = nestedClassId
+                        }
+                    }
+                }
+            }
+            if (foundClassId != null) return foundClassId
+        } else {
             for (starPackage in distinctStarImports) {
                 val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
                 if (tryResolve(candidateClassId)) return candidateClassId
             }
-            return null
         }
 
-        var foundClassId: ClassId? = null
-        for (starPackage in distinctStarImports) {
-            val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
-            if (tryResolve(candidateClassId)) {
-                if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
-                foundClassId = candidateClassId
-            } else {
-                // Class-level star import: `import a.D.*` → resolve `a.D` as a class, then look
-                // for nested class [simpleName] within it.
-                val outerClassId = resolveAsClassId(starPackage, tryResolve)
-                if (outerClassId != null) {
-                    val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
-                    if (tryResolve(nestedClassId)) {
-                        if (foundClassId != null && foundClassId != nestedClassId) return null // Ambiguous
-                        foundClassId = nestedClassId
-                    }
-                }
-            }
-        }
-        return foundClassId
+        return null
     }
 
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
      * Delegates to [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId].
-     *
-     * The `resolveWithoutInheritance` callback routes into dedicated non-recursing resolvers
-     * ([resolveSimpleNameToClassIdWithoutInheritance] /
-     * [resolveNestedClassToClassIdFromPartsWithoutInheritance]) to keep the reentrance-safe
-     * semantics visible at the callback site instead of hidden in a boolean flag.
      */
     private fun resolveInheritedInnerClassToClassId(
         simpleName: String,
@@ -574,9 +485,9 @@ class JavaResolutionContext private constructor(
         simpleName, tryResolve, getSupertypeClassIds, containingClassProvider,
         resolveWithoutInheritance = { name, resolve ->
             if (name.contains('.')) {
-                resolveNestedClassToClassIdFromPartsWithoutInheritance(name.split('.'), resolve)
+                resolveNestedClassToClassIdFromParts(name.split('.'), resolve, getSupertypeClassIds = null, checkInheritance = false)
             } else {
-                resolveSimpleNameToClassIdWithoutInheritance(name, resolve)
+                resolveSimpleNameToClassIdImpl(name, resolve, getSupertypeClassIds = null, checkInheritance = false)
             }
         }
     )
