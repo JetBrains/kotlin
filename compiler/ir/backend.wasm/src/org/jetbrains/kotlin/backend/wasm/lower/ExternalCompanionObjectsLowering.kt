@@ -9,24 +9,9 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isTmpForInline
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.IR_TEMPORARY_VARIABLE
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrComposite
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -37,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class ExternalCompanionObjectsLowering(val context: WasmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(ExternalCompanionObjectsLoweringTransformer())
+        irBody.transformChildrenVoid(ExternalCompanionObjectsLoweringVisitor())
     }
 }
 
@@ -46,7 +31,7 @@ class ExternalCompanionObjectsLowering(val context: WasmBackendContext) : BodyLo
  * unused result, when companion object is declared withing external interface.
  * Enables work with IDLs.
  */
-private class ExternalCompanionObjectsLoweringTransformer : IrElementTransformerVoid() {
+private class ExternalCompanionObjectsLoweringVisitor : IrElementTransformerVoid() {
 
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (expression.origin != IrStatementOrigin.INLINE_ARGS_CONTAINER) {
@@ -82,40 +67,37 @@ private class ExternalCompanionObjectsLoweringTransformer : IrElementTransformer
             override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
             override fun visitGetValue(expression: IrGetValue) {
-                if (expression.symbol == receiverVar) {
+                if (expression.symbol == receiverVar.symbol) {
                     receiverUsed = true
                 }
             }
         })
 
-        // Null out initializers of tmp vars, if companion object instance isn't required
+        // remove temporary companion object instance vars, if companion object instance is dropped
         if (!receiverUsed) {
-            val excludedVars = listOf(receiverVar, helperVarForReceiver)
+            val excludedVars = setOf(receiverVar, helperVarForReceiver)
 
-            inlinedBlock.transformChildrenVoid(object : IrElementTransformerVoid() {
-                override fun visitBlock(expression: IrBlock): IrExpression {
-                    expression.transformChildrenVoid(this)
-                    expression.statements.removeAll { it in excludedVars }
-                    return expression
-                }
-
-                override fun visitComposite(expression: IrComposite): IrExpression {
-                    expression.transformChildrenVoid(this)
-                    expression.statements.removeAll { it in excludedVars }
-                    return expression
-                }
-
-                override fun visitBlockBody(body: IrBlockBody): IrBody {
-                    body.transformChildrenVoid(this)
-                    body.statements.removeAll { it in excludedVars }
-                    return body
-                }
-            })
+            expression.eliminateTemporaryCompanionObjectInstanceVars(excludedVars)
         }
 
         expression.transformChildrenVoid(this)
 
         return expression
+    }
+
+    private fun IrBlock.eliminateTemporaryCompanionObjectInstanceVars(excludedVars: Set<IrVariable>) {
+        acceptVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+            override fun visitContainerExpression(expression: IrContainerExpression) {
+                expression.statements -= excludedVars
+                expression.acceptChildrenVoid(this)
+            }
+
+            override fun visitBlockBody(body: IrBlockBody) {
+                body.statements -= excludedVars
+                body.acceptChildrenVoid(this)
+            }
+        })
     }
 
     private fun isExternalInterfaceCompanion(klass: IrClass): Boolean {
@@ -124,5 +106,3 @@ private class ExternalCompanionObjectsLoweringTransformer : IrElementTransformer
         return parent.isInterface
     }
 }
-
-
