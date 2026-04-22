@@ -21,7 +21,6 @@ internal interface XcodebuildDefFileWorkParameters : WorkParameters {
     val clangModules: SetProperty<String>
     val discoverModulesImplicitly: Property<Boolean>
     val defFilesOutputDir: DirectoryProperty
-    val ldDumpOutputDir: DirectoryProperty
     val clangDumpIntermediatesDir: DirectoryProperty
     val cinteropNamespace: Property<String>
 }
@@ -29,24 +28,21 @@ internal interface XcodebuildDefFileWorkParameters : WorkParameters {
 internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFileWorkParameters> {
 
     override fun execute() {
-        writeDefAndLinkerOutputs(
+        writeDefOutputs(
             architectures = parameters.architectures.get(),
             cinteropNamespace = parameters.cinteropNamespace.get(),
             defFilesDir = parameters.defFilesOutputDir.getFile(),
-            ldDumpDir = parameters.ldDumpOutputDir.getFile(),
             clangDumpIntermediatesDir = parameters.clangDumpIntermediatesDir.getFile(),
         )
     }
 
-    private fun writeDefAndLinkerOutputs(
+    private fun writeDefOutputs(
         architectures: Set<AppleArchitecture>,
         cinteropNamespace: String,
         defFilesDir: File,
-        ldDumpDir: File,
         clangDumpIntermediatesDir: File,
     ) {
         val clangArgsDump = clangDumpIntermediatesDir.resolve("clang_args_dump")
-        val ldArgsDump = clangDumpIntermediatesDir.resolve("ld_args_dump")
         val discoverModulesImplicitly = parameters.discoverModulesImplicitly.get()
         val clangModulesFromParams = parameters.clangModules.get()
 
@@ -59,7 +55,10 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
             }.forEach {
                 val clangArgs = it.readLines().single()
                 val isArchitectureSpecificProductClangCall =
-                    "-fmodule-name=${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}" in clangArgs
+                    (
+                        "-fmodule-name=${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}" in clangArgs
+                                || "-fmodule-name=${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME}" in clangArgs
+                        )
                             && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in clangArgs
                 if (isArchitectureSpecificProductClangCall) {
                     architectureSpecificProductClangCalls.add(it)
@@ -80,27 +79,6 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
                 cinteropNamespace = cinteropNamespace,
                 discoverModulesImplicitly = discoverModulesImplicitly,
             )
-
-            val architectureSpecificProductLdCalls = ldArgsDump.listFilesOrEmpty().filter {
-                it.isFile
-            }.filter {
-                val ldArgs = it.readLines().single()
-                ("@rpath/lib${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.framework" in ldArgs)
-                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
-            }
-
-            val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())
-
-            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture))
-                .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
-            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture))
-                .writeText(parsedLdCall.frameworkLdArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
-            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture))
-                .writeText(System.currentTimeMillis().toString())
-            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture))
-                .writeText(parsedLdCall.linkTimeFrameworkSearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
-            ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture))
-                .writeText(parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
         }
     }
 }

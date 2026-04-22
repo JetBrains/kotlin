@@ -13,6 +13,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.CollectSwiftPMLinkerOutputs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.testbase.TestProject
@@ -442,6 +443,17 @@ internal fun TestProject.initSwiftPmProject(
 
         project.tasks
             .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+            .configureEach { task ->
+                task.additionalXcodeArgs.set(
+                    listOf(
+                        "-packageFingerprintPolicy", "warn",
+                        "-packageCachePath", cacheDirFile.path,
+                    )
+                )
+            }
+
+        project.tasks
+            .withType(CollectSwiftPMLinkerOutputs::class.java)
             .configureEach { task ->
                 task.additionalXcodeArgs.set(
                     listOf(

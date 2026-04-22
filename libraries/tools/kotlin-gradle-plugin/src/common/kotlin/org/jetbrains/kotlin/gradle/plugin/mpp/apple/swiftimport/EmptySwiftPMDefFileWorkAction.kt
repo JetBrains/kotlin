@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 internal interface EmptySwiftPMDefFileWorkParameters : WorkParameters {
     val architectures: SetProperty<AppleArchitecture>
     val defFilesOutputDir: DirectoryProperty
-    val ldDumpOutputDir: DirectoryProperty
     val cinteropNamespace: Property<String>
 }
 
@@ -25,7 +24,6 @@ internal abstract class EmptySwiftPMDefFileWorkAction : WorkAction<EmptySwiftPMD
         val architectures = parameters.architectures.get()
         val cinteropNamespace = parameters.cinteropNamespace.get()
         val defFilesDir = parameters.defFilesOutputDir.getFile()
-        val ldDumpDir = parameters.ldDumpOutputDir.getFile()
 
         architectures.forEach { architecture ->
             defFilesDir.resolve(XcodebuildDefFileUtils.defFileName(architecture)).writeText(
@@ -34,11 +32,6 @@ internal abstract class EmptySwiftPMDefFileWorkAction : WorkAction<EmptySwiftPMD
                     package = $cinteropNamespace
                 """.trimIndent()
             )
-            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture)).writeText("\n")
-            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture)).writeText("\n")
-            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture)).writeText("0")
-            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture)).writeText("\n")
-            ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture)).writeText("\n")
         }
     }
 }

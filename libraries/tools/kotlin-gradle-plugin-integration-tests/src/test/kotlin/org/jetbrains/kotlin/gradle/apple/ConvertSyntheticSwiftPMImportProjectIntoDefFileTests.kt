@@ -17,12 +17,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.CollectSwiftPMLinkerOutputs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.RunXcodebuildForSwiftPMDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.RunXcodebuildForSwiftPMLinkerOutputs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.WriteEmptySwiftPMDefFileOutputs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.WriteSwiftPMDefFileFromXcodebuildDumps
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.WriteSwiftPMLinkerOutputsFromXcodebuildDumps
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
@@ -75,7 +78,14 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     configureWithExtension(extension)
                     konanTargets.set(setOf(KonanTarget.IOS_SIMULATOR_ARM64))
                     dependencyIdentifierToImportedSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
+                    syntheticProductType.set(SyntheticProductType.INFERRED)
+                }
+                val packageGenerationForLinkerOutputs = project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGenerationForLinkerOutputs") {
+                    configureWithExtension(extension)
+                    konanTargets.set(setOf(KonanTarget.IOS_SIMULATOR_ARM64))
+                    dependencyIdentifierToImportedSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
                     syntheticProductType.set(SyntheticProductType.DYNAMIC)
+                    syntheticImportProjectRoot.set(project.layout.buildDirectory.dir("kotlin/swiftImportLinkerOutputs"))
                 }
 
                 val xcodebuildDumpTask = project.tasks.register<RunXcodebuildForSwiftPMDefFile>("packageDumpXcodebuild") {
@@ -114,6 +124,34 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                             XcodebuildDefFileUtils.defFilesRelativeDir(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
                         )
                     )
+                }
+
+                val linkerDumpTask = project.tasks.register<RunXcodebuildForSwiftPMLinkerOutputs>("packageDumpLinkerXcodebuild") {
+                    dependsOn(packageGenerationForLinkerOutputs)
+                    xcodebuildPlatform.set(KonanTarget.IOS_SIMULATOR_ARM64.applePlatform)
+                    xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
+                    architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
+                    filesToTrackFromLocalPackages.set(stubTrackedFiles)
+                    resolvedPackagesState.from(
+                        packageGenerationForLinkerOutputs.map { task ->
+                            task.syntheticImportProjectRoot.get().asFileTree.matching {
+                                it.include("**/Package.swift")
+                                it.include("Package.resolved")
+                            }
+                        }
+                    )
+                    swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
+                    syntheticImportProjectRoot.set(packageGenerationForLinkerOutputs.map { it.syntheticImportProjectRoot.get() })
+                    syntheticImportDd.set(project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR))
+                    ldDumpIntermediatesDir.set(
+                        project.layout.buildDirectory.dir("kotlin/swiftImportLdIntermediates/${KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk}")
+                    )
+                }
+
+                val writeLinkerTask = project.tasks.register<WriteSwiftPMLinkerOutputsFromXcodebuildDumps>("packageDumpWriteLinker") {
+                    dependsOn(linkerDumpTask)
+                    architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
+                    ldDumpIntermediatesDir.set(linkerDumpTask.flatMap { it.ldDumpIntermediatesDir })
                     ldDumpOutputDir.set(
                         project.layout.buildDirectory.dir(
                             XcodebuildDefFileUtils.ldDumpRelativeDir(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
@@ -123,6 +161,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
 
                 project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
                     dependsOn(writeDefTask)
+                    dependsOn(writeLinkerTask)
                     xcodebuildPlatform.set(KonanTarget.IOS_SIMULATOR_ARM64.applePlatform)
                     xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
                     architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
@@ -184,11 +223,6 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                             XcodebuildDefFileUtils.defFilesRelativeDir(KonanTarget.MACOS_ARM64.appleTarget.sdk)
                         )
                     )
-                    ldDumpOutputDir.set(
-                        project.layout.buildDirectory.dir(
-                            XcodebuildDefFileUtils.ldDumpRelativeDir(KonanTarget.MACOS_ARM64.appleTarget.sdk)
-                        )
-                    )
                 }
 
                 project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
@@ -212,7 +246,6 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                 listOf("language = Objective-C", "package = swiftPMImport.empty"),
                 generatedDefFile.readLines(),
             )
-            assertFileExists(projectPath.resolve("build/kotlin/swiftImportLdDump/macosx/arm64.ld"))
         }
     }
 

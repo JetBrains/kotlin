@@ -543,7 +543,7 @@ class SwiftPMImportUnitTests {
             .map { it.name }.toSet()
 
         assertEquals(
-            setOf("convertSyntheticImportProjectIntoDefFileIphonesimulator"),
+            setOf("collectSwiftPMLinkerOutputsIphonesimulator"),
             dynamicFrameworkTaskDependencies - staticFrameworkTaskDependencies,
         )
         assertEquals(
