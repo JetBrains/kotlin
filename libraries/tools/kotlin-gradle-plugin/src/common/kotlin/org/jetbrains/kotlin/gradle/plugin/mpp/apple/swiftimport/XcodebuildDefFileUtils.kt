@@ -191,6 +191,11 @@ internal object XcodebuildDefFileUtils {
         return implicitlyDiscoveredModules
     }
 
+    private fun String.isSyntheticFingerprintModule(): Boolean {
+        val module = trim().removeSurrounding("\"")
+        return module.startsWith("_")
+    }
+
     fun writeDefFile(
         parsedClangCall: ParsedClangCall,
         clangModules: Set<String>,
@@ -200,7 +205,9 @@ internal object XcodebuildDefFileUtils {
         discoverModulesImplicitly: Boolean,
     ) {
         val defFileSearchPaths = parsedClangCall.cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
-        val modules = clangModules.joinToString(" ") { "\"${it}\"" }
+        val modules = clangModules
+            .filterNot { it.isSyntheticFingerprintModule() }
+            .joinToString(" ") { "\"$it\"" }
 
         val defFile = defFilesDir.resolve("${architecture.xcodebuildArch}.def")
         defFile.writeText(

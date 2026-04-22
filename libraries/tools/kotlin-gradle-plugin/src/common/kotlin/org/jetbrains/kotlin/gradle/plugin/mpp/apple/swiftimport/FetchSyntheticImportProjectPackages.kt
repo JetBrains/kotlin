@@ -8,20 +8,25 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecOperations
+import java.io.File
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
+import org.gradle.api.tasks.Optional
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
@@ -76,64 +81,117 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @get:Internal
     abstract val additionalSwiftPackageResolveArgs: ListProperty<String>
 
+    @get:Optional
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val syntheticPackageFingerprint: RegularFileProperty
+
+    @get:Internal
+    val fingerprintCoordinationEnabled: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
+
+    @get:Internal
+    abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
+
     @get:Inject
-    protected abstract val execOps: ExecOperations
+    abstract val fs: FileSystemOperations
+
+    @get:Inject
+    protected abstract val workerExecutor: WorkerExecutor
 
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
-        checkoutSwiftPMDependencies()
-    }
 
-    private fun swiftpmResolve() {
-        execOps.exec { exec ->
-
-            exec.workingDir(syntheticImportProjectRoot.get().asFile)
-
-            val args = mutableListOf(
-                "/usr/bin/swift",
-                "package",
-                "--scratch-path", swiftPMDependenciesCheckout.get().asFile,
-                "resolve",
+        if (!fingerprintCoordinationEnabled.get() || !syntheticPackageFingerprint.isPresent) {
+            submitSwiftResolveWorkAction(
+                ownerSyntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
+                ownerSwiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
             )
+            return
+        }
 
-            if (additionalSwiftPackageResolveArgs.isPresent) {
-                args.addAll(additionalSwiftPackageResolveArgs.get())
+        val syntheticPackageHash = syntheticPackageFingerprint.get().asFile.readText().trim()
+
+        val generationBucket = coordinationService.get().findPackageGenerationBucket(syntheticPackageHash)
+            ?: error("Package bucket is missing for package hash $syntheticPackageHash")
+
+        coordinationService.get().awaitPackageGeneration(generationBucket)
+
+        val ownerHash = syntheticPackageFingerprint.asFile.get().readText().trim()
+        val claim = coordinationService.get().claimOrJoinSwiftResolve(
+            packageHash = ownerHash,
+        )
+        when (claim) {
+            is CoordinationClaim.Existing -> {
+                coordinationService.get().awaitSwiftResolved(claim.bucket)
             }
 
-            val environmentToFilter = listOf("SDKROOT")
-            environmentToFilter.forEach { key ->
-                if (exec.environment.containsKey(key)) {
-                    exec.environment.remove(key)
-                }
+            is CoordinationClaim.Owner -> {
+                runOwnerSwiftResolve(claim.bucket)
             }
-
-            exec.commandLine(args)
         }
-
-        if (gitIgnoreCheckoutDir.get()) {
-            writeCheckoutDirToGitIgnore()
-        }
+        finalizeFetchTask(claim.bucket)
 
     }
 
-    private fun writeCheckoutDirToGitIgnore() {
-        val checkoutDir = swiftPMDependenciesCheckout.get().asFile
-        val root = checkoutDir.parentFile
-        val exclude = root.resolve(".gitignore")
+    private fun finalizeFetchTask(
+        bucket: SwiftResolveBucket
+    ) {
+        copyPasteFromOwner(
+            bucket.ownerPackageResolvedFile,
+            syntheticLockFile.get().asFile,
+        )
+        copyPasteFromOwner(
+            bucket.ownerWorkspaceStateFile,
+            workspaceStateJson.get().asFile
+        )
+    }
 
-        if(!exclude.exists()) {
-            exclude.parentFile.mkdirs()
-            exclude.createNewFile()
+    private fun copyPasteFromOwner(
+        source: File,
+        destination: File,
+    ) {
+        if (!source.exists()) {
+            if (destination.exists()) {
+                destination.delete()
+            }
+            return
         }
-
-        val entry = "${checkoutDir.name}/"
-
-        exclude.writeText(entry)
+        copySwiftLockFile(fs, source, destination)
     }
 
-    private fun checkoutSwiftPMDependencies() {
-        swiftpmResolve()
+
+    private fun runOwnerSwiftResolve(
+        bucket: SwiftResolveBucket,
+    ) {
+        try {
+            // The owner writes directly to the root-build bucket, while still building this task's synthetic package and
+            // using this task's SwiftPM checkout.
+            submitSwiftResolveWorkAction(
+                ownerSyntheticImportProjectRoot = bucket.ownerSyntheticImportProjectRoot,
+                ownerSwiftPMDependenciesCheckout = bucket.ownerSwiftPMDependenciesCheckout,
+            )
+            workerExecutor.await()
+            // Completion stamps the shared dump and releases any tasks waiting on the same bucket.
+            coordinationService.get().markSwiftResolveCompleted(bucket)
+        } catch (failure: Throwable) {
+            // Propagate the same failure to every task that joined this bucket.
+            coordinationService.get().markSwiftResolveFailed(bucket, failure)
+            throw failure
+        }
     }
+
+    fun submitSwiftResolveWorkAction(
+        ownerSyntheticImportProjectRoot: File,
+        ownerSwiftPMDependenciesCheckout: File,
+    ) {
+        workerExecutor.noIsolation().submit(SwiftResolveWorkAction::class.java) { params ->
+            params.syntheticImportProjectRoot.set(ownerSyntheticImportProjectRoot)
+            params.swiftPMDependenciesCheckout.set(ownerSwiftPMDependenciesCheckout)
+            params.additionalSwiftPackageResolveArgs.set(additionalSwiftPackageResolveArgs)
+            params.gitIgnoreCheckoutDir.set(gitIgnoreCheckoutDir)
+        }
+    }
+
 
     companion object {
         const val TASK_NAME = "fetchSyntheticImportProjectPackages"

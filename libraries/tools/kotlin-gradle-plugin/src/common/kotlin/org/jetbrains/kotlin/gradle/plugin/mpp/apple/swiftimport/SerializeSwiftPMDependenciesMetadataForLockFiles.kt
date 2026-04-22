@@ -41,6 +41,7 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFiles
     ) {
         it.enabled = HostManager.hostIsMac
         it.configureWithExtension(swiftPMImportExtension)
+        it.dependsOn(transitiveDependencies)
         it.transitiveSwiftPMDependencies.set(transitiveDependencies)
         it.konanTargets.add(konanTarget)
     }

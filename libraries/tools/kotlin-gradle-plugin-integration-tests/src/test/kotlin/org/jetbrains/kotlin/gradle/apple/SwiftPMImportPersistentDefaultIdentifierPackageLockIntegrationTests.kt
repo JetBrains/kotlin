@@ -970,6 +970,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":right:syncPersistedPackageResolvedToSynthetic",
                         ":right:fetchSyntheticImportProjectPackages",
                         ":right:syncSyntheticPackageResolvedToPersisted",
+                        ":right:dumpXcodebuildArgsIphonesimulator",
                         ":right:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":right:compileKotlinIosSimulatorArm64",
                         ":right:iosSimulatorArm64MainKlibrary",
@@ -982,6 +983,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                     assertExactSwiftImportTasksInGraph(
                         ":left:computeLocalPackageDependencyInputFiles",
+                        ":left:fingerprintSyntheticPackage",
                         ":left:generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
                         ":serializeSwiftPMDependenciesMetadataForLockFiles",
                         ":left:serializeSwiftPMDependenciesMetadataForLockFiles",
@@ -990,6 +992,8 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         ":left:iosSimulatorArm64ProcessResources",
                         ":left:syncPersistedPackageResolvedToSynthetic",
                         ":left:fetchSyntheticImportProjectPackages",
+                        ":left:fingerprintXcodebuildIphonesimulator",
+                        ":left:dumpXcodebuildArgsIphonesimulator",
                         ":left:convertSyntheticImportProjectIntoDefFileIphonesimulator",
                         ":left:cinteropSwiftPMImportIosSimulatorArm64",
                         ":left:compileKotlinIosSimulatorArm64",
