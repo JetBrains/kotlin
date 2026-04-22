@@ -120,21 +120,47 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     @TaskAction
     fun generateDefFiles() {
-        workerExecutor.noIsolation().submit(XcodebuildDefFileWorkAction::class.java) { params ->
+        if (hasSwiftPMDependencies.get()) {
+            submitXcodebuildArgsDumpWorkAction()
+            workerExecutor.await()
+            submitDefFileWorkAction()
+        } else {
+            submitEmptyOutputsWorkAction()
+        }
+    }
+
+    private fun submitXcodebuildArgsDumpWorkAction() {
+        workerExecutor.noIsolation().submit(XcodebuildArgsDumpWorkAction::class.java) { params ->
             val sdk = xcodebuildSdk.get()
             params.xcodebuildPlatform.set(xcodebuildPlatform)
             params.xcodebuildSdk.set(xcodebuildSdk)
             params.architectures.set(architectures)
-            params.clangModules.set(clangModules)
-            params.discoverModulesImplicitly.set(discoverModulesImplicitly)
-            params.hasSwiftPMDependencies.set(hasSwiftPMDependencies)
             params.syntheticImportProjectRoot.set(syntheticImportProjectRoot)
             params.swiftPMDependenciesCheckout.set(swiftPMDependenciesCheckout)
             params.syntheticImportDd.set(syntheticImportDd)
+            params.clangDumpIntermediatesDir.set(layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk)))
+            params.additionalXcodeArgs.set(additionalXcodeArgs)
+        }
+    }
+
+    private fun submitDefFileWorkAction() {
+        workerExecutor.noIsolation().submit(XcodebuildDefFileWorkAction::class.java) { params ->
+            val sdk = xcodebuildSdk.get()
+            params.architectures.set(architectures)
+            params.clangModules.set(clangModules)
+            params.discoverModulesImplicitly.set(discoverModulesImplicitly)
             params.defFilesOutputDir.set(defFiles)
             params.ldDumpOutputDir.set(ldDump)
             params.clangDumpIntermediatesDir.set(layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk)))
-            params.additionalXcodeArgs.set(additionalXcodeArgs)
+            params.cinteropNamespace.set(cinteropNamespace)
+        }
+    }
+
+    private fun submitEmptyOutputsWorkAction() {
+        workerExecutor.noIsolation().submit(EmptySwiftPMDefFileWorkAction::class.java) { params ->
+            params.architectures.set(architectures)
+            params.defFilesOutputDir.set(defFiles)
+            params.ldDumpOutputDir.set(ldDump)
             params.cinteropNamespace.set(cinteropNamespace)
         }
     }
