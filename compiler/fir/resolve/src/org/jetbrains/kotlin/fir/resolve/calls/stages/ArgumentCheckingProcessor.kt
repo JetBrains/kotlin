@@ -270,7 +270,7 @@ internal object ArgumentCheckingProcessor {
         // Currently, we only apply conversions for arguments, not lambda's return expressions
         if (anonymousFunctionIfReturnExpression != null) {
             // For latest LV it's equal to `return false`
-            return !LanguageFeature.DoNotRunSuspendConversionForLambdaReturnStatements.isEnabled()
+            return LanguageFeature.DoNotRunSuspendConversionForLambdaReturnStatements.isDisabled()
         }
         return true
     }
