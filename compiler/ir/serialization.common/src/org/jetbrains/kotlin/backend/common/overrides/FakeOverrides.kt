@@ -292,31 +292,16 @@ private class IrLinkerFakeOverrideBuilderStrategy(
 }
 
 class IrLinkerFakeOverrideProvider(
-    linker: FileLocalAwareLinker,
-    symbolTable: SymbolTable,
+    private val linker: FileLocalAwareLinker,
+    private val symbolTable: SymbolTable,
     val mangler: KotlinMangler.IrMangler,
-    typeSystem: IrTypeSystemContext,
-    friendModules: Map<String, Collection<String>>,
+    private val friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
-    externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
-    isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
+    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
+    private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
 ) {
-    private val irFakeOverrideBuilder = IrFakeOverrideBuilder(
-        typeSystem,
-        IrLinkerFakeOverrideBuilderStrategy(
-            linker,
-            symbolTable,
-            typeSystem.irBuiltIns,
-            partialLinkageSupport,
-            fakeOverrideDeclarationTable,
-            friendModules,
-            isMultipleInheritedImplementationsAllowed,
-        ),
-        externalOverridabilityConditions
-    )
-
     private val haveFakeOverrides = mutableSetOf<IrClass>()
     val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
 
@@ -325,33 +310,46 @@ class IrLinkerFakeOverrideProvider(
         fakeOverrideCandidates[clazz] = compatibilityMode
     }
 
-    private fun buildFakeOverrideChainsForClass(clazz: IrClass, compatibilityMode: CompatibilityMode): Boolean {
+    private fun IrFakeOverrideBuilder.buildFakeOverrideChainsForClass(clazz: IrClass, compatibilityMode: CompatibilityMode): Boolean {
         if (haveFakeOverrides.contains(clazz)) return true
 
         for (supertype in clazz.superTypes) {
             val superClass = supertype.getClass() ?: error("Unexpected super type: ${supertype.render()}")
             val mode = fakeOverrideCandidates[superClass] ?: compatibilityMode
-            if (buildFakeOverrideChainsForClass(superClass, mode))
+            if (this.buildFakeOverrideChainsForClass(superClass, mode))
                 haveFakeOverrides.add(superClass)
         }
 
         if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return false
 
-        irFakeOverrideBuilder.buildFakeOverridesForClass(clazz, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations)
+        buildFakeOverridesForClass(clazz, compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations)
 
         return true
     }
 
-    fun provideFakeOverrides(klass: IrClass, compatibilityMode: CompatibilityMode) {
+    private fun IrFakeOverrideBuilder.provideFakeOverrides(klass: IrClass, compatibilityMode: CompatibilityMode) {
         buildFakeOverrideChainsForClass(klass, compatibilityMode)
         haveFakeOverrides.add(klass)
     }
 
-    fun provideFakeOverrides() {
+    fun provideFakeOverrides(typeSystem: IrTypeSystemContext) {
+        val fakeOverrideBuilder = IrFakeOverrideBuilder(
+            typeSystem,
+            IrLinkerFakeOverrideBuilderStrategy(
+                linker,
+                symbolTable,
+                typeSystem.irBuiltIns,
+                partialLinkageSupport,
+                fakeOverrideDeclarationTable,
+                friendModules,
+                isMultipleInheritedImplementationsAllowed,
+            ),
+            externalOverridabilityConditions
+        )
         val entries = fakeOverrideCandidates.entries.toMutableList()
         while (entries.isNotEmpty()) {
             val candidate = entries.removeLast()
-            provideFakeOverrides(candidate.key, candidate.value)
+            fakeOverrideBuilder.provideFakeOverrides(candidate.key, candidate.value)
         }
         fakeOverrideCandidates.clear()
     }

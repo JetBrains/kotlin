@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.name.Name
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
     configuration: CompilerConfiguration,
-    typeSystem: IrTypeSystemContext,
+    private val typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
@@ -48,7 +49,6 @@ class JvmIrLinker(
         linker = this,
         symbolTable = symbolTable,
         mangler = irMangler,
-        typeSystem = typeSystem,
         friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
@@ -87,6 +87,8 @@ class JvmIrLinker(
         if (this is PropertyAccessorDescriptor) return correspondingProperty.isCleanDescriptor()
         return this is DeserializedDescriptor
     }
+
+    override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = typeSystem
 
     override fun platformSpecificSymbol(symbol: IrSymbol): Boolean {
         return symbol.descriptor.isJavaDescriptor()

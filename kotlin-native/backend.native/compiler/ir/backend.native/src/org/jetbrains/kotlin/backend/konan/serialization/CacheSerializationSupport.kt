@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -140,7 +141,7 @@ internal class InlineFunctionDeserializer(
         linker.partialLinkageSupport.exploreClassifiers(linker.fakeOverrideBuilder)
         linker.partialLinkageSupport.exploreClassifiersInInlineLazyIrFunction(function)
 
-        linker.fakeOverrideBuilder.provideFakeOverrides()
+        linker.fakeOverrideBuilder.provideFakeOverrides(IrTypeSystemContextImpl(linker.builtIns))
 
         linker.partialLinkageSupport.enqueueDeclaration(function)
         linker.partialLinkageSupport.generateStubsAndPatchUsages(linker.symbolTable)
