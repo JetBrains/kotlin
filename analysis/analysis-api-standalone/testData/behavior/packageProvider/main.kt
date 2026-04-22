@@ -1,3 +1,3 @@
 package foo
 
-fun test() {}
+fun test() = listOf("foo", "bar")
