@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
@@ -74,16 +75,27 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     syntheticProductType.set(SyntheticProductType.DYNAMIC)
                 }
 
-                project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
+                val dumpTask = project.tasks.register<DumpXcodeBuildArgs>("packageDumpArgs") {
                     dependsOn(packageGeneration)
                     xcodebuildPlatform.set(KonanTarget.IOS_SIMULATOR_ARM64.applePlatform)
                     xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
                     architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
-                    discoverModulesImplicitly.set(true)
                     hasSwiftPMDependencies.set(true)
                     filesToTrackFromLocalPackages.set(stubTrackedFiles)
-                    swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
                     syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
+                    swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
+                    dumpedXcodeBuildArgsDir.set(
+                        project.layout.buildDirectory.dir("kotlin/customSwiftImportDump/iphonesimulator")
+                    )
+                }
+
+                project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
+                    dependsOn(dumpTask)
+                    xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
+                    architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
+                    discoverModulesImplicitly.set(true)
+                    hasSwiftPMDependencies.set(true)
+                    dumpedXcodeBuildArgsDir.set(dumpTask.flatMap { it.dumpedXcodeBuildArgsDir })
                 }
             }
 
@@ -122,22 +134,16 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
     @GradleTest
     fun `sdk without relevant SwiftPM dependencies writes stub outputs without xcodebuild`(version: GradleVersion) {
         project("empty", version) {
-            val stubTrackedFiles = projectPath.resolve("trackedFilesStub").also { it.createFile() }.toFile()
-
             plugins {
                 kotlin("multiplatform").apply(false)
             }
             buildScriptInjection {
                 project.createKotlinExtension(KotlinMultiplatformExtension::class)
                 project.tasks.register<ConvertSyntheticSwiftPMImportProjectIntoDefFile>("packageDump") {
-                    xcodebuildPlatform.set(KonanTarget.MACOS_ARM64.applePlatform)
                     xcodebuildSdk.set(KonanTarget.MACOS_ARM64.appleTarget.sdk)
                     architectures.add(KonanTarget.MACOS_ARM64.appleArchitecture)
                     discoverModulesImplicitly.set(true)
                     hasSwiftPMDependencies.set(false)
-                    filesToTrackFromLocalPackages.set(stubTrackedFiles)
-                    swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
-                    syntheticImportProjectRoot.set(project.layout.buildDirectory.dir("unusedSyntheticProject"))
                 }
             }
 

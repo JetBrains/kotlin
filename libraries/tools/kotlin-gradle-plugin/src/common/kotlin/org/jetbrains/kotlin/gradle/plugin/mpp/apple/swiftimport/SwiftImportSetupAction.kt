@@ -182,9 +182,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         when (val packageIdentifier = identifierSynchronizationOrNull()) {
             is PackageResolvedSynchronization.Identifier -> {
                 val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
+                val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
                 kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all {
-                    val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(this)
-
                     val projectPath = project.path
 
                     aggregationService.get().contribute(
@@ -270,17 +269,43 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         val targetSdk = target.konanTarget.appleTarget.sdk
 
         val defFilesAndLdDumpGenerationTask = registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
-            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
             discoverModulesImplicitly = swiftPMImportExtension.discoverClangModulesImplicitly,
-            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
             isMacOSHost = isMacOSHost,
             targetSdk = targetSdk,
-            targetPlatform = targetPlatform,
         )
+
         defFilesAndLdDumpGenerationTask.configure {
             it.architectures.add(target.konanTarget.appleArchitecture)
+        }
+
+        project.afterEvaluate {
+            if (swiftPMImportExtension.swiftPMDependencies.isEmpty()) return@afterEvaluate
+            val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
+            val normalizedDumpKey = swiftPMImportExtension.normalizedDumpTaskFingerprint(
+                xcodebuildPlatform = targetPlatform,
+                xcodebuildSdk = targetSdk,
+                architectures = setOf(target.konanTarget.appleArchitecture),
+                additionalXcodeArgs = emptyList(),
+            )
+
+            val claimedDumpTask = locateOrRegisterSharedDumpXcodebuildArgs(
+                aggregationService = aggregationService,
+                normalizedDumpKey = normalizedDumpKey,
+                computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+                fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
+                syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+                hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
+                targetSdk = targetSdk,
+                targetPlatform = targetPlatform,
+                architecture = target.konanTarget.appleArchitecture,
+                isMacOSHost = isMacOSHost,
+            )
+            defFilesAndLdDumpGenerationTask.configure { task ->
+                task.dumpedXcodeBuildArgsDir.set(
+                    project.layout.dir(project.provider { File(claimedDumpTask.dumpedArgsDir) })
+                )
+                task.dependsOn(claimedDumpTask.taskPath)
+            }
         }
 
         tasks.configureEach { task ->
@@ -294,7 +319,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 )
             }
         }
-
         target.binaries.all { binary ->
             binary.linkTaskProvider.configure { linkTask ->
                 if (binary is Framework && binary.isStatic) return@configure
@@ -707,14 +731,9 @@ internal fun Project.locateOrRegisterRegenerateLinkageImportProjectTask(): TaskP
 }
 
 private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
-    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
-    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
-    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     discoverModulesImplicitly: Provider<Boolean>,
-    hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
     isMacOSHost: Boolean,
     targetSdk: String,
-    targetPlatform: String,
 ): TaskProvider<ConvertSyntheticSwiftPMImportProjectIntoDefFile> {
     return project.locateOrRegisterTask<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(
         lowerCamelCaseName(
@@ -723,20 +742,85 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
         )
     ) {
         it.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-        it.dependsOn(fetchSyntheticImportProjectPackages)
-        it.dependsOn(computeLocalPackageDependencyInputFiles)
-        it.resolvedPackagesState.from(
+        it.xcodebuildSdk.set(targetSdk)
+        it.discoverModulesImplicitly.set(discoverModulesImplicitly)
+        it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies())
+    }
+}
+
+private fun Project.registerDumpXcodebuildArgsTask(
+    taskName: String,
+    outputDir: Provider<Directory>,
+    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
+    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
+    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
+    hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
+    targetSdk: String,
+    targetPlatform: String,
+    architecture: org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture,
+    isMacOSHost: Boolean,
+): TaskProvider<DumpXcodeBuildArgs> {
+    return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
+        taskName
+    ) { dumpTask ->
+        dumpTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+        dumpTask.dependsOn(fetchSyntheticImportProjectPackages)
+        dumpTask.dependsOn(computeLocalPackageDependencyInputFiles)
+        dumpTask.resolvedPackagesState.from(
             fetchSyntheticImportProjectPackages.map { it.inputManifests },
             fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
         )
-        it.xcodebuildPlatform.set(targetPlatform)
-        it.xcodebuildSdk.set(targetSdk)
-        it.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
-        it.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
-        it.discoverModulesImplicitly.set(discoverModulesImplicitly)
-        it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
-        it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
+        dumpTask.xcodebuildPlatform.set(targetPlatform)
+        dumpTask.xcodebuildSdk.set(targetSdk)
+        dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
+        dumpTask.syntheticImportProjectRoot.set(
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() }
+        )
+        dumpTask.architectures.add(architecture)
+        dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
+        dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
+        dumpTask.dumpedXcodeBuildArgsDir.set(outputDir)
     }
+}
+
+private fun Project.locateOrRegisterSharedDumpXcodebuildArgs(
+    aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
+    normalizedDumpKey: String,
+    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
+    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
+    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
+    hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
+    targetSdk: String,
+    targetPlatform: String,
+    architecture: org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture,
+    isMacOSHost: Boolean,
+): ClaimedDumpTask {
+    val candidateTaskName = lowerCamelCaseName(
+        DumpXcodeBuildArgs.TASK_NAME,
+        targetSdk,
+    )
+    val projectCandidateTaskName = "${project.path}:$candidateTaskName"
+    val candidateOutputDir = layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)).get().asFile.path
+    // The fingerprint only decides ownership; task names stay target-scoped so matching consumers can reuse the owner task directly.
+    val isClaimed = aggregationService.get().claimDumpTask(normalizedDumpKey, projectCandidateTaskName, candidateOutputDir)
+    val claimedTask = aggregationService.get().getClaimedDumpTask(normalizedDumpKey)
+
+    if (isClaimed) {
+        registerDumpXcodebuildArgsTask(
+            taskName = candidateTaskName,
+            outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)),
+            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
+            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
+            targetSdk = targetSdk,
+            targetPlatform = targetPlatform,
+            architecture = architecture,
+            isMacOSHost = isMacOSHost,
+        )
+    }
+
+    return claimedTask ?: error("Claimed dump task is missing")
 }
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
