@@ -33,3 +33,15 @@ class WithNonConflictingContextualFunction {
     context(p: WithNonConflictingContextualFunction)
     fun toString(): String = "Contex"
 }
+
+@ToString
+class WithBothIncludeAndExclude(
+    <!TO_STRING_EXCLUDE_AND_INCLUDE!>@ToString.Include<!> @ToString.Exclude val conflicting: String,
+    val normal: String,
+)
+
+@ToString
+class WithOnlyInclude(@ToString.Include val included: String)
+
+@ToString
+class WithOnlyExclude(@ToString.Exclude val excluded: String, val normal: String)

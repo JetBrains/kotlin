@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_ERROR
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.FLAG_USAGE_WARNING
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.LOG_PROPERTY_ALREADY_EXISTS
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_CALL_SUPER_NOT_CALLED
+import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_EXCLUDE_AND_INCLUDE
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -43,6 +44,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val LOG_PROPERTY_ALREADY_EXISTS by warning1<KtAnnotationEntry, Name>()
     val TO_STRING_FUNCTION_ALREADY_EXISTS by warning0<KtAnnotationEntry>()
     val TO_STRING_CALL_SUPER_NOT_CALLED by warning0<KtAnnotationEntry>()
+    val TO_STRING_EXCLUDE_AND_INCLUDE by warning0<KtAnnotationEntry>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -68,6 +70,10 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             TO_STRING_CALL_SUPER_NOT_CALLED,
             "Generating 'toString' implementation but without a call to superclass, even though this class does not extend 'java.lang.Object'. " +
                     "If this is intentional, add '@ToString(callSuper=false)' to your type."
+        )
+        map.put(
+            TO_STRING_EXCLUDE_AND_INCLUDE,
+            "@ToString.Exclude and @ToString.Include are mutually exclusive; the @Include annotation will be ignored."
         )
     }
 }

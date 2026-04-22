@@ -3,14 +3,17 @@ package org.jetbrains.kotlin.lombok.k2.generators
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.lombok.utils.AccessorNames
 import org.jetbrains.kotlin.lombok.utils.capitalize
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -142,3 +147,10 @@ class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
 
 val FirCallableSymbol<*>.isRelevantForConflictsCheck: Boolean
     get() = !isExtension && !hasContextParameters
+
+/**
+ * Annotations on primary constructor val/var params with @Target(FIELD) end up in the
+ * backing field's annotation list, not in property.annotations. We must check both.
+ */
+fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId, session: FirSession): FirAnnotation? =
+    getAnnotationByClassId(classId, session) ?: backingFieldSymbol?.getAnnotationByClassId(classId, session)

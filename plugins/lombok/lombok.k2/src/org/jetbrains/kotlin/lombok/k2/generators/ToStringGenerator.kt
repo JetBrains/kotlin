@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
@@ -37,7 +34,6 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -134,13 +130,13 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
                 val propertyIdentifier = property.name.identifier
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID) != null ||
+                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, session) != null ||
                     propertyIdentifier in toStringConfig.excludeFields
                 ) {
                     return@processAllProperties
                 }
 
-                val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID)
+                val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, session)
 
                 // TODO: include parameterless methods and computed properties (no backing field) if user explicitly opts them in (mirror Lombok behavior for methods).
                 @OptIn(SymbolInternals::class) // It's needed because `hasBackingField` on symbol requires `BODY_RESOLVE` phase, but the currenct phase might be less
@@ -163,11 +159,4 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
             }
         }
     }
-
-    /**
-     * Annotations on primary constructor val/var params with @Target(FIELD) end up in the
-     * backing field's annotation list, not in property.annotations. We must check both.
-     */
-    private fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId): FirAnnotation? =
-        getAnnotationByClassId(classId, session) ?: backingFieldSymbol?.getAnnotationByClassId(classId, session)
 }

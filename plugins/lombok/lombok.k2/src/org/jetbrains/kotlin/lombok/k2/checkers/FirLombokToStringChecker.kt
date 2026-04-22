@@ -14,13 +14,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.CallSuperMode
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.k2.generators.ToStringGenerator
+import org.jetbrains.kotlin.lombok.k2.generators.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.k2.generators.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.k2.generators.isToString
+import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.StandardClassIds
 
 
@@ -49,6 +53,20 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
              * because `toString()` is generated without calling the superclass implementation.
              */
             reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_CALL_SUPER_NOT_CALLED, context)
+        }
+
+        /**
+         * Mirrors Lombok Java behaviour: "Having both @ToString.Exclude and @ToString.Include on a member
+         * generates a warning; the member will be excluded in this case."
+         */
+        declaredMemberScope.processAllProperties { variableSymbol ->
+            val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
+            val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, context.session)
+                ?: return@processAllProperties
+            property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, context.session)
+                ?: return@processAllProperties
+            val includeSource = includeAnnotation.source ?: return@processAllProperties
+            reporter.reportOn(includeSource, LombokFirDiagnostics.TO_STRING_EXCLUDE_AND_INCLUDE, context)
         }
     }
 
