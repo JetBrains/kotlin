@@ -561,7 +561,7 @@ internal class BtaImplOptionsGenerator(
                 """.trimIndent()
             )
             returns(listTypeNameOf<String>())
-            addStatement("return toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()")
+            addStatement("return toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()")
         }
     }
 
@@ -796,6 +796,25 @@ internal class BtaImplOptionsGenerator(
             MemberName(targetPackage, "checkNoneContains", isExtension = true)
         )
     }
+
+    private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?) {
+        if (!level.isLeaf()) {
+            return
+        }
+        function("toArgumentStrings") {
+            addModifiers(KModifier.OVERRIDE)
+            if (parentClass == null) {
+                addModifiers(KModifier.OPEN)
+            }
+            returns(listTypeNameOf<String>())
+            if (generateCompatLayer) {
+                addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings()")
+            } else {
+                addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)")
+            }
+            addStatement("return arguments")
+        }
+    }
 }
 
 internal fun FunSpec.Builder.addSafeSetStatement(
@@ -829,21 +848,6 @@ internal fun FunSpec.Builder.addSafeSetStatement(
 }
 
 private fun maybeGetNullabilitySign(argument: BtaCompilerArgument<*>): String = (if (argument.valueType.isNullable) "?" else "")
-
-private fun TypeSpec.Builder.maybeAddToArgumentsStringFun(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?) {
-    if (!level.isLeaf()) {
-        return
-    }
-    function("toArgumentStrings") {
-        addModifiers(KModifier.OVERRIDE)
-        if (parentClass == null) {
-            addModifiers(KModifier.OPEN)
-        }
-        returns(listTypeNameOf<String>())
-        addStatement("val arguments = toCompilerArguments().compilerToArgumentStrings()")
-        addStatement("return arguments")
-    }
-}
 
 private fun toCompilerArgumentsAffectingOutcomeFunBuilder(
     level: KotlinCompilerArgumentsLevel,

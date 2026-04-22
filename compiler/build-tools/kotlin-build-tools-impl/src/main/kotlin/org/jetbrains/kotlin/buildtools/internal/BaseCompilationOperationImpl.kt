@@ -211,7 +211,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val metricsReporter = getMetricsReporter()
         val exitCode = daemon.compile(
             sessionId,
-            arguments.toArgumentStrings().toTypedArray(),
+            arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
             daemonCompileOptions,
             BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
             DaemonCompilationResults(

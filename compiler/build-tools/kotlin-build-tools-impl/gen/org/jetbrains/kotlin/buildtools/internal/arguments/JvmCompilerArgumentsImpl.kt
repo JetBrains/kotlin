@@ -454,7 +454,7 @@ internal class JvmCompilerArgumentsImpl(
   }
 
   override fun toArgumentStrings(): List<String> {
-    val arguments = toCompilerArguments().compilerToArgumentStrings()
+    val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)
     return arguments
   }
 
@@ -475,7 +475,7 @@ internal class JvmCompilerArgumentsImpl(
    * only sets arguments that have been explicitly assigned, and [compilerToArgumentStrings][org.jetbrains.kotlin.compilerRunner.toArgumentStrings]
    * skips properties whose value matches the default.
    */
-  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()
+  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
   public class JvmCompilerArgument<V>(
     public val id: String,
