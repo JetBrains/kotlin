@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
+/*dummy change */
+
 internal const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinBaseExtension>): KotlinBaseExtension {
