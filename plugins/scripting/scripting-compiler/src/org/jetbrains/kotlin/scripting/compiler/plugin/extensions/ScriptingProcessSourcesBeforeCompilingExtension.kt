@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -224,7 +225,6 @@ class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : Pr
         val versionSettings = configuration.languageVersionSettings
         val shouldSkipStandaloneScripts = versionSettings.supportsFeature(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
         val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { ScriptDefinitionProvider.getInstance(project) }
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         fun KtFile.isStandaloneScript(): Boolean {
             val scriptDefinition = definitionProvider?.findDefinition(KtFileScriptSource(this))
@@ -241,8 +241,8 @@ class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : Pr
                 !ktFile.isStandaloneScript() -> true
                 else -> {
                     if (!shouldSkipStandaloneScripts) {
-                        messageCollector.report(
-                            CompilerMessageSeverity.WARNING,
+                        configuration.report(
+                            CliDiagnostics.SCRIPTING_WARNING,
                             "Script '${ktFile.name}' is not supposed to be used along with regular Kotlin sources, and will be ignored in the future versions by default. (Use -Xallow-any-scripts-in-source-roots command line option to opt-in for the old behavior.)"
                         )
                     }
