@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
 class Ranges {
 
     @Sample
-    fun rangeFromComparable() {
+    fun rangeToComparable() {
         val start = Date.valueOf("2017-01-01")
         val end = Date.valueOf("2017-12-31")
         val range = start..end
@@ -36,7 +36,19 @@ class Ranges {
     }
 
     @Sample
-    fun rangeFromDouble() {
+    fun rangeUntilComparable() {
+        val start = Date.valueOf("2017-01-01")
+        val end = Date.valueOf("2017-12-31")
+        val range = start..<end
+        assertPrints(range, "2017-01-01..<2017-12-31")
+
+        assertTrue(Date.valueOf("2017-05-27") in range)
+        assertFalse(Date.valueOf("2017-12-31") in range)
+        assertTrue(Date.valueOf("2017-12-31") !in range)
+    }
+
+    @Sample
+    fun rangeToDouble() {
         val range = 1.0..100.0
         assertPrints(range, "1.0..100.0")
 
@@ -45,12 +57,30 @@ class Ranges {
     }
 
     @Sample
-    fun rangeFromFloat() {
+    fun rangeUntilDouble() {
+        val range = 1.0..<100.0
+        assertPrints(range, "1.0..<100.0")
+
+        assertTrue(3.14 in range)
+        assertFalse(100.0 in range)
+    }
+
+    @Sample
+    fun rangeToFloat() {
         val range = 1f..100f
         assertPrints(range, "1.0..100.0")
 
         assertTrue(3.14f in range)
         assertFalse(100.1f in range)
+    }
+
+    @Sample
+    fun rangeUntilFloat() {
+        val range = 1f..<100f
+        assertPrints(range, "1.0..<100.0")
+
+        assertTrue(3.14f in range)
+        assertFalse(100f in range)
     }
 
     @Sample
