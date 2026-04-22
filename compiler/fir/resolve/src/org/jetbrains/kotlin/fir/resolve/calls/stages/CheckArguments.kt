@@ -154,6 +154,10 @@ private fun FirExpression.shouldUseSamConversion(
 ): Boolean {
     val unwrapped = unwrapArgument()
 
+    if (unwrapped is FirCollectionLiteral) {
+        return false
+    }
+
     // Always apply SAM conversion on lambdas and callable references
     if (unwrapped is FirAnonymousFunctionExpression || unwrapped is FirCallableReferenceAccess) {
         return true
