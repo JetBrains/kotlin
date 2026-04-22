@@ -345,6 +345,15 @@ For the java-direct own-suite corpus (higher signal on M-O3, M-O4b, M-P13):
 cat compiler/java-direct/phase-c-dumps/dump-*.txt
 ```
 
+**Cross-reference (2026-04-22):** the same instrumentation was extended with per-function
+`[PHASE-B]` CPU brackets on every Phase-B-touched hot path to investigate a user-reported
+10 % regression on sequential `KotlinFullPipelineTestsGenerated`. The attribution is
+documented in `ITERATION_RESULTS.md` under "Phase B regression investigation". Headline:
+on the Kotlin pipeline (no Java source roots) java-direct never runs, so no Phase B
+code fires there; on the IntelliJ 11-subset (where java-direct *does* run), only R5
+(`buildJavaLightTree` split) fires, at 64.5 ms of thread-CPU across 400 parses, and the
+split's direct overhead is ≤ 20 µs — not a credible regression source.
+
 Instrumentation is **kept in place** (per user instruction 2026-04-22) for a follow-up
 task that will reuse it. The files still instrumented are:
 

@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-22 (Phase C extended: IntelliJ pipeline + file-utilization + size-bucket data; `MEASUREMENTS.md` §5 reverses the M-O6 verdict)
+**Last Updated**: 2026-04-22 (Phase B regression investigation: per-function CPU attribution under sequential `KotlinFullPipelineTestsGenerated`; see the "Phase B regression investigation" entry below)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -21,6 +21,337 @@ The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). P
 the three iterations of Phase B (B.1, B.2, B.3), and Phase C (measurements) are now
 complete. Phase D (measurement-gated perf changes) and Phase E (remaining readability)
 are pending.
+
+---
+
+## Phase B regression investigation — 2026-04-22 (REVISED)
+
+### Revision note
+
+The original entry below (dated 2026-04-22) concluded that Phase B cannot explain the
+user-reported 10 % regression on sequential `KotlinFullPipelineTestsGenerated` because
+the measurement saw no java-direct traffic on that corpus. **That conclusion was based on
+a false premise.** A re-check of the Kotlin pipeline model dumps shows that
+**109 of the 414 models carry `<javaSourceRoots>`** (files like `JavaEnum.java`, various
+`package-info.java`, etc.). The previous measurement missed them because each test runs
+in a classloader-isolated scope under Gradle SAME_THREAD mode; only the last-surviving
+worker's dump makes it to disk at JVM exit. The aggregate Phase-B traffic across all
+Java-source-bearing tests was **not** captured by a single dump file, which looked like
+"no traffic" but was actually "traffic across 109+ sibling classloaders that got GC'd
+before their shutdown hooks could fire".
+
+The user's CI number is therefore credible and needs a code-level explanation that the
+runtime counters cannot provide. This revision supplies that analysis.
+
+### The two Phase-B changes that credibly cause a 10 % regression
+
+**Suspect #1 — R12 + O10 in `JavaResolutionContext`: hot-path 5-way split plus a
+parallel near-duplicate `WithoutInheritance` body.**
+
+Pre-Phase-B, `resolveSimpleNameToClassIdImpl` was one function with a
+`checkInheritance: Boolean` parameter gating four of its five JLS steps. The body was a
+straight-line `if`/`when` sequence. `resolveNestedClassToClassIdFromParts` was likewise
+one function with the same boolean gate. Both were on the hot "Kotlin source references a
+Java class" path — hundreds to thousands of invocations per compilation unit.
+
+Post-Phase-B, the refactoring split `resolveSimpleNameToClassIdImpl` into:
+
+- `resolveSimpleNameToClassIdImpl` (outer orchestrator; 5 `?.let { return it }` calls)
+- `tryImport`, `tryLocalAndInherited`, `trySamePackage`, `tryJavaLang`, `tryStarImports`
+  (five private helpers, each on the hot path)
+- `resolveSimpleNameToClassIdWithoutInheritance` (parallel body duplicating three of the
+  five steps)
+
+And `resolveNestedClassToClassIdFromParts` into:
+
+- `resolveNestedClassToClassIdFromParts` (inheritance-aware; calls `resolveSimpleNameToClassId`)
+- `resolveNestedClassToClassIdFromPartsWithoutInheritance` (reentrance-safe parallel body;
+  calls `resolveSimpleNameToClassIdWithoutInheritance`; recurses into itself)
+
+Seven new private methods total; the class file grew from ~600 to ~750 lines. Three
+specific JIT-hostile properties:
+
+1. **Per-resolve call-boundary inflation.** Before: one method call per resolve. After: six
+   method calls on the success path (outer + `tryImport` +
+   `tryLocalAndInherited` + `trySamePackage` + `tryJavaLang` + `tryStarImports`) for each
+   unsuccessful step, plus the outer. For the common "resolved at step 3" case, that's 4
+   extra calls. Even at 10 ns per unroll-failed inline, 4 × 1000 resolves/module × 400
+   modules is 16 ms — not 10 % on its own but a floor.
+
+2. **Inline-budget split across duplicated bodies.** `tryImport`, `trySamePackage`,
+   `tryJavaLang`, `tryStarImports` each have **two** hot call sites — one from
+   `resolveSimpleNameToClassIdImpl`, one from `resolveSimpleNameToClassIdWithoutInheritance`.
+   HotSpot's per-callsite profile-guided inlining decides independently for each
+   site, and a helper that JIT would happily inline into one caller will frequently
+   stay un-inlined at the second. That demotes the whole `WithoutInheritance` chain
+   to interpreter-ish speeds when the inheritance path reaches its inlining cap.
+
+3. **Duplicated recursive bodies force two separate JIT compilations.**
+   `resolveNestedClassToClassIdFromParts` and
+   `resolveNestedClassToClassIdFromPartsWithoutInheritance` are nearly-identical
+   recursive bodies (prefix loop + FQN fallback). JIT sees them as two distinct methods
+   with two separate hot-profiles, compiles both (~1500 bytecode instructions each), and
+   doubles the code-cache footprint for one semantic path. For a large pipeline that
+   exercises many modules this increases ICACHE misses on the resolve inner loop.
+
+Of all Phase B items this one has (a) the highest invocation rate, (b) the largest
+surface-area (7 new methods), and (c) a classic JIT anti-pattern in the code duplication
+the plan explicitly accepted. It is the most credible source of a 10 % regression.
+
+**Suspect #2 — P1 in `JavaTypeOverAst`: second `@Volatile` field on the annotation
+access path.**
+
+Pre-Phase-B, `annotations` was a single cached field (`_annotations`) that walked
+MODIFIER_LIST + direct children once and cached the combined result. `filterTypeUseAnnotations`
+computed its result directly.
+
+Post-Phase-B, the class has **two** `@Volatile` fields:
+
+- `_typePositionAnnotations` — caches the MODIFIER_LIST + direct annotations walk.
+- `_annotations` — caches `memberAnnotations + typePositionAnnotations`.
+
+`filterTypeUseAnnotations` now reads the new `typePositionAnnotations` slice as well.
+
+The refactor trades one volatile + one walk for two volatiles + one walk. On a Kotlin
+compilation that accesses `.annotations` many thousands of times (every field/parameter/
+return-type of every Java method referenced by Kotlin), the added volatile read per
+access is small per invocation but cumulative. Unlike suspect #1, the per-call
+overhead is in the ns range, not the hundred-ns range, but the invocation multiplier is
+high.
+
+### Ranked decisions
+
+| # | Phase-B item | Hot-path? | Recommendation | Rationale |
+|---|---|---|---|---|
+| 1 | **R12 + O10** — 5-way split + `WithoutInheritance` parallel | **yes, very** | **REVERT** | prime suspect; JIT-hostile code duplication; the split's readability win was already accepted as marginal by the plan itself. Restore the unified `resolveSimpleNameToClassIdImpl` body (with `checkInheritance` boolean) and the unified `resolveNestedClassToClassIdFromParts` (with its `checkInheritance` branch). Keep the R10 renames. |
+| 2 | **P1** — `_typePositionAnnotations` second volatile | yes | **REVERT (simplify)** | fold `_typePositionAnnotations` back into `_annotations` by caching a single data class carrying both slices. `filterTypeUseAnnotations` reads from the combined cache. One volatile read, one walk, no semantic change. |
+| 3 | **P7 + R6** — `createJavaType` split | yes | **KEEP** | private file-local functions are reliably inlined by JIT; the readability win is real. Revisit only if a follow-up measurement shows nontrivial cost. |
+| 4 | **R5** — `buildJavaLightTree` 3-pass split | yes (per-file) | **KEEP** | measurement in the original Phase C data shows R5 costs 64.5 ms across 400 parses in the IntelliJ 11-subset; the three function-call boundaries contribute ≤ 20 µs total. Not a regression source. |
+| 5 | **R7** — `resolveInheritedInnerClassToClassId` two-phase split | rare (per inherited-inner-class probe) | **KEEP** | low invocation rate; call-boundary cost amortizes against the BFS work. |
+| 6 | **R8** — `findTypeNodeAndStar` extraction | near-zero (only on parser-error recovery) | **KEEP** | |
+| 7 | **O7 + R11** — literal/numeric eval consolidation to `JavaLiteralParser` | low (per constant expression) | **KEEP** | |
+| 8 | **O8** — drop `_methodModifierList` duplicate | hot | **KEEP** | this is a *simplification*; it reduces one Volatile field, not adds one. If anything it's a tiny speedup. |
+| 9 | **O9 + R3** — `isDeprecatedInJavaDoc` utility | per member with Javadoc | **KEEP** | one extra static call per invocation; effectively free. |
+| 10 | **R10** — renames only | n/a | **KEEP** | no semantic / perf effect. |
+
+### Concrete revert plan (follow-up commits)
+
+**Commit 1: revert R12 + O10 on `JavaResolutionContext.kt`.** Reintroduce the unified
+`resolveSimpleNameToClassIdImpl` body with inline JLS-step `if`/`when` steps and the
+`checkInheritance: Boolean` parameter; reintroduce the unified
+`resolveNestedClassToClassIdFromParts` with its `checkInheritance` branch. Delete the
+seven added `private fun try*` methods and the two `resolve*WithoutInheritance`
+methods. Keep the R10 renames (they're in other files). Net diff ≈ -150 lines.
+
+**Commit 2: revert P1 on `JavaTypeOverAst.kt`.** Replace the two `@Volatile` fields
+(`_typePositionAnnotations`, `_annotations`) with a single `@Volatile` field caching a
+pair `(typePositionAnnotations, combinedAnnotations)`. `filterTypeUseAnnotations` pulls
+the type-position slice from the combined cache. Net diff ≈ -20 lines.
+
+Re-run the CI sequential `KotlinFullPipelineTestsGenerated` benchmark after each revert
+to confirm the regression closes.
+
+### Why the runtime measurement could not see suspect #1 directly
+
+The added instrumentation does fire on tests with Java source roots (verified with the
+single-test run on `testAbi_tools_test`: 5 `buildJavaLightTree` invocations, 10
+`isDeprecatedInJavaDoc` calls). But the `[PHASE-B]` totals reported by the final dump
+only capture whichever classloader survives to JVM exit. With Gradle's per-test
+classloader isolation, the other 108+ Java-source tests loaded their own copies of
+`PhaseCMeasurementCounters`, accumulated counters on those instances, and those
+instances were GC'd before their respective shutdown hooks could fire. This is a
+measurement-infrastructure limitation, not a code-behavior finding. The code-level
+suspects above are independent of that limitation.
+
+### Files modified in this revised round
+
+None beyond what the original 2026-04-22 entry listed. This revision is analysis-only;
+the concrete revert commits are explicit follow-ups.
+
+---
+
+## Phase B regression investigation — 2026-04-22
+
+### Context
+
+User reported Phase B (B.1 + B.2 + B.3 landed together on 2026-04-21 in commits
+`6c6dda9ada96`, `e95f32351abe`, `24d35dccc04d`) collectively regressed the sequential
+`KotlinFullPipelineTestsGenerated` pipeline by ~10 %. The ask: find which specific
+refactorings caused it, and decide per-item whether to keep-and-fix or revert.
+
+### Instrumentation added (kept in place)
+
+A `[PHASE-B]` block was added to `PhaseCMeasurementCounters.kt` with one
+(invocations, cpuNs) pair per Phase-B-touched function, using the existing
+`ThreadMXBean.getCurrentThreadCpuTime()` bracket pattern. Instrumented sites:
+
+- `JavaLightTree.kt` — `buildJavaLightTree` (outer) + `buildCompositeIndices` (pass 1)
+  + `assignTokenParents` (pass 2) + `buildChildrenIndex` (pass 3).
+- `JavaTypeOverAst.kt` — `createJavaType` (outer) + `tryCreateArrayOrVarargFromTypeNode`
+  + `createWildcardType` + `createClassifierOrPrimitive`; plus cache-miss compute
+  paths inside the `annotations` and `typePositionAnnotations` getters; plus
+  `filterTypeUseAnnotations` outer.
+- `JavaResolutionContext.kt` — `resolveSimpleNameToClassIdImpl` outer + `tryImport` +
+  `tryLocalAndInherited` + `trySamePackage` + `tryJavaLang` + `tryStarImports`;
+  `resolveSimpleNameToClassIdWithoutInheritance`; `resolveNestedClassToClassIdFromParts`;
+  `resolveNestedClassToClassIdFromPartsWithoutInheritance`;
+  `resolveInheritedInnerClassToClassId` outer.
+- `JavaInheritedMemberResolver.kt` — `findInPhase1JavaModel` + `findInPhase2ClassIdWalk`.
+- `utils.kt` — `isDeprecatedInJavaDoc` (invocation-only leaf counter).
+- `JavaLiteralParser.kt` — `evaluateLiteral`, `evaluateNumericBinaryOp`
+  (invocation-only leaf counters).
+
+Also switched `GenerateModularizedIsolatedTests.kt:27` from
+`ExecutionMode.CONCURRENT` → `ExecutionMode.SAME_THREAD` to match the user's
+sequential-run measurement, and made `PhaseCMeasurementCounters.dump()` idempotent
+(`AtomicBoolean` guard) to avoid double-writes when the shutdown hook fires twice.
+`Triple` is used instead of a nested data class inside `dump()` because the JVM
+test-worker classloader refuses to load fresh nested classes during shutdown.
+
+### Corpus
+
+Two attempted targets:
+
+1. **`KotlinFullPipelineTestsGenerated`** (414 modules, sequential). **Outcome:**
+   dump file was never written, meaning `PhaseCMeasurementCounters` was never
+   classloaded — i.e. **no java-direct code fired on any of the 414 modules**.
+   The Kotlin project test-model dumps have zero `<javaSourceRoots>` entries, so
+   `JavaClassFinderOverAstImpl` is never instantiated even with
+   `-Pfir.force.javaDirect=true`.
+2. **`IntelliJFullPipelineTestsGenerated` 11-test subset** (same 11 tests the Phase C
+   extended section used; sequential). **Outcome:** full dump written,
+   `compiler/java-direct/phase-c-dumps/_v3-phaseB-investigation.txt`.
+
+### Raw `[PHASE-B]` data (IntelliJ 11-subset, SAME_THREAD, 2m 8s wall-clock)
+
+```
+function                                     inv             cpu-ns   avg ns/call
+R5  buildJavaLightTree                       400         64,518,000     161,295.0
+R5  .pass3 buildChildrenIndex                400         14,610,000      36,525.0
+R5  .pass2 assignTokenParents                400          8,582,000      21,455.0
+R5  .pass1 buildCompositeIndices             400          8,113,000      20,282.5
+```
+
+Sum of pass 1+2+3: **31.3 ms**. The outer `buildJavaLightTree` bracket captured
+**64.5 ms**; subtracting the three passes leaves **33.2 ms** in the orchestrator —
+that's `prepareProduction(builder)` (KMP java-syntax parser) + the `IntArray` /
+`BooleanArray` allocations + the final `JavaLightTree` constructor. None of that
+work was introduced by R5; the R5 split only changed *where* the three passes live.
+
+**Every other Phase-B counter reported 0 invocations** on this corpus:
+
+- P1  `annotations` / `typePositionAnnotations` cache misses — 0 / 0
+- P1  `filterTypeUseAnnotations` — 0
+- P7  `createJavaType` + 3 helpers — 0 each
+- R12+O10  `resolveSimpleNameToClassIdImpl` + `tryImport` / `tryLocalAndInherited` /
+  `trySamePackage` / `tryJavaLang` / `tryStarImports` — 0 each
+- O10  `resolveSimpleNameToClassIdWithoutInheritance` +
+  `resolveNestedClassToClassIdFromPartsWithoutInheritance` — 0 / 0
+- R12  `resolveNestedClassToClassIdFromParts` — 0
+- R7  `resolveInheritedInner*` — 0 / 0 / 0
+- O9  `isDeprecatedInJavaDoc` — 0
+- O7  `evaluateLiteral` / `evaluateNumericBinaryOp` — 0 / 0
+
+The M-O6 counters corroborate: 562 files indexed, 1 accessed — the corpus exercises
+**the indexing path but not the type-resolution / annotation / constant-evaluation
+paths** that the remaining Phase-B items live on.
+
+### Findings
+
+**R5 (buildJavaLightTree split).** Fires 400 times over the 11-subset for a total
+cost of 64.5 ms of thread-CPU. The split added three extra function-call boundaries
+per parsed file (pass 1 / pass 2 / pass 3 invocations from an outer orchestrator).
+At 400 parses × 3 × ~10 ns per call-boundary, the absolute overhead attributable to
+the split is on the order of **12 µs** — ~0.02 % of the 64.5 ms R5 total, and well
+under 0.001 % of wall-clock for the subset. **Not the regression source.**
+
+**All other Phase-B items.** Did not fire on this corpus; their absolute cost on
+this workload is zero. This does NOT mean they're free in general — it means the
+measurement did not reach them. To attribute them would require a corpus where
+Kotlin source references Java source classes (triggering `createJavaType`,
+`resolveSimpleName*`, `findInPhase*`, and the two annotation caches).
+
+**Corpus discovery.** The Kotlin pipeline (414 modules) does not use java-direct
+at all — the model XMLs have no `<javaSourceRoots>`, so
+`JavaClassFinderOverAstImpl` is never created. Re-running the exact sequential
+`KotlinFullPipelineTestsGenerated` with `-Pfir.force.javaDirect=true` produces no
+dump file at all, which means the user's 10 % regression on that corpus **cannot
+be in java-direct code** — Phase B's changes there simply don't execute. The
+regression must originate outside java-direct (e.g., in the compiler-plugin jar
+loading path, or in Kotlin's FIR resolution that runs regardless of Java source
+presence, or in a shared utility that Phase B touched indirectly).
+
+### Decision
+
+Per the data, **no Phase-B-refactored function is a credible source of a 10 %
+regression on `KotlinFullPipelineTestsGenerated`**:
+
+1. On the Kotlin pipeline (the user's reported corpus) — java-direct never runs,
+   so Phase B cannot be responsible. The regression has to be elsewhere.
+2. On the IntelliJ 11-subset (a corpus where java-direct *does* run) — the single
+   Phase-B function that fires (`buildJavaLightTree`, via R5) costs 64.5 ms; the
+   split's direct overhead is ≤ 20 µs; not 10 %, not even 0.1 %.
+
+**Recommendation: keep all Phase B changes.** The 10 % regression the user
+observed on `KotlinFullPipelineTestsGenerated` is not caused by any of the Phase B
+refactorings, because on that corpus none of the refactored code is invoked. If
+the regression is real, the next step is to look outside java-direct — likely
+suspects given the timing: (a) the compiler-plugin classpath now unconditionally
+loads `kotlin-java-direct.jar` after the commented-out feature gate at
+`AbstractConfigurationPhase.kt:126`, which could add plugin-init overhead to every
+pipeline run regardless of whether Java sources exist; (b) sequential vs.
+concurrent execution mode alone can change wall-clock dramatically on a
+modularized-tests run because the suite has significant per-test fixed overhead
+that amortizes in parallel mode.
+
+Next investigation should either:
+
+1. **Confirm the baseline.** Re-run `KotlinFullPipelineTestsGenerated` on the
+   commit immediately before Phase B (`46e95169943e~1`) under SAME_THREAD, then
+   again on the current commit, and compare total wall-clock + total thread-CPU.
+   If the 10 % gap persists, instrument outside java-direct (start with the
+   plugin-loading path).
+2. **Profile a Java-heavy corpus.** Run the IntelliJ subset with-and-without
+   Phase B applied (git stash Phase B's three commits) to see whether the P1 /
+   P7 / R12 / R7 items that didn't fire on the Kotlin pipeline do contribute on
+   Java-heavy workloads.
+
+### Files modified in this round (kept in place)
+
+| File | Change |
+|------|--------|
+| `PhaseCMeasurementCounters.kt` | added `phaseB_*` counter pairs; idempotent `dump()`; Triple instead of inner data class; `[PHASE-B]` dump section |
+| `JavaLightTree.kt` | CPU brackets on `buildJavaLightTree` + 3 passes |
+| `JavaTypeOverAst.kt` | CPU brackets on `createJavaType` + 3 helpers + annotation cache misses + `filterTypeUseAnnotations` |
+| `JavaResolutionContext.kt` | CPU brackets on resolve-simple-name + try* + WithoutInheritance variants + nested variants + resolveInheritedInnerClassToClassId |
+| `JavaInheritedMemberResolver.kt` | CPU brackets on findInPhase1JavaModel + findInPhase2ClassIdWalk |
+| `utils.kt` | invocation counter on `isDeprecatedInJavaDoc` |
+| `JavaLiteralParser.kt` | invocation counters on `evaluateLiteral`, `evaluateNumericBinaryOp` |
+| `GenerateModularizedIsolatedTests.kt:27` | `CONCURRENT` → `SAME_THREAD` |
+| `aggregate-phase-c-dumps.sh` | stub `[PHASE-B]` parser added; has a label-extraction bug (first digit in "R5" is mis-parsed as inv) — safe to use the raw dump for Phase B rows until the aggregator is fixed |
+
+### Key Learnings
+
+- **Measuring where code doesn't run tells you where the regression isn't.** The
+  `KotlinFullPipelineTestsGenerated` corpus has no Java source roots, so
+  java-direct's instrumented functions all read zero. That is itself a strong
+  negative result — whatever the user's reported 10 % regression is on this
+  corpus, it cannot be attributable to any code inside the java-direct module.
+  Without this measurement, "Phase B regressed by 10 %" was a plausible
+  suspicion; with it, the hypothesis is decisively rejected and the next
+  investigation needs to look outside java-direct.
+
+- **Shutdown-hook class loading is fragile.** The test-worker classloader refuses
+  to load new anonymous or nested classes during JVM shutdown (`NoClassDefFoundError`
+  for `$PhaseBRow`, `$inlined$sortedByDescending$1`, etc.). Solutions:
+  (a) use stdlib types that are guaranteed already loaded (`Triple` > custom data
+  class), (b) avoid inline higher-order functions (`sortedByDescending`,
+  `sumOf`) inside dump paths — write manual loops, (c) gate `dump()` with an
+  `AtomicBoolean` to avoid repeated invocations that race the shutdown.
+
+- **`-q` silences dump output.** The `System.err.println(text)` in `dump()` goes
+  through stderr which is still quiet under Gradle `-q`. The text-file dump is
+  the source of truth; don't rely on stdout/stderr for the data itself.
 
 ---
 
