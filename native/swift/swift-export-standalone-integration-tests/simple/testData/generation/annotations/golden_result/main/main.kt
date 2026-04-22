@@ -46,13 +46,6 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction")
-public fun ClassWithDeprecatedMembersFromInterface_deprecatedErrorFunction(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithDeprecatedMembersFromInterface
-    val _result = run { __self.deprecatedErrorFunction() }
-    return run { _result; true }
-}
-
 @ExportedBridge("ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction")
 public fun ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithDeprecatedMembersFromInterface
@@ -65,13 +58,6 @@ public fun ClassWithDeprecatedMembersFromInterface_regularFunction(self: kotlin.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ClassWithDeprecatedMembersFromInterface
     val _result = run { __self.regularFunction() }
     return run { _result; true }
-}
-
-@ExportedBridge("DeprecatedInterfaceWrapper_deprecatedInterface_get")
-public fun DeprecatedInterfaceWrapper_deprecatedInterface_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DeprecatedInterfaceWrapper
-    val _result = run { __self.deprecatedInterface }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("DeprecatedInterface_foo")
@@ -345,20 +331,6 @@ public fun __root___ClassWithDeprecatedMembersFromInterface_init_initialize__Typ
     return run { _result; true }
 }
 
-@ExportedBridge("__root___DeprecatedInterfaceWrapper_init_allocate")
-public fun __root___DeprecatedInterfaceWrapper_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<DeprecatedInterfaceWrapper>() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___DeprecatedInterfaceWrapper_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_DeprecatedInterface__")
-public fun __root___DeprecatedInterfaceWrapper_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_DeprecatedInterface__(__kt: kotlin.native.internal.NativePtr, deprecatedInterface: kotlin.native.internal.NativePtr): Boolean {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __deprecatedInterface = kotlin.native.internal.ref.dereferenceExternalRCRef(deprecatedInterface) as DeprecatedInterface
-    val _result = run { kotlin.native.internal.initInstance(____kt, DeprecatedInterfaceWrapper(__deprecatedInterface)) }
-    return run { _result; true }
-}
-
 @ExportedBridge("__root___FooObject_get")
 public fun __root___FooObject_get(): kotlin.native.internal.NativePtr {
     val _result = run { FooObject }
@@ -491,13 +463,6 @@ public fun __root___WithCompanion_init_initialize__TypesOfArguments__Swift_Unsaf
     return run { _result; true }
 }
 
-@ExportedBridge("__root___acceptDeprecatedInterface__TypesOfArguments__anyU20main_DeprecatedInterface__")
-public fun __root___acceptDeprecatedInterface__TypesOfArguments__anyU20main_DeprecatedInterface__(arg: kotlin.native.internal.NativePtr): Boolean {
-    val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as DeprecatedInterface
-    val _result = run { acceptDeprecatedInterface(__arg) }
-    return run { _result; true }
-}
-
 @ExportedBridge("__root___acceptPublicClassImplDeprecatedInterface__TypesOfArguments__main_PublicClassImplDeprecatedInterface__")
 public fun __root___acceptPublicClassImplDeprecatedInterface__TypesOfArguments__main_PublicClassImplDeprecatedInterface__(arg: kotlin.native.internal.NativePtr): Boolean {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as PublicClassImplDeprecatedInterface
@@ -568,34 +533,6 @@ public fun __root___deprecatedF(): Boolean {
 @ExportedBridge("__root___deprecatedImplicitlyF")
 public fun __root___deprecatedImplicitlyF(): Boolean {
     val _result = run { deprecatedImplicitlyF() }
-    return run { _result; true }
-}
-
-@ExportedBridge("__root___deprecatedInterfacePropertyWithContext_get__TypesOfArgumentsC1__main_normalT__")
-public fun __root___deprecatedInterfacePropertyWithContext_get__TypesOfArgumentsC1__main_normalT__(_0: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val ___0 = kotlin.native.internal.ref.dereferenceExternalRCRef(_0) as normalT
-    val _result = run { context(___0) { deprecatedInterfacePropertyWithContext } }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___deprecatedInterfacePropertyWithContext_set__TypesOfArgumentsC1__anyU20main_DeprecatedInterface_main_normalT__")
-public fun __root___deprecatedInterfacePropertyWithContext_set__TypesOfArgumentsC1__anyU20main_DeprecatedInterface_main_normalT__(value: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
-    val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as DeprecatedInterface
-    val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as normalT
-    val _result = run { context(___1) { deprecatedInterfacePropertyWithContext = __value } }
-    return run { _result; true }
-}
-
-@ExportedBridge("__root___deprecatedInterfaceProperty_get")
-public fun __root___deprecatedInterfaceProperty_get(): kotlin.native.internal.NativePtr {
-    val _result = run { deprecatedInterfaceProperty }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___deprecatedInterfaceProperty_set__TypesOfArguments__anyU20main_DeprecatedInterface__")
-public fun __root___deprecatedInterfaceProperty_set__TypesOfArguments__anyU20main_DeprecatedInterface__(newValue: kotlin.native.internal.NativePtr): Boolean {
-    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as DeprecatedInterface
-    val _result = run { deprecatedInterfaceProperty = __newValue }
     return run { _result; true }
 }
 
@@ -726,31 +663,6 @@ public fun __root___obsoletedChildT_init_initialize__TypesOfArguments__Swift_Uns
     return run { _result; true }
 }
 
-@ExportedBridge("__root___obsoletedF")
-public fun __root___obsoletedF(): Boolean {
-    val _result = run { obsoletedF() }
-    return run { _result; true }
-}
-
-@ExportedBridge("__root___obsoletedT_init_allocate")
-public fun __root___obsoletedT_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<obsoletedT>() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___obsoletedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun __root___obsoletedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, obsoletedT()) }
-    return run { _result; true }
-}
-
-@ExportedBridge("__root___obsoletedV_get")
-public fun __root___obsoletedV_get(): Boolean {
-    val _result = run { obsoletedV }
-    return run { _result; true }
-}
-
 @ExportedBridge("__root___publicClassImplDeprecatedInterfaceProperty_get")
 public fun __root___publicClassImplDeprecatedInterfaceProperty_get(): kotlin.native.internal.NativePtr {
     val _result = run { publicClassImplDeprecatedInterfaceProperty }
@@ -838,12 +750,6 @@ public fun __root___renamedWithArguments__TypesOfArguments__Swift_Int32_Swift_Fl
 public fun __root___returnClassA__TypesOfArguments__main_SwiftClassA__(value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __value = kotlin.native.internal.ref.dereferenceExternalRCRef(value) as KotlinClassA
     val _result = run { returnClassA(__value) }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("__root___returnDeprecatedInterface")
-public fun __root___returnDeprecatedInterface(): kotlin.native.internal.NativePtr {
-    val _result = run { returnDeprecatedInterface() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -948,13 +854,6 @@ public fun deprecatedT_deprecationInheritedV_get(self: kotlin.native.internal.Na
     return run { _result; true }
 }
 
-@ExportedBridge("deprecatedT_deprecationReinforcedF")
-public fun deprecatedT_deprecationReinforcedF(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as deprecatedT
-    val _result = run { __self.deprecationReinforcedF() }
-    return run { _result; true }
-}
-
 @ExportedBridge("deprecatedT_deprecationReinforcedT_init_allocate")
 public fun deprecatedT_deprecationReinforcedT_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<deprecatedT.deprecationReinforcedT>() }
@@ -965,13 +864,6 @@ public fun deprecatedT_deprecationReinforcedT_init_allocate(): kotlin.native.int
 public fun deprecatedT_deprecationReinforcedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, deprecatedT.deprecationReinforcedT()) }
-    return run { _result; true }
-}
-
-@ExportedBridge("deprecatedT_deprecationReinforcedV_get")
-public fun deprecatedT_deprecationReinforcedV_get(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as deprecatedT
-    val _result = run { __self.deprecationReinforcedV }
     return run { _result; true }
 }
 
@@ -1078,35 +970,6 @@ public fun normalChildT_normalV_get(self: kotlin.native.internal.NativePtr): Boo
 public fun normalChildT_obsoletedF(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
     val _result = run { __self.obsoletedF() }
-    return run { _result; true }
-}
-
-@ExportedBridge("normalChildT_obsoletedInFutureF")
-public fun normalChildT_obsoletedInFutureF(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
-    val _result = run { __self.obsoletedInFutureF() }
-    return run { _result; true }
-}
-
-@ExportedBridge("normalChildT_obsoletedInFutureP_get")
-public fun normalChildT_obsoletedInFutureP_get(self: kotlin.native.internal.NativePtr): Int {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
-    val _result = run { __self.obsoletedInFutureP }
-    return _result
-}
-
-@ExportedBridge("normalChildT_obsoletedInFutureP_set__TypesOfArguments__Swift_Int32__")
-public fun normalChildT_obsoletedInFutureP_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
-    val __newValue = newValue
-    val _result = run { __self.obsoletedInFutureP = __newValue }
-    return run { _result; true }
-}
-
-@ExportedBridge("normalChildT_obsoletedInFutureV_get")
-public fun normalChildT_obsoletedInFutureV_get(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalChildT
-    val _result = run { __self.obsoletedInFutureV }
     return run { _result; true }
 }
 
@@ -1260,13 +1123,6 @@ public fun normalT_normalV_get(self: kotlin.native.internal.NativePtr): Boolean 
     return run { _result; true }
 }
 
-@ExportedBridge("normalT_obsoletedF")
-public fun normalT_obsoletedF(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
-    val _result = run { __self.obsoletedF() }
-    return run { _result; true }
-}
-
 @ExportedBridge("normalT_obsoletedInFutureF")
 public fun normalT_obsoletedInFutureF(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
@@ -1308,27 +1164,6 @@ public fun normalT_obsoletedP_set__TypesOfArguments__Swift_Int32__(self: kotlin.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
     val __newValue = newValue
     val _result = run { __self.obsoletedP = __newValue }
-    return run { _result; true }
-}
-
-@ExportedBridge("normalT_obsoletedT_init_allocate")
-public fun normalT_obsoletedT_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<normalT.obsoletedT>() }
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
-@ExportedBridge("normalT_obsoletedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
-public fun normalT_obsoletedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(__kt: kotlin.native.internal.NativePtr, obsoleted: Float): Boolean {
-    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val __obsoleted = obsoleted
-    val _result = run { kotlin.native.internal.initInstance(____kt, normalT.obsoletedT(__obsoleted)) }
-    return run { _result; true }
-}
-
-@ExportedBridge("normalT_obsoletedV_get")
-public fun normalT_obsoletedV_get(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
-    val _result = run { __self.obsoletedV }
     return run { _result; true }
 }
 
@@ -1457,13 +1292,6 @@ public fun obsoletedT_deprecationRelaxedV_get(self: kotlin.native.internal.Nativ
     return run { _result; true }
 }
 
-@ExportedBridge("obsoletedT_deprecationRestatedF")
-public fun obsoletedT_deprecationRestatedF(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as obsoletedT
-    val _result = run { __self.deprecationRestatedF() }
-    return run { _result; true }
-}
-
 @ExportedBridge("obsoletedT_deprecationRestatedT_init_allocate")
 public fun obsoletedT_deprecationRestatedT_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<obsoletedT.deprecationRestatedT>() }
@@ -1474,12 +1302,5 @@ public fun obsoletedT_deprecationRestatedT_init_allocate(): kotlin.native.intern
 public fun obsoletedT_deprecationRestatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val _result = run { kotlin.native.internal.initInstance(____kt, obsoletedT.deprecationRestatedT()) }
-    return run { _result; true }
-}
-
-@ExportedBridge("obsoletedT_deprecationRestatedV_get")
-public fun obsoletedT_deprecationRestatedV_get(self: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as obsoletedT
-    val _result = run { __self.deprecationRestatedV }
     return run { _result; true }
 }

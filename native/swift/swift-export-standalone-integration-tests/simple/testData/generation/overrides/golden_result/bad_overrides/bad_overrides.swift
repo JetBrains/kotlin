@@ -26,7 +26,7 @@ extension ExportedKotlinPackages.weird {
         }
         @available(*, unavailable, message: "")
         open func foo() -> Swift.Void {
-            return { weird_A_foo(self.__externalRCRef()); return () }()
+            fatalError()
         }
         open func `throws`() throws -> Swift.Void {
             var _out_error: UnsafeMutableRawPointer? = nil

@@ -1087,11 +1087,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         public var isNullable: Swift.Bool {
             @_spi(kotlinx$serialization$ExperimentalSerializationApi)
             get {
-                return kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_isNullable_get(self.__externalRCRef())
+                fatalError()
             }
             @_spi(kotlinx$serialization$ExperimentalSerializationApi)
             set {
-                return { kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_isNullable_set__TypesOfArguments__Swift_Bool__(self.__externalRCRef(), newValue); return () }()
+                fatalError()
             }
         }
         public var serialName: Swift.String {

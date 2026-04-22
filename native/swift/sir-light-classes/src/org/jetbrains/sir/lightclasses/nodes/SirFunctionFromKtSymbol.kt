@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
@@ -108,6 +109,7 @@ internal open class SirFunctionFromKtSymbol(
     override val isAsync: Boolean get() = ktSymbol.isSuspend
 
     private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
+        if (isUnavailable) return@lazyWithSessions null
         val fqName = bridgeFqName ?: return@lazyWithSessions null
         val suffix = ""
         val baseName = fqName.baseBridgeName + suffix

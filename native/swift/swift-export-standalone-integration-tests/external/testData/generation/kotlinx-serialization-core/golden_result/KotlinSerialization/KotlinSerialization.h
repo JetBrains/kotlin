@@ -123,10 +123,6 @@ _Bool kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_annotations
 
 _Bool kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_element__TypesOfArguments__Swift_String_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Array_anyU20ExportedKotlinPackages_kotlin_Annotation__Swift_Bool__(void * self, NSString * elementName, void * descriptor, NSArray<id> * annotations, _Bool isOptional);
 
-_Bool kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_isNullable_get(void * self);
-
-_Bool kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_isNullable_set__TypesOfArguments__Swift_Bool__(void * self, _Bool newValue);
-
 NSString * kotlinx_serialization_descriptors_ClassSerialDescriptorBuilder_serialName_get(void * self);
 
 void * kotlinx_serialization_descriptors_PolymorphicKind_OPEN_get();
