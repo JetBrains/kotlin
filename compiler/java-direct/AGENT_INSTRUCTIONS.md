@@ -157,16 +157,40 @@ test regresses:
 
 ---
 
+## Performance Measurement
+
+When profiling java-direct code paths:
+
+- **Instrumentation stash**: `git stash show stash@{0}` — the stash named
+  `phase-c-instrumentation-v5-v6-measurements` contains a complete `PhaseCMeasurementCounters`
+  singleton with `AtomicLong` counters, `ThreadMXBean` CPU brackets, per-classloader dump files,
+  and an AWK aggregator script. Pop it to get a ready-made measurement harness.
+- **Classloader isolation**: Gradle runs each `*FullPipelineTestsGenerated` test method in its
+  own classloader. A Kotlin `object` singleton is per-classloader, not per-JVM. Dump files must
+  include `System.identityHashCode(PhaseCMeasurementCounters::class.java)` in the filename to
+  avoid overwrites. Aggregate with the `aggregate-phase-c-dumps.sh` script.
+- **CPU time**: use `ThreadMXBean.getCurrentThreadCpuTime()` (per-thread, aggregates correctly
+  under `CONCURRENT` execution). `System.nanoTime()` is unreliable inside Gradle workers.
+- **Forcing java-direct**: `-Pfir.force.javaDirect=true` enables java-direct on all modules
+  regardless of model XML. Requires the one-line passthrough in
+  `AbstractIsolatedFullPipelineModularizedTest.kt` (currently on HEAD).
+- **Corpora**: `KotlinFullPipelineTestsGenerated` (414 modules, 109 with Java sources) for
+  mixed workloads; `IntelliJFullPipelineTestsGenerated.testIntellij_platform_*` (446 modules)
+  for Java-heavy workloads. The full IntelliJ suite is multi-hour; use subsets.
+- See `implDocs/INVESTIGATION_TECHNIQUES.md` for detailed recipes.
+
+---
+
 ## Reference Documents
 
 | Document | When to consult |
 |----------|----------------|
 | `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes |
 | `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix |
-| `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging techniques, AST inspection, debugging recipes |
-| `ITERATION_RESULTS.md` | History of iterations, open perf items |
-| `implDocs/archive/` | Historical iteration details, completed-work design docs |
+| `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes |
+| `ITERATION_RESULTS.md` | Current iteration log (new entries on top) |
+| `implDocs/archive/` | Historical iterations, completed plans, measurement data |
 
 ---
 
-*Last updated: 2026-04-21 (cleanup; FIXING_ITERATIONS archived, status inlined)*
+*Last updated: 2026-04-22 (Phases A-E complete; measurement section added)*

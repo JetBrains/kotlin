@@ -480,30 +480,7 @@ java.io.File("<JD_TMP>/debug.log").appendText("DEBUG: $message\n")
 `println()` is swallowed by Gradle — never use it for debugging.
 
 **AtomicLong counters + shutdown hook** (for performance profiling — thread-safe,
-survives Gradle output swallowing):
-```kotlin
-import java.util.concurrent.atomic.AtomicLong
-
-object ResolutionCounters {
-    val someCallCount = AtomicLong()
-    val otherCallCount = AtomicLong()
-
-    init {
-        Runtime.getRuntime().addShutdownHook(Thread {
-            java.io.File("/tmp/jd_resolution_counters.txt").writeText(buildString {
-                appendLine("someCallCount: ${someCallCount.get()}")
-                appendLine("otherCallCount: ${otherCallCount.get()}")
-            })
-        })
-    }
-}
-
-// Usage at call sites:
-ResolutionCounters.someCallCount.incrementAndGet()
-```
-After the test run, read `/tmp/jd_resolution_counters.txt`. The shutdown hook fires in
-the forked JVM after all tests complete. `AtomicLong` is thread-safe for parallel test
-execution. **Always remove counters after investigation** — they are diagnostic-only.
+survives Gradle output swallowing). See the full measurement harness section below.
 
 **Unique vs duplicate calls** (cache-hit potential): wrap a callback with a `HashSet`:
 ```kotlin
@@ -514,3 +491,73 @@ val counting: (ClassId) -> Boolean = { id ->
     originalCallback(id)
 }
 ```
+
+---
+
+## Performance Measurement Harness
+
+### Ready-made instrumentation stash
+
+A complete measurement harness is available as a named git stash:
+
+```bash
+git stash show "stash@{0}"   # phase-c-instrumentation-v5-v6-measurements
+git stash pop "stash@{0}"    # apply it to the working tree
+```
+
+It contains:
+- `PhaseCMeasurementCounters.kt` — singleton with `AtomicLong` counters for 8 hypotheses,
+  `ThreadMXBean` CPU brackets, `ConcurrentHashMap.newKeySet` for unique-file tracking,
+  per-classloader dump via shutdown hook.
+- Counter increments at call sites in `JavaImportResolver.kt`, `JavaClassFinderOverAstImpl.kt`,
+  `JavaResolutionContext.kt`, `JavaClassOverAst.kt`, `JavaMemberOverAst.kt`,
+  `ConstantEvaluator.kt`, `JavaTypeOverAst.kt`.
+- `aggregate-phase-c-dumps.sh` — AWK-based aggregator that sums dump files across workers.
+- `fir.force.javaDirect=true` passthrough in `AbstractIsolatedFullPipelineModularizedTest.kt`.
+
+### Key patterns
+
+**Per-classloader dump filenames** — Gradle isolates each `*FullPipelineTestsGenerated` test
+in its own classloader. A Kotlin `object` is per-classloader, not per-JVM. Dump files must
+use unique names to avoid overwrites:
+
+```kotlin
+val cl = System.identityHashCode(PhaseCMeasurementCounters::class.java)
+val ts = System.nanoTime()
+val file = File("phase-c-dumps/dump-${pid}-${cl}-${ts}.txt")
+```
+
+**CPU time** — use `ThreadMXBean.getCurrentThreadCpuTime()` for per-thread CPU. Works
+correctly under `CONCURRENT` execution. `System.nanoTime()` is unreliable in Gradle workers.
+
+**Shutdown hook lifecycle** — each classloader's `init {}` registers a hook. The hook's
+`Thread` holds a strong reference chain back to the classloader, preventing GC. Use
+`@Synchronized` + `AtomicBoolean` guard for idempotent dump. Use `Triple` instead of
+nested data classes in the dump path — the classloader refuses to load new classes during
+JVM shutdown (`NoClassDefFoundError`). Avoid inline higher-order functions
+(`sortedByDescending`, `sumOf`) in dump — write manual loops.
+
+### Running measurements
+
+```bash
+# Build the instrumented jar
+./gradlew dist
+
+# Kotlin pipeline (414 modules, 109 with Java sources)
+./gradlew :compiler:fir:modularized-tests:test \
+  --tests KotlinFullPipelineTestsGenerated \
+  --rerun-tasks -Pfir.force.javaDirect=true 2>&1 | tee "$JD_TMP/measure.txt"
+
+# IntelliJ platform subset (446 modules, Java-heavy)
+./gradlew :compiler:fir:modularized-tests:test \
+  --tests "IntelliJFullPipelineTestsGenerated.testIntellij_platform_*" \
+  --rerun-tasks -Pfir.force.javaDirect=true 2>&1 | tee "$JD_TMP/measure_ij.txt"
+
+# Aggregate per-classloader dumps
+bash compiler/java-direct/aggregate-phase-c-dumps.sh
+```
+
+### Historical measurement data
+
+Full data from the 2026-04-22 measurement campaign (8 hypotheses, 3 corpora, corrected
+methodology) is archived at `implDocs/archive/MEASUREMENTS_2026_04_22.md`.
