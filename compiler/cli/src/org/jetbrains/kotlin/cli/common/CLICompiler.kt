@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticC
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -240,8 +241,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
                 } else {
-                    configuration.messageCollector.report(
-                        LOGGING,
+                    configuration.reportLog(
                         "Scripting plugin will not be loaded: not all required jars are present in the classpath (missing files: $missingJars)"
                     )
                 }
@@ -284,8 +284,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                 true
             } else false
         } catch (e: Throwable) {
-            val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            messageCollector.report(LOGGING, "Exception on loading scripting plugin: $e")
+            configuration.reportLog( "Exception on loading scripting plugin: $e")
             false
         }
 

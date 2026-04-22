@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.cli.pipeline
 
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.common.treatWarningsAsErrors
+import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.util.PhaseType
@@ -37,15 +36,11 @@ abstract class CheckCompilationErrors : Action<PipelineArtifact, PipelineContext
         }
 
         fun reportToMessageCollector(configuration: CompilerConfiguration) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-                configuration.diagnosticsCollector,
-                configuration.messageCollector,
-                configuration.renderDiagnosticInternalName
-            )
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(configuration.diagnosticsCollector, configuration)
         }
 
         fun checkHasErrors(configuration: CompilerConfiguration): Boolean {
-            if (configuration.diagnosticsCollector.hasErrors || configuration.messageCollector.hasErrors()) return true
+            if (configuration.diagnosticsCollector.hasErrors || configuration.hasMessageCollectorErrors()) return true
             if (configuration.treatWarningsAsErrors) {
                 // In the message collector check for `-Werror` is included into `hasErrors()`
                 return configuration.diagnosticsCollector.hasWarningsForWError
