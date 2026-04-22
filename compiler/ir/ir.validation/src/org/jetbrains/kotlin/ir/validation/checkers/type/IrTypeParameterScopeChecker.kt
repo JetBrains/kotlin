@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.validation.checkers.type
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -34,15 +35,21 @@ object IrTypeParameterScopeChecker : IrTypeChecker {
 
     private fun checkTypeParameterReference(
         context: CheckerContext,
-        element: IrElement,
+        container: IrElement,
         typeParameterSymbol: IrTypeParameterSymbol,
     ) {
-        if (!context.typeParameterScopeStack.isVisibleInCurrentScope(typeParameterSymbol)) {
+        if (
+            !context.typeParameterScopeStack.isVisibleInCurrentScope(typeParameterSymbol) &&
+            !typeParameterSymbol.isIntroducedBy(container)
+        ) {
             context.error(
-                element,
+                container,
                 "The following element references a type parameter '${typeParameterSymbol.owner.render()}' that is not available " +
                         "in the current scope."
             )
         }
     }
+
+    private fun IrTypeParameterSymbol.isIntroducedBy(container: IrElement): Boolean =
+        container is IrTypeParametersContainer && container.typeParameters.any { it.symbol == this }
 }
