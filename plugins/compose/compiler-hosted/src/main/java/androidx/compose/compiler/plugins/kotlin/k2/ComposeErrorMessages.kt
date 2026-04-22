@@ -149,5 +149,14 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             ComposeErrors.KEY_CALL_WITH_NO_ARGUMENTS,
             "key requires at least one argument."
         )
+
+        map.put(
+            ComposeErrors.COMPOSE_CONFIGURATION_ERROR,
+            "{0}",
+        )
+        map.put(
+            ComposeErrors.COMPOSE_CONFIGURATION_WARNING,
+            "{0}",
+        )
     }
 }

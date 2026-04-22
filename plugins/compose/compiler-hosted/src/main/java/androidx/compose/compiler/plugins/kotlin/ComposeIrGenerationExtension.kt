@@ -24,7 +24,7 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFr
 import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -50,7 +50,7 @@ class ComposeIrGenerationExtension(
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
     private val targetRuntimeVersion: ComposeRuntimeVersion? = null,
-    private val messageCollector: MessageCollector,
+    private val configuration: CompilerConfiguration,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
         private set
@@ -60,7 +60,7 @@ class ComposeIrGenerationExtension(
         pluginContext: IrPluginContext,
     ) {
         val isKlibTarget = !pluginContext.platform.isJvm()
-        if (VersionChecker(pluginContext, messageCollector).check(skipIfRuntimeNotFound) == VersionCheckerResult.NOT_FOUND) {
+        if (VersionChecker(pluginContext, configuration).check(skipIfRuntimeNotFound) == VersionCheckerResult.NOT_FOUND) {
             return
         }
 
@@ -102,7 +102,7 @@ class ComposeIrGenerationExtension(
                     !pluginContext.platform.isJvm()
                 },
             featureFlags,
-            messageCollector
+            configuration
         ).lower(moduleFragment)
 
         ProgressManager.checkCanceled()
