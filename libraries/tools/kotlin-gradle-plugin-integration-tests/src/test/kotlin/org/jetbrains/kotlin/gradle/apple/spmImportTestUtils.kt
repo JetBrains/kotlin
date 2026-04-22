@@ -13,7 +13,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
@@ -441,7 +441,7 @@ internal fun TestProject.initSwiftPmProject(
             }
 
         project.tasks
-            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+            .withType(DumpXcodeBuildArgs::class.java)
             .configureEach { task ->
                 task.additionalXcodeArgs.set(
                     listOf(
