@@ -7,7 +7,7 @@ import plugins.configureKotlinPomAttributes
 plugins {
     kotlin("multiplatform")
     `maven-publish`
-    signing
+    id("signing-convention")
     id("nodejs-cache-redirector-configuration")
     id("binaryen-configuration")
 }

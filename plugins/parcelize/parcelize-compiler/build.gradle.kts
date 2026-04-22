@@ -46,6 +46,9 @@ val robolectricClasspath by configurations.creating {
     attributes {
         attribute(Attribute.of("artifactType", String::class.java), "jar")
     }
+    resolutionStrategy.eachDependency {
+        checkAndOverrideBouncyCastleVersion(project)
+    }
 }
 val robolectricDependency by configurations.creating
 

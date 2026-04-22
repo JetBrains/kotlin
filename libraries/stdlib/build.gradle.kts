@@ -25,7 +25,7 @@ import kotlin.io.path.copyTo
 plugins {
     kotlin("multiplatform")
     `maven-publish`
-    signing
+    id("signing-convention")
     id("nodejs-cache-redirector-configuration")
     id("d8-configuration")
     id("binaryen-configuration")

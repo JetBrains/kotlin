@@ -78,6 +78,8 @@ org-tukaani-xz = "1.10"
 slf4j = "2.0.17"
 maven-xml-impl = "4.0.0-beta-5"
 yarn = "1.22.22"
+# This is also the version of bouncycastle that is used by KGP
+bouncycastle = "1.84"
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -189,6 +191,10 @@ org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz"}
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "maven-xml-impl" }
+
+bouncycastle-bcpg-jdk18on = { module = "org.bouncycastle:bcpg-jdk18on", version.ref = "bouncycastle" }
+bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

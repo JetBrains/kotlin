@@ -242,8 +242,8 @@ dependencies {
     // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
     "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
 
-    commonCompileOnly("org.bouncycastle:bcpkix-jdk18on:1.80")
-    commonCompileOnly("org.bouncycastle:bcpg-jdk18on:1.80")
+    commonCompileOnly(libs.bouncycastle.bcpkix.jdk18on)
+    commonCompileOnly(libs.bouncycastle.bcpg.jdk18on)
 
     testCompileOnly(project(":compiler"))
 
@@ -331,11 +331,7 @@ configurations.all {
             because("CVE-2025-48924")
         }
 
-        // Bouncy Castle
-        if (requested.group == "org.bouncycastle" && requested.name == "bcpkix-jdk18on") {
-            useVersion("1.80")
-            because("CVE-2024-34447, CVE-2024-30172, CVE-2024-30171, CVE-2024-29857")
-        }
+        checkAndOverrideBouncyCastleVersion(project)
     }
 }
 
@@ -345,6 +341,7 @@ tasks {
             "projectVersion" to project.version,
             "kotlinNativeVersion" to project.kotlinNativeVersion,
             "kotlinWebNpmToolingDirName" to kotlinWebNpmToolingDirName,
+            "bouncyCastleVersion" to libs.versions.bouncycastle.get(),
         )
         for ((name, value) in propertiesToExpand) {
             inputs.property(name, value)

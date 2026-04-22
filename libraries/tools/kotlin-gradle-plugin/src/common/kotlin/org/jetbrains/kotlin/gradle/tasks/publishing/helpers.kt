@@ -20,6 +20,7 @@ import org.gradle.plugins.signing.SigningExtension
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getExtension
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -130,6 +131,7 @@ internal fun keyIdToHex(keyId: Long) =
         .padStart(16, '0')
 
 
+private object Helpers
 private fun Project.maybeCreateBcConfiguration(): Configuration {
     return project.configurations.maybeCreateResolvable(KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME) {
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
@@ -137,11 +139,12 @@ private fun Project.maybeCreateBcConfiguration(): Configuration {
         attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
         description = "Bouncy Castle dependencies used internally for library publishing validation tasks. Not used during compilation."
         defaultDependencies {
+            val bouncyCastleVersion = Helpers.loadPropertyFromResources("project.properties", "bouncyCastleVersion")
             it.add(
-                project.dependencies.create("org.bouncycastle:bcpkix-jdk18on:1.80")
+                project.dependencies.create("org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}")
             )
             it.add(
-                project.dependencies.create("org.bouncycastle:bcpg-jdk18on:1.80")
+                project.dependencies.create("org.bouncycastle:bcpg-jdk18on:${bouncyCastleVersion}")
             )
         }
     }
