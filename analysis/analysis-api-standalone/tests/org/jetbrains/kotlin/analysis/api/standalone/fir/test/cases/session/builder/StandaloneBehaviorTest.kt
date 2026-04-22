@@ -289,8 +289,7 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
 
                 checkSubpackages("foo", emptyList())
                 checkSubpackages("bar", emptyList())
-                checkSubpackages("kotlin", listOf("collections"))
-                checkSubpackages("kotlin", listOf("jvm", "js"), shouldExist = false)
+                checkSubpackages("kotlin", listOf("collections", "jvm", "js"))
             }
 
             val ktFile = standaloneSession.modulesWithFiles.getValue(sourceModule).single() as KtFile
@@ -338,24 +337,17 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
             }
         }
 
-        fun checkSubpackages(name: String, expectedInside: List<String>, shouldExist: Boolean = true) {
+        fun checkSubpackages(name: String, expectedInside: List<String>) {
             val packageFqName = FqName(name)
             val actualSubpackages = packageProvider.getSubpackageNames(packageFqName, targetPlatform)
                 .mapTo(HashSet()) { it.asString() }
 
-            if (shouldExist) {
-                if (expectedInside.isEmpty()) {
-                    assertEquals(emptySet(), actualSubpackages, "Subpackages of '$packageFqName' must be empty")
-                } else {
-                    for (expectedSubpackage in expectedInside) {
-                        val isInside = expectedSubpackage in actualSubpackages
-                        assertTrue(isInside, "Subpackage '$name.$expectedSubpackage' must exist")
-                    }
-                }
+            if (expectedInside.isEmpty()) {
+                assertEquals(emptySet(), actualSubpackages, "Subpackages of '$packageFqName' must be empty")
             } else {
                 for (expectedSubpackage in expectedInside) {
                     val isInside = expectedSubpackage in actualSubpackages
-                    assertFalse(isInside, "Subpackage '$name.$expectedSubpackage' must not exist")
+                    assertTrue(isInside, "Subpackage '$name.$expectedSubpackage' must exist")
                 }
             }
         }

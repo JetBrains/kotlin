@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.packages
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -54,11 +55,18 @@ class KotlinStandalonePackageProviderFactory(
     private val indexedFiles: Collection<KtFile>,
     libraryRoots: List<VirtualFile>
 ) : KotlinCachingPackageProviderFactory(project) {
-    /** A mapping between the library root (normally, a root entry in a JAR/KLib archive) and its containing KLib file. */
+    /** A mapping between the library root and its containing KLib file. */
     private val klibFiles: Map<VirtualFile, Path> = buildMap {
         for (libraryRoot in libraryRoots) {
-            val libraryFile = runCatching { VfsUtilCore.getVirtualFileForJar(libraryRoot)?.toNioPath() }.getOrNull() ?: continue
-            if (libraryFile.extension.lowercase() == KLIB_FILE_EXTENSION) {
+            if (libraryRoot.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL) {
+                // Root entry in the Klib archive
+                val libraryFile = runCatching { VfsUtilCore.getVirtualFileForJar(libraryRoot)?.toNioPath() }.getOrNull() ?: continue
+                if (libraryFile.extension.lowercase() == KLIB_FILE_EXTENSION) {
+                    put(libraryRoot, libraryFile)
+                }
+            } else if (libraryRoot.isDirectory) {
+                // Unpacked Kotlin library (a tree of directories with individual '.knm' files)
+                val libraryFile = runCatching { libraryRoot.toNioPath() }.getOrNull() ?: continue
                 put(libraryRoot, libraryFile)
             }
         }
