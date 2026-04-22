@@ -806,10 +806,10 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     assertResolvedVersions(
                         persistedPackageResolvedSyncPath,
                         projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts"), listOf(
-                            repo to "1.0.0",
+                            repo to "1.0.1",
                         )
                     )
-                    assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
+                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
                 }
 
             }
@@ -892,7 +892,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         "Alamofire should be listed under .swiftpm-locks/default/swiftPMCheckout/checkouts"
                     )
 
-                    assertGitRevisionEquals(
+                    assertGitRevisionNotEquals(
                         initialAlamofireRevision,
                         projectPath.resolve(".swiftpm-locks/default/swiftPMCheckout/checkouts/Alamofire"),
                         "The initial umbrella alamofire revision should be different from expected"

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.IgnoreEmptyDirectories
@@ -95,6 +96,32 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
                 "--scratch-path", swiftPMDependenciesCheckout.get().asFile,
                 "resolve",
             )
+
+            val workspaceStateJson = swiftPMDependenciesCheckout.get().asFile.resolve("workspace-state.json")
+
+            /**
+             * [KT-85078]
+             * Handling cases where the lock file is missing:
+             *
+             * 1. Initial fetch:
+             *    - No lock file and no JSON file exist yet.
+             *    - No behavior change compared to current flow.
+             *
+             * 2. Lock file removed at umbrella level (identifier mode):
+             *    - If the JSON file exists → delete it to force a full refresh.
+             *    - Next fetch:
+             *        a) Recreates the lock file and JSON file.
+             *        b) Sync to synthetic invalidates and updates its JSON file.
+             *
+             * 3. Lock file removed at synthetic level (noSynchronization mode):
+             *    - If the JSON file exists → delete it to force a full refresh.
+             *    - Next fetch:
+             *        a) Recreates the lock file and JSON file.
+             *        b) Sync propagates changes back to the Gradle level.
+             */
+            if (!syntheticLockFile.get().asFile.exists() && workspaceStateJson.exists()) {
+                workspaceStateJson.delete()
+            }
 
             if (additionalSwiftPackageResolveArgs.isPresent) {
                 args.addAll(additionalSwiftPackageResolveArgs.get())

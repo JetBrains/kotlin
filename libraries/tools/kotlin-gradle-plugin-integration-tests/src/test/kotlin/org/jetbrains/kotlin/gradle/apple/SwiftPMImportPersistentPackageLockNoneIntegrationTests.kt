@@ -556,7 +556,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                     assertResolvedVersions(
                         persistedPackageResolvedSyncPath,
                         projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"), listOf(
-                            repo to "1.0.0",
+                            repo to "1.0.1",
                         )
                     )
 
@@ -631,7 +631,7 @@ class SwiftPMImportPersistentPackageLockNoneIntegrationTests : KGPBaseTest() {
                         "Alamofire should be listed under build/kotlin/swiftPMCheckout/checkouts"
                     )
 
-                    assertGitRevisionEquals(
+                    assertGitRevisionNotEquals(
                         initialAlamofireRevision,
                         projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts/Alamofire"),
                         "The initial alamofire revision should be different from expected"
