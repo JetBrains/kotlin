@@ -1,5 +1,5 @@
 [versions]
-kotlin-release = "2.3.20-RC"
+kotlin-release = "2.4.0-Beta2"
 dexMemberList = "4.1.1"
 dokka = "2.2.0"
 gradle-custom-user-data = "2.4.0"
