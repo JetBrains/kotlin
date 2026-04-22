@@ -82,7 +82,6 @@ class JavaLightTree(
      */
     private val compositeStartOffsets: IntArray,
 ) {
-    /** Synthetic root node — wraps all top-level production markers. */
     fun getRoot(): JavaLightNode = JavaLightNode(rootIndex)
 
     private fun isSyntheticRoot(node: JavaLightNode): Boolean = node.index == rootIndex
@@ -115,7 +114,6 @@ class JavaLightTree(
         return tokens.getTokenEnd(tokenIdx)
     }
 
-    /** Returns a view over [source] without copying — substring materialisation is the caller's choice. */
     fun getText(node: JavaLightNode): CharSequence = source.subSequence(getStartOffset(node), getEndOffset(node))
 
     /** O(length) char-by-char comparison; avoids the [String] allocation that [getText]+[CharSequence.toString] performs. */

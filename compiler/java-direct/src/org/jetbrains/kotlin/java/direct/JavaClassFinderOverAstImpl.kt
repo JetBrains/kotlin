@@ -66,22 +66,11 @@ class JavaClassFinderOverAstImpl(
     // Inner maps are immutable after creation — built atomically inside computeIfAbsent.
     private val index: ConcurrentHashMap<FqName, Map<String, List<FileEntry>>> = ConcurrentHashMap()
 
-    // class cache for already created JavaClassOverAst.
     private val classCache: MutableMap<ClassId, JavaClass> = ConcurrentHashMap()
-
-    // package cache
     private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
-
-    // Package-level annotations from package-info.java files.
-    // ConcurrentHashMap because different packages can be indexed concurrently by different threads.
     private val packageAnnotationNodes: ConcurrentHashMap<FqName, List<JavaAnnotation>> = ConcurrentHashMap()
-
-    // Cache: package FqName → list of directories (one per source root that contains this package).
-    // Populated via computeIfAbsent — each package resolved at most once.
     private val packageDirectoryCache: ConcurrentHashMap<FqName, List<VirtualFile>> = ConcurrentHashMap()
 
-    // Supertype graph queries (direct supertypes, inherited inner classes).
-    // Extracted into a focused collaborator in Step 1.6 of the refactoring plan.
     private val supertypeGraph = JavaSupertypeGraph(
         classCacheLookup = { classCache[it] },
         filesForClassLookup = { classId -> findFilesForClass(classId).map { it.file } },
@@ -256,8 +245,6 @@ class JavaClassFinderOverAstImpl(
         // A package with no class files may still exist via `package-info.java` carrying only
         // package-level annotations — respect those so the annotations are not lost.
         if (classesByName.isEmpty() && packageAnnotationNodes[fqName].isNullOrEmpty()) return null
-        // computeIfAbsent (not getOrPut) so concurrent callers share a single JavaPackageOverAst
-        // instance instead of each creating their own and racing on put.
         return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
     }
 

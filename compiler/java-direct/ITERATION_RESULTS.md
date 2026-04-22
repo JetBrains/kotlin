@@ -2,7 +2,7 @@
 
 **Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
 
-**Last Updated**: 2026-04-22 (Phase D: measurement-gated performance changes landed)
+**Last Updated**: 2026-04-22 (Phase E: readability cleanup)
 
 ### Open performance items (remaining after the 2026-04-20 / 04-21 perf work)
 
@@ -17,9 +17,73 @@ caveats have landed in code (verified against current source). What remains:
 - ~~**§5 architectural** — lazy per-package indexing and AST release after extraction.~~
   **Done** (lazy indexing landed 2026-04-21; AST release after extraction is a separate item).
 
-The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). Phase A,
-the three iterations of Phase B (B.1, B.2, B.3), Phase C (measurements), and Phase D
-(measurement-gated changes) are now complete. Phase E (remaining readability) is pending.
+The broader follow-up plan is tracked in `REFACTORING_PLAN.md` (Phases A–E). All five
+phases are now complete.
+
+---
+
+## Refactoring Plan Phase E: Readability Cleanup — 2026-04-22
+
+### Overview
+
+Final phase of `REFACTORING_PLAN.md`. Residual comment cleanup across 6 files.
+
+### Changes
+
+**R1 — Delete redundant comments.** Removed self-evident comments that restate
+what the code already says:
+- `JavaLightTree.kt` — "Synthetic root node — wraps all top-level production markers."
+  (the method name `getRoot()` and return type are sufficient).
+- `JavaLightTree.kt` — "Returns a view over [source] without copying — substring
+  materialisation is the caller's choice." (`subSequence` already implies this).
+- `JavaClassFinderOverAstImpl.kt` — "class cache for already created JavaClassOverAst",
+  "package cache", "Package-level annotations from package-info.java files.
+  ConcurrentHashMap because...", "Cache: package FqName → list of directories...",
+  "Supertype graph queries... Extracted into a focused collaborator in Step 1.6..."
+  (all restating what the field name and type already express).
+
+**R2 — Collapse `computeIfAbsent` rationale duplicates.** The comment
+"computeIfAbsent (not getOrPut) so concurrent callers share a single X instance"
+was repeated at 4+ sites. Kept the canonical KDoc on `JavaSupertypeGraph.getDirectSupertypes`
+(the most detailed, explaining both the atomicity rationale and the re-parse avoidance);
+deleted the duplicates at:
+- `JavaClassFinderOverAstImpl.findPackage` (2 lines)
+- `JavaClassOverAst.findInnerClass` (2 lines)
+- `JavaSupertypeGraph.collectInheritedInnerClasses` (trimmed to keep only the
+  self-deadlock avoidance note, which is non-obvious)
+- `JavaScopeResolver.findLocalClass` (1 line)
+
+The `JavaResolutionContext.create` comment about `computeIfAbsent` was kept because
+it explains a distinct concern (FIR type-parameter identity), not the generic
+atomicity pattern.
+
+**R4 — Trim JLS trivia.** Removed the 3-line "Interface fields are implicitly
+public static final / Enum constants are also..." comment from `JavaMemberOverAst`.
+The code (`containingClass.isInterface || isEnumEntry || hasFieldModifier(...)`)
+is self-explanatory to anyone with basic Java knowledge.
+
+**R9 — Constructor param count (skipped).** Post-Phase-D, `JavaResolutionContext`
+has 8 constructor parameters (1 over the >7 threshold). The plan suggested grouping
+`simpleImports` + `starImports` into a value class, but the constructor is `private`,
+the two fields are used independently throughout the class, and wrapping them would
+add indirection for marginal gain. Skipped.
+
+### Test Results
+
+Full suite: `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` —
+**BUILD SUCCESSFUL**, 0 failures.
+
+### Files Modified
+
+| File | Change | Lines |
+|------|--------|-------|
+| `JavaLightTree.kt` | R1: delete 2 self-evident KDocs | −2 |
+| `JavaClassFinderOverAstImpl.kt` | R1: delete 5 restating field comments; R2: delete `computeIfAbsent` rationale | −13 |
+| `JavaClassOverAst.kt` | R2: delete `computeIfAbsent` rationale on `findInnerClass` | −2 |
+| `JavaScopeResolver.kt` | R2: delete `computeIfAbsent` rationale on `findLocalClass` | −1 |
+| `JavaSupertypeGraph.kt` | R2: trim `computeIfAbsent` note on `collectInheritedInnerClasses` | −3 |
+| `JavaMemberOverAst.kt` | R4: delete JLS trivia comment | −3 |
+| **Net** | | **−24 lines** |
 
 ---
 

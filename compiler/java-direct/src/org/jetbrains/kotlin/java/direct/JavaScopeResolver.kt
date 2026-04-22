@@ -57,7 +57,6 @@ internal class JavaScopeResolver(
      * 5. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
-        // Fast path: lock-free get. computeIfAbsent on miss to avoid concurrent double-compute.
         findLocalClassCache[name]?.let { return if (it === FIND_LOCAL_CLASS_NULL) null else it as JavaClass }
         val cached = findLocalClassCache.computeIfAbsent(name) {
             findLocalClassUncached(it) ?: FIND_LOCAL_CLASS_NULL

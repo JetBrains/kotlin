@@ -269,9 +269,6 @@ class JavaFieldOverAst(
 
     override val isFromSource: Boolean get() = true
 
-    // Interface fields are implicitly public static final
-    // Enum constants are also implicitly public static final
-    // For multi-field declarations, hasFieldModifier checks the effective (possibly inherited) modifier list
     override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.STATIC_KEYWORD)
     override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
 }

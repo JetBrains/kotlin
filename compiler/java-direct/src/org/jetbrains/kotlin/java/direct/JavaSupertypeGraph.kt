@@ -89,9 +89,7 @@ internal class JavaSupertypeGraph(
      * Recursively collects all inner class names from the supertype hierarchy.
      * Returns Map<simpleName, Set<ClassId>> to detect ambiguities.
      *
-     * Uses [java.util.concurrent.ConcurrentHashMap.computeIfAbsent] so that concurrent callers
-     * do not both perform the recursive supertype walk for the same class. Nested recursion
-     * reads the cache via plain `get` (not `computeIfAbsent`) so it cannot self-deadlock.
+     * Nested recursion reads the cache via plain `get` (not `computeIfAbsent`) so it cannot self-deadlock.
      */
     fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> {
         return inheritedInnerClassesCache.computeIfAbsent(classId) {
