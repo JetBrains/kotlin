@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.jetbrains.kotlin.cli.common.arguments.ARGFILE_ARGUMENT
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.isAdvanced
@@ -70,7 +71,8 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
                 }
 
                 /* Advanced (e.g. -X arguments) or boolean properties need to be passed using the '=' */
-                argumentAnnotation.isAdvanced || property.returnType.classifier == Boolean::class -> {
+                argumentAnnotation.isAdvanced || property.returnType.classifier == Boolean::class
+                        || argumentStringValue.startsWith(ARGFILE_ARGUMENT) -> {
                     add("$argumentName=$argumentStringValue")
                 }
                 else -> {
