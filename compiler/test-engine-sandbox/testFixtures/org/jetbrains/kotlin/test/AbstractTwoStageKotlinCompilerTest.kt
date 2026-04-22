@@ -50,8 +50,8 @@ abstract class AbstractTwoStageKotlinCompilerTest {
     lateinit var nonGroupingRunner: NonGroupingTestRunner
         private set
 
-    var testKind: TestKind = TestKind.REGULAR
-        private set
+    val testKind: TestKind
+        get() = nonGroupingRunner.testServices.testKind()
 
     var nonGroupingPhaseRunnerInitialized: Boolean = false
         private set
@@ -93,8 +93,6 @@ abstract class AbstractTwoStageKotlinCompilerTest {
 
     fun initTestRunnerAndCreateModuleStructure(@TestDataFile filePath: String) {
         initTestRunners(filePath)
-        nonGroupingRunner.prepareModuleStructure(filePath)?.also {
-            testKind = nonGroupingRunner.testServices.testKind()
-        }
+        nonGroupingRunner.prepareModuleStructure(filePath)
     }
 }
