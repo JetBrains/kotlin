@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqueNames
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -71,6 +73,8 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
 
         val resultOfElimination = resultOfLoading.eliminateLibrariesWithDuplicatedUniqueNames(compilerConfiguration)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(compilerConfiguration.diagnosticsCollector, compilerConfiguration)
+
         assertTrue(resultOfElimination === resultOfLoading)
 
         assertEquals(2, messageCollector.messages.size)
@@ -107,6 +111,8 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
 
         val resultOfElimination = resultOfLoading.eliminateLibrariesWithDuplicatedUniqueNames(compilerConfiguration)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(compilerConfiguration.diagnosticsCollector, compilerConfiguration)
+
         assertTrue(resultOfElimination !== resultOfLoading)
         assertFalse(resultOfElimination.hasProblems)
         assertEquals(
@@ -148,6 +154,8 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         }
 
         val resultOfElimination = resultOfLoading.eliminateLibrariesWithDuplicatedUniqueNames(compilerConfiguration)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(compilerConfiguration.diagnosticsCollector, compilerConfiguration)
+
         assertTrue(resultOfElimination === resultOfLoading)
 
         assertEquals(2, messageCollector.messages.size)

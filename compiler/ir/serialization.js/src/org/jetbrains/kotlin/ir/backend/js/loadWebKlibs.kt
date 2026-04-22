@@ -49,7 +49,7 @@ fun loadWebKlibs(
         if (!configuration.skipLibrarySpecialCompatibilityChecks) {
             val isWasm = platformChecker is KlibPlatformChecker.Wasm
             val checker = if (isWasm) WasmLibrarySpecialCompatibilityChecker else JsLibrarySpecialCompatibilityChecker
-            checker.check(klibs.all, configuration.messageCollector, configuration.klibAbiCompatibilityLevel)
+            checker.check(klibs.all, configuration)
         }
     }
 }
