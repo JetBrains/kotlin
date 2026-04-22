@@ -15,6 +15,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.emptyList
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
@@ -45,7 +46,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonKlibBasedArgumentsImpl(
   private val adapter: CommonKlibBasedArgumentValueAdapter? = null,
-) : CommonCompilerArgumentsImpl(adapter),
+  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+) : CommonCompilerArgumentsImpl(adapter, restrictedArgViolations),
     CommonKlibBasedArguments,
     CommonKlibBasedArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()

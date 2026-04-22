@@ -14,6 +14,7 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.emptyList
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
@@ -55,7 +56,8 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JsArgumentsImpl(
   private val adapter: JsArgumentValueAdapter? = null,
-) : CommonJsAndWasmArgumentsImpl(adapter),
+  restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
+) : CommonJsAndWasmArgumentsImpl(adapter, restrictedArgViolations),
     JsArguments,
     JsArguments.Builder,
     DeepCopyable<JsArgumentsImpl> {
@@ -88,7 +90,7 @@ internal class JsArgumentsImpl(
 
   public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter).also { newArgs -> newArgs.applyArgumentStrings(toArgumentStrings()) }
+  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
   override fun build(): JsArguments = deepCopy()
 
