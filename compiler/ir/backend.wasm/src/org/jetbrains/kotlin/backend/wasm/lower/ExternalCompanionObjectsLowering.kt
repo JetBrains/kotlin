@@ -76,7 +76,6 @@ private class ExternalCompanionObjectsLoweringVisitor : IrElementTransformerVoid
         // remove temporary companion object instance vars, if companion object instance is dropped
         if (!receiverUsed) {
             val excludedVars = setOf(receiverVar, helperVarForReceiver)
-
             expression.eliminateTemporaryCompanionObjectInstanceVars(excludedVars)
         }
 
