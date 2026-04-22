@@ -11,6 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -38,6 +39,7 @@ class SwiftPMImportLenientSyncIT : KGPBaseTest() {
     private val serializeTask = ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}"
     private val umbrellaFetchTask = ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName("default")}"
     private fun convertTask(sdk: String) = ":${ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME}$sdk"
+    private fun dumpTask(sdk: String) = ":${DumpXcodeBuildArgs.TASK_NAME}$sdk"
 
     @DisplayName("Failing 'swift package resolve' fails a normal build but only warns during IDE sync")
     @GradleTest
@@ -99,7 +101,12 @@ class SwiftPMImportLenientSyncIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            initSwiftPmProject(cacheDirFile) {
+            initSwiftPmProject(
+                cacheDirFile,
+                nativeTargets = {
+                    listOf(iosArm64())
+                },
+            ) {
                 swiftPMDependencies {
                     localSwiftPackage(
                         directory = project.layout.projectDirectory.dir("localBrokenPackage"),
@@ -111,20 +118,20 @@ class SwiftPMImportLenientSyncIT : KGPBaseTest() {
             /* Normal build: xcodebuild failure aborts the build */
             buildAndFail(ideaImportTask) {
                 assertTasksExecuted(umbrellaFetchTask, generateTask, serializeTask)
-                assertTasksFailed(convertTask("Iphoneos"))
+                assertTasksFailed(dumpTask("Iphoneos"))
                 assertOutputContains("xcodebuild")
             }
 
             /* IDE sync: xcodebuild failure is downgraded to a warning, import succeeds */
             build(ideaImportTask, buildOptions = ideaSyncBuildOptions) {
-                assertTasksExecuted(convertTask("Iphoneos"))
-                assertOutputContains("Warning: Failed to generate SwiftPM cinterop def files via xcodebuild")
+                assertTasksExecuted(dumpTask("Iphoneos"))
+                assertOutputContains("Warning: Failed to dump xcodebuild arguments")
             }
 
             /* Lenient failure is not up-to-date: it re-runs and warns again on the next sync */
             build(ideaImportTask, buildOptions = ideaSyncBuildOptions) {
-                assertTasksExecuted(convertTask("Iphoneos"))
-                assertOutputContains("Warning: Failed to generate SwiftPM cinterop def files via xcodebuild")
+                assertTasksExecuted(dumpTask("Iphoneos"))
+                assertOutputContains("Warning: Failed to dump xcodebuild arguments")
             }
         }
     }

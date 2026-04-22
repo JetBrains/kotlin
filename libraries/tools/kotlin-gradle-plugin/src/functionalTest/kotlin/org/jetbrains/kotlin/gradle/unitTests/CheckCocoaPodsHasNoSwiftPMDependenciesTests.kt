@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependenc
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Remote.Version.From
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportMetadata
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.searchForGradlew
 import org.jetbrains.kotlin.gradle.util.buildProject
 import kotlin.test.Test
@@ -59,7 +59,7 @@ class CheckCocoaPodsHasNoSwiftPMDependenciesTests {
         val project = buildProject()
         val identifier = SwiftPMDependencyIdentifier("transitiveDep", true)
         val task = project.registerCheckTask(
-            transitive = TransitiveSwiftPMDependencies(
+            transitive = TransitiveSwiftPMMetadata(
                 mapOf(
                     identifier to SwiftPMImportMetadata(
                         konanTargets = setOf("ios_arm64"),
@@ -107,12 +107,12 @@ class CheckCocoaPodsHasNoSwiftPMDependenciesTests {
 
     private fun ProjectInternal.registerCheckTask(
         directDeps: Set<SwiftPMDependency> = emptySet(),
-        transitive: TransitiveSwiftPMDependencies = TransitiveSwiftPMDependencies(emptyMap()),
+        transitive: TransitiveSwiftPMMetadata = TransitiveSwiftPMMetadata(emptyMap()),
         workspacePathValue: String? = null,
     ): CheckCocoaPodsHasNoSwiftPMDependencies {
         val task = tasks.register("checkSwiftPMDependencies", CheckCocoaPodsHasNoSwiftPMDependencies::class.java).get()
         task.directSwiftPMDependencies.set(directDeps)
-        task.transitiveSwiftPMDependencies.set(transitive)
+        task.transitiveSwiftPMMetadata.set(transitive)
         if (workspacePathValue != null) task.workspacePath.set(workspacePathValue)
         task.gradleProjectPath.set(":")
         task.projectPath.set(projectDir)

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import java.io.Serializable
 
+@kotlinx.serialization.Serializable
 internal data class SwiftPMDependencyIdentifier(
     val identifier: String,
     val isModular: Boolean,
 ) : Serializable
 
-internal data class TransitiveSwiftPMDependencies(
+@kotlinx.serialization.Serializable
+internal data class TransitiveSwiftPMMetadata(
     val metadataByDependencyIdentifier: Map<SwiftPMDependencyIdentifier, SwiftPMImportMetadata>
 ) : Serializable

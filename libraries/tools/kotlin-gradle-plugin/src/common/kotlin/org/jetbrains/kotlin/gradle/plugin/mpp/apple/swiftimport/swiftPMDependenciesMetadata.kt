@@ -35,7 +35,7 @@ private const val SWIFTPM_DEPENDENCIES_METADATA_USAGE = "swiftPMDependenciesMeta
 internal const val SWIFTPM_DEPENDENCIES_METADATA_FOR_LOCK_FILES_USAGE = "swiftPMDependenciesMetadataForLockFiles"
 
 @Suppress("UNCHECKED_CAST")
-private fun swiftPMDependencies(swiftPMDependenciesMetadataClasspath: ArtifactView): Provider<TransitiveSwiftPMDependencies> {
+private fun deserializeSwiftPMMetadataFromArtifactView(swiftPMDependenciesMetadataClasspath: ArtifactView): Provider<TransitiveSwiftPMMetadata> {
     return swiftPMDependenciesMetadataClasspath
         .artifacts.resolvedArtifacts
         .map { artifacts ->
@@ -57,7 +57,7 @@ private fun swiftPMDependencies(swiftPMDependenciesMetadataClasspath: ArtifactVi
                         deserializeSwiftPMImportMetadata(it)
                     }
                 }
-            TransitiveSwiftPMDependencies(metadataByDependencyIdentifier)
+            TransitiveSwiftPMMetadata(metadataByDependencyIdentifier)
         }
 }
 
@@ -105,7 +105,7 @@ internal fun Project.inheritSwiftPMDependenciesFromAppleCompilationDependencies(
     }
 }
 
-internal fun Project.transitiveSwiftPMDependenciesProvider(): Provider<TransitiveSwiftPMDependencies> = swiftPMDependencies(
+internal fun Project.transitiveSwiftPMMetadataProvider(): Provider<TransitiveSwiftPMMetadata> = deserializeSwiftPMMetadataFromArtifactView(
     // 1. Select metadataApiElements component graph
     swiftPMDependenciesResolvableMetadataConfiguration().incoming.artifactView {
         // 2. Reselect SwiftPM metadata variant
