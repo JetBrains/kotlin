@@ -41,18 +41,18 @@ class JavaResolutionContext private constructor(
      * Shared by reference across contexts with the same containing class
      * (via [withTypeParameters] / [withInheritedTypeParameters]).
      */
-    private val aggregatedInheritedInnerClassesHolder: AggregatedInheritedInnerClassesHolder =
-        AggregatedInheritedInnerClassesHolder(),
+    private val inheritedInnerCache: InheritedInnerCache =
+        InheritedInnerCache(),
 ) {
-    private class AggregatedInheritedInnerClassesHolder {
+    private class InheritedInnerCache {
         @Volatile var value: Map<String, Set<ClassId>>? = null
     }
 
     private fun getAggregatedInheritedInnerClasses(): Map<String, Set<ClassId>>? {
-        aggregatedInheritedInnerClassesHolder.value?.let { return it }
+        inheritedInnerCache.value?.let { return it }
         val containingClass = containingClassProvider?.invoke() as? JavaClassOverAst ?: return null
         val result = inheritedMemberResolver.computeAggregatedInheritedInnerClasses(containingClass)
-        aggregatedInheritedInnerClassesHolder.value = result
+        inheritedInnerCache.value = result
         return result
     }
 
@@ -181,7 +181,7 @@ class JavaResolutionContext private constructor(
             scopeResolver.withTypeParameters(typeParams),
             inheritedMemberResolver,
             containingClassProvider, classFinderProvider,
-            aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
+            inheritedInnerCache, // share — containingClass unchanged
         )
     }
 
@@ -197,7 +197,7 @@ class JavaResolutionContext private constructor(
             scopeResolver.withInheritedTypeParameters(typeParams),
             inheritedMemberResolver,
             containingClassProvider, classFinderProvider,
-            aggregatedInheritedInnerClassesHolder, // share — containingClass unchanged
+            inheritedInnerCache, // share — containingClass unchanged
         )
     }
 

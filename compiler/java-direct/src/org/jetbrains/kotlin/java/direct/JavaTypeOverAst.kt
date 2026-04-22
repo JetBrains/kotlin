@@ -85,8 +85,7 @@ class JavaClassifierTypeOverAst(
     /**
      * Canonical cached form of the type name parts. All other properties that need the type name
      * derive from this single split result, avoiding redundant [String.split] allocations.
-     * For the 83 % of types that are single-segment (e.g. "String", "List"), this also saves
-     * one String allocation compared to storing both the joined name and the parts list.
+     * For single-segment types (~84 %), [rawTypeName] returns `parts[0]` directly.
      */
     @Volatile private var _rawTypeNameParts: List<String>? = null
     private val rawTypeNameParts: List<String>

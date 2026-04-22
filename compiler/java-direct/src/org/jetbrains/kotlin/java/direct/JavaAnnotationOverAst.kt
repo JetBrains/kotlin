@@ -78,6 +78,7 @@ class JavaAnnotationOverAst(
         return resolutionContext.resolve(reference, tryResolve)
     }
 
+    // Resolution is callback-based via resolveAnnotation(); this method is not used.
     override fun resolve(): JavaClass? = null
 }
 

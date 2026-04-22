@@ -160,15 +160,14 @@ internal class JavaInheritedMemberResolver(
      * This handles cross-file inheritance (e.g. a Java class extending a Kotlin class with an
      * inner class).
      *
-     * Runs two phases:
-     *   1. [findInPhase1JavaModel] walks [JavaClassifierType] supertypes from the Java model —
-     *      fast for same-file Java source supertypes and fully self-contained (no FIR
-     *      interaction). Any supertypes that couldn't be walked this way are recorded in
-     *      `nonSourceSupertypeIds` for Phase 2.
-     *   2. [findInPhase2ClassIdWalk] consumes `nonSourceSupertypeIds` and uses the FIR
-     *      [getSupertypeClassIds] callback to walk Kotlin / binary supertypes transitively.
+     * Runs two passes:
+     *   1. [walkJavaSourceSupertypes] — BFS over [JavaClassifierType] supertypes from the Java
+     *      model; fast for same-file Java source supertypes, fully self-contained (no FIR
+     *      interaction). Non-source supertypes are recorded in `nonSourceSupertypeIds`.
+     *   2. [walkBinarySupertypes] — BFS over the non-source (Kotlin / binary) supertype ClassIds
+     *      using the FIR [getSupertypeClassIds] callback.
      *
-     * Both phases share `visited` (to avoid re-probing the same `ClassId`) and use the
+     * Both passes share `visited` (to avoid re-probing the same `ClassId`) and use the
      * `SupertypeClassId.SimpleName` probe pattern with ambiguity detection.
      *
      * @param resolveWithoutInheritance function to resolve a name without checking inherited
@@ -193,28 +192,26 @@ internal class JavaInheritedMemberResolver(
         val visited = mutableSetOf<ClassId>()
         val nonSourceSupertypeIds = mutableListOf<ClassId>()
 
-        findInPhase1JavaModel(
+        walkJavaSourceSupertypes(
             simpleName, initialSupertypes, tryResolve, resolveWithoutInheritance, visited, nonSourceSupertypeIds,
         )?.let { return it }
 
         if (getSupertypeClassIds == null || nonSourceSupertypeIds.isEmpty()) return null
-        return findInPhase2ClassIdWalk(simpleName, nonSourceSupertypeIds, getSupertypeClassIds, tryResolve, visited)
+        return walkBinarySupertypes(simpleName, nonSourceSupertypeIds, getSupertypeClassIds, tryResolve, visited)
     }
 
     /**
-     * Phase 1 of [resolveInheritedInnerClassToClassId]: BFS over [JavaClassifierType] objects
-     * starting from [initialSupertypes]. For each supertype, resolves its name via
-     * [resolveWithoutInheritance] (the reentrance-safe variant — must NOT recurse back into
+     * BFS over [JavaClassifierType] supertypes from the Java model, starting from
+     * [initialSupertypes]. For each supertype, resolves its name via [resolveWithoutInheritance]
+     * (the reentrance-safe variant — must NOT recurse back into
      * [resolveInheritedInnerClassToClassId]), probes `supertypeClassId.SimpleName` via
      * [tryResolve], and either queues the supertype's own supertypes (Java source classes) or
-     * appends to [nonSourceSupertypeIds] (Kotlin / binary classes, handled in Phase 2).
+     * appends to [nonSourceSupertypeIds] (Kotlin / binary classes, handled by [walkBinarySupertypes]).
      *
-     * Returns the found inner-class `ClassId` or `null` if nothing was found at this phase;
-     * returns `null` early with no result if ambiguity is detected (two different matches).
-     * `visited` is mutated as candidates are probed; [nonSourceSupertypeIds] is populated for
-     * Phase 2's consumption.
+     * Returns the found inner-class `ClassId` or `null` if nothing was found;
+     * returns `null` early if ambiguity is detected (two different matches).
      */
-    private fun findInPhase1JavaModel(
+    private fun walkJavaSourceSupertypes(
         simpleName: String,
         initialSupertypes: List<JavaClassifierType>,
         tryResolve: (ClassId) -> Boolean,
@@ -253,7 +250,7 @@ internal class JavaInheritedMemberResolver(
                             nextLevel.addAll(javaClass.supertypes)
                         }
                     } else {
-                        // Non-source class (Kotlin / binary): remember for Phase 2.
+                        // Non-source class (Kotlin / binary): deferred to walkBinarySupertypes.
                         nonSourceSupertypeIds.add(supertypeClassId)
                     }
                 }
@@ -267,12 +264,12 @@ internal class JavaInheritedMemberResolver(
     }
 
     /**
-     * Phase 2 of [resolveInheritedInnerClassToClassId]: deque-based BFS over the ClassIds of
-     * non-source (Kotlin / binary) supertypes collected by Phase 1. Uses [getSupertypeClassIds]
-     * to walk each one transitively; probes the same `parentClassId.SimpleName` pattern as
-     * Phase 1; shares [visited] with Phase 1 so cross-phase ambiguity is still detected.
+     * Deque-based BFS over the ClassIds of non-source (Kotlin / binary) supertypes collected by
+     * [walkJavaSourceSupertypes]. Uses [getSupertypeClassIds] to walk each one transitively;
+     * probes the same `parentClassId.SimpleName` pattern; shares [visited] so cross-pass
+     * ambiguity is still detected.
      */
-    private fun findInPhase2ClassIdWalk(
+    private fun walkBinarySupertypes(
         simpleName: String,
         nonSourceSupertypeIds: List<ClassId>,
         getSupertypeClassIds: (ClassId) -> List<ClassId>,
