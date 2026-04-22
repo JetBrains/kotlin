@@ -244,7 +244,8 @@ dependencies {
     // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
     "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
 
-    val version = "1.80"
+    var version = if (project.hasProperty("whatever")) "123" else "1.80"
+//    val version = "1.80"
     commonCompileOnly("org.bouncycastle:bcpkix-jdk18on:${version}")
     commonCompileOnly("org.bouncycastle:bcpg-jdk18on:${version}")
 
