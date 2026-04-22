@@ -47,21 +47,21 @@ class WithNonConflictingContextualFunction(val b: String) {
 }
 
 fun box(): String {
-    Simple("Alice", 30).toString().let { if (it != "Simple(name=Alice, age=30)") return it }
-    NoFieldNames(1, 2).toString().let { if (it != "NoFieldNames(1, 2)") return it }
-    WithExclude("hello", "world").toString().let { if (it != "WithExclude(a=hello)") return it }
-    WithIncludeCustomName("foo", 42).toString().let { if (it != "WithIncludeCustomName(myName=foo, y=42)") return it }
-    OnlyIncluded("yes", "no").toString().let { if (it != "OnlyIncluded(included=yes)") return it }
-    WithExistingToString(5).toString().let { if (it != "custom") return it }
-    WithExistingNonConflictingToString(5).toString().let { if (it != "WithExistingNonConflictingToString(x=5)") return it }
-    WithComputedProperties().toString().let { if (it != "WithComputedProperties()") return it }
-    WithImplicitReturnTypeProperty().toString().let { if (it != "WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)") return it }
-    WithNonConflictingExtensionFunction(6).toString().let { if (it != "WithNonConflictingExtensionFunction(a=6)") return it }
-    WithNonConflictingContextualFunction("str").toString().let { if (it != "WithNonConflictingContextualFunction(b=str)") return it }
+    assertEquals("Simple(name=Alice, age=30)", Simple("Alice", 30).toString())
+    assertEquals("NoFieldNames(1, 2)", NoFieldNames(1, 2).toString())
+    assertEquals("WithExclude(a=hello)", WithExclude("hello", "world").toString())
+    assertEquals("WithIncludeCustomName(myName=foo, y=42)", WithIncludeCustomName("foo", 42).toString())
+    assertEquals("OnlyIncluded(included=yes)", OnlyIncluded("yes", "no").toString())
+    assertEquals("custom", WithExistingToString(5).toString())
+    assertEquals("WithExistingNonConflictingToString(x=5)", WithExistingNonConflictingToString(5).toString())
+    assertEquals("WithComputedProperties()", WithComputedProperties().toString())
+    assertEquals("WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", WithImplicitReturnTypeProperty().toString())
+    assertEquals("WithNonConflictingExtensionFunction(a=6)", WithNonConflictingExtensionFunction(6).toString())
+    assertEquals("WithNonConflictingContextualFunction(b=str)", WithNonConflictingContextualFunction("str").toString())
 
     @ToString()
     class LocalClass(val prop: String)
-    LocalClass("TestLocalClass").toString().let { if (it != "LocalClass(prop=TestLocalClass)") return it }
+    assertEquals("LocalClass(prop=TestLocalClass)", LocalClass("TestLocalClass").toString())
 
     return "OK"
 }
