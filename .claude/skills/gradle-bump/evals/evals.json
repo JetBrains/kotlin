@@ -1,0 +1,20 @@
+{
+  "skill_name": "gradle-bump",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need to add Gradle 9.5.0 support to KGP. The YouTrack issue is KT-99001. Please walk me through the process.",
+      "expected_output": "The skill should: (1) ask about existing sub-tasks before creating anything, (2) fetch the Gradle 9.5 upgrading guide to identify new deprecations, (3) read the 4 key files, (4) guide edits to GradlePluginVariant.kt (new enum entry + GRADLE_COMMON_COMPILE_API_VERSION), TestVersions.kt (new constant + MAX_SUPPORTED), build.gradle.kts gradleVersions list, and gradle-wrapper.properties (URL + SHA256), (5) search for deprecated API usages and apply fixes."
+    },
+    {
+      "id": 2,
+      "prompt": "Bump Gradle to 9.5.0. No YouTrack issue exists yet — please create all the tracking issues.",
+      "expected_output": "The skill should: (1) ask the user to confirm before creating YouTrack issues, (2) create parent issue + 2 sub-tasks using YouTrack MCP, (3) then proceed with the same code changes as eval 1. Should NOT directly create issues without asking first."
+    },
+    {
+      "id": 3,
+      "prompt": "We need Gradle 9.5 compatibility for KGP. The release notes say there's a new deprecation of SomeApi.oldMethod() — it should be replaced with SomeApi.newMethod(). The parent YouTrack issue is KT-99001 and sub-tasks KT-99002 (compile) and KT-99003 (tests) already exist.",
+      "expected_output": "The skill should: (1) detect existing sub-tasks via YouTrack MCP search, (2) NOT create new issues, (3) make all 4 file changes, (4) search KGP sources for usages of SomeApi.oldMethod() and fix them, (5) update YouTrack sub-tasks to Fixed state."
+    }
+  ]
+}
