@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing
 
+import com.microsoft.playwright.Browser
+import com.microsoft.playwright.Page
+import com.microsoft.playwright.Playwright
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -181,6 +184,31 @@ internal constructor(
     }
 
     private fun playwright() {
+        // https://docs.gradle.org/current/userguide/test_reporting_api.html
+        // https://playwright.dev/java/docs/evaluating
 
+        Playwright.create().use { playwright ->
+
+            val browser: Browser = playwright.chromium().launch()
+            val page: Page = browser.newPage()
+
+            page.exposeFunction("testStarted") { }
+            page.exposeFunction("testFailed") { args ->
+                args.first() == "expect actual fail"
+            }
+            page.exposeFunction("testFailed_cause_expectActual") { args ->
+
+            }
+
+            page.onConsoleMessage { msg ->
+                println(msg.text())
+            }
+
+            page.setContent(
+                """
+                
+            """.trimIndent()
+            )
+        }
     }
 }
