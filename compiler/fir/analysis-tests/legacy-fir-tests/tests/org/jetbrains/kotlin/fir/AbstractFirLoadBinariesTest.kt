@@ -25,7 +25,7 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
         session: FirSession,
         packageFqName: FqName,
         moduleDescriptor: ModuleDescriptor,
-        testDataPath: String
+        testDataFile: File
     ) {
         val declarationNames = DescriptorUtils.getAllDescriptors(moduleDescriptor.getPackage(packageFqName).memberScope)
             .mapNotNullTo(sortedSetOf()) { declarations ->
@@ -52,7 +52,7 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
         }
 
         TestDataAssertions.assertEqualsToFile(
-            File(testDataPath),
+            testDataFile,
             builder.toString().trimEnd() + "\n"
         )
     }
