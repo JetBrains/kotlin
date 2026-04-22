@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getDestructuredParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -57,9 +58,20 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
 
 val FirSession.conflictDeclarationsDiagnosticDispatcher: PlatformConflictDeclarationsDiagnosticDispatcher? by FirSession.nullableSessionComponentAccessor()
 
-object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
+abstract class FirConflictsDeclarationChecker(kind: MppCheckerKind) : FirBasicDeclarationChecker(kind) {
+    object Regular : FirConflictsDeclarationChecker(MppCheckerKind.Platform)
+    object ForExpectClass : FirConflictsDeclarationChecker(MppCheckerKind.Common)
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
+        val isCommon = mppKind == MppCheckerKind.Common
+        val isExpectClass = declaration is FirClass && declaration.isExpect
+        if (isCommon != isExpectClass) return
+        checkImpl(declaration)
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkImpl(declaration: FirDeclaration) {
         when (declaration) {
             is FirFile -> {
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)

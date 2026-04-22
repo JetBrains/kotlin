@@ -312,6 +312,12 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
     }
 
     @Test
+    @TestMetadata("containingClassSymbolWithWrongModuleDataBug.kt")
+    public void testContainingClassSymbolWithWrongModuleDataBug() {
+      run("containingClassSymbolWithWrongModuleDataBug.kt");
+    }
+
+    @Test
     @TestMetadata("objCAction_expectAnnotation.kt")
     public void testObjCAction_expectAnnotation() {
       run("objCAction_expectAnnotation.kt");

@@ -2,7 +2,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-native
 
-@Suppress(<!ERROR_SUPPRESSION!>"CONFLICTING_OVERLOADS"<!>)
 expect class AppleSSizeT {
     operator fun plus(other: AppleSSizeT): Int
     operator fun plus(other: Int): Int

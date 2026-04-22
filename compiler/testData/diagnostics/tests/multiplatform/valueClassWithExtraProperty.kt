@@ -10,7 +10,7 @@
 // FILE: common.kt
 expect value class Value(val x: Int) {
     context(x: String)
-    <!CONTEXTUAL_OVERLOAD_SHADOWED, CONTEXTUAL_OVERLOAD_SHADOWED{METADATA}!>val x: Int<!>
+    <!CONTEXTUAL_OVERLOAD_SHADOWED!>val x: Int<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)
