@@ -177,21 +177,24 @@ class FirDelegatedPropertyInferenceSession(
                     withPCLASession: Boolean,
                     precalculatedBoundsForCL: CollectionLiteralBounds?,
                 ) {
+                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
+                        parentSystem,
+                        postponedResolvedAtom,
+                        getCurrentCandidate(postponedResolvedAtom),
+                        withPCLASession,
+                        precalculatedBoundsForCL,
+                    )
+                }
+
+                override fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate {
                     // Reversed here bc we want top-most call to avoid exponential visit
-                    val containingCandidateForPostponedAtom = notCompletedCalls.asReversed().first {
+                    return notCompletedCalls.asReversed().first {
                         var found = false
                         it.processPostponedAtoms { atom ->
                             found = found || atom == postponedResolvedAtom
                         }
                         found
                     }.candidate
-                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
-                        parentSystem,
-                        postponedResolvedAtom,
-                        containingCandidateForPostponedAtom,
-                        withPCLASession,
-                        precalculatedBoundsForCL,
-                    )
                 }
             }
             components.callCompleter.completer.complete(

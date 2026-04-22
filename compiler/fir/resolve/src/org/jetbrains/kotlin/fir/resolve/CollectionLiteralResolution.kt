@@ -176,6 +176,7 @@ private fun postprocessCollectionLiteralCall(
         context = context,
         isReceiver = false,
         isDispatch = false,
+        collectionLiteralAtom.containingCallCandidate,
     )
 
     // 4. Run additional resolution stages for collection literals.

@@ -89,7 +89,8 @@ internal object CheckArguments : ResolutionStage() {
             sink,
             context,
             isReceiver,
-            isDispatch = false
+            isDispatch = false,
+            containingCallCandidate = this,
         )
     }
 }

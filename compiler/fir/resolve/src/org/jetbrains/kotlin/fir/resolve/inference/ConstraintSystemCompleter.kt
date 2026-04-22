@@ -48,6 +48,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             withPCLASession: Boolean,
             precalculatedBoundsForCL: CollectionLiteralBounds?,
         )
+
+        /**
+         * Normally, it is just a candidate whose call is being completed.
+         */
+        fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate
     }
 
     private fun PostponedAtomAnalyzer.analyze(
@@ -167,7 +172,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
-                    val argumentWasTransformed = transformToAtomWithNewFunctionExpectedType(
+                    val argumentWasTransformed = analyzer.transformToAtomWithNewFunctionExpectedType(
                         this, context, argument
                     )
 
@@ -285,7 +290,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         return anyAnalyzed
     }
 
-    private fun transformToAtomWithNewFunctionExpectedType(
+    private fun PostponedAtomAnalyzer.transformToAtomWithNewFunctionExpectedType(
         c: ConstraintSystemCompletionContext,
         resolutionContext: ResolutionContext,
         argument: PostponedAtomWithRevisableExpectedType,
@@ -297,7 +302,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         when (argument) {
             is ConeResolvedCallableReferenceAtom -> return false
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
-                argument.transformToResolvedLambda(c.getBuilder(), resolutionContext, revisedExpectedType)
+                argument.transformToResolvedLambda(getCurrentCandidate(argument), c.getBuilder(), resolutionContext, revisedExpectedType)
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
         }
 

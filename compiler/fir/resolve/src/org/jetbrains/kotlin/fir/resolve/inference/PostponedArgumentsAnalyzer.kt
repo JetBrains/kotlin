@@ -73,7 +73,7 @@ class PostponedArgumentsAnalyzer(
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
                 analyzeLambda(
                     c,
-                    argument.transformToResolvedLambda(c.getBuilder(), resolutionContext),
+                    argument.transformToResolvedLambda(candidate, c.getBuilder(), resolutionContext),
                     candidate, forOverloadByLambdaReturnType = false, withPCLASession
                 )
 
@@ -167,6 +167,7 @@ class PostponedArgumentsAnalyzer(
                 context = resolutionContext,
                 isReceiver = false,
                 isDispatch = false,
+                atom.containingCallCandidate,
             )
         }
     }
@@ -226,6 +227,7 @@ class PostponedArgumentsAnalyzer(
             context = resolutionContext,
             isReceiver = false,
             isDispatch = false,
+            atom.containingCallCandidate,
         )
 
         return true
@@ -412,6 +414,7 @@ class PostponedArgumentsAnalyzer(
                     context = resolutionContext,
                     isReceiver = false,
                     isDispatch = false,
+                    lambda.containingCallCandidate ?: candidate,
                     anonymousFunctionIfReturnExpression = lambda.anonymousFunction,
                 )
             }
@@ -475,6 +478,7 @@ class PostponedArgumentsAnalyzer(
 }
 
 fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
+    currentCandidate: Candidate,
     csBuilder: ConstraintSystemBuilder,
     context: ResolutionContext,
     expectedType: ConeKotlinType? = null,
@@ -483,8 +487,8 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     val fixedExpectedType = csBuilder.buildCurrentSubstitutor().asCone()
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = ArgumentCheckingProcessor.createResolvedLambdaAtomDuringCompletion(
-        candidateOfOuterCall, csBuilder, ConeResolutionAtomWithPostponedChild(expression), fixedExpectedType,
-        context, returnTypeVariable = returnTypeVariable,
+        currentCandidate, csBuilder, ConeResolutionAtomWithPostponedChild(expression), fixedExpectedType,
+        context, returnTypeVariable, containingCallCandidate,
         anonymousFunctionIfReturnExpression = anonymousFunctionIfReturnExpression,
     )
 

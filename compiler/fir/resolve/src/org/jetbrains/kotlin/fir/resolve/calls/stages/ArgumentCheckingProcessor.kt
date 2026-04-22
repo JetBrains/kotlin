@@ -50,13 +50,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal object ArgumentCheckingProcessor {
     private data class ArgumentContext(
-        val candidate: Candidate,
+        val currentCandidate: Candidate,
         val csBuilder: ConstraintSystemBuilder,
         val expectedType: ConeKotlinType?,
         val sink: CheckerSink?,
         val context: ResolutionContext,
         val isReceiver: Boolean,
         val isDispatch: Boolean,
+        val containingCallCandidate: Candidate,
         /**
          * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
          */
@@ -73,24 +74,32 @@ internal object ArgumentCheckingProcessor {
     // -------------------------------------------- Public API --------------------------------------------
 
     fun resolveArgumentExpression(
-        candidate: Candidate,
+        currentCandidate: Candidate,
         atom: ConeResolutionAtom,
         expectedType: ConeKotlinType?,
         sink: CheckerSink,
         context: ResolutionContext,
         isReceiver: Boolean,
         isDispatch: Boolean,
+        /**
+         * Note the difference between [currentCandidate] and [containingCallCandidate].
+         *  - [currentCandidate] is for the call being completed right now
+         *  - [containingCallCandidate] is for the call which contains the argument directly
+         *
+         *  They often coincide, but not always.
+         */
+        containingCallCandidate: Candidate,
         anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ) {
         val argumentContext = ArgumentContext(
-            candidate, candidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch,
-            anonymousFunctionIfReturnExpression,
+            currentCandidate, currentCandidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch,
+            containingCallCandidate, anonymousFunctionIfReturnExpression,
         )
         argumentContext.resolveArgumentExpression(atom)
     }
 
     fun resolvePlainArgumentType(
-        candidate: Candidate,
+        currentCandidate: Candidate,
         atom: ConeResolutionAtom,
         argumentType: ConeKotlinType,
         expectedType: ConeKotlinType?,
@@ -98,25 +107,31 @@ internal object ArgumentCheckingProcessor {
         context: ResolutionContext,
         isReceiver: Boolean,
         isDispatch: Boolean,
+        containingCallCandidate: Candidate,
         sourceForReceiver: KtSourceElement? = null,
     ) {
-        val argumentContext = ArgumentContext(candidate, candidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch)
+        val argumentContext = ArgumentContext(
+            currentCandidate, currentCandidate.csBuilder,
+            expectedType, sink, context, isReceiver, isDispatch,
+            containingCallCandidate,
+        )
         argumentContext.resolvePlainArgumentType(atom, argumentType, sourceForReceiver = sourceForReceiver)
     }
 
     fun createResolvedLambdaAtomDuringCompletion(
-        candidate: Candidate,
+        currentCandidate: Candidate,
         csBuilder: ConstraintSystemBuilder,
         atom: ConeResolutionAtomWithPostponedChild,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
         returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
+        containingCallCandidate: Candidate,
         anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ): ConeResolvedLambdaAtom {
         val argumentContext = ArgumentContext(
-            candidate, csBuilder, expectedType, sink = null,
+            currentCandidate, csBuilder, expectedType, sink = null,
             context, isReceiver = false, isDispatch = false,
-            anonymousFunctionIfReturnExpression,
+            containingCallCandidate, anonymousFunctionIfReturnExpression,
         )
         return argumentContext.createResolvedLambdaAtom(atom, duringCompletion = true, returnTypeVariable)
     }
@@ -251,7 +266,7 @@ internal object ArgumentCheckingProcessor {
             }
 
             if (isFromSimpleToCustom || isForUnitCoercion) {
-                candidate.addFunctionKindConversionOfArgument(
+                currentCandidate.addFunctionKindConversionOfArgument(
                     expression,
                     Candidate.FunctionConversionDescription(
                         isFromSimpleToCustom,
@@ -365,7 +380,7 @@ internal object ArgumentCheckingProcessor {
             if (variableWithConstraints != null) {
                 // Retrieve type using proper logic in ResultTypeResolver.
                 // Might return null in case of PCLA when all constraints are non-proper.
-                context(candidate.system) {
+                context(currentCandidate.system) {
                     (context.inferenceComponents.resultTypeResolver
                         .findResultTypeOrNull(variableWithConstraints, UNKNOWN) as ConeKotlinType?)
                         ?.applyIf(type.isMarkedNullable) {
@@ -401,10 +416,10 @@ internal object ArgumentCheckingProcessor {
         val lhs = context.bodyResolveComponents.callableReferenceLhsResolver.resolveLhsAsType(expression)
         val postponedAtom = ConeResolvedCallableReferenceAtom(
             expression, expectedType, lhs, context.session,
-            anonymousFunctionIfReturnExpression,
+            containingCallCandidate, anonymousFunctionIfReturnExpression,
         )
         atom.setPostponedSubAtom(postponedAtom)
-        candidate.addPostponedAtom(postponedAtom)
+        currentCandidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessSimpleNameReferenceForContextSensitiveResolution(
@@ -418,11 +433,11 @@ internal object ArgumentCheckingProcessor {
         }
 
         val postponedAtom = ConeSimpleNameForContextSensitiveResolution(
-            expression, expectedType, candidate, atom.fallbackSubAtom!!,
+            expression, expectedType, containingCallCandidate, atom.fallbackSubAtom!!,
         )
 
         atom.setPostponedSubAtom(postponedAtom)
-        candidate.addPostponedAtom(postponedAtom)
+        currentCandidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessQualifierWithContextSensitiveAlternative(
@@ -446,13 +461,14 @@ internal object ArgumentCheckingProcessor {
             expression,
             alternative,
             expectedType,
+            containingCallCandidate,
         )
 
         // NB: We apply the original expression immediately just the same way we would do without the alternative
         resolveArgumentExpression(atom.fallbackSubAtom!!)
 
         atom.setPostponedSubAtom(postponedAtom)
-        candidate.addPostponedAtom(postponedAtom)
+        currentCandidate.addPostponedAtom(postponedAtom)
     }
 
     /**
@@ -469,9 +485,9 @@ internal object ArgumentCheckingProcessor {
             return
         }
 
-        val postponedAtom = ConeCollectionLiteralAtom(expression, expectedType, candidate)
+        val postponedAtom = ConeCollectionLiteralAtom(expression, expectedType, containingCallCandidate)
         atom.setPostponedSubAtom(postponedAtom)
-        candidate.addPostponedAtom(postponedAtom)
+        currentCandidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild) {
@@ -484,7 +500,7 @@ internal object ArgumentCheckingProcessor {
     /**
      * @return true in case [ConeLambdaWithTypeVariableAsExpectedTypeAtom] was created and set as
      * [ConeResolutionAtomWithPostponedChild.subAtom] of the [atom] and a postponed atom of the
-     * [ArgumentCheckingProcessor.ArgumentContext.candidate].
+     * [ArgumentCheckingProcessor.ArgumentContext.currentCandidate].
      * In case of false result, this function works as pure (it does not change inference state).
      */
     private fun ArgumentContext.createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(
@@ -505,10 +521,10 @@ internal object ArgumentCheckingProcessor {
         ConeLambdaWithTypeVariableAsExpectedTypeAtom(
             atom.lambdaExpression,
             expectedType,
-            candidate,
+            containingCallCandidate,
             anonymousFunctionIfReturnExpression,
         ).also {
-            candidate.addPostponedAtom(it)
+            currentCandidate.addPostponedAtom(it)
             atom.setPostponedSubAtom(it)
         }
         return true
@@ -529,11 +545,12 @@ internal object ArgumentCheckingProcessor {
             returnTypeVariable,
             context.bodyResolveComponents,
             allowCoercionToExtensionReceiver = duringCompletion,
+            containingCallCandidate,
             sourceForFunctionExpression = expression.source,
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
 
         atom.setPostponedSubAtom(resolvedArgument)
-        candidate.addPostponedAtom(resolvedArgument)
+        currentCandidate.addPostponedAtom(resolvedArgument)
 
         if (expectedType != null) {
             val parameters = resolvedArgument.parameterTypes
@@ -580,7 +597,7 @@ internal object ArgumentCheckingProcessor {
         val receiverType = lambda.receiverType
         val returnType = lambda.returnType ?: typeVariable.defaultType
 
-        val defaultType = runIf(candidate.symbol.origin == FirDeclarationOrigin.DynamicScope) { ConeDynamicType.create(session) }
+        val defaultType = runIf(currentCandidate.symbol.origin == FirDeclarationOrigin.DynamicScope) { ConeDynamicType.create(session) }
 
         val parameters = lambda.valueParameters.mapIndexed { i, it ->
             it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
@@ -611,6 +628,7 @@ internal object ArgumentCheckingProcessor {
             returnType,
             typeVariable.takeIf { newTypeVariableUsed },
             coerceFirstParameterToExtensionReceiver = false,
+            containingCallCandidate,
             sourceForFunctionExpression,
         )
     }
@@ -678,7 +696,7 @@ internal object ArgumentCheckingProcessor {
         val expectedClassLikeType = expectedType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
 
         // Already compatible
-        if (c.candidate.csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType)) return null
+        if (c.currentCandidate.csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType)) return null
 
         // The expected return type must be Unit
         val expectedReturnType = expectedClassLikeType.returnType(c.session)

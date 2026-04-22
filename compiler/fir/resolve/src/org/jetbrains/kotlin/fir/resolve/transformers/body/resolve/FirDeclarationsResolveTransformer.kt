@@ -1316,6 +1316,7 @@ open class FirDeclarationsResolveTransformer(
                 returnTypeVariable = null,
                 components,
                 allowCoercionToExtensionReceiver = true,
+                containingCallCandidate = null,
                 sourceForFunctionExpression = null,
             )
         }

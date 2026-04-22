@@ -31,7 +31,7 @@ fun f3(x: List<() -> String>) { }
 
 fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([{ LambdaCollection<Int>() }])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[<!CANNOT_INFER_IT_PARAMETER_TYPE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>LambdaCollection<!>() }<!>]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[{ <!CANNOT_INFER_PARAMETER_TYPE!>LambdaCollection<!>() }]<!>)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([{ LambdaCollection<Int>() }, { LambdaCollection<String>() }])
 
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>([{ }])

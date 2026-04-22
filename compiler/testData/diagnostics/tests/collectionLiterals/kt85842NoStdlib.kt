@@ -4,8 +4,8 @@
 fun <T> id(t: T): T = t
 
 fun test() {
-    id(id { [] })
-    [{[]}]
+    <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!CANNOT_INFER_PARAMETER_TYPE!>id<!> { <!UNRESOLVED_REFERENCE!>[]<!> })
+    <!UNRESOLVED_REFERENCE!>[{<!UNRESOLVED_REFERENCE!>[]<!>}]<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, typeParameter */

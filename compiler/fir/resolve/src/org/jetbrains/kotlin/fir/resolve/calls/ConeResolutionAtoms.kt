@@ -186,6 +186,23 @@ sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolved
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
     abstract override val expectedType: ConeKotlinType?
+
+    /**
+     * The candidate corresponding to the nearest call that contains this atom.
+     *
+     * For example (the atom in question is CL):
+     *  1. `foo([])` -> candidate for `foo`
+     *  2. `val lst = [1, 2, 3]` -> candidate for synthetic call
+     *  3. `foo { [] }` -> candidate for `foo`
+     *  4. `foo { { [] } }` -> still candidate for `foo`
+     *
+     * For CLs and CSRs, we add their expansions to `argumentReplacements` of this candidate (and then `argumentReplacements`
+     * are used in the completion results writer).
+     *
+     * When [org.jetbrains.kotlin.config.LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument] is enabled,
+     * must always be non-`null`.
+     */
+    abstract val containingCallCandidate: Candidate?
 }
 
 //  ------------- Lambdas -------------
@@ -205,6 +222,7 @@ class ConeResolvedLambdaAtom(
     var returnType: ConeKotlinType,
     typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
     val coerceFirstParameterToExtensionReceiver: Boolean,
+    override val containingCallCandidate: Candidate?,
     // NB: It's not null right now only for lambdas inside the calls
     // TODO: Handle somehow that kind of lack of information once KT-67961 is fixed
     val sourceForFunctionExpression: KtSourceElement?,
@@ -254,7 +272,7 @@ sealed class ConePostponedAtomWithRevisableExpectedType(
 class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
-    val candidateOfOuterCall: Candidate,
+    override val containingCallCandidate: Candidate,
     anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
 ) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), LambdaWithTypeVariableAsExpectedTypeMarker {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
@@ -295,6 +313,7 @@ class ConeResolvedCallableReferenceAtom(
     private val initialExpectedType: ConeKotlinType?,
     val lhsAsType: CallableReferenceLhsAsType?,
     private val session: FirSession,
+    override val containingCallCandidate: Candidate,
     anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
 ) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), PostponedCallableReferenceMarker {
     var subAtom: ConeAtomWithCandidate? = null
@@ -371,7 +390,7 @@ class ConeResolvedCallableReferenceAtom(
 class ConeSimpleNameForContextSensitiveResolution(
     override val expression: FirPropertyAccessExpression,
     override val expectedType: ConeKotlinType,
-    val containingCallCandidate: Candidate,
+    override val containingCallCandidate: Candidate,
     val fallbackSubAtom: ConeResolutionAtom,
 ) : ConePostponedResolvedAtom() {
     override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
@@ -383,6 +402,7 @@ class ConeContextSensitiveAlternativeForQualifierAtom @FirIdeOnly constructor(
     val originalExpression: FirQualifierWithContextSensitiveAlternative,
     val alternative: FirPropertyAccessExpression,
     override val expectedType: ConeKotlinType,
+    override val containingCallCandidate: Candidate,
 ) : ConePostponedResolvedAtom() {
     override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
     override val outputType: ConeKotlinType?
@@ -402,7 +422,7 @@ class ConeContextSensitiveAlternativeForQualifierAtom @FirIdeOnly constructor(
 class ConeCollectionLiteralAtom(
     override val expression: FirCollectionLiteral,
     override val expectedType: ConeKotlinType?,
-    val containingCallCandidate: Candidate,
+    override val containingCallCandidate: Candidate,
 ) : ConePostponedResolvedAtom(), CollectionLiteralAtomMarker {
     override val inputTypes: Collection<ConeKotlinType> = listOfNotNull(expectedType)
     override val outputType: ConeKotlinType?
