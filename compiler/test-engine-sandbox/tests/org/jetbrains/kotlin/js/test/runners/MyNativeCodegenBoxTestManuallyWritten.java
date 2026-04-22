@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.test.runners;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseDummyTestCaseGroupProvider;
-import org.jetbrains.kotlin.test.AbstractMyNativeTwoPhaseTest;
+import org.jetbrains.kotlin.test.AbstractMyNativeTwoStageTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
 @UseDummyTestCaseGroupProvider()
-class MyNativeCodegenBoxTestManuallyWritten extends AbstractMyNativeTwoPhaseTest {
+class MyNativeCodegenBoxTestManuallyWritten extends AbstractMyNativeTwoStageTest {
     @Nested
     @TestMetadata("compiler/testData/codegen/box/arrays")
     @TestDataPath("$PROJECT_ROOT")

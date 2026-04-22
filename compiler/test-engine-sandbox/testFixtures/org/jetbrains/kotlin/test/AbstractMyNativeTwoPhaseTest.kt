@@ -38,7 +38,7 @@ import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.RegisterExtension
 
-abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest() {
+abstract class AbstractMyNativeTwoStageTest : AbstractTwoStageKotlinCompilerTest() {
     private lateinit var extensionContext: ExtensionContext
 
     @RegisterExtension
@@ -46,7 +46,7 @@ abstract class AbstractMyNativeTwoPhaseTest : AbstractTwoStageKotlinCompilerTest
         this.extensionContext = context
     }
 
-    override fun configure(builder: TwoPhaseTestConfigurationBuilder): Unit = with(builder) {
+    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         commonConfiguration {
             defaultDirectives {
                 LANGUAGE with listOf(

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.backend.handlers.IrValidationErrorChecker
-import org.jetbrains.kotlin.test.builders.TwoPhaseTestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives.ESCAPE_MODULE_NAME
 import org.jetbrains.kotlin.test.directives.TestKind
 import org.jetbrains.kotlin.test.directives.testKind
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
 abstract class AbstractTwoStageKotlinCompilerTest {
-    val configurationBuilder: TwoPhaseTestConfigurationBuilder.() -> Unit = {
+    val configurationBuilder: TwoStageTestConfigurationBuilder.() -> Unit = {
         commonConfiguration {
             AbstractKotlinCompilerTest.defaultConfiguration(this)
             defaultDirectives {
@@ -79,10 +79,10 @@ abstract class AbstractTwoStageKotlinCompilerTest {
         this.testInfo = testInfo
     }
 
-    abstract fun configure(builder: TwoPhaseTestConfigurationBuilder)
+    abstract fun configure(builder: TwoStageTestConfigurationBuilder)
 
     fun initTestRunners(@TestDataFile filePath: String) {
-        val configurationBuilder = TwoPhaseTestConfigurationBuilder().apply(configurationBuilder)
+        val configurationBuilder = TwoStageTestConfigurationBuilder().apply(configurationBuilder)
         nonGroupingRunner = NonGroupingTestRunner(configurationBuilder.nonGroupingPhaseBuilder.build(filePath)).also {
             nonGroupingPhaseRunnerInitialized = true
         }

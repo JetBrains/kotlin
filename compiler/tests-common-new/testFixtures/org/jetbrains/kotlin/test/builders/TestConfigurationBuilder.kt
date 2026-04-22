@@ -450,7 +450,7 @@ class GroupingPhaseTestConfigurationBuilder :
 
 @DefaultsDsl
 @OptIn(TestInfrastructureInternals::class, PrivateForInline::class)
-class TwoPhaseTestConfigurationBuilder {
+class TwoStageTestConfigurationBuilder {
     val nonGroupingPhaseBuilder = NonGroupingPhaseTestConfigurationBuilder()
     val groupingPhaseBuilder = GroupingPhaseTestConfigurationBuilder()
 

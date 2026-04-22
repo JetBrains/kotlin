@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/box")
 @TestDataPath("$PROJECT_ROOT")
 @UseDummyTestCaseGroupProvider()
-public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest {
+public class MyNativeTwoStageTestGenerated extends AbstractMyNativeTwoStageTest {
   private void run(String fileName) {
     initTestRunnerAndCreateModuleStructure("compiler/testData/codegen/box/" + fileName);
   }
@@ -7959,6 +7959,12 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
     }
 
     @Test
+    @TestMetadata("basicBlockAndExtension.kt")
+    public void testBasicBlockAndExtension() {
+      run("basicBlockAndExtension.kt");
+    }
+
+    @Test
     @TestMetadata("callableReferences.kt")
     public void testCallableReferences() {
       run("callableReferences.kt");
@@ -7989,9 +7995,39 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
     }
 
     @Test
+    @TestMetadata("inheritance.kt")
+    public void testInheritance() {
+      run("inheritance.kt");
+    }
+
+    @Test
+    @TestMetadata("inline.kt")
+    public void testInline() {
+      run("inline.kt");
+    }
+
+    @Test
     @TestMetadata("lateinit.kt")
     public void testLateinit() {
       run("lateinit.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleBlocks.kt")
+    public void testMultipleBlocks() {
+      run("multipleBlocks.kt");
+    }
+
+    @Test
+    @TestMetadata("suspend.kt")
+    public void testSuspend() {
+      run("suspend.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAlias.kt")
+    public void testTypeAlias() {
+      run("typeAlias.kt");
     }
   }
 
@@ -9015,6 +9051,12 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
     }
 
     @Test
+    @TestMetadata("kt52967.kt")
+    public void testKt52967() {
+      run("kt52967.kt");
+    }
+
+    @Test
     @TestMetadata("kt53551.kt")
     public void testKt53551() {
       run("kt53551.kt");
@@ -9030,6 +9072,24 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
     @TestMetadata("kt63430.kt")
     public void testKt63430() {
       run("kt63430.kt");
+    }
+
+    @Test
+    @TestMetadata("kt65953.kt")
+    public void testKt65953() {
+      run("kt65953.kt");
+    }
+
+    @Test
+    @TestMetadata("kt66368.kt")
+    public void testKt66368() {
+      run("kt66368.kt");
+    }
+
+    @Test
+    @TestMetadata("kt74998.kt")
+    public void testKt74998() {
+      run("kt74998.kt");
     }
 
     @Test
@@ -14339,6 +14399,18 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
       @TestMetadata("kt83372.kt")
       public void testKt83372() {
         run("kt83372.kt");
+      }
+
+      @Test
+      @TestMetadata("kt85203.kt")
+      public void testKt85203() {
+        run("kt85203.kt");
+      }
+
+      @Test
+      @TestMetadata("kt85203_2.kt")
+      public void testKt85203_2() {
+        run("kt85203_2.kt");
       }
 
       @Test
@@ -26334,12 +26406,6 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
     }
 
     @Test
-    @TestMetadata("resultGeneric2.kt")
-    public void testResultGeneric2() {
-      run("resultGeneric2.kt");
-    }
-
-    @Test
     @TestMetadata("resultInlining.kt")
     public void testResultInlining() {
       run("resultInlining.kt");
@@ -33377,6 +33443,12 @@ public class MyNativeTwoPhaseTestGenerated extends AbstractMyNativeTwoPhaseTest 
       @TestMetadata("expectRefinement.kt")
       public void testExpectRefinement() {
         run("expectRefinement.kt");
+      }
+
+      @Test
+      @TestMetadata("expectStatic.kt")
+      public void testExpectStatic() {
+        run("expectStatic.kt");
       }
 
       @Test

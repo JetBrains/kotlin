@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(args[0], "compiler/testData") {
-            testClass<AbstractMyNativeTwoPhaseTest>(annotations = listOf(annotation(UseDummyTestCaseGroupProvider::class.java))) {
+            testClass<AbstractMyNativeTwoStageTest>(annotations = listOf(annotation(UseDummyTestCaseGroupProvider::class.java))) {
                 model("codegen/box", excludeDirs = listOf("multiplatform/k1"))
             }
         }
