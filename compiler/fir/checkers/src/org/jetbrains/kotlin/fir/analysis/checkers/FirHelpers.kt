@@ -150,7 +150,7 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
 
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
     val primaryConstructor = asRegularClass
-        .takeIf { it.isBasicValueClass(session) || (checkExtendedValueClasses && it.isExtendedValueClass(session) && !isNullableType()) }
+        .takeIf { it.isBasicValueClass || (checkExtendedValueClasses && it.isExtendedValueClass && !isNullableType()) }
         ?.primaryConstructorIfAny(session)
         ?: return null
 

@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -72,7 +70,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         val supportsExtendedValueClasses = context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
         val valueModifierPrefix = if (supportsExtendedValueClasses) "@JvmInline value" else "Value"
-        val isExtendedValueClass = declaration.isExtendedValueClass(context)
+        val isExtendedValueClass = declaration.isExtendedValueClass
 
         if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
@@ -105,7 +103,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isExtendedValueClass(context) && !supertypeSymbol.classId.isRecordId()) {
+            } else if (!supertypeSymbol.isExtendedValueClass && !supertypeSymbol.classId.isRecordId()) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES)
             }
         }
@@ -337,19 +335,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 )
             }
         }
-    }
-
-    @OptIn(SymbolInternals::class)
-    private fun FirRegularClassSymbol.isExtendedValueClass(context: CheckerContext): Boolean {
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-        return fir.isExtendedValueClass(context)
-    }
-
-    private fun FirRegularClass.isExtendedValueClass(context: CheckerContext): Boolean {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) return false
-        if (!hasModifier(KtTokens.VALUE_KEYWORD)) return false
-        val jvmInlineAnnotationClassId = context.session.annotationPlatformSupport.jvmInlineAnnotationClassId
-        return jvmInlineAnnotationClassId == null || !hasAnnotation(jvmInlineAnnotationClassId, context.session)
     }
 
     private fun FirPropertySymbol.isRelatedToParameter(parameter: FirValueParameterSymbol?) =

@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.SessionHolder
-import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.declarations.utils.isValue
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -279,18 +275,6 @@ fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
 
     return isInlineOrValue
 }
-
-@OptIn(SuspiciousValueClassCheck::class)
-fun FirRegularClassSymbol.isExtendedValueClass(session: FirSession): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) return false
-
-    val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId
-    return isValue && (jvmInlineAnnotationClassId == null || !hasAnnotation(jvmInlineAnnotationClassId, session))
-}
-
-fun FirRegularClassSymbol.isBasicValueClass(session: FirSession): Boolean = isInlineOrValueClass() && !isExtendedValueClass(session)
 
 @PrivateForInline
 inline val FirDeclarationOrigin.isJavaOrEnhancement: Boolean
