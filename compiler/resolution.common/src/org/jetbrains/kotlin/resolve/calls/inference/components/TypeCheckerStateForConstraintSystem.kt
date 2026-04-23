@@ -446,8 +446,7 @@ abstract class TypeCheckerStateForConstraintSystem(
 
         if (typeVariableLowerBound.isMarkedNullable()) {
             // here is important that superType is singleClassifierType
-            return simplifiedSuperType.anyBound(::isMyTypeVariable) ||
-                    isSubtypeOfByTypeChecker(nullableNothingType(), simplifiedSuperType)
+            return isSubtypeOfByTypeChecker(nullableNothingType(), simplifiedSuperType)
         }
 
         return true
@@ -502,7 +501,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         }
 
     private fun isSubtypeOfByTypeChecker(subType: KotlinTypeMarker, superType: KotlinTypeMarker) =
-        AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, subType, superType)
+        AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, subType, superType, isFromNullabilityConstraint = true)
 
     private fun assertInputTypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Unit = with(typeSystemContext) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return

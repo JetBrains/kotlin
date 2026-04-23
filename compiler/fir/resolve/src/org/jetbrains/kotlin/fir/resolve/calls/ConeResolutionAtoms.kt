@@ -357,10 +357,16 @@ class ConeResolvedCallableReferenceAtom(
         else
             revisedExpectedType ?: initialExpectedType
 
-    override var revisedExpectedType: ConeKotlinType? = null
+    private var revisedExpectedType_: ConeKotlinType? = null
+    override var revisedExpectedType: ConeKotlinType?
         // TODO: Consider simplifying this (KT-74021)
-        get() = if (isPostponedBecauseOfAmbiguity) field else expectedType
-        private set
+        get() = if (isPostponedBecauseOfAmbiguity) revisedExpectedType_ else expectedType
+        private set(value) {
+            revisedExpectedType_ = value
+        }
+
+    override val realRevisedExpectedType: KotlinTypeMarker?
+        get() = revisedExpectedType_ ?: expectedType
 
     override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
         require(expectedType is ConeKotlinType)

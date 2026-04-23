@@ -110,7 +110,7 @@ fun main() {
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!RETURN_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String? {
+        <!RETURN_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>

@@ -390,7 +390,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             this?.typeConstructor?.takeIf { it in notFixedTypeVariables.keys }
 
         fun PostponedAtomWithRevisableExpectedType.collectNotFixedVariables() {
-            revisedExpectedType?.lowerBoundIfFlexible()?.asArgumentList()?.let { typeArgumentList ->
+            realRevisedExpectedType?.lowerBoundIfFlexible()?.asArgumentList()?.let { typeArgumentList ->
                 for (typeArgument in typeArgumentList) {
                     val constructor = typeArgument.getType()?.typeConstructor() ?: continue
                     if (constructor in notFixedTypeVariables) {
@@ -416,9 +416,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                         postponedAtom.collectNotFixedVariables()
                     }
                     is ConeResolvedCallableReferenceAtom -> {
-                        if (postponedAtom.needsResolution) {
+                        //if (postponedAtom.needsResolution) {
                             postponedAtom.collectNotFixedVariables()
-                        }
+                        //}
                     }
                     is ConeSimpleNameForContextSensitiveResolution,
                     is ConeContextSensitiveAlternativeForQualifierAtom,

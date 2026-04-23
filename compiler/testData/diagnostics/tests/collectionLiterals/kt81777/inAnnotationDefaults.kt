@@ -11,11 +11,11 @@ annotation class LamCorrectWithReturnAndParam(val e: <!INVALID_TYPE_OF_ANNOTATIO
 
 annotation class AnonInt(val e: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[fun() {}]<!>)
 annotation class AnonIntArray(val e: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>])
-annotation class AnonArrayString(val e: Array<String> = [<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun() {}<!>])
+annotation class AnonArrayString(val e: Array<String> = [<!ARGUMENT_TYPE_MISMATCH!>fun() {}<!>])
 annotation class AnonCorrect(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[fun() {}]<!>)
 annotation class AnonCorrectWithParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Unit><!> = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[fun(x: Int) {}]<!>)
-annotation class AnonCorrectWithReturn(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Int><!> = [<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun() { return <!RETURN_TYPE_MISMATCH!>42<!> }<!>])
-annotation class AnonCorrectWithReturnAndParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Int><!> = [<!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(it: Int) { return <!RETURN_TYPE_MISMATCH!>it<!> }<!>])
+annotation class AnonCorrectWithReturn(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<() -> Int><!> = [<!ARGUMENT_TYPE_MISMATCH!>fun() { return <!RETURN_TYPE_MISMATCH!>42<!> }<!>])
+annotation class AnonCorrectWithReturnAndParam(val e: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<(Int) -> Int><!> = [<!ARGUMENT_TYPE_MISMATCH!>fun(it: Int) { return <!RETURN_TYPE_MISMATCH!>it<!> }<!>])
 
 fun skip() {}
 fun <T> id(it: T) = it

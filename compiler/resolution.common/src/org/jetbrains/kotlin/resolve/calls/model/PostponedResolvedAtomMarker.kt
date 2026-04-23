@@ -34,6 +34,7 @@ interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
 
 interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
+    val realRevisedExpectedType: KotlinTypeMarker? get() = revisedExpectedType
 
     fun reviseExpectedType(expectedType: KotlinTypeMarker)
 }
