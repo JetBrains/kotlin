@@ -13995,10 +13995,22 @@ abstract interface <#A: out kotlin/Any?> kotlin.reflect/KCallable { // kotlin.re
 final fun (kotlin/Any?).kotlin/toString(): kotlin/String // kotlin/toString|toString@kotlin.Any?(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/BooleanArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.BooleanArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/ByteArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.ByteArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/CharArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.CharArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Double).kotlin/toBits(): kotlin/Long // kotlin/toBits|toBits@kotlin.Double(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Double).kotlin/toRawBits(): kotlin/Long // kotlin/toRawBits|toRawBits@kotlin.Double(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/DoubleArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.DoubleArray(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Float).kotlin/toBits(): kotlin/Int // kotlin/toBits|toBits@kotlin.Float(){}[0]
@@ -14007,10 +14019,22 @@ final fun (kotlin/Float).kotlin/toBits(): kotlin/Int // kotlin/toBits|toBits@kot
 final fun (kotlin/Float).kotlin/toRawBits(): kotlin/Int // kotlin/toRawBits|toRawBits@kotlin.Float(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/FloatArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.FloatArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Int).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Int(kotlin.Int){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/IntArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.IntArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/Long).kotlin.text/toString(kotlin/Int): kotlin/String // kotlin.text/toString|toString@kotlin.Long(kotlin.Int){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/LongArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.LongArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/ShortArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.ShortArray(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final fun (kotlin/String).kotlin.text/substring(kotlin/Int): kotlin/String // kotlin.text/substring|substring@kotlin.String(kotlin.Int){}[0]
@@ -14052,10 +14076,121 @@ final fun (kotlin/String?).kotlin/plus(kotlin/Any?): kotlin/String // kotlin/plu
 final fun (kotlin/Throwable).kotlin/printStackTrace() // kotlin/printStackTrace|printStackTrace@kotlin.Throwable(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/UByteArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.UByteArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/UIntArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.UIntArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/ULongArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.ULongArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun (kotlin/UShortArray).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.UShortArray(){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?> (kotlin.collections/Iterable<#A>).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.collections.Iterable<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?> (kotlin.sequences/Sequence<#A>).kotlin.sequences/allEqual(): kotlin/Boolean // kotlin.sequences/allEqual|allEqual@kotlin.sequences.Sequence<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final fun <#A: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/allEqual(): kotlin/Boolean // kotlin.collections/allEqual|allEqual@kotlin.Array<out|0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final fun <#A: kotlin/Any?> kotlin.collections/copyToArray(kotlin.collections/Collection<#A>): kotlin/Array<#A> // kotlin.collections/copyToArray|copyToArray(kotlin.collections.Collection<0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/BooleanArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Boolean, kotlin/Boolean, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.BooleanArray(kotlin.Function2<kotlin.Boolean,kotlin.Boolean,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/ByteArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Byte, kotlin/Byte, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.ByteArray(kotlin.Function2<kotlin.Byte,kotlin.Byte,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/CharArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Char, kotlin/Char, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.CharArray(kotlin.Function2<kotlin.Char,kotlin.Char,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/DoubleArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Double, kotlin/Double, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.DoubleArray(kotlin.Function2<kotlin.Double,kotlin.Double,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/FloatArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Float, kotlin/Float, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.FloatArray(kotlin.Function2<kotlin.Float,kotlin.Float,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/IntArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.IntArray(kotlin.Function2<kotlin.Int,kotlin.Int,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/LongArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Long, kotlin/Long, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.LongArray(kotlin.Function2<kotlin.Long,kotlin.Long,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/ShortArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/Short, kotlin/Short, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.ShortArray(kotlin.Function2<kotlin.Short,kotlin.Short,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/UByteArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/UByte, kotlin/UByte, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.UByteArray(kotlin.Function2<kotlin.UByte,kotlin.UByte,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/UIntArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/UInt, kotlin/UInt, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.UIntArray(kotlin.Function2<kotlin.UInt,kotlin.UInt,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/ULongArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/ULong, kotlin/ULong, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.ULongArray(kotlin.Function2<kotlin.ULong,kotlin.ULong,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun (kotlin/UShortArray).kotlin.collections/allEqualWith(kotlin/Function2<kotlin/UShort, kotlin/UShort, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.UShortArray(kotlin.Function2<kotlin.UShort,kotlin.UShort,kotlin.Boolean>){}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.collections/Iterable<#A>).kotlin.collections/allEqualBy(kotlin/Function1<#A, #B>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.collections.Iterable<0:0>(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.sequences/Sequence<#A>).kotlin.sequences/allEqualBy(kotlin/Function1<#A, #B>): kotlin/Boolean // kotlin.sequences/allEqualBy|allEqualBy@kotlin.sequences.Sequence<0:0>(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/allEqualBy(kotlin/Function1<#A, #B>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.Array<out|0:0>(kotlin.Function1<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
 final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.collections/toTypedArray(): kotlin/Array<#A> // kotlin.collections/toTypedArray|toTypedArray@kotlin.collections.Collection<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin.collections/Iterable<#A>).kotlin.collections/allEqualWith(kotlin/Function2<#A, #A, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.collections.Iterable<0:0>(kotlin.Function2<0:0,0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin.sequences/Sequence<#A>).kotlin.sequences/allEqualWith(kotlin/Function2<#A, #A, kotlin/Boolean>): kotlin/Boolean // kotlin.sequences/allEqualWith|allEqualWith@kotlin.sequences.Sequence<0:0>(kotlin.Function2<0:0,0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/allEqualWith(kotlin/Function2<#A, #A, kotlin/Boolean>): kotlin/Boolean // kotlin.collections/allEqualWith|allEqualWith@kotlin.Array<out|0:0>(kotlin.Function2<0:0,0:0,kotlin.Boolean>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/BooleanArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Boolean, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.BooleanArray(kotlin.Function1<kotlin.Boolean,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/ByteArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Byte, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.ByteArray(kotlin.Function1<kotlin.Byte,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/CharArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Char, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.CharArray(kotlin.Function1<kotlin.Char,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/DoubleArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Double, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.DoubleArray(kotlin.Function1<kotlin.Double,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/FloatArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Float, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.FloatArray(kotlin.Function1<kotlin.Float,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/IntArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Int, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.IntArray(kotlin.Function1<kotlin.Int,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/LongArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Long, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.LongArray(kotlin.Function1<kotlin.Long,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/ShortArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/Short, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.ShortArray(kotlin.Function1<kotlin.Short,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/UByteArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/UByte, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.UByteArray(kotlin.Function1<kotlin.UByte,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/UIntArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/UInt, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.UIntArray(kotlin.Function1<kotlin.UInt,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/ULongArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/ULong, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.ULongArray(kotlin.Function1<kotlin.ULong,0:0>){0§<kotlin.Any?>}[0]
+
+// Targets: [js, wasmJs, wasmWasi]
+final inline fun <#A: kotlin/Any?> (kotlin/UShortArray).kotlin.collections/allEqualBy(kotlin/Function1<kotlin/UShort, #A>): kotlin/Boolean // kotlin.collections/allEqualBy|allEqualBy@kotlin.UShortArray(kotlin.Function1<kotlin.UShort,0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
 final inline fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]

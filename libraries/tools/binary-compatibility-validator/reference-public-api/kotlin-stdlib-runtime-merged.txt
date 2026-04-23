@@ -758,6 +758,33 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun all ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun all ([SLkotlin/jvm/functions/Function1;)Z
 	public static final fun all ([ZLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqual ([B)Z
+	public static final fun allEqual ([C)Z
+	public static final fun allEqual ([D)Z
+	public static final fun allEqual ([F)Z
+	public static final fun allEqual ([I)Z
+	public static final fun allEqual ([J)Z
+	public static final fun allEqual ([Ljava/lang/Object;)Z
+	public static final fun allEqual ([S)Z
+	public static final fun allEqual ([Z)Z
+	public static final fun allEqualBy ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([CLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([DLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([FLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy ([ZLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualWith ([BLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([CLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([DLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([FLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([ILkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([JLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([SLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith ([ZLkotlin/jvm/functions/Function2;)Z
 	public static final fun any ([B)Z
 	public static final fun any ([BLkotlin/jvm/functions/Function1;)Z
 	public static final fun any ([C)Z
@@ -2253,6 +2280,9 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun addAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun addAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun all (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqual (Ljava/lang/Iterable;)Z
+	public static final fun allEqualBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualWith (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Z
 	public static final fun any (Ljava/lang/Iterable;)Z
 	public static final fun any (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun arrayListOf ([Ljava/lang/Object;)Ljava/util/ArrayList;
@@ -2713,6 +2743,18 @@ public final class kotlin/collections/UCollectionsKt {
 }
 
 public final class kotlin/collections/unsigned/UArraysKt {
+	public static final fun allEqual--ajY-9A ([I)Z
+	public static final fun allEqual-GBYM_sE ([B)Z
+	public static final fun allEqual-QwZRm1k ([J)Z
+	public static final fun allEqual-rL5Bavg ([S)Z
+	public static final fun allEqualBy-JOV_ifY ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy-MShoTSo ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy-jgv0xPQ ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualBy-xTcfx_M ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualWith-ELGow60 ([BLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith-WyvcNBI ([ILkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith-s8dVfGU ([JLkotlin/jvm/functions/Function2;)Z
+	public static final fun allEqualWith-xzaTVY8 ([SLkotlin/jvm/functions/Function2;)Z
 	public static final fun asList--ajY-9A ([I)Ljava/util/List;
 	public static final fun asList-GBYM_sE ([B)Ljava/util/List;
 	public static final fun asList-QwZRm1k ([J)Ljava/util/List;
@@ -5426,6 +5468,9 @@ public abstract class kotlin/sequences/SequenceScope {
 
 public final class kotlin/sequences/SequencesKt {
 	public static final fun all (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqual (Lkotlin/sequences/Sequence;)Z
+	public static final fun allEqualBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allEqualWith (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Z
 	public static final fun any (Lkotlin/sequences/Sequence;)Z
 	public static final fun any (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun asIterable (Lkotlin/sequences/Sequence;)Ljava/lang/Iterable;
