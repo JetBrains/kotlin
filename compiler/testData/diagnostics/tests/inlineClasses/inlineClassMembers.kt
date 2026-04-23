@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +CustomEqualsInValueClasses, +JvmInlineMultiFieldValueClasses
 
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {
+<!UNSUPPORTED_FEATURE!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val y<!> = 0
     var z: String
         get() = ""
@@ -38,7 +38,7 @@ class Val {
     }
 }
 
-<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class WithInner(val x: String) {
+<!UNSUPPORTED_FEATURE("The feature \"full value classes\" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-XXLanguage:+FullValueClasses', but note that no stability guarantees are provided.")!>value<!> class WithInner(val x: String) {
     <!INNER_CLASS_INSIDE_VALUE_CLASS!>inner<!> class Inner
 }
 

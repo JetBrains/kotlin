@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -226,7 +227,18 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     return
                 }
             } else if (primaryConstructorParametersByName.size != 1) {
-                reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, valueModifierPrefix)
+                val jvmInlineAnnotation = context.session.annotationPlatformSupport.jvmInlineAnnotationClassId
+                val hasJvmInlineAnnotation = jvmInlineAnnotation != null && declaration.hasAnnotation(jvmInlineAnnotation, context.session)
+                val valueModifier = declaration.getModifier(VALUE_KEYWORD)
+                if (primaryConstructorParametersByName.size > 1 && !hasJvmInlineAnnotation && valueModifier != null) {
+                    reporter.reportOn(
+                        valueModifier.source, FirErrors.UNSUPPORTED_FEATURE, LanguageFeature.FullValueClasses to context.languageVersionSettings
+                    )
+                } else {
+                    reporter.reportOn(
+                        primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, valueModifierPrefix
+                    )
+                }
                 return
             }
         } else if (!isFullValueClass || declaration.isFinal) {
