@@ -42,6 +42,9 @@ class AllEqualSequencesTest {
         assertTrue(sequenceOf<String>().allEqualWith { _, _ -> true })
         assertTrue(sequenceOf<String>().allEqualWith { _, _ -> false })
         assertTrue(sequenceOf("a").allEqualWith { _, _ -> error("should not be called") })
+        assertTrue(sequenceOf("a", "a").allEqualWith { a, b -> a == b })
+        assertFalse(sequenceOf("a", "b").allEqualWith { a, b -> a == b })
+        assertFalse(sequenceOf("b", "a").allEqualWith { a, b -> a == b })
         assertTrue(sequenceOf("a", "a", "a").allEqualWith { a, b -> a == b })
         assertFalse(sequenceOf("a", "a", "b").allEqualWith { a, b -> a == b })
         assertFalse(sequenceOf("b", "a", "a").allEqualWith { a, b -> a == b })
@@ -75,6 +78,23 @@ class AllEqualSequencesTest {
     }
 
     @Test
+    fun allEqualByNaNDouble() {
+        assertTrue(sequenceOf(Double.NaN, Double.NaN).allEqualBy { it })
+        assertTrue(sequenceOf(Double.NaN, Double.NaN, Double.NaN).allEqualBy { it })
+        assertFalse(sequenceOf(Double.NaN, 1.0).allEqualBy { it })
+        assertFalse(sequenceOf(1.0, Double.NaN).allEqualBy { it })
+        assertFalse(sequenceOf(Double.NaN, 1.0, Double.NaN).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZeroDouble() {
+        assertTrue(sequenceOf(0.0, 0.0).allEqualBy { it })
+        assertTrue(sequenceOf(-0.0, -0.0).allEqualBy { it })
+        assertFalse(sequenceOf(0.0, -0.0).allEqualBy { it })
+        assertFalse(sequenceOf(-0.0, 0.0).allEqualBy { it })
+    }
+
+    @Test
     fun allEqualNaNFloat() {
         assertTrue(sequenceOf(Float.NaN, Float.NaN).allEqual())
         assertTrue(sequenceOf(Float.NaN, Float.NaN, Float.NaN).allEqual())
@@ -89,5 +109,22 @@ class AllEqualSequencesTest {
         assertTrue(sequenceOf(-0.0f, -0.0f).allEqual())
         assertFalse(sequenceOf(0.0f, -0.0f).allEqual())
         assertFalse(sequenceOf(-0.0f, 0.0f).allEqual())
+    }
+
+    @Test
+    fun allEqualByNaNFloat() {
+        assertTrue(sequenceOf(Float.NaN, Float.NaN).allEqualBy { it })
+        assertTrue(sequenceOf(Float.NaN, Float.NaN, Float.NaN).allEqualBy { it })
+        assertFalse(sequenceOf(Float.NaN, 1.0f).allEqualBy { it })
+        assertFalse(sequenceOf(1.0f, Float.NaN).allEqualBy { it })
+        assertFalse(sequenceOf(Float.NaN, 1.0f, Float.NaN).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZeroFloat() {
+        assertTrue(sequenceOf(0.0f, 0.0f).allEqualBy { it })
+        assertTrue(sequenceOf(-0.0f, -0.0f).allEqualBy { it })
+        assertFalse(sequenceOf(0.0f, -0.0f).allEqualBy { it })
+        assertFalse(sequenceOf(-0.0f, 0.0f).allEqualBy { it })
     }
 }

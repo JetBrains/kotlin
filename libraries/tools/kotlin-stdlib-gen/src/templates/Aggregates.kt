@@ -195,7 +195,7 @@ object Aggregates : TemplateGroupBase() {
         else -> "AllEqual${f}Samples.$methodName"
     }
 
-    private fun MemberBuilder.appendAllEqualFloatingPointNote() {
+    private fun MemberBuilder.appendAllEqualFloatingPointNote(subject: String = "elements") {
         if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
             doc {
                 doc + """
@@ -207,7 +207,7 @@ object Aggregates : TemplateGroupBase() {
         if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
             doc {
                 doc + """
-                For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+                For $subject of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
                 and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
                 """
             }
@@ -294,6 +294,7 @@ object Aggregates : TemplateGroupBase() {
             ${f.element} equals the [selector] value of every subsequent ${f.element}.
             """
         }
+        appendAllEqualFloatingPointNote(subject = "selector values")
         sample(allEqualSampleRef("allEqualBy"))
         body {
             """

@@ -42,6 +42,9 @@ class AllEqualDoubleArrayTest {
         assertTrue(doubleArrayOf().allEqualWith { _, _ -> true })
         assertTrue(doubleArrayOf().allEqualWith { _, _ -> false })
         assertTrue(doubleArrayOf(1.0).allEqualWith { _, _ -> error("should not be called") })
+        assertTrue(doubleArrayOf(1.0, 1.0).allEqualWith { a, b -> a == b })
+        assertFalse(doubleArrayOf(1.0, 2.0).allEqualWith { a, b -> a == b })
+        assertFalse(doubleArrayOf(2.0, 1.0).allEqualWith { a, b -> a == b })
         assertTrue(doubleArrayOf(1.0, 1.0, 1.0).allEqualWith { a, b -> a == b })
         assertFalse(doubleArrayOf(1.0, 1.0, 2.0).allEqualWith { a, b -> a == b })
         assertFalse(doubleArrayOf(2.0, 1.0, 1.0).allEqualWith { a, b -> a == b })
@@ -66,5 +69,22 @@ class AllEqualDoubleArrayTest {
         assertTrue(doubleArrayOf(-0.0, -0.0).allEqual())
         assertFalse(doubleArrayOf(0.0, -0.0).allEqual())
         assertFalse(doubleArrayOf(-0.0, 0.0).allEqual())
+    }
+
+    @Test
+    fun allEqualByNaNDouble() {
+        assertTrue(doubleArrayOf(Double.NaN, Double.NaN).allEqualBy { it })
+        assertTrue(doubleArrayOf(Double.NaN, Double.NaN, Double.NaN).allEqualBy { it })
+        assertFalse(doubleArrayOf(Double.NaN, 1.0).allEqualBy { it })
+        assertFalse(doubleArrayOf(1.0, Double.NaN).allEqualBy { it })
+        assertFalse(doubleArrayOf(Double.NaN, 1.0, Double.NaN).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZeroDouble() {
+        assertTrue(doubleArrayOf(0.0, 0.0).allEqualBy { it })
+        assertTrue(doubleArrayOf(-0.0, -0.0).allEqualBy { it })
+        assertFalse(doubleArrayOf(0.0, -0.0).allEqualBy { it })
+        assertFalse(doubleArrayOf(-0.0, 0.0).allEqualBy { it })
     }
 }

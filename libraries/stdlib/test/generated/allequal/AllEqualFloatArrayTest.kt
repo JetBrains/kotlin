@@ -42,6 +42,9 @@ class AllEqualFloatArrayTest {
         assertTrue(floatArrayOf().allEqualWith { _, _ -> true })
         assertTrue(floatArrayOf().allEqualWith { _, _ -> false })
         assertTrue(floatArrayOf(1.0f).allEqualWith { _, _ -> error("should not be called") })
+        assertTrue(floatArrayOf(1.0f, 1.0f).allEqualWith { a, b -> a == b })
+        assertFalse(floatArrayOf(1.0f, 2.0f).allEqualWith { a, b -> a == b })
+        assertFalse(floatArrayOf(2.0f, 1.0f).allEqualWith { a, b -> a == b })
         assertTrue(floatArrayOf(1.0f, 1.0f, 1.0f).allEqualWith { a, b -> a == b })
         assertFalse(floatArrayOf(1.0f, 1.0f, 2.0f).allEqualWith { a, b -> a == b })
         assertFalse(floatArrayOf(2.0f, 1.0f, 1.0f).allEqualWith { a, b -> a == b })
@@ -66,5 +69,22 @@ class AllEqualFloatArrayTest {
         assertTrue(floatArrayOf(-0.0f, -0.0f).allEqual())
         assertFalse(floatArrayOf(0.0f, -0.0f).allEqual())
         assertFalse(floatArrayOf(-0.0f, 0.0f).allEqual())
+    }
+
+    @Test
+    fun allEqualByNaNFloat() {
+        assertTrue(floatArrayOf(Float.NaN, Float.NaN).allEqualBy { it })
+        assertTrue(floatArrayOf(Float.NaN, Float.NaN, Float.NaN).allEqualBy { it })
+        assertFalse(floatArrayOf(Float.NaN, 1.0f).allEqualBy { it })
+        assertFalse(floatArrayOf(1.0f, Float.NaN).allEqualBy { it })
+        assertFalse(floatArrayOf(Float.NaN, 1.0f, Float.NaN).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZeroFloat() {
+        assertTrue(floatArrayOf(0.0f, 0.0f).allEqualBy { it })
+        assertTrue(floatArrayOf(-0.0f, -0.0f).allEqualBy { it })
+        assertFalse(floatArrayOf(0.0f, -0.0f).allEqualBy { it })
+        assertFalse(floatArrayOf(-0.0f, 0.0f).allEqualBy { it })
     }
 }

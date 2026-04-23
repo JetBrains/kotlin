@@ -118,6 +118,9 @@ object AllEqualTestGenerator {
         assertTrue($emptyCollection.allEqualWith { _, _ -> true })
         assertTrue($emptyCollection.allEqualWith { _, _ -> false })
         assertTrue($ctor($equal).allEqualWith { _, _ -> error("should not be called") })
+        assertTrue($ctor($equal, $equal).allEqualWith { a, b -> a == b })
+        assertFalse($ctor($equal, $other).allEqualWith { a, b -> a == b })
+        assertFalse($ctor($other, $equal).allEqualWith { a, b -> a == b })
         assertTrue($ctor($equal, $equal, $equal).allEqualWith { a, b -> a == b })
         assertFalse($ctor($equal, $equal, $other).allEqualWith { a, b -> a == b })
         assertFalse($ctor($other, $equal, $equal).allEqualWith { a, b -> a == b })
@@ -153,6 +156,23 @@ object AllEqualTestGenerator {
         assertTrue($ctor($zeroNeg, $zeroNeg).allEqual())
         assertFalse($ctor($zeroPos, $zeroNeg).allEqual())
         assertFalse($ctor($zeroNeg, $zeroPos).allEqual())
+    }
+
+    @Test
+    fun allEqualByNaN$typeName() {
+        assertTrue($ctor($nanVal, $nanVal).allEqualBy { it })
+        assertTrue($ctor($nanVal, $nanVal, $nanVal).allEqualBy { it })
+        assertFalse($ctor($nanVal, $finite).allEqualBy { it })
+        assertFalse($ctor($finite, $nanVal).allEqualBy { it })
+        assertFalse($ctor($nanVal, $finite, $nanVal).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZero$typeName() {
+        assertTrue($ctor($zeroPos, $zeroPos).allEqualBy { it })
+        assertTrue($ctor($zeroNeg, $zeroNeg).allEqualBy { it })
+        assertFalse($ctor($zeroPos, $zeroNeg).allEqualBy { it })
+        assertFalse($ctor($zeroNeg, $zeroPos).allEqualBy { it })
     }"""
         )
     }

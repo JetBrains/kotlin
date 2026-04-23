@@ -42,6 +42,9 @@ class AllEqualIterablesTest {
         assertTrue(listOf<String>().allEqualWith { _, _ -> true })
         assertTrue(listOf<String>().allEqualWith { _, _ -> false })
         assertTrue(listOf("a").allEqualWith { _, _ -> error("should not be called") })
+        assertTrue(listOf("a", "a").allEqualWith { a, b -> a == b })
+        assertFalse(listOf("a", "b").allEqualWith { a, b -> a == b })
+        assertFalse(listOf("b", "a").allEqualWith { a, b -> a == b })
         assertTrue(listOf("a", "a", "a").allEqualWith { a, b -> a == b })
         assertFalse(listOf("a", "a", "b").allEqualWith { a, b -> a == b })
         assertFalse(listOf("b", "a", "a").allEqualWith { a, b -> a == b })
@@ -75,6 +78,23 @@ class AllEqualIterablesTest {
     }
 
     @Test
+    fun allEqualByNaNDouble() {
+        assertTrue(listOf(Double.NaN, Double.NaN).allEqualBy { it })
+        assertTrue(listOf(Double.NaN, Double.NaN, Double.NaN).allEqualBy { it })
+        assertFalse(listOf(Double.NaN, 1.0).allEqualBy { it })
+        assertFalse(listOf(1.0, Double.NaN).allEqualBy { it })
+        assertFalse(listOf(Double.NaN, 1.0, Double.NaN).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZeroDouble() {
+        assertTrue(listOf(0.0, 0.0).allEqualBy { it })
+        assertTrue(listOf(-0.0, -0.0).allEqualBy { it })
+        assertFalse(listOf(0.0, -0.0).allEqualBy { it })
+        assertFalse(listOf(-0.0, 0.0).allEqualBy { it })
+    }
+
+    @Test
     fun allEqualNaNFloat() {
         assertTrue(listOf(Float.NaN, Float.NaN).allEqual())
         assertTrue(listOf(Float.NaN, Float.NaN, Float.NaN).allEqual())
@@ -89,5 +109,22 @@ class AllEqualIterablesTest {
         assertTrue(listOf(-0.0f, -0.0f).allEqual())
         assertFalse(listOf(0.0f, -0.0f).allEqual())
         assertFalse(listOf(-0.0f, 0.0f).allEqual())
+    }
+
+    @Test
+    fun allEqualByNaNFloat() {
+        assertTrue(listOf(Float.NaN, Float.NaN).allEqualBy { it })
+        assertTrue(listOf(Float.NaN, Float.NaN, Float.NaN).allEqualBy { it })
+        assertFalse(listOf(Float.NaN, 1.0f).allEqualBy { it })
+        assertFalse(listOf(1.0f, Float.NaN).allEqualBy { it })
+        assertFalse(listOf(Float.NaN, 1.0f, Float.NaN).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualByNegativeZeroFloat() {
+        assertTrue(listOf(0.0f, 0.0f).allEqualBy { it })
+        assertTrue(listOf(-0.0f, -0.0f).allEqualBy { it })
+        assertFalse(listOf(0.0f, -0.0f).allEqualBy { it })
+        assertFalse(listOf(-0.0f, 0.0f).allEqualBy { it })
     }
 }

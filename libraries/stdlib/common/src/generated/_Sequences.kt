@@ -1453,6 +1453,9 @@ public fun <T> Sequence<T>.allEqual(): Boolean {
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the sequence is considered all-equal-by if the [selector] value of the first
  * element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
  *
  * The operation is _terminal_.
  * 
