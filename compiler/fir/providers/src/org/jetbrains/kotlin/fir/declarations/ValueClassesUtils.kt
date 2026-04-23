@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
     symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-    return symbol.fir.inlineClassRepresentation(distinguishBasicAndExtended = true)?.underlyingType
+    return symbol.fir.inlineClassRepresentation(distinguishBasicAndFull = true)?.underlyingType
 }
 
 @OptIn(SuspiciousValueClassCheck::class)
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeRigidType>? {
-    val areExtendedValueClassesSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
+    val areFullValueClassesSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.FullValueClasses)
     val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId
-    if (areExtendedValueClassesSupported && (jvmInlineAnnotationClassId == null || !klass.hasAnnotation(jvmInlineAnnotationClassId, session)) && klass.isValue) {
+    if (areFullValueClassesSupported && (jvmInlineAnnotationClassId == null || !klass.hasAnnotation(jvmInlineAnnotationClassId, session)) && klass.isValue) {
         val fields = if (klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED) {
             null
         } else {
@@ -41,7 +41,7 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
                 ?.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
                 ?: emptyList()
         }
-        return ExtendedValueClassRepresentation(fields)
+        return FullValueClassRepresentation(fields)
     }
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
@@ -72,7 +72,7 @@ private fun ConeRigidType.basicValueClassRepresentationTypeMarkersList(session: 
     val symbol = this.toRegularClassSymbol(session) ?: return null
     if (!symbol.fir.isInlineOrValue) return null
     val valueClassRepresentation = symbol.fir.valueClassRepresentation
-    if (valueClassRepresentation is ExtendedValueClassRepresentation) return null
+    if (valueClassRepresentation is FullValueClassRepresentation) return null
     valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
 
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null

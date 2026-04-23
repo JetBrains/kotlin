@@ -473,7 +473,7 @@ class ComposerParamTransformer(
             )
         } else {
             return classSymbol!!.constructors.firstOrNull { it.owner.isPrimary }?.let { ctor ->
-                val underlyingType = getInlineClassUnderlyingType(classSymbol.owner, distinguishBasicAndExtended = true)
+                val underlyingType = getInlineClassUnderlyingType(classSymbol.owner, distinguishBasicAndFull = true)
 
                 underlyingType.defaultValue(startOffset, endOffset)?.let { defaultUnderlyingTypeValue ->
                     IrConstructorCallImpl(

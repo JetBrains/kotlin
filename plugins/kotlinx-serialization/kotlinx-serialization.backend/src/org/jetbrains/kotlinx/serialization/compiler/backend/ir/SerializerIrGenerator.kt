@@ -639,7 +639,7 @@ open class SerializerIrGenerator(
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
-                serializableDesc.isSingleFieldValueClass(distinguishBasicAndExtended = context.platform.isJvm()) ->
+                serializableDesc.isSingleFieldValueClass(distinguishBasicAndFull = context.platform.isJvm()) ->
                     SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }

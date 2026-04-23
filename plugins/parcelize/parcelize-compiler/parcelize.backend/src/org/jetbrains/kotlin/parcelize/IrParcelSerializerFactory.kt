@@ -393,7 +393,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
 
-    private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndExtended = true)
+    private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndFull = true)
 
     // Unsigned array types
     private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(

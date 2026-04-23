@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
@@ -46,7 +45,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         if (!firClass.hasAnnotationUltraSafe(JvmStandardClassIds.Annotations.JvmRecord)) return
         if (!(firClass.isData || (firClass.isValue &&
                     !firClass.hasAnnotationSafe(JvmStandardClassIds.Annotations.JvmInline, session) &&
-                    session.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses))
+                    session.languageVersionSettings.supportsFeature(LanguageFeature.FullValueClasses))
                     )
         ) return
         // java.lang.Record is inaccessible for the Common platform; in pre-17 JDKs we still add the supertype to report relevant errors

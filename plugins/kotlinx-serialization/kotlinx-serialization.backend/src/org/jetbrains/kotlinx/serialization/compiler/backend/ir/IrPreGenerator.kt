@@ -117,7 +117,7 @@ class IrPreGenerator(
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
                 ?.findPluginGeneratedMethod(SerialEntityNames.LOAD, compilerContext.afterK2) == null
         ) return
-        if (irClass.isSingleFieldValueClass(distinguishBasicAndExtended = compilerContext.platform.isJvm())) return
+        if (irClass.isSingleFieldValueClass(distinguishBasicAndFull = compilerContext.platform.isJvm())) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN

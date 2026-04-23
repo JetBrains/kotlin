@@ -530,7 +530,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
-        if (toFirRegularClass()?.isExtendedValueClass == true) return false
+        if (toFirRegularClass()?.isFullValueClass == true) return false
         val fields = getValueClassProperties() ?: return false
         return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
     }
@@ -539,7 +539,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId ?: return false
         val regularClass = toFirRegularClass()
         if (regularClass != null) {
-            if (regularClass.isExtendedValueClass) return false
+            if (regularClass.isFullValueClass) return false
             if (!regularClass.symbol.hasAnnotation(jvmInlineAnnotationClassId, session)) return false
         }
         val fields = getValueClassProperties() ?: return false

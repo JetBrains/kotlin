@@ -458,10 +458,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
         this as? IrTypeParameterSymbol
 
-    open val distinguishBasicAndExtendedSingleFieldValueClasses: Boolean get() = false
+    open val distinguishBasicAndFullSingleFieldValueClasses: Boolean get() = false
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass(distinguishBasicAndExtended = distinguishBasicAndExtendedSingleFieldValueClasses) == true
+        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass(distinguishBasicAndFull = distinguishBasicAndFullSingleFieldValueClasses) == true
 
     override fun TypeConstructorMarker.isJvmInlineMultiFieldValueClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isJvmInlineMultiFieldValueClass == true
@@ -479,7 +479,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         } ?: owner.superTypes.first()
 
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation(distinguishBasicAndExtended = distinguishBasicAndExtendedSingleFieldValueClasses)?.underlyingType
+        (this as IrType).classOrNull?.owner?.inlineClassRepresentation(distinguishBasicAndFull = distinguishBasicAndFullSingleFieldValueClasses)?.underlyingType
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)
