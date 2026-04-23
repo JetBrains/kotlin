@@ -70,23 +70,28 @@ internal open class KotlinJsIrLinkConfig(
 
                     when (mode) {
                         KotlinJsBinaryMode.PRODUCTION -> {
-                            configureOptions(
-                                compilation,
-                                ENABLE_DCE,
-                                MINIMIZED_MEMBER_NAMES
-                            )
+                            configureOptions(ENABLE_DCE)
+
+                            if (compilation.isWasm()) {
+                                configureWasmOptions(compilation)
+                            } else {
+                                configureOptions(
+                                    MINIMIZED_MEMBER_NAMES
+                                )
+                            }
                         }
 
                         KotlinJsBinaryMode.DEVELOPMENT -> {
-                            configureOptions(
-                                compilation,
-                                WASM_FORCE_DEBUG_FRIENDLY
-                            )
+                            if (compilation.isWasm()) {
+                                configureWasmOptions(compilation, WASM_FORCE_DEBUG_FRIENDLY)
+                            }
                         }
                         else -> throw InvalidUserDataException(
                             "Unknown KotlinJsBinaryMode to configure the build: $mode"
                         )
                     }
+
+                    if (compilation.isWasm()) return@apply
 
                     val alreadyDefinedOutputMode = any { it.startsWith(PER_MODULE) }
                     if (!alreadyDefinedOutputMode) {
@@ -100,21 +105,26 @@ internal open class KotlinJsIrLinkConfig(
     }
 
     private fun MutableList<String>.configureOptions(
-        compilation: KotlinCompilationInfo,
         vararg additionalCompilerArgs: String,
     ) {
         additionalCompilerArgs.forEach { arg ->
             if (none { it.startsWith(arg) }) add(arg)
         }
+    }
 
-        if (compilation.platformType == KotlinPlatformType.wasm) {
-            add(WASM_BACKEND)
-            val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
-            val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
-            add("$WASM_TARGET=$targetValue")
-            if (wasmPerModule) {
-                add(WASM_INCLUDED_MODULE_ONLY)
-            }
+    private fun MutableList<String>.configureWasmOptions(
+        compilation: KotlinCompilationInfo,
+        vararg additionalCompilerArgs: String,
+    ) {
+        configureOptions(*additionalCompilerArgs)
+        add(WASM_BACKEND)
+        val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
+        val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
+        add("$WASM_TARGET=$targetValue")
+        if (wasmPerModule) {
+            add(WASM_INCLUDED_MODULE_ONLY)
         }
     }
+
+    private fun KotlinCompilationInfo.isWasm() = platformType == KotlinPlatformType.wasm
 }
