@@ -189,6 +189,185 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.allEqualSampleRef(methodName: String): String = "samples.generated.allequal." + when (f) {
+        ArraysOfObjects -> "AllEqualArraySamples.$methodName"
+        ArraysOfPrimitives, ArraysOfUnsigned -> "AllEqual${primitive!!.name}ArraySamples.$methodName"
+        else -> "AllEqual${f}Samples.$methodName"
+    }
+
+    private fun MemberBuilder.appendAllEqualFloatingPointNote() {
+        if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
+            doc {
+                doc + """
+                `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+                consistent with [${primitive!!.name}.equals].
+                """
+            }
+        }
+        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
+            doc {
+                doc + """
+                For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+                and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+                """
+            }
+        }
+    }
+
+    val f_allEqual = fn("allEqual()") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        returns("Boolean")
+        doc {
+            val equalityPhrase = if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true)
+                "equality semantics consistent with [${primitive!!.name}.equals]"
+            else
+                "structural equality (`==`)"
+            """
+            Returns `true` if all ${f.element.pluralize()} in the ${f.collection} are equal to each other.
+
+            Returns `true` if the ${f.collection} has fewer than two ${f.element.pluralize()}.
+
+            The ${f.element.pluralize()} are compared sequentially using $equalityPhrase,
+            and the ${f.collection} is considered all-equal if the first ${f.element} equals every
+            subsequent ${f.element}.
+            """
+        }
+        appendAllEqualFloatingPointNote()
+        sample(allEqualSampleRef("allEqual"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            while (iterator.hasNext()) {
+                if (first != iterator.next()) return false
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects) {
+            """
+            if (size < 2) return true
+            val first = this[0]
+            for (i in 1..lastIndex) {
+                if (first != this[i]) return false
+            }
+            return true
+            """
+        }
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
+            val condition = if (primitive?.isFloatingPoint() == true)
+                "first.compareTo(this[i]) != 0"
+            else
+                "first != this[i]"
+            """
+            if (size < 2) return true
+            val first = this[0]
+            for (i in 1..lastIndex) {
+                if ($condition) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_allEqualBy = fn("allEqualBy(selector: (T) -> K)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        inline()
+        returns("Boolean")
+        typeParam("K")
+        doc {
+            """
+            Returns `true` if all ${f.element.pluralize()} in the ${f.collection} yield the same value
+            produced by the given [selector] function.
+
+            Returns `true` if the ${f.collection} has fewer than two ${f.element.pluralize()}.
+
+            The [selector] values are compared sequentially using structural equality (`==`),
+            and the ${f.collection} is considered all-equal-by if the [selector] value of the first
+            ${f.element} equals the [selector] value of every subsequent ${f.element}.
+            """
+        }
+        sample(allEqualSampleRef("allEqualBy"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            if (!iterator.hasNext()) return true
+            val firstKey = selector(first)
+            while (iterator.hasNext()) {
+                if (firstKey != selector(iterator.next())) return false
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            val firstKey = selector(this[0])
+            for (i in 1..lastIndex) {
+                if (firstKey != selector(this[i])) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_allEqualWith = fn("allEqualWith(predicate: (T, T) -> Boolean)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        inline()
+        returns("Boolean")
+        doc {
+            """
+            Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+            ${f.element} of the ${f.collection} and each subsequent ${f.element}.
+
+            Returns `true` if the ${f.collection} has fewer than two ${f.element.pluralize()}.
+
+            The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+            ${f.element} as the first argument and each subsequent ${f.element} as the second argument.
+            """
+        }
+        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
+            doc {
+                doc + """
+                For example, `{ a, b -> a === b }` checks referential equality.
+                """
+            }
+        }
+        sample(allEqualSampleRef("allEqualWith"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            while (iterator.hasNext()) {
+                if (!predicate(first, iterator.next())) return false
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            val first = this[0]
+            for (i in 1..lastIndex) {
+                if (!predicate(first, this[i])) return false
+            }
+            return true
+            """
+        }
+    }
 
     val f_count_predicate = fn("count(predicate: (T) -> Boolean)") {
         includeDefault()

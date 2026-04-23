@@ -14281,6 +14281,593 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun <T> Array<out T>.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun ByteArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun ShortArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun IntArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun LongArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using equality semantics consistent with [Float.equals],
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun FloatArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first.compareTo(this[i]) != 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using equality semantics consistent with [Double.equals],
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Double.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun DoubleArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first.compareTo(this[i]) != 0) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun BooleanArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun CharArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <T, K> Array<out T>.allEqualBy(selector: (T) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> ByteArray.allEqualBy(selector: (Byte) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> ShortArray.allEqualBy(selector: (Short) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> IntArray.allEqualBy(selector: (Int) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> LongArray.allEqualBy(selector: (Long) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> FloatArray.allEqualBy(selector: (Float) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> DoubleArray.allEqualBy(selector: (Double) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> BooleanArray.allEqualBy(selector: (Boolean) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the array is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <K> CharArray.allEqualBy(selector: (Char) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        if (firstKey != selector(this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * For example, `{ a, b -> a === b }` checks referential equality.
+ * 
+ * @sample samples.generated.allequal.AllEqualArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun <T> Array<out T>.allEqualWith(predicate: (T, T) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun ByteArray.allEqualWith(predicate: (Byte, Byte) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun ShortArray.allEqualWith(predicate: (Short, Short) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun IntArray.allEqualWith(predicate: (Int, Int) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun LongArray.allEqualWith(predicate: (Long, Long) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun FloatArray.allEqualWith(predicate: (Float, Float) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun DoubleArray.allEqualWith(predicate: (Double, Double) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun BooleanArray.allEqualWith(predicate: (Boolean, Boolean) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the array and each subsequent element.
+ * 
+ * Returns `true` if the array has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun CharArray.allEqualWith(predicate: (Char, Char) -> Boolean): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (!predicate(first, this[i])) return false
+    }
+    return true
+}
+
+/**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any

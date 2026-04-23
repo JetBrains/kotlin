@@ -1418,6 +1418,86 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
+ * Returns `true` if all elements in the sequence are equal to each other.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and the sequence is considered all-equal if the first element equals every
+ * subsequent element.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.allequal.AllEqualSequencesSamples.allEqual
+ */
+@SinceKotlin("2.4")
+public fun <T> Sequence<T>.allEqual(): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    val first = iterator.next()
+    while (iterator.hasNext()) {
+        if (first != iterator.next()) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the sequence yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and the sequence is considered all-equal-by if the [selector] value of the first
+ * element equals the [selector] value of every subsequent element.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.allequal.AllEqualSequencesSamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+public inline fun <T, K> Sequence<T>.allEqualBy(selector: (T) -> K): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    val first = iterator.next()
+    if (!iterator.hasNext()) return true
+    val firstKey = selector(first)
+    while (iterator.hasNext()) {
+        if (firstKey != selector(iterator.next())) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
+ * element of the sequence and each subsequent element.
+ * 
+ * Returns `true` if the sequence has fewer than two elements.
+ * 
+ * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
+ * element as the first argument and each subsequent element as the second argument.
+ * 
+ * For example, `{ a, b -> a === b }` checks referential equality.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.generated.allequal.AllEqualSequencesSamples.allEqualWith
+ */
+@SinceKotlin("2.4")
+public inline fun <T> Sequence<T>.allEqualWith(predicate: (T, T) -> Boolean): Boolean {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    val first = iterator.next()
+    while (iterator.hasNext()) {
+        if (!predicate(first, iterator.next())) return false
+    }
+    return true
+}
+
+/**
  * Returns `true` if sequence has at least one element.
  *
  * The operation is _terminal_.
