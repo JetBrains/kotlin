@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.toInlineRepresentation
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -20,22 +20,22 @@ private object FirValueClassRepresentationKey : FirDeclarationDataKey()
 var FirRegularClass.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
         by FirDeclarationDataRegistry.data(FirValueClassRepresentationKey)
 
-fun FirRegularClass.inlineClassRepresentation(distinguishBasicAndExtended: Boolean): InlineClassRepresentation<ConeRigidType>? =
-    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndExtended = distinguishBasicAndExtended)
+fun FirRegularClass.inlineClassRepresentation(distinguishBasicAndFull: Boolean): InlineClassRepresentation<ConeRigidType>? =
+    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndFull = distinguishBasicAndFull)
 
 val FirRegularClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>?
     get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>
 
-val FirRegularClass.isExtendedValueClass: Boolean
-    get() = valueClassRepresentation is ExtendedValueClassRepresentation
+val FirRegularClass.isFullValueClass: Boolean
+    get() = valueClassRepresentation is FullValueClassRepresentation
 
 val FirRegularClass.isBasicValueClass: Boolean
     get() = valueClassRepresentation is BasicValueClassRepresentation
 
-val FirRegularClassSymbol.isExtendedValueClass: Boolean
+val FirRegularClassSymbol.isFullValueClass: Boolean
     get() {
         lazyResolveToPhase(FirResolvePhase.STATUS)
-        return fir.valueClassRepresentation is ExtendedValueClassRepresentation
+        return fir.valueClassRepresentation is FullValueClassRepresentation
     }
 
 val FirRegularClassSymbol.isBasicValueClass: Boolean

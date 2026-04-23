@@ -65,5 +65,5 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
     fun getRuntimeClassFor(type: IrType): IrClass? = type.erasedUpperBound.takeIf { !it.isInterface }
 }
 
-val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(distinguishBasicAndExtended = false)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndExtended = false)
+val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(distinguishBasicAndFull = false)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndFull = false)

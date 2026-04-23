@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
@@ -164,7 +163,7 @@ val FirCallableSymbol<*>.isInlineClassProperty: Boolean
     get() {
         if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
-        val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation(distinguishBasicAndExtended = false) ?: return false
+        val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation(distinguishBasicAndFull = false) ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name
     }
 

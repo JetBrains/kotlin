@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
@@ -43,21 +43,21 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  *
  * The compatibility is assessed based on the type of value class representation associated with the `IrClass`.
  *
- * @param distinguishBasicAndExtended A boolean indicating whether to differentiate between basic and extended value class representations.
- *                                    If `true`, `ExtendedValueClassRepresentation` will not be considered as single-field compatible,
- *                                    regardless of the number of properties in the representation. If `false`, the compatibility
- *                                    for extended value classes depends on whether they have exactly one underlying property.
- *                                    `true` must be used for JVM, `false` for other backends.
+ * @param distinguishBasicAndFull A boolean indicating whether to differentiate between basic and full value class representations.
+ *                                If `true`, `FullValueClassRepresentation` will not be considered as single-field compatible,
+ *                                regardless of the number of properties in the representation. If `false`, the compatibility
+ *                                for full value classes depends on whether they have exactly one underlying property.
+ *                                `true` must be used for JVM, `false` for other backends.
  * @return `true` if the `IrClass` is compatible with being a single-field value class; `false` otherwise.
  */
-fun IrClass.isSingleFieldValueClass(distinguishBasicAndExtended: Boolean): Boolean =
-    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndExtended) != null
+fun IrClass.isSingleFieldValueClass(distinguishBasicAndFull: Boolean): Boolean =
+    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndFull) != null
 
 val IrClass.isJvmInlineMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
 
-val IrClass.isExtendedValueClass: Boolean
-    get() = valueClassRepresentation is ExtendedValueClassRepresentation<*>
+val IrClass.isFullValueClass: Boolean
+    get() = valueClassRepresentation is FullValueClassRepresentation<*>
 
 val IrClass.isBasicValueClass: Boolean
     get() = valueClassRepresentation is BasicValueClassRepresentation<*>
@@ -91,17 +91,17 @@ val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValu
  * This method evaluates the type of the class's value class representation and
  * determines whether to return its equivalent inline class representation.
  *
- * @param distinguishBasicAndExtended A boolean indicating whether to differentiate between basic and extended value class representations.
- *                                    If `true`, `ExtendedValueClassRepresentation` will not be considered as single-field compatible,
- *                                    regardless of the number of properties in the representation. If `false`, the compatibility
- *                                    for extended value classes depends on whether they have exactly one underlying property.
- *                                    `true` must be used for JVM, `false` for other backends.
+ * @param distinguishBasicAndFull A boolean indicating whether to differentiate between basic and full value class representations.
+ *                                If `true`, `FullValueClassRepresentation` will not be considered as single-field compatible,
+ *                                regardless of the number of properties in the representation. If `false`, the compatibility
+ *                                for full value classes depends on whether they have exactly one underlying property.
+ *                                `true` must be used for JVM, `false` for other backends.
  * @return An [InlineClassRepresentation] if the class has a compatible value class
- *         representation and meets the conditions specified by the `distinguishBasicAndExtended`
+ *         representation and meets the conditions specified by the `distinguishBasicAndFull`
  *         parameter; otherwise, `null`.
  */
-fun IrClass.inlineClassRepresentation(distinguishBasicAndExtended: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndExtended)
+fun IrClass.inlineClassRepresentation(distinguishBasicAndFull: Boolean): InlineClassRepresentation<IrSimpleType>? =
+    valueClassRepresentation?.toInlineRepresentation(distinguishBasicAndFull)
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)

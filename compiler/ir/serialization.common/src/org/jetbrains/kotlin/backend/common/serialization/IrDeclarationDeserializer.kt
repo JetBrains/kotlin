@@ -400,7 +400,7 @@ class IrDeclarationDeserializer(
                     proto.hasMultiFieldValueClassRepresentation() ->
                         deserializeMultiFieldValueClassRepresentation(proto.multiFieldValueClassRepresentation)
                     // Inline classes with KLib version <= 1.5.20 are no longer supported
-                    else -> deserializeExtendedValueClassRepresentation(this)
+                    else -> deserializeFullValueClassRepresentation(this)
                 }
 
                 // It has been decided not to deserialize the list of sealed subclasses because of KT-54028
@@ -422,10 +422,10 @@ class IrDeclarationDeserializer(
         return JvmInlineMultiFieldValueClassRepresentation(names memoryOptimizedZip types)
     }
 
-    private fun deserializeExtendedValueClassRepresentation(irClass: IrClass): ExtendedValueClassRepresentation<IrSimpleType> {
-        if (irClass.modality == Modality.ABSTRACT || irClass.modality == Modality.SEALED) return ExtendedValueClassRepresentation(null)
-        val ctor = irClass.primaryConstructor ?: error("Extended value class has no primary constructor: ${irClass.render()}")
-        return ExtendedValueClassRepresentation(ctor.parameters.map { it.name to it.type as IrSimpleType })
+    private fun deserializeFullValueClassRepresentation(irClass: IrClass): FullValueClassRepresentation<IrSimpleType> {
+        if (irClass.modality == Modality.ABSTRACT || irClass.modality == Modality.SEALED) return FullValueClassRepresentation(null)
+        val ctor = irClass.primaryConstructor ?: error("Full value class has no primary constructor: ${irClass.render()}")
+        return FullValueClassRepresentation(ctor.parameters.map { it.name to it.type as IrSimpleType })
     }
 
     private fun deserializeIrTypeAlias(proto: ProtoTypeAlias, parentStart: Int?, setParent: Boolean = true): IrTypeAlias =
