@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.asJava.LightClassTestCommon
+import org.jetbrains.kotlin.light.classes.symbol.util.LightClassTestCommon
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions

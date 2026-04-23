@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava
+package org.jetbrains.kotlin.light.classes.symbol.util
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiClass
 import junit.framework.TestCase
+import org.jetbrains.kotlin.analysis.api.impl.base.test.util.PsiClassRenderer
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import java.io.File
 import java.util.regex.Pattern
 
-object LightClassTestCommon {
+internal object LightClassTestCommon {
     private val SUBJECT_FQ_NAME_PATTERN = Pattern.compile("^//\\s*(.*)$", Pattern.MULTILINE)
     const val NOT_GENERATED_DIRECTIVE = "// NOT_GENERATED"
 

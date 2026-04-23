@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava
+package org.jetbrains.kotlin.analysis.api.impl.base.test.util
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignature
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
-
 
 class PsiClassRenderer private constructor(
     private val renderInner: Boolean,
@@ -379,5 +378,4 @@ class PsiClassRenderer private constructor(
 
     private fun PsiModifierListOwner.skipRenderingNullability(typeIfApplicable: PsiType?) =
         isPrimitiveOrNonExisting(typeIfApplicable)// || isPrivateOrParameterInPrivateMethod()
-
 }
