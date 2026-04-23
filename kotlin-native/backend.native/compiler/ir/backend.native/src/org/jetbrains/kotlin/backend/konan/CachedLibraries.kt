@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.serialization.*
-import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.file.File
@@ -225,7 +224,7 @@ class CachedLibraries(
             // A safety measure. We don't expect the compiler to produce non-stdlib caches on MinGW.
             // However, if it does, we are going to be aware without breaking the compilation.
             if (target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
-                configuration.report(CompilerMessageSeverity.WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING,
                         "MinGW target does not support caches for libraries except for stdlib. Found cache at ${cache.path}"
                 )
                 null

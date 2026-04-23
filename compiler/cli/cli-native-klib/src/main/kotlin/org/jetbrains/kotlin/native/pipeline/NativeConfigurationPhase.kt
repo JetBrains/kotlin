@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.native.pipeline
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
+import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.checkForUnexpectedKlibLibraries
@@ -130,7 +130,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
             configuration.konanManifestNativeTargets = parseManifestNativeTargets(it, configuration)
         }
 
-        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_WARNING, KONAN_ARGUMENT_ERROR)
+        configuration.setupPartialLinkageConfig(arguments, KONAN_ARGUMENT_STRONG_WARNING, KONAN_ARGUMENT_ERROR)
     }
 
     private fun parseManifestNativeTargets(
@@ -144,7 +144,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
 
         if (unrecognizedTargetNames.isNotEmpty()) {
             configuration.report(
-                KONAN_ARGUMENT_WARNING,
+                KONAN_ARGUMENT_STRONG_WARNING,
                 """
                     The following target names passed to the -Xmanifest-native-targets are not recognized:
                     ${unrecognizedTargetNames.joinToString(separator = ", ")}

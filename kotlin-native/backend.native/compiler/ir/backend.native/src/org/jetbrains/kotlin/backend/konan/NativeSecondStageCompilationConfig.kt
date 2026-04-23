@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
@@ -45,7 +46,7 @@ class NativeSecondStageCompilationConfig(
         // We can't access `target` property due to circular dependency.
         val target = configuration.konanTarget
         if (macabi && target !in setOf("ios_simulator_arm64", "ios_x64")) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "macabi is only supported for iosArm64 target")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "macabi is only supported for iosArm64 target")
             false
         } else macabi
     }
@@ -103,7 +104,7 @@ class NativeSecondStageCompilationConfig(
         val explicit = configuration.get(BinaryOptions.smallBinary)
         if (debug) {
             if (explicit == true) {
-                configuration.report(CompilerMessageSeverity.WARNING, "smallBinary is not compatible with debug, and will be ignored")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "smallBinary is not compatible with debug, and will be ignored")
             }
             return@run false
         }
@@ -121,7 +122,7 @@ class NativeSecondStageCompilationConfig(
             it.toObsoleteKind() !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
             else -> null
         }?.let { message ->
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
             return@takeIf false
         }
         return@takeIf true
@@ -139,7 +140,7 @@ class NativeSecondStageCompilationConfig(
             true -> true
             false -> {
                 if (target.family == Family.MINGW) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "MinGW target does not support mmap/munmap")
+                    configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "MinGW target does not support mmap/munmap")
                     true
                 } else {
                     false
@@ -150,7 +151,7 @@ class NativeSecondStageCompilationConfig(
     val mmapTag: UByte by lazy {
         configuration.get(BinaryOptions.mmapTag)?.let {
             if (it > 255U) {
-                configuration.report(CompilerMessageSeverity.ERROR, "mmap tag must be between 1 and 255")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_ERROR, "mmap tag must be between 1 and 255")
             }
             it.toUByte()
         } ?: 246U // doesn't seem to be used in the wild.
@@ -169,7 +170,7 @@ class NativeSecondStageCompilationConfig(
         val cfgString = configuration.runtimeLogs ?: return@lazy default
 
         fun <T> error(message: String): T? {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "$message. No logging will be performed.")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "$message. No logging will be performed.")
             return null
         }
 
@@ -219,7 +220,7 @@ class NativeSecondStageCompilationConfig(
     val gcSchedulerType: GCSchedulerType by lazy {
         val arg = configuration.get(BinaryOptions.gcSchedulerType) ?: defaultGCSchedulerType
         arg.deprecatedWithReplacement?.let { replacement ->
-            configuration.report(CompilerMessageSeverity.WARNING, "Binary option gcSchedulerType=$arg is deprecated. Use gcSchedulerType=$replacement instead")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "Binary option gcSchedulerType=$arg is deprecated. Use gcSchedulerType=$replacement instead")
             replacement
         } ?: arg
     }
@@ -245,13 +246,13 @@ class NativeSecondStageCompilationConfig(
         val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
         if (gcMarkSingleThreaded) {
             if (mutatorsCooperate == true) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Mutators cooperation is not supported during single threaded mark")
             }
             false
         } else if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
             if (mutatorsCooperate == true) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Mutators cooperation is not yet supported in CMS GC")
             }
             false
@@ -264,7 +265,7 @@ class NativeSecondStageCompilationConfig(
         val auxGCThreads = configuration.get(BinaryOptions.auxGCThreads)
         if (gcMarkSingleThreaded) {
             if (auxGCThreads != null && auxGCThreads != 0U) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Auxiliary GC workers are not supported during single threaded mark")
             }
             0U
@@ -305,7 +306,7 @@ class NativeSecondStageCompilationConfig(
 
     val enableSafepointSignposts: Boolean = configuration.get(BinaryOptions.enableSafepointSignposts)?.also {
         if (it && !target.supportsSignposts) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")
         }
     } ?: false // Disabled by default because of KT-68928
 
@@ -321,7 +322,7 @@ class NativeSecondStageCompilationConfig(
     val globalDataLazyInit: Boolean
         get() = configuration.get(BinaryOptions.globalDataLazyInit)?.also {
             if (!it) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Eager Global Data initialization is deprecated")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Eager Global Data initialization is deprecated")
             }
         } ?: true
 
@@ -416,7 +417,7 @@ class NativeSecondStageCompilationConfig(
     val allocationMode by lazy {
         (configuration.allocationMode ?: defaultAllocationMode).also {
             if (it == AllocationMode.CUSTOM && sanitizer != null && pagedAllocator) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
             }
         }
     }
@@ -428,7 +429,7 @@ class NativeSecondStageCompilationConfig(
     val minidumpOnSIGTERM by lazy {
         configuration.get(BinaryOptions.minidumpOnSIGTERM)?.let {
             if (it && minidumpLocation == null) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Minidump location is not defined")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Minidump location is not defined")
                 false
             } else it
         } ?: false
@@ -437,7 +438,7 @@ class NativeSecondStageCompilationConfig(
     val swiftExport by lazy {
         configuration.get(BinaryOptions.swiftExport)?.let {
             if (it && !target.supportsObjcInterop()) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Swift Export cannot be enabled on $target that does not have objc interop")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Swift Export cannot be enabled on $target that does not have objc interop")
                 false
             } else it
         } ?: false
@@ -457,7 +458,7 @@ class NativeSecondStageCompilationConfig(
     internal val propertyLazyInitialization: Boolean
         get() = configuration[NativeConfigurationKeys.PROPERTY_LAZY_INITIALIZATION]?.also {
             if (!it) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Eager property initialization is deprecated")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Eager property initialization is deprecated")
             }
         } ?: defaultPropertyLazyInitialization
 
@@ -604,7 +605,7 @@ class NativeSecondStageCompilationConfig(
     internal val omitFrameworkBinary: Boolean by lazy {
         configuration.omitFrameworkBinary.also {
             if (it && produce != CompilerOutputKind.FRAMEWORK) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
             }
         }
@@ -640,7 +641,7 @@ class NativeSecondStageCompilationConfig(
         val path = configuration.saveLlvmIrDirectory
         if (path == null) {
             val tempDir = Files.createTempDirectory(Paths.get(StandardSystemProperty.JAVA_IO_TMPDIR.value()!!), /* prefix= */ null).toFile()
-            configuration.report(CompilerMessageSeverity.WARNING,
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING,
                     "Temporary directory for LLVM IR is ${tempDir.canonicalPath}")
             tempDir
         } else {
