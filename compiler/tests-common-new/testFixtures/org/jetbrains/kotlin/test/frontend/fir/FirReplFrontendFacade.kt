@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
@@ -70,7 +71,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
 
         val projectEnvironment =
-            VfsBasedProjectEnvironment(project, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
+            VfsBasedProjectEnvironment(project, configuration.extensionsStorage, VirtualFileManager.getInstance().getFileSystem(FILE_PROTOCOL)) {
                 packagePartProviderFactory.invoke(it)
             }
 

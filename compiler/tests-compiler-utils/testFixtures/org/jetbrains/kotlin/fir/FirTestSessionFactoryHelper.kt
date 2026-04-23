@@ -11,8 +11,10 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -54,6 +56,7 @@ object FirTestSessionFactoryHelper {
         )
     }
 
+    @OptIn(ExperimentalCompilerApi::class)
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         project: Project,
@@ -69,6 +72,7 @@ object FirTestSessionFactoryHelper {
             JvmPlatforms.unspecifiedJvmPlatform,
             VfsBasedProjectEnvironment(
                 project,
+                configuration.extensionsStorage,
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
                 getPackagePartProvider
             ),
