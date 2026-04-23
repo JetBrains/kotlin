@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor.a
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaParameterType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.fir.resolve.inference.FirPCLAInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPositionWithOutOfScopeTypeMarker
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -275,6 +277,28 @@ internal object ArgumentCheckingProcessor {
         return true
     }
 
+    /**
+     * Checks whether the given type contains type parameters that are out of scope in the current constraint system state.
+     * @see FirPCLAInferenceSession.outerCandidateDeclarationsSnapshot
+     */
+    private fun ArgumentContext.containsOutOfScopeTypeParameter(type: ConeKotlinType): Boolean {
+        val pclaSession = context.bodyResolveContext.inferenceSession as? FirPCLAInferenceSession
+        val outerDeclarations = pclaSession?.outerCandidateDeclarationsSnapshot ?: emptySet()
+        if (outerDeclarations.isEmpty()) return false
+
+        with(session.typeContext) {
+            return type.contains {
+                val typeConstructor = it.typeConstructor()
+                if (typeConstructor is ConeTypeParameterLookupTag) {
+                    val typeParamOwner = typeConstructor.typeParameterSymbol.containingDeclarationSymbol
+                    typeParamOwner !in outerDeclarations
+                } else {
+                    false
+                }
+            }
+        }
+    }
+
     private fun ArgumentContext.checkApplicabilityForArgumentType(
         atom: ConeResolutionAtom,
         argumentTypeBeforeCapturing: ConeKotlinType,
@@ -283,6 +307,12 @@ internal object ArgumentCheckingProcessor {
         if (expectedType == null) return
 
         val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, session)
+        val effectivePosition =
+            if (position is ArgumentConstraintPosition<*> && containsOutOfScopeTypeParameter(argumentType)) {
+                ArgumentConstraintPositionWithOutOfScopeTypeMarker(position)
+            } else {
+                position
+            }
 
         when {
             isReceiver && isDispatch -> {
@@ -296,12 +326,12 @@ internal object ArgumentCheckingProcessor {
             }
 
             else -> {
-                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) return // no errors
+                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, effectivePosition)) return // no errors
 
                 val smartcastExpression = atom.expression as? FirSmartCastExpression
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
                     val unstableType = smartcastExpression.smartcastType.coneType
-                    if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
+                    if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, effectivePosition)) {
                         reportDiagnostic(
                             UnstableSmartCast(
                                 smartcastExpression,
@@ -321,10 +351,10 @@ internal object ArgumentCheckingProcessor {
 
                 val nullableExpectedType = expectedType.withNullability(nullable = true, session.typeContext)
 
-                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
+                if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, effectivePosition)) {
                     reportDiagnostic(InapplicableNullableReceiver(argumentType))
                 } else {
-                    csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+                    csBuilder.addSubtypeConstraint(argumentType, expectedType, effectivePosition)
                     reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
                 }
             }

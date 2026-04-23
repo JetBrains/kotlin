@@ -72,6 +72,12 @@ abstract class KnownTypeParameterConstraintPosition<T : KotlinTypeMarker>(val ty
 
 sealed class ArgumentConstraintPosition<out T>(val argument: T) : ConstraintPosition()
 
+class ArgumentConstraintPositionWithOutOfScopeTypeMarker<T>(
+    val delegate: ArgumentConstraintPosition<T>
+) : ArgumentConstraintPosition<T>(delegate.argument) {
+    override fun toString(): String = "$delegate with out-of-scope type"
+}
+
 abstract class RegularArgumentConstraintPosition<out T>(argument: T) : ArgumentConstraintPosition<T>(argument),
     OnlyInputTypeConstraintPosition {
     override fun toString(): String = "Argument $argument"

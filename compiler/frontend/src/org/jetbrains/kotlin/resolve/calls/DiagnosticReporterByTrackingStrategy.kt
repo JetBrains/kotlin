@@ -619,6 +619,9 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 }
             }
+            is ArgumentConstraintPositionWithOutOfScopeTypeMarker<*> -> {
+                reportConstraintErrorByPosition(error, position.delegate)
+            }
         }
     }
 

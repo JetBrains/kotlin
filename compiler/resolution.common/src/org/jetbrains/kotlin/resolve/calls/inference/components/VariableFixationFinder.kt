@@ -88,8 +88,11 @@ abstract class VariableFixationFinder(
         val variable: TypeConstructorMarker,
         private val hasProperConstraint: Boolean,
         private val hasDependencyOnOuterTypeVariable: Boolean = false,
+        private val hasDependencyOnOutOfScopeTypeParameter: Boolean = false
     ) {
-        val isReady: Boolean get() = hasProperConstraint && !hasDependencyOnOuterTypeVariable
+        val isReady: Boolean
+            get() = hasProperConstraint && !hasDependencyOnOuterTypeVariable
+                    && !hasDependencyOnOutOfScopeTypeParameter
     }
 
     context(c: Context)

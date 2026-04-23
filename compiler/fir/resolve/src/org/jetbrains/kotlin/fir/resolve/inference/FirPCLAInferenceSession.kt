@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeSemiFixVariableConst
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
@@ -40,6 +41,30 @@ class FirPCLAInferenceSession(
     private val outerCandidate: Candidate,
     private val inferenceComponents: InferenceComponents,
 ) : FirInferenceSession() {
+
+    /**
+     * A snapshot of declarations containing the [outerCandidate], captured at session creation time.
+     *
+     * Used as the inference boundary for out-of-scope type parameter detection.
+     * When a type parameter appears in a PCLA lambda argument,
+     * we check whether its declaring declaration is contained within this boundary.
+     *
+     * See KT-85684 and KT-60855.
+     *
+     * ```kt
+     * fun foo() = buildList {
+     *     fun <T> local(t: T) {
+     *         add(t) // Constraint T <: E (E is type variable in MutableList<E> from buildList)
+     *     }
+     * }
+     * ```
+     *
+     * The constraint T <: E is unsolvable because T is an out-of-scope type parameter.
+     *
+     * @see org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor.containsOutOfScopeTypeParameter
+     */
+    internal val outerCandidateDeclarationsSnapshot: Set<FirBasedSymbol<*>> =
+        outerCandidate.callInfo.containingDeclarations.map { it.symbol }.toSet()
 
     var currentCommonSystem: NewConstraintSystemImpl = prepareSharedBaseSystem(outerCandidate.system, inferenceComponents)
         private set

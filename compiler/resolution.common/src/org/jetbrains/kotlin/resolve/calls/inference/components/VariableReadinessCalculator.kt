@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPositionWithOutOfScopeTypeMarker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
 
@@ -31,6 +32,11 @@ class VariableReadinessCalculator(
         // In PCLA case, a not-yet-fixed type variable in the argument position still gives us a proper constraint.
         HAS_PROPER_CONSTRAINTS,
         HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY,
+
+        // A proper constraint is a constraint that does not have out-of-scope type parameters.
+        // See examples in KT-85684 and KT-60855.
+        // See Also: FirPCLAInferenceSession.outerCandidateDeclarationsSnapshot
+        HAS_NO_OUT_OF_SCOPE_TYPE_PARAMETER,
 
         // *** A prioritizer needed for KT-74999 (the Traversable vs. Path choice) ***
         // Currently, only used in 2.2+, and helps with self-type based declared upper bounds in particular situations.
@@ -124,6 +130,9 @@ class VariableReadinessCalculator(
 
         readiness[Q.HAS_PROPER_CONSTRAINTS] = hasProperArgumentConstraints() || areAllProperConstraintsSelfTypeBased
         readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY] = !dependencyProvider.isRelatedToOuterTypeVariable(this)
+        readiness[Q.HAS_NO_OUT_OF_SCOPE_TYPE_PARAMETER] = constraints.none {
+            it.isProperArgumentConstraint() && it.position.from is ArgumentConstraintPositionWithOutOfScopeTypeMarker<*>
+        }
 
         readiness[Q.HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES] = areAllProperConstraintsSelfTypeBased
                 && fixationEnhancementsIn22
@@ -180,6 +189,7 @@ class VariableReadinessCalculator(
                 variable = candidate,
                 hasProperConstraint = readiness[Q.HAS_PROPER_CONSTRAINTS],
                 hasDependencyOnOuterTypeVariable = !readiness[Q.HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY],
+                hasDependencyOnOutOfScopeTypeParameter = !readiness[Q.HAS_NO_OUT_OF_SCOPE_TYPE_PARAMETER]
             )
         }
     }
