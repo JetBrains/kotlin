@@ -6,9 +6,9 @@
 fun test(k: K<String>) {
     // In all three cases, we infer T = Nothing? and have a contradiction around JavaBox<out String> vs JavaBox<Nothing?>
     // However, K2 reports an error only in case with foo2 (but it should)
-    k.foo(JavaBox(null))
-    foo2<String>(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
-    foo3(JavaBox(null))
+    k.foo(<!ARGUMENT_TYPE_MISMATCH("JavaBox<Nothing?>; JavaBox<out String>")!>JavaBox(null)<!>)
+    foo2<String>(<!ARGUMENT_TYPE_MISMATCH("JavaBox<Nothing?>; JavaBox<out String>")!>JavaBox(null)<!>)
+    foo3(<!ARGUMENT_TYPE_MISMATCH("JavaBox<Nothing?>; JavaBox<out String>")!>JavaBox(null)<!>)
 }
 
 class K<R> {

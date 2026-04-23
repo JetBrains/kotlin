@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
@@ -29,6 +30,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         if (this !is ConeTypeVariable) return false
         val typeParameter =
             (this.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.fir ?: return false
+        if (typeParameter.containingDeclarationSymbol !is SyntheticSymbol) return false
 
         // TODO: Take a look at org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
         return typeParameter.bounds.any { it.coneType is ConeFlexibleType }

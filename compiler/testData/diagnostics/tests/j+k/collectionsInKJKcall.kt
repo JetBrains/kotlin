@@ -3,24 +3,24 @@
 // WITH_STDLIB
 
 fun testCollections() {
-    testKotlinSet(java.util.HashSet(setOf(null)))
-    testKotlinSet(<!ARGUMENT_TYPE_MISMATCH!>HashSet(setOf(null))<!>)
-    testKotlinList(java.util.ArrayList(arrayListOf(null)))
-    testKotlinList(<!ARGUMENT_TYPE_MISMATCH!>ArrayList(arrayListOf(null))<!>)
-    testKotlinMap(java.util.HashMap(hashMapOf(Pair(null, null))))
-    testKotlinMap(<!ARGUMENT_TYPE_MISMATCH!>HashMap(hashMapOf(Pair(null, null)))<!>)
+    testKotlinSet(<!ARGUMENT_TYPE_MISMATCH("HashSet<Nothing?>; Set<String>")!>java.util.HashSet(setOf(null))<!>)
+    testKotlinSet(<!ARGUMENT_TYPE_MISMATCH("HashSet<Nothing?>; Set<String>")!>HashSet(setOf(null))<!>)
+    testKotlinList(<!ARGUMENT_TYPE_MISMATCH("ArrayList<Nothing?>; List<String>")!>java.util.ArrayList(arrayListOf(null))<!>)
+    testKotlinList(<!ARGUMENT_TYPE_MISMATCH("ArrayList<Nothing?>; List<String>")!>ArrayList(arrayListOf(null))<!>)
+    testKotlinMap(<!ARGUMENT_TYPE_MISMATCH("HashMap<Nothing?, Nothing?>; Map<String, String>")!>java.util.HashMap(hashMapOf(Pair(null, null)))<!>)
+    testKotlinMap(<!ARGUMENT_TYPE_MISMATCH("HashMap<Nothing?, Nothing?>; Map<String, String>")!>HashMap(hashMapOf(Pair(null, null)))<!>)
 
-    testJavaSet(java.util.HashSet(setOf(null)))
-    testJavaSet(<!ARGUMENT_TYPE_MISMATCH!>HashSet(setOf(null))<!>)
-    testJavaList(java.util.ArrayList(arrayListOf(null)))
-    testJavaList(<!ARGUMENT_TYPE_MISMATCH!>ArrayList(arrayListOf(null))<!>)
-    testJavaMap(java.util.HashMap(hashMapOf(Pair(null, null))))
-    testJavaMap(<!ARGUMENT_TYPE_MISMATCH!>HashMap(hashMapOf(Pair(null, null)))<!>)
+    testJavaSet(<!ARGUMENT_TYPE_MISMATCH("HashSet<Nothing?>; HashSet<String>")!>java.util.HashSet(setOf(null))<!>)
+    testJavaSet(<!ARGUMENT_TYPE_MISMATCH("HashSet<Nothing?>; HashSet<String>")!>HashSet(setOf(null))<!>)
+    testJavaList(<!ARGUMENT_TYPE_MISMATCH("ArrayList<Nothing?>; ArrayList<String>")!>java.util.ArrayList(arrayListOf(null))<!>)
+    testJavaList(<!ARGUMENT_TYPE_MISMATCH("ArrayList<Nothing?>; ArrayList<String>")!>ArrayList(arrayListOf(null))<!>)
+    testJavaMap(<!ARGUMENT_TYPE_MISMATCH("HashMap<Nothing?, Nothing?>; HashMap<String, String>")!>java.util.HashMap(hashMapOf(Pair(null, null)))<!>)
+    testJavaMap(<!ARGUMENT_TYPE_MISMATCH("HashMap<Nothing?, Nothing?>; HashMap<String, String>")!>HashMap(hashMapOf(Pair(null, null)))<!>)
 
-    testKotlinSet(java.util.HashSet(setOf(null)))
-    testKotlinSet(java.util.HashSet(hashSetOf(null)))
-    testKotlinList(java.util.ArrayList(listOf(null)))
-    testKotlinList(java.util.ArrayList(arrayListOf(null)))
+    testKotlinSet(<!ARGUMENT_TYPE_MISMATCH("HashSet<Nothing?>; Set<String>")!>java.util.HashSet(setOf(null))<!>)
+    testKotlinSet(<!ARGUMENT_TYPE_MISMATCH("HashSet<Nothing?>; Set<String>")!>java.util.HashSet(hashSetOf(null))<!>)
+    testKotlinList(<!ARGUMENT_TYPE_MISMATCH("ArrayList<Nothing?>; List<String>")!>java.util.ArrayList(listOf(null))<!>)
+    testKotlinList(<!ARGUMENT_TYPE_MISMATCH("ArrayList<Nothing?>; List<String>")!>java.util.ArrayList(arrayListOf(null))<!>)
 }
 
 fun testKotlinSet(a: Set<String>) {}

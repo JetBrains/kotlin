@@ -42,9 +42,9 @@ fun genericTypeAnnotationCheck(
     val k: String = a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     val k2: String = a.foo("")
     val k3: JavaBox<String?> <!INITIALIZER_TYPE_MISMATCH!>=<!> a.foo2(null)
-    val k4: JavaBox<String?> <!INITIALIZER_TYPE_MISMATCH!>=<!> a.foo2(JavaBox(null))
+    val k4: JavaBox<String?> <!INITIALIZER_TYPE_MISMATCH!>=<!> a.foo2(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
     val k5: JavaBox<String> = a.foo2(null)
-    val k6: JavaBox<String> = a.foo2(JavaBox(null))
+    val k6: JavaBox<String> = a.foo2(<!ARGUMENT_TYPE_MISMATCH("JavaBox<Nothing?>; JavaBox<String>!")!>JavaBox(null)<!>)
 
     val k7: String = c.foo(null)
     val k8: String = c.foo("")

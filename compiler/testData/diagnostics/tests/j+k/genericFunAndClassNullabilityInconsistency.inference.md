@@ -45,6 +45,7 @@ R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
 
 1. `JavaBox<TypeVariable(T)> <: JavaBox<out kotlin/String>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_
     1. `TypeVariable(T) <: kotlin/String`
+2. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
 
 ##### Call Completion:
 
@@ -55,7 +56,7 @@ R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
@@ -120,6 +121,7 @@ foo2#<R|kotlin/String|>(R?C|/JavaBox.JavaBox|(Null(null)))
 3. Combine `kotlin/Nothing? <: TypeVariable(T)` with `TypeVariable(T) <: TypeVariable(S)`
     1. `kotlin/Nothing? <: TypeVariable(S)`
 4. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
+5. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
 
 ##### Call Completion:
 
@@ -216,6 +218,7 @@ foo3#(R?C|/JavaBox.JavaBox|(Null(null)))
 
 1. `JavaBox<TypeVariable(T)> <: JavaBox<out kotlin/String>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_
     1. `TypeVariable(T) <: kotlin/String`
+2. __NewConstraintError: `kotlin/Nothing? <: kotlin/String`__
 
 ##### Call Completion:
 
@@ -226,7 +229,7 @@ foo3#(R?C|/JavaBox.JavaBox|(Null(null)))
    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
