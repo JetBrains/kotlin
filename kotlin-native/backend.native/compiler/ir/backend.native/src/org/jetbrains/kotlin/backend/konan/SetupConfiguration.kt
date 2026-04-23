@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -237,7 +238,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     val availableProcessors = Runtime.getRuntime().availableProcessors()
     val nThreads = if (nThreadsRaw == 0) availableProcessors else nThreadsRaw
     if (nThreads > 1) {
-        report(LOGGING, "Running backend in parallel with $nThreads threads")
+        reportLog("Running backend in parallel with $nThreads threads")
     }
     if (nThreads > availableProcessors) {
         report(WARNING, "The number of threads $nThreads is more than the number of processors $availableProcessors")

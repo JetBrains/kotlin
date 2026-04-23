@@ -40,6 +40,7 @@ import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.konan.config.konanHome
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
@@ -194,19 +195,19 @@ class CacheBuilder(
                 addedFiles.add(LibraryFile(library, newFile))
         }
 
-        configuration.report(CompilerMessageSeverity.LOGGING, "IC analysis results")
-        configuration.report(CompilerMessageSeverity.LOGGING, "    CACHED:")
-        icedLibraries.filter { caches[it] != null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
-        configuration.report(CompilerMessageSeverity.LOGGING, "    CLEAN BUILD:")
-        icedLibraries.filter { caches[it] == null }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
-        configuration.report(CompilerMessageSeverity.LOGGING, "    FULL REBUILD:")
-        icedLibraries.filter { it in needFullRebuild }.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        ${it.location}") }
-        configuration.report(CompilerMessageSeverity.LOGGING, "    ADDED FILES:")
-        addedFiles.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        $it") }
-        configuration.report(CompilerMessageSeverity.LOGGING, "    REMOVED FILES:")
-        removedFiles.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        $it") }
-        configuration.report(CompilerMessageSeverity.LOGGING, "    CHANGED FILES:")
-        changedFiles.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "        $it") }
+        configuration.reportLog( "IC analysis results")
+        configuration.reportLog( "    CACHED:")
+        icedLibraries.filter { caches[it] != null }.forEach { configuration.reportLog( "        ${it.location}") }
+        configuration.reportLog( "    CLEAN BUILD:")
+        icedLibraries.filter { caches[it] == null }.forEach { configuration.reportLog( "        ${it.location}") }
+        configuration.reportLog( "    FULL REBUILD:")
+        icedLibraries.filter { it in needFullRebuild }.forEach { configuration.reportLog( "        ${it.location}") }
+        configuration.reportLog( "    ADDED FILES:")
+        addedFiles.forEach { configuration.reportLog( "        $it") }
+        configuration.reportLog( "    REMOVED FILES:")
+        removedFiles.forEach { configuration.reportLog( "        $it") }
+        configuration.reportLog( "    CHANGED FILES:")
+        changedFiles.forEach { configuration.reportLog( "        $it") }
 
         val dirtyFiles = mutableSetOf<LibraryFile>()
 
@@ -231,9 +232,9 @@ class CacheBuilder(
         }
 
         val groupedDirtyFiles = dirtyFiles.groupBy { it.library }
-        configuration.report(CompilerMessageSeverity.LOGGING, "    DIRTY FILES:")
+        configuration.reportLog( "    DIRTY FILES:")
         groupedDirtyFiles.values.flatten().forEach {
-            configuration.report(CompilerMessageSeverity.LOGGING, "        $it")
+            configuration.reportLog( "        $it")
         }
 
         for (library in icedLibraries) {
@@ -255,14 +256,14 @@ class CacheBuilder(
         val dependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary)
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {
-                configuration.report(CompilerMessageSeverity.LOGGING,
+                configuration.reportLog(
                         "SKIPPING ${library.location} as some of the dependencies aren't cached")
                 return
             }
         }
 
-        configuration.report(CompilerMessageSeverity.LOGGING, "CACHING ${library.location}")
-        filesToCache.forEach { configuration.report(CompilerMessageSeverity.LOGGING, "    $it") }
+        configuration.reportLog( "CACHING ${library.location}")
+        filesToCache.forEach { configuration.reportLog( "    $it") }
 
         // Produce monolithic caches for external libraries for now.
         val makePerFileCache = !isExternal && !library.isCInteropLibrary()
@@ -415,7 +416,7 @@ class CacheBuilder(
             val libraryPath = library.libraryFile.absolutePath
             val libraries = dependencies.filter { !it.isFromKotlinNativeDistribution }.map { it.libraryFile.absolutePath }
             val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
-            configuration.report(CompilerMessageSeverity.LOGGING,
+            configuration.reportLog(
                     "-p static_cache -Xadd-cache=${library.location} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +
                             cachedLibraries.entries.joinToString("\n") { "-Xcached-library=${it.key},${it.value} \\" } + "\n" +
