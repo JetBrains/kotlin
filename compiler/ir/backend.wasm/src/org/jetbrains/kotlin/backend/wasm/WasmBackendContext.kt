@@ -50,6 +50,10 @@ class WasmBackendContext(
     val phaseConfig = configuration.phaseConfig ?: PhaseConfig()
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
+    // TODO move, rename, link to from lowerings, etc.
+    val originalCtorToSplitCtorMap = mutableMapOf<IrConstructorSymbol, IrConstructorSymbol>()
+    val originalCtorToInitNoAllocFnMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
+
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false
     override val irFactory: IrFactory = symbolTable.irFactory
@@ -83,10 +87,6 @@ class WasmBackendContext(
 
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
         var nonConstantFieldInitializer: IrSimpleFunction? = null
-
-        // TODO rename, link to from lowerings, etc.
-        val splitCtorToOriginalCtorMap = mutableMapOf<IrConstructorSymbol, IrConstructorSymbol>()
-        val originalCtorToInitNoAllocFnMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
     }
 
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()

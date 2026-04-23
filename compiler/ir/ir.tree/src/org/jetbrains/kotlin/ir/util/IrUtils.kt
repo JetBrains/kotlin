@@ -506,6 +506,11 @@ fun irCall(
     newReturnType: IrType? = null
 ): IrCall =
     call.run {
+        // TODO lets see if we keep this
+//        assert(call.arguments.size == newSymbol.owner.parameters.size) {
+//            "Cannot rewrite call with ${call.arguments.size} arguments to a function with ${newSymbol.owner.parameters.size} parameters"
+//        }
+
         IrCallImpl(
             startOffset,
             endOffset,
