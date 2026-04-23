@@ -194,7 +194,9 @@ abstract class AbstractAtomicfuIrBuilder(
             val valueType = atomicfuSymbols.atomicArrayToPrimitiveType(atomicfuArrayField.type)
             context.irFactory.buildField {
                 this.name = atomicfuArrayField.name
-                type = arrayClass.defaultType
+                // For parameterized array types (e.g. AtomicArray<T>), defaultType uses the class's own
+                // type parameter T which is not in scope outside the class — use the concrete element type.
+                type = if (arrayClass.owner.typeParameters.isNotEmpty()) arrayClass.typeWith(valueType) else arrayClass.defaultType
                 this.isFinal = true
                 this.isStatic = atomicfuArrayField.isStatic
                 visibility = DescriptorVisibilities.PRIVATE
@@ -292,13 +294,20 @@ abstract class AbstractAtomicfuIrBuilder(
     ): IrFunctionAccessExpression? =
         atomicArrayClass.getSingleArgCtorOrNull { argType -> argType.isArray() }?.let { cons ->
             return irCall(cons).apply {
+                val arrayOfNullsFn = atomicfuSymbols.arrayOfNulls.owner
                 val arrayOfNulls = irCall(atomicfuSymbols.arrayOfNulls).apply {
                     typeArguments[0] = valueType
                     arguments[0] = size
+                    // arrayOfNulls returns `Array<T?>` where T is its own type parameter — not in scope here.
+                    // Substitute T=valueType to get the concrete return type.
+                    this.type = arrayOfNullsFn.returnType.substitute(arrayOfNullsFn.typeParameters, listOf(valueType))
                 }
                 typeArguments[0] = valueType
                 arguments[0] = arrayOfNulls
                 this.dispatchReceiver = dispatchReceiver
+                // Constructor return type is AtomicArray<T> with T=class type param — not in scope here.
+                // Use the concrete element type to build the concrete array type.
+                this.type = atomicArrayClass.typeWith(valueType)
             }
         }
 
@@ -360,7 +369,12 @@ abstract class AbstractAtomicfuIrBuilder(
             origin = IrStatementOrigin.LAMBDA
         )
 
-    fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicfuSymbols.invoke0Symbol).apply { dispatchReceiver = refGetter }
+    fun invokePropertyGetter(refGetter: IrExpression) = irCall(atomicfuSymbols.invoke0Symbol).apply {
+        dispatchReceiver = refGetter
+        // invoke0Symbol.owner.returnType is `R of kotlin.Function0` — not in scope here.
+        // The concrete return type is the type argument of the Function0 receiver type.
+        this.type = (refGetter.type as IrSimpleType).arguments.single().typeOrNull ?: this.type
+    }
     fun toBoolean(irExpr: IrExpression) = irEquals(irExpr, irInt(1)) as IrCall
     fun toInt(irExpr: IrExpression) = irIfThenElse(irBuiltIns.intType, irExpr, irInt(1), irInt(0))
 
@@ -513,6 +527,9 @@ abstract class AbstractAtomicfuIrBuilder(
                         nameHint = "atomicfu\$cur", false
                     )
                     +irCall(atomicfuSymbols.invoke1Symbol).apply {
+                        // invoke1Symbol.owner.returnType is `R of kotlin.Function1` — not in scope here.
+                        // The loop action always returns Unit; override the type to keep it in scope.
+                        this.type = irBuiltIns.unitType
                         arguments[0] = irGet(action)
                         arguments[1] = irGet(cur)
                     }
@@ -577,6 +594,9 @@ abstract class AbstractAtomicfuIrBuilder(
                     )
                     val upd = createTmpVariable(
                         irCall(atomicfuSymbols.invoke1Symbol).apply {
+                            // invoke1Symbol.owner.returnType is `R of kotlin.Function1` — not in scope here.
+                            // The update action returns the new value, which is of valueType.
+                            this.type = valueType
                             arguments[0] = irGet(action)
                             arguments[1] = irGet(cur)
                         }, "atomicfu\$upd", false

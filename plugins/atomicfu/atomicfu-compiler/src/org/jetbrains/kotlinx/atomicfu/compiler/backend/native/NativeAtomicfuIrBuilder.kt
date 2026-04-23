@@ -51,6 +51,11 @@ class NativeAtomicfuIrBuilder(
                 typeArguments[0] = valueType
             }
             this.arguments.assignFrom(castedArgs)
+            // The callee's return type may be a type parameter (e.g. `T of atomicGetField`, or
+            // `T of AtomicArray` for class-level type parameters used as return type).
+            // Such a type parameter is not in scope at the call site, so the IR validator rejects it.
+            // Use the concrete valueType instead to keep the type in scope.
+            if (symbol.owner.returnType.isTypeParameter()) this.type = valueType
         }
         return if (isAtomicArrayHandler && valueType.isBoolean() && symbol.owner.returnType.isInt()) toBoolean(irCall) else irCall
     }
