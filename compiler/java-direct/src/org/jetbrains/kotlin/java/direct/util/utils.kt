@@ -5,10 +5,14 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaDocSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxElementType
+import org.jetbrains.kotlin.java.direct.model.JavaTypeParameterOverAst
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 
 /**
@@ -17,7 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
  *
  * Shared by every [org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner] that implements
  * `isDeprecatedInJavaDoc` over the AST — classes, members, value parameters. Packages
- * ([JavaPackageOverAst]) return `false` unconditionally and don't use this helper.
+ * ([org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst]) return `false` unconditionally and don't use this helper.
  */
 internal fun isDeprecatedInJavaDoc(tree: JavaLightTree, node: JavaLightNode): Boolean =
     tree.findChildByType(node, JavaDocSyntaxElementType.DOC_COMMENT)?.let {

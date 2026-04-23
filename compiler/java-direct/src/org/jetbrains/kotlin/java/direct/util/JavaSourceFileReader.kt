@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.BufferedReader
@@ -11,7 +11,7 @@ import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
 /**
- * Abstraction over file access used by [JavaClassFinderOverAstImpl] for reading `.java`
+ * Abstraction over file access used by [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl] for reading `.java`
  * source files and walking source roots.
  *
  * The input is always a [VirtualFile] — the class finder receives roots as virtual files
@@ -37,7 +37,7 @@ interface JavaSourceFileReader {
      * Returns a lazy [Sequence] of `.java` (and `package-info.java`) source files found under
      * the given [roots]. Invalid or non-directory roots are silently skipped.
      *
-     * The returned sequence is intended to be consumed once by [JavaClassFinderOverAstImpl.buildIndex].
+     * The returned sequence is intended to be consumed once by [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl.buildIndex].
      */
     fun walkSourceRoots(roots: List<VirtualFile>): Sequence<VirtualFile>
 

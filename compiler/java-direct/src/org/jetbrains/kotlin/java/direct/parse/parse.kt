@@ -5,10 +5,9 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.parse
 
 import com.intellij.java.syntax.JavaSyntaxDefinition
-import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.parser.JavaParser
 import com.intellij.platform.syntax.lexer.performLexing
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder

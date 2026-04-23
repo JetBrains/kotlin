@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
@@ -34,10 +34,10 @@ internal class JavaScopeResolver(
      * [withTypeParameters] / [withInheritedTypeParameters]). A new cache is created
      * when [withContainingClass] changes the containing class.
      *
-     * Uses a [ConcurrentHashMap] because FIR resolves types concurrently across members of the
+     * Uses a [java.util.concurrent.ConcurrentHashMap] because FIR resolves types concurrently across members of the
      * same class, and the scope resolver (and therefore this cache) is shared across those
      * resolutions. Null results are encoded via the [FIND_LOCAL_CLASS_NULL] sentinel because
-     * [ConcurrentHashMap] does not accept null values.
+     * [java.util.concurrent.ConcurrentHashMap] does not accept null values.
      */
     private val findLocalClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap(),
 ) {

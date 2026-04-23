@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.parse.dump
+import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -16,12 +20,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Unit tests for the [JavaLightTree] infrastructure. These tests exercise the tree
+ * Unit tests for the [org.jetbrains.kotlin.java.direct.parse.JavaLightTree] infrastructure. These tests exercise the tree
  * navigation API directly — offsets, text, parent/child relationships, token vs. composite
  * discrimination, and error-input handling — independent of the `*OverAst` model classes that
- * consume the tree. Several behaviours here (token parent via [JavaLightTree.getParent],
- * [JavaLightTree.isToken] / [JavaLightTree.isComposite] discrimination, [JavaLightTree.textEquals]
- * edge cases, malformed-source tolerance, [JavaLightTree.dump]) are not covered elsewhere and
+ * consume the tree. Several behaviours here (token parent via [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.getParent],
+ * [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.isToken] / [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.isComposite] discrimination, [org.jetbrains.kotlin.java.direct.parse.JavaLightTree.textEquals]
+ * edge cases, malformed-source tolerance, [dump]) are not covered elsewhere and
  * form the regression safety net for the tree primitives.
  */
 class JavaLightTreeTest {

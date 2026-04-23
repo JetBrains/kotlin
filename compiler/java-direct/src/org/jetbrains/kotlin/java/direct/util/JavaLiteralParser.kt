@@ -5,10 +5,12 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 
 /**
  * Shared Java literal parsing and constant-expression helpers used by both

@@ -5,10 +5,17 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
+import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
+import org.jetbrains.kotlin.java.direct.util.cachedNonNull
+import org.jetbrains.kotlin.java.direct.util.cachedNullable
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -144,7 +151,7 @@ internal fun createAnnotationArgumentFromValue(
  *
  * Supports the subset of constant expressions that can legally appear in a Java annotation
  * value (JLS 9.6.1): literals, unary minus, and binary string concatenation / arithmetic.
- * Unlike [ConstantEvaluator] this does not require a containing class — annotation arguments
+ * Unlike [org.jetbrains.kotlin.java.direct.util.ConstantEvaluator] this does not require a containing class — annotation arguments
  * cannot reference local fields — which is why the two evaluators coexist. The numeric and
  * literal primitives live in [JavaLiteralParser] so the semantics match across both.
  */

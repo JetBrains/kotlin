@@ -10,6 +10,15 @@ package org.jetbrains.kotlin.java.direct
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.java.direct.model.JavaAnnotationOverAst
+import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
+import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.JavaSupertypeGraph
+import org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -34,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap
  * indexed at most once (via [ConcurrentHashMap.computeIfAbsent]). Packages never queried by
  * the compiler are never scanned.
  *
- * Files are indexed via lightweight line scanning ([extractFileInfoLightweight]) that extracts
+ * Files are indexed via lightweight line scanning ([org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight]) that extracts
  * only the package name and top-level class names without invoking the parser. The full parse
  * happens lazily on first [findClass] access, at which point **all** top-level classes in the
  * file are cached to avoid re-parsing for sibling classes.

@@ -3,9 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl
+import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.ClassId
@@ -277,7 +281,7 @@ class JavaResolutionContext private constructor(
      * [resolveInheritedInnerClassToClassId]). Keeping a single implementation prevents the two
      * copies from drifting when one is updated.
      *
-     * Operates on a pre-split parts list to avoid O(n²) [String.split] + [joinToString]
+     * Operates on a pre-split parts list to avoid O(n²) [split] + [joinToString]
      * allocations on recursive calls.
      */
     private fun resolveNestedClassToClassIdFromParts(

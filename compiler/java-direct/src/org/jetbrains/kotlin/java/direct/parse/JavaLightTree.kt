@@ -5,7 +5,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.parse
 
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
@@ -25,7 +25,7 @@ import com.intellij.platform.syntax.parser.prepareProduction
  *  - `Int.MIN_VALUE`: invalid / "not computed" sentinel ([JavaLightTree.NO_NODE]).
  *
  * Two value classes are equal iff their [index] values are equal — equality alone does not
- * distinguish nodes from different trees. Higher-level abstractions (e.g. [JavaElementOverAst])
+ * distinguish nodes from different trees. Higher-level abstractions (e.g. [org.jetbrains.kotlin.java.direct.JavaElementOverAst])
  * compare both the node and the owning tree.
  */
 @JvmInline
@@ -116,7 +116,7 @@ class JavaLightTree(
 
     fun getText(node: JavaLightNode): CharSequence = source.subSequence(getStartOffset(node), getEndOffset(node))
 
-    /** O(length) char-by-char comparison; avoids the [String] allocation that [getText]+[CharSequence.toString] performs. */
+    /** O(length) char-by-char comparison; avoids the [String] allocation that [getText]+[toString] performs. */
     fun textEquals(node: JavaLightNode, expected: String): Boolean {
         val start = getStartOffset(node)
         val end = getEndOffset(node)

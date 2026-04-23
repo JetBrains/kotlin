@@ -3,16 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.openapi.vfs.VirtualFile
+import kotlin.text.iterator
 
 /**
  * Lightweight (no-parse) source index helpers for Java source files.
  *
  * These utilities allow extracting the package name and top-level class names of a `.java`
  * file by scanning it line-by-line, without invoking the KMP Java parser. They are used by
- * [JavaClassFinderOverAstImpl] to index large files cheaply; the full parse is then deferred
+ * [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl] to index large files cheaply; the full parse is then deferred
  * until a class is actually looked up.
  */
 

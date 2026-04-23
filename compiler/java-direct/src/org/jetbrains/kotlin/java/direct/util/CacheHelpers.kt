@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalContracts::class)
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.util
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind

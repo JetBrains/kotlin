@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

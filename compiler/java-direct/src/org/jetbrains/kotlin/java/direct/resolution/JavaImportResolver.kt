@@ -5,12 +5,15 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.resolution
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.element.SyntaxTokenTypes
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Handles extraction and lookup of Java import declarations from AST nodes.
@@ -256,7 +259,7 @@ internal object JavaImportResolver {
     /**
      * Finds a top-level class node by name in the compilation unit root.
      */
-    fun findClassNode(tree: JavaLightTree, root: JavaLightNode, name: org.jetbrains.kotlin.name.Name): JavaLightNode? {
+    fun findClassNode(tree: JavaLightTree, root: JavaLightNode, name: Name): JavaLightNode? {
         for (child in tree.getChildren(root)) {
             if (tree.getType(child) == JavaSyntaxElementType.CLASS) {
                 val idNode = tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER) ?: continue

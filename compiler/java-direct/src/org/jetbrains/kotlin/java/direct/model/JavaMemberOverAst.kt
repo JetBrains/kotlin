@@ -5,7 +5,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
@@ -13,6 +13,16 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
+import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
+import org.jetbrains.kotlin.java.direct.util.cachedBoolean
+import org.jetbrains.kotlin.java.direct.util.cachedNonNull
+import org.jetbrains.kotlin.java.direct.util.cachedNullable
+import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
+import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -88,7 +98,9 @@ class JavaFieldOverAst(
      */
     @Volatile private var _leadingFieldNode: Any? = NOT_COMPUTED
     private val leadingFieldNode: JavaLightNode?
-        get() = cachedNullable({ _leadingFieldNode }, { _leadingFieldNode = it }) { computeLeadingFieldNode() }
+        get() = cachedNullable(
+            { _leadingFieldNode },
+            { _leadingFieldNode = it }) { computeLeadingFieldNode() }
 
     private fun computeLeadingFieldNode(): JavaLightNode? {
         if (tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST) != null ||
@@ -118,7 +130,9 @@ class JavaFieldOverAst(
      */
     @Volatile private var _effectiveModifierList: Any? = NOT_COMPUTED
     private val effectiveModifierList: JavaLightNode?
-        get() = cachedNullable({ _effectiveModifierList }, { _effectiveModifierList = it }) {
+        get() = cachedNullable(
+            { _effectiveModifierList },
+            { _effectiveModifierList = it }) {
             tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
                 ?: leadingFieldNode?.let { tree.findChildByType(it, JavaSyntaxElementType.MODIFIER_LIST) }
         }
@@ -281,19 +295,25 @@ class JavaMethodOverAst(
 
     @Volatile private var _methodTypeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
-        get() = cachedNonNull({ _methodTypeParameters }, { _methodTypeParameters = it }) {
+        get() = cachedNonNull(
+            { _methodTypeParameters },
+            { _methodTypeParameters = it }) {
             computeTypeParameters(node, tree, containingClass.memberResolutionContext)
         }
 
     @Volatile private var _methodResolutionContext: JavaResolutionContext? = null
     override val resolutionContext: JavaResolutionContext
-        get() = cachedNonNull({ _methodResolutionContext }, { _methodResolutionContext = it }) {
+        get() = cachedNonNull(
+            { _methodResolutionContext },
+            { _methodResolutionContext = it }) {
             containingClass.memberResolutionContext.withTypeParameters(typeParameters)
         }
 
     @Volatile private var _methodValueParameters: List<JavaValueParameter>? = null
     override val valueParameters: List<JavaValueParameter>
-        get() = cachedNonNull({ _methodValueParameters }, { _methodValueParameters = it }) {
+        get() = cachedNonNull(
+            { _methodValueParameters },
+            { _methodValueParameters = it }) {
             val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
             if (parameterList != null) {
                 tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
@@ -367,7 +387,9 @@ class JavaConstructorOverAst(
 
     @Volatile private var _ctorResolutionContext: JavaResolutionContext? = null
     override val resolutionContext: JavaResolutionContext
-        get() = cachedNonNull({ _ctorResolutionContext }, { _ctorResolutionContext = it }) {
+        get() = cachedNonNull(
+            { _ctorResolutionContext },
+            { _ctorResolutionContext = it }) {
             containingClass.memberResolutionContext.withTypeParameters(typeParameters)
         }
 

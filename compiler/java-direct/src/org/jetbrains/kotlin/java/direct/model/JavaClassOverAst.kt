@@ -5,7 +5,7 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
@@ -13,6 +13,15 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
+import org.jetbrains.kotlin.java.direct.util.cachedBoolean
+import org.jetbrains.kotlin.java.direct.util.cachedNonNull
+import org.jetbrains.kotlin.java.direct.util.cachedNullable
+import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
+import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,7 +36,9 @@ class JavaClassOverAst(
 
     @Volatile private var _memberResolutionContext: JavaResolutionContext? = null
     val memberResolutionContext: JavaResolutionContext
-        get() = cachedNonNull({ _memberResolutionContext }, { _memberResolutionContext = it }) {
+        get() = cachedNonNull(
+            { _memberResolutionContext },
+            { _memberResolutionContext = it }) {
             resolutionContext.withContainingClass(this).withTypeParameters(typeParameters)
         }
 
@@ -91,7 +102,9 @@ class JavaClassOverAst(
 
     @Volatile private var _supertypes: Collection<JavaClassifierType>? = null
     override val supertypes: Collection<JavaClassifierType>
-        get() = cachedNonNull({ _supertypes }, { _supertypes = it }) { computeSupertypes() }
+        get() = cachedNonNull(
+            { _supertypes },
+            { _supertypes = it }) { computeSupertypes() }
 
     private fun computeSupertypes(): List<JavaClassifierType> {
         val result = mutableListOf<JavaClassifierType>()
@@ -124,7 +137,8 @@ class JavaClassOverAst(
     override val innerClassNames: Collection<Name>
         get() = cachedNonNull({ _innerClassNames }, { _innerClassNames = it }) {
             tree.getChildren(node).filter { tree.getType(it) == JavaSyntaxElementType.CLASS }.map {
-                Name.identifier(tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } ?: "<error>")
+                Name.identifier(tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() }
+                                    ?: "<error>")
             }
         }
 
@@ -178,13 +192,13 @@ class JavaClassOverAst(
     /**
      * Searches for an inner class in the supertypes of this class, working purely on raw AST text.
      *
-     * This is intentionally distinct from [JavaInheritedMemberResolver.findInnerClassFromSupertypes]:
+     * This is intentionally distinct from [org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver.findInnerClassFromSupertypes]:
      *
      * | Aspect            | This method (`JavaClassOverAst`)                       | `JavaInheritedMemberResolver`                          |
      * |-------------------|--------------------------------------------------------|--------------------------------------------------------|
      * | Input             | Raw `EXTENDS_LIST` / `IMPLEMENTS_LIST` AST text        | Resolved `javaClass.supertypes` (full [JavaClassifierType]) |
      * | Resolution depth  | Simple-name lookup via [JavaResolutionContext.findLocalClass] | Full classifier resolution + cross-file ambiguity check |
-     * | Caller context    | Inside [findInnerClass] — recursion sentinel for the model layer | Top-level resolver entry point used by [JavaScopeResolver] |
+     * | Caller context    | Inside [findInnerClass] — recursion sentinel for the model layer | Top-level resolver entry point used by [org.jetbrains.kotlin.java.direct.resolution.JavaScopeResolver] |
      * | Recursion guard   | `visited: MutableSet<String>` of FQN strings           | `visited: MutableSet<JavaClass>` of model instances    |
      *
      * The two paths cannot be unified because **this method must avoid triggering full type
@@ -250,7 +264,9 @@ class JavaClassOverAst(
      */
     @Volatile private var _isAnnotationType: Int = -1
     override val isAnnotationType: Boolean
-        get() = cachedBoolean({ _isAnnotationType }, { _isAnnotationType = it }) { computeIsAnnotationType() }
+        get() = cachedBoolean(
+            { _isAnnotationType },
+            { _isAnnotationType = it }) { computeIsAnnotationType() }
 
     private fun computeIsAnnotationType(): Boolean {
         // Whitespace is excluded from children by JavaLightTree, so AT is directly
@@ -278,7 +294,11 @@ class JavaClassOverAst(
 
     @Volatile private var _isSealed: Int = -1
     override val isSealed: Boolean
-        get() = cachedBoolean({ _isSealed }, { _isSealed = it }) { hasModifier(JavaSyntaxTokenType.SEALED_KEYWORD) }
+        get() = cachedBoolean({ _isSealed }, { _isSealed = it }) {
+            hasModifier(
+                JavaSyntaxTokenType.SEALED_KEYWORD
+            )
+        }
 
     override val permittedTypes: Sequence<JavaClassifierType>
         get() {
@@ -327,7 +347,10 @@ class JavaClassOverAst(
     override val methods: Collection<JavaMethod>
         get() = cachedNonNull({ _methods }, { _methods = it }) {
             val methodNodes =
-                tree.getChildrenByType(node, JavaSyntaxElementType.METHOD) + tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION_METHOD)
+                tree.getChildrenByType(node, JavaSyntaxElementType.METHOD) + tree.getChildrenByType(
+                    node,
+                    JavaSyntaxElementType.ANNOTATION_METHOD
+                )
             methodNodes
                 .filter { tree.findChildByType(it, JavaSyntaxElementType.TYPE) != null }
                 .map { JavaMethodOverAst(it, tree, this) }

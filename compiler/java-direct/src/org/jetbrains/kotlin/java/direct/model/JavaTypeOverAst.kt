@@ -5,12 +5,19 @@
 
 @file:Suppress("UnstableApiUsage")
 
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.model
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
+import org.jetbrains.kotlin.java.direct.util.cachedBoolean
+import org.jetbrains.kotlin.java.direct.util.cachedNonNull
+import org.jetbrains.kotlin.java.direct.util.cachedNullable
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -89,7 +96,9 @@ class JavaClassifierTypeOverAst(
      */
     @Volatile private var _rawTypeNameParts: List<String>? = null
     private val rawTypeNameParts: List<String>
-        get() = cachedNonNull({ _rawTypeNameParts }, { _rawTypeNameParts = it }) { extractTypeNameParts(node) }
+        get() = cachedNonNull(
+            { _rawTypeNameParts },
+            { _rawTypeNameParts = it }) { extractTypeNameParts(node) }
 
     @Volatile private var _rawTypeName: String? = null
     private val rawTypeName: String
@@ -127,7 +136,9 @@ class JavaClassifierTypeOverAst(
     // NOT_COMPUTED sentinel to distinguish "not-computed" from "computed-as-null".
     @Volatile private var _classifier: Any? = NOT_COMPUTED
     override val classifier: JavaClassifier?
-        get() = cachedNullable({ _classifier }, { _classifier = it }) { computeClassifier() }
+        get() = cachedNullable(
+            { _classifier },
+            { _classifier = it }) { computeClassifier() }
 
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts
@@ -169,7 +180,9 @@ class JavaClassifierTypeOverAst(
      */
     @Volatile private var _isTriviallyFlexibleHint: Int = -1
     override val isTriviallyFlexibleHint: Boolean
-        get() = cachedBoolean({ _isTriviallyFlexibleHint }, { _isTriviallyFlexibleHint = it }) {
+        get() = cachedBoolean(
+            { _isTriviallyFlexibleHint },
+            { _isTriviallyFlexibleHint = it }) {
             computeIsTriviallyFlexibleHint()
         }
 
@@ -197,7 +210,9 @@ class JavaClassifierTypeOverAst(
 
     @Volatile private var _classifierQualifiedName: String? = null
     override val classifierQualifiedName: String
-        get() = cachedNonNull({ _classifierQualifiedName }, { _classifierQualifiedName = it }) {
+        get() = cachedNonNull(
+            { _classifierQualifiedName },
+            { _classifierQualifiedName = it }) {
             computeClassifierQualifiedName()
         }
 
@@ -253,7 +268,9 @@ class JavaClassifierTypeOverAst(
 
     @Volatile private var _typeArguments: List<JavaType>? = null
     override val typeArguments: List<JavaType>
-        get() = cachedNonNull({ _typeArguments }, { _typeArguments = it }) { computeTypeArguments() }
+        get() = cachedNonNull(
+            { _typeArguments },
+            { _typeArguments = it }) { computeTypeArguments() }
 
     private fun computeTypeArguments(): List<JavaType> {
         // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.
@@ -656,7 +673,9 @@ class JavaTypeParameterOverAst(
     // "don't access before updateResolutionContext" invariant that already governs upperBounds.
     @Volatile private var _typeParamAnnotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
-        get() = cachedNonNull({ _typeParamAnnotations }, { _typeParamAnnotations = it }) {
+        get() = cachedNonNull(
+            { _typeParamAnnotations },
+            { _typeParamAnnotations = it }) {
             val modListAnns = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
                 tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
                     .map { JavaAnnotationOverAst(it, tree, resolutionContext) }

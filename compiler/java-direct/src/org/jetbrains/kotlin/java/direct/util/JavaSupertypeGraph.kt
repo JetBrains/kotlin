@@ -3,38 +3,42 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UnstableApiUsage")
-
-package org.jetbrains.kotlin.java.direct
+package org.jetbrains.kotlin.java.direct.util
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.iterator
 
 /**
  * Encapsulates supertype-graph queries for Java source classes: direct supertypes and
  * transitively inherited inner class names.
  *
- * The graph is computed lazily from the AST, preferring already-cached [JavaClass] instances
+ * The graph is computed lazily from the AST, preferring already-cached [org.jetbrains.kotlin.load.java.structure.JavaClass] instances
  * (fast path, no I/O). When a class hasn't been cached yet, the owning file is re-parsed as a
  * fallback (slow path). Results are memoized in per-instance caches.
  *
  * This component intentionally does NOT own the source index or the class cache — it consults
  * them via callbacks passed to the constructor, so that a single authoritative copy lives in
- * [JavaClassFinderOverAstImpl].
+ * [org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl].
  *
- * @param classCacheLookup returns the cached [JavaClass] for a given [ClassId], or `null` if
+ * @param classCacheLookup returns the cached [org.jetbrains.kotlin.load.java.structure.JavaClass] for a given [org.jetbrains.kotlin.name.ClassId], or `null` if
  *     it hasn't been parsed/cached yet.
  * @param filesForClassLookup returns the candidate source files that may contain the top-level
- *     class identified by the given [ClassId].
+ *     class identified by the given [org.jetbrains.kotlin.name.ClassId].
  * @param sameClassInSameFilePackage returns whether the given simple name exists as a top-level
  *     class in the given package in the source index (for same-package supertype resolution).
- * @param sourceFileReader reader used to fetch the text of a [VirtualFile] on the slow path.
+ * @param sourceFileReader reader used to fetch the text of a [com.intellij.openapi.vfs.VirtualFile] on the slow path.
  */
 internal class JavaSupertypeGraph(
     private val classCacheLookup: (ClassId) -> JavaClass?,
@@ -51,7 +55,7 @@ internal class JavaSupertypeGraph(
     /**
      * Returns the direct supertype [ClassId]s for a class.
      *
-     * Uses [java.util.concurrent.ConcurrentHashMap.computeIfAbsent] (not `getOrPut`) so that
+     * Uses [ConcurrentHashMap.computeIfAbsent] (not `getOrPut`) so that
      * concurrent callers do not both re-parse the same file or re-extract from the same AST.
      */
     fun getDirectSupertypes(classId: ClassId): List<ClassId> {
