@@ -258,6 +258,10 @@ include(
 )
 
 include(
+    ":kotlin-java-direct"
+)
+
+include(
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-allopen-compiler-plugin.embeddable",
     ":kotlin-allopen-compiler-plugin.common",
@@ -812,6 +816,8 @@ project(":native:external-projects-test-utils:testInternalLibrary").projectDir =
 project(":native:external-projects-test-utils:testExtensionsLibrary").projectDir =
     File("$rootDir/native/external-projects-test-utils/testDependencies/testExtensionsLibrary")
 project(":kotlin-parcelize-compiler").projectDir = File("$rootDir/prepare/parcelize-compiler-gradle")
+
+project(":kotlin-java-direct").projectDir = File("$rootDir/compiler/java-direct")
 
 project(":kotlin-allopen-compiler-plugin").projectDir = File("$rootDir/plugins/allopen")
 project(":kotlin-allopen-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/allopen/allopen.embeddable")

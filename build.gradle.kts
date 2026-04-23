@@ -704,7 +704,7 @@ allprojects {
                 includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
                 includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
-                includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
+                includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|multiplatform).*")
             }
         }
 
@@ -992,6 +992,7 @@ tasks {
     testLifecycleTask("miscCompilerTest") {
         dependsOn(":compiler:test")
         dependsOn(":compiler:tests-integration:test")
+        dependsOn(":kotlin-java-direct:test")
         dependsOn(":kotlin-compiler-embeddable:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
