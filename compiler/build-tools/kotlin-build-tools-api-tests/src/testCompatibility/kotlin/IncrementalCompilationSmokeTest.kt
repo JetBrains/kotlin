@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.WasmScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -136,6 +137,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchains.getCompilerVersion()}"
                 )
                 assumeFalse(this is JsScenarioDsl) // internal tracking currently doesn't fully work for JS
+                assumeFalse(this is WasmScenarioDsl) // internal tracking currently doesn't fully work for Wasm
             }
             val module1 = if (useTrackedModules) {
                 trackedModule("jvm-module-1")

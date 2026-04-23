@@ -5,7 +5,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.internal.js.operations
+package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
-import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.BACKUP_CLASSES
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
@@ -28,15 +28,15 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.TRACK_CONFIGURATION_INPUTS
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
-import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.HISTORY_FILE_DIR
-import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
+import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.HISTORY_FILE_DIR
+import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
@@ -47,24 +47,24 @@ import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.io.File
 import java.nio.file.Path
 
-internal class JsKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(JsKlibCompilationOperation::class),
-    sources: List<Path>,
-    destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+internal class WasmKlibCompilationOperationImpl private constructor(
+    override val options: Options = Options(WasmKlibCompilationOperation::class),
+    override val sources: List<Path>,
+    override val destination: Path,
+    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
-) : CommonJsAndWasmKlibCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile, sources, destination),
-    JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
-    DeepCopyable<JsKlibCompilationOperationImpl> {
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+    WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
+    DeepCopyable<WasmKlibCompilationOperationImpl> {
     constructor(
         sources: List<Path>,
         destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
         buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
         compilerVersion: String,
     ) : this(
-        options = Options(JsKlibCompilationOperation::class),
+        options = Options(WasmKlibCompilationOperation::class),
         sources = sources,
         destination = destination,
         compilerArguments = compilerArguments,
@@ -79,14 +79,14 @@ internal class JsKlibCompilationOperationImpl private constructor(
         workingDirectory: Path,
         sourcesChanges: SourcesChanges,
         modulesInformation: List<IncrementalModule>,
-    ): JsHistoryBasedIncrementalCompilationConfiguration.Builder {
-        return JsHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
+    ): WasmHistoryBasedIncrementalCompilationConfiguration.Builder {
+        return WasmHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
     }
 
-    override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()
+    override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()
 
-    override fun deepCopy(): JsKlibCompilationOperationImpl {
-        return JsKlibCompilationOperationImpl(
+    override fun deepCopy(): WasmKlibCompilationOperationImpl {
+        return WasmKlibCompilationOperationImpl(
             options.deepCopy(),
             sources,
             destination,
@@ -97,14 +97,14 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JsKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V = options[key]
 
     @UseFromImplModuleRestricted
-    override fun <V> set(key: JsKlibCompilationOperation.Option<V>, value: V) {
+    override fun <V> set(key: WasmKlibCompilationOperation.Option<V>, value: V) {
         options[key] = value
     }
 
-    override fun build(): JsKlibCompilationOperation = deepCopy()
+    override fun build(): WasmKlibCompilationOperation = deepCopy()
 
     private operator fun <V> get(key: Option<V>): V = options[key]
 
@@ -118,24 +118,24 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     override fun getRootProjectDir(): Path? {
-        return (get(INCREMENTAL_COMPILATION) as? JsHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
+        return (get(INCREMENTAL_COMPILATION) as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
     }
 
-    override fun createAndPrepareCompilerArguments(): K2JSCompilerArguments =
+    override fun createAndPrepareCompilerArguments(): KotlinWasmCompilerArguments =
         compilerArguments.toCompilerArguments().also { compilerArguments ->
             compilerArguments.outputDir = destination.absolutePathStringOrThrow()
         }
 
-    override val targetPlatform: CompileService.TargetPlatform = CompileService.TargetPlatform.JS
+    override val targetPlatform: CompileService.TargetPlatform = CompileService.TargetPlatform.WASM
 
     override fun getIcOptionsOrNull(
         reportCategories: Array<Int>,
         reportSeverity: Int,
         requestedCompilationResults: Array<Int>,
-        arguments: K2JSCompilerArguments,
+        arguments: KotlinWasmCompilerArguments,
     ): IncrementalCompilationOptions? {
-        return when (val aggregatedIcConfiguration: JsIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
-            is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
+        return when (val aggregatedIcConfiguration: WasmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)) {
+            is WasmHistoryBasedIncrementalCompilationConfigurationImpl -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
                 val classpathChanges = ClasspathChanges.NotAvailableForJSCompiler
 
@@ -167,14 +167,14 @@ internal class JsKlibCompilationOperationImpl private constructor(
             null -> null
             else -> {
                 error(
-                    "Unexpected incremental compilation configuration: ${aggregatedIcConfiguration::class}. In this version, it must be an instance of JsHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
+                    "Unexpected incremental compilation configuration: ${aggregatedIcConfiguration::class}. In this version, it must be an instance of WasmHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
                 )
             }
         }
     }
 
     private fun makeConfigurationInputs(
-        icConfiguration: JsHistoryBasedIncrementalCompilationConfigurationImpl,
+        icConfiguration: WasmHistoryBasedIncrementalCompilationConfigurationImpl,
     ): ConfigurationInputs? {
         return if (icConfiguration[TRACK_CONFIGURATION_INPUTS]) {
             ConfigurationInputs(
@@ -197,7 +197,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
 
     override fun shouldCompileIncrementally(): Boolean {
         return when (val icConfig = get(INCREMENTAL_COMPILATION)) {
-            is JsHistoryBasedIncrementalCompilationConfigurationImpl -> {
+            is WasmHistoryBasedIncrementalCompilationConfigurationImpl -> {
                 true
             }
             null -> { // no IC configuration -> non-incremental compilation
@@ -209,22 +209,22 @@ internal class JsKlibCompilationOperationImpl private constructor(
         }
     }
 
-    override fun createCompiler(): CLICompiler<K2JSCompilerArguments> {
-        return K2JSCompiler()
+    override fun createCompiler(): CLICompiler<KotlinWasmCompilerArguments> {
+        return KotlinWasmCompiler()
     }
 
-    override fun K2JSCompilerArguments.addSources() {
+    override fun KotlinWasmCompilerArguments.addSources() {
         freeArgs += sources.map { it.absolutePathStringOrThrow() }
     }
 
     override fun compileIncrementallyInProcess(
-        arguments: K2JSCompilerArguments,
+        arguments: KotlinWasmCompilerArguments,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         requireNotNull(icConfiguration) { "Missing INCREMENTAL_COMPILATION option." }
-        check(icConfiguration is JsHistoryBasedIncrementalCompilationConfigurationImpl) {
-            "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of JsHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
+        check(icConfiguration is WasmHistoryBasedIncrementalCompilationConfigurationImpl) {
+            "Unexpected incremental compilation configuration: ${icConfiguration::class}. In this version, it must be an instance of WasmHistoryBasedIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
         }
 
         val projectDir = icConfiguration[ROOT_PROJECT_DIR]?.toFile()
@@ -236,7 +236,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
                 arguments, DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS, includeJavaSources = false
             ).isEmpty()
         ) {
-            "Unexpected Kotlin sources found in free compiler arguments. Only pass sources through `JsKlibCompilationOperation.sources`."
+            "Unexpected Kotlin sources found in free compiler arguments. Only pass sources through `WasmKlibCompilationOperation.sources`."
         }
 
         val kotlinSources = sources.map { it.toFile() }
@@ -288,7 +288,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
 
-    private fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
+    private fun WasmHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false,
             withAbiSnapshot = false,
@@ -300,7 +300,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     companion object {
-        val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
+        val INCREMENTAL_COMPILATION: Option<WasmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
     }
 }
 

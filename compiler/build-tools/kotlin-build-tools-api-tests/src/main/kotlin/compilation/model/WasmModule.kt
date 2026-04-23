@@ -16,55 +16,55 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Co
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.Companion.NOPACK
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
-import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
-import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.js.jsLinkingOperation
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation.Companion.INCREMENTAL_COMPILATION
-import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
-import org.jetbrains.kotlin.buildtools.api.js.operations.historyBasedIcConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation.Companion.INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.historyBasedIcConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.wasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.wasmLinkingOperation
 import java.nio.file.Path
 import kotlin.io.path.pathString
 import kotlin.io.path.walk
 
 @OptIn(ExperimentalCompilerArgument::class)
-class JsModule(
+class WasmModule(
     private val kotlinToolchain: KotlinToolchains,
     val buildSession: KotlinToolchains.BuildSession,
-    override val project: JsProject,
+    override val project: WasmProject,
     moduleName: String,
     moduleDirectory: Path,
     dependencies: List<Dependency>,
     defaultStrategyConfig: ExecutionPolicy,
-    moduleCompilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit = {},
+    moduleCompilationConfigAction: (WasmKlibCompilationOperation.Builder) -> Unit = {},
     private val stdlibKlibLocation: List<Path>,
-    private val registeredModules: Set<JsModule> = mutableSetOf(),
-) : AbstractModule<JsKlibCompilationOperation, JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>(
+    private val registeredModules: Set<WasmModule> = mutableSetOf(),
+) : AbstractModule<WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder, WasmHistoryBasedIncrementalCompilationConfiguration.Builder>(
     project,
     moduleName,
     moduleDirectory,
     dependencies,
     defaultStrategyConfig,
     moduleCompilationConfigAction,
-), LinkableModule<JsLinkingOperation, JsLinkingOperation.Builder> {
+), LinkableModule<WasmLinkingOperation, WasmLinkingOperation.Builder> {
 
     var lastCompileProducedPackedKlib = false
 
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibKlibLocation)
     override val expectedOutputFileName: String
-        get() = "$moduleName.js"
+        get() = "$moduleName.wasm"
 
     override fun link(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JsLinkingOperation.Builder) -> Unit,
-        compilationAction: (JsLinkingOperation) -> Unit,
+        compilationConfigAction: (WasmLinkingOperation.Builder) -> Unit,
+        compilationAction: (WasmLinkingOperation) -> Unit,
         assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
-        val compilationOperation = kotlinToolchain.js.jsLinkingOperation(
+        val compilationOperation = kotlinToolchain.wasm.wasmLinkingOperation(
             // handle both cases of NOPACK set to true and false
             if (lastCompileProducedPackedKlib) {
                 outputDirectory.resolve("$moduleName.klib")
@@ -88,13 +88,13 @@ class JsModule(
 
     override fun compileImpl(
         strategyConfig: ExecutionPolicy,
-        compilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit,
-        compilationAction: (JsKlibCompilationOperation) -> Unit,
+        compilationConfigAction: (WasmKlibCompilationOperation.Builder) -> Unit,
+        compilationAction: (WasmKlibCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult {
         val allowedExtensions = setOf("kt")
 
-        val compilationOperation = kotlinToolchain.js.jsKlibCompilationOperation(
+        val compilationOperation = kotlinToolchain.wasm.wasmKlibCompilationOperation(
             sourcesDirectory.walk()
                 .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
                 .toList(),
@@ -120,9 +120,9 @@ class JsModule(
         strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
-        compilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit,
-        compilationAction: (JsKlibCompilationOperation) -> Unit,
-        icOptionsConfigAction: (JsHistoryBasedIncrementalCompilationConfiguration.Builder) -> Unit,
+        compilationConfigAction: (WasmKlibCompilationOperation.Builder) -> Unit,
+        compilationAction: (WasmKlibCompilationOperation) -> Unit,
+        icOptionsConfigAction: (WasmHistoryBasedIncrementalCompilationConfiguration.Builder) -> Unit,
         assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
@@ -43,7 +44,7 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
             module1.compile {}
             if (module1 is LinkableModule<*, *>) {
                 module1.link {
-                    assertOutputs("${module1.moduleName}.js")
+                    assertOutputsContains(module1.expectedOutputFileName)
                 }
             }
         }
