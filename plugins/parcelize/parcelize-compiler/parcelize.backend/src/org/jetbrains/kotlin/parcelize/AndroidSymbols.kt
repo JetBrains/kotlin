@@ -505,7 +505,7 @@ class AndroidSymbols(
 
     val textUtilsCharSequenceCreator: IrFieldSymbol = androidTextTextUtils.owner.addField {
         name = Name.identifier("CHAR_SEQUENCE_CREATOR")
-        type = androidOsParcelableCreator.defaultType
+        type = androidOsParcelableCreator.typeWith(irBuiltIns.charSequenceClass.defaultType)
         isStatic = true
     }.symbol
 
