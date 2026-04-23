@@ -9,12 +9,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
+import org.jetbrains.kotlin.analysis.api.impl.base.test.util.renderClass
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.asJava.renderClass
 import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFromFile
+import org.jetbrains.kotlin.light.classes.symbol.util.LightClassTestCommon
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.psi.KtFile
