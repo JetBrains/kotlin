@@ -185,8 +185,8 @@
                 </executions>
                 <configuration>
                     <parallel>classes</parallel>
-                    <threadCount>1</threadCount>
-                    <perCoreThreadCount>true</perCoreThreadCount>
+                    <threadCount>8</threadCount>
+                    <perCoreThreadCount>false</perCoreThreadCount>
                     <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
                     <systemPropertyVariables>
                         <!-- Properties required for integration tests run -->
