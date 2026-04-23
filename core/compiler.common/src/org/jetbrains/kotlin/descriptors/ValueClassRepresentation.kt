@@ -21,8 +21,8 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
         is JvmInlineMultiFieldValueClassRepresentation ->
             JvmInlineMultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { [name, type] -> name to transform(type) })
-        is ExtendedValueClassRepresentation ->
-            ExtendedValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
+        is FullValueClassRepresentation ->
+            FullValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
     }
 }
 
@@ -59,11 +59,11 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
 
 
 fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
-    distinguishBasicAndExtended: Boolean
+    distinguishBasicAndFull: Boolean
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this
     is JvmInlineMultiFieldValueClassRepresentation -> null
-    is ExtendedValueClassRepresentation if distinguishBasicAndExtended -> null
-    is ExtendedValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
+    is FullValueClassRepresentation if distinguishBasicAndFull -> null
+    is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
         ?.let { [name, type] -> InlineClassRepresentation(name, type) }
 }

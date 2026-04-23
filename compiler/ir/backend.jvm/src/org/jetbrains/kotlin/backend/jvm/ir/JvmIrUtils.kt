@@ -614,5 +614,5 @@ fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
     parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
 
 
-val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(distinguishBasicAndExtended = true)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndExtended = true)
+val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(distinguishBasicAndFull = true)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(distinguishBasicAndFull = true)

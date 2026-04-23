@@ -58,7 +58,7 @@ class FirClassAnySynthesizedMemberScope(
 ) : FirContainingNamesAwareScope() {
     private val originForFunctions = when {
         klass.isData -> FirDeclarationOrigin.Synthetic.DataClassMember
-        klass.isExtendedValueClass -> FirDeclarationOrigin.Synthetic.ExtendedValueClassMember(generatedAnyMethod = !klass.isAbstract && !klass.isSealed)
+        klass.isFullValueClass -> FirDeclarationOrigin.Synthetic.FullValueClassMember(generatedAnyMethod = !klass.isAbstract && !klass.isSealed)
         klass.isInlineOrValue -> FirDeclarationOrigin.Synthetic.BasicValueClassMember
         else -> error("This scope should not be created for non-data and non-value class. ${klass.render()}")
     }

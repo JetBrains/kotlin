@@ -212,7 +212,7 @@ class DeserializedClassDescriptor(
         val hasInlineClassRepresentationInMetadata = metadataVersion.isAtLeast(1, 5, 1)
         classProto.loadValueClassRepresentation(
             tryLoadJvmInlineMultiFieldValueClass = hasInlineClassRepresentationInMetadata,
-            tryLoadExtendedValueClass = false,
+            tryLoadFullValueClass = false,
             c.nameResolver, c.typeTable, c.typeDeserializer::simpleType, ::getValueClassPropertyType,
         )?.let { return it }
         if (!hasInlineClassRepresentationInMetadata) {
