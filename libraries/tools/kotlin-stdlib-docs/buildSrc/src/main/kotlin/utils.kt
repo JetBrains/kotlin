@@ -13,6 +13,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.forEach
 import kotlin.io.normalize
+import kotlin.io.path.invariantSeparatorsPathString
 
 
 fun Project.getGithubRevision(): String {
@@ -108,7 +109,7 @@ fun Project.fixIntersectedSourceRootsAndSamples(
         replacements.forEach { (original, replacement) ->
             // setup source-links
             sourceSet.sourceLink {
-                remoteUrl.set(URI("$kotlin_library_url/${kotlin_library_dir.toPath().relativize(original.toPath())}"))
+                remoteUrl.set(URI("$kotlin_library_url/${original.relativeTo(kotlin_library_dir).toPath().invariantSeparatorsPathString}"))
                 localDirectory.set(replacement)
                 remoteLineSuffix.set("#L")
             }
