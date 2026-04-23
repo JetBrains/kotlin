@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStra
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
@@ -118,7 +119,7 @@ class CacheSupport(
         val hasCachedLibs = explicitCacheFiles.isNotEmpty() || implicitCacheDirectories.isNotEmpty()
 
         if (ignoreCacheReason != null && hasCachedLibs) {
-            configuration.report(CompilerMessageSeverity.WARNING, "Cached libraries will not be used $ignoreCacheReason")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "Cached libraries will not be used $ignoreCacheReason")
         }
 
         val ignoreCachedLibraries = ignoreCacheReason != null

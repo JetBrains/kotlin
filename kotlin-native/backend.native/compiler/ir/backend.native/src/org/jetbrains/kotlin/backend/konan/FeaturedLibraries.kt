@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.config.exportedLibraries
@@ -78,7 +79,7 @@ private sealed class FeaturedLibrariesReporter {
 
         override fun reportIllegalKind(library: KotlinLibrary) {
             configuration.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
+                    CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                     illegalKindMessage(library.reportedKind, library.location.path)
             )
         }
@@ -92,7 +93,7 @@ private sealed class FeaturedLibrariesReporter {
                 includedLibraries.forEach { appendLine(it.libraryFile) }
             }
 
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
         }
     }
 
@@ -100,7 +101,7 @@ private sealed class FeaturedLibrariesReporter {
         override fun reportIllegalKind(library: KotlinLibrary) = with(library) {
             val message = "$reportedKind library $location cannot be passed with -Xinclude " +
                     "(library path: ${libraryFile.absolutePath})"
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
         }
 
         override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {
