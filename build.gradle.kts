@@ -423,6 +423,7 @@ tasks {
     testLifecycleTask("miscCompilerTest") {
         dependsOn(":compiler:test")
         dependsOn(":compiler:tests-integration:test")
+        dependsOn(":compiler:java-direct:test")
         dependsOn(":kotlin-compiler-embeddable:test")
         dependsOn("incrementalCompilationTest")
         dependsOn("scriptingTest")
