@@ -312,4 +312,4 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
 }
 
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(isJvm: Boolean, functionPresenceChecker: () -> IrSimpleFunction?) =
-    !isSingleFieldValueClass(distinguishBasicAndExtended = isJvm) && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
+    !isSingleFieldValueClass(distinguishBasicAndFull = isJvm) && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

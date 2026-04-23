@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
  *
  * @param irClass The IrClass instance for which to retrieve the underlying type.
 
- * @param distinguishBasicAndExtended A boolean indicating whether to differentiate between basic and extended value class representations.
- *                                    If `true`, `ExtendedValueClassRepresentation` will not be considered as single-field compatible,
- *                                    regardless of the number of properties in the representation. If `false`, the compatibility
- *                                    for extended value classes depends on whether they have exactly one underlying property.
- *                                    `true` must be used for JVM, `false` for other backends.
+ * @param distinguishBasicAndFull A boolean indicating whether to differentiate between basic and full value class representations.
+ *                                If `true`, `FullValueClassRepresentation` will not be considered as single-field compatible,
+ *                                regardless of the number of properties in the representation. If `false`, the compatibility
+ *                                for full value classes depends on whether they have exactly one underlying property.
+ *                                `true` must be used for JVM, `false` for other backends.
  * @return The underlying type of the inline class if it exists, otherwise throws an error.
  */
-fun getInlineClassUnderlyingType(irClass: IrClass, distinguishBasicAndExtended: Boolean): IrSimpleType {
-    val representation = irClass.inlineClassRepresentation(distinguishBasicAndExtended) ?: error("Not an inline class: ${irClass.render()}")
+fun getInlineClassUnderlyingType(irClass: IrClass, distinguishBasicAndFull: Boolean): IrSimpleType {
+    val representation = irClass.inlineClassRepresentation(distinguishBasicAndFull) ?: error("Not an inline class: ${irClass.render()}")
     return representation.underlyingType
 }
 

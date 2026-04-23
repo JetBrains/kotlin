@@ -30,7 +30,7 @@ sealed class FirDeclarationOrigin(
     sealed class Synthetic(generatedAnyMethod: Boolean = false) : FirDeclarationOrigin(generatedAnyMethod = generatedAnyMethod) {
         object DataClassMember : Synthetic(generatedAnyMethod = true)
         object BasicValueClassMember : Synthetic(generatedAnyMethod = true)
-        class ExtendedValueClassMember(generatedAnyMethod: Boolean) : Synthetic(generatedAnyMethod = generatedAnyMethod)
+        class FullValueClassMember(generatedAnyMethod: Boolean) : Synthetic(generatedAnyMethod = generatedAnyMethod)
         object JavaProperty : Synthetic()
         object DelegateField : Synthetic()
         object PluginFile : Synthetic()

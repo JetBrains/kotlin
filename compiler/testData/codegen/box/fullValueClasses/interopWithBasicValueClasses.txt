@@ -1,0 +1,66 @@
+@kotlin.Metadata
+public final class FullValue {
+    // source: 'interopWithBasicValueClasses.kt'
+    private final field x: int
+    private final field y: int
+    private method <init>(p0: int, p1: int): void
+    public synthetic method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method f-0AojUPI(p0: int): void
+    public final method g(@org.jetbrains.annotations.NotNull p0: FullValue): void
+    public final method getX-rTLzBkc(): int
+    public final method getY-rTLzBkc(): int
+    public final method h-QsU9m2Q(@org.jetbrains.annotations.NotNull p0: FullValue): void
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class InnerInline {
+    // source: 'interopWithBasicValueClasses.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): InnerInline
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final static method f-0AojUPI(p0: int, p1: int): void
+    public final static method g-impl(p0: int, @org.jetbrains.annotations.NotNull p1: FullValue): void
+    public final method getX(): int
+    public final static method h-QsU9m2Q(p0: int, @org.jetbrains.annotations.NotNull p1: FullValue): void
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class InteropWithBasicValueClassesKt {
+    // source: 'interopWithBasicValueClasses.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class OuterInline {
+    // source: 'interopWithBasicValueClasses.kt'
+    private final @org.jetbrains.annotations.NotNull field x: FullValue
+    private synthetic method <init>(p0: FullValue): void
+    public synthetic final static method box-impl(p0: FullValue): OuterInline
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: FullValue): FullValue
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: FullValue, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: FullValue, p1: FullValue): boolean
+    public final static method f-0AojUPI(p0: FullValue, p1: int): void
+    public final static method g-impl(p0: FullValue, @org.jetbrains.annotations.NotNull p1: FullValue): void
+    public final @org.jetbrains.annotations.NotNull method getX(): FullValue
+    public final static method h-QsU9m2Q(p0: FullValue, @org.jetbrains.annotations.NotNull p1: FullValue): void
+    public method hashCode(): int
+    public static method hashCode-impl(p0: FullValue): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: FullValue): java.lang.String
+    public synthetic final method unbox-impl(): FullValue
+}

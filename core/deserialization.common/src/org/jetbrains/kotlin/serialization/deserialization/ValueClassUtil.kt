@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.ExtendedValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
     tryLoadJvmInlineMultiFieldValueClass: Boolean,
-    tryLoadExtendedValueClass: Boolean,
+    tryLoadFullValueClass: Boolean,
     nameResolver: NameResolver,
     typeTable: TypeTable,
     typeDeserializer: (ProtoBuf.Type) -> T,
@@ -26,7 +26,7 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
         val annotationId = nameResolver.getClassId(it.id)
         annotationId.relativeClassName.asString() == "JvmInline" && annotationId.packageFqName.asString() == "kotlin.jvm"
     }
-    if (!hasJvmInline && tryLoadExtendedValueClass && Flags.IS_VALUE_CLASS.get(flags) && !hasInlineClassUnderlyingPropertyName()) {
+    if (!hasJvmInline && tryLoadFullValueClass && Flags.IS_VALUE_CLASS.get(flags) && !hasInlineClassUnderlyingPropertyName()) {
         val modality = Flags.MODALITY.get(flags)
         val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
         val fields = if (isAbstractOrSealed) {
@@ -37,7 +37,7 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
                 nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
             }
         }
-        return ExtendedValueClassRepresentation(fields)
+        return FullValueClassRepresentation(fields)
     }
 
     if (hasInlineClassUnderlyingPropertyName()) {
