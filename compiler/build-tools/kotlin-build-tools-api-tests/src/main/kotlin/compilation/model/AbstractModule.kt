@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import kotlin.reflect.KClass
 
 private class CompilationOutcomeImpl(
     rawLogLines: Map<LogLevel, Collection<String>>,
@@ -50,11 +51,11 @@ private class CompilationOutcomeImpl(
     }
 }
 
-data class AbstractModuleCacheKey(
-    val moduleClass: String,
+data class AbstractModuleCacheKey<T>(
+    val moduleClass: KClass<*>,
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
-    val compilationArguments: Function1<*, Unit>,
+    val compilationArguments: (T) -> Unit,
 ) : DependencyScenarioDslCacheKey
 
 val EXPLICIT_NULL_MODULE_NAME_MARKER = "###null_module_name###"
@@ -87,7 +88,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
 
     override val scenarioDslCacheKey =
         AbstractModuleCacheKey(
-            this::class.java.name,
+            this::class,
             moduleName,
             dependencies.map { it.scenarioDslCacheKey },
             moduleCompilationConfigAction
@@ -98,7 +99,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         forceOutput: LogLevel?,
         compilationConfigAction: (B) -> Unit,
         compilationAction: (O) -> Unit,
-        assertions: context(Module<*, *, *>) CompilationOutcome.(Throwable) -> Unit,
+        assertions: context(ModuleContext) CompilationOutcome.(Throwable) -> Unit,
     ): Throwable {
         val kotlinLogger = TestKotlinLogger()
         try {
@@ -118,7 +119,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
         forceOutput: LogLevel?,
         compilationConfigAction: (B) -> Unit,
         compilationAction: (O) -> Unit,
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val result = compileImpl(
@@ -134,7 +135,7 @@ abstract class AbstractModule<O : BaseCompilationOperation, B : BaseCompilationO
     protected fun processOutcome(
         kotlinLogger: TestKotlinLogger,
         result: CompilationResult?,
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
         forceOutput: LogLevel?,
     ) {
         val outcome = CompilationOutcomeImpl(kotlinLogger.logMessagesByLevel, result)

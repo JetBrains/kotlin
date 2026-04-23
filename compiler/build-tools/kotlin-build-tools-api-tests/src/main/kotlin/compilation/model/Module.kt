@@ -51,7 +51,7 @@ interface Module<O : BaseCompilationOperation, B : BaseCompilationOperation.Buil
         forceOutput: LogLevel? = null,
         compilationConfigAction: (B) -> Unit = {},
         compilationAction: (O) -> Unit = {},
-        assertions: context(Module<*, *, *>) CompilationOutcome.(Throwable) -> Unit = {},
+        assertions: context(ModuleContext) CompilationOutcome.(Throwable) -> Unit = {},
     ): Throwable
 
     fun compile(
@@ -59,7 +59,7 @@ interface Module<O : BaseCompilationOperation, B : BaseCompilationOperation.Buil
         forceOutput: LogLevel? = null,
         compilationConfigAction: (B) -> Unit = {},
         compilationAction: (O) -> Unit = {},
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit = {},
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 
     fun compileIncrementally(
@@ -91,3 +91,5 @@ interface Module<O : BaseCompilationOperation, B : BaseCompilationOperation.Buil
         const val EXECUTION_TIMEOUT_SECONDS = 10L
     }
 }
+
+typealias ModuleContext = Module<*, *, *>

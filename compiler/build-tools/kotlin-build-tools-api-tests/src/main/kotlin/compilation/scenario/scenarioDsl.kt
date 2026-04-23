@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcom
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -80,7 +81,7 @@ internal abstract class BaseScenarioModule<B : BaseCompilationOperation.Builder,
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module<*, *, *>, ScenarioModule) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
@@ -155,7 +156,7 @@ internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module<*, *, *>, ScenarioModule) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         super.compile(forceOutput) {
             assertions()

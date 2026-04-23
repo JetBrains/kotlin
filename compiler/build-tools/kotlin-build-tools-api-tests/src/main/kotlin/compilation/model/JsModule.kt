@@ -59,7 +59,7 @@ class JsModule(
         forceOutput: LogLevel?,
         compilationConfigAction: (JsLinkingOperation.Builder) -> Unit,
         compilationAction: (JsLinkingOperation) -> Unit,
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
         val compilationOperation = kotlinToolchain.js.jsLinkingOperation(
@@ -121,7 +121,7 @@ class JsModule(
         compilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit,
         compilationAction: (JsKlibCompilationOperation) -> Unit,
         icOptionsConfigAction: (JsHistoryBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val modulesInfo = registeredModules.map {

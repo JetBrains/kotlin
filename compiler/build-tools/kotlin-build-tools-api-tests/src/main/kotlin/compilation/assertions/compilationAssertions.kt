@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.assertions
 
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.runProcess
 import java.io.File
 
@@ -27,7 +27,7 @@ fun CompilationOutcome.expectFailWithError(expectedErrorLines: Set<Regex>) {
  * @param classFqn The fully qualified name of the class to inspect.
  * @param expectedDeclarations The set of expected class declarations.
  */
-context(module: Module<*, *, *>)
+context(module: ModuleContext)
 fun assertClassDeclarationsContain(classFqn: String, expectedDeclarations: Set<String>) {
     val javaHome = System.getProperty("java.home")
     val javapPath = File(javaHome, "bin/javap").let {

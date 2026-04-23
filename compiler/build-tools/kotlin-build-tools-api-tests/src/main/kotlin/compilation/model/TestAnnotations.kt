@@ -58,7 +58,7 @@ annotation class BtaV2StrategyAndPlatformAgnosticCompilationTest
 
 
 /**
- * Annotation for parameterized tests that evaluate compilation behavior using only BTAv2 on all supported platforms
+ * Annotation for parameterized tests that evaluate compilation behavior using both BTA implementations on all supported platforms
  * This involves the variants: [daemon, in-process] x [jvm, js]
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
@@ -70,7 +70,7 @@ annotation class BtaV2StrategyAndPlatformAgnosticCompilationTest
 annotation class DefaultStrategyAndPlatformAgnosticCompilationTest
 
 /**
- * Annotation for parameterized tests that evaluate compilation behavior using only BTAv2 on all supported platforms
+ * Annotation for parameterized tests that evaluate incremental compilation scenarios on all supported platforms
  * This involves the variants: [daemon, in-process] x [jvm, js]
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)

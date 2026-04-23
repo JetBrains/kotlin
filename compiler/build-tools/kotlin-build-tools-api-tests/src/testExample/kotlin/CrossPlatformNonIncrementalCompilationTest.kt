@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 
 /**
@@ -26,7 +23,14 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
     fun failedCompilationAllPlatforms(project: ProjectCreator) {
         project {
             val module1 = module("jvm-module-1")
-            verifySyntaxErrorCompilationFails(module1)
+            module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
+            module1.compile {
+                expectFail()
+                assertLogContainsPatterns(LogLevel.ERROR, ".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
+
+                // equals to
+                expectFailWithError(".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
+            }
         }
     }
 
@@ -35,7 +39,8 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
     fun successfulCompilationAllPlatforms(project: ProjectCreator) {
         project {
             val module1 = module("jvm-module-1")
-            verifySuccessfulCompilation(module1)
+            // default assertion expects COMPILATION_SUCCESS
+            module1.compile {}
             if (module1 is LinkableModule<*, *>) {
                 module1.link {
                     assertOutputs("${module1.moduleName}.js")
@@ -44,27 +49,4 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
         }
     }
 
-    companion object {
-        private fun <O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> verifySyntaxErrorCompilationFails(
-            module: Module<O, B, IC>,
-        ) {
-            module.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
-
-            module.compile {
-                expectFail()
-                assertLogContainsPatterns(LogLevel.ERROR, ".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
-
-                // equals to
-                expectFailWithError(".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
-            }
-        }
-
-        private fun <O : BaseCompilationOperation, B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> verifySuccessfulCompilation(
-            module: Module<O, B, IC>,
-        ) {
-            // default assertion expects COMPILATION_SUCCESS
-            module.compile {
-            }
-        }
-    }
 }

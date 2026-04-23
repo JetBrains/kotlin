@@ -17,6 +17,6 @@ interface LinkableModule<O : BaseCompilationOperation, B : BaseCompilationOperat
         forceOutput: LogLevel? = null,
         compilationConfigAction: (B) -> Unit = {},
         compilationAction: (O) -> Unit = {},
-        assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit = {},
+        assertions: context(ModuleContext) CompilationOutcome.() -> Unit = {},
     ): CompilationResult
 }
