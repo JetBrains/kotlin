@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 
 interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
     val kotlinToolchains: KotlinToolchains
+    val project: AbstractProject<*, B, IC>
+    val strategyConfig: ExecutionPolicy
 
     /**
      * Creates a module for a scenario.
@@ -34,21 +38,8 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
-    ): ScenarioModule
-
-    fun modules(vararg moduleSpecs: ModuleSpec<B, IC>): List<ScenarioModule> {
-        return moduleSpecs.fold(mutableListOf<Pair<String, ScenarioModule>>()) { acc, spec ->
-            acc.add(
-                spec.moduleName to module(
-                    spec.moduleName,
-                    spec.dependencies.map { dependency -> acc.first { it.first == dependency }.second },
-                    spec.snapshotConfig,
-                    spec.compilationConfigAction,
-                    spec.icOptionsConfigAction
-                )
-            )
-            acc
-        }.map { it.second }
+    ): ScenarioModule {
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction)
     }
 
     /**
@@ -73,28 +64,36 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
-    ): ScenarioModule
-
-    fun trackedModules(vararg moduleSpecs: ModuleSpec<B, IC>): List<ScenarioModule> {
-        return moduleSpecs.fold(mutableListOf<Pair<String, ScenarioModule>>()) { acc, spec ->
-            acc.add(
-                spec.moduleName to trackedModule(
-                    spec.moduleName,
-                    spec.dependencies.map { dependency -> acc.first { it.first == dependency }.second },
-                    spec.snapshotConfig,
-                    spec.compilationConfigAction,
-                    spec.icOptionsConfigAction
-                )
-            )
-            acc
-        }.map { it.second }
+    ): ScenarioModule {
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction, true)
     }
 }
 
-data class ModuleSpec<in B, in IC>(
-    val moduleName: String,
-    val dependencies: List<String> = emptyList(),
-    val snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
-    val compilationConfigAction: (B) -> Unit = {},
-    val icOptionsConfigAction: (IC) -> Unit = {},
-)
+private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> Scenario<B, IC>.createModule(
+    dependencies: List<ScenarioModule>,
+    moduleName: String,
+    snapshotConfig: SnapshotConfig,
+    compilationConfigAction: (B) -> Unit,
+    icOptionsConfigAction: (IC) -> Unit,
+    tracked: Boolean = false,
+): ScenarioModule {
+    val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
+    val module =
+        project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
+    return GlobalCompiledProjectsCache.getProjectFromCache(
+        module,
+        strategyConfig,
+        snapshotConfig,
+        icOptionsConfigAction,
+        tracked,
+        dependencies,
+    )
+        ?: GlobalCompiledProjectsCache.putProjectIntoCache(
+            module,
+            strategyConfig,
+            snapshotConfig,
+            icOptionsConfigAction,
+            tracked,
+            dependencies,
+        )
+}

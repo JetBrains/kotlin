@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
-import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -16,7 +14,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompil
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.*
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assumptions
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
-import kotlin.io.path.deleteRecursively
 import kotlin.io.path.name
 import kotlin.io.path.walk
 import kotlin.io.path.writeText
@@ -72,9 +71,6 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
         jsProject(strategyConfig) {
             val libModule = module("js-ic-basic-lib")
             val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
-
-            libModule.otherModules += appModule
-            appModule.otherModules += libModule
 
             val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
 
@@ -130,7 +126,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
 
     private fun runMultiModuleTest(scenario: ScenarioCreator, useTrackedModules: Boolean) {
         scenario {
-            Assumptions.assumeFalse(
+            assumeFalse(
                 KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) == KotlinToolingVersion("2.2.21") && OS.MAC.isCurrentOs,
                 "Known failure on Mac with 2.2.21"
             )
@@ -141,14 +137,16 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                 )
                 assumeFalse(this is JsScenarioDsl) // internal tracking currently doesn't fully work for JS
             }
-            val moduleSpecs: List<ModuleSpec<BaseCompilationOperation.Builder, BaseIncrementalCompilationConfiguration.Builder>> = listOf(
-                ModuleSpec("jvm-module-1"),
-                ModuleSpec("jvm-module-2", dependencies = listOf("jvm-module-1"))
-            )
-            val (module1, module2) = if (useTrackedModules) {
-                trackedModules(*moduleSpecs.toTypedArray())
+            val module1 = if (useTrackedModules) {
+                trackedModule("jvm-module-1")
             } else {
-                modules(*moduleSpecs.toTypedArray())
+                module("jvm-module-1")
+            }
+
+            val module2 = if (useTrackedModules) {
+                trackedModule("jvm-module-2", listOf(module1))
+            } else {
+                module("jvm-module-2", listOf(module1))
             }
 
             module1.createPredefinedFile("secret.kt", "new-file")

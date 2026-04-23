@@ -39,6 +39,7 @@ class JsModule(
     defaultStrategyConfig: ExecutionPolicy,
     moduleCompilationConfigAction: (JsKlibCompilationOperation.Builder) -> Unit = {},
     private val stdlibKlibLocation: List<Path>,
+    private val registeredModules: Set<JsModule> = mutableSetOf(),
 ) : AbstractModule<JsKlibCompilationOperation, JsKlibCompilationOperation.Builder, JsHistoryBasedIncrementalCompilationConfiguration.Builder>(
     project,
     moduleName,
@@ -48,7 +49,6 @@ class JsModule(
     moduleCompilationConfigAction,
 ), LinkableModule<JsLinkingOperation, JsLinkingOperation.Builder> {
 
-    val otherModules = mutableListOf<JsModule>()
     var lastCompileProducedPackedKlib = false
 
     private val dependencyFiles: List<Path>
@@ -124,7 +124,7 @@ class JsModule(
         assertions: context(Module<*, *, *>) CompilationOutcome.() -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
-            val modulesInfo = (otherModules + this).map {
+            val modulesInfo = registeredModules.map {
                 IncrementalModule(
                     it.moduleName,
                     it.outputDirectory,

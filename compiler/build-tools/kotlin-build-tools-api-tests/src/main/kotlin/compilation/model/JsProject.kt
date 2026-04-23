@@ -25,6 +25,8 @@ class JsProject(
     defaultStrategyConfig,
     projectDirectory,
 ) {
+    private val registeredModules = mutableSetOf<JsModule>()
+
     override fun module(
         moduleName: String,
         dependencies: List<Dependency>,
@@ -45,8 +47,10 @@ class JsProject(
             moduleCompilationConfigAction = moduleCompilationConfigAction,
             stdlibKlibLocation = stdlibClasspath ?: listOf(
                 currentKotlinJsStdlibKlibLocation
-            )
+            ),
+            registeredModules = registeredModules,
         )
+        registeredModules.add(module)
         initModule(module, moduleName)
         return module
     }

@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -190,83 +189,3 @@ internal class AutoTrackedScenarioModuleImpl<B : BaseCompilationOperation.Builde
 ) : BaseScenarioModule<B, IC>(module, outputs, strategyConfig, icOptionsConfigAction) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
-
-private class JvmScenarioDsl(
-    private val project: JvmProject,
-    private val strategyConfig: ExecutionPolicy,
-    override val kotlinToolchains: KotlinToolchains,
-) : Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder> {
-    @Synchronized
-    override fun module(
-        moduleName: String,
-        dependencies: List<ScenarioModule>,
-        snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-    ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
-        val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
-        return GlobalCompiledProjectsCache.getProjectFromCache(
-            module,
-            strategyConfig,
-            snapshotConfig,
-            icOptionsConfigAction,
-            false,
-            dependencies,
-        )
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(
-                module,
-                strategyConfig,
-                snapshotConfig,
-                icOptionsConfigAction,
-                false,
-                dependencies,
-            )
-    }
-
-    @Synchronized
-    override fun trackedModule(
-        moduleName: String,
-        dependencies: List<ScenarioModule>,
-        snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-    ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
-        val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
-        return GlobalCompiledProjectsCache.getProjectFromCache(
-            module,
-            strategyConfig,
-            snapshotConfig,
-            icOptionsConfigAction,
-            true,
-            dependencies,
-        )
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(
-                module,
-                strategyConfig,
-                snapshotConfig,
-                icOptionsConfigAction,
-                true,
-                dependencies,
-            )
-    }
-}
-
-fun BaseCompilationTest.jvmScenario(
-    kotlinToolchains: KotlinToolchains,
-    strategyConfig: ExecutionPolicy,
-    action: Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.() -> Unit,
-) {
-    action(JvmScenarioDsl(JvmProject(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig, kotlinToolchains))
-}
-
-fun BaseCompilationTest.jvmScenario(
-    executionStrategy: CompilerExecutionStrategyConfiguration,
-    action: Scenario<JvmCompilationOperation.Builder, JvmSnapshotBasedIncrementalCompilationConfiguration.Builder>.() -> Unit,
-) {
-    jvmScenario(executionStrategy.first, executionStrategy.second, action)
-}
-

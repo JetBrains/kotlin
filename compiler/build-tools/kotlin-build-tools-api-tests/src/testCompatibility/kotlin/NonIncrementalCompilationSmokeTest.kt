@@ -5,28 +5,17 @@
 
 package org.jetbrains.kotlin.buildtools.tests
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.RemovedCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
-import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
-import org.jetbrains.kotlin.buildtools.api.js.jsLinkingOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
-import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinJsStdlibKlibLocation
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
-import kotlin.io.path.createDirectories
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
 
 class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation produces only expected outputs in multi-module setup")
