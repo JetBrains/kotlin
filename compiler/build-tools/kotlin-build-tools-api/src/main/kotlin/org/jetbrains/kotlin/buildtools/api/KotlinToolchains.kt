@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains.Toolchain
+import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_3_20
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_0
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_4_20
+import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import java.net.URLClassLoader
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -26,6 +29,9 @@ import kotlin.contracts.contract
  *
  * Currently supported toolchains:
  * - [JvmPlatformToolchain] for Kotlin/JVM compilation
+ * - [WasmPlatformToolchain] for Kotlin/Wasm compilation
+ * - [JsPlatformToolchain] for Kotlin/JS compilation
+ * - [AbiValidationToolchain] for ABI validation
  * - [CriToolchain] for Compiler Reference Index operations
  *
  * This interface is not intended to be implemented by the API consumers.

@@ -57,7 +57,7 @@ internal class JvmCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destinationDirectory: Path,
     compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(JvmCompilerArgumentValueAdapter.getOrNull()),
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
     JvmCompilationOperation,

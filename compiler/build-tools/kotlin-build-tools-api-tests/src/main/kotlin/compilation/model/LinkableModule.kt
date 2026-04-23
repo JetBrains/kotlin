@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 interface LinkableModule<O : BaseCompilationOperation, B : BaseCompilationOperation.Builder> {
     val defaultStrategyConfig: ExecutionPolicy
 
+    val expectedOutputFileName: String
+
     fun link(
         strategyConfig: ExecutionPolicy = defaultStrategyConfig,
         forceOutput: LogLevel? = null,

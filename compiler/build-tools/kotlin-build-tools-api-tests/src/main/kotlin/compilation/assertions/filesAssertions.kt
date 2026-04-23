@@ -96,12 +96,17 @@ fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
     assertOutputs(expectedOutputs.toSet())
 }
 
+context(module: ModuleContext)
+fun CompilationOutcome.assertOutputsContains(vararg expectedOutputs: String) {
+    assertOutputs(expectedOutputs.toSet(), doNotFailOnExtraFiles = true)
+}
+
 /**
  * Asserts that the compiler produces all files declared as expected outputs.
  * Unless there's explicit expected output for the module's Kotlin module files, the default matching [Module.moduleName] will be added automatically.
  */
 context(module: ModuleContext)
-fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
+fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>, doNotFailOnExtraFiles: Boolean = false) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
@@ -117,7 +122,7 @@ fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
             if (!wasPreviously) notDeclaredFiles.add(currentFile)
         }
     }
-    assert(filesLeft.isEmpty() && notDeclaredFiles.isEmpty()) {
+    assert(filesLeft.isEmpty() && (doNotFailOnExtraFiles || notDeclaredFiles.isEmpty())) {
         val errors = mutableListOf<String>()
         if (filesLeft.isNotEmpty()) {
             errors.add("The following files were declared as expected, but not actually produced: $filesLeft")
