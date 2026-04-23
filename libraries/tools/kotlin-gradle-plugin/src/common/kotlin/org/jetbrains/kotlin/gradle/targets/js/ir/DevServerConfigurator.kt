@@ -125,12 +125,6 @@ internal class DevServerConfigurator(
                         linkSyncTask.flatMap { it.destinationDirectory }
                     )
 
-                    task.rootDirectory.set(
-                        project.rootDir
-                    )
-
-                    task.host.convention("localhost")
-
                     runTaskConfigurations.all {
                         it.execute(task)
                     }

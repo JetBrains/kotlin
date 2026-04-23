@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import com.google.gson.JsonParser
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.options.Option
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
-import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 
@@ -29,14 +26,16 @@ internal abstract class KotlinSimpleDevServerTask
     abstract val contentDirectory: DirectoryProperty
 
     @get:Internal
-    abstract val rootDirectory: DirectoryProperty
+    private val rootDirectory: File = project.rootDir
 
     @get:Input
     @get:Optional
+    @get:Option("Set a port for the dev server.")
     abstract val port: Property<Int>
 
     @get:Input
-    abstract val host: Property<String>
+    @get:Option("Set a HOST for the dev server.")
+    val host: Property<String> = project.objects.property(String::class.java).convention("localhost")
 
     @TaskAction
     fun start() {
