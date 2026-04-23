@@ -6,22 +6,14 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
-import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
-import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
-import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
-import org.jetbrains.kotlin.backend.common.serialization.deserializeFqName
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
-import org.jetbrains.kotlin.backend.common.serialization.fileEntry
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
-import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
-import org.jetbrains.kotlin.konan.config.filesToCache
-import org.jetbrains.kotlin.konan.config.optimization
-import org.jetbrains.kotlin.konan.config.preLinkCaches
+import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -82,13 +74,13 @@ class CacheSupport(
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
                 File(it).takeIf { it.isDirectory }
-                        ?: configuration.reportCompilationError("auto cacheable root $it is not found or is not a directory")
+                        ?: configuration.reportCompilationErrorAndThrow("auto cacheable root $it is not found or is not a directory")
             }
 
     private val implicitCacheDirectories = buildList {
         configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
             add(File(it).takeIf { it.isDirectory }
-                    ?: configuration.reportCompilationError("cache directory $it is not found or is not a directory"))
+                    ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory"))
         }
         systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
         autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }
@@ -118,7 +110,7 @@ class CacheSupport(
 
         val explicitCaches = explicitCacheFiles.entries.associate { (libraryPath, cachePath) ->
             val library = fileToLibrary[File(libraryPath)]
-                    ?: configuration.reportCompilationError("cache not applied: library $libraryPath in $cachePath")
+                    ?: configuration.reportCompilationErrorAndThrow("cache not applied: library $libraryPath in $cachePath")
 
             library to cachePath
         }
@@ -185,7 +177,7 @@ class CacheSupport(
                 for (dependency in dependencies) {
                     if (!cachedLibraries.isLibraryCached(dependency) && dependency != libraryToCache?.klib) {
                         val description = if (cache != null) "cached (in ${cache.path})" else "going to be cached"
-                        configuration.reportCompilationError("${library.location} is $description, but its dependency isn't: ${dependency.location}")
+                        configuration.reportCompilationErrorAndThrow("${library.location} is $description, but its dependency isn't: ${dependency.location}")
                     }
                 }
             }
@@ -195,14 +187,14 @@ class CacheSupport(
         libraryToCache?.klib?.let {
             val cache = cachedLibraries.getLibraryCache(it)
             if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationError("can't cache library '${it.location}' " +
+                configuration.reportCompilationErrorAndThrow("can't cache library '${it.location}' " +
                         "that is already cached in '${cache.path}'")
             }
         }
 
         if ((libraryToCache != null || cachedLibraries.hasDynamicCaches || cachedLibraries.hasStaticCaches)
                 && configuration.optimization) {
-            configuration.reportCompilationError("Cache cannot be used in optimized compilation")
+            configuration.reportCompilationErrorAndThrow("Cache cannot be used in optimized compilation")
         }
     }
 }

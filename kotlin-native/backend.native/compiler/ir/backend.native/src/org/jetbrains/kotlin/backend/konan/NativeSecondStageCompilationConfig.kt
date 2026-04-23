@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -19,36 +20,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
-import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
-import org.jetbrains.kotlin.konan.config.allocationMode
-import org.jetbrains.kotlin.konan.config.autoCacheDir
-import org.jetbrains.kotlin.konan.config.checkDependencies
-import org.jetbrains.kotlin.konan.config.compileFromBitcode
-import org.jetbrains.kotlin.konan.config.debug
-import org.jetbrains.kotlin.konan.config.enableAssertions
-import org.jetbrains.kotlin.konan.config.externalDependencies
-import org.jetbrains.kotlin.konan.config.fullExportedNamePrefix
-import org.jetbrains.kotlin.konan.config.generateDebugTrampoline
-import org.jetbrains.kotlin.konan.config.incrementalCacheDir
-import org.jetbrains.kotlin.konan.config.konanDataDir
-import org.jetbrains.kotlin.konan.config.konanHome
-import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
-import org.jetbrains.kotlin.konan.config.konanManifestAddend
-import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
-import org.jetbrains.kotlin.konan.config.konanTarget
-import org.jetbrains.kotlin.konan.config.llvmLtoPasses
-import org.jetbrains.kotlin.konan.config.llvmModulePasses
-import org.jetbrains.kotlin.konan.config.llvmVariant
-import org.jetbrains.kotlin.konan.config.makePerFileCache
-import org.jetbrains.kotlin.konan.config.omitFrameworkBinary
-import org.jetbrains.kotlin.konan.config.optimization
-import org.jetbrains.kotlin.konan.config.runtimeFile
-import org.jetbrains.kotlin.konan.config.runtimeLogs
-import org.jetbrains.kotlin.konan.config.saveDependenciesPath
-import org.jetbrains.kotlin.konan.config.saveLlvmIrDirectory
-import org.jetbrains.kotlin.konan.config.serializedDependencies
-import org.jetbrains.kotlin.konan.config.staticFramework
-import org.jetbrains.kotlin.konan.config.testDumpOutputPath
+import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -513,7 +485,7 @@ class NativeSecondStageCompilationConfig(
 
     val stackProtectorMode = configuration.get(BinaryOptions.stackProtector)?.let {
         if (it != StackProtectorMode.NO && target.family == Family.MINGW) {
-            configuration.reportCompilationError("Stack protector is not supported on MinGW targets")
+            configuration.reportCompilationErrorAndThrow("Stack protector is not supported on MinGW targets")
             null
         } else it
     } ?: StackProtectorMode.NO
@@ -578,13 +550,13 @@ class NativeSecondStageCompilationConfig(
     internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString).also { it.mkdirs() }
     private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
         File(it).apply {
-            if (!isDirectory) configuration.reportCompilationError("auto cache directory $this is not found or is not a directory")
+            if (!isDirectory) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
         }
     } ?: File(distribution.systemCacheRootDirectory.absolutePath)
     internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString).also { it.mkdirs() }
     private val incrementalCacheRootDirectory = configuration.incrementalCacheDir?.let {
         File(it).apply {
-            if (!isDirectory) configuration.reportCompilationError("incremental cache directory $this is not found or is not a directory")
+            if (!isDirectory) configuration.reportCompilationErrorAndThrow("incremental cache directory $this is not found or is not a directory")
         }
     }
     internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)?.also { it.mkdirs() }

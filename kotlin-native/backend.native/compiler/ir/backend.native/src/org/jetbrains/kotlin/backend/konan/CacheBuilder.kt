@@ -8,39 +8,24 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
-import org.jetbrains.kotlin.konan.config.cacheDirectories
-import org.jetbrains.kotlin.konan.config.cachedLibraries
-import org.jetbrains.kotlin.konan.config.checkDependencies
-import org.jetbrains.kotlin.konan.config.filesToCache
-import org.jetbrains.kotlin.konan.config.generateTestRunner
-import org.jetbrains.kotlin.konan.config.konanFriendLibraries
-import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
-import org.jetbrains.kotlin.konan.config.konanLibraries
-import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
-import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
-import org.jetbrains.kotlin.konan.config.konanNoEndorsedLibs
-import org.jetbrains.kotlin.konan.config.konanNoStdlib
-import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
-import org.jetbrains.kotlin.konan.config.makePerFileCache
-import org.jetbrains.kotlin.konan.config.testDumpOutputPath
+import org.jetbrains.kotlin.konan.config.*
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
-import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.konan.config.konanHome
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
@@ -397,7 +382,7 @@ class CacheBuilder(
                                     """.trimIndent()
                         "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
                     }
-            config.configuration.reportCompilationError(message)
+            configuration.reportCompilationErrorAndThrow(message)
         }
     }
 
