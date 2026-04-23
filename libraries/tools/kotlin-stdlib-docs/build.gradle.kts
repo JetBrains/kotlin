@@ -1,3 +1,8 @@
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import java.nio.charset.Charset
+
 plugins {
     base
     `dokka-convention`
@@ -59,9 +64,28 @@ val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
 }
 
 (getTasksByName("dokkaGenerateHtml", false) + getTasksByName("dokkaGenerate", false)).forEach {
-    it.dependsOn(prepare)
-}
+    it.doLast {
+        val dokkaOutputDirectory = dokka.dokkaPublications.html.get().outputDirectory.get().asFile
+        configurations["dokka"].allDependencies.withType(ProjectDependency::class.java)
+            .forEach {
+                val project = project.project(it.path)
+                val jsonFile = project.layout.buildDirectory.file("dokka-module/html/module-descriptor.json").get().asFile
+                val packageList = project.layout.buildDirectory.file("dokka-module/html/module/package-list").get().asFile
+                val fileAsJsonObject = Json.decodeFromString<JsonObject>(jsonFile.readText(Charset.defaultCharset()))
+                val modulePath = (fileAsJsonObject.get("modulePath") as JsonPrimitive).content
 
+                project.copy {
+                    from(packageList)
+                    into(dokkaOutputDirectory.resolve(modulePath))
+                }
+            }
+    }
+}
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    }
+}
 dependencies {
     dokka(project(":kotlin-stdlib"))
     dokka(project(":kotlin-test"))
