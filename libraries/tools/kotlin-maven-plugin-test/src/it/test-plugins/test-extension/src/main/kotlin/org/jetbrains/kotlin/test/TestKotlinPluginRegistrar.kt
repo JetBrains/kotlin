@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test
 
+import org.jetbrains.kotlin.cli.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compiler.plugin.*
@@ -36,11 +37,10 @@ class TestCommandLineProcessor : CommandLineProcessor {
 
 class TestKotlinPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val option = configuration.get(TestPluginKeys.TestOption)!!
 
-        collector.report(CompilerMessageSeverity.INFO, "Plugin applied")
-        collector.report(CompilerMessageSeverity.INFO, "Option value: $option")
+        configuration.reportInfo("Plugin applied")
+        configuration.reportInfo("Option value: $option")
     }
 
     override val pluginId: String get() = "test.compiler.plugin"
