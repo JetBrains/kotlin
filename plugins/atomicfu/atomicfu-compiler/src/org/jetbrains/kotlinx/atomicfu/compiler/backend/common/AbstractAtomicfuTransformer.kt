@@ -508,7 +508,21 @@ abstract class AbstractAtomicfuTransformer(
                 addAll(originalCall.arguments.subList(extensionReceiverParameter + 1, originalCall.arguments.size))
             }
 
+            // irCall.type defaults to callee.owner.returnType, which may reference a type parameter
+            // (e.g. S of foo$atomicfu$...) that is not in scope at the call site when the caller
+            // is a non-generic function. Substitute the type parameters with the concrete call-site
+            // type arguments to get a properly-scoped return type.
+            // When callTypeArguments is empty (non-parameterized extension), the substitution falls
+            // through to the else branch and returnType is used as-is.
+            val typeParams = transformedAtomicExtension.typeParameters
+            val concreteTypeArgs = callTypeArguments.filterNotNull()
+            val concreteReturnType = if (typeParams.isNotEmpty() && typeParams.size == concreteTypeArgs.size) {
+                transformedAtomicExtension.returnType.substitute(typeParams, concreteTypeArgs)
+            } else {
+                transformedAtomicExtension.returnType
+            }
             return irCall(transformedAtomicExtension.symbol).apply {
+                this.type = concreteReturnType
                 arguments.assignFrom(transformedArguments)
                 typeArguments.assignFrom(callTypeArguments)
             }
