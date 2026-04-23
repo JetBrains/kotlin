@@ -1,12 +1,10 @@
 package org.jetbrains.kotlinx.dataframe.plugin.impl.api
 
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getKClassArgument
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.fir.types.withNullabilityOf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -151,6 +149,7 @@ internal fun SimpleFrameColumn.map(transform: ColumnMapper, selected: ColumnsSet
 
 internal class To0 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.parserOptions by ignore()
     val Arguments.typeArg0: ColumnType by arg()
     override val Arguments.startingSchema get() = receiver.schema
 
