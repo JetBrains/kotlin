@@ -31,11 +31,6 @@ fun ErrorReportingContext.reportCompilationError(message: String): Nothing {
     throw KonanCompilationException()
 }
 
-fun CompilerConfiguration.reportCompilationError(message: String): Nothing {
-    report(CompilerMessageSeverity.ERROR, message)
-    throw KonanCompilationException()
-}
-
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) =
     this.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
 
