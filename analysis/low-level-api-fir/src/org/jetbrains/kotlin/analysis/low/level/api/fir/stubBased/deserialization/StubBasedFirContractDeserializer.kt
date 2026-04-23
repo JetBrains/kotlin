@@ -31,7 +31,7 @@ internal class StubBasedFirContractDeserializer(
     private val typeDeserializer: StubBasedFirTypeDeserializer,
 ) {
     fun loadContract(declaration: KtDeclarationWithBody): FirContractDescription? {
-        val contract = when (declaration) {
+        val effectDeclarations = when (declaration) {
             is KtNamedFunction -> {
                 val functionStub: KotlinFunctionStubImpl = declaration.compiledStub
                 functionStub.contract
@@ -47,8 +47,8 @@ internal class StubBasedFirContractDeserializer(
             }
         }
 
-        val effects = contract?.map {
-            it.accept(ContractDescriptionConvertingVisitor(), null)
+        val effects = effectDeclarations?.mapNotNull {
+            it.accept(ContractDescriptionConvertingVisitor(), data = null)
         }
 
         if (effects.isNullOrEmpty()) return null
@@ -62,80 +62,90 @@ internal class StubBasedFirContractDeserializer(
     }
 
     inner class ContractDescriptionConvertingVisitor :
-        KtContractDescriptionVisitor<ConeContractDescriptionElement, Nothing?, KotlinTypeBean, Nothing?>() {
+        KtContractDescriptionVisitor<ConeContractDescriptionElement?, Nothing?, KotlinTypeBean, Nothing?>() {
+        override fun visitContractDescriptionElement(
+            contractDescriptionElement: KtContractDescriptionElement<KotlinTypeBean, Nothing?>,
+            data: Nothing?,
+        ): ConeContractDescriptionElement? {
+            return null
+        }
+
         override fun visitCallsEffectDeclaration(
             callsEffect: KtCallsEffectDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val parameterReference = callsEffect.valueParameterReference.accept(this, data) ?: return null
             return ConeCallsEffectDeclaration(
-                callsEffect.valueParameterReference.accept(
-                    this,
-                    data
-                ) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>, callsEffect.kind
+                parameterReference as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
+                callsEffect.kind
             )
         }
 
         override fun visitReturnsResultOfEffectDeclaration(
             returnsResultOfEffect: KtReturnsResultOfDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val parameterReference = returnsResultOfEffect.valueParameterReference.accept(this, data) ?: return null
             return ConeReturnsResultOfDeclaration(
-                returnsResultOfEffect.valueParameterReference.accept(
-                    this,
-                    data
-                ) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+                parameterReference as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
             )
         }
 
         override fun visitReturnsEffectDeclaration(
             returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val value = returnsEffect.value.accept(this, data) ?: return null
             return ConeReturnsEffectDeclaration(
-                returnsEffect.value.accept(
-                    this,
-                    data
-                ) as KtConstantReference<ConeKotlinType, ConeDiagnostic>
+                value as KtConstantReference<ConeKotlinType, ConeDiagnostic>
             )
         }
 
         override fun visitConditionalEffectDeclaration(
             conditionalEffect: KtConditionalEffectDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val effect = conditionalEffect.effect.accept(this, data) ?: return null
+            val condition = conditionalEffect.condition.accept(this, data) ?: return null
             return ConeConditionalEffectDeclaration(
-                conditionalEffect.effect.accept(this, data) as KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
-                conditionalEffect.condition.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>
+                effect as KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+                condition as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>
             )
         }
 
         override fun visitConditionalReturnsDeclaration(
             conditionalEffect: KtConditionalReturnsDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?,
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val condition = conditionalEffect.argumentsCondition.accept(this, data) ?: return null
+            val effect = conditionalEffect.returnsEffect.accept(this, data) ?: return null
             return ConeConditionalReturnsDeclaration(
-                conditionalEffect.argumentsCondition.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
-                conditionalEffect.returnsEffect.accept(this, data) as KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
+                condition as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
+                effect as KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
             )
         }
 
         override fun visitHoldsInEffectDeclaration(
             holdsInEffect: KtHoldsInEffectDeclaration<KotlinTypeBean, Nothing?>,
             data: Nothing?,
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val condition = holdsInEffect.argumentsCondition.accept(this, data) ?: return null
+            val parameterReference = holdsInEffect.valueParameterReference.accept(this, data) ?: return null
             return ConeHoldsInEffectDeclaration(
-                holdsInEffect.argumentsCondition.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
-                holdsInEffect.valueParameterReference.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
+                condition as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
+                parameterReference as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>
             )
         }
 
         override fun visitLogicalBinaryOperationContractExpression(
             binaryLogicExpression: KtBinaryLogicExpression<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val left = binaryLogicExpression.left.accept(this, data) ?: return null
+            val right = binaryLogicExpression.right.accept(this, data) ?: return null
             return ConeBinaryLogicExpression(
-                binaryLogicExpression.left.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
-                binaryLogicExpression.right.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
+                left as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
+                right as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>,
                 binaryLogicExpression.kind
             )
         }
@@ -143,17 +153,20 @@ internal class StubBasedFirContractDeserializer(
         override fun visitLogicalNot(
             logicalNot: KtLogicalNot<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
-            return ConeLogicalNot(logicalNot.arg.accept(this, data) as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>)
+        ): ConeContractDescriptionElement? {
+            val arg = logicalNot.arg.accept(this, data) ?: return null
+            return ConeLogicalNot(arg as KtBooleanExpression<ConeKotlinType, ConeDiagnostic>)
         }
 
         override fun visitIsInstancePredicate(
             isInstancePredicate: KtIsInstancePredicate<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val arg = isInstancePredicate.arg.accept(this, data) ?: return null
+            val type = typeDeserializer.type(isInstancePredicate.type) ?: return null
             return ConeIsInstancePredicate(
-                isInstancePredicate.arg.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
-                typeDeserializer.type(isInstancePredicate.type)!!,
+                arg as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
+                type,
                 isInstancePredicate.isNegated
             )
         }
@@ -161,9 +174,10 @@ internal class StubBasedFirContractDeserializer(
         override fun visitIsNullPredicate(
             isNullPredicate: KtIsNullPredicate<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
+            val arg = isNullPredicate.arg.accept(this, data) ?: return null
             return ConeIsNullPredicate(
-                isNullPredicate.arg.accept(this, data) as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
+                arg as KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
                 isNullPredicate.isNegated
             )
         }
@@ -206,16 +220,14 @@ internal class StubBasedFirContractDeserializer(
         override fun visitConstantDescriptor(
             constantReference: KtConstantReference<KotlinTypeBean, Nothing?>,
             data: Nothing?
-        ): ConeContractDescriptionElement {
+        ): ConeContractDescriptionElement? {
             return when (constantReference) {
                 KotlinContractConstantValues.FALSE -> ConeContractConstantValues.FALSE
                 KotlinContractConstantValues.TRUE -> ConeContractConstantValues.TRUE
                 KotlinContractConstantValues.NULL -> ConeContractConstantValues.NULL
                 KotlinContractConstantValues.NOT_NULL -> ConeContractConstantValues.NOT_NULL
                 KotlinContractConstantValues.WILDCARD -> ConeContractConstantValues.WILDCARD
-                else -> {
-                    error("Unexpected constant: $constantReference")
-                }
+                else -> null
             }
         }
     }
