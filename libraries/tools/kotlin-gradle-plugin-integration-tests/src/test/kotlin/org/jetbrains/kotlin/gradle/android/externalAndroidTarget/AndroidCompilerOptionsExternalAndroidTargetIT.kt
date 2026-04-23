@@ -40,6 +40,7 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
                             freeCompilerArgs.add("-Xexpect-actual-classes")
                             progressiveMode.set(true)
                             allWarningsAsErrors.set(true)
+                            jvmTarget.set(JvmTarget.JVM_1_8)
                         }
                     }
                     iosArm64()
@@ -58,6 +59,7 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
                 assertCompilerArgument(":compileAndroidMain", "-Xexpect-actual-classes", LogLevel.INFO)
                 assertCompilerArgument(":compileAndroidMain", "-progressive", LogLevel.INFO)
                 assertCompilerArgument(":compileAndroidMain", "-Werror", LogLevel.INFO)
+                assertCompilerArgument(":compileAndroidMain", "-jvm-target 1.8", LogLevel.INFO)
             }
         }
     }
@@ -128,6 +130,12 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
                     androidLibrary {
                         compileSdk = 34
                         namespace = "org.jetbrains.sample.options"
+                        compilations.getByName("main").compileTaskProvider.configure {
+                            compilerOptions {
+                                progressiveMode.set(true)
+                                allWarningsAsErrors.set(true)
+                            }
+                        }
                     }
                     iosArm64()
 
@@ -137,14 +145,6 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
                         class CompilationLevelProbe
                         """.trimIndent()
                     )
-
-                    val androidMainCompilation = targets.getByName("android").compilations.getByName("main")
-                    androidMainCompilation.compileTaskProvider.configure {
-                        compilerOptions {
-                            progressiveMode.set(true)
-                            allWarningsAsErrors.set(true)
-                        }
-                    }
                 }
             }
             build(":compileAndroidMain") {
@@ -175,6 +175,12 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
                         compileSdk = 34
                         namespace = "org.jetbrains.sample.options"
                         withHostTest { }
+                        compilations.getByName("hostTest").compileTaskProvider.configure {
+                            compilerOptions {
+                                progressiveMode.set(true)
+                                allWarningsAsErrors.set(true)
+                            }
+                        }
                     }
                     iosArm64()
 
@@ -184,14 +190,6 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
                         class HostCompilationLevelProbe
                         """.trimIndent()
                     )
-
-                    val androidHostTestCompilation = targets.getByName("android").compilations.getByName("hostTest")
-                    androidHostTestCompilation.compileTaskProvider.configure {
-                        compilerOptions {
-                            progressiveMode.set(true)
-                            allWarningsAsErrors.set(true)
-                        }
-                    }
                 }
             }
             build(":compileAndroidHostTest") {
@@ -219,13 +217,13 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
                     compilerOptions {
-                        allWarningsAsErrors.set(false)
+                        allWarningsAsErrors.set(true)
                     }
                     androidLibrary {
                         compileSdk = 34
                         namespace = "org.jetbrains.sample.options"
                         compilerOptions {
-                            allWarningsAsErrors.set(true)
+                            allWarningsAsErrors.set(false)
                         }
                     }
                     iosArm64()
@@ -240,47 +238,7 @@ class AndroidCompilerOptionsExternalAndroidTargetIT : KGPBaseTest() {
             }
             build(":compileAndroidMain") {
                 assertTasksExecuted(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-Werror", LogLevel.INFO)
-            }
-        }
-    }
-
-    @GradleAndroidTest
-    fun `androidLibrary jvmTarget is honored`(
-        gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
-    ) {
-        project(
-            "empty",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
-            buildJdk = jdkVersion.location,
-        ) {
-            plugins {
-                kotlin("multiplatform")
-                id("com.android.kotlin.multiplatform.library")
-            }
-            buildScriptInjection {
-                kotlinMultiplatform.apply {
-                    androidLibrary {
-                        compileSdk = 34
-                        namespace = "org.jetbrains.sample.options"
-                        compilerOptions {
-                            jvmTarget.set(JvmTarget.JVM_1_8)
-                        }
-                    }
-                    iosArm64()
-
-                    sourceSets.getByName("androidMain").compileSource(
-                        """
-                        package sample
-                        class JvmTargetProbe { fun ok() = 42 }
-                        """.trimIndent()
-                    )
-                }
-            }
-            build(":compileAndroidMain") {
-                assertTasksExecuted(":compileAndroidMain")
-                assertCompilerArgument(":compileAndroidMain", "-jvm-target 1.8", LogLevel.INFO)
+                assertNoCompilerArgument(":compileAndroidMain", "-Werror", LogLevel.INFO)
             }
         }
     }
