@@ -21,7 +21,6 @@ dependencies {
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-platform-interface"))
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(project(":native:native.config"))

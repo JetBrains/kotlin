@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":compiler:backend"))
     implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(libs.caffeine)
 
     testFixturesApi(platform(libs.junit.bom))
@@ -28,6 +27,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-native"))

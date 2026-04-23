@@ -12,7 +12,6 @@ dependencies {
     testFixturesImplementation(libs.junit.jupiter.api)
 
     testFixturesImplementation(kotlinTest("junit"))
-    testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":compiler:psi:psi-api"))
     testFixturesImplementation(project(":analysis:kt-references"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
