@@ -11,18 +11,27 @@ import com.microsoft.playwright.Playwright
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.tasks.testing.TestExecuter
+import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.internal.testing.PlaywrightTestExecutor
+import org.jetbrains.kotlin.gradle.internal.testing.PwExecutionSpec
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
+import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.dir
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
@@ -157,58 +166,47 @@ internal constructor(
         return testFramework
     }
 
-    override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
-        val launchOpts = objects.processLaunchOptions {
-            workingDir.set(this@KotlinJsTest.testFramework!!.workingDir)
-            executable.set(this@KotlinJsTest.testFramework!!.executable)
-            environment.putAll(this@KotlinJsTest.environment)
-        }
+    override fun createTestExecutionSpec(): TestExecutionSpec {
+        if (playwright) {
+            val clientSettings = TCServiceMessagesClientSettings(
+                name,
+                testNameSuffix = targetName,
+                prependSuiteName = true,
+                stackTraceParser = ::parseNodeJsStackTraceAsJvm,
+                ignoreOutOfRootNodes = true,
+            )
 
-        return testFramework!!.createTestExecutionSpec(
-            task = this,
-            launchOpts = launchOpts,
-            nodeJsArgs = nodeJsArgs,
-            debug = debug
-        )
-    }
-
-    var playwright = false
-
-    @TaskAction
-    override fun executeTests() {
-        if (!playwright) {
-            super.executeTests()
+            return PwExecutionSpec(
+                createClient = { processor, logger -> TCServiceMessagesClient(processor, clientSettings, logger) },
+                url = compilation.npmProject.dir.get().asFile.resolve("dist/test.html").toURI().toString()
+            )
         } else {
-            playwright()
-        }
-    }
-
-    private fun playwright() {
-        // https://docs.gradle.org/current/userguide/test_reporting_api.html
-        // https://playwright.dev/java/docs/evaluating
-
-        Playwright.create().use { playwright ->
-
-            val browser: Browser = playwright.chromium().launch()
-            val page: Page = browser.newPage()
-
-            page.exposeFunction("testStarted") { }
-            page.exposeFunction("testFailed") { args ->
-                args.first() == "expect actual fail"
-            }
-            page.exposeFunction("testFailed_cause_expectActual") { args ->
-
+            val launchOpts = objects.processLaunchOptions {
+                workingDir.set(this@KotlinJsTest.testFramework!!.workingDir)
+                executable.set(this@KotlinJsTest.testFramework!!.executable)
+                environment.putAll(this@KotlinJsTest.environment)
             }
 
-            page.onConsoleMessage { msg ->
-                println(msg.text())
-            }
-
-            page.setContent(
-                """
-                
-            """.trimIndent()
+            return testFramework!!.createTestExecutionSpec(
+                task = this,
+                launchOpts = launchOpts,
+                nodeJsArgs = nodeJsArgs,
+                debug = debug
             )
         }
+    }
+
+    private var playwright = false
+
+    override fun createTestExecuter(): TestExecuter<*> {
+        if (playwright) {
+            return PlaywrightTestExecutor()
+        } else {
+            return super.createTestExecuter()
+        }
+    }
+
+    fun usePlaywright() {
+        playwright = true
     }
 }
