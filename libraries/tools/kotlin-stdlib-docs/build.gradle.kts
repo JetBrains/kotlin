@@ -7,7 +7,7 @@ val isTeamcityBuild = project.hasProperty("teamcity.version") || System.getenv("
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
-val kotlin_libs by extra("${layout.buildDirectory}/libs")
+val kotlin_libs by extra(layout.buildDirectory.dir("libs").get().asFile.path)
 
 val rootProperties = java.util.Properties().apply {
     file(kotlin_root).resolve("gradle.properties").inputStream().use { stream -> load(stream) }
@@ -29,7 +29,7 @@ println("    artifacts version: $artifactsVersion")
 println("    artifacts repo: $artifactsRepo")
 
 
-val outputDir = file(findProperty("docsBuildDir") as String? ?: "${layout.buildDirectory}/doc")
+val outputDir = (findProperty("docsBuildDir") as String?)?.let{ file(it) } ?: layout.buildDirectory.dir("doc").get().asFile
 val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")
 val outputDirPartial = outputDir.resolve("partial")
 val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
@@ -47,6 +47,17 @@ val prepare by tasks.registering {
     dependsOn(":kotlin_big:extractLibs")
 }
 
+version = (findProperty("version") as String?).takeIf { it != "unspecified"}  ?: kotlinLanguageVersion
+val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
+
+
+(getTasksByName("dokkaGenerateHtml", true) + getTasksByName("dokkaGenerate", true) + getTasksByName(
+    "dokkaGenerateModuleHtml",
+    true
+)).forEach {
+    it.dependsOn(prepare)
+}
+
 (getTasksByName("dokkaGenerateHtml", false) + getTasksByName("dokkaGenerate", false)).forEach {
     it.dependsOn(prepare)
 }
@@ -56,4 +67,30 @@ dependencies {
     dokka(project(":kotlin-test"))
     dokka(project(":kotlin-reflect"))
 }
-version = (findProperty("version") as String?).takeIf { it != "unspecified"}  ?: kotlinLanguageVersion
+
+ dokka {
+     val moduleDirName = "all-libs"
+     pluginsConfiguration {
+         versioning {
+             version.set(kotlinLanguageVersion)
+             if (isLatest) {
+                 olderVersionsDir.set(inputDirPrevious.resolve(moduleDirName))
+             }
+         }
+         if (isLatest) {
+             register<VersionFilterPluginParameters>("VersionFilterPlugin") {
+                 targetVersion = kotlinLanguageVersion
+             }
+         }
+     }
+
+     dokkaPublications.html {
+         if (isLatest) {
+             outputDirectory.set(outputDir.resolve("latest").resolve(moduleDirName))
+         } else {
+             outputDirectory.set(
+                 outputDir.resolve("latest").resolve(moduleDirName).resolve(kotlinLanguageVersion)
+             )
+         }
+     }
+ }

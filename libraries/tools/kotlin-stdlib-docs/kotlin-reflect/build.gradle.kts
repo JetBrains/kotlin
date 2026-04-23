@@ -13,7 +13,7 @@ plugins {
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
 val kotlin_libs: String by project
 
-val outputDir = file(findProperty("docsBuildDir") as String? ?: "${layout.buildDirectory}/doc")
+val outputDir = (findProperty("docsBuildDir") as String?)?.let{ file(it) } ?: layout.buildDirectory.dir("doc").get().asFile
 val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")
 val outputDirPartial = outputDir.resolve("partial")
 val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
@@ -28,26 +28,28 @@ dokka {
 
     val kotlinLanguageVersion = version as String
 
+    val moduleDirName = "kotlin-reflect"
+
     pluginsConfiguration {
         versioning {
             version.set(kotlinLanguageVersion)
             if (isLatest) {
-                olderVersionsDir.set(projectDir.resolve("dokka-docs"))
+                olderVersionsDir.set(inputDirPrevious.resolve(moduleDirName))
             }
         }
-
-        register<VersionFilterPluginParameters>("VersionFilterPlugin") {
-            targetVersion = kotlinLanguageVersion
+        if (isLatest) {
+            register<VersionFilterPluginParameters>("VersionFilterPlugin") {
+                targetVersion = kotlinLanguageVersion
+            }
         }
     }
 
     dokkaPublications.html {
-        val moduleDirName = "kotlin-reflect"
         if (isLatest) {
-            outputDirectory.set(file("$outputDirPartial/latest").resolve(moduleDirName))
+            outputDirectory.set(outputDirPartial.resolve("latest").resolve(moduleDirName))
         } else {
             outputDirectory.set(
-                file("$outputDirPartial/previous").resolve(moduleDirName).resolve(kotlinLanguageVersion)
+                outputDirPartial.resolve("previous").resolve(moduleDirName).resolve(kotlinLanguageVersion)
             )
         }
     }
