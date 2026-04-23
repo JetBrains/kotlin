@@ -151,6 +151,7 @@
 /compiler/ir/ir.inline/ "Kotlin Common Backend"
 /compiler/ir/ir.validation/ "Kotlin Common Backend"
 /compiler/javac-wrapper/ "Kotlin Frontend"
+/compiler/java-direct/ "Kotlin Frontend"
 /compiler/jklib.tests/ "JKlib"
 /compiler/light-classes/ "Kotlin Analysis API"
 /compiler/plugin-api/ "Kotlin Frontend"
