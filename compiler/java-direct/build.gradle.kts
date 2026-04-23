@@ -1,0 +1,78 @@
+
+description = "Kotlin Java Direct Compiler Plugin"
+
+plugins {
+    kotlin("jvm")
+    id("test-inputs-check")
+    id("java-test-fixtures")
+    id("project-tests-convention")
+}
+
+repositories {
+    mavenCentral()
+    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
+}
+
+dependencies {
+    api(project(":compiler:frontend.java"))
+    api(project(":core:compiler.common.jvm"))
+
+    compileOnly(intellijCore())
+    implementation(libs.org.jetbrains.syntax.api)
+    implementation(libs.org.jetbrains.java.syntax.jvm)
+    implementation(project(":compiler:plugin-api"))
+    implementation(project(":compiler:cli"))
+
+    embedded(libs.org.jetbrains.syntax.api) { isTransitive = false }
+    embedded(libs.org.jetbrains.java.syntax.jvm) { isTransitive = false }
+
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+}
+
+sourceSets {
+    "main" { projectDefault() }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
+}
+
+optInToExperimentalCompilerApi()
+
+publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()
+
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_11_0,
+            JdkMajorVersion.JDK_17_0,
+            JdkMajorVersion.JDK_21_0
+        )
+    ) {
+        useJUnitPlatform()
+        workingDir = rootDir
+    }
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withMockJdkAnnotationsJar()
+    withTestJar()
+    withScriptingPlugin()
+    withMockJdkRuntime()
+    withStdlibCommon()
+    withAnnotations()
+    withThirdPartyAnnotations()
+    withThirdPartyJava8Annotations()
+    withThirdPartyJsr305()
+}
