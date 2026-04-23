@@ -113,7 +113,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .maybeCreateResolvable(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .defaultDependencies {
                 @Suppress("DEPRECATION")
-                if (project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get() || project.kotlinPropertiesProvider.runKotlinJsCompilerViaBuildToolsApi.get()) {
+                if (project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()
+                    || project.kotlinPropertiesProvider.runKotlinJsCompilerViaBuildToolsApi.get()
+                    || project.kotlinPropertiesProvider.runKotlinWasmCompilerViaBuildToolsApi.get()
+                ) {
                     it.add(
                         project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
                     )

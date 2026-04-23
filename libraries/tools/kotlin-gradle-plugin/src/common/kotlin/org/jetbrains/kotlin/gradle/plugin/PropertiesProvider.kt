@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_PER_MODULE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
@@ -447,6 +448,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val runKotlinJsCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
+    val runKotlinWasmCompilerViaBuildToolsApi: Provider<Boolean>
+        get() = booleanProvider(KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
+
     val generateCompilerRefIndex: Provider<Boolean>
         get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(false)
 
@@ -752,6 +756,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
         val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.compiler.runViaBuildToolsApi")
         val KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.js.compiler.runViaBuildToolsApi")
+        val KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.wasm.compiler.runViaBuildToolsApi")
         val KOTLIN_GENERATE_COMPILER_REF_INDEX = property("kotlin.compiler.generateCompilerRefIndex")
         val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = property("kotlin.mpp.allow.legacy.dependencies")
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")

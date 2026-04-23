@@ -30,9 +30,14 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompil
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain.Companion.wasm
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -88,6 +93,80 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         BuildMetricsReporterImpl()
     } else {
         DoNothingBuildMetricsReporter
+    }
+
+    @OptIn(ExperimentalCompilerArgument::class)
+    private fun performWasmCompilation(
+        executionStrategy: KotlinCompilerExecutionStrategy,
+        log: KotlinLogger,
+        compilerMessageRenderer: ProblemsApiCompilerMessageRenderer,
+    ): CompilationResult {
+        try {
+            val buildSession = obtainBuildSession()
+            val kotlinToolchains = buildSession.kotlinToolchains
+            val args = parseCommandLineArguments<KotlinWasmCompilerArguments>(workArguments.compilerArgs.toList())
+            val sources = args.freeArgs.mapNotNull {
+                try {
+                    Paths.get(it)
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            val destination = Path(requireNotNull(args.outputDir))
+
+            val wasmCompilationOperationBuilder: BaseCompilationOperation.Builder = args.includes?.let { includes ->
+                kotlinToolchains.wasm.wasmLinkingOperationBuilder(Path(includes), destination)
+            } ?: kotlinToolchains.wasm.wasmKlibCompilationOperationBuilder(sources, destination)
+
+            val compilationOperation =
+                wasmCompilationOperationBuilder.also { compilationOperationBuilder: BaseCompilationOperation.Builder ->
+                    when (compilationOperationBuilder) {
+                        is WasmKlibCompilationOperation.Builder -> {
+                            compilationOperationBuilder.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
+                        }
+                        is WasmLinkingOperation.Builder -> {
+                            compilationOperationBuilder.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
+                        }
+                    }
+                    setupBaseCompilationSettings(compilationOperationBuilder, compilerMessageRenderer)
+                    if (compilationOperationBuilder is WasmKlibCompilationOperation.Builder) {
+                        compilationOperationBuilder[WasmKlibCompilationOperation.INCREMENTAL_COMPILATION] =
+                            workArguments.incrementalCompilationEnvironment?.let { icEnv ->
+                                compilationOperationBuilder.historyBasedIcConfigurationBuilder(
+                                    icEnv.rootProjectDir.toPath(),
+                                    icEnv.workingDir.toPath(),
+                                    icEnv.changedFiles,
+                                    workArguments.incrementalModuleInfo?.let {
+                                        it.dirToModule.map { (dir, module) ->
+                                            IncrementalModule(
+                                                module.name,
+                                                dir.toPath(),
+                                                module.buildDir.toPath(),
+                                                module.buildHistoryFile.parentFile.toPath()
+                                            )
+                                        }
+                                    } ?: emptyList()
+                                ).apply {
+                                    setupBaseIcOptions(icEnv)
+                                    this[WasmHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] =
+                                        workArguments.incrementalModuleInfo?.rootProjectBuildDir?.toPath()
+                                    this[WasmHistoryBasedIncrementalCompilationConfiguration.HISTORY_FILE_DIR] =
+                                        icEnv.multiModuleICSettings.buildHistoryFile.parentFile.toPath()
+                                }.build()
+                            }
+                    }
+                }.let {
+                    when (it) {
+                        is WasmKlibCompilationOperation.Builder -> it.build()
+                        is WasmLinkingOperation.Builder -> it.build()
+                        else -> error("Unexpected compilation operation type: $it")
+                    }
+                } as BaseCompilationOperation
+
+            return runCompilationOperation(executionStrategy, kotlinToolchains, log, buildSession, compilationOperation)
+        } catch (e: Throwable) {
+            wrapAndRethrowCompilationException(executionStrategy, e)
+        }
     }
 
     @OptIn(ExperimentalCompilerArgument::class)
@@ -209,6 +288,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         return when (workArguments.compilerClassName) {
             KotlinCompilerClass.JS -> performJsCompilation(executionStrategy, log, compilerMessageRenderer)
             KotlinCompilerClass.JVM -> performJvmCompilation(executionStrategy, log, compilerMessageRenderer)
+            KotlinCompilerClass.WASM -> performWasmCompilation(executionStrategy, log, compilerMessageRenderer)
             else -> throw IllegalStateException("Unknown compiler class name: ${workArguments.compilerClassName}")
         }
     }
