@@ -220,7 +220,11 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 )
                 classKind = ClassKind.OBJECT
                 symbol = firReplStateSymbol
-                superTypeRefs += hashMapClassSymbol.defaultType().toFirResolvedTypeRef(null)
+                val nullableAnyType = session.builtinTypes.nullableAnyType.coneType
+                superTypeRefs += hashMapClassSymbol.constructType(
+                    Array(hashMapClassSymbol.typeParameterSymbols.size) { nullableAnyType },
+                    isMarkedNullable = false
+                ).toFirResolvedTypeRef(null)
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 scopeProvider = session.kotlinScopeProvider
                 declarations += constructor
