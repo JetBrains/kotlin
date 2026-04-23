@@ -13,7 +13,8 @@ extension ExportedKotlinPackages.flattened {
             try Task.checkCancellation()
             var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
             return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { nativeContinuation in
+                try Task.checkCancellation()
+                return try await withUnsafeThrowingContinuation { nativeContinuation in
                     withUnsafeCurrentTask { currentTask in
                         let continuation: (Swift.Int32) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
                         let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
