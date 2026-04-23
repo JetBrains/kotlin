@@ -106,8 +106,11 @@ fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, 
     val createFromParcel = creator.type.getClass()!!.functions.first { function ->
         function.name == CREATE_FROM_PARCEL_NAME && function.overridesFunctionIn(CREATOR_FQN)
     }
-
-    return irCall(createFromParcel).apply {
+    // Substitute the return type T with the concrete type argument from the creator's type to avoid
+    // out-of-scope type parameter references in the generated IR (KT-69305).
+    val returnType = (creator.type as? IrSimpleType)?.arguments?.firstOrNull()?.typeOrNull
+        ?: createFromParcel.returnType
+    return irCall(createFromParcel.symbol, returnType).apply {
         arguments[0] = creator
         arguments[1] = parcel
     }
