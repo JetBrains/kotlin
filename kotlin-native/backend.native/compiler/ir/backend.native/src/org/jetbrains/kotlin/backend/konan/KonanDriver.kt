@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryNam
 import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.backend.konan.driver.NativeCompilerDriver
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.prohibitExportKlibToOlderAbiVersionAtSecondStage
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.zipFileSystemAccessor
@@ -67,7 +68,7 @@ class KonanDriver(
 
         if (isCompilingFromBitcode && hasSourceRoots) {
             configuration.report(
-                    CompilerMessageSeverity.WARNING,
+                    CliDiagnostics.KONAN_ARGUMENT_WARNING,
                     "Source files will be ignored by the compiler when compiling from bitcode"
             )
         }
@@ -121,13 +122,13 @@ class KonanDriver(
         if (!hasCompilerInput) return
 
         if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                     "Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.")
         }
 
         // Avoid showing warning twice in 2-phase compilation.
         if (config.produce != CompilerOutputKind.LIBRARY && config.target in softDeprecatedTargets) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                     "target ${config.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
         }
 

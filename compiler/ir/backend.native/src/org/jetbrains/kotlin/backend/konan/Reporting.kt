@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
@@ -30,9 +28,6 @@ fun ErrorReportingContext.reportCompilationError(message: String): Nothing {
     report(CompilerMessageSeverity.ERROR, null, null, message)
     throw KonanCompilationException()
 }
-
-fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String) =
-    this.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
 
 fun error(irFile: IrFile?, element: IrElement?, message: String): Nothing {
     error(renderCompilerError(irFile, element, message))
