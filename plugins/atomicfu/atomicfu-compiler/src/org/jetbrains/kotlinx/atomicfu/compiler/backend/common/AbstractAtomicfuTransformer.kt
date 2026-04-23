@@ -509,6 +509,7 @@ abstract class AbstractAtomicfuTransformer(
             }
 
             return irCall(transformedAtomicExtension.symbol).apply {
+                type = originalCall.type
                 arguments.assignFrom(transformedArguments)
                 typeArguments.assignFrom(callTypeArguments)
             }
