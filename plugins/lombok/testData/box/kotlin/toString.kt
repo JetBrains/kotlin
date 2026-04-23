@@ -41,6 +41,21 @@ class WithNonConflictingExtensionFunction(val a: Int) {
 }
 
 @ToString
+data class DataClassDefault(val name: String, val age: Int)
+
+@ToString(includeFieldNames = false)
+data class DataClassNoFieldNames(val x: Int, val y: Int)
+
+@ToString
+object EmptyObject
+
+@ToString
+object ObjectWithProperties {
+    val version = "2.0"
+    val label = "release"
+}
+
+@ToString
 class WithNonConflictingContextualFunction(val b: String) {
     context(p: WithNonConflictingContextualFunction)
     fun toString(): String = "Contex"
@@ -88,6 +103,12 @@ fun box(): String {
     assertEquals("WithImplicitReturnTypeProperty(implicitReturnTypeProp=implicit return type)", WithImplicitReturnTypeProperty().toString())
     assertEquals("WithNonConflictingExtensionFunction(a=6)", WithNonConflictingExtensionFunction(6).toString())
     assertEquals("WithNonConflictingContextualFunction(b=str)", WithNonConflictingContextualFunction("str").toString())
+
+    assertEquals("DataClassDefault(name=Alice, age=30)", DataClassDefault("Alice", 30).toString())
+    assertEquals("DataClassNoFieldNames(1, 2)", DataClassNoFieldNames(1, 2).toString())
+
+    assertEquals("EmptyObject()", EmptyObject.toString())
+    assertEquals("ObjectWithProperties(version=2.0, label=release)", ObjectWithProperties.toString())
 
     @ToString()
     class LocalClass(val prop: String)
