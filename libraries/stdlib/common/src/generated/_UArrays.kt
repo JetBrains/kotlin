@@ -6138,6 +6138,9 @@ public fun UShortArray.allEqual(): Boolean {
  * and the array is considered all-equal-by if the [selector] value of the first
  * element equals the [selector] value of every subsequent element.
  * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
  * @sample samples.generated.allequal.AllEqualUIntArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
@@ -6160,6 +6163,9 @@ public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
  * element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
  * 
  * @sample samples.generated.allequal.AllEqualULongArraySamples.allEqualBy
  */
@@ -6184,6 +6190,9 @@ public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
  * and the array is considered all-equal-by if the [selector] value of the first
  * element equals the [selector] value of every subsequent element.
  * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
  * @sample samples.generated.allequal.AllEqualUByteArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
@@ -6206,6 +6215,9 @@ public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
  * element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
  * 
  * @sample samples.generated.allequal.AllEqualUShortArraySamples.allEqualBy
  */
