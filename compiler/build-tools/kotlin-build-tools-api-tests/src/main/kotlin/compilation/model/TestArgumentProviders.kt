@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Named
@@ -61,6 +62,13 @@ class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : Argument
                         ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                             baseTest.jsProject(executionStrategyConfiguration.payload, testAction)
                         }
+                    } else null,
+                    if (executionStrategyConfiguration.payload.first.supportsWasm()) {
+                        named(
+                            "${executionStrategyConfiguration.name}[Wasm]"
+                        ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                            baseTest.wasmProject(executionStrategyConfiguration.payload, testAction)
+                        }
                     } else null)
             }
         }
@@ -99,18 +107,26 @@ class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsP
                             "${executionStrategyConfiguration.name}[JVM]"
                         ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                             baseTest.jvmProject(executionStrategyConfiguration.payload, testAction)
-                        }, if (executionStrategyConfiguration.payload.first.supportsJs()) {
+                        },
+                        if (executionStrategyConfiguration.payload.first.supportsJs()) {
                             named(
                                 "${executionStrategyConfiguration.name}[JS]"
                             ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                                 baseTest.jsProject(executionStrategyConfiguration.payload, testAction)
                             }
-                        } else null)
+                        } else null,
+                        if (executionStrategyConfiguration.payload.first.supportsWasm()) {
+                            named(
+                                "${executionStrategyConfiguration.name}[Wasm]"
+                            ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                baseTest.wasmProject(executionStrategyConfiguration.payload, testAction)
+                            }
+                        } else null,
+                    )
                 }
         }
     }
 }
-
 
 class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
@@ -132,7 +148,15 @@ class DefaultStrategyAndPlatformAgnosticScenarioTestArgumentProvider : Arguments
                             ) { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
                                 baseTest.jsScenario(executionStrategyConfiguration.payload, testAction)
                             }
-                        } else null)
+                        } else null,
+                        if (executionStrategyConfiguration.payload.first.supportsWasm()) {
+                            named(
+                                "${executionStrategyConfiguration.name}[Wasm]"
+                            ) { baseTest: BaseCompilationTest, testAction: ScenarioAction ->
+                                baseTest.wasmScenario(executionStrategyConfiguration.payload, testAction)
+                            }
+                        } else null
+                    )
                 }
         }
     }
@@ -182,3 +206,4 @@ typealias ScenarioCreator = BaseCompilationTest.(ScenarioAction) -> Unit
 typealias ScenarioAction = Scenario<out BaseCompilationOperation.Builder, out BaseIncrementalCompilationConfiguration.Builder>.() -> Unit
 
 fun KotlinToolchains.supportsJs() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
+fun KotlinToolchains.supportsWasm() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
