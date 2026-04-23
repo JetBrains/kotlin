@@ -1,3 +1,55 @@
+## 2.3.21
+
+### Backend. Wasm
+
+- [`KT-84610`](https://youtrack.jetbrains.com/issue/KT-84610) [Wasm] Failed to compile klibs in IC mode
+
+### Compiler
+
+- [`KT-84566`](https://youtrack.jetbrains.com/issue/KT-84566) Prevent launching Default dispatcher threads from IJ SDK in kotlin compiler
+- [`KT-85358`](https://youtrack.jetbrains.com/issue/KT-85358) Native: roll back the workaround for KT-84678 once MapLibre has been properly fixed
+- [`KT-85626`](https://youtrack.jetbrains.com/issue/KT-85626)  `@JvmRecord` in commonMain breaks compileCommonMainKotlinMetadata with "Cannot access 'java.lang.Record'"
+- [`KT-85405`](https://youtrack.jetbrains.com/issue/KT-85405) Postpone/Revert `DontIgnoreUpperBoundViolatedOnImplicitArguments`
+- [`KT-84678`](https://youtrack.jetbrains.com/issue/KT-84678) K/N: Undefined symbol from SPM-added ObjC frameworks when linking iOS target
+- [`KT-85021`](https://youtrack.jetbrains.com/issue/KT-85021) False positive SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC error in multi-module project
+
+### JavaScript
+
+- [`KT-82395`](https://youtrack.jetbrains.com/issue/KT-82395) Support top-level declarations from compiler plugins in JS incremental compilation
+- [`KT-84475`](https://youtrack.jetbrains.com/issue/KT-84475) K/JS: false-positive exportability warnings in multi-module project
+- [`KT-84633`](https://youtrack.jetbrains.com/issue/KT-84633) Kotlin/JS: "Serializer for class not found" error when IR output granularity is `whole-program`
+- [`KT-85047`](https://youtrack.jetbrains.com/issue/KT-85047) Kotlin/JS: `@JsStatic` on suspend fun of class companion generates incorrect d.ts
+- [`KT-84517`](https://youtrack.jetbrains.com/issue/KT-84517) K/JS: bad mappings data in outputted Kotlin stdlib source map
+
+### Libraries
+
+- [`KT-71848`](https://youtrack.jetbrains.com/issue/KT-71848) Kotlinx.metadata: Add `CompilerPluginData` into Km API
+
+### Native. C and ObjC Import
+
+- [`KT-85399`](https://youtrack.jetbrains.com/issue/KT-85399) Kotlin/Native: TypeCastException when casting ObjC Protocol MetaClass with genericSafeCasts enabled
+- [`KT-85508`](https://youtrack.jetbrains.com/issue/KT-85508) K/N: TypeCastException when using nw_parameters_create_secure_tcp block parameter on 2.3.20
+
+### Tools. Gradle
+
+- [`KT-84729`](https://youtrack.jetbrains.com/issue/KT-84729) Update Gradle plugin-publish version to enable configuration cache badge on Gradle plugins portal
+
+### Tools. Gradle. Compiler plugins
+
+- [`KT-85257`](https://youtrack.jetbrains.com/issue/KT-85257) AGP/Compose: MergeMappingFileTask clears R8 artifacts due to `@OutputDirectory` annotation on AGP 9.1+
+
+### Tools. Scripts
+
+- [`KT-85105`](https://youtrack.jetbrains.com/issue/KT-85105) Scripts: JVM backend internal error (IR lowering) when scratch file contains anonymous object
+- [`KT-85103`](https://youtrack.jetbrains.com/issue/KT-85103) Exception while generating code when explain destructuring decls
+- [`KT-84842`](https://youtrack.jetbrains.com/issue/KT-84842) scriptCompilationClasspathFromContext behavior changed from 2.3.10 to 2.3.20
+- [`KT-85029`](https://youtrack.jetbrains.com/issue/KT-85029) Kotlin Scripting: ScriptDiagnostic reports "at null" instead of error location
+
+### Tools. Statistics (FUS)
+
+- [`KT-85628`](https://youtrack.jetbrains.com/issue/KT-85628) KGP: composite build FUS metrics fail on access of 'configurationTimeMetrics'
+
+
 ## 2.3.20
 
 ### Analysis API. FIR
