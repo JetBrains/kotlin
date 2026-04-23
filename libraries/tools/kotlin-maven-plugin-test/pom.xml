@@ -184,6 +184,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <parallel>classes</parallel>
                     <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
                     <systemPropertyVariables>
                         <!-- Properties required for integration tests run -->
