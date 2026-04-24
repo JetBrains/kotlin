@@ -674,6 +674,7 @@ enum class LanguageFeature(
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
     FullValueClasses(sinceVersion = null, "KT-84904"),
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188"),
+    JavaDirect(sinceVersion = null, "KT-70023"),
     ;
 
     constructor(
