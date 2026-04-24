@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 
@@ -60,7 +61,7 @@ abstract class AndroidSdkProvisionerExtension {
         val sdkProvider = project.provider { sdkConfiguration.singleFile }
         when (provisioningType.type) {
             ProvisionedFileType.FILE -> inputs.file(sdkProvider)
-            ProvisionedFileType.DIRECTORY -> inputs.dir(sdkProvider)
+            ProvisionedFileType.DIRECTORY -> inputs.dir(sdkProvider).withPathSensitivity(PathSensitivity.RELATIVE)
         }
         return sdkProvider.map { it.canonicalPath }
     }
