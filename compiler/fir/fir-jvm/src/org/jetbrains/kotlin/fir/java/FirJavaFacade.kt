@@ -194,6 +194,8 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 }
 
                 if (classKind == ClassKind.CLASS && !javaClass.isAbstract) {
+                    // Java permits `sealed non-abstract class`; Kotlin needs the flag to relax its
+                    // "sealed ⇒ abstract" expectation when consuming such classes at use sites.
                     isJavaNonAbstractSealed = true
                 }
             }
@@ -336,6 +338,8 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
             // check in FirPropertyAccessorImpl that requires a source element for Source origin. Library
             // origin still creates a proper getter (not a Java backing field) which EnumExternalEntriesLowering
             // can intercept to generate the correct intrinsic mapping.
+            // Note: the values()/valueOf() branch above does not need the same guard — those are plain
+            // functions, so they do not trigger FirPropertyAccessorImpl's source-element validation.
             val enumEntriesOrigin = when {
                 firJavaClass.origin.fromSource && classSource != null -> FirDeclarationOrigin.Source
                 else -> FirDeclarationOrigin.Library

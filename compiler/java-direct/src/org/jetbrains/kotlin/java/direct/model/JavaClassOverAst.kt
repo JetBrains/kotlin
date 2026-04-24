@@ -83,6 +83,8 @@ class JavaClassOverAst(
         get() = hasModifier(JavaSyntaxTokenType.ABSTRACT_KEYWORD) || isInterface ||
                 ((isAnnotationType || isEnum) && methods.any { it.isAbstract })
 
+    // Nested interfaces/enums are implicitly static (JLS 8.5.1); any member type of an interface
+    // is implicitly static (JLS 9.5). Everything else requires an explicit `static` modifier.
     override val isStatic: Boolean
         get() = hasModifier(JavaSyntaxTokenType.STATIC_KEYWORD) || (outerClass != null && (isInterface || isEnum)) || (outerClass?.isInterface == true)
 

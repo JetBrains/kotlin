@@ -19,6 +19,10 @@ import kotlin.experimental.inv
 /**
  * Evaluates constant expressions in Java field initializers.
  *
+ * Companion evaluator: `evaluateConstantExpression` in `JavaAnnotationOverAst.kt` implements the
+ * same JLS 9.6.1 subset for annotation arguments. The two coexist because annotation-argument
+ * evaluation runs before the class scope is available and therefore cannot reference fields.
+ *
  * @param containingClass the class containing the field being evaluated
  * @param resolveExternalReference optional callback to resolve references to external classes (e.g., Kotlin classes)
  */

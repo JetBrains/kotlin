@@ -38,17 +38,10 @@ internal object JavaImportResolver {
     }
 
     /**
-     * Extracts all import declarations from a compilation unit root node.
-     *
-     * Returns a pair of:
-     * - Simple (single-type) imports: map from simple name to fully qualified name
-     * - Star (on-demand) imports: list of package FqNames
-     *
-     * Handles four import patterns:
-     * 1. Normal imports (`import pkg.Class`)
-     * 2. Static imports (`import static pkg.Class.MEMBER`)
-     * 3. Error-element imports (parser recovery for reserved-word packages like `kotlin`)
-     * 4. Fragmented imports (parser splits import across sibling nodes)
+     * Extracts all import declarations from a compilation unit root. Returns
+     * `(simpleName -> FqName, list of star-imported package FqNames)`. Dispatches to per-shape
+     * helpers below to cover the well-formed case plus two parser-recovery shapes
+     * (ERROR_ELEMENT inside / outside IMPORT_LIST).
      */
     fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> {
         val simpleImports = mutableMapOf<String, FqName>()
@@ -73,9 +66,6 @@ internal object JavaImportResolver {
         return simpleImports to starImports
     }
 
-    /**
-     * Pattern 1: well-formed `import pkg.Class;` / `import pkg.*;` statements.
-     */
     private fun extractNormalImports(
         tree: JavaLightTree,
         importList: JavaLightNode,
@@ -98,11 +88,7 @@ internal object JavaImportResolver {
         }
     }
 
-    /**
-     * Pattern 2: `import static pkg.Class.MEMBER;` / `import static pkg.Class.*;`.
-     *
-     * The KMP parser uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child.
-     */
+    /** Uses IMPORT_STATIC_STATEMENT with IMPORT_STATIC_REFERENCE child in the KMP parser. */
     private fun extractStaticImports(
         tree: JavaLightTree,
         importList: JavaLightNode,
@@ -124,9 +110,8 @@ internal object JavaImportResolver {
     }
 
     /**
-     * Pattern 3: ERROR_ELEMENT inside IMPORT_LIST. The parser emits these when the import
-     * starts with a reserved word (e.g. `import kotlin.X;`) — the overall IMPORT_LIST is
-     * intact but one entry became an ERROR_ELEMENT with recoverable IDENTIFIER/DOT children.
+     * Recovers imports emitted as ERROR_ELEMENT inside IMPORT_LIST — happens when the import
+     * starts with a reserved word (e.g. `import kotlin.X;`); IDENTIFIER/DOT children survive.
      */
     private fun extractErrorElementImports(
         tree: JavaLightTree,
@@ -158,13 +143,9 @@ internal object JavaImportResolver {
     }
 
     /**
-     * Pattern 4: fragmented imports — the parser has split the import across sibling nodes
-     * at the compilation-unit root.
-     *
-     * Shape 1: `ERROR_ELEMENT(IMPORT_KEYWORD)` followed by `TYPE(JAVA_CODE_REFERENCE)` — simple import.
-     * Shape 2: `ERROR_ELEMENT(import)` followed by `TYPE(pkg.)` followed by `ERROR_ELEMENT(*;)` — star import.
-     *
-     * The parser may insert MODIFIER_LIST and whitespace between the anchor and the type node.
+     * Recovers imports the parser has split across sibling nodes of the compilation-unit root.
+     * Two shapes: `ERROR_ELEMENT(import) + TYPE(JAVA_CODE_REFERENCE)` (simple), or additionally
+     * followed by `ERROR_ELEMENT(*;)` (star). MODIFIER_LIST / whitespace between nodes are skipped.
      */
     private fun extractFragmentedImports(
         tree: JavaLightTree,
@@ -205,22 +186,12 @@ internal object JavaImportResolver {
         }
     }
 
-    /**
-     * Holder for the two pieces of information recovered from a fragmented import's sibling
-     * scan: the TYPE / JAVA_CODE_REFERENCE node carrying the fully-qualified name, and whether
-     * a trailing `*` (making it a star import) was seen before the next top-level declaration.
-     */
     private data class FragmentedImportTarget(val typeNode: JavaLightNode, val hasStar: Boolean)
 
     /**
-     * Scans the siblings of an `import`-shaped ERROR_ELEMENT at `allChildren[startIdx]` for the
-     * import's target. Skips MODIFIER_LIST and blank ERROR_ELEMENTs that the parser may have
-     * emitted between the anchor and the type reference. Stops at the first TYPE /
-     * JAVA_CODE_REFERENCE (captured) and then scans once more for an optional `*` marker before
-     * the next top-level declaration.
-     *
-     * Returns `null` when no TYPE / JAVA_CODE_REFERENCE is found before a CLASS boundary —
-     * meaning this was not actually a fragmented import but some unrelated parser error.
+     * Starting at the `import`-shaped ERROR_ELEMENT at `allChildren[startIdx]`, finds the TYPE /
+     * JAVA_CODE_REFERENCE sibling carrying the FQN and probes one more step for a trailing `*`.
+     * Returns `null` if a CLASS boundary is hit first (unrelated parser error).
      */
     private fun findTypeNodeAndStar(
         tree: JavaLightTree,

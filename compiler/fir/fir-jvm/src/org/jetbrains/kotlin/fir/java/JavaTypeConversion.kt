@@ -637,39 +637,26 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 }
 
 /**
- * Checks if an annotation class has TYPE_USE in its @Target annotation.
- *
- * This is used to filter type annotations - only annotations with @Target(ElementType.TYPE_USE)
- * should appear on types. This matches the behavior of javac-wrapper's filterTypeAnnotations().
- *
- * @param fqName fully qualified name of the annotation class
- * @param session FIR session for resolving the annotation class
- * @return true if the annotation has TYPE_USE target, false otherwise
+ * Whether the annotation class named by [fqName] carries `@Target(ElementType.TYPE_USE)` (or
+ * Kotlin's `@Target(AnnotationTarget.TYPE)`). Mirrors javac-wrapper's `filterTypeAnnotations()`.
  */
 private fun isTypeUseAnnotationClass(fqName: String, session: FirSession): Boolean {
     val classId = findClassIdByFqNameString(fqName, session) ?: ClassId.topLevel(FqName(fqName))
-
-    // Resolve the annotation class
     val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
 
-    // Verify the symbol's classId matches our request. Some class finders may return
-    // classes from different packages when the requested package doesn't contain the class.
-    // This happens with PSI-based finders that match by simple name alone.
-    if (symbol != null && symbol.classId != classId) {
-        return false
-    }
+    // Reject cross-package matches. PSI-based class finder matches by simple name alone and
+    // happily returns a class from a different package when the requested one does not contain it
+    // (see `KotlinCliJavaFileManagerImpl.findClass` fallback paths) — we must not treat such
+    // results as TYPE_USE just because the simple name coincides.
+    if (symbol != null && symbol.classId != classId) return false
 
     val annotationClass = symbol?.fir as? FirRegularClass ?: return false
-
-    // Find @Target annotation on the annotation class
-    // It could be java.lang.annotation.Target or kotlin.annotation.Target (mapped)
     val targetAnnotation = annotationClass.annotations.find { firAnnotation ->
         val targetClassId = firAnnotation.annotationTypeRef.coneType.classId
         targetClassId == JvmStandardClassIds.Annotations.Java.Target ||
                 targetClassId == StandardClassIds.Annotations.Target
     } ?: return false
 
-    // Check if TYPE_USE is in the target values
     return hasTypeUseTarget(targetAnnotation)
 }
 

@@ -359,7 +359,9 @@ private fun resolveConstFieldValue(session: FirSession, classId: ClassId, fieldN
     val firClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
 
     if (firClass != null) {
-        // Check both the class itself and its companion object
+        // Class member first, companion second, top-level last: a reference like `MainKt.FOO`
+        // resolves `MainKt` as a real class before the Kotlin facade fallback, so a genuine
+        // class/companion member of the same name must win over the top-level property.
         val constField = firClass.declarations.filterIsInstance<FirProperty>().find {
             it.name == fieldName && it.isConst
         } ?: firClass.companionObjectSymbol?.fir?.declarations?.filterIsInstance<FirProperty>()?.find {
@@ -371,7 +373,7 @@ private fun resolveConstFieldValue(session: FirSession, classId: ClassId, fieldN
         }
     }
 
-    // Fallback: try as a top-level Kotlin property via facade class (e.g., MainKt.FOO → top-level const val FOO)
+    // Fallback: top-level Kotlin property exposed via the facade class (e.g., MainKt.FOO → top-level const val FOO)
     val topLevelSymbols = session.symbolProvider.getTopLevelPropertySymbols(classId.packageFqName, fieldName)
     for (symbol in topLevelSymbols) {
         if (symbol.isConst) {
