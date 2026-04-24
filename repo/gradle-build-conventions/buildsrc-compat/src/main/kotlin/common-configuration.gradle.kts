@@ -339,7 +339,6 @@ fun Project.configureTests() {
             ":kotlin-compiler-client-embeddable",
             ":kotlin-compiler-embeddable",
             ":kotlin-daemon-client",
-            ":kotlin-gradle-plugin",
             ":kotlin-gradle-plugin-dsl-codegen",
             ":kotlin-gradle-plugin-idea",
             ":kotlin-gradle-plugin-idea-proto",

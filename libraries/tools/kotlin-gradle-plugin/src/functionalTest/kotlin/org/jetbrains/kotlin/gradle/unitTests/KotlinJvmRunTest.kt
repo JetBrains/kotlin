@@ -167,6 +167,9 @@ class KotlinJvmRunTest {
     @Test
     fun `test - jvmRun task is using kotlin configured toolchain - jvm 11`() = buildProjectWithMPP().runLifecycleAwareTest {
         Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
+        // Toolchain detection uses ForkJoinPool parallel streams which deadlock under SecurityManager (KT-85432)
+        @Suppress("DEPRECATION")
+        Assumptions.assumeTrue(System.getSecurityManager() == null)
         val kotlin = multiplatformExtension
         kotlin.jvmToolchain(11)
         kotlin.jvm()
@@ -177,6 +180,9 @@ class KotlinJvmRunTest {
     @Test
     fun `test - jvmRun task is using kotlin configured toolchain - jvm 17`() = buildProjectWithMPP().runLifecycleAwareTest {
         Assumptions.assumeFalse(HostManager.hostIsMingw, "https://github.com/gradle/native-platform/issues/274")
+        // Toolchain detection uses ForkJoinPool parallel streams which deadlock under SecurityManager (KT-85432)
+        @Suppress("DEPRECATION")
+        Assumptions.assumeTrue(System.getSecurityManager() == null)
         val kotlin = multiplatformExtension
         kotlin.jvmToolchain(17)
         kotlin.jvm()

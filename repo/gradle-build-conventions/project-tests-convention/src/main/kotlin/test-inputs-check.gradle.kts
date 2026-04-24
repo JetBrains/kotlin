@@ -1,8 +1,27 @@
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.process.CommandLineArgumentProvider
 import java.io.IOException
 
 plugins {
     java
+}
+
+abstract class TestInputsCheckArgumentProvider : CommandLineArgumentProvider {
+    @get:Input
+    abstract val enabled: Property<Boolean>
+
+    @get:Internal
+    abstract val policyFile: RegularFileProperty
+
+    override fun asArguments(): Iterable<String> =
+        if (enabled.get()) {
+            listOf(
+                "-Djava.security.policy=${policyFile.get().asFile.absolutePath}",
+                "-Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager",
+            )
+        } else {
+            emptyList()
+        }
 }
 
 dependencies {
@@ -10,6 +29,7 @@ dependencies {
 }
 
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
+val inputsCheckIsSupported = !disableInputsCheck && !OperatingSystem.current().isWindows
 tasks.withType<Test>().configureEach {
     val taskName = this.name
     ignoreFailures = false
@@ -20,8 +40,13 @@ tasks.withType<Test>().configureEach {
             project.providers.of(XcodeToolchainValueSource::class.java) {}
         }
 
+    outputs.doNotCacheIf(
+        "test-inputs-check is disabled or unsupported for the task",
+        TestInputsCheckCacheSpec(inputsCheckIsSupported, testInputsCheck.enabled),
+    )
+
     // Disable checks on windows until we fix KTI-2322
-    if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
+    if (inputsCheckIsSupported) {
         val permissionsTemplateFile = rootProject.file("tests-permissions.template.policy")
         inputs.file(permissionsTemplateFile).withPathSensitivity(PathSensitivity.RELATIVE)
         val policyFileProvider: Provider<RegularFile> = layout.buildDirectory.file("permissions-for-$taskName.policy")
@@ -32,7 +57,6 @@ tasks.withType<Test>().configureEach {
         val javaVersion = provider { tasks.named<Test>(taskName).map { it.javaLauncher.get().metadata.languageVersion.asInt() }.get() }
         val defineJDKEnvVariables: List<Int> = listOf(8, 11, 17, 21)
         inputs.property("javaVersion", javaVersion)
-
         val nativeHome = project.providers.gradleProperty("kotlin.internal.native.test.nativeHome").orElse(
             project.providers.gradleProperty("kn.nativeHome")
         )
@@ -59,6 +83,8 @@ tasks.withType<Test>().configureEach {
         } else null
 
         doFirst {
+            if (!testInputsCheck.enabled.get()) return@doFirst
+
             if (!permissionsTemplateFile.exists()) {
                 throw GradleException("Security policy template file not found at: ${permissionsTemplateFile.absolutePath}")
             }
@@ -78,6 +104,14 @@ tasks.withType<Test>().configureEach {
                 return file.parents().mapNotNull { parent ->
                     """permission java.io.FilePermission "${parent.absolutePath}", "read";""".takeIf { addedDirs.add(parent) }
                 }.toList()
+            }
+
+            val coarseInputDirectories = testInputsCheck.coarseInputDirectories.files.map { it.canonicalFile }
+            val coarseInputDirectoryPaths = coarseInputDirectories.map { it.toPath().toAbsolutePath().normalize() }
+
+            fun File.isInOrUnderCoarseInputDirectory(): Boolean {
+                val path = absoluteFile.toPath().normalize()
+                return coarseInputDirectoryPaths.any { directoryPath -> path == directoryPath || path.startsWith(directoryPath) }
             }
 
             fun getJDKFromToolchain(service: JavaToolchainService, version: Int): String {
@@ -120,57 +154,77 @@ tasks.withType<Test>().configureEach {
                     )
                 }
 
-            val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet()) { file ->
-                if (file.isDirectory) {
-                    addedDirs.add(file)
-                    buildList {
-                        add("""permission java.io.FilePermission "${file.absolutePath}/", "read";""")
-                        if (file.canonicalPath.contains("/testData")) {
-                            // We write to the testData folder from tests...
-                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read,write,delete";""")
-                        } else {
-                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read";""")
-                        }
-                        if (file.canonicalPath.endsWith("dist")) {
-                            add("""permission java.io.FilePermission "${file.resolve("kotlinc").resolve("bin")}/-", "read,execute";""")
-                        }
-                    }
-                } else if (file.extension == "class") {
-                    listOfNotNull(
-                        """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read";""".takeIf {
-                            addedDirs.add(file.parentFile)
-                        }
-                    )
-                } else if (file.extension == "jar") {
-                    listOf(
-                        // JvmCompilationUtils.compileJavaFiles uses embedded javaCompiler if no jdkHome is set, and it opens dependencies
-                        """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
-                        """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
-                        """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
-                    )
-                } else if (file.extension == "klib") {
-                    // KlibLoader.kt creates a ZipFileSystem, and that always require write permission
-                    // (even if you don't modify the file, potentially, you could)
-                    listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
-                    )
-                } else if (file.parentFile.name == "ideaHomeForTests") {
-                    listOf(
-                        """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read,write";""",
-                        """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
-                    )
-                } else {
-                    val parents = parentsReadPermission(file)
-                    listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}", "read";""",
-                    ) + parents
-                }
+            val coarseInputDirectoryPermissions: Set<String> = coarseInputDirectories.flatMapTo(HashSet()) { directory ->
+                addedDirs.add(directory)
+                parentsReadPermission(directory) + listOf(
+                    // Allow the task to check the declared coarse input directory root itself.
+                    """permission java.io.FilePermission "${directory.absolutePath}", "read";""",
+                    // Allow the task to list direct children of the declared coarse input directory.
+                    """permission java.io.FilePermission "${directory.absolutePath}/", "read";""",
+                    // Allow the task to read files under the declared coarse input without enumerating the whole tree.
+                    """permission java.io.FilePermission "${directory.absolutePath}/-", "read";""",
+                )
             }
 
-            val allPermissionsForGradleRoDepCache = System.getenv("GRADLE_RO_DEP_CACHE")?.let {
+            val inputPermissions: Set<String> = inputs.files
+                .filterNot { file -> file.isInOrUnderCoarseInputDirectory() }
+                .flatMapTo(HashSet()) { file ->
+                    if (file.isDirectory) {
+                        addedDirs.add(file)
+                        buildList {
+                            add("""permission java.io.FilePermission "${file.absolutePath}/", "read";""")
+                            if (file.canonicalPath.contains("/testData")) {
+                                // We write to the testData folder from tests...
+                                add("""permission java.io.FilePermission "${file.absolutePath}/-", "read,write,delete";""")
+                            } else {
+                                add("""permission java.io.FilePermission "${file.absolutePath}/-", "read";""")
+                            }
+                            if (file.canonicalPath.endsWith("dist")) {
+                                add("""permission java.io.FilePermission "${file.resolve("kotlinc").resolve("bin")}/-", "read,execute";""")
+                            }
+                        }
+                    } else if (file.extension == "class") {
+                        listOfNotNull(
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read";""".takeIf {
+                                addedDirs.add(file.parentFile)
+                            }
+                        )
+                    } else if (file.extension == "jar") {
+                        listOf(
+                            // JvmCompilationUtils.compileJavaFiles uses embedded javaCompiler if no jdkHome is set, and it opens dependencies
+                            """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
+                            """permission java.io.FilePermission "${file.absolutePath}/-", "read";""",
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
+                        )
+                    } else if (file.extension == "klib") {
+                        // KlibLoader.kt creates a ZipFileSystem, and that always require write permission
+                        // (even if you don't modify the file, potentially, you could)
+                        listOf(
+                            """permission java.io.FilePermission "${file.absolutePath}", "read,write";""",
+                        )
+                    } else if (file.parentFile.name == "ideaHomeForTests") {
+                        listOf(
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read,write";""",
+                            """permission java.io.FilePermission "${file.parentFile.absolutePath}", "read";""",
+                        )
+                    } else {
+                        val parents = parentsReadPermission(file)
+                        listOf(
+                            """permission java.io.FilePermission "${file.absolutePath}", "read";""",
+                        ) + parents
+                    }
+                }
+            val allInputPermissions = coarseInputDirectoryPermissions + inputPermissions
+
+            val permissionsForGradleRoDepCache = System.getenv("GRADLE_RO_DEP_CACHE")?.let {
+                val cacheDir = File(it).absoluteFile
                 listOf(
-                    """grant codeBase "file:${File(it).absolutePath}/-" {""",
+                    """grant codeBase "file:${cacheDir.absolutePath}/-" {""",
                     """    permission java.security.AllPermission;""",
+                    """};""",
+                    """grant {""",
+                    """    permission java.io.FilePermission "${cacheDir.absolutePath}", "read";""",
+                    """    permission java.io.FilePermission "${cacheDir.absolutePath}/-", "read";""",
                     """};""",
                 ).joinToString("\n")
             }
@@ -261,16 +315,27 @@ tasks.withType<Test>().configureEach {
                             }
                         )
                         .replace("{{gradle_user_home}}", """$gradleUserHomeDir""")
-                        .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")
+                        .replace("{{all_permissions_for_gradle_ro_dep_cache}}", permissionsForGradleRoDepCache ?: "")
                         .replace(
                             "{{build_dir}}",
-                            """permission java.io.FilePermission "${buildDir.get().asFile.absolutePath}/-", "read,write,execute,delete";"""
+                            buildString {
+                                val buildDirPath = buildDir.get().asFile.absolutePath
+                                append("""permission java.io.FilePermission "$buildDirPath/-", "read,write,execute,delete";""")
+                                // Gradle's FileSystemProbing uppercases a filename and calls File.exists() to detect
+                                // filesystem case-sensitivity. SecurityManager.checkRead fires on the uppercased path
+                                // regardless of OS or whether the file exists, so grant read for that variant too.
+                                val buildDirUpper = buildDirPath.uppercase()
+                                if (buildDirUpper != buildDirPath) {
+                                    append("\n    ")
+                                    append("""permission java.io.FilePermission "$buildDirUpper/-", "read";""")
+                                }
+                            }
                         )
                         .replace("{{java_library_paths}}", javaLibraryPaths.joinToString("\n    "))
                         .replace(
                             "{{debugger_agent_jar}}",
                             debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
-                        .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
+                        .replace("{{inputs}}", allInputPermissions.sorted().joinToString("\n    "))
                         .replace(
                             "{{wasm}}",
                             buildString {
@@ -305,9 +370,11 @@ tasks.withType<Test>().configureEach {
             }
         }
         logger.info("Security policy for test inputs generated to ${policyFileProvider.get().asFile.absolutePath}")
-        jvmArgs(
-            "-Djava.security.policy=${policyFileProvider.get().asFile.absolutePath}",
-            "-Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager",
+        jvmArgumentProviders.add(
+            objects.newInstance(TestInputsCheckArgumentProvider::class.java).apply {
+                enabled.set(testInputsCheck.enabled)
+                policyFile.set(policyFileProvider)
+            }
         )
     }
 }

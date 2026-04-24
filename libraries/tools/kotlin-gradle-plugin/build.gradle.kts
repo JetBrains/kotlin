@@ -1,6 +1,8 @@
 import GenerateKgpBuildConstantsTask.Companion.registerGenerateKgpBuildConstantsTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
+import org.gradle.api.file.RegularFile
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -14,6 +16,7 @@ plugins {
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
     id("project-tests-convention")
+    id("test-inputs-check")
     `java-test-fixtures`
 }
 
@@ -59,6 +62,12 @@ tasks.test {
     useJUnitPlatform {
         exclude("**/*LincheckTest.class")
     }
+    extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+        // The regular test task still uses rootDir as its working directory, which is explicitly
+        // marked non-cacheable by project-tests-convention. Keep the input check focused on the
+        // cacheable KGP test tasks migrated in this change.
+        enabled.set(false)
+    }
     val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
     val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
     doFirst {
@@ -66,6 +75,8 @@ tasks.test {
         systemProperty("jdk11Home", jdk11Provider.get())
     }
 }
+
+val muteCommonFile: RegularFile = rootProject.layout.projectDirectory.file("tests/mute-common.csv")
 
 tasks.withType<Test>().configureEach {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0))
@@ -651,6 +662,7 @@ functionalTestCompilation.associateWith(testFixturesCompilation)
 
 tasks.register<Test>("functionalTest") {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    addFileProperty(muteCommonFile, "org.jetbrains.kotlin.test.mutes.file")
     useJUnitPlatform()
 
     @OptIn(TemporaryTestFederationApi::class)
@@ -690,6 +702,111 @@ tasks.withType<Test>().configureEach {
         rootProject.layout.projectDirectory.file("kotlin-native/konan/konan.properties"),
         "konanProperties"
     )
+
+    // Redirect AGP's analytics/preferences directory to the build directory so that
+    // tests do not write analytics.settings to ~/.android.
+    // Clear deprecated ANDROID_SDK_HOME to prevent conflict with ANDROID_USER_HOME -
+    // CI sets ANDROID_SDK_HOME for SDK location, but AGP also interprets it as preferences root.
+    // SDK resolution uses android.sdk.root system property (from provisioner), not this env var.
+    environment.remove("ANDROID_SDK_HOME")
+    environment("ANDROID_USER_HOME", layout.buildDirectory.dir("android-user-home").get().asFile.absolutePath)
+
+    extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+        val androidSdkDirectory = provider { project.configurations.getByName("androidSdk").singleFile.canonicalFile }
+        coarseInputDirectories.from(androidSdkDirectory)
+        val konanDataDir = providers.gradleProperty("konan.data.dir")
+            .orElse(providers.environmentVariable("KONAN_DATA_DIR"))
+            .orElse(provider { System.getProperty("user.home") + File.separator + ".konan" })
+
+        with(extraPermissions) {
+            // Gradle's ProjectBuilder calls System.getProperties(), and functional tests
+            // temporarily override host and IDE-sync properties.
+            add("""permission java.util.PropertyPermission "*", "read,write";""")
+
+            // Gradle's dependency resolution in ProjectBuilder needs proxy configuration access.
+            add("""permission java.net.NetPermission "getProxySelector";""")
+
+            // Gradle/AGP creates an MBean server while initializing ProjectBuilder services.
+            add("""permission javax.management.MBeanServerPermission "*";""")
+            // Gradle/AGP queries and invokes MBeans for JVM memory/container monitoring.
+            add("""permission javax.management.MBeanPermission "*", "*";""")
+            // Gradle/AGP registers trusted MBeans as part of the same monitoring setup.
+            add("""permission javax.management.MBeanTrustPermission "*";""")
+
+            // AGP reads and writes the legacy ~/.android directory even when ANDROID_USER_HOME is
+            // redirected. Some AGP code paths (e.g. analytics.settings) hardcode the legacy path.
+            val androidDir = File(System.getProperty("user.home"), ".android")
+            // AGP checks and creates the legacy ~/.android directory itself.
+            add("""permission java.io.FilePermission "${androidDir.absolutePath}", "read,write";""")
+            // AGP reads and updates legacy files such as analytics.settings under ~/.android.
+            add("""permission java.io.FilePermission "${androidDir.absolutePath}/-", "read,write";""")
+
+            // Gradle reads Maven local repository and settings during ProjectBuilder initialization.
+            val m2Home = File(System.getProperty("user.home"), ".m2")
+            // Gradle scans Maven local metadata and artifacts under ~/.m2.
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}/-", "read";""")
+            // Gradle checks the Maven local directory itself before scanning its contents.
+            add("""permission java.io.FilePermission "${m2Home.absolutePath}", "read";""")
+            val mavenRepoLocal = System.getProperty("maven.repo.local")
+            if (mavenRepoLocal != null) {
+                // Gradle scans the explicitly configured Maven local repository content.
+                add("""permission java.io.FilePermission "$mavenRepoLocal/-", "read";""")
+                // Gradle checks the configured Maven local repository root before resolving from it.
+                add("""permission java.io.FilePermission "$mavenRepoLocal", "read";""")
+            }
+
+            // K/N writes lock files and caches toolchain archives under the konan data directory.
+            // DependencyProcessor.downloadDependency() deletes stale extraction residue before
+            // re-extracting; `delete` is a separate FilePermission action from `write`.
+            addAll(konanDataDir.map {
+                listOf(
+                    // K/N resolves, extracts, updates, and cleans cached toolchain files.
+                    """permission java.io.FilePermission "$it/-", "read,write,delete";""",
+                    // K/N checks the konan data directory root before accessing cached files.
+                    """permission java.io.FilePermission "$it", "read";""",
+                )
+            })
+
+            // K/N dependency resolution executes tar from the environment PATH to extract toolchain archives.
+            add("""permission java.io.FilePermission "<<ALL FILES>>", "execute";""")
+
+            // K/N DependencyExtractor creates hard links when extracting toolchain archives.
+            add("""permission java.nio.file.LinkPermission "hard";""")
+
+            // Linux: Gradle reads cgroup memory limits and /proc info during ProjectBuilder
+            // initialization (container-aware heap sizing, CPU-count probes).
+            if (!OperatingSystem.current().isMacOsX && !OperatingSystem.current().isWindows) {
+                // Gradle reads process and CPU information from procfs on Linux.
+                add("""permission java.io.FilePermission "/proc/-", "read";""")
+                // Gradle reads cgroup memory limits from sysfs on Linux.
+                add("""permission java.io.FilePermission "/sys/fs/cgroup/-", "read";""")
+            }
+
+            // Android SDK directory.
+            // AGP's LocalRepoLoaderImpl.writePackage mutates package.xml inside the provisioned
+            // SDK during initialization, so write access is required on the provisioned tree.
+            // The directory is tracked as a real input by androidSdkProvisioner. coarseInputDirectories
+            // keeps test-inputs-check from expanding the entire SDK into the generated policy.
+            // Use provider-backed addAll for lazy evaluation - configuration resolution must not
+            // happen at configuration time.
+            addAll(androidSdkDirectory.map { provisionedDirectory ->
+                buildList {
+                    val provisionedPath = provisionedDirectory.canonicalPath
+                    // AGP reads SDK packages and updates package.xml files in the provisioned SDK.
+                    add("""permission java.io.FilePermission "$provisionedPath/-", "read,write";""")
+                    // AGP checks the provisioned SDK root before scanning or updating packages.
+                    add("""permission java.io.FilePermission "$provisionedPath", "read,write";""")
+                    val androidHome = System.getenv("ANDROID_HOME")
+                    if (androidHome != null && androidHome != provisionedPath) {
+                        // Some AGP/Android tooling probes ANDROID_HOME content even when sdk.dir points elsewhere.
+                        add("""permission java.io.FilePermission "$androidHome/-", "read";""")
+                        // Android tooling checks the ANDROID_HOME root before probing its content.
+                        add("""permission java.io.FilePermission "$androidHome", "read";""")
+                    }
+                }
+            })
+        }
+    }
 
     //region custom Maven Local directory
     // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
