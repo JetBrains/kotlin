@@ -38,10 +38,10 @@ open class KlibMetadataDeserializedPackageFragment(
     // packages from the library.
     override val protoForNames: ProtoBuf.PackageFragment get() = ensureStorage()
 
-    private var protoForNamesStorage: SoftReference<ProtoBuf.PackageFragment> = SoftReference(null)
+    private var protoForNamesStorage: SoftReference<ProtoBuf.PackageFragment>? = null
 
     private fun ensureStorage(): ProtoBuf.PackageFragment {
-        var tmp = protoForNamesStorage.get()
+        var tmp = protoForNamesStorage?.get()
         if (tmp == null) {
             tmp = customMetadataProtoLoader?.loadPackageFragment(library, fqName.asString(), partName)
                 ?: parsePackageFragment(metadata.getPackageFragment(fqName.asString(), partName))

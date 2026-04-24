@@ -160,8 +160,8 @@ private class CacheEntryValue<VALUE> private constructor(
     }
 
     fun updateToSoftReference() {
-        if (strongRef != null) {
-            softRef = SoftReference(strongRef)
+        strongRef?.let {
+            softRef = SoftReference(it)
             strongRef = null
         }
     }
