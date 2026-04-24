@@ -197,7 +197,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             JsIrBuilder.buildCall(testFun.symbol).apply {
                 dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
             },
-            context.irBuiltIns.unitType
+            context.irBuiltIns.nothingType
         )
 
         if (afterFuns.isEmpty()) {
@@ -264,7 +264,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
             body.statements += JsIrBuilder.buildReturn(
                 fn.symbol,
                 returnValue,
-                fn.returnType
+                context.irBuiltIns.nothingType
             )
 
             return

@@ -80,7 +80,7 @@ MODULE_FRAGMENT
               then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
-          RETURN type=kotlin.String from='public final fun foo (a: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.String declared in example.C'
+          RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.String declared in example.C'
             GET_VAR 'val tmp_0: kotlin.String [val] declared in example.C.foo' type=kotlin.String origin=null
       FUN VERSION_OVERLOAD_WRAPPER name:foo visibility:public modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:example.C
@@ -144,7 +144,7 @@ MODULE_FRAGMENT
               then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
-          RETURN type=kotlin.String from='public final fun foo (a: kotlin.Int, b: kotlin.String?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example.C'
+          RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.Int, b: kotlin.String?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example.C'
             GET_VAR 'val tmp_1: kotlin.String [val] declared in example.C.foo' type=kotlin.String origin=null
       FUN name:foo visibility:public modality:FINAL returnType:kotlin.String
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:example.C
@@ -203,7 +203,7 @@ MODULE_FRAGMENT
               then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
-          RETURN type=kotlin.String from='public final fun foo (a: kotlin.Int, b: kotlin.String?, c: kotlin.Boolean, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example.C'
+          RETURN type=kotlin.Nothing from='public final fun foo (a: kotlin.Int, b: kotlin.String?, c: kotlin.Boolean, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example.C'
             GET_VAR 'val tmp_2: kotlin.String [val] declared in example.C.foo' type=kotlin.String origin=null
     FUN VERSION_OVERLOAD_WRAPPER name:bar visibility:public modality:FINAL returnType:kotlin.String
       VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
@@ -243,7 +243,7 @@ MODULE_FRAGMENT
             then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
         CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
-        RETURN type=kotlin.String from='public final fun bar (a: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.String declared in example'
+        RETURN type=kotlin.Nothing from='public final fun bar (a: kotlin.Int, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.String declared in example'
           GET_VAR 'val tmp_3: kotlin.String [val] declared in example.bar' type=kotlin.String origin=null
     FUN VERSION_OVERLOAD_WRAPPER name:bar visibility:public modality:FINAL returnType:kotlin.String
       VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
@@ -299,7 +299,7 @@ MODULE_FRAGMENT
             then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
         CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
-        RETURN type=kotlin.String from='public final fun bar (a: kotlin.Int, b: kotlin.String?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example'
+        RETURN type=kotlin.Nothing from='public final fun bar (a: kotlin.Int, b: kotlin.String?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example'
           GET_VAR 'val tmp_4: kotlin.String [val] declared in example.bar' type=kotlin.String origin=null
     FUN name:bar visibility:public modality:FINAL returnType:kotlin.String
       VALUE_PARAMETER kind:Regular name:a index:0 type:kotlin.Int
@@ -357,7 +357,7 @@ MODULE_FRAGMENT
             then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
         CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
-        RETURN type=kotlin.String from='public final fun bar (a: kotlin.Int, b: kotlin.String?, c: kotlin.Boolean, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example'
+        RETURN type=kotlin.Nothing from='public final fun bar (a: kotlin.Int, b: kotlin.String?, c: kotlin.Boolean, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.String declared in example'
           GET_VAR 'val tmp_5: kotlin.String [val] declared in example.bar' type=kotlin.String origin=null
     FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:Regular name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]

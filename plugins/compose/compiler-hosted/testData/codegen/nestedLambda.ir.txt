@@ -532,5 +532,5 @@ MODULE_FRAGMENT
             then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
         CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null
-        RETURN type=home.DominantColorState from='public final fun rememberDominantColorState (defaultColor: home.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): home.DominantColorState declared in home'
+        RETURN type=kotlin.Nothing from='public final fun rememberDominantColorState (defaultColor: home.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): home.DominantColorState declared in home'
           GET_VAR 'val tmp_2: home.DominantColorState [val] declared in home.rememberDominantColorState' type=home.DominantColorState origin=null

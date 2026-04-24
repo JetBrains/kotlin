@@ -177,7 +177,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                                 JsIrBuilder.buildCall(context.symbols.jsNewTarget),
                                 parameters.map { parameter -> JsIrBuilder.buildGetValue(parameter.symbol) } + context.getVoid(),
                             )
-                        statements.add(JsIrBuilder.buildReturn(symbol, selfReplacedConstructorCall, returnType))
+                        statements.add(JsIrBuilder.buildReturn(symbol, selfReplacedConstructorCall, context.irBuiltIns.nothingType))
                     }
                 }
                 origin = ES6_SYNTHETIC_INTEROP_CONSTRUCTOR
@@ -256,7 +256,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                 statements.addAll(bodyCopy.statements)
 
                 if (self != null) {
-                    statements.add(JsIrBuilder.buildReturn(factory.symbol, JsIrBuilder.buildGetValue(self), irClass.defaultType))
+                    statements.add(JsIrBuilder.buildReturn(factory.symbol, JsIrBuilder.buildGetValue(self), context.irBuiltIns.nothingType))
                 }
             }
 
@@ -304,7 +304,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                         JsIrBuilder.buildReturn(
                             constructorReplacement.symbol,
                             JsIrBuilder.buildGetValue(selfParameterSymbol),
-                            irClass.defaultType
+                            context.irBuiltIns.nothingType
                         )
                     )
                 } else {
