@@ -97,8 +97,14 @@ tasks.register<Test>("lincheckTest") {
         "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
         "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
     )
+    addFileProperty(muteCommonFile, "org.jetbrains.kotlin.test.mutes.file")
     useJUnitPlatform {
         include("**/*LincheckTest.class")
+    }
+    extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
+        // Lincheck's bytecode instrumentation is fundamentally incompatible with SecurityManager —
+        // even AllPermission causes test worker crashes (EOFException / suppressAccessChecks).
+        enabled.set(false)
     }
 }
 
