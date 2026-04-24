@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 internal class JavaScopeResolver(
     private val localClassProvider: (Name) -> JavaClass?,
-    private val containingClassProvider: (() -> JavaClass?)?,
+    private val containingClass: JavaClass?,
     private val inheritedMemberResolver: JavaInheritedMemberResolver,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
@@ -30,7 +30,7 @@ internal class JavaScopeResolver(
     val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     /**
      * Cache for [findLocalClass] results. Shared across scopes that have the same
-     * [containingClassProvider] and [localClassProvider] (i.e., scopes created via
+     * [containingClass] and [localClassProvider] (i.e., scopes created via
      * [withTypeParameters] / [withInheritedTypeParameters]). A new cache is created
      * when [withContainingClass] changes the containing class.
      *
@@ -65,7 +65,6 @@ internal class JavaScopeResolver(
     }
 
     private fun findLocalClassUncached(name: Name): JavaClass? {
-        val containingClass = containingClassProvider?.invoke()
         // First check inner classes of the containing class
         containingClass?.findInnerClass(name)?.let { return it }
         // Then check sibling inner classes (classes in the outer class)
@@ -98,7 +97,7 @@ internal class JavaScopeResolver(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaScopeResolver(
-            localClassProvider, containingClassProvider, inheritedMemberResolver, newScope,
+            localClassProvider, containingClass, inheritedMemberResolver, newScope,
             inheritedTypeParametersInScope,
             findLocalClassCache, // share cache — containingClass unchanged
         )
@@ -113,7 +112,7 @@ internal class JavaScopeResolver(
         if (typeParams.isEmpty()) return this
         val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaScopeResolver(
-            localClassProvider, containingClassProvider, inheritedMemberResolver, typeParametersInScope,
+            localClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
             newInherited,
             findLocalClassCache, // share cache — containingClass unchanged
         )
@@ -123,10 +122,10 @@ internal class JavaScopeResolver(
      * Creates a new scope for members of the given class.
      * Inner class references will be resolved against this class.
      */
-    fun withContainingClass(containingClass: JavaClass): JavaScopeResolver {
+    fun withContainingClass(newContainingClass: JavaClass): JavaScopeResolver {
         return JavaScopeResolver(
             localClassProvider,
-            containingClassProvider = { containingClass },
+            containingClass = newContainingClass,
             inheritedMemberResolver,
             typeParametersInScope,
             inheritedTypeParametersInScope,

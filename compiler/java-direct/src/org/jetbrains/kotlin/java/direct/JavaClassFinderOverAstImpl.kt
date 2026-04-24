@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaAnnotationOverAst
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
@@ -52,7 +53,7 @@ class JavaClassFinderOverAstImpl(
     private val sourceRoots: List<VirtualFile>,
     private val debugLogFilePath: Path? = null,
     private val sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
-) : JavaClassFinder {
+) : JavaClassFinder, LeanJavaClassFinder {
 
     private data class FileEntry(
         val file: VirtualFile,
@@ -200,7 +201,7 @@ class JavaClassFinderOverAstImpl(
      * Triggers lazy indexing for the class's package on first access.
      * Safe to call at any point, including during FIR type processing.
      */
-    fun isClassInIndex(classId: ClassId): Boolean {
+    override fun isClassInIndex(classId: ClassId): Boolean {
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString() ?: return false
         return ensurePackageIndexed(classId.packageFqName).containsKey(topLevelName)
     }
@@ -301,7 +302,7 @@ class JavaClassFinderOverAstImpl(
         // Validate against expected directory-derived package if specified.
         if (expectedPackage != null && packageFqName != expectedPackage) return
 
-        val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
+        val resolutionContext = JavaResolutionContext.create(tree, classFinder = this)
         val annotations = mutableListOf<JavaAnnotation>()
 
         // Annotations are in PACKAGE_STATEMENT → MODIFIER_LIST → ANNOTATION (KMP parser structure).
@@ -372,7 +373,7 @@ class JavaClassFinderOverAstImpl(
         val source = sourceFileReader.readFileContent(file.file) ?: return null
         val tree = parseJavaToLightTree(source, 0)
         val root = tree.getRoot()
-        val resolutionContext = JavaResolutionContext.create(tree, classFinderProvider = { this })
+        val resolutionContext = JavaResolutionContext.create(tree, classFinder = this)
 
         // Cache ALL top-level classes from this file to avoid re-parsing for sibling classes.
         val allClassNames = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).mapNotNull {
@@ -439,7 +440,7 @@ class JavaClassFinderOverAstImpl(
      * Recursively collects all inner class names from the supertype hierarchy.
      * Delegates to [JavaSupertypeGraph].
      */
-    internal fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> =
+    override fun collectInheritedInnerClasses(classId: ClassId): Map<String, Set<ClassId>> =
         supertypeGraph.collectInheritedInnerClasses(classId)
 
     private fun findFilesForClass(classId: ClassId): List<FileEntry> {

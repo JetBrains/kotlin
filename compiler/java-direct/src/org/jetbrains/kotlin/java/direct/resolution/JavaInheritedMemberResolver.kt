@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
-import org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -29,7 +28,7 @@ import kotlin.collections.iterator
  */
 internal class JavaInheritedMemberResolver(
     private val packageFqName: FqName,
-    private val classFinderProvider: (() -> JavaClassFinderOverAstImpl)?,
+    private val classFinder: LeanJavaClassFinder?,
     private val localClassProvider: (Name) -> JavaClass?,
 ) {
 
@@ -40,7 +39,7 @@ internal class JavaInheritedMemberResolver(
      * Returns null if multiple inner classes with the same name are found (ambiguity),
      * which will cause MISSING_DEPENDENCY_CLASS error as per javac behavior.
      *
-     * Uses the classFinderProvider (if available) to detect cross-file ambiguities.
+     * Uses the [classFinder] (if available) to detect cross-file ambiguities.
      * Falls back to local resolution for same-file supertypes.
      */
     fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
@@ -72,11 +71,10 @@ internal class JavaInheritedMemberResolver(
         // If local resolution found nothing, try cross-file detection
         if (allFound.isEmpty()) {
             val javaClassOverAst = javaClass as? JavaClassOverAst
-            if (javaClassOverAst != null && classFinderProvider != null) {
+            if (javaClassOverAst != null && classFinder != null) {
                 val fqName = javaClassOverAst.fqName
                 if (fqName != null) {
                     val containingClassId = Companion.fqNameToClassId(fqName, packageFqName)
-                    val classFinder = classFinderProvider.invoke()
 
                     val inheritedInners = classFinder.collectInheritedInnerClasses(containingClassId)
                     val candidates = inheritedInners[name.asString()] ?: emptySet()
@@ -99,8 +97,8 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with [nestedName].
-     * Uses both the [getSupertypeClassIds] callback (for Kotlin/binary classes) and the class finder's
-     * [JavaClassFinderOverAstImpl.collectInheritedInnerClasses] (for same-package Java source classes).
+     * Uses both the [getSupertypeClassIds] callback (for Kotlin/binary classes) and the [classFinder]'s
+     * [LeanJavaClassFinder.collectInheritedInnerClasses] (for same-package Java source classes).
      */
     fun findInheritedNestedClass(
         outerClassId: ClassId,
@@ -121,7 +119,6 @@ internal class JavaInheritedMemberResolver(
         }
 
         // Also check via the class finder for same-package Java source supertypes
-        val classFinder = classFinderProvider?.invoke()
         if (classFinder != null) {
             val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
             val candidates = inheritedInners[nestedName]
@@ -139,7 +136,7 @@ internal class JavaInheritedMemberResolver(
      * Maps simpleName -> Set<ClassId> across the containing class and all its outer classes.
      */
     fun computeAggregatedInheritedInnerClasses(containingClass: JavaClassOverAst): Map<String, Set<ClassId>>? {
-        val classFinder = classFinderProvider?.invoke() ?: return null
+        val finder = classFinder ?: return null
 
         val merged = mutableMapOf<String, MutableSet<ClassId>>()
         var current: JavaClass? = containingClass
@@ -148,7 +145,7 @@ internal class JavaInheritedMemberResolver(
             val fqn = jdClass?.fqName
             if (fqn != null) {
                 val cid = Companion.fqNameToClassId(fqn, packageFqName)
-                val inheritedInners = classFinder.collectInheritedInnerClasses(cid)
+                val inheritedInners = finder.collectInheritedInnerClasses(cid)
                 for ((name, classIds) in inheritedInners) {
                     merged.getOrPut(name) { mutableSetOf() }.addAll(classIds)
                 }
@@ -180,10 +177,10 @@ internal class JavaInheritedMemberResolver(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
-        containingClassProvider: (() -> JavaClass?)?,
+        containingClass: JavaClass?,
         resolveWithoutInheritance: (String, (ClassId) -> Boolean) -> ClassId?,
     ): ClassId? {
-        val containingClass = containingClassProvider?.invoke() ?: return null
+        containingClass ?: return null
 
         // Collect direct supertypes from the containing class and its outer classes.
         val initialSupertypes = mutableListOf<JavaClassifierType>()
@@ -245,7 +242,6 @@ internal class JavaInheritedMemberResolver(
                 }
 
                 if (foundClassId == null) {
-                    val classFinder = classFinderProvider?.invoke()
                     if (classFinder != null && classFinder.isClassInIndex(supertypeClassId)) {
                         // Java source class: walk via class finder (safe, no FIR interaction).
                         val javaClass = classFinder.findClass(JavaClassFinder.Request(supertypeClassId))

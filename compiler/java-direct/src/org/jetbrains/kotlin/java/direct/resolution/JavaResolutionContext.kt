@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.java.direct.resolution
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.java.direct.JavaClassFinderOverAstImpl
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
@@ -36,8 +35,8 @@ class JavaResolutionContext private constructor(
     private val starImports: List<FqName>,
     private val scopeResolver: JavaScopeResolver,
     private val inheritedMemberResolver: JavaInheritedMemberResolver,
-    private val containingClassProvider: (() -> JavaClass?)? = null,
-    private val classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
+    private val containingClass: JavaClass? = null,
+    private val classFinder: LeanJavaClassFinder? = null,
     /**
      * Lazily computed aggregated inherited inner classes for the entire containing class chain.
      * Maps simpleName -> Set<ClassId> across the containing class and all its outer classes.
@@ -54,8 +53,8 @@ class JavaResolutionContext private constructor(
 
     private fun getAggregatedInheritedInnerClasses(): Map<String, Set<ClassId>>? {
         inheritedInnerCache.value?.let { return it }
-        val containingClass = containingClassProvider?.invoke() as? JavaClassOverAst ?: return null
-        val result = inheritedMemberResolver.computeAggregatedInheritedInnerClasses(containingClass)
+        val containingClassOverAst = containingClass as? JavaClassOverAst ?: return null
+        val result = inheritedMemberResolver.computeAggregatedInheritedInnerClasses(containingClassOverAst)
         inheritedInnerCache.value = result
         return result
     }
@@ -72,8 +71,8 @@ class JavaResolutionContext private constructor(
 
     /**
      * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with [nestedName].
-     * Uses both the [getSupertypeClassIds] callback (for Kotlin/binary classes) and the class finder's
-     * [JavaClassFinderOverAstImpl.collectInheritedInnerClasses] (for same-package Java source classes).
+     * Uses both the [getSupertypeClassIds] callback (for Kotlin/binary classes) and the [classFinder]'s
+     * [LeanJavaClassFinder.collectInheritedInnerClasses] (for same-package Java source classes).
      */
     private fun findInheritedNestedClass(
         outerClassId: ClassId,
@@ -147,7 +146,7 @@ class JavaResolutionContext private constructor(
      * Returns false for ambiguous cases (multiple star-import matches) to avoid false positives.
      */
     fun isUnambiguouslyCrossFileClass(simpleName: String): Boolean {
-        val finder = classFinderProvider?.invoke() ?: return false
+        val finder = classFinder ?: return false
         // 1. Explicit single-type import takes highest priority (JLS 7.5.1) — always unambiguous
         simpleImports[simpleName]?.let { importedFqn ->
             val fqnStr = importedFqn.asString()
@@ -184,7 +183,7 @@ class JavaResolutionContext private constructor(
             packageFqName, simpleImports, starImports,
             scopeResolver.withTypeParameters(typeParams),
             inheritedMemberResolver,
-            containingClassProvider, classFinderProvider,
+            containingClass, classFinder,
             inheritedInnerCache, // share — containingClass unchanged
         )
     }
@@ -200,7 +199,7 @@ class JavaResolutionContext private constructor(
             packageFqName, simpleImports, starImports,
             scopeResolver.withInheritedTypeParameters(typeParams),
             inheritedMemberResolver,
-            containingClassProvider, classFinderProvider,
+            containingClass, classFinder,
             inheritedInnerCache, // share — containingClass unchanged
         )
     }
@@ -209,13 +208,13 @@ class JavaResolutionContext private constructor(
      * Creates a new context for members of the given class.
      * Inner class references will be resolved against this class.
      */
-    fun withContainingClass(containingClass: JavaClass): JavaResolutionContext {
+    fun withContainingClass(newContainingClass: JavaClass): JavaResolutionContext {
         return JavaResolutionContext(
             packageFqName, simpleImports, starImports,
-            scopeResolver.withContainingClass(containingClass),
+            scopeResolver.withContainingClass(newContainingClass),
             inheritedMemberResolver,
-            containingClassProvider = { containingClass },
-            classFinderProvider = classFinderProvider,
+            containingClass = newContainingClass,
+            classFinder = classFinder,
             // new holder — containingClass changed, aggregated inherited inner classes may differ
         )
     }
@@ -323,10 +322,9 @@ class JavaResolutionContext private constructor(
 
         // Also try inherited inner class resolution via the aggregated map from the class finder.
         // Covers same-package source supertypes that the [getSupertypeClassIds] callback does not see.
-        if (checkInheritance && getSupertypeClassIds == null && classFinderProvider != null && parts.size == 2) {
+        if (checkInheritance && getSupertypeClassIds == null && classFinder != null && parts.size == 2) {
             val outerClassId = resolveSimpleNameToClassIdImpl(parts[0], tryResolve, getSupertypeClassIds = null, checkInheritance = true)
             if (outerClassId != null) {
-                val classFinder = classFinderProvider.invoke()
                 val inheritedInners = classFinder.collectInheritedInnerClasses(outerClassId)
                 val candidates = inheritedInners[parts[1]]
                 if (candidates != null && candidates.size == 1) {
@@ -485,7 +483,7 @@ class JavaResolutionContext private constructor(
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
     ): ClassId? = inheritedMemberResolver.resolveInheritedInnerClassToClassId(
-        simpleName, tryResolve, getSupertypeClassIds, containingClassProvider,
+        simpleName, tryResolve, getSupertypeClassIds, containingClass,
         resolveWithoutInheritance = { name, resolve ->
             if (name.contains('.')) {
                 resolveNestedClassToClassIdFromParts(name.split('.'), resolve, getSupertypeClassIds = null, checkInheritance = false)
@@ -529,7 +527,7 @@ class JavaResolutionContext private constructor(
      */
     fun getContainingClassIds(): List<ClassId> {
         val result = mutableListOf<ClassId>()
-        var cls: JavaClass? = containingClassProvider?.invoke()
+        var cls: JavaClass? = containingClass
         while (cls != null) {
             val fqName = cls.fqName
             if (fqName != null) {
@@ -541,9 +539,9 @@ class JavaResolutionContext private constructor(
     }
 
     companion object {
-        fun create(
+        internal fun create(
             tree: JavaLightTree,
-            classFinderProvider: (() -> JavaClassFinderOverAstImpl)? = null,
+            classFinder: LeanJavaClassFinder? = null,
         ): JavaResolutionContext {
             val root = tree.getRoot()
             val packageFqName = JavaImportResolver.extractPackageName(tree, root)
@@ -570,11 +568,11 @@ class JavaResolutionContext private constructor(
             }
 
             val inheritedMemberResolver = JavaInheritedMemberResolver(
-                packageFqName, classFinderProvider, localClassProvider,
+                packageFqName, classFinder, localClassProvider,
             )
             val scopeResolver = JavaScopeResolver(
                 localClassProvider,
-                containingClassProvider = null,
+                containingClass = null,
                 inheritedMemberResolver,
             )
 
@@ -584,7 +582,7 @@ class JavaResolutionContext private constructor(
                 starImports = starImports,
                 scopeResolver = scopeResolver,
                 inheritedMemberResolver = inheritedMemberResolver,
-                classFinderProvider = classFinderProvider,
+                classFinder = classFinder,
             ).also { contextRef = it }
         }
 
