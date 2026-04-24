@@ -249,6 +249,22 @@ internal fun Project.createGeneralTestTask(
 
         systemProperty("idea.ignore.disabled.plugins", "true")
 
+        val disableGradleExcludesVar = "DISABLE_GRADLE_EXCLUDES"
+        val disableGradleExcludesProvider = project.providers.environmentVariable(disableGradleExcludesVar)
+        inputs.property("disableGradleExcludes", disableGradleExcludesProvider).optional(true)
+        doFirst {
+            // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/37539
+            // the tests won't be skipped by Gradle but will be disabled by TCParallelTestsExecutionCondition
+            // this can be removed after Gradle updated to a version with the fix (likely 9.6.0)
+            val excludesFile = testArgumentProvider.excludesFile
+            val disableGradleExcludes = disableGradleExcludesProvider.orNull?.toBoolean() ?: false
+            if (disableGradleExcludes && excludesFile.isPresent) {
+                logger.warn("Removing excludes set by TeamCity because $disableGradleExcludesVar environment variable is set to true")
+                val parallelTestsExcludes = File(excludesFile.get().path).readLines().filter { !it.startsWith("#") }.toSet()
+                filter.excludePatterns.removeAll(parallelTestsExcludes)
+            }
+        }
+
         val fs = project.serviceOf<FileSystemOperations>()
         doLast {
             File(testArgumentProvider.tempDir.get(), testArgumentProvider.prefix.get()).let {
