@@ -200,7 +200,7 @@
                         <jdk17Home>${jdk17Home}</jdk17Home>
                         <jdk21Home>${jdk21Home}</jdk21Home>
                     </systemPropertyVariables>
-                  <forkCount>2</forkCount>
+                  <forkCount>3</forkCount>
                 </configuration>
             </plugin>
         </plugins>

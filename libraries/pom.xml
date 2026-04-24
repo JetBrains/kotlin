@@ -182,7 +182,7 @@
                     <systemProperties>
                         <project.version>${project.version}</project.version>
                     </systemProperties>
-                  <forkCount>2</forkCount>
+                  <forkCount>3</forkCount>
                 </configuration>
             </plugin>
 
