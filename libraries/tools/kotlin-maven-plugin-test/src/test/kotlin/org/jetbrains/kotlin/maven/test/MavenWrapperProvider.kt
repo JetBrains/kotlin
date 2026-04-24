@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.maven.test
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFilePermission
-import kotlin.io.path.createDirectories
-import kotlin.io.path.outputStream
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 
 fun configureMavenWrapperInProjectDirectory(
     projectDirectory: Path,
@@ -21,7 +19,9 @@ fun configureMavenWrapperInProjectDirectory(
     // Copy mvnw
     val mvnwPath = projectDirectory.resolve("mvnw")
     classLoader.getResourceAsStream("maven-wrapper/mvnw")?.use { input ->
-        Files.copy(input, mvnwPath)
+        val text = input.reader().readText().replace("<REPLACE_ME>", projectDirectory.absolutePathString())
+        println(text)
+        mvnwPath.writeText(text)
     } ?: error("Resource maven-wrapper/mvnw not found")
 
     // Set execute permissions for mvnw
@@ -43,7 +43,8 @@ fun configureMavenWrapperInProjectDirectory(
     // Copy mvnw.cmd
     val mvnwCmdPath = projectDirectory.resolve("mvnw.cmd")
     classLoader.getResourceAsStream("maven-wrapper/mvnw.cmd")?.use { input ->
-        Files.copy(input, mvnwCmdPath)
+        val text = input.reader().readText().replace("<REPLACE_ME>", projectDirectory.absolutePathString())
+        mvnwCmdPath.writeText(text)
     } ?: error("Resource maven-wrapper/mvnw.cmd not found")
 
     // Create .mvn/wrapper directory
