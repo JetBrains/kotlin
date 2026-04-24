@@ -52,7 +52,13 @@ kotlin.sourceSets.main {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+
+    /* The shape of the entire repo is considered an input. Always re-run this task */
+    outputs.upToDateWhen { false }
+    outputs.doNotCacheIf("Always run this tests") { true }
+
     workingDir = gradle.linearClosure { it.parent }.last().rootProject.isolated.projectDirectory.asFile
+
     inputs.file(workingDir.resolve("repo/domains.yaml"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
         .withPropertyName("domains.yaml")

@@ -127,7 +127,6 @@ Unknown:
  - .ai
  - .claude
  - .editorconfig
- - .fleet
  - .gitattributes
  - .gitignore
  - .idea
@@ -229,4 +228,3 @@ Unknown:
  - tests
  - tests-permissions.template.policy
  - third-party
-

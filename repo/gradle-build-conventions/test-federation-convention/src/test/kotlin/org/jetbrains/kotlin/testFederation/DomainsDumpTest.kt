@@ -43,9 +43,9 @@ class DomainsDumpTest {
                     }
                     appendLine()
                 }
-        }
+        }.trim()
 
-        val expectText = dump.readText().lines().joinToString("\n")
+        val expectText = dump.readText().lines().joinToString("\n").trim()
 
         if (expectText != actualText) {
             if (System.getenv("UPDATE_DOMAINS_DUMP") == "true") {
