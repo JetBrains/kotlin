@@ -48,7 +48,9 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.createJavaDirectSourceJavaFacadeBuilder
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -353,6 +355,10 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
         var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
 
+        val javaDirectFacade =
+            if (configuration.useJavaDirect) {
+                createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
+            } else AbstractProjectEnvironment::getFirJavaFacade
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -413,6 +419,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     extensionRegistrars,
                     configuration.languageVersionSettings,
                     context,
+                    createJavaFacade = javaDirectFacade,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
@@ -453,7 +460,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                     needRegisterJavaElementFinder = true,
                     kmpModuleKind = kmpModuleKind,
-                    sessionConfigurator,
+                    createJavaFacade = javaDirectFacade,
+                    init = sessionConfigurator,
                 )
             }
         )

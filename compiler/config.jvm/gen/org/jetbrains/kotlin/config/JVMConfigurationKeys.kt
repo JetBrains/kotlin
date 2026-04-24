@@ -179,6 +179,10 @@ object JVMConfigurationKeys {
     @JvmField
     val COMMON_FRAGMENTS_OUTPUT_DIR = CompilerConfigurationKey.create<File>("COMMON_FRAGMENTS_OUTPUT_DIR")
 
+    // Use java-direct as frontend Java facade
+    @JvmField
+    val USE_JAVA_DIRECT = CompilerConfigurationKey.create<Boolean>("USE_JAVA_DIRECT")
+
 }
 
 var CompilerConfiguration.outputDirectory: File?
@@ -372,4 +376,8 @@ var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
 var CompilerConfiguration.commonFragmentsOutputDir: File?
     get() = get(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR)
     set(value) { putIfNotNull(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR, value) }
+
+var CompilerConfiguration.useJavaDirect: Boolean
+    get() = getBoolean(JVMConfigurationKeys.USE_JAVA_DIRECT)
+    set(value) { put(JVMConfigurationKeys.USE_JAVA_DIRECT, value) }
 
