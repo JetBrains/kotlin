@@ -50,15 +50,23 @@ projectTests {
             JdkMajorVersion.JDK_21_0
         )
     ) {}
+    testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
+    testData(project(":compiler:fir:analysis-tests").isolated, "testData")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":compiler").isolated, "testData/loadJava")
+
     withJvmStdlibAndReflect()
     withScriptRuntime()
     withMockJdkAnnotationsJar()
+    withMockJDKModifiedRuntime()
     withTestJar()
     withScriptingPlugin()
     withMockJdkRuntime()
     withStdlibCommon()
     withAnnotations()
+    withThirdPartyJsr305()
     withThirdPartyAnnotations()
     withThirdPartyJava8Annotations()
-    withThirdPartyJsr305()
+    withThirdPartyJava9Annotations()
 }
