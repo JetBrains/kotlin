@@ -94,7 +94,8 @@ internal class WasmArgumentsImpl(
   override fun build(): WasmArguments = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments()): KotlinWasmCompilerArguments {
+  public fun toCompilerArguments(): KotlinWasmCompilerArguments {
+    val arguments = KotlinWasmCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {

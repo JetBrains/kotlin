@@ -183,7 +183,8 @@ internal class JvmCompilerArgumentsImpl(
   override fun build(): JvmCompilerArguments = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
+  public fun toCompilerArguments(): K2JVMCompilerArguments {
+    val arguments = K2JVMCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {

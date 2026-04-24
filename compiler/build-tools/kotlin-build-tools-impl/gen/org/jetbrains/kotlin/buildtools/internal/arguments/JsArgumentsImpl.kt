@@ -98,7 +98,8 @@ internal class JsArgumentsImpl(
   override fun build(): JsArguments = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
+  public fun toCompilerArguments(): K2JSCompilerArguments {
+    val arguments = K2JSCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {
