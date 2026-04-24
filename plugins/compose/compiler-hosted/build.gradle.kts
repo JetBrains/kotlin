@@ -65,6 +65,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
 
     // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }
