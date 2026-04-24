@@ -1,0 +1,105 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'Box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class StringWrapper {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: java.lang.String): StringWrapper
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class StringWrapperNullable {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.Nullable field s: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
+    private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: java.lang.String): StringWrapperNullable
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.Nullable method getS(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Test {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
+    private method <init>(p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method component1(): StringWrapper
+    public final @org.jetbrains.annotations.NotNull method component1-K4fyztM(): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: StringWrapper): Test
+    public synthetic static method copy-JELJCFg$default(p0: Test, p1: java.lang.String, p2: int, p3: java.lang.Object): Test
+    public final @org.jetbrains.annotations.NotNull method copy-JELJCFg(@org.jetbrains.annotations.NotNull p0: java.lang.String): Test
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getS(): StringWrapper
+    public final @org.jetbrains.annotations.NotNull method getS-K4fyztM(): java.lang.String
+    public method hashCode(): int
+    public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class TestNullable {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.Nullable field s: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: StringWrapper): void
+    private method <init>(p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method component1(): StringWrapper
+    public final @org.jetbrains.annotations.Nullable method component1-DSQDras(): java.lang.String
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.Nullable p0: StringWrapper): TestNullable
+    public synthetic static method copy-fGmC9WA$default(p0: TestNullable, p1: java.lang.String, p2: int, p3: java.lang.Object): TestNullable
+    public final @org.jetbrains.annotations.NotNull method copy-fGmC9WA(@org.jetbrains.annotations.Nullable p0: java.lang.String): TestNullable
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method getS(): StringWrapper
+    public final @org.jetbrains.annotations.Nullable method getS-DSQDras(): java.lang.String
+    public method hashCode(): int
+    public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class TestNullableNullable {
+    // source: 'IC.kt'
+    private final @org.jetbrains.annotations.Nullable field s: StringWrapperNullable
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: StringWrapperNullable): void
+    private method <init>(p0: StringWrapperNullable, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: StringWrapperNullable, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method component1(): StringWrapperNullable
+    public final @org.jetbrains.annotations.Nullable method component1-a6ykjJI(): StringWrapperNullable
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.Nullable p0: StringWrapperNullable): TestNullableNullable
+    public synthetic static method copy-Vd2dOB4$default(p0: TestNullableNullable, p1: StringWrapperNullable, p2: int, p3: java.lang.Object): TestNullableNullable
+    public final @org.jetbrains.annotations.NotNull method copy-Vd2dOB4(@org.jetbrains.annotations.Nullable p0: StringWrapperNullable): TestNullableNullable
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method getS(): StringWrapperNullable
+    public final @org.jetbrains.annotations.Nullable method getS-a6ykjJI(): StringWrapperNullable
+    public method hashCode(): int
+    public final @org.jetbrains.annotations.NotNull method ok(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
