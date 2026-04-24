@@ -41,7 +41,8 @@ abstract class JavaMemberOverAst(
             tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>"
         )
 
-    @Volatile private var _baseModifierList: Any? = NOT_COMPUTED
+    @Volatile
+    private var _baseModifierList: Any? = NOT_COMPUTED
     protected val modifierList: JavaLightNode?
         get() = cachedNullable({ _baseModifierList }, { _baseModifierList = it }) {
             tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
@@ -66,7 +67,8 @@ abstract class JavaMemberOverAst(
             }
         }
 
-    @Volatile private var _baseAnnotations: Collection<JavaAnnotation>? = null
+    @Volatile
+    private var _baseAnnotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() = cachedNonNull({ _baseAnnotations }, { _baseAnnotations = it }) {
             modifierList?.let { ml ->
@@ -86,7 +88,8 @@ class JavaFieldOverAst(
     tree: JavaLightTree,
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass), JavaField {
-    @Volatile private var _isEnumEntry: Int = -1
+    @Volatile
+    private var _isEnumEntry: Int = -1
     override val isEnumEntry: Boolean
         get() = cachedBoolean({ _isEnumEntry }, { _isEnumEntry = it }) {
             tree.getType(node) == JavaSyntaxElementType.ENUM_CONSTANT
@@ -96,7 +99,8 @@ class JavaFieldOverAst(
      * For multi-field declarations like `public static int A = 1, B = 2, C = 3;`,
      * the parser only attaches MODIFIER_LIST and TYPE to the first FIELD node.
      */
-    @Volatile private var _leadingFieldNode: Any? = NOT_COMPUTED
+    @Volatile
+    private var _leadingFieldNode: Any? = NOT_COMPUTED
     private val leadingFieldNode: JavaLightNode?
         get() = cachedNullable(
             { _leadingFieldNode },
@@ -128,7 +132,8 @@ class JavaFieldOverAst(
      * Effective modifier list: own if present, otherwise inherited from the leading field
      * in a multi-field declaration.
      */
-    @Volatile private var _effectiveModifierList: Any? = NOT_COMPUTED
+    @Volatile
+    private var _effectiveModifierList: Any? = NOT_COMPUTED
     private val effectiveModifierList: JavaLightNode?
         get() = cachedNullable(
             { _effectiveModifierList },
@@ -154,7 +159,8 @@ class JavaFieldOverAst(
             }
         }
 
-    @Volatile private var _fieldAnnotations: Collection<JavaAnnotation>? = null
+    @Volatile
+    private var _fieldAnnotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() = cachedNonNull({ _fieldAnnotations }, { _fieldAnnotations = it }) {
             effectiveModifierList?.let { ml ->
@@ -163,7 +169,8 @@ class JavaFieldOverAst(
             } ?: emptyList()
         }
 
-    @Volatile private var _type: JavaType? = null
+    @Volatile
+    private var _type: JavaType? = null
     override val type: JavaType
         get() = cachedNonNull({ _type }, { _type = it }) { computeType() }
 
@@ -178,7 +185,8 @@ class JavaFieldOverAst(
     /**
      * The initializer expression node, if present.
      */
-    @Volatile private var _initializerNode: Any? = NOT_COMPUTED
+    @Volatile
+    private var _initializerNode: Any? = NOT_COMPUTED
     private val initializerNode: JavaLightNode?
         get() = cachedNullable({ _initializerNode }, { _initializerNode = it }) {
             val children = tree.getChildren(node)
@@ -198,7 +206,7 @@ class JavaFieldOverAst(
                     (fieldType.classifierQualifiedName == "java.lang.String" ||
                             fieldType.classifierQualifiedName == "String")
             if (fieldType !is JavaPrimitiveType && !isString) return false
-            // Verify the initializer is a potentially-constant expression form.
+            // Verify the initializer is a potentially constant expression form.
             // This mirrors how PSI checks computeConstantValue() != null: method calls, object
             // creation, etc. can never be compile-time constants per JLS 15.29.
             // For cross-language references (e.g., Foo.FOO from Kotlin), we conservatively return
@@ -208,7 +216,7 @@ class JavaFieldOverAst(
 
     /**
      * Returns true if the initializer expression could possibly be a JLS compile-time constant
-     * expression. This is conservative: qualified references (e.g., Foo.BAR) are assumed
+     * expression. This is conservative: qualified references (e.g., `Foo.BAR`) are assumed
      * potentially constant even if we cannot evaluate them locally, since they might be resolved
      * via cross-language callback. Unresolvable simple names and method calls return false.
      */
@@ -293,7 +301,8 @@ class JavaMethodOverAst(
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass), JavaMethod {
 
-    @Volatile private var _methodTypeParameters: List<JavaTypeParameter>? = null
+    @Volatile
+    private var _methodTypeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
         get() = cachedNonNull(
             { _methodTypeParameters },
@@ -301,7 +310,8 @@ class JavaMethodOverAst(
             computeTypeParameters(node, tree, containingClass.memberResolutionContext)
         }
 
-    @Volatile private var _methodResolutionContext: JavaResolutionContext? = null
+    @Volatile
+    private var _methodResolutionContext: JavaResolutionContext? = null
     override val resolutionContext: JavaResolutionContext
         get() = cachedNonNull(
             { _methodResolutionContext },
@@ -309,7 +319,8 @@ class JavaMethodOverAst(
             containingClass.memberResolutionContext.withTypeParameters(typeParameters)
         }
 
-    @Volatile private var _methodValueParameters: List<JavaValueParameter>? = null
+    @Volatile
+    private var _methodValueParameters: List<JavaValueParameter>? = null
     override val valueParameters: List<JavaValueParameter>
         get() = cachedNonNull(
             { _methodValueParameters },
@@ -321,7 +332,8 @@ class JavaMethodOverAst(
             } else emptyList()
         }
 
-    @Volatile private var _returnType: JavaType? = null
+    @Volatile
+    private var _returnType: JavaType? = null
     override val returnType: JavaType
         get() = cachedNonNull({ _returnType }, { _returnType = it }) {
             val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
@@ -334,7 +346,7 @@ class JavaMethodOverAst(
         }
 
     // Interface methods are abstract unless they have 'default' or 'static' keyword.
-    // Note: in Java, a non-default interface method body is a compile error, but we still see
+    // Note: in Java, a non-default interface method body is a compile-time error, but we still see
     // the body in the AST. We must NOT use hasBody to determine abstractness — interface
     // methods without 'default' are always abstract regardless of whether a body is present.
     // This matches PSI behavior which only checks for explicit 'default'/'static' keywords.
@@ -379,13 +391,15 @@ class JavaConstructorOverAst(
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
 
-    @Volatile private var _ctorTypeParameters: List<JavaTypeParameter>? = null
+    @Volatile
+    private var _ctorTypeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
         get() = cachedNonNull({ _ctorTypeParameters }, { _ctorTypeParameters = it }) {
             computeTypeParameters(node, tree, containingClass.memberResolutionContext)
         }
 
-    @Volatile private var _ctorResolutionContext: JavaResolutionContext? = null
+    @Volatile
+    private var _ctorResolutionContext: JavaResolutionContext? = null
     override val resolutionContext: JavaResolutionContext
         get() = cachedNonNull(
             { _ctorResolutionContext },
@@ -393,7 +407,8 @@ class JavaConstructorOverAst(
             containingClass.memberResolutionContext.withTypeParameters(typeParameters)
         }
 
-    @Volatile private var _ctorValueParameters: List<JavaValueParameter>? = null
+    @Volatile
+    private var _ctorValueParameters: List<JavaValueParameter>? = null
     override val valueParameters: List<JavaValueParameter>
         get() = cachedNonNull({ _ctorValueParameters }, { _ctorValueParameters = it }) {
             val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
@@ -414,14 +429,16 @@ class JavaValueParameterOverAst(
     override val name: Name?
         get() = tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { Name.identifier(tree.getText(it).toString()) }
 
-    @Volatile private var _type: JavaType? = null
+    @Volatile
+    private var _type: JavaType? = null
     override val type: JavaType
         get() = cachedNonNull({ _type }, { _type = it }) {
             val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE) ?: node
             createJavaTypeWithAnnotations(typeNode, modifierList, tree, resolutionContext)
         }
 
-    @Volatile private var _isVararg: Int = -1
+    @Volatile
+    private var _isVararg: Int = -1
     override val isVararg: Boolean
         get() = cachedBoolean({ _isVararg }, { _isVararg = it }) {
             if (tree.findChildByType(node, JavaSyntaxTokenType.ELLIPSIS) != null) {
@@ -432,13 +449,15 @@ class JavaValueParameterOverAst(
             }
         }
 
-    @Volatile private var _modifierList: Any? = NOT_COMPUTED
+    @Volatile
+    private var _modifierList: Any? = NOT_COMPUTED
     private val modifierList: JavaLightNode?
         get() = cachedNullable({ _modifierList }, { _modifierList = it }) {
             tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
         }
 
-    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
+    @Volatile
+    private var _annotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() = cachedNonNull({ _annotations }, { _annotations = it }) {
             modifierList?.let { ml ->

@@ -18,5 +18,7 @@ abstract class JavaElementOverAst(
 
     override fun hashCode(): Int = node.hashCode()
 
-    override fun toString(): String = tree.getType(node).toString()
+    override fun toString(): String =
+        @Suppress("UnstableApiUsage")
+        tree.getType(node).toString()
 }

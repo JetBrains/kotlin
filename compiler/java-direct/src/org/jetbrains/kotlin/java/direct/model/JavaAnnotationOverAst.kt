@@ -27,7 +27,8 @@ class JavaAnnotationOverAst(
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaAnnotation {
 
-    @Volatile private var _arguments: Collection<JavaAnnotationArgument>? = null
+    @Volatile
+    private var _arguments: Collection<JavaAnnotationArgument>? = null
     override val arguments: Collection<JavaAnnotationArgument>
         get() = cachedNonNull({ _arguments }, { _arguments = it }) {
             val parameterList = tree.findChildByType(node, JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST)
@@ -41,20 +42,22 @@ class JavaAnnotationOverAst(
         }
 
     /**
-     * The simple or qualified name of the annotation as it appears in source.
+     * The simple or qualified name of the annotation as it appears in the source.
      * For `@Deprecated`, returns "Deprecated".
      * For `@java.lang.Deprecated`, returns "java.lang.Deprecated".
      *
      * Cached — accessed by [classId], [isResolved], and [resolveAnnotation], so caching avoids
      * re-walking the AST three times per annotation.
      */
-    @Volatile private var _annotationName: Any? = NOT_COMPUTED
+    @Volatile
+    private var _annotationName: Any? = NOT_COMPUTED
     private val annotationName: String?
         get() = cachedNullable({ _annotationName }, { _annotationName = it }) {
             tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
         }
 
-    @Volatile private var _classId: Any? = NOT_COMPUTED
+    @Volatile
+    private var _classId: Any? = NOT_COMPUTED
     override val classId: ClassId?
         get() = cachedNullable({ _classId }, { _classId = it }) { computeClassId() }
 
@@ -276,11 +279,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
 
     override val enumClassId: ClassId?
         get() {
-            val className = className
-
-            if (className == null) {
-                return null
-            }
+            val className = className ?: return null
 
             val imported = resolutionContext.getSimpleImport(className)
             if (imported != null) {
@@ -300,7 +299,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
         return resolutionContext.resolve(className, tryResolve)
     }
 
-    override val entryName: Name?
+    override val entryName: Name
         get() {
             val text = tree.getText(refNode).toString()
             val lastDot = text.lastIndexOf('.')

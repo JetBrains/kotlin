@@ -34,34 +34,19 @@ abstract class JavaTypeOverAst(
     // These need callback-based filtering since they may or may not be TYPE_USE.
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
-    // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
+    // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
     // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
-    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
-    override val annotations: Collection<JavaAnnotation>
-        get() = cachedNonNull({ _annotations }, { _annotations = it }) {
-            val modifierListAnnotations =
-                tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                    tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                        .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-                } ?: emptyList()
-
-            val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-
-            memberAnnotations + extraAnnotations + modifierListAnnotations + directAnnotations
+    @Volatile
+    private var _typePositionAnnotations: Collection<JavaAnnotation>? = null
+    private val typePositionAnnotations: Collection<JavaAnnotation>
+        get() = cachedNonNull({ _typePositionAnnotations }, { _typePositionAnnotations = it }) {
+            extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
         }
 
-    override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
-        // Type-position annotations (from the type node itself) are TYPE_USE by syntax.
-        val modifierListAnnotations =
-            tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            } ?: emptyList()
-        val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
-            .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        val typePositionAnnotations = extraAnnotations + modifierListAnnotations + directAnnotations
+    override val annotations: Collection<JavaAnnotation>
+        get() = memberAnnotations + typePositionAnnotations
 
+    override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
         // Member modifier list annotations need callback filtering.
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
             val fqName = if (annotation.isResolved) {
@@ -94,13 +79,15 @@ class JavaClassifierTypeOverAst(
      * derive from this single split result, avoiding redundant [String.split] allocations.
      * For single-segment types (~84 %), [rawTypeName] returns `parts[0]` directly.
      */
-    @Volatile private var _rawTypeNameParts: List<String>? = null
+    @Volatile
+    private var _rawTypeNameParts: List<String>? = null
     private val rawTypeNameParts: List<String>
         get() = cachedNonNull(
             { _rawTypeNameParts },
             { _rawTypeNameParts = it }) { extractTypeNameParts(node) }
 
-    @Volatile private var _rawTypeName: String? = null
+    @Volatile
+    private var _rawTypeName: String? = null
     private val rawTypeName: String
         get() = cachedNonNull({ _rawTypeName }, { _rawTypeName = it }) {
             val parts = rawTypeNameParts
@@ -134,7 +121,8 @@ class JavaClassifierTypeOverAst(
 
     // null is a valid result (unresolved external class), so the cache uses the shared
     // NOT_COMPUTED sentinel to distinguish "not-computed" from "computed-as-null".
-    @Volatile private var _classifier: Any? = NOT_COMPUTED
+    @Volatile
+    private var _classifier: Any? = NOT_COMPUTED
     override val classifier: JavaClassifier?
         get() = cachedNullable(
             { _classifier },
@@ -178,7 +166,8 @@ class JavaClassifierTypeOverAst(
      * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
      * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
      */
-    @Volatile private var _isTriviallyFlexibleHint: Int = -1
+    @Volatile
+    private var _isTriviallyFlexibleHint: Int = -1
     override val isTriviallyFlexibleHint: Boolean
         get() = cachedBoolean(
             { _isTriviallyFlexibleHint },
@@ -208,7 +197,8 @@ class JavaClassifierTypeOverAst(
         return false
     }
 
-    @Volatile private var _classifierQualifiedName: String? = null
+    @Volatile
+    private var _classifierQualifiedName: String? = null
     override val classifierQualifiedName: String
         get() = cachedNonNull(
             { _classifierQualifiedName },
@@ -248,7 +238,8 @@ class JavaClassifierTypeOverAst(
 
     override val presentableText: String get() = tree.getText(node).toString()
 
-    @Volatile private var _isRaw: Int = -1
+    @Volatile
+    private var _isRaw: Int = -1
     override val isRaw: Boolean
         get() = cachedBoolean({ _isRaw }, { _isRaw = it }) { computeIsRaw() }
 
@@ -266,7 +257,8 @@ class JavaClassifierTypeOverAst(
         return explicitArgCount == 0 || explicitArgCount < typeParamCount
     }
 
-    @Volatile private var _typeArguments: List<JavaType>? = null
+    @Volatile
+    private var _typeArguments: List<JavaType>? = null
     override val typeArguments: List<JavaType>
         get() = cachedNonNull(
             { _typeArguments },
@@ -350,7 +342,8 @@ class JavaClassifierTypeOverAst(
     override val isResolved: Boolean
         get() = classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null
 
-    @Volatile private var _containingClassIds: List<ClassId>? = null
+    @Volatile
+    private var _containingClassIds: List<ClassId>? = null
     override val containingClassIds: List<ClassId>
         get() = cachedNonNull({ _containingClassIds }, { _containingClassIds = it }) {
             resolutionContext.getContainingClassIds()
@@ -458,9 +451,7 @@ class JavaTypeParameterTypeOverAst(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
 
-    // Type parameter references are always resolved
     override val isResolved: Boolean get() = true
-    // Type parameters don't resolve to ClassId - they're handled specially by FIR
 }
 
 fun createJavaType(
@@ -603,6 +594,30 @@ fun createJavaTypeWithAnnotations(
 }
 
 /**
+ * Collects annotations attached syntactically to [node], in source order:
+ *  1. annotations nested inside the node's MODIFIER_LIST (if any), then
+ *  2. annotations that are direct children of the node.
+ *
+ * Shared by [JavaTypeOverAst.typePositionAnnotations] and [JavaTypeParameterOverAst.annotations],
+ * which both need exactly this walk (the KMP parser may place annotations either inside a
+ * MODIFIER_LIST or directly under the enclosing node, depending on the construct).
+ */
+private fun collectModifierListAndDirectAnnotations(
+    node: JavaLightNode,
+    tree: JavaLightTree,
+    resolutionContext: JavaResolutionContext,
+): List<JavaAnnotation> {
+    val modifierListAnnotations =
+        tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
+            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
+                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+        } ?: emptyList()
+    val directAnnotations = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
+        .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
+    return modifierListAnnotations + directAnnotations
+}
+
+/**
  * AST-backed [JavaTypeParameter].
  *
  * Two-phase construction invariant
@@ -671,18 +686,13 @@ class JavaTypeParameterOverAst(
     // Safe w.r.t. the two-phase construction contract (see class KDoc): annotations don't
     // reference sibling type parameters, so caching is valid as long as callers respect the
     // "don't access before updateResolutionContext" invariant that already governs upperBounds.
-    @Volatile private var _typeParamAnnotations: Collection<JavaAnnotation>? = null
+    @Volatile
+    private var _typeParamAnnotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() = cachedNonNull(
             { _typeParamAnnotations },
             { _typeParamAnnotations = it }) {
-            val modListAnns = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)?.let { ml ->
-                tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                    .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            } ?: emptyList()
-            val directAnns = tree.getChildrenByType(node, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-            modListAnns + directAnns
+            collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
         }
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
@@ -719,7 +729,7 @@ class EnumSupertypeForJavaDirect(
      * The type argument for Enum<E> - represents the enum class itself.
      */
     private inner class EnumSelfTypeArgument : JavaClassifierType {
-        override val classifier: JavaClassifier? get() = enumClass
+        override val classifier: JavaClassifier get() = enumClass
         override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: ""
         override val typeArguments: List<JavaType> get() = emptyList()
         override val isRaw: Boolean get() = false
