@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
+import org.jetbrains.kotlin.java.direct.util.NULL_CACHE_VALUE
 import org.jetbrains.kotlin.java.direct.util.cachedBoolean
 import org.jetbrains.kotlin.java.direct.util.cachedNonNull
 import org.jetbrains.kotlin.java.direct.util.cachedNullable
@@ -30,11 +31,12 @@ import java.util.concurrent.ConcurrentHashMap
 class JavaClassOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,
-    val resolutionContext: JavaResolutionContext,
+    internal val resolutionContext: JavaResolutionContext,
     override val outerClass: JavaClass? = null,
 ) : JavaElementOverAst(node, tree), JavaClass {
 
-    @Volatile private var _memberResolutionContext: JavaResolutionContext? = null
+    @Volatile
+    private var _memberResolutionContext: JavaResolutionContext? = null
     val memberResolutionContext: JavaResolutionContext
         get() = cachedNonNull(
             { _memberResolutionContext },
@@ -47,8 +49,9 @@ class JavaClassOverAst(
             tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>"
         )
 
-    @Volatile private var _fqName: Any? = NOT_COMPUTED
-    override val fqName: FqName?
+    @Volatile
+    private var _fqName: Any? = NOT_COMPUTED
+    override val fqName: FqName
         get() = cachedNullable({ _fqName }, { _fqName = it }) { computeFqName() }
 
     private fun computeFqName(): FqName {
@@ -65,7 +68,8 @@ class JavaClassOverAst(
         return result
     }
 
-    @Volatile private var _modifierList: Any? = NOT_COMPUTED
+    @Volatile
+    private var _modifierList: Any? = NOT_COMPUTED
     private val modifierList: JavaLightNode?
         get() = cachedNullable({ _modifierList }, { _modifierList = it }) {
             tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
@@ -94,13 +98,15 @@ class JavaClassOverAst(
             else -> JavaVisibilities.PackageVisibility
         }
 
-    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
+    @Volatile
+    private var _typeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
         get() = cachedNonNull({ _typeParameters }, { _typeParameters = it }) {
             computeTypeParameters(node, tree, resolutionContext)
         }
 
-    @Volatile private var _supertypes: Collection<JavaClassifierType>? = null
+    @Volatile
+    private var _supertypes: Collection<JavaClassifierType>? = null
     override val supertypes: Collection<JavaClassifierType>
         get() = cachedNonNull(
             { _supertypes },
@@ -133,7 +139,8 @@ class JavaClassOverAst(
         return result
     }
 
-    @Volatile private var _innerClassNames: Collection<Name>? = null
+    @Volatile
+    private var _innerClassNames: Collection<Name>? = null
     override val innerClassNames: Collection<Name>
         get() = cachedNonNull({ _innerClassNames }, { _innerClassNames = it }) {
             tree.getChildren(node).filter { tree.getType(it) == JavaSyntaxElementType.CLASS }.map {
@@ -145,16 +152,12 @@ class JavaClassOverAst(
     private val innerClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap()
 
     override fun findInnerClass(name: Name): JavaClass? {
-        innerClassCache[name]?.let { return if (it === NULL_INNER_CLASS) null else it as JavaClass }
-        val cached = innerClassCache.computeIfAbsent(name) { findInnerClassUncached(it) ?: NULL_INNER_CLASS }
-        return if (cached === NULL_INNER_CLASS) null else cached as JavaClass
+        innerClassCache[name]?.let { return if (it === NULL_CACHE_VALUE) null else it as JavaClass }
+        val cached = innerClassCache.computeIfAbsent(name) { findInnerClassImpl(it) ?: NULL_CACHE_VALUE }
+        return if (cached === NULL_CACHE_VALUE) null else cached as JavaClass
     }
 
-    private companion object {
-        private val NULL_INNER_CLASS: Any = Any()
-    }
-
-    private fun findInnerClassUncached(name: Name): JavaClass? {
+    private fun findInnerClassImpl(name: Name): JavaClass? {
         val nameString = name.asString()
         val innerClassNode = tree.getChildren(node).find { child ->
             tree.getType(child) == JavaSyntaxElementType.CLASS &&
@@ -183,7 +186,7 @@ class JavaClassOverAst(
             return JavaClassOverAst(innerClassNode, tree, contextForInner, outerClass = this)
         }
 
-        // Inner class not directly declared — search supertypes (JLS 8.5: inherited member types).
+        // Inner class is not directly declared — search supertypes (JLS 8.5: inherited member types).
         // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
         // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
         return findInnerClassInSupertypes(name, mutableSetOf())
@@ -208,7 +211,7 @@ class JavaClassOverAst(
      * ambiguities that simple-name AST scanning cannot see.
      */
     private fun findInnerClassInSupertypes(name: Name, visited: MutableSet<String>): JavaClass? {
-        val myId = fqName?.asString() ?: return null
+        val myId = fqName.asString()
         if (myId in visited) return null
         visited.add(myId)
 
@@ -245,7 +248,8 @@ class JavaClassOverAst(
         return null
     }
 
-    @Volatile private var _isInterface: Int = -1
+    @Volatile
+    private var _isInterface: Int = -1
     override val isInterface: Boolean
         get() = cachedBoolean({ _isInterface }, { _isInterface = it }) {
             tree.findChildByType(node, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
@@ -262,15 +266,14 @@ class JavaClassOverAst(
      * against future parser changes that might surface an annotation token at the CLASS level
      * for a non-annotation interface, and makes the invariant explicit.
      */
-    @Volatile private var _isAnnotationType: Int = -1
+    @Volatile
+    private var _isAnnotationType: Int = -1
     override val isAnnotationType: Boolean
         get() = cachedBoolean(
             { _isAnnotationType },
             { _isAnnotationType = it }) { computeIsAnnotationType() }
 
     private fun computeIsAnnotationType(): Boolean {
-        // Whitespace is excluded from children by JavaLightTree, so AT is directly
-        // followed by INTERFACE_KEYWORD for `@interface` declarations.
         val children = tree.getChildren(node)
         for (i in 0 until children.size - 1) {
             if (tree.getType(children[i]) == JavaSyntaxTokenType.AT &&
@@ -280,19 +283,22 @@ class JavaClassOverAst(
         return false
     }
 
-    @Volatile private var _isEnum: Int = -1
+    @Volatile
+    private var _isEnum: Int = -1
     override val isEnum: Boolean
         get() = cachedBoolean({ _isEnum }, { _isEnum = it }) {
             tree.findChildByType(node, JavaSyntaxTokenType.ENUM_KEYWORD) != null
         }
 
-    @Volatile private var _isRecord: Int = -1
+    @Volatile
+    private var _isRecord: Int = -1
     override val isRecord: Boolean
         get() = cachedBoolean({ _isRecord }, { _isRecord = it }) {
             tree.findChildByType(node, JavaSyntaxTokenType.RECORD_KEYWORD) != null
         }
 
-    @Volatile private var _isSealed: Int = -1
+    @Volatile
+    private var _isSealed: Int = -1
     override val isSealed: Boolean
         get() = cachedBoolean({ _isSealed }, { _isSealed = it }) {
             hasModifier(
@@ -317,7 +323,7 @@ class JavaClassOverAst(
 
     private fun deriveImplicitPermittedTypes(): Sequence<JavaClassifierType> {
         val myName = name.asString()
-        val myFqName = fqName?.asString() ?: myName
+        val myFqName = fqName.asString()
         return tree.getChildren(node)
             .filter { tree.getType(it) == JavaSyntaxElementType.CLASS }
             .filter { innerNode ->
@@ -343,7 +349,8 @@ class JavaClassOverAst(
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
-    @Volatile private var _methods: Collection<JavaMethod>? = null
+    @Volatile
+    private var _methods: Collection<JavaMethod>? = null
     override val methods: Collection<JavaMethod>
         get() = cachedNonNull({ _methods }, { _methods = it }) {
             val methodNodes =
@@ -356,7 +363,8 @@ class JavaClassOverAst(
                 .map { JavaMethodOverAst(it, tree, this) }
         }
 
-    @Volatile private var _fields: Collection<JavaField>? = null
+    @Volatile
+    private var _fields: Collection<JavaField>? = null
     override val fields: Collection<JavaField>
         get() = cachedNonNull({ _fields }, { _fields = it }) {
             val fieldNodes = tree.getChildrenByType(node, JavaSyntaxElementType.FIELD) +
@@ -364,7 +372,8 @@ class JavaClassOverAst(
             fieldNodes.map { JavaFieldOverAst(it, tree, this) }
         }
 
-    @Volatile private var _constructors: Collection<JavaConstructor>? = null
+    @Volatile
+    private var _constructors: Collection<JavaConstructor>? = null
     override val constructors: Collection<JavaConstructor>
         get() = cachedNonNull({ _constructors }, { _constructors = it }) {
             tree.getChildrenByType(node, JavaSyntaxElementType.METHOD)
@@ -375,7 +384,8 @@ class JavaClassOverAst(
                 .map { JavaConstructorOverAst(it, tree, this) }
         }
 
-    @Volatile private var _recordComponents: Collection<JavaRecordComponent>? = null
+    @Volatile
+    private var _recordComponents: Collection<JavaRecordComponent>? = null
     override val recordComponents: Collection<JavaRecordComponent>
         get() = cachedNonNull({ _recordComponents }, { _recordComponents = it }) {
             val header = tree.findChildByType(node, JavaSyntaxElementType.RECORD_HEADER)
@@ -387,7 +397,8 @@ class JavaClassOverAst(
 
     override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 
-    @Volatile private var _annotations: Collection<JavaAnnotation>? = null
+    @Volatile
+    private var _annotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
         get() = cachedNonNull({ _annotations }, { _annotations = it }) {
             modifierList?.let { ml ->

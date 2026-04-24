@@ -41,7 +41,7 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
             class A {}
         """.trimIndent()
         val javaClass = parseFirstClass(source)
-        assert(javaClass.fqName?.asString() == "com.example.A")
+        assert(javaClass.fqName.asString() == "com.example.A")
     }
 
     @Test

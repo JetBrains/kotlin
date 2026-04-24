@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
+import org.jetbrains.kotlin.java.direct.util.NULL_CACHE_VALUE
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +37,7 @@ internal class JavaScopeResolver(
      *
      * Uses a [java.util.concurrent.ConcurrentHashMap] because FIR resolves types concurrently across members of the
      * same class, and the scope resolver (and therefore this cache) is shared across those
-     * resolutions. Null results are encoded via the [FIND_LOCAL_CLASS_NULL] sentinel because
+     * resolutions. Null results are encoded via the [NULL_CACHE_VALUE] sentinel because
      * [java.util.concurrent.ConcurrentHashMap] does not accept null values.
      */
     private val findLocalClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap(),
@@ -57,11 +58,11 @@ internal class JavaScopeResolver(
      * 5. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
-        findLocalClassCache[name]?.let { return if (it === FIND_LOCAL_CLASS_NULL) null else it as JavaClass }
+        findLocalClassCache[name]?.let { return if (it === NULL_CACHE_VALUE) null else it as JavaClass }
         val cached = findLocalClassCache.computeIfAbsent(name) {
-            findLocalClassUncached(it) ?: FIND_LOCAL_CLASS_NULL
+            findLocalClassUncached(it) ?: NULL_CACHE_VALUE
         }
-        return if (cached === FIND_LOCAL_CLASS_NULL) null else cached as JavaClass
+        return if (cached === NULL_CACHE_VALUE) null else cached as JavaClass
     }
 
     private fun findLocalClassUncached(name: Name): JavaClass? {
@@ -133,8 +134,4 @@ internal class JavaScopeResolver(
         )
     }
 
-    companion object {
-        /** Sentinel for [findLocalClassCache]: "looked up, result was null". */
-        private val FIND_LOCAL_CLASS_NULL = Any()
-    }
 }
