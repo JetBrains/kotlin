@@ -27,10 +27,11 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -109,24 +110,12 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             javaTypeParameterStack.addStack(parentStack)
         }
 
-        val firJavaClass = createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
-
-        /**
-         * This is where the problems begin. We need to enhance nullability of super types and type parameter bounds,
-         * for which we need the annotations of this class as they may specify default nullability.
-         * However, all three - annotations, type parameter bounds, and supertypes - can refer to other classes,
-         * which will cause the type parameter bounds and supertypes of *those* classes to get enhanced first,
-         * but they may refer back to this class again - which, thanks to the magic of symbol resolver caches,
-         * will be observed in a state where we've not done the enhancement yet. For those cases, we must publish
-         * at least unenhanced resolved types,
-         * or else FIR may crash upon encountering a [org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef]
-         * where [FirResolvedTypeRef] is expected.
-         *
-         * 1. (will happen lazily in [FirJavaClass.annotations]]) Resolve annotations
-         * 2. (will happen lazily in [FirJavaClass.typeParameters]) Enhance type parameter bounds in [FirJavaTypeParameter] - may refer to each other, take default nullability from annotations
-         * 3. (will happen lazily in [FirJavaClass.superTypeRefs]) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
-         */
-        return firJavaClass
+        // Annotations, type-parameter bounds, and supertypes can refer back into this class via
+        // the symbol-resolver cache during enhancement. To keep that cycle from observing an
+        // unenhanced FirJavaTypeRef where FirResolvedTypeRef is expected, all three are published
+        // lazily via FirJavaClass.annotations / typeParameters / superTypeRefs (see
+        // FirLazyJavaDeclarationList for staging order).
+        return createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
     }
 
     @OptIn(FirImplementationDetail::class)
@@ -193,11 +182,23 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 setSealedClassInheritors {
                     javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
                         val classifier = classifierType.classifier as? JavaClass
-                        classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) ?: it.classId }
+                        if (classifier != null) {
+                            JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
+                        } else {
+                            // Cross-file permitted type: classifier is null because it's not locally
+                            // resolvable (java-direct only resolves types in the same compilation unit).
+                            // Build a ClassId from the type name using the current class's package as context.
+                            val qualifiedName = classifierType.classifierQualifiedName
+                            if (qualifiedName.isEmpty()) return@mapNotNullTo null
+                            val inheritorClassId = ClassId(classId.packageFqName, FqName(qualifiedName), isLocal = false)
+                            JavaToKotlinClassMap.mapJavaToKotlin(inheritorClassId.asSingleFqName()) ?: inheritorClassId
+                        }
                     }
                 }
 
                 if (classKind == ClassKind.CLASS && !javaClass.isAbstract) {
+                    // Java permits `sealed non-abstract class`; Kotlin needs the flag to relax its
+                    // "sealed ⇒ abstract" expectation when consuming such classes at use sites.
                     isJavaNonAbstractSealed = true
                 }
             }
@@ -336,8 +337,12 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 origin = mappedJavaEnumFunctionsOrigin,
             )
 
+            // For java-direct source classes (classSource == null): use Library to avoid the
+            // FirPropertyAccessorImpl source-element validation that fires only on the entries
+            // getter (not on values()/valueOf()). Library still produces a proper getter that
+            // EnumExternalEntriesLowering can intercept for the correct intrinsic mapping.
             val enumEntriesOrigin = when {
-                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Source
+                firJavaClass.origin.fromSource && classSource != null -> FirDeclarationOrigin.Source
                 else -> FirDeclarationOrigin.Library
             }
 
@@ -545,8 +550,10 @@ private fun convertJavaFieldToFir(
             annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
 
             lazyInitializer = lazy {
-                // NB: null should be converted to null
                 javaField.initializerValue?.createConstantIfAny(session)
+                    ?: javaField.resolveInitializerValue { classQualifier, fieldName ->
+                        resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
+                    }?.createConstantIfAny(session)
             }
 
             lazyHasConstantInitializer = lazy {
@@ -562,6 +569,67 @@ private fun convertJavaFieldToFir(
             }
         }
     }
+}
+
+/**
+ * Resolves an external field reference (e.g. a Kotlin `const val`) referenced from a Java field
+ * initializer to its compile-time constant value. Tries, in order: top-level property exposed via
+ * a JVM facade class (`MainKt.FOO`), class member property, companion-object property. Returns
+ * `null` if [classQualifier] is `null` (unqualified — not supported across languages) or if none
+ * of the cases resolves to a const value.
+ */
+private fun resolveExternalFieldValue(
+    session: FirSession,
+    classQualifier: String?,
+    fieldName: String,
+    currentPackage: FqName,
+): Any? {
+    if (classQualifier == null) return null
+    val propertyName = Name.identifier(fieldName)
+    val parts = classQualifier.split('.')
+    // Simple name → current package; otherwise split on the last dot.
+    val qualifierPackage = if (parts.size == 1) currentPackage else FqName(parts.dropLast(1).joinToString("."))
+    // Simple name may denote a class in the current package or a top-level class; a dotted
+    // qualifier is unambiguous.
+    val classIds = if (parts.size == 1) {
+        listOf(ClassId(currentPackage, Name.identifier(classQualifier)), ClassId.topLevel(FqName(classQualifier)))
+    } else {
+        listOf(ClassId.topLevel(FqName(classQualifier)))
+    }
+
+    return tryResolveAsTopLevel(session, qualifierPackage, propertyName)
+        ?: tryResolveAsClassMember(session, classIds, propertyName)
+        ?: tryResolveAsCompanionMember(session, classIds, propertyName)
+}
+
+/** Top-level Kotlin property exposed via a JVM facade class (e.g. `MainKt.FOO`). */
+private fun tryResolveAsTopLevel(session: FirSession, qualifierPackage: FqName, propertyName: Name): Any? {
+    for (symbol in session.symbolProvider.getTopLevelPropertySymbols(qualifierPackage, propertyName)) {
+        symbol.tryExtractConstantValue(session)?.let { return it }
+    }
+    return null
+}
+
+/** Direct class member property (e.g. `object Foo { const val BAR = 1 }`, or a Java static field on a Kotlin class). */
+private fun tryResolveAsClassMember(session: FirSession, classIds: List<ClassId>, propertyName: Name): Any? {
+    for (classId in classIds) {
+        for (symbol in session.getClassDeclaredPropertySymbols(classId, propertyName)) {
+            symbol.tryExtractConstantValue(session)?.let { return it }
+        }
+    }
+    return null
+}
+
+/** Companion-object property (e.g. `Foo.BAR` where `BAR` lives in `Foo.Companion`). */
+private fun tryResolveAsCompanionMember(session: FirSession, classIds: List<ClassId>, propertyName: Name): Any? {
+    for (classId in classIds) {
+        val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+        val companionClassId = classSymbol?.companionObjectSymbol?.classId ?: continue
+        for (symbol in session.getClassDeclaredPropertySymbols(companionClassId, propertyName)) {
+            symbol.tryExtractConstantValue(session)?.let { return it }
+        }
+    }
+    return null
 }
 
 private fun convertJavaMethodToFir(
@@ -673,7 +741,9 @@ private fun convertJavaConstructorToFir(
         symbol = constructorSymbol
         status = methodStatus
         // TODO get rid of dependency on PSI KT-63046
-        isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+        isPrimary = javaConstructor == null
+                || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+                || (source == null && javaClass.isRecord && isCanonicalRecordConstructorForSource(javaConstructor, javaClass))
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
         }
@@ -731,6 +801,15 @@ private fun buildConstructorForAnnotationClass(
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
     }
+}
+
+// For source-based (non-PSI) Java class finders: detect canonical record constructor by matching
+// parameter names to record component names in order (JLS requires identical names for explicit canonical ctors).
+private fun isCanonicalRecordConstructorForSource(constructor: JavaConstructor, javaClass: JavaClass): Boolean {
+    val components = javaClass.recordComponents.toList()
+    val params = constructor.valueParameters
+    if (params.size != components.size) return false
+    return params.zip(components).all { (param, component) -> param.name == component.name }
 }
 
 private fun FqName.topLevelName() = asString().substringBefore(".")
