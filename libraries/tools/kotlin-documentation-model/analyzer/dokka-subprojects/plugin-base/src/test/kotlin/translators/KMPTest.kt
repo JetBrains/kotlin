@@ -6,8 +6,10 @@ package translators
 
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
+import utils.OnlySymbols
 import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
@@ -63,6 +65,70 @@ class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
             }
             with((this / "example" / "jvm").cast<DFunction>()) {
                 assertTrue(parameters[0].type is GenericTypeConstructor)
+            }
+        }
+    }
+
+
+    @Test
+    @OnlySymbols("Wasm Wasi")
+    fun `should resolve a default import of wasmWasi`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/wasmWasi/kotlin")
+                    analysisPlatform = "wasmWasi"
+                    classpath = listOf(getResourceAbsolutePath("stdlib/kotlin-stdlib-wasm-wasi-2.2.21.klib"))
+                }
+
+            }
+        }
+        inlineModelTest(
+            """
+                |/src/wasmWasi/kotlin/main.kt
+                |package example
+                |
+                |@ExperimentalWasmInterop
+                |external fun f(): Int
+            """,
+            configuration = configuration
+        ) {
+            with((this / "example" / "f").cast<DFunction>()) {
+                val annotation = extra[Annotations]?.directAnnotations?.values?.first()?.first().notNull("annotation")
+                assertEquals("ExperimentalWasmInterop", annotation.dri.classNames)
+                assertEquals("kotlin.wasm", annotation.dri.packageName)
+                assertEquals(0, logger.warnMessages.size)
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("Wasm Wasi")
+    fun `should not resolve a default import of wasmWasi`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/wasmWasi/kotlin")
+                    analysisPlatform = "wasmJs"
+                    classpath = listOf(getResourceAbsolutePath("stdlib/kotlin-stdlib-wasm-wasi-2.2.21.klib"))
+                }
+
+            }
+        }
+        inlineModelTest(
+            """
+                |/src/wasmWasi/kotlin/main.kt
+                |package example
+                |
+                |@ExperimentalWasmInterop
+                |external fun f(): Int
+            """,
+            configuration = configuration
+        ) {
+            with((this / "example" / "f").cast<DFunction>()) {
+                val annotation = extra[Annotations]?.directAnnotations?.values?.first()?.first().notNull("annotation")
+                assertEquals("<ERROR CLASS>", annotation.dri.classNames)
+                assertEquals(1, logger.warnMessages.size)
             }
         }
     }
