@@ -582,6 +582,7 @@ with bodies.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",

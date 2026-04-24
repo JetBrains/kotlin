@@ -56,6 +56,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.ignoreConstOptimizationErrors = from.ignoreConstOptimizationErrors
     to.incrementalCompilation = from.incrementalCompilation
     to.inlineClasses = from.inlineClasses
+    @Suppress("DEPRECATION")
     to.intellijPluginRoot = from.intellijPluginRoot
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion

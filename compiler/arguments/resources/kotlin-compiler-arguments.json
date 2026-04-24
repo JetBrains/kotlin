@@ -4117,7 +4117,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "1.1.3",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.4.20",
                             "removedVersion": null
                         },
                         "argumentType": {

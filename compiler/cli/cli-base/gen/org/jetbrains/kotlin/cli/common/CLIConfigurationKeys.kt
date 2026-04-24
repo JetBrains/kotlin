@@ -52,10 +52,6 @@ object CLIConfigurationKeys {
     @JvmField
     val ALLOW_KOTLIN_PACKAGE = CompilerConfigurationKey.create<Boolean>("ALLOW_KOTLIN_PACKAGE")
 
-    // Used in Eclipse plugin (see KotlinCLICompiler).
-    @JvmField
-    val INTELLIJ_PLUGIN_ROOT = CompilerConfigurationKey.create<String>("INTELLIJ_PLUGIN_ROOT")
-
     // See K2MetadataCompilerArguments.
     @JvmField
     val METADATA_DESTINATION_DIRECTORY = CompilerConfigurationKey.create<File>("METADATA_DESTINATION_DIRECTORY")
@@ -121,10 +117,6 @@ var CompilerConfiguration.treatWarningsAsErrors: Boolean
 var CompilerConfiguration.allowKotlinPackage: Boolean
     get() = getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
     set(value) { put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, value) }
-
-var CompilerConfiguration.intellijPluginRoot: String?
-    get() = get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)
-    set(value) { put(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.metadataDestinationDirectory: File?
     get() = get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)
