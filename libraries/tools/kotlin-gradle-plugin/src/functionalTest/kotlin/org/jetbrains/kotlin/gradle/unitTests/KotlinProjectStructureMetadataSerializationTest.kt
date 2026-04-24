@@ -58,7 +58,9 @@ class KotlinProjectStructureMetadataSerializationTest {
 
     @Test
     fun `deserialize 0_3_1 format version built from coroutines`() {
-        val json = File("src/functionalTest/resources/coroutines-kotlin-project-structure-metadata.0_3_1.json").absoluteFile.readText()
+        val json = File(System.getProperty("resourcesPath"))
+            .resolve("coroutines-kotlin-project-structure-metadata.0_3_1.json")
+            .readText()
         val deserialized = assertNotNull(parseKotlinSourceSetMetadataFromJson(json))
         assertEquals(KotlinProjectStructureMetadata.FORMAT_VERSION_0_3_1, deserialized.formatVersion)
         assertTrue(deserialized.isPublishedAsRoot)
