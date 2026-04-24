@@ -130,6 +130,7 @@ class TestGroup(
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
             skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
+            additionalFileFilter: ((File) -> Boolean)? = null,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -144,7 +145,7 @@ class TestGroup(
                     testInfraRevision, File(testDataRoot), rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
-                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck, testKClass
+                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck, testKClass, additionalFileFilter,
                 )
             )
         }
