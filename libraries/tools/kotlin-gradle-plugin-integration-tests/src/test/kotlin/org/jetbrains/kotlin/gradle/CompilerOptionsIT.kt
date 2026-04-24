@@ -172,13 +172,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
             build(*compileTasks.toTypedArray()) {
                 if (output.contains("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1")) {
-                    // output from BTA
+                    // output from BTA * 2
                     assertOutputContainsExactlyTimes(
                         "-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1",
-                        1
+                        2
                     )
-                    // output from KGP: 3 times per non-JVM compile task + 1 from JVM task (BTA)
-                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * (compileTasks.size - 1) + 1)
+                    // output from KGP: 2 times per non-JVM compile task + 1 from JVM task (BTA)
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 2 * (compileTasks.size - 1) + 1)
                 } else {
                     assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
                 }

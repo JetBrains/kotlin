@@ -313,6 +313,7 @@ data class BuildOptions(
 
         if (runViaBuildToolsApi != null) {
             arguments.add("-Pkotlin.compiler.runViaBuildToolsApi=$runViaBuildToolsApi")
+            arguments.add("-Pkotlin.js.compiler.runViaBuildToolsApi=$runViaBuildToolsApi")
         }
 
         if (showDiagnosticsStacktrace != null) {

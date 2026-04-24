@@ -5,6 +5,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.JsOptions
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.Disabled
@@ -732,13 +733,14 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     @DisplayName("Test compilation when incremental state is missing")
     @GradleTest
     open fun testMissingIncrementalState(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = false)) {
+        defaultProject(gradleVersion) {
             // Perform the first non-incremental build without using Kotlin daemon so that incremental state is not produced
             build(
                 ":lib:$compileKotlinTaskName",
                 buildOptions = defaultBuildOptions.copy(
                     compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
-                    incremental = false
+                    incremental = false,
+                    jsOptions = JsOptions(incrementalJs = false, incrementalJsKlib = false),
                 ),
             ) {
                 projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").let {
@@ -753,6 +755,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 ":lib:$compileKotlinTaskName",
                 buildOptions = defaultBuildOptions.copy(
                     incremental = false,
+                    jsOptions = JsOptions(incrementalJs = false, incrementalJsKlib = false),
                 )
             ) {
                 assertTasksUpToDate(":lib:$compileKotlinTaskName")
