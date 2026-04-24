@@ -47,7 +47,6 @@ abstract class JavaTypeOverAst(
         get() = memberAnnotations + typePositionAnnotations
 
     override fun filterTypeUseAnnotations(isTypeUseAnnotation: (String) -> Boolean): Collection<JavaAnnotation> {
-        // Member modifier list annotations need callback filtering.
         val filteredMemberAnnotations = memberAnnotations.filter { annotation ->
             val fqName = if (annotation.isResolved) {
                 annotation.classId?.asSingleFqName()?.asString()
@@ -366,10 +365,7 @@ class JavaClassifierTypeOverAst(
     }
 }
 
-/**
- * JavaClassifierType for enum entry fields.
- * The type of enum constant is the containing enum class itself.
- */
+/** [JavaClassifierType] for enum entry fields: the constant's type is the containing enum class. */
 class JavaClassifierTypeForEnumEntry(
     private val enumClass: JavaClass,
 ) : JavaClassifierType {
@@ -382,7 +378,6 @@ class JavaClassifierTypeForEnumEntry(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    // Already resolved - we have direct reference to the class
     override val isResolved: Boolean get() = true
     override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
         val fqName = enumClass.fqName ?: return null
@@ -679,8 +674,7 @@ class JavaTypeParameterOverAst(
 
     // Annotations on the type parameter declaration itself (e.g., <@NonNull T>).
     // Matches TreeBasedTypeParameter which reads tree.annotations().
-    // The KMP parser may place annotations in a MODIFIER_LIST or directly under the
-    // TYPE_PARAMETER node (no MODIFIER_LIST wrapper).
+    // See [collectModifierListAndDirectAnnotations] for the parser-shape handling.
     //
     // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
     // Safe w.r.t. the two-phase construction contract (see class KDoc): annotations don't
@@ -702,10 +696,7 @@ class JavaTypeParameterOverAst(
     override val isFromSource: Boolean get() = true
 }
 
-/**
- * Represents the implicit supertype java.lang.Enum<E> for enum classes.
- * In Java, all enums implicitly extend java.lang.Enum parameterized with the enum type itself.
- */
+/** Implicit supertype `java.lang.Enum<E>` for enum classes. */
 class EnumSupertypeForJavaDirect(
     private val enumClass: JavaClass,
 ) : JavaClassifierType {
@@ -718,16 +709,12 @@ class EnumSupertypeForJavaDirect(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    // java.lang.Enum is always resolved
     override val isResolved: Boolean get() = true
     override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
         val classId = ClassId.topLevel(FqName(classifierQualifiedName))
         return if (tryResolve(classId)) classId else null
     }
 
-    /**
-     * The type argument for Enum<E> - represents the enum class itself.
-     */
     private inner class EnumSelfTypeArgument : JavaClassifierType {
         override val classifier: JavaClassifier get() = enumClass
         override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: ""
@@ -747,10 +734,7 @@ class EnumSupertypeForJavaDirect(
     }
 }
 
-/**
- * A simple classifier type for well-known external classes like java.lang.Object
- * and java.lang.annotation.Annotation. These don't have type arguments.
- */
+/** Classifier type for well-known external classes (e.g. `java.lang.Object`), resolved by FIR. */
 class SimpleClassifierType(
     override val classifierQualifiedName: String,
 ) : JavaClassifierType {
@@ -762,7 +746,6 @@ class SimpleClassifierType(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
-    // Well-known classes are always resolved
     override val isResolved: Boolean get() = true
     override fun resolve(tryResolve: (ClassId) -> Boolean, getSupertypeClassIds: ((ClassId) -> List<ClassId>)?): ClassId? {
         val classId = ClassId.topLevel(FqName(classifierQualifiedName))
