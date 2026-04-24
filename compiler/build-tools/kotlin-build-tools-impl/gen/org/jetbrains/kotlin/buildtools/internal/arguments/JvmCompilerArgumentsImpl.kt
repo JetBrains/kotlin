@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IR_DO_NOT_CLEAR_BINDING_CONTEXT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_IR_INLINER
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVAC_ARGUMENTS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVA_DIRECT
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVA_PACKAGE_PREFIX
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVA_SOURCE_ROOTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_JDK_RELEASE
@@ -212,6 +213,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)}
     if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
+    if (X_JAVA_DIRECT in this) { arguments.javaDirect = get(X_JAVA_DIRECT)}
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
     if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     try { if (X_JAVAC_ARGUMENTS in this) { arguments.setUsingReflection("javacArguments", get(X_JAVAC_ARGUMENTS) ?: emptyArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_JAVAC_ARGUMENTS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
@@ -299,6 +301,7 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_INDY_ALLOW_ANNOTATED_LAMBDAS] = arguments.indyAllowAnnotatedLambdas } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = arguments.doNotClearBindingContext } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_INLINER] = arguments.getUsingReflection("enableIrInliner") } catch (_: NoSuchMethodError) {  }
+    try { this[X_JAVA_DIRECT] = arguments.javaDirect } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_PACKAGE_PREFIX] = arguments.javaPackagePrefix } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_SOURCE_ROOTS] = arguments.javaSourceRoots.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVAC_ARGUMENTS] = arguments.getUsingReflection("javacArguments") } catch (_: NoSuchMethodError) {  }
@@ -383,6 +386,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_INDY_ALLOW_ANNOTATED_LAMBDAS in this) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)}
     if (X_IR_DO_NOT_CLEAR_BINDING_CONTEXT in this) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)}
     try { if (X_IR_INLINER in this) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IR_INLINER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
+    if (X_JAVA_DIRECT in this) { arguments.javaDirect = get(X_JAVA_DIRECT)}
     if (X_JAVA_PACKAGE_PREFIX in this) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)}
     if (X_JAVA_SOURCE_ROOTS in this) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     try { if (X_JAVAC_ARGUMENTS in this) { arguments.setUsingReflection("javacArguments", get(X_JAVAC_ARGUMENTS) ?: emptyArray())} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_JAVAC_ARGUMENTS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
@@ -544,6 +548,8 @@ internal class JvmCompilerArgumentsImpl(
         JvmCompilerArgument("X_IR_DO_NOT_CLEAR_BINDING_CONTEXT")
 
     public val X_IR_INLINER: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_IR_INLINER")
+
+    public val X_JAVA_DIRECT: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_JAVA_DIRECT")
 
     public val X_JAVA_PACKAGE_PREFIX: JvmCompilerArgument<String?> =
         JvmCompilerArgument("X_JAVA_PACKAGE_PREFIX")

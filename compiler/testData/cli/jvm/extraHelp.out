@@ -40,6 +40,7 @@ where advanced options include:
   -Xindy-allow-annotated-lambdas Allow using 'invokedynamic' for lambda expressions with annotations
   -Xir-do-not-clear-binding-context
                              When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
+  -Xjava-direct              experimental direct java support.
   -Xjava-package-prefix      Package prefix for Java files.
   -Xjava-source-roots=<path> Paths to directories with Java source files.
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.

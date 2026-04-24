@@ -992,4 +992,16 @@ The default value is 'inline'.""".asReleaseDependent()
             introducedVersion = KotlinReleaseVersion.v2_3_20,
         )
     }
+
+    compilerArgument {
+        name = "Xjava-direct"
+        description = "experimental direct java support.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.JavaDirect))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
 }
