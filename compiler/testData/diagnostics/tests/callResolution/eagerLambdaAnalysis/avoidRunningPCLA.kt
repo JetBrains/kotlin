@@ -31,12 +31,12 @@ fun main(x: String) {
         <!RETURN_TYPE_MISMATCH!>4<!>
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>(x) {
+    bar(x) {
         it.add("5")
         "6"
     }
 
-    <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>(x) {
+    bar(x) {
         it.add("7")
         <!RETURN_TYPE_MISMATCH!>8<!>
     }
