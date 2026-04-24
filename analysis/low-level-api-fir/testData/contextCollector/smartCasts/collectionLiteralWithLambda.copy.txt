@@ -19,7 +19,7 @@ Tower Data Context:
                 FirLocalPropertySymbol lvar a: R|kotlin/Any?|
 Smart Casts:
     FirLocalPropertySymbol lvar a: R|kotlin/Any?|
-    Stability: CAPTURED_VARIABLE
+    Stability: STABLE_VALUE
     Types:
         kotlin.Int
 
