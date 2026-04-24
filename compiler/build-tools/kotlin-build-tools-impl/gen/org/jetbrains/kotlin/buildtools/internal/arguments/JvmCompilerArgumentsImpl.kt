@@ -270,6 +270,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_NULLABILITY_ANNOTATIONS in this) { arguments.applyNullabilityAnnotations(get(X_NULLABILITY_ANNOTATIONS))}
     if (X_JSR305 in this) { arguments.applyJsr305(get(X_JSR305))}
     arguments.internalArguments = parseCommandLineArguments<K2JVMCompilerArguments>(internalArguments.toList()).internalArguments
+    populateExplicitArguments(arguments)
     return arguments
   }
 

@@ -143,7 +143,12 @@ internal class BtaImplOptionsGenerator(
                         MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments"),
                         level.getCompilerArgumentsClassName()
                     )
-
+                    if (!generateCompatLayer) {
+                        toCompilerConverterFun.addStatement(
+                            "%M(arguments)",
+                            MemberName("org.jetbrains.kotlin.buildtools.internal.arguments", "populateExplicitArguments")
+                        )
+                    }
                     constructorSpecBuilder.addStatement("applyCompilerArguments(%T())", level.getCompilerArgumentsClassName())
                 }
 

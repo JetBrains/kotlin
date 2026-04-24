@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
 import java.nio.file.Path
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -63,5 +64,26 @@ internal fun List<String>.checkNoneContains(other: CharSequence) {
                     "This character is currently not supported in this context. " +
                     "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
         )
+    }
+}
+
+internal fun populateExplicitArguments(arguments: CommonToolArguments) {
+    val argumentsInfo = getArgumentsInfo(arguments.javaClass)
+
+    arguments.explicitArguments = buildMap {
+        for (argumentField in argumentsInfo.cliArgNameToArguments.values) {
+            val actualValue = argumentField.getter.invoke(arguments)
+            val defaultValue = argumentsInfo.getDefaultValue(argumentField)
+
+            val isDefaultValue = if (actualValue is Array<*>) {
+                actualValue.contentEquals(defaultValue as Array<*>)
+            } else {
+                actualValue == defaultValue
+            }
+
+            if (!isDefaultValue) {
+                this[argumentField] = listOf(actualValue)
+            }
+        }
     }
 }
