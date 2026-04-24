@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -19,7 +19,7 @@ class LocalClassesTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("ic-scenarios/KT-85074")
     fun localClassSuperTypeChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("ic-scenarios/KT-85074")
 
             module.replaceFileWithVersion("Foo.kt", "addVal")
@@ -38,7 +38,7 @@ class LocalClassesTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("ic-scenarios/local-class-change")
     fun localClassChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module = module("ic-scenarios/local-class-change")
 
             module.replaceFileWithVersion("Foo.kt", "changeLocalClass")

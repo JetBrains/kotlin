@@ -4,3 +4,4 @@ org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlin.cli.CliTestGenerated.Wasm.testWasmExtraHelp,KTI-3163,STABLE
 org.jetbrains.kotlin.cli.CliTestGenerated.Js.testJsExtraHelp,KTI-3163,STABLE
+org.jetbrains.kotlin.analysis.low.level.api.fir.ContextCollectorSourceTestGenerated.SmartCasts.testCollectionLiteralWithLambda,KTI-3169,FLAKY

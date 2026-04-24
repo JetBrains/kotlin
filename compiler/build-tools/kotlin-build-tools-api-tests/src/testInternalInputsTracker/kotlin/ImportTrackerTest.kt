@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.initializeBtaClassloader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -28,7 +28,7 @@ class ImportTrackerTest : BaseCompilationTest() {
             )
         val kotlinToolchains = KotlinToolchains.loadImplementation(customBtaClassLoader)
         val inProcessPolicy = kotlinToolchains.createInProcessExecutionPolicy()
-        project(kotlinToolchains to inProcessPolicy) {
+        jvmProject(kotlinToolchains to inProcessPolicy) {
             val module1 = module(moduleName)
             val recordedImports = mutableListOf<Pair<String, String>>()
             val importTracker = object : CompilerImportTracker {

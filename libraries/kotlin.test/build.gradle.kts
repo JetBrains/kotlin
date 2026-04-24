@@ -128,11 +128,11 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         nodejs()
-        (this as KotlinJsTargetDsl).compilerOptions {
+        compilerOptions {
+            sourceMap = false
+            sourceMapEmbedSources.unsetConvention()
             freeCompilerArgs.addAll(
                 "-Xklib-ir-inliner=intra-module",
-                "-source-map=false",
-                "-source-map-embed-sources=",
             )
         }
         compilations["main"].compileTaskProvider.configure {
@@ -143,11 +143,13 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         nodejs()
+        // cast is necessary because of KT-85971
+        // update after bootstrap
         (this as KotlinJsTargetDsl).compilerOptions {
+            sourceMap = false
+            sourceMapEmbedSources.unsetConvention()
             freeCompilerArgs.addAll(
                 "-Xklib-ir-inliner=intra-module",
-                "-source-map=false",
-                "-source-map-embed-sources=",
             )
         }
         compilations["main"].compileTaskProvider.configure {

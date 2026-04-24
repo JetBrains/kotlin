@@ -466,7 +466,8 @@ abstract class CompileServiceImplBase(
                                     gradleIncrementalServicesFacade,
                                     compilationResults!!,
                                     gradleIncrementalArgs
-                                )
+                                ),
+                                gradleIncrementalArgs.configurationInputs
                             )
                         }
                     }
@@ -681,6 +682,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        configurationInputs: ConfigurationInputs? = null
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
@@ -695,6 +697,12 @@ abstract class CompileServiceImplBase(
             ModulesApiHistoryJs(rootProjectDir, modulesInfo)
         } ?: EmptyModulesApiHistory
 
+        val projectDir = incrementalCompilationOptions.rootProjectDir
+        val buildDir = incrementalCompilationOptions.buildDir
+        val fileLocations = if (projectDir != null && buildDir != null) {
+            FileLocations(projectDir, buildDir)
+        } else null
+
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
             reporter = reporter,
@@ -704,7 +712,14 @@ abstract class CompileServiceImplBase(
             icFeatures = incrementalCompilationOptions.icFeatures,
         )
         return try {
-            compiler.compile(allKotlinFiles, args, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles())
+            compiler.compile(
+                allKotlinFiles,
+                args,
+                compilerMessageCollector,
+                incrementalCompilationOptions.sourceChanges.toChangedFiles(),
+                fileLocations = fileLocations,
+                configurationInputs = configurationInputs,
+            )
         } finally {
             reporter.endMeasureGc()
             reporter.flush()

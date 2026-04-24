@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoComp
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.scenario
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.moduleWithFir
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -29,7 +29,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DisplayName("Adding and removing the class")
     @TestMetadata("jvm-module-1")
     fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             val module1 = moduleWithFir("jvm-module-1")
 
             val randomString = UUID.randomUUID().toString()
@@ -63,7 +63,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DisplayName("Throws an exception on using LV 1.9")
     @TestMetadata("jvm-module-1")
     fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(
                 message = "Compilation does not fail on LV 1.9"
             ) {
@@ -83,7 +83,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @DisplayName("Throws an exception on missing -Xuse-fir-ic")
     @TestMetadata("jvm-module-1")
     fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+        jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(
                 message = "Compilation does not fail on missing -Xuse-fir-ic"
             ) {

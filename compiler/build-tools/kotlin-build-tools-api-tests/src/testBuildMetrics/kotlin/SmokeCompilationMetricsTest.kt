@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,7 +24,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @DisplayName("Basic non-incremental compilation metrics test")
     @TestMetadata("jvm-module-1")
     fun testNonIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
@@ -52,7 +51,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @DisplayName("Basic incremental compilation metrics test")
     @TestMetadata("jvm-module-1")
     fun testIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
@@ -79,7 +78,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @DisplayName("Metrics are collected even when compilation fails")
     @TestMetadata("jvm-module-1")
     fun testCompilationErrorMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
 
             module1.sourcesDirectory.resolve("bar.kt").writeText(
@@ -108,7 +107,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     @DisplayName("Second-round incremental compilation metrics")
     @TestMetadata("jvm-module-1")
     fun testSecondRoundIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
 
             module1.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->

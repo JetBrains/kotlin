@@ -5,34 +5,42 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
-import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 
-internal abstract class BaseScenarioModule private constructor(
-    internal val module: Module,
-    internal val outputs: MutableSet<String>,
+internal abstract class BaseScenarioModule<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> private constructor(
+    internal val module: Module<*, B, IC>,
+    internal val outputs: MutableSet<FileKey>,
     private val strategyConfig: ExecutionPolicy,
-    private val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+    private val icOptionsConfigAction: ((IC) -> Unit),
 ) : ScenarioModule {
     // make a copy of the outputs to avoid them being shared between different tests
     constructor(
-        module: Module,
-        outputs: Collection<String>,
+        module: Module<*, B, IC>,
+        outputs: Collection<FileKey>,
         strategyConfig: ExecutionPolicy,
-        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
+        icOptionsConfigAction: (IC) -> Unit,
     ) : this(module, outputs.toMutableSet(), strategyConfig, icOptionsConfigAction)
+
+    val outputFiles: Set<String> get() = outputs.map { it.relativeFilePath }.toSet()
+
+    fun addOutputFiles(outputRelativePaths: Set<String>) {
+        outputRelativePaths.forEach { outputRelativePath ->
+            val file = module.outputDirectory.resolve(outputRelativePath)
+            outputs.add(FileKey(outputRelativePath, file.getLastModifiedTime().toMillis(), file.fileSize()))
+        }
+    }
+
+    fun removeOutputFiles(outputRelativePaths: Set<String>) {
+        outputs.removeAll { it.relativeFilePath in outputRelativePaths }
+    }
 
     override fun changeFile(
         fileName: String,
@@ -73,7 +81,7 @@ internal abstract class BaseScenarioModule private constructor(
 
     override fun compile(
         forceOutput: LogLevel?,
-        assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit,
+        assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit,
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
@@ -87,7 +95,7 @@ internal abstract class BaseScenarioModule private constructor(
 
     override fun executeCompiledCode(
         mainClassFqn: String,
-        assertions: ExecutionOutcome.() -> Unit
+        assertions: ExecutionOutcome.() -> Unit,
     ) {
         module.executeCompiledClass(
             mainClassFqn,
@@ -96,12 +104,13 @@ internal abstract class BaseScenarioModule private constructor(
     }
 }
 
-internal class ExternallyTrackedScenarioModuleImpl(
-    module: Module,
-    outputs: MutableSet<String>,
+internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder>(
+    module: Module<*, B, IC>,
+    outputs: MutableSet<FileKey>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
-) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
+    icOptionsConfigAction: (IC) -> Unit,
+    val dependencies: List<ScenarioModule>,
+) : BaseScenarioModule<B, IC>(module, outputs, strategyConfig, icOptionsConfigAction) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
     override fun replaceFileWithVersion(fileName: String, version: String) {
@@ -128,9 +137,27 @@ internal class ExternallyTrackedScenarioModuleImpl(
         addToModifiedFiles(file)
     }
 
-    override fun getSourcesChanges() = sourcesChanges
+    fun getOutputChanges() = SourcesChanges.Known(
+        modifiedFiles = module.outputDirectory.walk().toList().filter {
+            val name = it.relativeTo(module.outputDirectory).toString()
+            !outputs.contains(FileKey(name, it.getLastModifiedTime().toMillis(), it.fileSize()))
+        }.map { it.absolute().toFile() },
+        removedFiles = outputs.map { module.outputDirectory.resolve(it.relativeFilePath).absolute().toFile() }.filter { !it.exists() }
+    )
 
-    override fun compile(forceOutput: LogLevel?, assertions: context(Module, ScenarioModule) CompilationOutcome.() -> Unit) {
+    override fun getSourcesChanges() =
+        sourcesChanges + dependencies.filterIsInstance<ExternallyTrackedScenarioModuleImpl<*, *>>().map { it.getOutputChanges() }
+            .fold(SourcesChanges.Known(emptyList(), emptyList())) { acc, changes -> acc + changes }
+
+    operator fun SourcesChanges.Known.plus(other: SourcesChanges.Known): SourcesChanges.Known = SourcesChanges.Known(
+        this.modifiedFiles + other.modifiedFiles,
+        this.removedFiles + other.removedFiles,
+    )
+
+    override fun compile(
+        forceOutput: LogLevel?,
+        assertions: context(ModuleContext, ScenarioModule) CompilationOutcome.() -> Unit,
+    ) {
         super.compile(forceOutput) {
             assertions()
 
@@ -155,55 +182,11 @@ internal class ExternallyTrackedScenarioModuleImpl(
     }
 }
 
-internal class AutoTrackedScenarioModuleImpl(
-    module: Module,
-    outputs: MutableSet<String>,
+internal class AutoTrackedScenarioModuleImpl<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder>(
+    module: Module<*, B, IC>,
+    outputs: MutableSet<FileKey>,
     strategyConfig: ExecutionPolicy,
-    icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit),
-) : BaseScenarioModule(module, outputs, strategyConfig, icOptionsConfigAction) {
+    icOptionsConfigAction: (IC) -> Unit,
+) : BaseScenarioModule<B, IC>(module, outputs, strategyConfig, icOptionsConfigAction) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
-
-private class ScenarioDsl(
-    private val project: Project,
-    private val strategyConfig: ExecutionPolicy,
-) : Scenario {
-    @Synchronized
-    override fun module(
-        moduleName: String,
-        dependencies: List<ScenarioModule>,
-        snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-    ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
-        val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, false)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, false)
-    }
-
-    @Synchronized
-    override fun trackedModule(
-        moduleName: String,
-        dependencies: List<ScenarioModule>,
-        snapshotConfig: SnapshotConfig,
-        compilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
-        icOptionsConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration.Builder) -> Unit,
-    ): ScenarioModule {
-        val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
-        val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, true)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, icOptionsConfigAction, true)
-    }
-}
-
-fun BaseCompilationTest.scenario(kotlinToolchains: KotlinToolchains, strategyConfig: ExecutionPolicy, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(kotlinToolchains, strategyConfig, workingDirectory), strategyConfig))
-}
-
-fun BaseCompilationTest.scenario(executionStrategy: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
-    scenario(executionStrategy.first, executionStrategy.second, action)
-}
-

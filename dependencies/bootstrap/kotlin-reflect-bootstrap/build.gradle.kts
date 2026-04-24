@@ -1,6 +1,9 @@
+val kotlinReflectVersion = rootProject.extra["versions.kotlin-reflect"] as String
 val resolvedBootstrap = configurations.resolvable("kotlinReflectBootstrapClasspath") {
     dependencies.addLater(providers.provider {
-        project.dependencies.create("org.jetbrains.kotlin:kotlin-reflect:${bootstrapKotlinVersion}")
+        project.dependencies.create("org.jetbrains.kotlin:kotlin-reflect:$kotlinReflectVersion") {
+            isTransitive = false
+        }
     })
 }
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.model.project
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Warnings-as-errors: -Werror promotes warnings to error log level")
@@ -23,7 +23,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @DisplayName("Without -Werror, deprecation warning stays at WARN level")
     @BtaV2StrategyAgnosticCompilationTest
     fun warningIsLoggedAtWarnLevelWithoutWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile {
                 assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
@@ -35,7 +35,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @DisplayName("With -Werror, deprecation warning is promoted to ERROR level")
     @BtaV2StrategyAgnosticCompilationTest
     fun warningIsLoggedAtErrorLevelWithWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[WERROR] = true
@@ -50,7 +50,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @DisplayName("With -Xwarning-level=DEPRECATION:warning and -Werror, deprecation warning stays at WARN level (not escalated)")
     @BtaV2StrategyAgnosticCompilationTest
     fun fixedWarningIsNotEscalatedToErrorWithWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 it.compilerArguments[WERROR] = true
@@ -66,7 +66,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @DisplayName("With -Xwarning-level=DEPRECATION:warning but no -Werror, deprecation warning still stays at WARN level")
     @BtaV2StrategyAgnosticCompilationTest
     fun fixedWarningStaysAtWarnLevelWithoutWerror(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+        jvmProject(strategyConfig) {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 @OptIn(ExperimentalCompilerArgument::class)
