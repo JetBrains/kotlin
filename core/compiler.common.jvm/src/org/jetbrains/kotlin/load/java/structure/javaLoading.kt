@@ -30,5 +30,9 @@ private fun isMethodWithOneObjectParameter(method: JavaMethod): Boolean {
         val classFqName = classifier.fqName
         return classFqName != null && classFqName.asString() == "java.lang.Object"
     }
-    return false
+    // For unresolved types (e.g., java-direct before FIR resolves the type via callback),
+    // the classifier is null. Check the qualified name directly: unqualified "Object" in Java
+    // always refers to java.lang.Object, so it is safe to treat it as such here.
+    val qualifiedName = type.classifierQualifiedName
+    return qualifiedName == "java.lang.Object" || qualifiedName == "Object"
 }

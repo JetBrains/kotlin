@@ -34,6 +34,21 @@ interface JavaArrayAnnotationArgument : JavaAnnotationArgument {
 interface JavaEnumValueAnnotationArgument : JavaAnnotationArgument {
     val enumClassId: ClassId?
     val entryName: Name?
+
+    /**
+     * Whether the enum class reference is already resolved (fully qualified or imported).
+     * If false, FIR should use [resolveEnumClass] for resolution.
+     */
+    val isResolved: Boolean get() = true
+
+    /**
+     * Resolves the enum class using the provided callback.
+     * Called when [isResolved] is false or [enumClassId] may be incorrect for nested classes.
+     *
+     * @param tryResolve callback that checks if a ClassId exists
+     * @return the resolved ClassId, or null if resolution fails
+     */
+    fun resolveEnumClass(tryResolve: (ClassId) -> Boolean): ClassId? = enumClassId
 }
 
 interface JavaClassObjectAnnotationArgument : JavaAnnotationArgument {
