@@ -16,6 +16,7 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
 
     @UsedFromCompilerGeneratedCode
     internal var result: Any? = null
+    @UsedFromCompilerGeneratedCode
     internal var exception: Throwable? = null
     protected var finallyPath: Array<Int>? = null
 
