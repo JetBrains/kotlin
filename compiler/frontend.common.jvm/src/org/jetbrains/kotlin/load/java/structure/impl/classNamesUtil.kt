@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 fun String.convertCanonicalNameToQName() = splitCanonicalFqName().joinToString(separator = ".") { it.substringBefore('<') }
 
 // "test.A<B.C>.D<E<F.G, H>, I.J>" -> ["test", "A<B.C>", "D<E<F.G, H>, I.J>"]
-private fun String.splitCanonicalFqName(): List<String> {
+fun String.splitCanonicalFqName(): List<String> {
     fun String.toNonEmpty(): String =
             if (this.isNotEmpty()) this else SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString()
 

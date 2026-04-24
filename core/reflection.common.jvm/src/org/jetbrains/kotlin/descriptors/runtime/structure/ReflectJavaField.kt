@@ -28,4 +28,6 @@ class ReflectJavaField(override val member: Field) : ReflectJavaMember(), JavaFi
 
     override val initializerValue: Any? get() = null
     override val hasConstantNotNullInitializer get() = false
+    // Reflection cannot observe field initializers, so report none.
+    override val hasInitializer: Boolean get() = false
 }

@@ -189,14 +189,24 @@ internal fun JavaAnnotationArgument.toFirExpression(
             }
         }
         is JavaEnumValueAnnotationArgument -> {
-            val classId = requireNotNull(enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId)
-            buildEnumEntryDeserializedAccessExpression {
-                // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
-                // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
-                // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
-                // As a fallback, we use the expected type which should be the type of the enum.
-                enumClassId = classId
-                enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+            val classId = enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+
+            if (classId != null) {
+                buildEnumEntryDeserializedAccessExpression {
+                    enumClassId = classId
+                    enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+                }
+            } else {
+                // Both `enumClassId` and the expected-type fallback are null (e.g. KT-47702:
+                // static-imported enum constant in an annotation default value). Produce a
+                // diagnosable error instead of the historic `requireNotNull` crash.
+                buildErrorExpression {
+                    this.source = source
+                    diagnostic = ConeSimpleDiagnostic(
+                        "Cannot resolve enum annotation argument: ${entryName?.asString() ?: "?"}",
+                        DiagnosticKind.Java,
+                    )
+                }
             }
         }
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {

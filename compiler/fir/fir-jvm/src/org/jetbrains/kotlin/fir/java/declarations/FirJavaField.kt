@@ -43,6 +43,7 @@ class FirJavaField @FirImplementationDetail constructor(
     private val annotationList: FirJavaAnnotationList,
     lazyInitializer: Lazy<FirExpression?>,
     lazyHasConstantInitializer: Lazy<Boolean>,
+    lazyHasInitializer: Lazy<Boolean>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
     private val containingClassSymbol: FirClassSymbol<*>,
@@ -51,6 +52,9 @@ class FirJavaField @FirImplementationDetail constructor(
         private set
 
     var lazyHasConstantInitializer: Lazy<Boolean> = lazyHasConstantInitializer
+        private set
+
+    var lazyHasInitializer: Lazy<Boolean> = lazyHasInitializer
         private set
 
     init {
@@ -75,6 +79,14 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val hasConstantInitializer: Boolean
         get() = lazyHasConstantInitializer.value
+
+    /**
+     * Whether the underlying Java declaration carries any initializer expression. Mirrors
+     * [org.jetbrains.kotlin.load.java.structure.JavaField.hasInitializer]; broader than
+     * [hasConstantInitializer], which is restricted to JLS 4.12.4 compile-time constants.
+     */
+    val hasInitializer: Boolean
+        get() = lazyHasInitializer.value
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
         annotations.getDeprecationsProviderFromAnnotations(moduleData.session, fromJava = true)
@@ -159,6 +171,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
         lazyInitializer = lazyOf(newInitializer)
+        lazyHasInitializer = lazyOf(newInitializer != null)
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
@@ -204,6 +217,7 @@ class FirJavaFieldBuilder : FirFieldBuilder() {
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
     var lazyInitializer: Lazy<FirExpression?>? = null
     lateinit var lazyHasConstantInitializer: Lazy<Boolean>
+    lateinit var lazyHasInitializer: Lazy<Boolean>
     lateinit var containingClassSymbol: FirClassSymbol<*>
 
     @OptIn(FirImplementationDetail::class)
@@ -220,6 +234,7 @@ class FirJavaFieldBuilder : FirFieldBuilder() {
             annotationList,
             lazyInitializer ?: lazyOf(initializer),
             lazyHasConstantInitializer,
+            lazyHasInitializer,
             dispatchReceiverType,
             attributes,
             containingClassSymbol,

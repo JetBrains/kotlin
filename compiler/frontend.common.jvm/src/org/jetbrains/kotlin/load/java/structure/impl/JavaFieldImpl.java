@@ -60,4 +60,9 @@ public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField
         // see IsConstantExpressionVisitor.visitLiteralExpression()
         return isCompileTimeConstant(getPsi());
     }
+
+    @Override
+    public boolean getHasInitializer() {
+        return getPsi().hasInitializer();
+    }
 }

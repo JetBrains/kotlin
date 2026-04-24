@@ -43,4 +43,9 @@ class SymbolBasedField(
     override val hasConstantNotNullInitializer: Boolean
         get() = initializerValue != null
 
+    // Symbol-based view (javac) does not expose non-constant initializer presence; report only
+    // constant initializers, matching [hasConstantNotNullInitializer].
+    override val hasInitializer: Boolean
+        get() = initializerValue != null
+
 }

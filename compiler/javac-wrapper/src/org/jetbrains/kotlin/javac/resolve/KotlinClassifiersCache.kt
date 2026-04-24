@@ -205,6 +205,7 @@ class MockKotlinField(private val psiField: PsiField) : JavaField {
     override val isEnumEntry get() = shouldNotBeCalled()
     override val type get() = shouldNotBeCalled()
     override val hasConstantNotNullInitializer get() = shouldNotBeCalled()
+    override val hasInitializer get() = shouldNotBeCalled()
     override fun findAnnotation(fqName: FqName) = shouldNotBeCalled()
     override val isFromSource: Boolean get() = shouldNotBeCalled()
 }

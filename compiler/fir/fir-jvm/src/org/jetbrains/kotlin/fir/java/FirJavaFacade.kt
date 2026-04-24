@@ -109,8 +109,6 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             javaTypeParameterStack.addStack(parentStack)
         }
 
-        val firJavaClass = createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
-
         /**
          * This is where the problems begin. We need to enhance nullability of super types and type parameter bounds,
          * for which we need the annotations of this class as they may specify default nullability.
@@ -122,11 +120,11 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
          * or else FIR may crash upon encountering a [org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef]
          * where [FirResolvedTypeRef] is expected.
          *
-         * 1. (will happen lazily in [FirJavaClass.annotations]]) Resolve annotations
+         * 1. (will happen lazily in [FirJavaClass.annotations]) Resolve annotations
          * 2. (will happen lazily in [FirJavaClass.typeParameters]) Enhance type parameter bounds in [FirJavaTypeParameter] - may refer to each other, take default nullability from annotations
          * 3. (will happen lazily in [FirJavaClass.superTypeRefs]) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
          */
-        return firJavaClass
+        return createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
     }
 
     @OptIn(FirImplementationDetail::class)
@@ -191,12 +189,14 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
                     javaClass.permittedTypes.mapNotNullTo(mutableListOf()) { classifierType ->
-                        val classifier = classifierType.classifier as? JavaClass
-                        classifier?.let { JavaToKotlinClassMap.mapJavaToKotlin(it.fqName!!) ?: it.classId }
+                        val classifier = classifierType.classifier as? JavaClass ?: return@mapNotNullTo null
+                        JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId
                     }
                 }
 
                 if (classKind == ClassKind.CLASS && !javaClass.isAbstract) {
+                    // Java permits `sealed non-abstract class`; Kotlin needs the flag to relax its
+                    // "sealed ⇒ abstract" expectation when consuming such classes at use sites.
                     isJavaNonAbstractSealed = true
                 }
             }
@@ -541,12 +541,15 @@ private fun convertJavaFieldToFir(
             annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
 
             lazyInitializer = lazy {
-                // NB: null should be converted to null
                 javaField.initializerValue?.createConstantIfAny(session)
             }
 
             lazyHasConstantInitializer = lazy {
                 javaField.hasConstantNotNullInitializer
+            }
+
+            lazyHasInitializer = lazy {
+                javaField.hasInitializer
             }
 
             if (!javaField.isStatic) {
@@ -664,7 +667,11 @@ private fun convertJavaConstructorToFir(
         symbol = constructorSymbol
         status = methodStatus
         // TODO get rid of dependency on PSI KT-63046
-        isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+        isPrimary = javaConstructor == null
+                || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
+                // For non-PSI (java-direct) sources `source?.psi` is null, so detect the canonical
+                // record constructor structurally instead of via PSI.
+                || (source?.psi == null && javaClass.isRecord && isCanonicalRecordConstructorForSource(javaConstructor, javaClass))
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
         }
@@ -718,10 +725,20 @@ private fun buildConstructorForAnnotationClass(
     }
 }
 
+// For source-based (non-PSI) Java class finders: detect canonical record constructor by matching
+// parameter names to record component names in order (JLS requires identical names for explicit canonical ctors).
+private fun isCanonicalRecordConstructorForSource(constructor: JavaConstructor, javaClass: JavaClass): Boolean {
+    val components = javaClass.recordComponents.toList()
+    val params = constructor.valueParameters
+    if (params.size != components.size) return false
+    return params.zip(components).all { [param, component] -> param.name == component.name }
+}
+
 private fun FqName.topLevelName() = asString().substringBefore(".")
 
 internal fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
     return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)
+        ?: (this as? JavaDirectSourceElementOwner)?.toKtSourceElement(sourceElementKind)
 }
 
 private fun List<FirTypeParameter>.toRefs(): List<FirTypeParameterRef> {
