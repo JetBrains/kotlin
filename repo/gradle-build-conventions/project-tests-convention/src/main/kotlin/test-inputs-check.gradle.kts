@@ -123,14 +123,18 @@ tasks.withType<Test>().configureEach {
             val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet()) { file ->
                 if (file.isDirectory) {
                     addedDirs.add(file)
-                    listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}/", "read";""",
-                        """permission java.io.FilePermission "${file.absolutePath}/-", "read${
+                    buildList {
+                        add("""permission java.io.FilePermission "${file.absolutePath}/", "read";""")
+                        if (file.canonicalPath.contains("/testData")) {
                             // We write to the testData folder from tests...
-                            if (file.canonicalPath.contains("/testData")) ",write,delete"
-                            else ""
-                        }";""",
-                    )
+                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read,write,delete";""")
+                        } else {
+                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read";""")
+                        }
+                        if (file.canonicalPath.endsWith("dist")) {
+                            add("""permission java.io.FilePermission "${file.resolve("kotlinc").resolve("bin")}/-", "read,execute";""")
+                        }
+                    }
                 } else if (file.extension == "class") {
                     listOfNotNull(
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read";""".takeIf {

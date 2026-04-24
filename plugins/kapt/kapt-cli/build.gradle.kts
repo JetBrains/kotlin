@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -29,8 +30,6 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
-        workingDir = rootDir
-        dependsOn(":dist")
         val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
             environment("JAVA_HOME", jdkHome.get())
@@ -40,4 +39,9 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.kapt.cli.test.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
+
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
+
+    testData(project(":kotlin-annotation-processing-cli").isolated, "testData")
 }
