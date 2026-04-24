@@ -115,6 +115,7 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             args.skipPrereleaseCheck = originalArguments.skipPrereleaseCheck
             args.whenGuards = originalArguments.whenGuards
             args.nestedTypeAliases = originalArguments.nestedTypeAliases
+            args.javaDirect = originalArguments.javaDirect
 
         } else {
             args.jvmTarget = config.jvmTarget
