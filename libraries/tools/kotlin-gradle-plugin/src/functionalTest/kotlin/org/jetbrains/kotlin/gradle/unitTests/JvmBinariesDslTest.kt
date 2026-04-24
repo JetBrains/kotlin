@@ -424,6 +424,9 @@ class JvmBinariesDslTest {
     fun configuredToolchainIsAppliedToRunTask() {
         // On Windows toolchain detection is not working correctly in the functional tests
         Assumptions.assumeTrue(!SystemUtils.IS_OS_WINDOWS)
+        // Toolchain detection uses ForkJoinPool parallel streams which deadlock under SecurityManager (KT-85432)
+        @Suppress("DEPRECATION")
+        Assumptions.assumeTrue(System.getSecurityManager() == null)
 
         val project = testMppProject {
             kotlin {
