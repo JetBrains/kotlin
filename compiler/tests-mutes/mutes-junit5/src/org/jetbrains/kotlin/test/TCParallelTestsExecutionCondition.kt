@@ -17,10 +17,16 @@ import kotlin.jvm.optionals.getOrNull
  */
 class TCParallelTestsExecutionCondition : ExecutionCondition {
     lateinit var excludedTestClasses: Set<String>
+    lateinit var includedTestClasses: Set<String>
     override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
         if (!::excludedTestClasses.isInitialized) {
             excludedTestClasses = context.getConfigurationParameter("teamcity.build.parallelTests.excludesFile") { excludesFile ->
                 File(excludesFile).readLines().filter { !it.startsWith("#") }.toSet()
+            }.getOrNull() ?: emptySet()
+        }
+        if (!::includedTestClasses.isInitialized) {
+            includedTestClasses = context.getConfigurationParameter("teamcity.build.parallelTests.includesFile") { includesFile ->
+                File(includesFile).readLines().filter { !it.startsWith("#") }.toSet()
             }.getOrNull() ?: emptySet()
         }
 
@@ -34,8 +40,14 @@ class TCParallelTestsExecutionCondition : ExecutionCondition {
             return ConditionEvaluationResult.enabled("The execution condition is only applicable to test methods")
         }
 
-        return if (context.testClass.getOrNull()?.name in excludedTestClasses) {
-            ConditionEvaluationResult.disabled("Disabled in the current batch by TeamCity Parallel Tests feature")
+        val className = context.testClass.getOrNull()?.name
+        return if (className != null && className in excludedTestClasses) {
+            val topLevelClassName = className.substringBefore('$')
+            if (className != topLevelClassName && topLevelClassName in includedTestClasses) {
+                ConditionEvaluationResult.enabled("KTI-3092")
+            } else {
+                ConditionEvaluationResult.disabled("Disabled in the current batch by TeamCity Parallel Tests feature")
+            }
         } else {
             ConditionEvaluationResult.enabled("Not disabled in the current batch by TeamCity Parallel Tests feature")
         }
