@@ -81,7 +81,7 @@ internal class KFunctionState(
 
         invokeSymbol = environment.getCachedFunction(irFunction.symbol, boundParameters) ?: environment.setCachedFunction(
             irFunction.symbol, boundParameters,
-            newFunction = createInvokeFunction(irFunction, irClass, boundParameters).symbol
+            newFunction = context(environment) { createInvokeFunction(irFunction, irClass, boundParameters).symbol }
         )
     }
 
@@ -103,6 +103,7 @@ internal class KFunctionState(
     private var _typeParameters: List<KTypeParameter>? = null
 
     companion object {
+        context(environment: IrInterpreterEnvironment)
         private fun createInvokeFunction(
             irFunction: IrFunction, irClass: IrClass, boundParameters: Set<IrValueParameter>
         ): IrSimpleFunction {
@@ -140,7 +141,7 @@ internal class KFunctionState(
                     }
                 }
 
-                body = listOf(this.createReturn(call)).wrapWithBlockBody()
+                body = listOf(this.createReturn(call, environment.irBuiltIns.nothingType)).wrapWithBlockBody()
             }
             functionClass.declarations += newFunctionToInvoke
             return newFunctionToInvoke

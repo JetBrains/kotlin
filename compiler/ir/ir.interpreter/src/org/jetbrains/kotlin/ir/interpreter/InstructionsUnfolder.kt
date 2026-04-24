@@ -168,7 +168,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
 
         val callWithAllArgs = expression.shallowCopy() // just a copy of given call, but with all arguments in place
         callWithAllArgs.arguments.assignFrom(actualParameters.map { it?.createGetValue() } )
-        defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs)).wrapWithBlockBody()
+        defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs, environment.irBuiltIns.nothingType)).wrapWithBlockBody()
 
         val callToDefault = environment.setCachedFunction(
             expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall, newFunction = defaultFun.symbol

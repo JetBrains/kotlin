@@ -104,7 +104,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             body = when (original) {
                 is IrConstructor -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(wrapperCall))
                 else -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
-                    statements += IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, wrapperCall)
+                    statements += IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.nothingType, symbol, wrapperCall)
                 }
             }
         }

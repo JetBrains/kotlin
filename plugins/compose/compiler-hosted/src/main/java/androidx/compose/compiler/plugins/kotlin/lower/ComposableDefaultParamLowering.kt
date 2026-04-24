@@ -348,8 +348,7 @@ class ComposableDefaultParamLowering(
                                     arguments[index++] = irGet(p)
                                 }
                             }
-                        },
-                        copy.returnType
+                        }
                     )
                 )
             }
