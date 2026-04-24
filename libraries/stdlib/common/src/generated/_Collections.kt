@@ -1956,6 +1956,7 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
  * @sample samples.generated.allequal.AllEqualIterablesSamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun <T> Iterable<T>.allEqual(): Boolean {
     val iterator = iterator()
     if (!iterator.hasNext()) return true
@@ -1982,6 +1983,7 @@ public fun <T> Iterable<T>.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualIterablesSamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <T, K> Iterable<T>.allEqualBy(selector: (T) -> K): Boolean {
     val iterator = iterator()
     if (!iterator.hasNext()) return true
@@ -2008,6 +2010,7 @@ public inline fun <T, K> Iterable<T>.allEqualBy(selector: (T) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualIterablesSamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <T> Iterable<T>.allEqualWith(predicate: (T, T) -> Boolean): Boolean {
     val iterator = iterator()
     if (!iterator.hasNext()) return true

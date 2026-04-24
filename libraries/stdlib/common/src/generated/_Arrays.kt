@@ -14295,6 +14295,7 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
  * @sample samples.generated.allequal.AllEqualArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun <T> Array<out T>.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14316,6 +14317,7 @@ public fun <T> Array<out T>.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun ByteArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14337,6 +14339,7 @@ public fun ByteArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun ShortArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14358,6 +14361,7 @@ public fun ShortArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun IntArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14379,6 +14383,7 @@ public fun IntArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun LongArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14403,6 +14408,7 @@ public fun LongArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun FloatArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14427,6 +14433,7 @@ public fun FloatArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun DoubleArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14448,6 +14455,7 @@ public fun DoubleArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun BooleanArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14469,6 +14477,7 @@ public fun BooleanArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public fun CharArray.allEqual(): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14494,6 +14503,7 @@ public fun CharArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <T, K> Array<out T>.allEqualBy(selector: (T) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14519,6 +14529,7 @@ public inline fun <T, K> Array<out T>.allEqualBy(selector: (T) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> ByteArray.allEqualBy(selector: (Byte) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14544,6 +14555,7 @@ public inline fun <K> ByteArray.allEqualBy(selector: (Byte) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> ShortArray.allEqualBy(selector: (Short) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14569,6 +14581,7 @@ public inline fun <K> ShortArray.allEqualBy(selector: (Short) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> IntArray.allEqualBy(selector: (Int) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14594,6 +14607,7 @@ public inline fun <K> IntArray.allEqualBy(selector: (Int) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> LongArray.allEqualBy(selector: (Long) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14619,6 +14633,7 @@ public inline fun <K> LongArray.allEqualBy(selector: (Long) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> FloatArray.allEqualBy(selector: (Float) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14644,6 +14659,7 @@ public inline fun <K> FloatArray.allEqualBy(selector: (Float) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> DoubleArray.allEqualBy(selector: (Double) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14669,6 +14685,7 @@ public inline fun <K> DoubleArray.allEqualBy(selector: (Double) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> BooleanArray.allEqualBy(selector: (Boolean) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14694,6 +14711,7 @@ public inline fun <K> BooleanArray.allEqualBy(selector: (Boolean) -> K): Boolean
  * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <K> CharArray.allEqualBy(selector: (Char) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
@@ -14717,6 +14735,7 @@ public inline fun <K> CharArray.allEqualBy(selector: (Char) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun <T> Array<out T>.allEqualWith(predicate: (T, T) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14738,6 +14757,7 @@ public inline fun <T> Array<out T>.allEqualWith(predicate: (T, T) -> Boolean): B
  * @sample samples.generated.allequal.AllEqualByteArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun ByteArray.allEqualWith(predicate: (Byte, Byte) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14759,6 +14779,7 @@ public inline fun ByteArray.allEqualWith(predicate: (Byte, Byte) -> Boolean): Bo
  * @sample samples.generated.allequal.AllEqualShortArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun ShortArray.allEqualWith(predicate: (Short, Short) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14780,6 +14801,7 @@ public inline fun ShortArray.allEqualWith(predicate: (Short, Short) -> Boolean):
  * @sample samples.generated.allequal.AllEqualIntArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun IntArray.allEqualWith(predicate: (Int, Int) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14801,6 +14823,7 @@ public inline fun IntArray.allEqualWith(predicate: (Int, Int) -> Boolean): Boole
  * @sample samples.generated.allequal.AllEqualLongArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun LongArray.allEqualWith(predicate: (Long, Long) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14822,6 +14845,7 @@ public inline fun LongArray.allEqualWith(predicate: (Long, Long) -> Boolean): Bo
  * @sample samples.generated.allequal.AllEqualFloatArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun FloatArray.allEqualWith(predicate: (Float, Float) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14843,6 +14867,7 @@ public inline fun FloatArray.allEqualWith(predicate: (Float, Float) -> Boolean):
  * @sample samples.generated.allequal.AllEqualDoubleArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun DoubleArray.allEqualWith(predicate: (Double, Double) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14864,6 +14889,7 @@ public inline fun DoubleArray.allEqualWith(predicate: (Double, Double) -> Boolea
  * @sample samples.generated.allequal.AllEqualBooleanArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun BooleanArray.allEqualWith(predicate: (Boolean, Boolean) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]
@@ -14885,6 +14911,7 @@ public inline fun BooleanArray.allEqualWith(predicate: (Boolean, Boolean) -> Boo
  * @sample samples.generated.allequal.AllEqualCharArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 public inline fun CharArray.allEqualWith(predicate: (Char, Char) -> Boolean): Boolean {
     if (size < 2) return true
     val first = this[0]

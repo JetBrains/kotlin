@@ -230,6 +230,7 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfUnsigned)
     } builder {
         since("2.4")
+        annotation("@ExperimentalStdlibApi")
         returns("Boolean")
         doc {
             val equalityPhrase = if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true)
@@ -290,6 +291,7 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfUnsigned)
     } builder {
         since("2.4")
+        annotation("@ExperimentalStdlibApi")
         inline()
         returns("Boolean")
         typeParam("K")
@@ -337,6 +339,7 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfUnsigned)
     } builder {
         since("2.4")
+        annotation("@ExperimentalStdlibApi")
         inline()
         returns("Boolean")
         doc {

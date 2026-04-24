@@ -6052,6 +6052,7 @@ public inline fun UShortArray.all(predicate: (UShort) -> Boolean): Boolean {
  * @sample samples.generated.allequal.AllEqualUIntArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public fun UIntArray.allEqual(): Boolean {
     if (size < 2) return true
@@ -6074,6 +6075,7 @@ public fun UIntArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualULongArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public fun ULongArray.allEqual(): Boolean {
     if (size < 2) return true
@@ -6096,6 +6098,7 @@ public fun ULongArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualUByteArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public fun UByteArray.allEqual(): Boolean {
     if (size < 2) return true
@@ -6118,6 +6121,7 @@ public fun UByteArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualUShortArraySamples.allEqual
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public fun UShortArray.allEqual(): Boolean {
     if (size < 2) return true
@@ -6144,6 +6148,7 @@ public fun UShortArray.allEqual(): Boolean {
  * @sample samples.generated.allequal.AllEqualUIntArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
     if (size < 2) return true
@@ -6170,6 +6175,7 @@ public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualULongArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
     if (size < 2) return true
@@ -6196,6 +6202,7 @@ public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualUByteArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
     if (size < 2) return true
@@ -6222,6 +6229,7 @@ public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualUShortArraySamples.allEqualBy
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun <K> UShortArray.allEqualBy(selector: (UShort) -> K): Boolean {
     if (size < 2) return true
@@ -6244,6 +6252,7 @@ public inline fun <K> UShortArray.allEqualBy(selector: (UShort) -> K): Boolean {
  * @sample samples.generated.allequal.AllEqualUIntArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun UIntArray.allEqualWith(predicate: (UInt, UInt) -> Boolean): Boolean {
     if (size < 2) return true
@@ -6266,6 +6275,7 @@ public inline fun UIntArray.allEqualWith(predicate: (UInt, UInt) -> Boolean): Bo
  * @sample samples.generated.allequal.AllEqualULongArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun ULongArray.allEqualWith(predicate: (ULong, ULong) -> Boolean): Boolean {
     if (size < 2) return true
@@ -6288,6 +6298,7 @@ public inline fun ULongArray.allEqualWith(predicate: (ULong, ULong) -> Boolean):
  * @sample samples.generated.allequal.AllEqualUByteArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun UByteArray.allEqualWith(predicate: (UByte, UByte) -> Boolean): Boolean {
     if (size < 2) return true
@@ -6310,6 +6321,7 @@ public inline fun UByteArray.allEqualWith(predicate: (UByte, UByte) -> Boolean):
  * @sample samples.generated.allequal.AllEqualUShortArraySamples.allEqualWith
  */
 @SinceKotlin("2.4")
+@ExperimentalStdlibApi
 @ExperimentalUnsignedTypes
 public inline fun UShortArray.allEqualWith(predicate: (UShort, UShort) -> Boolean): Boolean {
     if (size < 2) return true
