@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:WasmStackSwitchingOnly
+
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
@@ -67,7 +69,6 @@ internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
     var pendingSuspend: Boolean
 )
 
-@WasmStackSwitchingOnly
 internal class WasmContinuation<T, R>(
     internal val wasmContBox: WasmContinuationBox,
     completion: Continuation<R>,
