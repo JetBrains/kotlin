@@ -33,17 +33,20 @@ internal class PlaywrightTestExecutor : TestExecuter<PwExecutionSpec> {
 
         client.root {
             val browser = playwright.chromium().launch()
-            val page = browser.newPage()
-            page.onConsoleMessage {
-                if (it.text().startsWith("THE END")) {
-                    handler.close()
-                    page.close()
-                    playwright.close()
-                } else {
-                    handler.write(it.text().toByteArray())
+            browser.use {
+                val page = browser.newPage()
+                var finished = false
+                page.onConsoleMessage {
+                    if (it.text().startsWith("THE END")) {
+                        finished = true
+                    } else {
+                        handler.write(it.text().toByteArray())
+                        handler.writeEndLine()
+                    }
                 }
+                page.navigate(spec.url)
+                page.waitForCondition { finished }
             }
-            page.navigate(spec.url)
         }
     }
 
