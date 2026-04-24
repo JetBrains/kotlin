@@ -46,7 +46,9 @@ public class SinceKotlinVersion(str: String) : Comparable<SinceKotlinVersion> {
             Platform.jvm to SinceKotlinVersion("1.0"),
             Platform.js to SinceKotlinVersion("1.1"),
             Platform.native to SinceKotlinVersion("1.3"),
-            Platform.wasm to SinceKotlinVersion("1.8"),
+            @Suppress("DEPRECATION") Platform.wasm to SinceKotlinVersion("1.8"),
+            Platform.wasmWasi to SinceKotlinVersion("1.8"),
+            Platform.wasmJs to SinceKotlinVersion("1.8")
         )
 
         fun minVersionOfPlatform(platform: Platform): SinceKotlinVersion {
