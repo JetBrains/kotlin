@@ -10,12 +10,16 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
@@ -26,9 +30,12 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -189,14 +196,45 @@ internal fun JavaAnnotationArgument.toFirExpression(
             }
         }
         is JavaEnumValueAnnotationArgument -> {
-            val classId = requireNotNull(enumClassId ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId)
-            buildEnumEntryDeserializedAccessExpression {
-                // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
-                // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
-                // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
-                // As a fallback, we use the expected type which should be the type of the enum.
-                enumClassId = classId
-                enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+            val classId = if (isResolved) {
+                enumClassId
+            } else {
+                resolveEnumClass { candidateClassId ->
+                    session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
+                }
+            } ?: expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+
+            if (classId != null) {
+                val fieldName = entryName
+
+                // Try to resolve as a const field (Kotlin const vals or Java static final fields)
+                val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
+                if (constValue != null) {
+                    return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
+                }
+
+                buildEnumEntryDeserializedAccessExpression {
+                    enumClassId = classId
+                    enumEntryName = fieldName ?: SpecialNames.NO_NAME_PROVIDED
+                }
+            } else {
+                // enumClassId may be null (KT-47702: static-imported enum constant in an annotation default value) — fall back to the
+                // parameter's expected type, or an error if neither is available.
+                val fallbackClassId = expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
+                if (fallbackClassId != null) {
+                    buildEnumEntryDeserializedAccessExpression {
+                        enumClassId = fallbackClassId
+                        enumEntryName = entryName ?: SpecialNames.NO_NAME_PROVIDED
+                    }
+                } else {
+                    buildErrorExpression {
+                        this.source = source
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Cannot resolve enum annotation argument: ${entryName?.asString() ?: "?"}",
+                            DiagnosticKind.Java,
+                        )
+                    }
+                }
             }
         }
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
@@ -309,6 +347,63 @@ private fun fillAnnotationArgumentMapping(
     }
 }
 
+/**
+ * Tries to resolve a reference as a const field value.
+ * Checks the class itself, its companion object, and top-level properties.
+ * Uses [FirExpressionEvaluator] for proper const evaluation, handling non-trivial initializers.
+ */
+private fun resolveConstFieldValue(session: FirSession, classId: ClassId, fieldName: Name): Any? {
+    val firClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir as? FirRegularClass
+
+    if (firClass != null) {
+        // Class member first, companion second, top-level last: a reference like `MainKt.FOO`
+        // resolves `MainKt` as a real class before the Kotlin facade fallback, so a genuine
+        // class/companion member of the same name must win over the top-level property.
+        val constField = firClass.declarations.filterIsInstance<FirProperty>().find {
+            it.name == fieldName && it.isConst
+        } ?: firClass.companionObjectSymbol?.fir?.declarations?.filterIsInstance<FirProperty>()?.find {
+            it.name == fieldName && it.isConst
+        }
+
+        if (constField != null) {
+            return extractEvaluatedConstValue(constField, session)
+        }
+    }
+
+    // Fallback: top-level Kotlin property exposed via the facade class (e.g., MainKt.FOO → top-level const val FOO)
+    val topLevelSymbols = session.symbolProvider.getTopLevelPropertySymbols(classId.packageFqName, fieldName)
+    for (symbol in topLevelSymbols) {
+        if (symbol.isConst) {
+            extractEvaluatedConstValue(symbol.fir, session)?.let { return it }
+        }
+    }
+
+    return null
+}
+
+/**
+ * Extracts the evaluated constant value from a `const` [FirProperty] using FIR's const evaluator.
+ */
+internal fun extractEvaluatedConstValue(property: FirProperty, session: FirSession): Any? {
+    (property.initializer as? FirLiteralExpression)?.let { return it.value }
+
+    val evaluated = property.evaluatedInitializer
+        ?: FirExpressionEvaluator.evaluatePropertyInitializer(property, session)
+
+    return ((evaluated as? FirEvaluatorResult.Evaluated)?.result as? FirLiteralExpression)?.value
+}
+
+/**
+ * Extracts a constant value from a property or Java field symbol for cross-language const evaluation.
+ */
+internal fun FirVariableSymbol<*>.tryExtractConstantValue(session: FirSession): Any? {
+    (resolvedInitializer as? FirLiteralExpression)?.let { return it.value }
+    if (this is FirPropertySymbol && isConst) {
+        return extractEvaluatedConstValue(fir, session)
+    }
+    return null
+}
+
 private fun JavaClass.annotationParametersMapping(
     session: FirSession,
     source: KtSourceElement?,
@@ -357,7 +452,14 @@ private fun buildFirAnnotation(
     session: FirSession,
     source: KtSourceElement?,
 ): AnnotationData {
-    val classId = javaAnnotation.classId
+    val classId = if (javaAnnotation.isResolved) {
+        javaAnnotation.classId
+    } else {
+        // Resolve unqualified annotation names via java.lang and star imports
+        javaAnnotation.resolveAnnotation { candidateClassId ->
+            session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null
+        } ?: javaAnnotation.classId
+    }
     val lookupTag = when (classId) {
         JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
         JvmStandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
