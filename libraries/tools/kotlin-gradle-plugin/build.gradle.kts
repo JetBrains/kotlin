@@ -687,7 +687,11 @@ tasks.withType<Test>().configureEach {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
         dependsOn(acceptLicensesTask)
     }
-    maxParallelForks = 8
+    // TeamCity agents can have 16G RAM; keep CI below the local default to avoid killing the Gradle daemon.
+    maxParallelForks = providers.gradleProperty("kotlin.test.maxParallelForks")
+        .map(String::toInt)
+        .orElse(kotlinBuildProperties.isTeamcityBuild.map { if (it) 4 else 8 })
+        .get()
     maxHeapSize = "4G" // KT-72460 to investigate why we need to change heap size
 
     testLogging {
