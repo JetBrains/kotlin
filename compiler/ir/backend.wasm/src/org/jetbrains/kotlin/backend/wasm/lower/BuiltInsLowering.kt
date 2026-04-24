@@ -166,12 +166,6 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
             in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
                 val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
-                val createSymbol = symbols.createSimpleCoroutineFromSuspendFunction
-                val createdCoroutine = builder.irCall(createSymbol).apply {
-                    typeArguments[0] = call.typeArguments.last()  // T
-                    arguments[0] = call.arguments.last()!!        // completion
-                }
-
                 if (context.wasmCoroutinesStackSwitching) {
                     val suspendFunctionToContRefSymbol = symbols.coroutinesStackSwitchingIntrinsics!!.suspendFunctionToContrefImpl[arity]
                     val contRefArg = builder.irCall(suspendFunctionToContRefSymbol).apply {
@@ -185,6 +179,12 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                         typeArguments[0] = call.typeArguments.last()
                     }
                 } else {
+                    val createSymbol = symbols.createSimpleCoroutineFromSuspendFunction
+                    val createdCoroutine = builder.irCall(createSymbol).apply {
+                        typeArguments[0] = call.typeArguments.last()  // T
+                        arguments[0] = call.arguments.last()!!        // completion
+                    }
+
                     // Should we rely on fact this type is always statically known?
                     val fType = call.arguments[0]!!.type
                     val coroutineImplClass = symbols.coroutineImpl.owner  // CoroutineImplStateMachine

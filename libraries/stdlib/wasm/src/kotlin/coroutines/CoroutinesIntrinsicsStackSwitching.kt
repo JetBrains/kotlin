@@ -8,7 +8,6 @@
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineImplStackSwitching
 import kotlin.coroutines.WasmContinuation
 import kotlin.coroutines.WasmContinuationBox
 import kotlin.internal.UsedFromCompilerGeneratedCode
@@ -18,9 +17,9 @@ import kotlin.wasm.internal.*
 internal fun <T> createCoroutineUninterceptedIntrinsic0StackSwitching(
     f: suspend () -> T,
     completion: Continuation<T>
-): Continuation<Unit> = WasmContinuation<Unit, T>(
+): Continuation<Unit> = WasmContinuation(
     WasmContinuationBox(suspendFunction0ToContrefImpl(f), false),
-    createSimpleCoroutineFromSuspendFunctionStackSwitching(completion)
+    completion
 )
 
 @UsedFromCompilerGeneratedCode
@@ -28,19 +27,7 @@ internal fun <R, T> createCoroutineUninterceptedIntrinsic1StackSwitching(
     f: suspend R.() -> T,
     receiver: R,
     completion: Continuation<T>
-): Continuation<Unit> = WasmContinuation<Unit, T>(
+): Continuation<Unit> = WasmContinuation(
     WasmContinuationBox(suspendFunction1ToContrefImpl(f, receiver), false),
-    createSimpleCoroutineFromSuspendFunctionStackSwitching(completion)
+    completion
 )
-
-@Suppress("UNCHECKED_CAST")
-@UsedFromCompilerGeneratedCode
-internal fun <T> createSimpleCoroutineFromSuspendFunctionStackSwitching(
-    completion: Continuation<T>
-): CoroutineImplStackSwitching<Any?, T> = object : CoroutineImplStackSwitching<Any?, T>(completion) {
-    override fun doResume(): Any? {
-        if (exception != null) throw exception as Throwable
-        return result
-    }
-}
-

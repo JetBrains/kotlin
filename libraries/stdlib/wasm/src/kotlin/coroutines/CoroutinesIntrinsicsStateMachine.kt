@@ -42,7 +42,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
     }
 }
 
-// Is replaced by Stack Switching intrinsic when -Xwasm-coroutines-stack-switching passed
+// Is not used by Stack Switching implementation
 @Suppress("UNCHECKED_CAST")
 @UsedFromCompilerGeneratedCode
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
