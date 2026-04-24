@@ -27,16 +27,11 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
-import org.jetbrains.kotlin.fir.declarations.utils.isConst
-import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -115,24 +110,9 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             javaTypeParameterStack.addStack(parentStack)
         }
 
-        val firJavaClass = createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
-
-        /**
-         * This is where the problems begin. We need to enhance nullability of super types and type parameter bounds,
-         * for which we need the annotations of this class as they may specify default nullability.
-         * However, all three - annotations, type parameter bounds, and supertypes - can refer to other classes,
-         * which will cause the type parameter bounds and supertypes of *those* classes to get enhanced first,
-         * but they may refer back to this class again - which, thanks to the magic of symbol resolver caches,
-         * will be observed in a state where we've not done the enhancement yet. For those cases, we must publish
-         * at least unenhanced resolved types,
-         * or else FIR may crash upon encountering a [org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef]
-         * where [FirResolvedTypeRef] is expected.
-         *
-         * 1. (will happen lazily in [FirJavaClass.annotations]]) Resolve annotations
-         * 2. (will happen lazily in [FirJavaClass.typeParameters]) Enhance type parameter bounds in [FirJavaTypeParameter] - may refer to each other, take default nullability from annotations
-         * 3. (will happen lazily in [FirJavaClass.superTypeRefs]) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
-         */
-        return firJavaClass
+        // Lazy enhancement of annotations, type parameter bounds, and super types is staged via
+        // FirJavaClass.annotations / typeParameters / superTypeRefs — see FirLazyJavaDeclarationList.
+        return createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
     }
 
     @OptIn(FirImplementationDetail::class)
@@ -353,7 +333,7 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
             )
 
             // For java-direct source classes (classSource == null): use Library to avoid the validation
-            // check in FirPropertyAccessorImpl that requires source element for Source origin. Library
+            // check in FirPropertyAccessorImpl that requires a source element for Source origin. Library
             // origin still creates a proper getter (not a Java backing field) which EnumExternalEntriesLowering
             // can intercept to generate the correct intrinsic mapping.
             val enumEntriesOrigin = when {
@@ -565,7 +545,7 @@ private fun convertJavaFieldToFir(
             annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
 
             lazyInitializer = lazy {
-                // First try simple evaluation (handles literals and same-file references)
+                // First, try simple evaluation (handles literals and same-file references)
                 javaField.initializerValue?.createConstantIfAny(session)
                     ?: run {
                         // Try callback-based resolution for cross-language references (e.g., Java -> Kotlin)
@@ -623,7 +603,7 @@ private fun resolveExternalFieldValue(
     // For `MainKt.FOO`, try to find top-level property `FOO` in the package
     // The facade class name is typically `<FileName>Kt` (e.g., MainKt for Main.kt)
     val parts = classQualifier.split('.')
-    
+
     // Determine package FqName for the qualifier
     val qualifierPackage = if (parts.size == 1) {
         // Simple class name - use current package
@@ -632,13 +612,11 @@ private fun resolveExternalFieldValue(
         // Fully qualified name - extract package (everything except the class name)
         FqName(parts.dropLast(1).joinToString("."))
     }
-    
+
     // Try top-level property first (this handles facade classes like MainKt)
     val topLevelSymbols = session.symbolProvider.getTopLevelPropertySymbols(qualifierPackage, propertyName)
     for (symbol in topLevelSymbols) {
-        if (symbol.isConst) {
-            extractConstantValue(symbol, session)?.let { return it }
-        }
+        symbol.tryExtractConstantValue(session)?.let { return it }
     }
 
     // Case 2: Try as a class or companion object property
@@ -656,64 +634,24 @@ private fun resolveExternalFieldValue(
     for (classId in classIds) {
         // First try direct class member lookup
         val propertySymbols = session.getClassDeclaredPropertySymbols(classId, propertyName)
-        
+
         for (symbol in propertySymbols) {
-            if (symbol is FirPropertySymbol && symbol.isConst) {
-                extractConstantValue(symbol, session)?.let { return it }
-            }
-            if (symbol is FirFieldSymbol) {
-                extractConstantValue(symbol, session)?.let { return it }
-            }
+            symbol.tryExtractConstantValue(session)?.let { return it }
         }
-        
+
         // Case 3: Try companion object lookup (for Foo.BAR where BAR is in Foo.Companion)
         val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
         val companionSymbol = classSymbol?.companionObjectSymbol
         if (companionSymbol != null) {
             val companionClassId = companionSymbol.classId
             val companionPropertySymbols = session.getClassDeclaredPropertySymbols(companionClassId, propertyName)
-            
+
             for (symbol in companionPropertySymbols) {
-                if (symbol is FirPropertySymbol && symbol.isConst) {
-                    extractConstantValue(symbol, session)?.let { return it }
-                }
+                symbol.tryExtractConstantValue(session)?.let { return it }
             }
         }
     }
 
-    return null
-}
-
-/**
- * Extracts the constant value from a property or field symbol.
- * Handles both simple literal initializers and evaluated expressions.
- * For const properties, triggers evaluation if not already evaluated.
- */
-private fun extractConstantValue(symbol: FirVariableSymbol<*>, session: FirSession): Any? {
-    // First try resolvedInitializer (for simple literals)
-    val initializer = symbol.resolvedInitializer
-    if (initializer is FirLiteralExpression) {
-        return initializer.value
-    }
-    
-    // For const properties with non-literal initializers, trigger evaluation if needed
-    if (symbol is FirPropertySymbol && symbol.isConst) {
-        // Check if already evaluated
-        var evaluated = symbol.fir.evaluatedInitializer
-        
-        // If not evaluated yet, trigger evaluation
-        if (evaluated == null) {
-            evaluated = FirExpressionEvaluator.evaluatePropertyInitializer(symbol.fir, session)
-        }
-        
-        if (evaluated is FirEvaluatorResult.Evaluated) {
-            val result = evaluated.result
-            if (result is FirLiteralExpression) {
-                return result.value
-            }
-        }
-    }
-    
     return null
 }
 

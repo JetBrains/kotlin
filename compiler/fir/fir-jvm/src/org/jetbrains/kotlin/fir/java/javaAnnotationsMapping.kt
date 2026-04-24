@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -219,12 +221,8 @@ internal fun JavaAnnotationArgument.toFirExpression(
                     enumEntryName = fieldName ?: SpecialNames.NO_NAME_PROVIDED
                 }
             } else {
-                // enumClassId can be null when a java annotation uses a Kotlin enum as parameter and declares the default value using
-                // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
-                // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
-                // As a fallback, we use the expected type which should be the type of the enum.
-                // If even the expected type is unavailable (e.g., unresolvable reference in source-based Java parsing where
-                // the import is missing), return an error expression rather than crashing.
+                // enumClassId may be null (KT-47702: static-imported enum constant in an annotation default value) — fall back to the
+                // parameter's expected type, or an error if neither is available.
                 val fallbackClassId = expectedArrayElementTypeIfArray?.lowerBoundIfFlexible()?.classId
                 if (fallbackClassId != null) {
                     buildEnumEntryDeserializedAccessExpression {
@@ -385,23 +383,26 @@ private fun resolveConstFieldValue(session: FirSession, classId: ClassId, fieldN
 }
 
 /**
- * Extracts the evaluated constant value from a [FirProperty] using FIR's const evaluator.
- * Handles both simple literal initializers and complex const expressions.
+ * Extracts the evaluated constant value from a `const` [FirProperty] using FIR's const evaluator.
  */
-private fun extractEvaluatedConstValue(property: FirProperty, session: FirSession): Any? {
-    // First check if already evaluated
+internal fun extractEvaluatedConstValue(property: FirProperty, session: FirSession): Any? {
+    (property.initializer as? FirLiteralExpression)?.let { return it.value }
+
     val evaluated = property.evaluatedInitializer
         ?: FirExpressionEvaluator.evaluatePropertyInitializer(property, session)
 
-    if (evaluated is FirEvaluatorResult.Evaluated) {
-        val result = evaluated.result
-        if (result is FirLiteralExpression) {
-            return result.value
-        }
-    }
+    return ((evaluated as? FirEvaluatorResult.Evaluated)?.result as? FirLiteralExpression)?.value
+}
 
-    // Fallback: try the initializer directly (simple literal)
-    return (property.initializer as? FirLiteralExpression)?.value
+/**
+ * Extracts a constant value from a property or Java field symbol for cross-language const evaluation.
+ */
+internal fun FirVariableSymbol<*>.tryExtractConstantValue(session: FirSession): Any? {
+    (resolvedInitializer as? FirLiteralExpression)?.let { return it.value }
+    if (this is FirPropertySymbol && isConst) {
+        return extractEvaluatedConstValue(fir, session)
+    }
+    return null
 }
 
 private fun JavaClass.annotationParametersMapping(

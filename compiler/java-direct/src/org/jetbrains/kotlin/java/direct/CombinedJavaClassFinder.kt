@@ -71,13 +71,11 @@ class CombinedJavaClassFinder(
             ?: binaryFinder.findPackage(fqName, mayHaveAnnotations)
     }
 
-    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val fromSources = sourceFinder.knownClassNamesInPackage(packageFqName)
         val fromBinaries = binaryFinder.knownClassNamesInPackage(packageFqName)
 
         return when {
-            fromSources == null && fromBinaries == null -> null
-            fromSources == null -> fromBinaries
             fromBinaries == null -> fromSources
             else -> fromSources + fromBinaries
         }

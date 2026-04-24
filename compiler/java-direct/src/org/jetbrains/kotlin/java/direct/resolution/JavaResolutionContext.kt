@@ -373,18 +373,7 @@ class JavaResolutionContext private constructor(
 
         // Fall back: try as fully qualified name with different package/class splits
         // (longest package to shortest).
-        for (classStartIndex in (parts.size - 1) downTo 0) {
-            val packageFqName = if (classStartIndex == 0) {
-                FqName.ROOT
-            } else {
-                FqName.fromSegments(parts.subList(0, classStartIndex))
-            }
-            val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
-            val classId = ClassId(packageFqName, relativeClassName, isLocal = false)
-            if (tryResolve(classId)) return classId
-        }
-
-        return null
+        return probeFqnSplits(parts, tryResolve)
     }
 
     /**
@@ -659,4 +648,26 @@ class JavaResolutionContext private constructor(
         internal fun extractImports(tree: JavaLightTree, root: JavaLightNode): Pair<Map<String, FqName>, List<FqName>> =
             JavaImportResolver.extractImports(tree, root)
     }
+}
+
+/**
+ * Probe every package/class split of [parts] from longest package prefix down to the root package,
+ * returning the first [ClassId] accepted by [tryResolve].
+ *
+ * Mirrors the fallback branch of the session-aware `findClassId(fqn, session, accept)` in
+ * `compiler/fir/fir-jvm/.../JavaTypeConversion.kt` (which additionally uses
+ * `FirSymbolNamesProvider.getPackageNames()` to skip impossible packages on the fast path). We
+ * keep a local copy here because `java-direct` must not depend on `fir-jvm`; the two probe loops
+ * are intentionally identical so they can be kept in sync by inspection.
+ */
+private fun probeFqnSplits(parts: List<String>, tryResolve: (ClassId) -> Boolean): ClassId? {
+    if (parts.isEmpty()) return null
+    for (classStartIndex in (parts.size - 1) downTo 0) {
+        val packageFqName = if (classStartIndex == 0) FqName.ROOT
+        else FqName.fromSegments(parts.subList(0, classStartIndex))
+        val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
+        val candidate = ClassId(packageFqName, relativeClassName, isLocal = false)
+        if (tryResolve(candidate)) return candidate
+    }
+    return null
 }

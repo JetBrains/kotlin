@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Files are indexed via lightweight line scanning ([org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight]) that extracts
  * only the package name and top-level class names without invoking the parser. The full parse
  * happens lazily on first [findClass] access, at which point **all** top-level classes in the
- * file are cached to avoid re-parsing for sibling classes.
+ * file are cached to avoid reparsing for sibling classes.
  */
 class JavaClassFinderOverAstImpl(
     private val sourceRoots: List<VirtualFile>,
@@ -258,18 +258,11 @@ class JavaClassFinderOverAstImpl(
         return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
     }
 
-    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? {
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
         val classesByName = ensurePackageIndexed(packageFqName)
         if (classesByName.isEmpty()) return emptySet()
-        // Only return canonical class names (where the class name matches the file's basename).
-        // Secondary classes (e.g., class B defined alongside class A in A.java) are accessible
-        // when their ClassId is known directly (e.g., as return type from the same file's API)
-        // but are NOT exposed as standalone same-package names. This matches PSI behavior.
-        //
-        // KT-4455: non-canonical Java classes are not visible as independent types from Kotlin.
-        // Fixing this would mean removing the filter below so that secondary classes appear in
-        // package-level name sets — but that is a deliberate Kotlin/JVM design choice, not a
-        // java-direct bug, so the fix belongs in a separate task tracked by the issue.
+        // Only expose canonical class names (matching the file's basename) — PSI behavior per
+        // KT-4455; secondary classes are still reachable when referenced by their ClassId.
         return buildSet {
             for ((name, fileEntries) in classesByName) {
                 if (fileEntries.any { it.fileBaseName == name }) add(name)
@@ -375,7 +368,7 @@ class JavaClassFinderOverAstImpl(
         val root = tree.getRoot()
         val resolutionContext = JavaResolutionContext.create(tree, classFinder = this)
 
-        // Cache ALL top-level classes from this file to avoid re-parsing for sibling classes.
+        // Cache ALL top-level classes from this file to avoid reparsing for sibling classes.
         val allClassNames = tree.getChildrenByType(root, JavaSyntaxElementType.CLASS).mapNotNull {
             tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() }
         }
