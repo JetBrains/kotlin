@@ -20,7 +20,6 @@ fun configureMavenWrapperInProjectDirectory(
     val mvnwPath = projectDirectory.resolve("mvnw")
     classLoader.getResourceAsStream("maven-wrapper/mvnw")?.use { input ->
         val text = input.reader().readText().replace("<REPLACE_ME>", projectDirectory.absolutePathString())
-        println(text)
         mvnwPath.writeText(text)
     } ?: error("Resource maven-wrapper/mvnw not found")
 
