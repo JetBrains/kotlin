@@ -38,7 +38,6 @@ import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
-import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
@@ -90,10 +89,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
-import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.nio.file.FileSystems
-import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: ProjectEnvironment,
@@ -454,12 +450,10 @@ class KotlinCoreEnvironment private constructor(
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
             // Tests are supposed to create a single project and dispose it right after use
-            val appEnv =
-                createApplicationEnvironment(
-                    parentDisposable,
-                    configuration,
-                    KotlinCoreApplicationEnvironmentMode.UnitTest,
-                )
+            val appEnv = createApplicationEnvironment(
+                parentDisposable,
+                KotlinCoreApplicationEnvironmentMode.UnitTest,
+            )
             val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
             return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
         }
@@ -492,7 +486,6 @@ class KotlinCoreEnvironment private constructor(
         fun createProjectEnvironmentForTests(projectDisposable: Disposable, configuration: CompilerConfiguration): ProjectEnvironment {
             val appEnv = createApplicationEnvironment(
                 projectDisposable,
-                configuration,
                 KotlinCoreApplicationEnvironmentMode.UnitTest,
             )
             return ProjectEnvironment(projectDisposable, appEnv, configuration)
@@ -546,12 +539,10 @@ class KotlinCoreEnvironment private constructor(
             synchronized(APPLICATION_LOCK) {
                 if (ourApplicationEnvironment == null) {
                     val disposable = Disposer.newDisposable("Disposable for the KotlinCoreApplicationEnvironment")
-                    ourApplicationEnvironment =
-                        createApplicationEnvironment(
-                            disposable,
-                            configuration,
-                            environmentMode,
-                        )
+                    ourApplicationEnvironment = createApplicationEnvironment(
+                        disposable,
+                        environmentMode,
+                    )
                     ourProjectCount = 0
                     Disposer.register(disposable, Disposable {
                         synchronized(APPLICATION_LOCK) {
@@ -662,44 +653,14 @@ class KotlinCoreEnvironment private constructor(
 
         private fun createApplicationEnvironment(
             parentDisposable: Disposable,
-            configuration: CompilerConfiguration,
             environmentMode: KotlinCoreApplicationEnvironmentMode,
         ): KotlinCoreApplicationEnvironment {
             val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, environmentMode)
-
-            registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler-cli-root.xml")
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)
 
             return applicationEnvironment
-        }
-
-        private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
-            fun File.hasConfigFile(configFile: String): Boolean =
-                if (isDirectory) File(this, "META-INF" + File.separator + configFile).exists()
-                else try {
-                    ZipFile(this).use {
-                        it.getEntry("META-INF/$configFile") != null
-                    }
-                } catch (e: Throwable) {
-                    false
-                }
-
-            val pluginRoot: File =
-                configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
-                    ?: PathUtil.getResourcePathForClass(CompilerSystemProperties::class.java).takeIf { it.hasConfigFile(configFilePath) }
-                    ?: configuration.get(CLIConfigurationKeys.PATH_TO_KOTLIN_COMPILER_JAR)?.takeIf { it.hasConfigFile(configFilePath) }
-                    ?: throw IllegalStateException(
-                        "Unable to find extension point configuration $configFilePath " +
-                                "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
-                    )
-
-            CoreApplicationEnvironment.registerExtensionPointAndExtensions(
-                FileSystems.getDefault().getPath(pluginRoot.path),
-                configFilePath,
-                ApplicationManager.getApplication().extensionArea
-            )
         }
 
         @JvmStatic
