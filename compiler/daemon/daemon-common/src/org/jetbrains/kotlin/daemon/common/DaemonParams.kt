@@ -21,7 +21,6 @@ import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
 import java.security.MessageDigest
-import java.util.*
 import kotlin.reflect.KMutableProperty1
 
 const val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
@@ -305,10 +304,10 @@ data class CompilerId(
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(
             PropMapper(
-            this,
-            CompilerId::compilerClasspath,
-            toString = { it.joinToString(File.pathSeparator) },
-            fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
+                this,
+                CompilerId::compilerClasspath,
+                toString = { it.joinToString(File.pathSeparator) },
+                fromString = { it.trimQuotes().split(File.pathSeparator) }), StringPropMapper(this, CompilerId::compilerVersion)
         )
 
     fun digest(): String = compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
@@ -386,14 +385,14 @@ fun configureDaemonJVMOptions(
     CompilerSystemProperties.COMPILE_DAEMON_JVM_OPTIONS_PROPERTY.value?.let {
         opts.jvmParams.addAll(
             it.trimQuotes()
-                                  .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
-                                  .map {
-                                      it.replace(
-                                          "\\\\(.)".toRegex(),
-                                          "$1"
-                                      )
-                                  } // de-escaping characters escaped by backslash, straightforward, without exceptions
-                                  .filterExtractProps(opts.mappers, "-", opts.restMapper))
+                .split("(?<!\\\\),".toRegex())  // using independent non-capturing group with negative lookahead zero length assertion to split only on non-escaped commas
+                .map {
+                    it.replace(
+                        "\\\\(.)".toRegex(),
+                        "$1"
+                    )
+                } // de-escaping characters escaped by backslash, straightforward, without exceptions
+                .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
     // assuming that from the conflicting options the last one is taken
@@ -431,8 +430,8 @@ fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
         val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
         if (unrecognized.any()) throw IllegalArgumentException(
             "Unrecognized daemon options passed via property ${CompilerSystemProperties.COMPILE_DAEMON_OPTIONS_PROPERTY.property}: " + unrecognized.joinToString(
-            " "
-        ) + "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() })
+                " "
+            ) + "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() })
         )
     }
     CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.value?.let { opts.verbose = true }

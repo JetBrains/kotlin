@@ -816,6 +816,7 @@ class CompileServiceImpl(
     compilerId: CompilerId,
     daemonOptions: DaemonOptions,
     val daemonJVMOptions: DaemonJVMOptions,
+    val javaLanguageVersion: JavaLanguageVersion,
     port: Int,
     timer: Timer,
     onShutdown: () -> Unit,
@@ -844,6 +845,10 @@ class CompileServiceImpl(
         } catch (e: Exception) {
             CompileService.CallResult.Error("Unknown Kotlin version")
         }
+    }
+
+    override fun getJavaLanguageVersion(): CompileService.CallResult<JavaLanguageVersion> = ifAlive {
+        CompileService.CallResult.Good(javaLanguageVersion)
     }
 
     override fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive {
@@ -1120,16 +1125,19 @@ class CompileServiceImpl(
                 compilerId,
                 runFile,
                 filter = { _, p -> p != port },
-                report = { _, msg -> log.info(msg) }).toList().sortedWith(comparator)
-
-            fun hasLowerPriorityThan(other: DaemonWithMetadata): Boolean =
-                daemonJVMOptions memorywiseFitsInto other.jvmOptions && FileAgeComparator().compare(other.runFile, runFile) > 0
+                report = { _, msg -> log.info(msg) }
+            ).toList()
+                .filter { it.javaLanguageVersion == javaLanguageVersion }
+                .sortedWith(comparator)
 
             fun hasHigherPriorityThan(other: DaemonWithMetadata): Boolean =
                 other.jvmOptions memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
                     other.runFile,
                     runFile
                 ) < 0
+
+            fun hasLowerPriorityThan(other: DaemonWithMetadata): Boolean =
+                daemonJVMOptions memorywiseFitsInto other.jvmOptions && FileAgeComparator().compare(other.runFile, runFile) > 0
 
             var bestDaemonWithMetadata = aliveWithOpts.firstOrNull() ?: return@ifAliveUnit
 
@@ -1167,9 +1175,9 @@ class CompileServiceImpl(
             //    C performs election: (1) is false because B is better than A and B does not fit into C, (2) is false C does not fit into neither A nor B.
             //    Result: all daemons are alive and well.
             for (i in 0 until aliveWithOpts.size) {
-                // there is at least one bigger, try to handover my clients to it and shutdown
                 bestDaemonWithMetadata = aliveWithOpts[i]
                 if (hasLowerPriorityThan(bestDaemonWithMetadata)) {
+                    // there is at least one bigger, try to handover my clients to it and shutdown
                     log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, try to handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                     val clients = getClients().takeIf { it.isGood }?.get() ?: emptyList()
                     val handoverSuccessful = clients

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient.DAEMON_CONNECT_CYCLE_ATTEMPTS
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient.JAVA_TOOL_OPTIONS_ENV_VARIABLE
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -457,9 +459,17 @@ object KotlinCompilerClient {
         report: (DaemonReportCategory, String) -> Unit,
     ): DaemonSearchResult {
         registryDir.mkdirs()
+        val javaLanguageVersion = JavaLanguageVersion.parse(CompilerSystemProperties.JAVA_VERSION.value)
         val timestampMarker = Files.createTempFile(registryDir.toPath(), "kotlin-daemon-client-tsmarker", null).toFile()
         val aliveWithMetadata = try {
-            walkDaemons(registryDir, compilerId, timestampMarker, report = report, filter = { file, _ -> file !in ignoredDaemonSessionFiles }).toList()
+            walkDaemons(
+                registryDir,
+                compilerId,
+                timestampMarker,
+                report = report,
+                filter = { file, _ -> file !in ignoredDaemonSessionFiles })
+                .toList()
+                .filter { it.javaLanguageVersion == javaLanguageVersion }
         } finally {
             timestampMarker.delete()
         }
@@ -477,7 +487,7 @@ object KotlinCompilerClient {
 
     internal data class GcAutoConfiguration(
         var shouldAutoConfigureGc: Boolean = true,
-        val preferredGc: String = "Parallel"
+        val preferredGc: String = "Parallel",
     )
 
     private fun getEnvironmentVariablesForTests(reportingTargets: DaemonReportingTargets): Map<String, String> {
@@ -505,7 +515,7 @@ object KotlinCompilerClient {
      * In that case the worst thing we may face, we won't configure the [GcAutoConfiguration.preferredGc] GC.
      * That sounds acceptable.
      */
-    private fun getImplicitJvmArguments(environmentVariablesForTests: Map<String, String>) : List<String> {
+    private fun getImplicitJvmArguments(environmentVariablesForTests: Map<String, String>): List<String> {
         val javaToolOptions = environmentVariablesForTests[JAVA_TOOL_OPTIONS_ENV_VARIABLE]
             ?: System.getenv(JAVA_TOOL_OPTIONS_ENV_VARIABLE)
             ?: return emptyList()
@@ -523,6 +533,7 @@ object KotlinCompilerClient {
         initialClientInfo: InitialClientInformation,
     ): Boolean {
         val javaExecutable = File(File(CompilerSystemProperties.JAVA_HOME.safeValue, "bin"), "java")
+        val javaLanguageVersion = JavaLanguageVersion.parse(CompilerSystemProperties.JAVA_VERSION.value)
         val serverHostname = CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.value
             ?: error("${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property} is not set!")
         val platformSpecificOptions = listOf(
@@ -530,9 +541,8 @@ object KotlinCompilerClient {
             "-Djava.awt.headless=true",
             "-D${CompilerSystemProperties.JAVA_RMI_SERVER_HOSTNAME.property}=$serverHostname"
         )
-        val javaVersion = CompilerSystemProperties.JAVA_VERSION.value?.toIntOrNull()
         val javaIllegalAccessWorkaround =
-            if (javaVersion != null && javaVersion >= 16)
+            if (javaLanguageVersion >= JavaLanguageVersion.of(16))
                 listOf("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
             else emptyList()
         val environmentVariablesForTests = getEnvironmentVariablesForTests(reportingTargets)
