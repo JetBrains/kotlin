@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 
 class IrReturnImpl internal constructor(
@@ -25,6 +26,11 @@ class IrReturnImpl internal constructor(
     override var value: IrExpression,
     override var returnTargetSymbol: IrReturnTargetSymbol,
 ) : IrReturn() {
+    init {
+        if (!type.isNothing()) {
+            error("Return type is not Nothing")
+        }
+    }
     override var attributeOwnerId: IrElement = this
 
     // A temporary API for compatibility with Flysto user project, see KQA-1254
