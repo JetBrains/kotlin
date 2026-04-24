@@ -202,7 +202,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(context: ResolutionContext)
     private fun ConeKotlinType.shouldExplicitArgumentBeFlexibleForGivenParameter(typeParameter: FirTypeParameterRef): Boolean {
         if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitNullableJavaTypeArgumentsFlexible) &&
-            with(context.typeContext) { isNullableType() }
+            with(context.typeContext) { isMarkedNullable() }
         ) {
             return false
         }
