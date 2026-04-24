@@ -7,20 +7,21 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileTask
 
 class ProjectCompilerOptionsTests {
 
@@ -533,6 +534,44 @@ class ProjectCompilerOptionsTests {
                 )
             )
         }
+    }
+
+    @Test
+    fun testWasmJsConfiguredWithWithOptions() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmJs {
+                    compilerOptions {
+                        sourceMap.set(false)
+                        sourceMapEmbedSources.unsetConvention()
+                    }
+                }
+            }
+        }
+        val compilerOptions = project.kotlinJsTask("compileKotlinWasmJs").compilerOptions
+        assertFalse(compilerOptions.sourceMap.get())
+        assertEquals(null, compilerOptions.sourceMapEmbedSources.orNull)
+    }
+
+    @Test
+    fun testWasmWasiConfiguredWithWithOptions() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                @OptIn(ExperimentalWasmDsl::class)
+                wasmWasi {
+                    compilerOptions {
+                        sourceMap.set(false)
+                        sourceMapEmbedSources.unsetConvention()
+                    }
+                }
+            }
+        }
+        val compilerOptions = project.kotlinJsTask("compileKotlinWasmWasi").compilerOptions
+        assertFalse(compilerOptions.sourceMap.get())
+        assertEquals(null, compilerOptions.sourceMapEmbedSources.orNull)
     }
 
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks
