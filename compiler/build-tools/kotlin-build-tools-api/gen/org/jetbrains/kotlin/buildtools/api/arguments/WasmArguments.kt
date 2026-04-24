@@ -92,6 +92,16 @@ public interface WasmArguments : CommonJsAndWasmArguments {
         WasmArgument("X_WASM", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Compile Kotlin Coroutines with Wasm Stack Switching Proposal
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_COROUTINES_STACK_SWITCHING: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_COROUTINES_STACK_SWITCHING", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * Avoid optimizations that can break debugging.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
