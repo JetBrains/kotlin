@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-51400
 // LANGUAGE: +EagerLambdaAnalysis
@@ -30,10 +30,10 @@ class A {
     fun main(i: Int) {
 
         val x1 = i.singleOverload(::bar2, ::foo, ::bar) { value -> 0 }
-        val x2 = i.<!OVERLOAD_RESOLUTION_AMBIGUITY!>debounce<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar2<!>, ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>, ::bar) { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>value<!> -> 0 }
+        val x2 = i.debounce(::bar2, ::foo, ::bar) { value -> 0 }
 
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: debounce, [/debounce, /debounce]")!>x2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x2<!>
     }
 }
 

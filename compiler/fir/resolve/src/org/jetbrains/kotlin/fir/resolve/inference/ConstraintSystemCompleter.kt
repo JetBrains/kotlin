@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
@@ -38,6 +39,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private val variableFixationFinder = inferenceComponents.variableFixationFinder
     private val postponedArgumentsInputTypesResolver = inferenceComponents.postponedArgumentInputTypesResolver
     private val languageVersionSettings = components.session.languageVersionSettings
+    private val isEagerLambdaAnalysisEnabled = languageVersionSettings.supportsFeature(LanguageFeature.EagerLambdaAnalysis)
 
     /**
      * see basic impl at [org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer.analyze]
@@ -48,17 +50,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             withPCLASession: Boolean,
             precalculatedBoundsForCL: CollectionLiteralBounds?,
         )
-    }
-
-    private fun PostponedAtomAnalyzer.analyze(
-        postponedResolvedAtom: ConePostponedResolvedAtom,
-        withPCLASession: Boolean = false,
-    ) {
-        return analyze(postponedResolvedAtom, withPCLASession, null)
-    }
-
-    private fun PostponedAtomAnalyzer.analyze(precalculatedBoundsForCL: CollectionLiteralBounds) {
-        return analyze(precalculatedBoundsForCL.atom, false, precalculatedBoundsForCL)
     }
 
     fun complete(
@@ -72,17 +63,48 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, analyzer)
     }
 
+    private class AnalyzerWithLambdaTracker(
+        val analyzer: PostponedAtomAnalyzer,
+        private val stopAtFirstLambda: Boolean,
+    ) {
+        var hadLambdaToStopAfter: Boolean = false
+
+        fun analyze(
+            postponedResolvedAtom: ConePostponedResolvedAtom,
+            withPCLASession: Boolean = false,
+        ) {
+            if (stopAtFirstLambda && postponedResolvedAtom is ConeLambdaAtom) {
+                hadLambdaToStopAfter = true
+                return
+            }
+            analyzer.analyze(postponedResolvedAtom, withPCLASession, null)
+        }
+
+        fun analyze(precalculatedBoundsForCL: CollectionLiteralBounds) {
+            return analyzer.analyze(precalculatedBoundsForCL.atom, false, precalculatedBoundsForCL)
+        }
+    }
+
     private fun ConstraintSystemCompletionContext.runCompletion(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ConeResolutionAtom>,
         topLevelType: ConeKotlinType,
         context: ResolutionContext,
-        analyzer: PostponedAtomAnalyzer,
+        givenAnalyzer: PostponedAtomAnalyzer,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
         context.session.inferenceLogger?.logStage("Call Completion", this)
 
+        val analyzer = AnalyzerWithLambdaTracker(
+            givenAnalyzer,
+            stopAtFirstLambda = isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda(),
+        )
+
         completion@ while (true) {
+            if (analyzer.hadLambdaToStopAfter) {
+                return
+            }
+
             if (completionMode.shouldForkPointConstraintsBeResolved) {
                 resolveForkPointsConstraints()
             }
@@ -90,7 +112,8 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             // TODO: This is very slow, KT-59680
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
-            if (completionMode.isUntilFirstLambda() && hasLambdaToAnalyze(postponedArguments)) return
+            // Obsolete step for @OverloadResolutionByLambdaReturnType
+            if (!isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda() && hasLambdaToAnalyze(postponedArguments)) return
 
             if (analyzeContextSensitiveResolutionAlternatives(postponedArguments, analyzer)) continue
 
@@ -266,7 +289,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private fun ConstraintSystemCompletionContext.tryToCompleteWithPCLA(
         completionMode: ConstraintSystemCompletionMode,
         postponedArguments: List<ConePostponedResolvedAtom>,
-        analyzer: PostponedAtomAnalyzer,
+        analyzerWithLambdaTracker: AnalyzerWithLambdaTracker,
     ): Boolean {
         if (!completionMode.allLambdasShouldBeAnalyzed) return false
 
@@ -277,7 +300,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             val notFixedInputTypeVariables = argument.inputTypes.flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
 
             if (notFixedInputTypeVariables.isEmpty()) continue
-            analyzer.analyze(argument, withPCLASession = true)
+            analyzerWithLambdaTracker.analyze(argument, withPCLASession = true)
 
             anyAnalyzed = true
         }
@@ -317,14 +340,14 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
     private fun analyzeContextSensitiveResolutionAlternatives(
         postponedArguments: List<ConePostponedResolvedAtom>,
-        analyzer: PostponedAtomAnalyzer,
+        analyzerWithLambdaTracker: AnalyzerWithLambdaTracker,
     ): Boolean {
         if (!languageVersionSettings.getFlag(AnalysisFlags.ideMode)) return false
         var wasAny = false
 
         for (atom in postponedArguments) {
             if (atom is ConeContextSensitiveAlternativeForQualifierAtom) {
-                analyzer.analyze(atom, withPCLASession = false)
+                analyzerWithLambdaTracker.analyze(atom, withPCLASession = false)
                 wasAny = true
             }
         }
