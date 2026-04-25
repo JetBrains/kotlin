@@ -135,9 +135,9 @@ public final class IrClass extends
             break;
           }
           case 64: {
-            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
               sealedSubclass_ = new java.util.ArrayList<java.lang.Long>();
-              mutable_bitField0_ |= 0x00000080;
+              mutable_bitField0_ |= 0x00000100;
             }
             sealedSubclass_.add(input.readInt64());
             break;
@@ -145,14 +145,27 @@ public final class IrClass extends
           case 66: {
             int length = input.readRawVarint32();
             int limit = input.pushLimit(length);
-            if (!((mutable_bitField0_ & 0x00000080) == 0x00000080) && input.getBytesUntilLimit() > 0) {
+            if (!((mutable_bitField0_ & 0x00000100) == 0x00000100) && input.getBytesUntilLimit() > 0) {
               sealedSubclass_ = new java.util.ArrayList<java.lang.Long>();
-              mutable_bitField0_ |= 0x00000080;
+              mutable_bitField0_ |= 0x00000100;
             }
             while (input.getBytesUntilLimit() > 0) {
               sealedSubclass_.add(input.readInt64());
             }
             input.popLimit(limit);
+            break;
+          }
+          case 74: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.Builder subBuilder = null;
+            if (((bitField0_ & 0x00000010) == 0x00000010)) {
+              subBuilder = fullValueClassRepresentation_.toBuilder();
+            }
+            fullValueClassRepresentation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(fullValueClassRepresentation_);
+              fullValueClassRepresentation_ = subBuilder.buildPartial();
+            }
+            bitField0_ |= 0x00000010;
             break;
           }
         }
@@ -172,7 +185,7 @@ public final class IrClass extends
       if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
         superType_ = java.util.Collections.unmodifiableList(superType_);
       }
-      if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
         sealedSubclass_ = java.util.Collections.unmodifiableList(sealedSubclass_);
       }
       try {
@@ -354,6 +367,21 @@ public final class IrClass extends
     return inlineClassRepresentation_;
   }
 
+  public static final int FULL_VALUE_CLASS_REPRESENTATION_FIELD_NUMBER = 9;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation fullValueClassRepresentation_;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+   */
+  public boolean hasFullValueClassRepresentation() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation getFullValueClassRepresentation() {
+    return fullValueClassRepresentation_;
+  }
+
   public static final int SEALED_SUBCLASS_FIELD_NUMBER = 8;
   private java.util.List<java.lang.Long> sealedSubclass_;
   /**
@@ -385,6 +413,7 @@ public final class IrClass extends
     declaration_ = java.util.Collections.emptyList();
     superType_ = java.util.Collections.emptyList();
     inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
+    fullValueClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.getDefaultInstance();
     sealedSubclass_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
@@ -468,6 +497,9 @@ public final class IrClass extends
     for (int i = 0; i < sealedSubclass_.size(); i++) {
       output.writeInt64NoTag(sealedSubclass_.get(i));
     }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeMessage(9, fullValueClassRepresentation_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -528,6 +560,10 @@ public final class IrClass extends
             .computeInt32SizeNoTag(dataSize);
       }
       sealedSubclassMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(9, fullValueClassRepresentation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -637,8 +673,10 @@ public final class IrClass extends
       bitField0_ = (bitField0_ & ~0x00000020);
       inlineClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000040);
-      sealedSubclass_ = java.util.Collections.emptyList();
+      fullValueClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000080);
+      sealedSubclass_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000100);
       return this;
     }
 
@@ -693,9 +731,13 @@ public final class IrClass extends
         to_bitField0_ |= 0x00000008;
       }
       result.inlineClassRepresentation_ = inlineClassRepresentation_;
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.fullValueClassRepresentation_ = fullValueClassRepresentation_;
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
         sealedSubclass_ = java.util.Collections.unmodifiableList(sealedSubclass_);
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000100);
       }
       result.sealedSubclass_ = sealedSubclass_;
       result.bitField0_ = to_bitField0_;
@@ -746,10 +788,13 @@ public final class IrClass extends
       if (other.hasInlineClassRepresentation()) {
         mergeInlineClassRepresentation(other.getInlineClassRepresentation());
       }
+      if (other.hasFullValueClassRepresentation()) {
+        mergeFullValueClassRepresentation(other.getFullValueClassRepresentation());
+      }
       if (!other.sealedSubclass_.isEmpty()) {
         if (sealedSubclass_.isEmpty()) {
           sealedSubclass_ = other.sealedSubclass_;
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000100);
         } else {
           ensureSealedSubclassIsMutable();
           sealedSubclass_.addAll(other.sealedSubclass_);
@@ -1348,11 +1393,71 @@ public final class IrClass extends
       return this;
     }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation fullValueClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.getDefaultInstance();
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+     */
+    public boolean hasFullValueClassRepresentation() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation getFullValueClassRepresentation() {
+      return fullValueClassRepresentation_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+     */
+    public Builder setFullValueClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      fullValueClassRepresentation_ = value;
+
+      bitField0_ |= 0x00000080;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+     */
+    public Builder setFullValueClassRepresentation(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.Builder builderForValue) {
+      fullValueClassRepresentation_ = builderForValue.build();
+
+      bitField0_ |= 0x00000080;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+     */
+    public Builder mergeFullValueClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation value) {
+      if (((bitField0_ & 0x00000080) == 0x00000080) &&
+          fullValueClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.getDefaultInstance()) {
+        fullValueClassRepresentation_ =
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.newBuilder(fullValueClassRepresentation_).mergeFrom(value).buildPartial();
+      } else {
+        fullValueClassRepresentation_ = value;
+      }
+
+      bitField0_ |= 0x00000080;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation full_value_class_representation = 9;</code>
+     */
+    public Builder clearFullValueClassRepresentation() {
+      fullValueClassRepresentation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFullValueClassRepresentation.getDefaultInstance();
+
+      bitField0_ = (bitField0_ & ~0x00000080);
+      return this;
+    }
+
     private java.util.List<java.lang.Long> sealedSubclass_ = java.util.Collections.emptyList();
     private void ensureSealedSubclassIsMutable() {
-      if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (!((bitField0_ & 0x00000100) == 0x00000100)) {
         sealedSubclass_ = new java.util.ArrayList<java.lang.Long>(sealedSubclass_);
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000100;
        }
     }
     /**
@@ -1409,7 +1514,7 @@ public final class IrClass extends
      */
     public Builder clearSealedSubclass() {
       sealedSubclass_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000100);
       
       return this;
     }
