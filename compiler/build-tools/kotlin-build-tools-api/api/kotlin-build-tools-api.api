@@ -889,6 +889,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Wa
 	public static final field X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_COROUTINES_STACK_SWITCHING Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUGGER_CUSTOM_FORMATTERS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUG_FRIENDLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUG_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
