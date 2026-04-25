@@ -692,6 +692,7 @@ message IrClass {
   repeated int32 super_type = 6 [packed=true];
   optional IrInlineClassRepresentation inline_class_representation = 7;
   optional IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;
+  optional IrFullValueClassRepresentation full_value_class_representation = 10;
   repeated int64 sealed_subclass = 8 [packed=true];
 }
 
@@ -784,6 +785,11 @@ message IrInlineClassRepresentation {
 }
 
 message IrMultiFieldValueClassRepresentation {
+  repeated int32 underlying_property_name = 1 [packed=true];
+  repeated int32 underlying_property_type = 2 [packed=true];
+}
+
+message IrFullValueClassRepresentation {
   repeated int32 underlying_property_name = 1 [packed=true];
   repeated int32 underlying_property_type = 2 [packed=true];
 }
