@@ -308,6 +308,13 @@ private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRe
         }
     }
 
+    if (valueClassRepresentation == KotlinValueClassRepresentation.FULL_VALUE_CLASS) {
+        val fields =
+            if (klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED) null
+            else constructor.valueParameters.map { parameter -> parameter.name to parameter.coneRigidType() }
+        return FullValueClassRepresentation(fields)
+    }
+
     if (valueClassRepresentation == KotlinValueClassRepresentation.INLINE_CLASS) {
         val parameter = constructor.valueParameters.single()
         return InlineClassRepresentation(parameter.name, parameter.coneRigidType())

@@ -295,7 +295,15 @@ class FirElementSerializer private constructor(
                     }
                 }
             }
-            is JvmInlineMultiFieldValueClassRepresentation, is FullValueClassRepresentation, null -> {}
+            is JvmInlineMultiFieldValueClassRepresentation, null -> {}
+            is FullValueClassRepresentation -> {
+                val reprBuilder = ProtoBuf.FullValueClassRepresentation.newBuilder()
+                representation.underlyingPropertyNamesToTypes?.forEach { [name, type] ->
+                    reprBuilder.addPropertyName(getSimpleNameIndex(name))
+                    reprBuilder.addPropertyTypeId(typeId(type))
+                }
+                builder.fullValueClassRepresentation = reprBuilder.build()
+            }
         }
 
         if (klass is FirRegularClass) {

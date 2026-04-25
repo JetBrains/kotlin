@@ -16,5 +16,6 @@ package org.jetbrains.kotlin.psi.stubs.elements
 enum class KotlinValueClassRepresentation {
     // The order of entries is important, as an entry's ordinal is used to serialize/deserialize it
     INLINE_CLASS,
+    FULL_VALUE_CLASS,
     ;
 }

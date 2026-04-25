@@ -28,8 +28,7 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
 
     open fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? = null
 
-    open fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean = false
-    open fun isMaybeFullValueClass(containerSource: DeserializedContainerSource?): Boolean = false
+    open fun isMaybeJvmInlineMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean = false
 
     open val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean get() = true
 
@@ -65,8 +64,8 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
             return components.firstNotNullOfOrNull { it.loadHasBackingFieldFlag(propertyProto) }
         }
 
-        override fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean {
-            return components.any { it.isMaybeMultiFieldValueClass(containerSource) }
+        override fun isMaybeJvmInlineMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean {
+            return components.any { it.isMaybeJvmInlineMultiFieldValueClass(containerSource) }
         }
 
         override val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean

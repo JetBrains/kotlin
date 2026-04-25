@@ -16,25 +16,20 @@ import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
     tryLoadJvmInlineMultiFieldValueClass: Boolean,
-    tryLoadFullValueClass: Boolean,
     nameResolver: NameResolver,
     typeTable: TypeTable,
     typeDeserializer: (ProtoBuf.Type) -> T,
     typeOfPublicProperty: (Name) -> T?,
 ): ValueClassRepresentation<T>? {
-    val hasJvmInline = annotationList.any {
-        val annotationId = nameResolver.getClassId(it.id)
-        annotationId.relativeClassName.asString() == "JvmInline" && annotationId.packageFqName.asString() == "kotlin.jvm"
-    }
-    if (!hasJvmInline && tryLoadFullValueClass && Flags.IS_VALUE_CLASS.get(flags) && !hasInlineClassUnderlyingPropertyName()) {
+    if (hasFullValueClassRepresentation()) {
+        val repr = fullValueClassRepresentation
         val modality = Flags.MODALITY.get(flags)
         val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
         val fields = if (isAbstractOrSealed) {
             null
         } else {
-            val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
-            primaryConstructor.valueParameterList.map {
-                nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
+            repr.propertyNameList.zip(repr.propertyTypeIdList) { nameId, typeId ->
+                nameResolver.getName(nameId) to typeDeserializer(typeTable[typeId])
             }
         }
         return FullValueClassRepresentation(fields)

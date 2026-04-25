@@ -190,6 +190,11 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) return false
         }
 
+        if (old.hasFullValueClassRepresentation() != new.hasFullValueClassRepresentation()) return false
+        if (old.hasFullValueClassRepresentation()) {
+            if (!checkEquals(old.fullValueClassRepresentation, new.fullValueClassRepresentation)) return false
+        }
+
         if (!checkEqualsClassAnnotation(old, new)) return false
 
         if (!checkEqualsClassVersionRequirement(old, new)) return false
@@ -283,6 +288,7 @@ open class ProtoCompareGenerated(
         INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
         INLINE_CLASS_UNDERLYING_TYPE,
         INLINE_CLASS_UNDERLYING_TYPE_ID,
+        FULL_VALUE_CLASS_REPRESENTATION,
         ANNOTATION_LIST,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
@@ -350,6 +356,11 @@ open class ProtoCompareGenerated(
         if (old.hasInlineClassUnderlyingTypeId() != new.hasInlineClassUnderlyingTypeId()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
         if (old.hasInlineClassUnderlyingTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
+        }
+
+        if (old.hasFullValueClassRepresentation() != new.hasFullValueClassRepresentation()) result.add(ProtoBufClassKind.FULL_VALUE_CLASS_REPRESENTATION)
+        if (old.hasFullValueClassRepresentation()) {
+            if (!checkEquals(old.fullValueClassRepresentation, new.fullValueClassRepresentation)) result.add(ProtoBufClassKind.FULL_VALUE_CLASS_REPRESENTATION)
         }
 
         if (!checkEqualsClassAnnotation(old, new)) result.add(ProtoBufClassKind.ANNOTATION_LIST)
@@ -1074,6 +1085,14 @@ open class ProtoCompareGenerated(
         if (old.hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) {
             if (old.getExtension(KlibMetadataProtoBuf.enumEntryOrdinal) != new.getExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) return false
         }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.FullValueClassRepresentation, new: ProtoBuf.FullValueClassRepresentation): Boolean {
+        if (!checkEqualsFullValueClassRepresentationPropertyName(old, new)) return false
+
+        if (!checkEqualsFullValueClassRepresentationPropertyTypeId(old, new)) return false
 
         return true
     }
@@ -1938,6 +1957,26 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsFullValueClassRepresentationPropertyName(old: ProtoBuf.FullValueClassRepresentation, new: ProtoBuf.FullValueClassRepresentation): Boolean {
+        if (old.propertyNameCount != new.propertyNameCount) return false
+
+        for(i in 0..old.propertyNameCount - 1) {
+            if (!checkStringEquals(old.getPropertyName(i), new.getPropertyName(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsFullValueClassRepresentationPropertyTypeId(old: ProtoBuf.FullValueClassRepresentation, new: ProtoBuf.FullValueClassRepresentation): Boolean {
+        if (old.propertyTypeIdCount != new.propertyTypeIdCount) return false
+
+        for(i in 0..old.propertyTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getPropertyTypeId(i)), newTypeTable.getType(new.getPropertyTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsAnnotationArgument(old: ProtoBuf.Annotation, new: ProtoBuf.Annotation): Boolean {
         if (old.argumentCount != new.argumentCount) return false
 
@@ -2155,6 +2194,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     if (hasInlineClassUnderlyingTypeId()) {
         hashCode = 31 * hashCode + typeById(inlineClassUnderlyingTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasFullValueClassRepresentation()) {
+        hashCode = 31 * hashCode + fullValueClassRepresentation.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..annotationCount - 1) {
@@ -2749,6 +2792,20 @@ fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     if (hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) {
         hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.enumEntryOrdinal)
+    }
+
+    return hashCode
+}
+
+fun ProtoBuf.FullValueClassRepresentation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {
+    var hashCode = 1
+
+    for(i in 0..propertyNameCount - 1) {
+        hashCode = 31 * hashCode + stringIndexes(getPropertyName(i))
+    }
+
+    for(i in 0..propertyTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getPropertyTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     return hashCode

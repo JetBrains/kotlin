@@ -254,6 +254,8 @@ message Class {
   optional Type inline_class_underlying_type = 18;
   optional int32 inline_class_underlying_type_id = 19 [(type_id_in_table) = true];
 
+  optional FullValueClassRepresentation full_value_class_representation = 22;
+
   repeated Annotation annotation = 25;
 
   optional TypeTable type_table = 30;
@@ -268,6 +270,11 @@ message Class {
 
   // WARNING: Don't occupy index 171 which was previously used for storing DescriptorUniqId.
   // DescriptorUniqId class_uniq_id = 171;
+}
+
+message FullValueClassRepresentation {
+  repeated int32 property_name = 1 [packed = true, (name_id_in_table) = true];
+  repeated int32 property_type_id = 2 [packed = true, (type_id_in_table) = true];
 }
 
 message Package {
