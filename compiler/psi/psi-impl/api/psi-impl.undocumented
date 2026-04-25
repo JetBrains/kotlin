@@ -22,6 +22,7 @@ org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeKdocText()
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeClassId(StubOutputStream, ClassId?)
 org.jetbrains.kotlin.psi.stubs.StubUtils.serializeKdocText(String?)
+org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation.FULL_VALUE_CLASS
 org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation.INLINE_CLASS
 org.jetbrains.kotlin.psi.stubs.elements.KtAnnotationUseSiteTargetElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtBackingFieldElementType

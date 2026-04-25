@@ -11271,6 +11271,19 @@ public final class DebugProtoBuf {
     int getInlineClassUnderlyingTypeId();
 
     /**
+     * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+     */
+    boolean hasFullValueClassRepresentation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation getFullValueClassRepresentation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder getFullValueClassRepresentationOrBuilder();
+
+    /**
      * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 25;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> 
@@ -11608,17 +11621,30 @@ public final class DebugProtoBuf {
               input.popLimit(limit);
               break;
             }
+            case 178: {
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000040) == 0x00000040)) {
+                subBuilder = fullValueClassRepresentation_.toBuilder();
+              }
+              fullValueClassRepresentation_ = input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(fullValueClassRepresentation_);
+                fullValueClassRepresentation_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000040;
+              break;
+            }
             case 202: {
-              if (!((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
+              if (!((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
                 annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>();
-                mutable_bitField0_ |= 0x00040000;
+                mutable_bitField0_ |= 0x00080000;
               }
               annotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.PARSER, extensionRegistry));
               break;
             }
             case 242: {
               org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000040) == 0x00000040)) {
+              if (((bitField0_ & 0x00000080) == 0x00000080)) {
                 subBuilder = typeTable_.toBuilder();
               }
               typeTable_ = input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable.PARSER, extensionRegistry);
@@ -11626,13 +11652,13 @@ public final class DebugProtoBuf {
                 subBuilder.mergeFrom(typeTable_);
                 typeTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000040;
+              bitField0_ |= 0x00000080;
               break;
             }
             case 248: {
-              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
+              if (!((mutable_bitField0_ & 0x00200000) == 0x00200000)) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00100000;
+                mutable_bitField0_ |= 0x00200000;
               }
               versionRequirement_.add(input.readInt32());
               break;
@@ -11640,9 +11666,9 @@ public final class DebugProtoBuf {
             case 250: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00100000) == 0x00100000) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00200000) == 0x00200000) && input.getBytesUntilLimit() > 0) {
                 versionRequirement_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00100000;
+                mutable_bitField0_ |= 0x00200000;
               }
               while (input.getBytesUntilLimit() > 0) {
                 versionRequirement_.add(input.readInt32());
@@ -11652,7 +11678,7 @@ public final class DebugProtoBuf {
             }
             case 258: {
               org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000080) == 0x00000080)) {
+              if (((bitField0_ & 0x00000100) == 0x00000100)) {
                 subBuilder = versionRequirementTable_.toBuilder();
               }
               versionRequirementTable_ = input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable.PARSER, extensionRegistry);
@@ -11660,13 +11686,13 @@ public final class DebugProtoBuf {
                 subBuilder.mergeFrom(versionRequirementTable_);
                 versionRequirementTable_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000080;
+              bitField0_ |= 0x00000100;
               break;
             }
             case 266: {
-              if (!((mutable_bitField0_ & 0x00400000) == 0x00400000)) {
+              if (!((mutable_bitField0_ & 0x00800000) == 0x00800000)) {
                 compilerPluginData_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginData>();
-                mutable_bitField0_ |= 0x00400000;
+                mutable_bitField0_ |= 0x00800000;
               }
               compilerPluginData_.add(input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginData.PARSER, extensionRegistry));
               break;
@@ -11715,13 +11741,13 @@ public final class DebugProtoBuf {
         if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           contextReceiverTypeId_ = java.util.Collections.unmodifiableList(contextReceiverTypeId_);
         }
-        if (((mutable_bitField0_ & 0x00040000) == 0x00040000)) {
+        if (((mutable_bitField0_ & 0x00080000) == 0x00080000)) {
           annotation_ = java.util.Collections.unmodifiableList(annotation_);
         }
-        if (((mutable_bitField0_ & 0x00100000) == 0x00100000)) {
+        if (((mutable_bitField0_ & 0x00200000) == 0x00200000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
         }
-        if (((mutable_bitField0_ & 0x00400000) == 0x00400000)) {
+        if (((mutable_bitField0_ & 0x00800000) == 0x00800000)) {
           compilerPluginData_ = java.util.Collections.unmodifiableList(compilerPluginData_);
         }
         this.unknownFields = unknownFields.build();
@@ -12387,6 +12413,27 @@ public final class DebugProtoBuf {
       return inlineClassUnderlyingTypeId_;
     }
 
+    public static final int FULL_VALUE_CLASS_REPRESENTATION_FIELD_NUMBER = 22;
+    private org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation fullValueClassRepresentation_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+     */
+    public boolean hasFullValueClassRepresentation() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation getFullValueClassRepresentation() {
+      return fullValueClassRepresentation_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder getFullValueClassRepresentationOrBuilder() {
+      return fullValueClassRepresentation_;
+    }
+
     public static final int ANNOTATION_FIELD_NUMBER = 25;
     private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> annotation_;
     /**
@@ -12428,7 +12475,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
      */
     public boolean hasTypeTable() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+      return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -12483,7 +12530,7 @@ public final class DebugProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
      */
     public boolean hasVersionRequirementTable() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
+      return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -12552,6 +12599,7 @@ public final class DebugProtoBuf {
       inlineClassUnderlyingPropertyName_ = 0;
       inlineClassUnderlyingType_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.getDefaultInstance();
       inlineClassUnderlyingTypeId_ = 0;
+      fullValueClassRepresentation_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance();
       annotation_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable.getDefaultInstance();
       versionRequirement_ = java.util.Collections.emptyList();
@@ -12724,16 +12772,19 @@ public final class DebugProtoBuf {
       for (int i = 0; i < contextReceiverTypeId_.size(); i++) {
         output.writeInt32NoTag(contextReceiverTypeId_.get(i));
       }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        output.writeMessage(22, fullValueClassRepresentation_);
+      }
       for (int i = 0; i < annotation_.size(); i++) {
         output.writeMessage(25, annotation_.get(i));
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
         output.writeMessage(30, typeTable_);
       }
       for (int i = 0; i < versionRequirement_.size(); i++) {
         output.writeInt32(31, versionRequirement_.get(i));
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
         output.writeMessage(32, versionRequirementTable_);
       }
       for (int i = 0; i < compilerPluginData_.size(); i++) {
@@ -12861,11 +12912,15 @@ public final class DebugProtoBuf {
         }
         contextReceiverTypeIdMemoizedSerializedSize = dataSize;
       }
+      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(22, fullValueClassRepresentation_);
+      }
       for (int i = 0; i < annotation_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(25, annotation_.get(i));
       }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(30, typeTable_);
       }
@@ -12878,7 +12933,7 @@ public final class DebugProtoBuf {
         size += dataSize;
         size += 2 * getVersionRequirementList().size();
       }
-      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(32, versionRequirementTable_);
       }
@@ -13006,6 +13061,7 @@ public final class DebugProtoBuf {
           getTypeAliasFieldBuilder();
           getEnumEntryFieldBuilder();
           getInlineClassUnderlyingTypeFieldBuilder();
+          getFullValueClassRepresentationFieldBuilder();
           getAnnotationFieldBuilder();
           getTypeTableFieldBuilder();
           getVersionRequirementTableFieldBuilder();
@@ -13090,9 +13146,15 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00010000);
         inlineClassUnderlyingTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00020000);
+        if (fullValueClassRepresentationBuilder_ == null) {
+          fullValueClassRepresentation_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance();
+        } else {
+          fullValueClassRepresentationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00040000);
         if (annotationBuilder_ == null) {
           annotation_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00040000);
+          bitField0_ = (bitField0_ & ~0x00080000);
         } else {
           annotationBuilder_.clear();
         }
@@ -13101,18 +13163,18 @@ public final class DebugProtoBuf {
         } else {
           typeTableBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00080000);
-        versionRequirement_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00100000);
+        versionRequirement_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00200000);
         if (versionRequirementTableBuilder_ == null) {
           versionRequirementTable_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable.getDefaultInstance();
         } else {
           versionRequirementTableBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00200000);
+        bitField0_ = (bitField0_ & ~0x00400000);
         if (compilerPluginDataBuilder_ == null) {
           compilerPluginData_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00400000);
+          bitField0_ = (bitField0_ & ~0x00800000);
         } else {
           compilerPluginDataBuilder_.clear();
         }
@@ -13264,30 +13326,38 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000020;
         }
         result.inlineClassUnderlyingTypeId_ = inlineClassUnderlyingTypeId_;
+        if (((from_bitField0_ & 0x00040000) == 0x00040000)) {
+          to_bitField0_ |= 0x00000040;
+        }
+        if (fullValueClassRepresentationBuilder_ == null) {
+          result.fullValueClassRepresentation_ = fullValueClassRepresentation_;
+        } else {
+          result.fullValueClassRepresentation_ = fullValueClassRepresentationBuilder_.build();
+        }
         if (annotationBuilder_ == null) {
-          if (((bitField0_ & 0x00040000) == 0x00040000)) {
+          if (((bitField0_ & 0x00080000) == 0x00080000)) {
             annotation_ = java.util.Collections.unmodifiableList(annotation_);
-            bitField0_ = (bitField0_ & ~0x00040000);
+            bitField0_ = (bitField0_ & ~0x00080000);
           }
           result.annotation_ = annotation_;
         } else {
           result.annotation_ = annotationBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00080000) == 0x00080000)) {
-          to_bitField0_ |= 0x00000040;
+        if (((from_bitField0_ & 0x00100000) == 0x00100000)) {
+          to_bitField0_ |= 0x00000080;
         }
         if (typeTableBuilder_ == null) {
           result.typeTable_ = typeTable_;
         } else {
           result.typeTable_ = typeTableBuilder_.build();
         }
-        if (((bitField0_ & 0x00100000) == 0x00100000)) {
+        if (((bitField0_ & 0x00200000) == 0x00200000)) {
           versionRequirement_ = java.util.Collections.unmodifiableList(versionRequirement_);
-          bitField0_ = (bitField0_ & ~0x00100000);
+          bitField0_ = (bitField0_ & ~0x00200000);
         }
         result.versionRequirement_ = versionRequirement_;
-        if (((from_bitField0_ & 0x00200000) == 0x00200000)) {
-          to_bitField0_ |= 0x00000080;
+        if (((from_bitField0_ & 0x00400000) == 0x00400000)) {
+          to_bitField0_ |= 0x00000100;
         }
         if (versionRequirementTableBuilder_ == null) {
           result.versionRequirementTable_ = versionRequirementTable_;
@@ -13295,9 +13365,9 @@ public final class DebugProtoBuf {
           result.versionRequirementTable_ = versionRequirementTableBuilder_.build();
         }
         if (compilerPluginDataBuilder_ == null) {
-          if (((bitField0_ & 0x00400000) == 0x00400000)) {
+          if (((bitField0_ & 0x00800000) == 0x00800000)) {
             compilerPluginData_ = java.util.Collections.unmodifiableList(compilerPluginData_);
-            bitField0_ = (bitField0_ & ~0x00400000);
+            bitField0_ = (bitField0_ & ~0x00800000);
           }
           result.compilerPluginData_ = compilerPluginData_;
         } else {
@@ -13585,11 +13655,14 @@ public final class DebugProtoBuf {
         if (other.hasInlineClassUnderlyingTypeId()) {
           setInlineClassUnderlyingTypeId(other.getInlineClassUnderlyingTypeId());
         }
+        if (other.hasFullValueClassRepresentation()) {
+          mergeFullValueClassRepresentation(other.getFullValueClassRepresentation());
+        }
         if (annotationBuilder_ == null) {
           if (!other.annotation_.isEmpty()) {
             if (annotation_.isEmpty()) {
               annotation_ = other.annotation_;
-              bitField0_ = (bitField0_ & ~0x00040000);
+              bitField0_ = (bitField0_ & ~0x00080000);
             } else {
               ensureAnnotationIsMutable();
               annotation_.addAll(other.annotation_);
@@ -13602,7 +13675,7 @@ public final class DebugProtoBuf {
               annotationBuilder_.dispose();
               annotationBuilder_ = null;
               annotation_ = other.annotation_;
-              bitField0_ = (bitField0_ & ~0x00040000);
+              bitField0_ = (bitField0_ & ~0x00080000);
               annotationBuilder_ = 
                 org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getAnnotationFieldBuilder() : null;
@@ -13617,7 +13690,7 @@ public final class DebugProtoBuf {
         if (!other.versionRequirement_.isEmpty()) {
           if (versionRequirement_.isEmpty()) {
             versionRequirement_ = other.versionRequirement_;
-            bitField0_ = (bitField0_ & ~0x00100000);
+            bitField0_ = (bitField0_ & ~0x00200000);
           } else {
             ensureVersionRequirementIsMutable();
             versionRequirement_.addAll(other.versionRequirement_);
@@ -13631,7 +13704,7 @@ public final class DebugProtoBuf {
           if (!other.compilerPluginData_.isEmpty()) {
             if (compilerPluginData_.isEmpty()) {
               compilerPluginData_ = other.compilerPluginData_;
-              bitField0_ = (bitField0_ & ~0x00400000);
+              bitField0_ = (bitField0_ & ~0x00800000);
             } else {
               ensureCompilerPluginDataIsMutable();
               compilerPluginData_.addAll(other.compilerPluginData_);
@@ -13644,7 +13717,7 @@ public final class DebugProtoBuf {
               compilerPluginDataBuilder_.dispose();
               compilerPluginDataBuilder_ = null;
               compilerPluginData_ = other.compilerPluginData_;
-              bitField0_ = (bitField0_ & ~0x00400000);
+              bitField0_ = (bitField0_ & ~0x00800000);
               compilerPluginDataBuilder_ = 
                 org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getCompilerPluginDataFieldBuilder() : null;
@@ -16277,12 +16350,128 @@ public final class DebugProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation fullValueClassRepresentation_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder> fullValueClassRepresentationBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public boolean hasFullValueClassRepresentation() {
+        return ((bitField0_ & 0x00040000) == 0x00040000);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation getFullValueClassRepresentation() {
+        if (fullValueClassRepresentationBuilder_ == null) {
+          return fullValueClassRepresentation_;
+        } else {
+          return fullValueClassRepresentationBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public Builder setFullValueClassRepresentation(org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation value) {
+        if (fullValueClassRepresentationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          fullValueClassRepresentation_ = value;
+          onChanged();
+        } else {
+          fullValueClassRepresentationBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00040000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public Builder setFullValueClassRepresentation(
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder builderForValue) {
+        if (fullValueClassRepresentationBuilder_ == null) {
+          fullValueClassRepresentation_ = builderForValue.build();
+          onChanged();
+        } else {
+          fullValueClassRepresentationBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00040000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public Builder mergeFullValueClassRepresentation(org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation value) {
+        if (fullValueClassRepresentationBuilder_ == null) {
+          if (((bitField0_ & 0x00040000) == 0x00040000) &&
+              fullValueClassRepresentation_ != org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance()) {
+            fullValueClassRepresentation_ =
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.newBuilder(fullValueClassRepresentation_).mergeFrom(value).buildPartial();
+          } else {
+            fullValueClassRepresentation_ = value;
+          }
+          onChanged();
+        } else {
+          fullValueClassRepresentationBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00040000;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public Builder clearFullValueClassRepresentation() {
+        if (fullValueClassRepresentationBuilder_ == null) {
+          fullValueClassRepresentation_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance();
+          onChanged();
+        } else {
+          fullValueClassRepresentationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00040000);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder getFullValueClassRepresentationBuilder() {
+        bitField0_ |= 0x00040000;
+        onChanged();
+        return getFullValueClassRepresentationFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder getFullValueClassRepresentationOrBuilder() {
+        if (fullValueClassRepresentationBuilder_ != null) {
+          return fullValueClassRepresentationBuilder_.getMessageOrBuilder();
+        } else {
+          return fullValueClassRepresentation_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.FullValueClassRepresentation full_value_class_representation = 22;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder> 
+          getFullValueClassRepresentationFieldBuilder() {
+        if (fullValueClassRepresentationBuilder_ == null) {
+          fullValueClassRepresentationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder>(
+                  getFullValueClassRepresentation(),
+                  getParentForChildren(),
+                  isClean());
+          fullValueClassRepresentation_ = null;
+        }
+        return fullValueClassRepresentationBuilder_;
+      }
+
       private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> annotation_ =
         java.util.Collections.emptyList();
       private void ensureAnnotationIsMutable() {
-        if (!((bitField0_ & 0x00040000) == 0x00040000)) {
+        if (!((bitField0_ & 0x00080000) == 0x00080000)) {
           annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>(annotation_);
-          bitField0_ |= 0x00040000;
+          bitField0_ |= 0x00080000;
          }
       }
 
@@ -16432,7 +16621,7 @@ public final class DebugProtoBuf {
       public Builder clearAnnotation() {
         if (annotationBuilder_ == null) {
           annotation_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00040000);
+          bitField0_ = (bitField0_ & ~0x00080000);
           onChanged();
         } else {
           annotationBuilder_.clear();
@@ -16509,7 +16698,7 @@ public final class DebugProtoBuf {
           annotationBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder>(
                   annotation_,
-                  ((bitField0_ & 0x00040000) == 0x00040000),
+                  ((bitField0_ & 0x00080000) == 0x00080000),
                   getParentForChildren(),
                   isClean());
           annotation_ = null;
@@ -16524,7 +16713,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00080000) == 0x00080000);
+        return ((bitField0_ & 0x00100000) == 0x00100000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
@@ -16549,7 +16738,7 @@ public final class DebugProtoBuf {
         } else {
           typeTableBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00100000;
         return this;
       }
       /**
@@ -16563,7 +16752,7 @@ public final class DebugProtoBuf {
         } else {
           typeTableBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00100000;
         return this;
       }
       /**
@@ -16571,7 +16760,7 @@ public final class DebugProtoBuf {
        */
       public Builder mergeTypeTable(org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable value) {
         if (typeTableBuilder_ == null) {
-          if (((bitField0_ & 0x00080000) == 0x00080000) &&
+          if (((bitField0_ & 0x00100000) == 0x00100000) &&
               typeTable_ != org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable.getDefaultInstance()) {
             typeTable_ =
               org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
@@ -16582,7 +16771,7 @@ public final class DebugProtoBuf {
         } else {
           typeTableBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00100000;
         return this;
       }
       /**
@@ -16595,14 +16784,14 @@ public final class DebugProtoBuf {
         } else {
           typeTableBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00080000);
+        bitField0_ = (bitField0_ & ~0x00100000);
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.TypeTable type_table = 30;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeTable.Builder getTypeTableBuilder() {
-        bitField0_ |= 0x00080000;
+        bitField0_ |= 0x00100000;
         onChanged();
         return getTypeTableFieldBuilder().getBuilder();
       }
@@ -16635,9 +16824,9 @@ public final class DebugProtoBuf {
 
       private java.util.List<java.lang.Integer> versionRequirement_ = java.util.Collections.emptyList();
       private void ensureVersionRequirementIsMutable() {
-        if (!((bitField0_ & 0x00100000) == 0x00100000)) {
+        if (!((bitField0_ & 0x00200000) == 0x00200000)) {
           versionRequirement_ = new java.util.ArrayList<java.lang.Integer>(versionRequirement_);
-          bitField0_ |= 0x00100000;
+          bitField0_ |= 0x00200000;
          }
       }
       /**
@@ -16722,7 +16911,7 @@ public final class DebugProtoBuf {
        */
       public Builder clearVersionRequirement() {
         versionRequirement_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00100000);
+        bitField0_ = (bitField0_ & ~0x00200000);
         onChanged();
         return this;
       }
@@ -16734,7 +16923,7 @@ public final class DebugProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
        */
       public boolean hasVersionRequirementTable() {
-        return ((bitField0_ & 0x00200000) == 0x00200000);
+        return ((bitField0_ & 0x00400000) == 0x00400000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
@@ -16759,7 +16948,7 @@ public final class DebugProtoBuf {
         } else {
           versionRequirementTableBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00400000;
         return this;
       }
       /**
@@ -16773,7 +16962,7 @@ public final class DebugProtoBuf {
         } else {
           versionRequirementTableBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00400000;
         return this;
       }
       /**
@@ -16781,7 +16970,7 @@ public final class DebugProtoBuf {
        */
       public Builder mergeVersionRequirementTable(org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable value) {
         if (versionRequirementTableBuilder_ == null) {
-          if (((bitField0_ & 0x00200000) == 0x00200000) &&
+          if (((bitField0_ & 0x00400000) == 0x00400000) &&
               versionRequirementTable_ != org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable.getDefaultInstance()) {
             versionRequirementTable_ =
               org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable.newBuilder(versionRequirementTable_).mergeFrom(value).buildPartial();
@@ -16792,7 +16981,7 @@ public final class DebugProtoBuf {
         } else {
           versionRequirementTableBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00400000;
         return this;
       }
       /**
@@ -16805,14 +16994,14 @@ public final class DebugProtoBuf {
         } else {
           versionRequirementTableBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00200000);
+        bitField0_ = (bitField0_ & ~0x00400000);
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.VersionRequirementTable version_requirement_table = 32;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.VersionRequirementTable.Builder getVersionRequirementTableBuilder() {
-        bitField0_ |= 0x00200000;
+        bitField0_ |= 0x00400000;
         onChanged();
         return getVersionRequirementTableFieldBuilder().getBuilder();
       }
@@ -16846,9 +17035,9 @@ public final class DebugProtoBuf {
       private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginData> compilerPluginData_ =
         java.util.Collections.emptyList();
       private void ensureCompilerPluginDataIsMutable() {
-        if (!((bitField0_ & 0x00400000) == 0x00400000)) {
+        if (!((bitField0_ & 0x00800000) == 0x00800000)) {
           compilerPluginData_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginData>(compilerPluginData_);
-          bitField0_ |= 0x00400000;
+          bitField0_ |= 0x00800000;
          }
       }
 
@@ -16998,7 +17187,7 @@ public final class DebugProtoBuf {
       public Builder clearCompilerPluginData() {
         if (compilerPluginDataBuilder_ == null) {
           compilerPluginData_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00400000);
+          bitField0_ = (bitField0_ & ~0x00800000);
           onChanged();
         } else {
           compilerPluginDataBuilder_.clear();
@@ -17075,7 +17264,7 @@ public final class DebugProtoBuf {
           compilerPluginDataBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
               org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginData, org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginData.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.CompilerPluginDataOrBuilder>(
                   compilerPluginData_,
-                  ((bitField0_ & 0x00400000) == 0x00400000),
+                  ((bitField0_ & 0x00800000) == 0x00800000),
                   getParentForChildren(),
                   isClean());
           compilerPluginData_ = null;
@@ -17092,6 +17281,652 @@ public final class DebugProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.metadata.Class)
+  }
+
+  public interface FullValueClassRepresentationOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.FullValueClassRepresentation)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated int32 property_name = 1 [packed = true];</code>
+     */
+    java.util.List<java.lang.Integer> getPropertyNameList();
+    /**
+     * <code>repeated int32 property_name = 1 [packed = true];</code>
+     */
+    int getPropertyNameCount();
+    /**
+     * <code>repeated int32 property_name = 1 [packed = true];</code>
+     */
+    int getPropertyName(int index);
+
+    /**
+     * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+     */
+    java.util.List<java.lang.Integer> getPropertyTypeIdList();
+    /**
+     * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+     */
+    int getPropertyTypeIdCount();
+    /**
+     * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+     */
+    int getPropertyTypeId(int index);
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.metadata.FullValueClassRepresentation}
+   */
+  public static final class FullValueClassRepresentation extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.metadata.FullValueClassRepresentation)
+      FullValueClassRepresentationOrBuilder {
+    // Use FullValueClassRepresentation.newBuilder() to construct.
+    private FullValueClassRepresentation(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private FullValueClassRepresentation(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final FullValueClassRepresentation defaultInstance;
+    public static FullValueClassRepresentation getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public FullValueClassRepresentation getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private FullValueClassRepresentation(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                propertyName_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              propertyName_.add(input.readInt32());
+              break;
+            }
+            case 10: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
+                propertyName_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                propertyName_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 16: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                propertyTypeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              propertyTypeId_.add(input.readInt32());
+              break;
+            }
+            case 18: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+                propertyTypeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                propertyTypeId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          propertyName_ = java.util.Collections.unmodifiableList(propertyName_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          propertyTypeId_ = java.util.Collections.unmodifiableList(propertyTypeId_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.metadata.DebugProtoBuf.internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_descriptor;
+    }
+
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.metadata.DebugProtoBuf.internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.class, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder.class);
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Parser<FullValueClassRepresentation> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<FullValueClassRepresentation>() {
+      public FullValueClassRepresentation parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new FullValueClassRepresentation(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<FullValueClassRepresentation> getParserForType() {
+      return PARSER;
+    }
+
+    public static final int PROPERTY_NAME_FIELD_NUMBER = 1;
+    private java.util.List<java.lang.Integer> propertyName_;
+    /**
+     * <code>repeated int32 property_name = 1 [packed = true];</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getPropertyNameList() {
+      return propertyName_;
+    }
+    /**
+     * <code>repeated int32 property_name = 1 [packed = true];</code>
+     */
+    public int getPropertyNameCount() {
+      return propertyName_.size();
+    }
+    /**
+     * <code>repeated int32 property_name = 1 [packed = true];</code>
+     */
+    public int getPropertyName(int index) {
+      return propertyName_.get(index);
+    }
+    private int propertyNameMemoizedSerializedSize = -1;
+
+    public static final int PROPERTY_TYPE_ID_FIELD_NUMBER = 2;
+    private java.util.List<java.lang.Integer> propertyTypeId_;
+    /**
+     * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getPropertyTypeIdList() {
+      return propertyTypeId_;
+    }
+    /**
+     * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+     */
+    public int getPropertyTypeIdCount() {
+      return propertyTypeId_.size();
+    }
+    /**
+     * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+     */
+    public int getPropertyTypeId(int index) {
+      return propertyTypeId_.get(index);
+    }
+    private int propertyTypeIdMemoizedSerializedSize = -1;
+
+    private void initFields() {
+      propertyName_ = java.util.Collections.emptyList();
+      propertyTypeId_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (getPropertyNameList().size() > 0) {
+        output.writeRawVarint32(10);
+        output.writeRawVarint32(propertyNameMemoizedSerializedSize);
+      }
+      for (int i = 0; i < propertyName_.size(); i++) {
+        output.writeInt32NoTag(propertyName_.get(i));
+      }
+      if (getPropertyTypeIdList().size() > 0) {
+        output.writeRawVarint32(18);
+        output.writeRawVarint32(propertyTypeIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < propertyTypeId_.size(); i++) {
+        output.writeInt32NoTag(propertyTypeId_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < propertyName_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(propertyName_.get(i));
+        }
+        size += dataSize;
+        if (!getPropertyNameList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        propertyNameMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < propertyTypeId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(propertyTypeId_.get(i));
+        }
+        size += dataSize;
+        if (!getPropertyTypeIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        propertyTypeIdMemoizedSerializedSize = dataSize;
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.metadata.FullValueClassRepresentation}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.metadata.FullValueClassRepresentation)
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentationOrBuilder {
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.metadata.DebugProtoBuf.internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_descriptor;
+      }
+
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.metadata.DebugProtoBuf.internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.class, org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        propertyName_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        propertyTypeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.metadata.DebugProtoBuf.internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_descriptor;
+      }
+
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation build() {
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation buildPartial() {
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation result = new org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          propertyName_ = java.util.Collections.unmodifiableList(propertyName_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.propertyName_ = propertyName_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          propertyTypeId_ = java.util.Collections.unmodifiableList(propertyTypeId_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.propertyTypeId_ = propertyTypeId_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation) {
+          return mergeFrom((org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation other) {
+        if (other == org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation.getDefaultInstance()) return this;
+        if (!other.propertyName_.isEmpty()) {
+          if (propertyName_.isEmpty()) {
+            propertyName_ = other.propertyName_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensurePropertyNameIsMutable();
+            propertyName_.addAll(other.propertyName_);
+          }
+          onChanged();
+        }
+        if (!other.propertyTypeId_.isEmpty()) {
+          if (propertyTypeId_.isEmpty()) {
+            propertyTypeId_ = other.propertyTypeId_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensurePropertyTypeIdIsMutable();
+            propertyTypeId_.addAll(other.propertyTypeId_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.metadata.DebugProtoBuf.FullValueClassRepresentation) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<java.lang.Integer> propertyName_ = java.util.Collections.emptyList();
+      private void ensurePropertyNameIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          propertyName_ = new java.util.ArrayList<java.lang.Integer>(propertyName_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getPropertyNameList() {
+        return java.util.Collections.unmodifiableList(propertyName_);
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public int getPropertyNameCount() {
+        return propertyName_.size();
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public int getPropertyName(int index) {
+        return propertyName_.get(index);
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public Builder setPropertyName(
+          int index, int value) {
+        ensurePropertyNameIsMutable();
+        propertyName_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public Builder addPropertyName(int value) {
+        ensurePropertyNameIsMutable();
+        propertyName_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public Builder addAllPropertyName(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensurePropertyNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, propertyName_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 property_name = 1 [packed = true];</code>
+       */
+      public Builder clearPropertyName() {
+        propertyName_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<java.lang.Integer> propertyTypeId_ = java.util.Collections.emptyList();
+      private void ensurePropertyTypeIdIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          propertyTypeId_ = new java.util.ArrayList<java.lang.Integer>(propertyTypeId_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getPropertyTypeIdList() {
+        return java.util.Collections.unmodifiableList(propertyTypeId_);
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public int getPropertyTypeIdCount() {
+        return propertyTypeId_.size();
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public int getPropertyTypeId(int index) {
+        return propertyTypeId_.get(index);
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public Builder setPropertyTypeId(
+          int index, int value) {
+        ensurePropertyTypeIdIsMutable();
+        propertyTypeId_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public Builder addPropertyTypeId(int value) {
+        ensurePropertyTypeIdIsMutable();
+        propertyTypeId_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public Builder addAllPropertyTypeId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensurePropertyTypeIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, propertyTypeId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 property_type_id = 2 [packed = true];</code>
+       */
+      public Builder clearPropertyTypeId() {
+        propertyTypeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.FullValueClassRepresentation)
+    }
+
+    static {
+      defaultInstance = new FullValueClassRepresentation(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.metadata.FullValueClassRepresentation)
   }
 
   public interface PackageOrBuilder extends
@@ -45873,6 +46708,11 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_metadata_Class_fieldAccessorTable;
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_descriptor;
+  private static
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_fieldAccessorTable;
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_metadata_Package_descriptor;
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
@@ -46017,7 +46857,7 @@ public final class DebugProtoBuf {
       ".metadata.Type\022\036\n\016upper_bound_id\030\006 \003(\005B\006" +
       "\020\001\240\265\030\001\022=\n\nannotation\030d \003(\0132).org.jetbrai",
       "ns.kotlin.metadata.Annotation\"$\n\010Varianc" +
-      "e\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002*\005\010e\020\350\007\"\325\n\n\005C" +
+      "e\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002*\005\010e\020\350\007\"\273\013\n\005C" +
       "lass\022\020\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_name\030\003 \002(\005B" +
       "\004\220\265\030\001\022#\n\025companion_object_name\030\004 \001(\005B\004\210\265" +
       "\030\001\022D\n\016type_parameter\030\005 \003(\0132,.org.jetbrai" +
@@ -46040,179 +46880,184 @@ public final class DebugProtoBuf {
       "roperty_name\030\021 \001(\005B\004\210\265\030\001\022I\n\034inline_class" +
       "_underlying_type\030\022 \001(\0132#.org.jetbrains.k" +
       "otlin.metadata.Type\022-\n\037inline_class_unde" +
-      "rlying_type_id\030\023 \001(\005B\004\240\265\030\001\022=\n\nannotation" +
-      "\030\031 \003(\0132).org.jetbrains.kotlin.metadata.A" +
-      "nnotation\022<\n\ntype_table\030\036 \001(\0132(.org.jetb" +
-      "rains.kotlin.metadata.TypeTable\022\033\n\023versi" +
-      "on_requirement\030\037 \003(\005\022Y\n\031version_requirem" +
-      "ent_table\030  \001(\01326.org.jetbrains.kotlin.m",
-      "etadata.VersionRequirementTable\022O\n\024compi" +
-      "ler_plugin_data\030! \003(\01321.org.jetbrains.ko" +
-      "tlin.metadata.CompilerPluginData\"x\n\004Kind" +
-      "\022\t\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022\016\n\nENUM_CLASS" +
-      "\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004" +
-      "\022\n\n\006OBJECT\020\005\022\024\n\020COMPANION_OBJECT\020\006*\006\010d\020\270" +
-      "\224\001\"\335\002\n\007Package\0229\n\010function\030\003 \003(\0132\'.org.j" +
-      "etbrains.kotlin.metadata.Function\0229\n\010pro" +
-      "perty\030\004 \003(\0132\'.org.jetbrains.kotlin.metad" +
-      "ata.Property\022<\n\ntype_alias\030\005 \003(\0132(.org.j",
-      "etbrains.kotlin.metadata.TypeAlias\022<\n\nty" +
-      "pe_table\030\036 \001(\0132(.org.jetbrains.kotlin.me" +
-      "tadata.TypeTable\022Y\n\031version_requirement_" +
-      "table\030  \001(\01326.org.jetbrains.kotlin.metad" +
-      "ata.VersionRequirementTable*\005\010d\020\310\001\"`\n\tTy" +
-      "peTable\0221\n\004type\030\001 \003(\0132#.org.jetbrains.ko" +
-      "tlin.metadata.Type\022\032\n\016first_nullable\030\002 \001" +
-      "(\005:\002-1:\004\240\273\030\001\"\234\002\n\013Constructor\022\020\n\005flags\030\001 " +
-      "\001(\005:\0016\022F\n\017value_parameter\030\002 \003(\0132-.org.je" +
-      "tbrains.kotlin.metadata.ValueParameter\022\033",
-      "\n\023version_requirement\030\037 \003(\005\022O\n\024compiler_" +
-      "plugin_data\030  \003(\01321.org.jetbrains.kotlin" +
-      ".metadata.CompilerPluginData\022=\n\nannotati" +
-      "on\030\003 \003(\0132).org.jetbrains.kotlin.metadata" +
-      ".Annotation*\006\010d\020\270\224\001\"\300\007\n\010Function\022\020\n\005flag" +
-      "s\030\t \001(\005:\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name" +
-      "\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\0132#.org." +
-      "jetbrains.kotlin.metadata.Type\022\034\n\016return" +
-      "_type_id\030\007 \001(\005B\004\240\265\030\001\022D\n\016type_parameter\030\004" +
-      " \003(\0132,.org.jetbrains.kotlin.metadata.Typ",
-      "eParameter\022:\n\rreceiver_type\030\005 \001(\0132#.org." +
-      "jetbrains.kotlin.metadata.Type\022\036\n\020receiv" +
-      "er_type_id\030\010 \001(\005B\004\240\265\030\001\022B\n\025context_receiv" +
-      "er_type\030\n \003(\0132#.org.jetbrains.kotlin.met" +
-      "adata.Type\022(\n\030context_receiver_type_id\030\013" +
-      " \003(\005B\006\020\001\240\265\030\001\022H\n\021context_parameter\030\r \003(\0132" +
-      "-.org.jetbrains.kotlin.metadata.ValuePar" +
-      "ameter\022F\n\017value_parameter\030\006 \003(\0132-.org.je" +
-      "tbrains.kotlin.metadata.ValueParameter\022<" +
-      "\n\ntype_table\030\036 \001(\0132(.org.jetbrains.kotli",
-      "n.metadata.TypeTable\022\033\n\023version_requirem" +
-      "ent\030\037 \003(\005\0229\n\010contract\030  \001(\0132\'.org.jetbra" +
-      "ins.kotlin.metadata.Contract\022O\n\024compiler" +
-      "_plugin_data\030! \003(\01321.org.jetbrains.kotli" +
-      "n.metadata.CompilerPluginData\022=\n\nannotat" +
-      "ion\030\014 \003(\0132).org.jetbrains.kotlin.metadat" +
-      "a.Annotation\022P\n\035extension_receiver_annot" +
-      "ation\030\" \003(\0132).org.jetbrains.kotlin.metad" +
-      "ata.Annotation*\006\010d\020\270\224\001\"\250\n\n\010Property\022\022\n\005f" +
-      "lags\030\013 \001(\005:\003518\022\027\n\told_flags\030\001 \001(\005:\0042054",
-      "\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(" +
-      "\0132#.org.jetbrains.kotlin.metadata.Type\022\034" +
-      "\n\016return_type_id\030\t \001(\005B\004\240\265\030\001\022D\n\016type_par" +
-      "ameter\030\004 \003(\0132,.org.jetbrains.kotlin.meta" +
-      "data.TypeParameter\022:\n\rreceiver_type\030\005 \001(" +
-      "\0132#.org.jetbrains.kotlin.metadata.Type\022\036" +
-      "\n\020receiver_type_id\030\n \001(\005B\004\240\265\030\001\022B\n\025contex" +
-      "t_receiver_type\030\014 \003(\0132#.org.jetbrains.ko" +
-      "tlin.metadata.Type\022(\n\030context_receiver_t" +
-      "ype_id\030\r \003(\005B\006\020\001\240\265\030\001\022H\n\021context_paramete",
-      "r\030\021 \003(\0132-.org.jetbrains.kotlin.metadata." +
-      "ValueParameter\022M\n\026setter_value_parameter" +
-      "\030\006 \001(\0132-.org.jetbrains.kotlin.metadata.V" +
-      "alueParameter\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014s" +
-      "etter_flags\030\010 \001(\005\022\033\n\023version_requirement" +
-      "\030\037 \003(\005\022O\n\024compiler_plugin_data\030  \003(\01321.o" +
-      "rg.jetbrains.kotlin.metadata.CompilerPlu" +
-      "ginData\022=\n\nannotation\030\016 \003(\0132).org.jetbra" +
-      "ins.kotlin.metadata.Annotation\022D\n\021getter" +
-      "_annotation\030\017 \003(\0132).org.jetbrains.kotlin",
-      ".metadata.Annotation\022D\n\021setter_annotatio" +
-      "n\030\020 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Annotation\022P\n\035extension_receiver_annotat" +
-      "ion\030! \003(\0132).org.jetbrains.kotlin.metadat" +
-      "a.Annotation\022K\n\030backing_field_annotation" +
-      "\030\" \003(\0132).org.jetbrains.kotlin.metadata.A" +
-      "nnotation\022L\n\031delegate_field_annotation\030#" +
-      " \003(\0132).org.jetbrains.kotlin.metadata.Ann" +
-      "otation\022?\n\016getterContract\030( \001(\0132\'.org.je" +
-      "tbrains.kotlin.metadata.Contract\022?\n\016sett",
-      "erContract\030) \001(\0132\'.org.jetbrains.kotlin." +
-      "metadata.Contract*\006\010d\020\270\224\001\"\224\003\n\016ValueParam" +
-      "eter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265" +
-      "\030\001\0221\n\004type\030\003 \001(\0132#.org.jetbrains.kotlin." +
-      "metadata.Type\022\025\n\007type_id\030\005 \001(\005B\004\240\265\030\001\022@\n\023" +
-      "vararg_element_type\030\004 \001(\0132#.org.jetbrain" +
-      "s.kotlin.metadata.Type\022$\n\026vararg_element" +
-      "_type_id\030\006 \001(\005B\004\240\265\030\001\022=\n\nannotation\030\007 \003(\013" +
-      "2).org.jetbrains.kotlin.metadata.Annotat" +
-      "ion\022d\n\"annotation_parameter_default_valu",
-      "e\030\010 \001(\01328.org.jetbrains.kotlin.metadata." +
-      "Annotation.Argument.Value*\005\010d\020\310\001\"\347\003\n\tTyp" +
-      "eAlias\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004" +
-      "\210\265\030\001\022D\n\016type_parameter\030\003 \003(\0132,.org.jetbr" +
-      "ains.kotlin.metadata.TypeParameter\022<\n\017un" +
-      "derlying_type\030\004 \001(\0132#.org.jetbrains.kotl" +
-      "in.metadata.Type\022 \n\022underlying_type_id\030\005" +
-      " \001(\005B\004\240\265\030\001\022:\n\rexpanded_type\030\006 \001(\0132#.org." +
-      "jetbrains.kotlin.metadata.Type\022\036\n\020expand" +
-      "ed_type_id\030\007 \001(\005B\004\240\265\030\001\022=\n\nannotation\030\010 \003",
-      "(\0132).org.jetbrains.kotlin.metadata.Annot" +
-      "ation\022\033\n\023version_requirement\030\037 \003(\005\022O\n\024co" +
-      "mpiler_plugin_data\030  \003(\01321.org.jetbrains" +
-      ".kotlin.metadata.CompilerPluginData*\005\010d\020" +
-      "\310\001\"e\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001\022=\n\na" +
-      "nnotation\030\002 \003(\0132).org.jetbrains.kotlin.m" +
-      "etadata.Annotation*\005\010d\020\310\001\"\225\003\n\022VersionReq" +
-      "uirement\022\017\n\007version\030\001 \001(\005\022\024\n\014version_ful" +
-      "l\030\002 \001(\005\022M\n\005level\030\003 \001(\01627.org.jetbrains.k" +
-      "otlin.metadata.VersionRequirement.Level:",
-      "\005ERROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n\007message\030\005 " +
-      "\001(\005B\004\230\265\030\001\022e\n\014version_kind\030\006 \001(\0162=.org.je" +
-      "tbrains.kotlin.metadata.VersionRequireme" +
-      "nt.VersionKind:\020LANGUAGE_VERSION\"+\n\005Leve" +
-      "l\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n" +
-      "\013VersionKind\022\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020CO" +
-      "MPILER_VERSION\020\001\022\017\n\013API_VERSION\020\002\"a\n\027Ver" +
-      "sionRequirementTable\022F\n\013requirement\030\001 \003(" +
-      "\01321.org.jetbrains.kotlin.metadata.Versio" +
-      "nRequirement\"\323\002\n\017PackageFragment\022;\n\007stri",
-      "ngs\030\001 \001(\0132*.org.jetbrains.kotlin.metadat" +
-      "a.StringTable\022J\n\017qualified_names\030\002 \001(\01321" +
-      ".org.jetbrains.kotlin.metadata.Qualified" +
-      "NameTable\0227\n\007package\030\003 \001(\0132&.org.jetbrai" +
-      "ns.kotlin.metadata.Package\0223\n\005class\030\004 \003(" +
-      "\0132$.org.jetbrains.kotlin.metadata.Class\022" +
-      "B\n\017file_annotation\030\005 \003(\0132).org.jetbrains" +
-      ".kotlin.metadata.Annotation*\005\010d\020\310\001\"A\n\010Co" +
-      "ntract\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.k" +
-      "otlin.metadata.Effect\"\217\005\n\006Effect\022E\n\013effe",
-      "ct_type\030\001 \001(\01620.org.jetbrains.kotlin.met" +
-      "adata.Effect.EffectType\022N\n\033effect_constr" +
-      "uctor_argument\030\002 \003(\0132).org.jetbrains.kot" +
-      "lin.metadata.Expression\022S\n conclusion_of" +
-      "_conditional_effect\030\003 \001(\0132).org.jetbrain" +
-      "s.kotlin.metadata.Expression\022B\n\004kind\030\004 \001" +
-      "(\01624.org.jetbrains.kotlin.metadata.Effec" +
-      "t.InvocationKind\022Q\n\016condition_kind\030\005 \001(\016" +
-      "29.org.jetbrains.kotlin.metadata.Effect." +
-      "EffectConditionKind\"Z\n\nEffectType\022\024\n\020RET",
-      "URNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NO" +
-      "T_NULL\020\002\022\025\n\021RETURNS_RESULT_OF\020\003\"G\n\016Invoc" +
-      "ationKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_O" +
-      "NCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"]\n\023EffectCondit" +
-      "ionKind\022\030\n\024CONCLUSION_CONDITION\020\000\022\025\n\021RET" +
-      "URNS_CONDITION\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\"" +
-      "\245\003\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031valu" +
-      "e_parameter_reference\030\002 \001(\005\022O\n\016constant_" +
-      "value\030\003 \001(\01627.org.jetbrains.kotlin.metad" +
-      "ata.Expression.ConstantValue\022=\n\020is_insta",
-      "nce_type\030\004 \001(\0132#.org.jetbrains.kotlin.me" +
-      "tadata.Type\022!\n\023is_instance_type_id\030\005 \001(\005" +
-      "B\004\240\265\030\001\022?\n\014and_argument\030\006 \003(\0132).org.jetbr" +
-      "ains.kotlin.metadata.Expression\022>\n\013or_ar" +
-      "gument\030\007 \003(\0132).org.jetbrains.kotlin.meta" +
-      "data.Expression\".\n\rConstantValue\022\010\n\004TRUE" +
-      "\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPlugi" +
-      "nData\022\027\n\tplugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002" +
-      " \002(\014*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n" +
-      "\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n",
-      "\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022" +
-      "\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCA" +
-      "L\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFA" +
-      "KE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHES" +
-      "IZED\020\003*L\n\021ReturnValueStatus\022\017\n\013UNSPECIFI" +
-      "ED\020\000\022\014\n\010MUST_USE\020\001\022\030\n\024EXPLICITLY_IGNORAB" +
-      "LE\020\002B\017B\rDebugProtoBuf"
+      "rlying_type_id\030\023 \001(\005B\004\240\265\030\001\022d\n\037full_value" +
+      "_class_representation\030\026 \001(\0132;.org.jetbra" +
+      "ins.kotlin.metadata.FullValueClassRepres" +
+      "entation\022=\n\nannotation\030\031 \003(\0132).org.jetbr" +
+      "ains.kotlin.metadata.Annotation\022<\n\ntype_" +
+      "table\030\036 \001(\0132(.org.jetbrains.kotlin.metad",
+      "ata.TypeTable\022\033\n\023version_requirement\030\037 \003" +
+      "(\005\022Y\n\031version_requirement_table\030  \001(\01326." +
+      "org.jetbrains.kotlin.metadata.VersionReq" +
+      "uirementTable\022O\n\024compiler_plugin_data\030! " +
+      "\003(\01321.org.jetbrains.kotlin.metadata.Comp" +
+      "ilerPluginData\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINT" +
+      "ERFACE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003" +
+      "\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020CO" +
+      "MPANION_OBJECT\020\006*\006\010d\020\270\224\001\"_\n\034FullValueCla" +
+      "ssRepresentation\022\035\n\rproperty_name\030\001 \003(\005B",
+      "\006\020\001\210\265\030\001\022 \n\020property_type_id\030\002 \003(\005B\006\020\001\240\265\030" +
+      "\001\"\335\002\n\007Package\0229\n\010function\030\003 \003(\0132\'.org.je" +
+      "tbrains.kotlin.metadata.Function\0229\n\010prop" +
+      "erty\030\004 \003(\0132\'.org.jetbrains.kotlin.metada" +
+      "ta.Property\022<\n\ntype_alias\030\005 \003(\0132(.org.je" +
+      "tbrains.kotlin.metadata.TypeAlias\022<\n\ntyp" +
+      "e_table\030\036 \001(\0132(.org.jetbrains.kotlin.met" +
+      "adata.TypeTable\022Y\n\031version_requirement_t" +
+      "able\030  \001(\01326.org.jetbrains.kotlin.metada" +
+      "ta.VersionRequirementTable*\005\010d\020\310\001\"`\n\tTyp",
+      "eTable\0221\n\004type\030\001 \003(\0132#.org.jetbrains.kot" +
+      "lin.metadata.Type\022\032\n\016first_nullable\030\002 \001(" +
+      "\005:\002-1:\004\240\273\030\001\"\234\002\n\013Constructor\022\020\n\005flags\030\001 \001" +
+      "(\005:\0016\022F\n\017value_parameter\030\002 \003(\0132-.org.jet" +
+      "brains.kotlin.metadata.ValueParameter\022\033\n" +
+      "\023version_requirement\030\037 \003(\005\022O\n\024compiler_p" +
+      "lugin_data\030  \003(\01321.org.jetbrains.kotlin." +
+      "metadata.CompilerPluginData\022=\n\nannotatio" +
+      "n\030\003 \003(\0132).org.jetbrains.kotlin.metadata." +
+      "Annotation*\006\010d\020\270\224\001\"\300\007\n\010Function\022\020\n\005flags",
+      "\030\t \001(\005:\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name\030" +
+      "\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\0132#.org.j" +
+      "etbrains.kotlin.metadata.Type\022\034\n\016return_" +
+      "type_id\030\007 \001(\005B\004\240\265\030\001\022D\n\016type_parameter\030\004 " +
+      "\003(\0132,.org.jetbrains.kotlin.metadata.Type" +
+      "Parameter\022:\n\rreceiver_type\030\005 \001(\0132#.org.j" +
+      "etbrains.kotlin.metadata.Type\022\036\n\020receive" +
+      "r_type_id\030\010 \001(\005B\004\240\265\030\001\022B\n\025context_receive" +
+      "r_type\030\n \003(\0132#.org.jetbrains.kotlin.meta" +
+      "data.Type\022(\n\030context_receiver_type_id\030\013 ",
+      "\003(\005B\006\020\001\240\265\030\001\022H\n\021context_parameter\030\r \003(\0132-" +
+      ".org.jetbrains.kotlin.metadata.ValuePara" +
+      "meter\022F\n\017value_parameter\030\006 \003(\0132-.org.jet" +
+      "brains.kotlin.metadata.ValueParameter\022<\n" +
+      "\ntype_table\030\036 \001(\0132(.org.jetbrains.kotlin" +
+      ".metadata.TypeTable\022\033\n\023version_requireme" +
+      "nt\030\037 \003(\005\0229\n\010contract\030  \001(\0132\'.org.jetbrai" +
+      "ns.kotlin.metadata.Contract\022O\n\024compiler_" +
+      "plugin_data\030! \003(\01321.org.jetbrains.kotlin" +
+      ".metadata.CompilerPluginData\022=\n\nannotati",
+      "on\030\014 \003(\0132).org.jetbrains.kotlin.metadata" +
+      ".Annotation\022P\n\035extension_receiver_annota" +
+      "tion\030\" \003(\0132).org.jetbrains.kotlin.metada" +
+      "ta.Annotation*\006\010d\020\270\224\001\"\250\n\n\010Property\022\022\n\005fl" +
+      "ags\030\013 \001(\005:\003518\022\027\n\told_flags\030\001 \001(\005:\0042054\022" +
+      "\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\013" +
+      "2#.org.jetbrains.kotlin.metadata.Type\022\034\n" +
+      "\016return_type_id\030\t \001(\005B\004\240\265\030\001\022D\n\016type_para" +
+      "meter\030\004 \003(\0132,.org.jetbrains.kotlin.metad" +
+      "ata.TypeParameter\022:\n\rreceiver_type\030\005 \001(\013",
+      "2#.org.jetbrains.kotlin.metadata.Type\022\036\n" +
+      "\020receiver_type_id\030\n \001(\005B\004\240\265\030\001\022B\n\025context" +
+      "_receiver_type\030\014 \003(\0132#.org.jetbrains.kot" +
+      "lin.metadata.Type\022(\n\030context_receiver_ty" +
+      "pe_id\030\r \003(\005B\006\020\001\240\265\030\001\022H\n\021context_parameter" +
+      "\030\021 \003(\0132-.org.jetbrains.kotlin.metadata.V" +
+      "alueParameter\022M\n\026setter_value_parameter\030" +
+      "\006 \001(\0132-.org.jetbrains.kotlin.metadata.Va" +
+      "lueParameter\022\024\n\014getter_flags\030\007 \001(\005\022\024\n\014se" +
+      "tter_flags\030\010 \001(\005\022\033\n\023version_requirement\030",
+      "\037 \003(\005\022O\n\024compiler_plugin_data\030  \003(\01321.or" +
+      "g.jetbrains.kotlin.metadata.CompilerPlug" +
+      "inData\022=\n\nannotation\030\016 \003(\0132).org.jetbrai" +
+      "ns.kotlin.metadata.Annotation\022D\n\021getter_" +
+      "annotation\030\017 \003(\0132).org.jetbrains.kotlin." +
+      "metadata.Annotation\022D\n\021setter_annotation" +
+      "\030\020 \003(\0132).org.jetbrains.kotlin.metadata.A" +
+      "nnotation\022P\n\035extension_receiver_annotati" +
+      "on\030! \003(\0132).org.jetbrains.kotlin.metadata" +
+      ".Annotation\022K\n\030backing_field_annotation\030",
+      "\" \003(\0132).org.jetbrains.kotlin.metadata.An" +
+      "notation\022L\n\031delegate_field_annotation\030# " +
+      "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
+      "tation\022?\n\016getterContract\030( \001(\0132\'.org.jet" +
+      "brains.kotlin.metadata.Contract\022?\n\016sette" +
+      "rContract\030) \001(\0132\'.org.jetbrains.kotlin.m" +
+      "etadata.Contract*\006\010d\020\270\224\001\"\224\003\n\016ValueParame" +
+      "ter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030" +
+      "\001\0221\n\004type\030\003 \001(\0132#.org.jetbrains.kotlin.m" +
+      "etadata.Type\022\025\n\007type_id\030\005 \001(\005B\004\240\265\030\001\022@\n\023v",
+      "ararg_element_type\030\004 \001(\0132#.org.jetbrains" +
+      ".kotlin.metadata.Type\022$\n\026vararg_element_" +
+      "type_id\030\006 \001(\005B\004\240\265\030\001\022=\n\nannotation\030\007 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati" +
+      "on\022d\n\"annotation_parameter_default_value" +
+      "\030\010 \001(\01328.org.jetbrains.kotlin.metadata.A" +
+      "nnotation.Argument.Value*\005\010d\020\310\001\"\347\003\n\tType" +
+      "Alias\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210" +
+      "\265\030\001\022D\n\016type_parameter\030\003 \003(\0132,.org.jetbra" +
+      "ins.kotlin.metadata.TypeParameter\022<\n\017und",
+      "erlying_type\030\004 \001(\0132#.org.jetbrains.kotli" +
+      "n.metadata.Type\022 \n\022underlying_type_id\030\005 " +
+      "\001(\005B\004\240\265\030\001\022:\n\rexpanded_type\030\006 \001(\0132#.org.j" +
+      "etbrains.kotlin.metadata.Type\022\036\n\020expande" +
+      "d_type_id\030\007 \001(\005B\004\240\265\030\001\022=\n\nannotation\030\010 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Annota" +
+      "tion\022\033\n\023version_requirement\030\037 \003(\005\022O\n\024com" +
+      "piler_plugin_data\030  \003(\01321.org.jetbrains." +
+      "kotlin.metadata.CompilerPluginData*\005\010d\020\310" +
+      "\001\"e\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001\022=\n\nan",
+      "notation\030\002 \003(\0132).org.jetbrains.kotlin.me" +
+      "tadata.Annotation*\005\010d\020\310\001\"\225\003\n\022VersionRequ" +
+      "irement\022\017\n\007version\030\001 \001(\005\022\024\n\014version_full" +
+      "\030\002 \001(\005\022M\n\005level\030\003 \001(\01627.org.jetbrains.ko" +
+      "tlin.metadata.VersionRequirement.Level:\005" +
+      "ERROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n\007message\030\005 \001" +
+      "(\005B\004\230\265\030\001\022e\n\014version_kind\030\006 \001(\0162=.org.jet" +
+      "brains.kotlin.metadata.VersionRequiremen" +
+      "t.VersionKind:\020LANGUAGE_VERSION\"+\n\005Level" +
+      "\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n\013",
+      "VersionKind\022\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020COM" +
+      "PILER_VERSION\020\001\022\017\n\013API_VERSION\020\002\"a\n\027Vers" +
+      "ionRequirementTable\022F\n\013requirement\030\001 \003(\013" +
+      "21.org.jetbrains.kotlin.metadata.Version" +
+      "Requirement\"\323\002\n\017PackageFragment\022;\n\007strin" +
+      "gs\030\001 \001(\0132*.org.jetbrains.kotlin.metadata" +
+      ".StringTable\022J\n\017qualified_names\030\002 \001(\01321." +
+      "org.jetbrains.kotlin.metadata.QualifiedN" +
+      "ameTable\0227\n\007package\030\003 \001(\0132&.org.jetbrain" +
+      "s.kotlin.metadata.Package\0223\n\005class\030\004 \003(\013",
+      "2$.org.jetbrains.kotlin.metadata.Class\022B" +
+      "\n\017file_annotation\030\005 \003(\0132).org.jetbrains." +
+      "kotlin.metadata.Annotation*\005\010d\020\310\001\"A\n\010Con" +
+      "tract\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.ko" +
+      "tlin.metadata.Effect\"\217\005\n\006Effect\022E\n\013effec" +
+      "t_type\030\001 \001(\01620.org.jetbrains.kotlin.meta" +
+      "data.Effect.EffectType\022N\n\033effect_constru" +
+      "ctor_argument\030\002 \003(\0132).org.jetbrains.kotl" +
+      "in.metadata.Expression\022S\n conclusion_of_" +
+      "conditional_effect\030\003 \001(\0132).org.jetbrains",
+      ".kotlin.metadata.Expression\022B\n\004kind\030\004 \001(" +
+      "\01624.org.jetbrains.kotlin.metadata.Effect" +
+      ".InvocationKind\022Q\n\016condition_kind\030\005 \001(\0162" +
+      "9.org.jetbrains.kotlin.metadata.Effect.E" +
+      "ffectConditionKind\"Z\n\nEffectType\022\024\n\020RETU" +
+      "RNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT" +
+      "_NULL\020\002\022\025\n\021RETURNS_RESULT_OF\020\003\"G\n\016Invoca" +
+      "tionKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_ON" +
+      "CE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"]\n\023EffectConditi" +
+      "onKind\022\030\n\024CONCLUSION_CONDITION\020\000\022\025\n\021RETU",
+      "RNS_CONDITION\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\"\245" +
+      "\003\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value" +
+      "_parameter_reference\030\002 \001(\005\022O\n\016constant_v" +
+      "alue\030\003 \001(\01627.org.jetbrains.kotlin.metada" +
+      "ta.Expression.ConstantValue\022=\n\020is_instan" +
+      "ce_type\030\004 \001(\0132#.org.jetbrains.kotlin.met" +
+      "adata.Type\022!\n\023is_instance_type_id\030\005 \001(\005B" +
+      "\004\240\265\030\001\022?\n\014and_argument\030\006 \003(\0132).org.jetbra" +
+      "ins.kotlin.metadata.Expression\022>\n\013or_arg" +
+      "ument\030\007 \003(\0132).org.jetbrains.kotlin.metad",
+      "ata.Expression\".\n\rConstantValue\022\010\n\004TRUE\020" +
+      "\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002\";\n\022CompilerPlugin" +
+      "Data\022\027\n\tplugin_id\030\001 \002(\005B\004\230\265\030\001\022\014\n\004data\030\002 " +
+      "\002(\014*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010" +
+      "ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010" +
+      "INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n" +
+      "\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL" +
+      "\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAK" +
+      "E_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESI" +
+      "ZED\020\003*L\n\021ReturnValueStatus\022\017\n\013UNSPECIFIE",
+      "D\020\000\022\014\n\010MUST_USE\020\001\022\030\n\024EXPLICITLY_IGNORABL" +
+      "E\020\002B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -46286,93 +47131,99 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_metadata_Class_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Class_descriptor,
-        new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "SupertypeId", "NestedClassName", "ContextReceiverType", "ContextReceiverTypeId", "Constructor", "Function", "Property", "TypeAlias", "EnumEntry", "SealedSubclassFqName", "InlineClassUnderlyingPropertyName", "InlineClassUnderlyingType", "InlineClassUnderlyingTypeId", "Annotation", "TypeTable", "VersionRequirement", "VersionRequirementTable", "CompilerPluginData", });
-    internal_static_org_jetbrains_kotlin_metadata_Package_descriptor =
+        new java.lang.String[] { "Flags", "FqName", "CompanionObjectName", "TypeParameter", "Supertype", "SupertypeId", "NestedClassName", "ContextReceiverType", "ContextReceiverTypeId", "Constructor", "Function", "Property", "TypeAlias", "EnumEntry", "SealedSubclassFqName", "InlineClassUnderlyingPropertyName", "InlineClassUnderlyingType", "InlineClassUnderlyingTypeId", "FullValueClassRepresentation", "Annotation", "TypeTable", "VersionRequirement", "VersionRequirementTable", "CompilerPluginData", });
+    internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_descriptor =
       getDescriptor().getMessageTypes().get(6);
+    internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_metadata_FullValueClassRepresentation_descriptor,
+        new java.lang.String[] { "PropertyName", "PropertyTypeId", });
+    internal_static_org_jetbrains_kotlin_metadata_Package_descriptor =
+      getDescriptor().getMessageTypes().get(7);
     internal_static_org_jetbrains_kotlin_metadata_Package_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Package_descriptor,
         new java.lang.String[] { "Function", "Property", "TypeAlias", "TypeTable", "VersionRequirementTable", });
     internal_static_org_jetbrains_kotlin_metadata_TypeTable_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_org_jetbrains_kotlin_metadata_TypeTable_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_TypeTable_descriptor,
         new java.lang.String[] { "Type", "FirstNullable", });
     internal_static_org_jetbrains_kotlin_metadata_Constructor_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_org_jetbrains_kotlin_metadata_Constructor_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Constructor_descriptor,
         new java.lang.String[] { "Flags", "ValueParameter", "VersionRequirement", "CompilerPluginData", "Annotation", });
     internal_static_org_jetbrains_kotlin_metadata_Function_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_org_jetbrains_kotlin_metadata_Function_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Function_descriptor,
         new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ContextReceiverType", "ContextReceiverTypeId", "ContextParameter", "ValueParameter", "TypeTable", "VersionRequirement", "Contract", "CompilerPluginData", "Annotation", "ExtensionReceiverAnnotation", });
     internal_static_org_jetbrains_kotlin_metadata_Property_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_org_jetbrains_kotlin_metadata_Property_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Property_descriptor,
         new java.lang.String[] { "Flags", "OldFlags", "Name", "ReturnType", "ReturnTypeId", "TypeParameter", "ReceiverType", "ReceiverTypeId", "ContextReceiverType", "ContextReceiverTypeId", "ContextParameter", "SetterValueParameter", "GetterFlags", "SetterFlags", "VersionRequirement", "CompilerPluginData", "Annotation", "GetterAnnotation", "SetterAnnotation", "ExtensionReceiverAnnotation", "BackingFieldAnnotation", "DelegateFieldAnnotation", "GetterContract", "SetterContract", });
     internal_static_org_jetbrains_kotlin_metadata_ValueParameter_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_org_jetbrains_kotlin_metadata_ValueParameter_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_ValueParameter_descriptor,
         new java.lang.String[] { "Flags", "Name", "Type", "TypeId", "VarargElementType", "VarargElementTypeId", "Annotation", "AnnotationParameterDefaultValue", });
     internal_static_org_jetbrains_kotlin_metadata_TypeAlias_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_org_jetbrains_kotlin_metadata_TypeAlias_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_TypeAlias_descriptor,
         new java.lang.String[] { "Flags", "Name", "TypeParameter", "UnderlyingType", "UnderlyingTypeId", "ExpandedType", "ExpandedTypeId", "Annotation", "VersionRequirement", "CompilerPluginData", });
     internal_static_org_jetbrains_kotlin_metadata_EnumEntry_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_org_jetbrains_kotlin_metadata_EnumEntry_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_EnumEntry_descriptor,
         new java.lang.String[] { "Name", "Annotation", });
     internal_static_org_jetbrains_kotlin_metadata_VersionRequirement_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_org_jetbrains_kotlin_metadata_VersionRequirement_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_VersionRequirement_descriptor,
         new java.lang.String[] { "Version", "VersionFull", "Level", "ErrorCode", "Message", "VersionKind", });
     internal_static_org_jetbrains_kotlin_metadata_VersionRequirementTable_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_org_jetbrains_kotlin_metadata_VersionRequirementTable_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_VersionRequirementTable_descriptor,
         new java.lang.String[] { "Requirement", });
     internal_static_org_jetbrains_kotlin_metadata_PackageFragment_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(17);
     internal_static_org_jetbrains_kotlin_metadata_PackageFragment_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_PackageFragment_descriptor,
         new java.lang.String[] { "Strings", "QualifiedNames", "Package", "Class_", "FileAnnotation", });
     internal_static_org_jetbrains_kotlin_metadata_Contract_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(18);
     internal_static_org_jetbrains_kotlin_metadata_Contract_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Contract_descriptor,
         new java.lang.String[] { "Effect", });
     internal_static_org_jetbrains_kotlin_metadata_Effect_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_org_jetbrains_kotlin_metadata_Effect_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Effect_descriptor,
         new java.lang.String[] { "EffectType", "EffectConstructorArgument", "ConclusionOfConditionalEffect", "Kind", "ConditionKind", });
     internal_static_org_jetbrains_kotlin_metadata_Expression_descriptor =
-      getDescriptor().getMessageTypes().get(19);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_org_jetbrains_kotlin_metadata_Expression_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Expression_descriptor,
         new java.lang.String[] { "Flags", "ValueParameterReference", "ConstantValue", "IsInstanceType", "IsInstanceTypeId", "AndArgument", "OrArgument", });
     internal_static_org_jetbrains_kotlin_metadata_CompilerPluginData_descriptor =
-      getDescriptor().getMessageTypes().get(20);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_org_jetbrains_kotlin_metadata_CompilerPluginData_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_CompilerPluginData_descriptor,
@@ -46402,6 +47253,8 @@ public final class DebugProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.fqNameIdInTable);
+    registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.nameIdInTable);
+    registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.skipMessageInComparison);
