@@ -200,6 +200,12 @@
                         <jdk17Home>${jdk17Home}</jdk17Home>
                         <jdk21Home>${jdk21Home}</jdk21Home>
                     </systemPropertyVariables>
+                    <properties>
+                      <configurationParameters>
+                        junit.jupiter.execution.parallel.enabled = true
+                        junit.jupiter.execution.parallel.mode.default = concurrent
+                      </configurationParameters>
+                    </properties>
                 </configuration>
             </plugin>
         </plugins>
