@@ -350,7 +350,6 @@ public fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {
 public inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
 
     return memScoped {
@@ -713,10 +712,9 @@ public class MemScope : ArenaBase() {
  */
 @ExperimentalForeignApi
 @OptIn(kotlin.contracts.ExperimentalContracts::class)
-public inline fun <R> memScoped(block: MemScope.() -> R): R {
+public inline fun <R> memScoped(block: MemScope.()->R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
 
     val memScope = MemScope()
