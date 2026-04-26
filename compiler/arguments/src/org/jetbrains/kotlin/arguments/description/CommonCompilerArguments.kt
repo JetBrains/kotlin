@@ -694,6 +694,21 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         )
     }
 
+    compilerArgument {
+        name = "Xallow-returns-result-of"
+        description = ("Allows to use `returnsResultOf()` in `contract {}` block of function body. " +
+                "This contract provides additional information for return value checker. " +
+                "Enabling this feature will force compiler to produce pre-release binaries, " +
+                "because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AllowReturnsResultOfContract))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
+        )
+    }
+
 
     compilerArgument {
         name = "Xsuppress-version-warnings"

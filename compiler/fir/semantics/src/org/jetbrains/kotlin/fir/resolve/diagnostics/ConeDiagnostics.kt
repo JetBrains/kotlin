@@ -271,9 +271,19 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
             get() = "instance check for erased type"
     }
 
-    class RequiresLanguageFeature(val featureName: String) : ConeContractDescriptionError() {
+    class RequiresLanguageFeature(featureName: String, vararg featureNames: String) : ConeContractDescriptionError() {
+        val featureNames: List<String> = buildList {
+            add(featureName)
+            addAll(featureNames)
+        }
+
+        private fun renderFeatures(): String {
+            if (featureNames.size == 1) return "feature '${featureNames[0]}'"
+            return "features ${featureNames.joinToString(", ") { "'$it'" }}"
+        }
+
         override val reason: String
-            get() = "requires language feature '$featureName' to be enabled"
+            get() = "requires language ${renderFeatures()} to be enabled"
     }
 }
 

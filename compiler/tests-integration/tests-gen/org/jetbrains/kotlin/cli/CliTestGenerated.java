@@ -539,6 +539,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/checker.args");
     }
 
+    @TestMetadata("contracts.args")
+    public void testContracts() {
+      runTest("compiler/testData/cli/jvm/diagnosticTests/crv/contracts.args");
+    }
+
     @TestMetadata("full.args")
     public void testFull() {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/full.args");

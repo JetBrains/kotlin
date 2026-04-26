@@ -163,6 +163,17 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
+        value = "-Xallow-returns-result-of",
+        description = "Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.",
+    )
+    @Enables(LanguageFeature.AllowReturnsResultOfContract)
+    var allowReturnsResultOf: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xannotation-default-target",
         valueDescription = "first-only|first-only-warn|param-property",
         description = """Change the default annotation targets for constructor properties:

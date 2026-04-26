@@ -29,6 +29,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.allowReturnsResultOf) {
+        put(LanguageFeature.AllowReturnsResultOfContract, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.annotationDefaultTarget == "first-only-warn") {
         put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
         put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)

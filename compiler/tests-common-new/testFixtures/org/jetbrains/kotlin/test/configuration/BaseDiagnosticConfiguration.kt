@@ -232,6 +232,12 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/crvFull/contracts/*") {
+        defaultDirectives {
+            LANGUAGE with "+AllowReturnsResultOfContract"
+        }
+    }
+
     forTestsMatching("compiler/testData/diagnostics/tests/crvDisabled/*") {
         defaultDirectives {
             RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.DISABLED

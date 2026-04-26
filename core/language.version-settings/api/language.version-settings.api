@@ -145,6 +145,7 @@ public final class org/jetbrains/kotlin/config/LanguageFeature : java/lang/Enum 
 	public static final field AllowReifiedGenericsInContracts Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field AllowReifiedTypeInCatchClause Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field AllowReturnInExpressionBodyWithExplicitType Lorg/jetbrains/kotlin/config/LanguageFeature;
+	public static final field AllowReturnsResultOfContract Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field AllowSealedInheritorsInDifferentFilesOfSamePackage Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field AllowSuperCallToJavaInterface Lorg/jetbrains/kotlin/config/LanguageFeature;
 	public static final field AnnotationAllUseSiteTarget Lorg/jetbrains/kotlin/config/LanguageFeature;

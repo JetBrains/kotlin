@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/contracts.kt
+-d
+$TEMP_DIR$
+-Xreturn-value-checker=full
+-Xallow-returns-result-of
