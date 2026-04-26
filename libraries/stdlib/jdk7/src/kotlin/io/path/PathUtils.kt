@@ -395,11 +395,8 @@ public fun Path.listDirectoryEntries(glob: String = "*"): List<Path> {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue // KT-72691
 public inline fun <T> Path.useDirectoryEntries(glob: String = "*", block: (Sequence<Path>) -> T): T {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
-    }
     return Files.newDirectoryStream(this, glob).use { block(it.asSequence()) }
 }
 

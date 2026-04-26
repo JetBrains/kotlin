@@ -37,10 +37,10 @@ public inline fun TODO(reason: String): Nothing = throw NotImplementedError("An 
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#run).
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <R> run(block: () -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return block()
 }
@@ -51,10 +51,10 @@ public inline fun <R> run(block: () -> R): R {
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#run).
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T, R> T.run(block: T.() -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return block()
 }
@@ -65,10 +65,10 @@ public inline fun <T, R> T.run(block: T.() -> R): R {
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#with).
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T, R> with(receiver: T, block: T.() -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return receiver.block()
 }
@@ -110,10 +110,10 @@ public inline fun <T> T.also(block: (T) -> Unit): T {
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#let).
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T, R> T.let(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return block(this)
 }

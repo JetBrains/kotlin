@@ -58,10 +58,10 @@ public fun Reader.readLines(): List<String> {
  * the processing is complete.
  * @return the value returned by [block].
  */
+@IgnorableReturnValue
 public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
     }
     return buffered().use { block(it.lineSequence()) }
 }
