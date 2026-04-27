@@ -320,8 +320,10 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         environment,
     ) { !framework.isStatic } ?: return
     embedAndSignTask.dependsOn(validateTask)
-    embedAndSignTask.dependsOn(assembleTask.taskProvider)
-    embedAndSignTask.dependsOn(symbolicLinkTask)
+    if (matchesRequestedBinary) {
+        embedAndSignTask.dependsOn(assembleTask.taskProvider)
+        embedAndSignTask.dependsOn(symbolicLinkTask)
+    }
 
     if (kotlinPropertiesProvider.appleCopyDsymDuringArchiving && matchesRequestedBinary) {
         val dsymCopyTask = registerDsymArchiveTask(
