@@ -1,3 +1,7 @@
+plugins {
+    java
+}
+
 val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {
@@ -54,4 +58,15 @@ tasks.withType<Test>().configureEach {
         failOnPassedAfterRetry.set(extension.allowFlaky.convention(true).map { !it })
     }
     ignoreFailures = false
+}
+
+tasks.register("printTestJavaLauncher") {
+    notCompatibleWithConfigurationCache("")
+
+    doLast {
+        val javaLauncher = tasks.test.get().javaLauncher.get()
+        println("${this.project.path} -> javaLauncher.jvmVersion = ${javaLauncher.metadata.jvmVersion}")
+        println("${this.project.path} -> javaLauncher.javaRuntimeVersion = ${javaLauncher.metadata.javaRuntimeVersion}")
+        println("${this.project.path} -> javaLauncher.installationPath = ${javaLauncher.metadata.installationPath}")
+    }
 }
