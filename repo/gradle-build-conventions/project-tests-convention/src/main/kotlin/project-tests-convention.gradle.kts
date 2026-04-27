@@ -54,4 +54,9 @@ tasks.withType<Test>().configureEach {
         failOnPassedAfterRetry.set(extension.allowFlaky.convention(true).map { !it })
     }
     ignoreFailures = false
+
+    javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)
+    jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
+    jvmArgs("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED")
 }
