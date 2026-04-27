@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Recommended way to edit .jfc files is to use the configure command of
+the 'jfr' tool, i.e. jfr configure, or JDK Mission Control
+see Window -> Flight Recorder Template Manager
+
+-->
+<configuration label="Custom" version="2.0">
+
+  <event name="jdk.FileRead">
+    <setting name="enabled">true</setting>
+    <setting name="threshold">0 ms</setting>
+    <setting name="stackTrace">false</setting>
+  </event>
+
+</configuration>

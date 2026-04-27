@@ -58,27 +58,10 @@ testing {
                             "kotlin.daemon.custom.run.files.path.for.tests",
                             "build/daemon"
                         )
-                        testInputsCheck {
-                            extraPermissions.set(
-                                listOfNotNull(
-                                    "permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",
-                                    "permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";",
-
-                                    // paths below are not expected to exist,
-                                    // these are here to pass implicit `exists()` checks in the Kotlin compiler
-                                    "permission java.io.FilePermission \"<no_path>/lib\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";"
-                                )
-                            )
-                        }
                     }
                 }
             }
         }
-
 
         withType<JvmTestSuite>().configureEach configureSuit@{
             dependencies {
@@ -87,7 +70,6 @@ testing {
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation("org.jetbrains.kotlin:kotlin-build-tools-api:$btaApiVersion")
                 implementation(project(":compiler:arguments"))
             }

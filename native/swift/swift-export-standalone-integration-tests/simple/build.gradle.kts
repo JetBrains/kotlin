@@ -42,9 +42,6 @@ projectTests {
         allowUnsafe = true, // KT-85212
     ) {
         dependsOn(":kotlin-native:distInvalidateStaleCaches")
-        extensions.configure<TestInputsCheckExtension>("testInputsCheck") {
-            allowFlightRecorder.set(true)
-        }
     }
 }
 

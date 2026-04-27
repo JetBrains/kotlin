@@ -175,9 +175,6 @@ projectTests {
         }
 
         setUpJsIrBoxTests()
-        testInputsCheck {
-            allowFlightRecorder.set(true)
-        }
     }
 
     nativeTestTask(

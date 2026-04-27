@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.*
+import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -17,7 +18,6 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
     private val target = LeafCommonizerTarget("a")
 
     fun `test sample 0`() {
-
         val root = createCirTreeRootFromSourceCode(
             """
             class A

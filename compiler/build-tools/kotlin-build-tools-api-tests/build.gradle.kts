@@ -218,11 +218,6 @@ testing {
                             javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                            testInputsCheck {
-                                if (implVersion.version < KotlinToolingVersion(2, 2, 0, "snapshot")) {
-                                    extraPermissions.add("permission java.util.PropertyPermission \"*\", \"read,write\";")
-                                }
-                            }
                         }
                     }
                 }
@@ -237,7 +232,6 @@ testing {
 
                 implementation(project())
                 implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
                 implementation(project(":compiler:build-tools:kotlin-build-tools-api"))
                 implementation(project(":compiler:arguments"))
                 if (isRegular) {
@@ -261,20 +255,6 @@ testing {
                         "build/daemon"
                     )
                     addClasspathProperty(unpackedResourcesResolvable, "kotlin.test.templates.classpath")
-                    testInputsCheck {
-                        with(extraPermissions) {
-                            add("permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";")
-                            add("permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";")
-
-                            // paths below are not expected to exist,
-                            // these are here to pass some implicit `exists()` checks in the Kotlin compiler
-                            add("permission java.io.FilePermission \"<no_path>/lib\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";")
-                            add("permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";")
-                        }
-                    }
                 }
             }
         }

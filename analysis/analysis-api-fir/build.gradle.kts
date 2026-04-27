@@ -70,10 +70,6 @@ projectTests {
 
         @OptIn(TemporaryTestFederationApi::class)
         isSmokeTest = true
-
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")
