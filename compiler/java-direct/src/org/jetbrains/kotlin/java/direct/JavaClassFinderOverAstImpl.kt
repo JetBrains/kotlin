@@ -18,12 +18,9 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.io.File
-import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -40,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class JavaClassFinderOverAstImpl(
     sourceRoots: List<VirtualFile>,
-    debugLogFilePath: Path? = null,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {
 
@@ -64,8 +60,6 @@ class JavaClassFinderOverAstImpl(
         sameClassInSameFilePackage = { pkg, name -> packageIndexer.ensurePackageIndexed(pkg).containsKey(name) },
         sourceFileReader = sourceFileReader,
     )
-
-    private val debugLogFile: File? = debugLogFilePath?.toFile()
 
     override fun isClassInIndex(classId: ClassId): Boolean {
         val topLevelName = classId.relativeClassName.pathSegments().firstOrNull()?.asString() ?: return false
@@ -100,7 +94,6 @@ class JavaClassFinderOverAstImpl(
             }
             if (resolved != null) result.add(resolved)
         }
-        debugLogFile?.appendText("findClasses: ${request.classId} ->\n  ${result.joinToString("\n  ") { it.classId?.asFqNameString() ?: it.name.asString() }}\n")
         return result
     }
 
@@ -123,7 +116,7 @@ class JavaClassFinderOverAstImpl(
     // ---- Internal API used by JavaPackageOverAst ----
 
     internal fun getPackageAnnotations(packageFqName: FqName): List<JavaAnnotation> {
-        // Package-info files are parsed as a side-effect of package indexing; trigger it first.
+        // Package-info files are parsed as a side effect of package indexing; trigger it first.
         packageIndexer.ensurePackageIndexed(packageFqName)
         return packageInfoIndexer.getPackageAnnotations(packageFqName)
     }
