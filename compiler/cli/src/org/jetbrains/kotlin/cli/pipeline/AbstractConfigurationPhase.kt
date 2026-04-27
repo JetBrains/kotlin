@@ -46,7 +46,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     postActions: Set<Action<ConfigurationPipelineArtifact, PipelineContext>> = emptySet(),
     val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
-    override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact? {
+    override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact {
         val configuration = input.configuration
         configuration.setupCommonConfiguration(input)
 
@@ -90,10 +90,10 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         configuration: CompilerConfiguration,
     ) {
         val arguments = input.arguments
-        val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
-        val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
-        val pluginConfigurations = arguments.pluginConfigurations?.asList().orEmpty()
-        val pluginOrderConstraints = arguments.pluginOrderConstraints?.asList().orEmpty()
+        val pluginClasspaths = arguments.pluginClasspaths.toMutableList()
+        val pluginOptions = arguments.pluginOptions.toMutableList()
+        val pluginConfigurations = arguments.pluginConfigurations.asList()
+        val pluginOrderConstraints = arguments.pluginOrderConstraints.asList()
 
         if (!checkPluginsArguments(configuration, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return
