@@ -23,7 +23,7 @@ internal class KotlinCompileCommonConfig(
             @Suppress("DEPRECATION")
             task.moduleName.set(providers.provider { compilationInfo.moduleName })
             task.incrementalModuleInfoProvider.disallowChanges()
-            task.runViaBuildToolsApi.value(false).disallowChanges()
+            task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinMetadataCompilerViaBuildToolsApi)
         }
     }
 }

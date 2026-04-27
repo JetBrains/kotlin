@@ -19,4 +19,6 @@ internal enum class BtaToolchain {
 
     /** Wasm linking phase (has `--includes` argument). */
     WASM_LINKING,
+
+    METADATA,
 }
