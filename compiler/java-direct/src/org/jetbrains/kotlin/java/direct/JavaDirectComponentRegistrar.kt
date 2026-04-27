@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import java.nio.file.Paths
 
 class JavaDirectComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
@@ -45,11 +44,7 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
                 ?: throw IllegalStateException("No Java source roots and no default finder provider")
         }
 
-        val sourceFinder =
-            JavaClassFinderOverAstImpl(
-                roots,
-                System.getProperty(JAVA_DIRECT_DEBUG_LOG_PROPERTY_NAME)?.let { Paths.get(it) }
-            )
+        val sourceFinder = JavaClassFinderOverAstImpl(roots)
 
         // If no default finder provider, return source-only finder
         val binaryFinder = defaultFinderProvider?.invoke() ?: return sourceFinder
@@ -60,6 +55,3 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
 }
 
 private const val PLUGIN_ID = "org.jetbrains.kotlin.javaDirect"
-
-// TODO: consider removing after testing or find a better way to debuglog
-internal const val JAVA_DIRECT_DEBUG_LOG_PROPERTY_NAME = "java.direct.debug.log.path"

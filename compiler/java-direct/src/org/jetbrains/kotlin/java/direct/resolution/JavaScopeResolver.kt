@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
-import org.jetbrains.kotlin.java.direct.util.NULL_CACHE_VALUE
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Manages type parameter scoping and local class lookup for Java source resolution.
@@ -17,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap
  * Responsible for:
  * - Type parameter lookup (own high-priority params and inherited low-priority params)
  * - Local class resolution (inner classes, sibling classes, supertype-inherited classes, top-level classes)
- * - Caching of local class lookup results
  *
  * This class encapsulates the scoping logic that was previously embedded in [JavaResolutionContext].
  */
@@ -29,18 +26,6 @@ internal class JavaScopeResolver(
     val typeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
     /** Type parameters with LOW priority (outer class inherited params, shadowed by inner class names). */
     val inheritedTypeParametersInScope: Map<String, JavaTypeParameter> = emptyMap(),
-    /**
-     * Cache for [findLocalClass] results. Shared across scopes that have the same
-     * [containingClass] and [localClassProvider] (i.e., scopes created via
-     * [withTypeParameters] / [withInheritedTypeParameters]). A new cache is created
-     * when [withContainingClass] changes the containing class.
-     *
-     * Uses a [java.util.concurrent.ConcurrentHashMap] because FIR resolves types concurrently across members of the
-     * same class, and the scope resolver (and therefore this cache) is shared across those
-     * resolutions. Null results are encoded via the [NULL_CACHE_VALUE] sentinel because
-     * [java.util.concurrent.ConcurrentHashMap] does not accept null values.
-     */
-    private val findLocalClassCache: ConcurrentHashMap<Name, Any> = ConcurrentHashMap(),
 ) {
 
     /** Returns type parameters with HIGH priority (method/class own params, win over inner class names). */
@@ -58,14 +43,6 @@ internal class JavaScopeResolver(
      * 5. Top-level classes in the same compilation unit
      */
     fun findLocalClass(name: Name): JavaClass? {
-        findLocalClassCache[name]?.let { return if (it === NULL_CACHE_VALUE) null else it as JavaClass }
-        val cached = findLocalClassCache.computeIfAbsent(name) {
-            findLocalClassUncached(it) ?: NULL_CACHE_VALUE
-        }
-        return if (cached === NULL_CACHE_VALUE) null else cached as JavaClass
-    }
-
-    private fun findLocalClassUncached(name: Name): JavaClass? {
         // First check inner classes of the containing class
         containingClass?.findInnerClass(name)?.let { return it }
         // Then check sibling inner classes (classes in the outer class)
@@ -100,7 +77,6 @@ internal class JavaScopeResolver(
         return JavaScopeResolver(
             localClassProvider, containingClass, inheritedMemberResolver, newScope,
             inheritedTypeParametersInScope,
-            findLocalClassCache, // share cache — containingClass unchanged
         )
     }
 
@@ -115,7 +91,6 @@ internal class JavaScopeResolver(
         return JavaScopeResolver(
             localClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
             newInherited,
-            findLocalClassCache, // share cache — containingClass unchanged
         )
     }
 
@@ -130,7 +105,6 @@ internal class JavaScopeResolver(
             inheritedMemberResolver,
             typeParametersInScope,
             inheritedTypeParametersInScope,
-            // new cache — containingClass changed, findLocalClass results may differ
         )
     }
 

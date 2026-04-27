@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
-import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
-import org.jetbrains.kotlin.java.direct.util.cachedNonNull
-import org.jetbrains.kotlin.java.direct.util.cachedNullable
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -27,12 +24,10 @@ class JavaAnnotationOverAst(
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaAnnotation {
 
-    @Volatile
-    private var _arguments: Collection<JavaAnnotationArgument>? = null
     override val arguments: Collection<JavaAnnotationArgument>
-        get() = cachedNonNull({ _arguments }, { _arguments = it }) {
+        get() {
             val parameterList = tree.findChildByType(node, JavaSyntaxElementType.ANNOTATION_PARAMETER_LIST)
-            if (parameterList == null) {
+            return if (parameterList == null) {
                 emptyList()
             } else {
                 tree.getChildrenByType(parameterList, JavaSyntaxElementType.NAME_VALUE_PAIR).map { nvp ->
@@ -45,21 +40,12 @@ class JavaAnnotationOverAst(
      * The simple or qualified name of the annotation as it appears in the source.
      * For `@Deprecated`, returns "Deprecated".
      * For `@java.lang.Deprecated`, returns "java.lang.Deprecated".
-     *
-     * Cached — accessed by [classId], [isResolved], and [resolveAnnotation], so caching avoids
-     * re-walking the AST three times per annotation.
      */
-    @Volatile
-    private var _annotationName: Any? = NOT_COMPUTED
     private val annotationName: String?
-        get() = cachedNullable({ _annotationName }, { _annotationName = it }) {
-            tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
-        }
+        get() = tree.findChildByType(node, JavaSyntaxElementType.JAVA_CODE_REFERENCE)?.let { tree.getText(it).toString() }
 
-    @Volatile
-    private var _classId: Any? = NOT_COMPUTED
     override val classId: ClassId?
-        get() = cachedNullable({ _classId }, { _classId = it }) { computeClassId() }
+        get() = computeClassId()
 
     private fun computeClassId(): ClassId? {
         val reference = annotationName ?: return null

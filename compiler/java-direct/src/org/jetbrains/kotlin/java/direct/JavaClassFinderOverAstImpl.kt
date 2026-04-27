@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * [JavaClassFinder] implementation backed by the direct Java AST parser in this module.
@@ -31,9 +30,9 @@ import java.util.concurrent.ConcurrentHashMap
  *  - [JavaPackageInfoIndexer] — `package-info.java` parsing and package-annotation aggregation.
  *  - [JavaClassCache] — `ClassId → JavaClass` memoization and on-demand file parsing.
  *
- * This class owns the [JavaClassFinder] / [LeanJavaClassFinder] contract, the [JavaPackage]
- * cache, and the [JavaSupertypeGraph] used for inherited-inner-class resolution. All the state that
- * is specific to a single concern lives on the corresponding collaborator.
+ * This class owns the [JavaClassFinder] / [LeanJavaClassFinder] contract and the
+ * [JavaSupertypeGraph] used for inherited-inner-class resolution. All the state that is specific
+ * to a single concern lives on the corresponding collaborator.
  */
 class JavaClassFinderOverAstImpl(
     sourceRoots: List<VirtualFile>,
@@ -51,8 +50,6 @@ class JavaClassFinderOverAstImpl(
         sourceFileReader = sourceFileReader,
         resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this) },
     )
-
-    private val packageCache: MutableMap<FqName, JavaPackage> = ConcurrentHashMap()
 
     private val supertypeGraph = JavaSupertypeGraph(
         classCacheLookup = { classCache[it] },
@@ -102,7 +99,7 @@ class JavaClassFinderOverAstImpl(
         // A package with no class files may still exist via `package-info.java` carrying only
         // package-level annotations — respect those so the annotations are not lost.
         if (classesByName.isEmpty() && !packageInfoIndexer.hasPackageAnnotations(fqName)) return null
-        return packageCache.computeIfAbsent(fqName) { JavaPackageOverAst(fqName, this) }
+        return JavaPackageOverAst(fqName, this)
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =

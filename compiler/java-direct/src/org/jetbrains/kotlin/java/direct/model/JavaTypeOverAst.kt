@@ -14,10 +14,6 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.util.NOT_COMPUTED
-import org.jetbrains.kotlin.java.direct.util.cachedBoolean
-import org.jetbrains.kotlin.java.direct.util.cachedNonNull
-import org.jetbrains.kotlin.java.direct.util.cachedNullable
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -35,13 +31,8 @@ abstract class JavaTypeOverAst(
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
     // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
-    // FIR accesses annotations multiple times per type (for nullability, deprecation, etc.).
-    @Volatile
-    private var _typePositionAnnotations: Collection<JavaAnnotation>? = null
     private val typePositionAnnotations: Collection<JavaAnnotation>
-        get() = cachedNonNull({ _typePositionAnnotations }, { _typePositionAnnotations = it }) {
-            extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
-        }
+        get() = extraAnnotations + collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
 
     override val annotations: Collection<JavaAnnotation>
         get() = memberAnnotations + typePositionAnnotations
@@ -73,24 +64,13 @@ class JavaClassifierTypeOverAst(
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
 
-    /**
-     * Canonical cached form of the type name parts. All other properties that need the type name
-     * derive from this single split result, avoiding redundant [String.split] allocations.
-     * For single-segment types (~84 %), [rawTypeName] returns `parts[0]` directly.
-     */
-    @Volatile
-    private var _rawTypeNameParts: List<String>? = null
     private val rawTypeNameParts: List<String>
-        get() = cachedNonNull(
-            { _rawTypeNameParts },
-            { _rawTypeNameParts = it }) { extractTypeNameParts(node) }
+        get() = extractTypeNameParts(node)
 
-    @Volatile
-    private var _rawTypeName: String? = null
     private val rawTypeName: String
-        get() = cachedNonNull({ _rawTypeName }, { _rawTypeName = it }) {
+        get() {
             val parts = rawTypeNameParts
-            if (parts.size == 1) parts[0] else parts.joinToString(".")
+            return if (parts.size == 1) parts[0] else parts.joinToString(".")
         }
 
     /**
@@ -118,14 +98,8 @@ class JavaClassifierTypeOverAst(
         }
     }
 
-    // null is a valid result (unresolved external class), so the cache uses the shared
-    // NOT_COMPUTED sentinel to distinguish "not-computed" from "computed-as-null".
-    @Volatile
-    private var _classifier: Any? = NOT_COMPUTED
     override val classifier: JavaClassifier?
-        get() = cachedNullable(
-            { _classifier },
-            { _classifier = it }) { computeClassifier() }
+        get() = computeClassifier()
 
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts
@@ -165,14 +139,8 @@ class JavaClassifierTypeOverAst(
      * A class is trivially flexible unless it's a Kotlin read-only collection mapped class
      * (e.g., java.util.List → kotlin.collections.List), which needs mutable/readonly distinction.
      */
-    @Volatile
-    private var _isTriviallyFlexibleHint: Int = -1
     override val isTriviallyFlexibleHint: Boolean
-        get() = cachedBoolean(
-            { _isTriviallyFlexibleHint },
-            { _isTriviallyFlexibleHint = it }) {
-            computeIsTriviallyFlexibleHint()
-        }
+        get() = computeIsTriviallyFlexibleHint()
 
     private fun computeIsTriviallyFlexibleHint(): Boolean {
         if (classifier != null) return false // local lookup found it — handled by isTriviallyFlexible()
@@ -196,14 +164,8 @@ class JavaClassifierTypeOverAst(
         return false
     }
 
-    @Volatile
-    private var _classifierQualifiedName: String? = null
     override val classifierQualifiedName: String
-        get() = cachedNonNull(
-            { _classifierQualifiedName },
-            { _classifierQualifiedName = it }) {
-            computeClassifierQualifiedName()
-        }
+        get() = computeClassifierQualifiedName()
 
     private fun computeClassifierQualifiedName(): String {
         val parts = rawTypeNameParts
@@ -237,10 +199,8 @@ class JavaClassifierTypeOverAst(
 
     override val presentableText: String get() = tree.getText(node).toString()
 
-    @Volatile
-    private var _isRaw: Int = -1
     override val isRaw: Boolean
-        get() = cachedBoolean({ _isRaw }, { _isRaw = it }) { computeIsRaw() }
+        get() = computeIsRaw()
 
     private fun computeIsRaw(): Boolean {
         // A type is raw if it has no type arguments but the class has type parameters.
@@ -256,12 +216,8 @@ class JavaClassifierTypeOverAst(
         return explicitArgCount == 0 || explicitArgCount < typeParamCount
     }
 
-    @Volatile
-    private var _typeArguments: List<JavaType>? = null
     override val typeArguments: List<JavaType>
-        get() = cachedNonNull(
-            { _typeArguments },
-            { _typeArguments = it }) { computeTypeArguments() }
+        get() = computeTypeArguments()
 
     private fun computeTypeArguments(): List<JavaType> {
         // Collect all REFERENCE_PARAMETER_LISTs from this node and nested JAVA_CODE_REFERENCEs.
@@ -341,12 +297,8 @@ class JavaClassifierTypeOverAst(
     override val isResolved: Boolean
         get() = classifier != null || resolutionContext.getSimpleImport(rawTypeNameParts[0]) != null
 
-    @Volatile
-    private var _containingClassIds: List<ClassId>? = null
     override val containingClassIds: List<ClassId>
-        get() = cachedNonNull({ _containingClassIds }, { _containingClassIds = it }) {
-            resolutionContext.getContainingClassIds()
-        }
+        get() = resolutionContext.getContainingClassIds()
 
     override fun resolve(
         tryResolve: (ClassId) -> Boolean,
@@ -675,19 +627,8 @@ class JavaTypeParameterOverAst(
     // Annotations on the type parameter declaration itself (e.g., <@NonNull T>).
     // Matches TreeBasedTypeParameter which reads tree.annotations().
     // See [collectModifierListAndDirectAnnotations] for the parser-shape handling.
-    //
-    // Cached to avoid creating new JavaAnnotationOverAst wrapper objects on every access.
-    // Safe w.r.t. the two-phase construction contract (see class KDoc): annotations don't
-    // reference sibling type parameters, so caching is valid as long as callers respect the
-    // "don't access before updateResolutionContext" invariant that already governs upperBounds.
-    @Volatile
-    private var _typeParamAnnotations: Collection<JavaAnnotation>? = null
     override val annotations: Collection<JavaAnnotation>
-        get() = cachedNonNull(
-            { _typeParamAnnotations },
-            { _typeParamAnnotations = it }) {
-            collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
-        }
+        get() = collectModifierListAndDirectAnnotations(node, tree, resolutionContext)
 
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
