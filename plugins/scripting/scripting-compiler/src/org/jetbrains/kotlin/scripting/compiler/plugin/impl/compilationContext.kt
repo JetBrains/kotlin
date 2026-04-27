@@ -251,6 +251,7 @@ private fun createInitialCompilerConfiguration(
     reportingState.currentArguments = baseArguments
 
     return CompilerConfiguration.create().apply {
+        @OptIn(MessageCollectorAccess::class) // write access
         this.messageCollector = messageCollector
         setupCommonArguments(baseArguments)
 

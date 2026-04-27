@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
@@ -59,6 +60,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
         get() = true
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
         val messageCollector = configuration.get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         withClassloadingProblemsReporting(messageCollector) {
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))

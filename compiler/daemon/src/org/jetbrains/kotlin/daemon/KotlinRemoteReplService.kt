@@ -56,6 +56,7 @@ abstract class KotlinJvmReplServiceBase(
     private val log by lazy { Logger.getLogger("replService") }
 
     protected val configuration = CompilerConfiguration.create().apply {
+        @OptIn(MessageCollectorAccess::class) // write access
         this.messageCollector = messageCollector
         addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })
         addJvmClasspathRoots(templateClasspath)

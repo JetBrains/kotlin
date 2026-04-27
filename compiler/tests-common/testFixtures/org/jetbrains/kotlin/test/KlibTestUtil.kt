@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeMetadata
@@ -65,6 +66,7 @@ object KlibTestUtil {
         require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
         val configuration = KotlinTestUtils.newConfiguration()
+        @OptIn(MessageCollectorAccess::class) // write access
         configuration.messageCollector =
             FilteringMessageCollector(
                 PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false)

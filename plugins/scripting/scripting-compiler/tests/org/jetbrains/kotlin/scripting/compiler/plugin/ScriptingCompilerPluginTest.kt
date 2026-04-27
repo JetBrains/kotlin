@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
@@ -76,6 +77,7 @@ class ScriptingCompilerPluginTest {
     ): KotlinCoreEnvironment {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             updateWithBaseCompilerArguments()
+            @OptIn(MessageCollectorAccess::class) // write access
             this.messageCollector = messageCollector
             addKotlinSourceRoots(sources)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destDir)

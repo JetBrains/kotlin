@@ -38,9 +38,10 @@ object KeysContainerGenerator {
     private fun SmartPrinter.collectAndPrintImports(container: KeysContainer) {
         val regularTypes = container.keys.flatMap { it.types }
         val optInTypes = container.keys.flatMap { key -> key.optIns.map { it.annotationClass.starProjectedType } }
+        val annotationTypes = container.keys.flatMap { key -> key.annotations.map { it.annotationClass.starProjectedType } }
         printImports(
             container.packageName,
-            importableTypes = regularTypes + optInTypes,
+            importableTypes = regularTypes + optInTypes + annotationTypes,
             simpleImports = defaultImports + container.keys.flatMap { it.importsToAdd },
             starImports = emptyList(),
         )
@@ -64,7 +65,7 @@ object KeysContainerGenerator {
 
     private fun SmartPrinter.generateRegularKey(key: Key) {
         println("@JvmField")
-        generateOptIns(key)
+        generateAnnotations(key)
         println("val ${key.name} = CompilerConfigurationKey.create<${key.typeString}>(\"${key.name}\")")
     }
 
@@ -84,7 +85,7 @@ object KeysContainerGenerator {
         }
         println(")")
         println("@JvmField")
-        generateOptIns(key)
+        generateAnnotations(key)
         println("val ${key.name} = ${key.initializer}")
     }
 
@@ -103,7 +104,7 @@ object KeysContainerGenerator {
         val nullable = !booleanFlag && key.defaultValue == null && key.lazyDefaultValue == null
         val returnType = key.typeString.applyIf(nullable) { "$this?"}
 
-        generateOptIns(key)
+        generateAnnotations(key)
         println("var CompilerConfiguration.${key.accessorName}: $returnType")
         val keyAccess = container.keyAccessString(key)
         withIndent {
@@ -125,7 +126,7 @@ object KeysContainerGenerator {
     }
 
     private fun SmartPrinter.generateCollectionKeyAccessors(container: KeysContainer, key: CollectionKey) {
-        generateOptIns(key)
+        generateAnnotations(key)
         println("var CompilerConfiguration.${key.accessorName}: ${key.typeString}")
         val keyAccess = container.keyAccessString(key)
         withIndent {
@@ -140,14 +141,18 @@ object KeysContainerGenerator {
         println()
     }
 
-    private fun SmartPrinter.generateOptIns(key: Key) {
+    private fun SmartPrinter.generateAnnotations(key: Key) {
         val optIns = key.optIns
-        if (optIns.isEmpty()) return
-        val annotationLine = optIns.joinToString(separator = ", ", prefix = "@OptIn(", postfix = ")") { annotation ->
-            val name = annotation.annotationClass.simpleName!!
-            "$name::class"
+        if (optIns.isNotEmpty()) {
+            val annotationLine = optIns.joinToString(separator = ", ", prefix = "@OptIn(", postfix = ")") { annotation ->
+                val name = annotation.annotationClass.simpleName!!
+                "$name::class"
+            }
+            println(annotationLine)
         }
-        println(annotationLine)
+        for (annotation in key.annotations) {
+            println("@${annotation.annotationClass.simpleName}")
+        }
     }
 
     private fun KeysContainer.keyAccessString(key: Key): String {

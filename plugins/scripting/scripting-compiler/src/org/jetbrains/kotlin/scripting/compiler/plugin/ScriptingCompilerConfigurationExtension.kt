@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -75,6 +76,7 @@ internal fun configureScriptDefinitions(
     hostConfiguration: ScriptingHostConfiguration,
     classLoader: ClassLoader
 ) {
+    @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
     val messageCollector = configuration.messageCollector
 
     val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES)

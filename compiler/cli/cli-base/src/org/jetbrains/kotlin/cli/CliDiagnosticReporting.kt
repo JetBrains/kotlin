@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
@@ -40,18 +41,22 @@ fun CompilerConfiguration.report(
     }
 }
 
+@OptIn(MessageCollectorAccess::class)
 fun CompilerConfiguration.reportInfo(message: String, location: CompilerMessageSourceLocation? = null) {
     messageCollector.report(CompilerMessageSeverity.INFO, message, location)
 }
 
+@OptIn(MessageCollectorAccess::class)
 fun CompilerConfiguration.reportLog(message: String, location: CompilerMessageSourceLocation? = null) {
     messageCollector.report(CompilerMessageSeverity.LOGGING, message, location)
 }
 
+@OptIn(MessageCollectorAccess::class)
 fun CompilerConfiguration.reportOutput(message: String, location: CompilerMessageSourceLocation? = null) {
     messageCollector.report(CompilerMessageSeverity.OUTPUT, message, location)
 }
 
+@OptIn(MessageCollectorAccess::class)
 fun CompilerConfiguration.reportException(message: String, location: CompilerMessageSourceLocation? = null) {
     messageCollector.report(CompilerMessageSeverity.EXCEPTION, message, location)
 }
@@ -64,6 +69,7 @@ fun CompilerConfiguration.reportException(e: Throwable) {
     reportException(OutputMessageUtil.renderException(e), location = null)
 }
 
+@OptIn(MessageCollectorAccess::class)
 fun CompilerConfiguration.hasMessageCollectorErrors(): Boolean {
     return messageCollector.hasErrors()
 }

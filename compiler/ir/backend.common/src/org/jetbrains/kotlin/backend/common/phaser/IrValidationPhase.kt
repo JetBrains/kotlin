@@ -30,6 +30,7 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
             irModule,
             context.irBuiltIns,
             defaultValidationConfig,
+            @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
             context.configuration.messageCollector,
             verificationMode,
             phaseName,

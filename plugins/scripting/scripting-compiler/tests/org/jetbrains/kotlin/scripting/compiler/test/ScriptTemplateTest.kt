@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.*
@@ -371,6 +372,7 @@ class ScriptTemplateTest {
                 *additionalClasspath
             )
             configuration.updateWithBaseCompilerArguments()
+            @OptIn(MessageCollectorAccess::class) // write access
             configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,

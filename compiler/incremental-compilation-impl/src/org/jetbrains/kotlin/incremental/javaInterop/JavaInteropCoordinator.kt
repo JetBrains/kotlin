@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.incremental.*
@@ -139,6 +140,7 @@ internal sealed class JavaInteropCoordinator(
     protected val compilerConfiguration: CompilerConfiguration by lazy {
         val filterMessageCollector = FilteringMessageCollector(messageCollector) { !it.isError }
         CompilerConfiguration.create().apply {
+            @OptIn(MessageCollectorAccess::class) // write access
             this.messageCollector = filterMessageCollector
             configureJdkClasspathRoots()
         }

@@ -15,16 +15,18 @@ import org.jetbrains.kotlin.cli.common.repl.ReplClassLoader
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.messageCollector
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ReplCompilationState
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createCompilationContextFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ReplConfiguration
-import org.jetbrains.kotlin.scripting.definitions.*
+import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
+import org.jetbrains.kotlin.scripting.definitions.ScriptEvaluationConfigurationFromHostConfiguration
 import java.io.PrintWriter
 import java.net.URLClassLoader
 import java.util.concurrent.atomic.AtomicInteger
@@ -35,7 +37,6 @@ import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.renderError
-import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ReplInterpreter(
     projectEnvironment: JavaCoreProjectEnvironment,
@@ -59,6 +60,7 @@ class ReplInterpreter(
                 projectEnvironment.parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
 
+        @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
         val context =
             createCompilationContextFromEnvironment(
                 ScriptCompilationConfigurationFromLegacyTemplate(
@@ -68,7 +70,7 @@ class ReplInterpreter(
                     displayName("Kotlin REPL")
                 },
                 environment,
-                ScriptDiagnosticsMessageCollector(environment.messageCollector)
+                ScriptDiagnosticsMessageCollector(environment.configuration.messageCollector)
             )
 
         compilationConfiguration = context.baseScriptCompilationConfiguration

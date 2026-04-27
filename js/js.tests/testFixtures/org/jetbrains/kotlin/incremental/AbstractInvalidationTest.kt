@@ -423,6 +423,7 @@ abstract class AbstractInvalidationTest(
         val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
+        @OptIn(MessageCollectorAccess::class) // write access
         configuration.messageCollector = messageCollector
         configuration.addSourcesFromDir(sourceDir)
         configuration.produceKlibFile = true

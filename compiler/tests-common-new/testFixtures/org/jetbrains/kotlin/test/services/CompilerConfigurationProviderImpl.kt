@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.enableIrNestedOffsetsChecks
 import org.jetbrains.kotlin.config.enableIrVarargTypesChecks
 import org.jetbrains.kotlin.config.enableIrVisibilityChecks
@@ -128,6 +129,7 @@ fun createCompilerConfiguration(
             !CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS.isApplicableTo(module, testServices)
 
     val messageCollector = MessageCollectorForCompilerTests(System.err, CompilerTestMessageRenderer(module))
+    @OptIn(MessageCollectorAccess::class) // write access
     configuration.messageCollector = messageCollector
     configuration.languageVersionSettings = module.languageVersionSettings
     configuration.targetPlatform = module.targetPlatform(testServices)

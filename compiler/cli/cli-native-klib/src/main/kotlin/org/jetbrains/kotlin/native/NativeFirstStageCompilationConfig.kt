@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
@@ -43,6 +44,7 @@ class NativeFirstStagePhaseContext(
 ) : NativePhaseContext {
     override var inVerbosePhase: Boolean = false
 
+    @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
     override val messageCollector: MessageCollector
         get() = config.configuration.messageCollector
 
