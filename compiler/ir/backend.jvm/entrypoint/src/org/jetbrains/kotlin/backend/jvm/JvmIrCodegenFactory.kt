@@ -233,6 +233,7 @@ class JvmIrCodegenFactory(
             symbolTable,
             psi2irContext.irBuiltIns,
             irProvider,
+            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
             configuration.messageCollector,
             diagnosticReporter
         )

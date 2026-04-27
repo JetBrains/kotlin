@@ -115,6 +115,7 @@ open class IncrementalFirJvmCompilerRunner(
 
                 put(CLIConfigurationKeys.ORIGINAL_MESSAGE_COLLECTOR_KEY, messageCollector)
                 this.targetPlatform = JvmPlatforms.defaultJvmPlatform
+                @OptIn(MessageCollectorAccess::class) // write access
                 this.messageCollector = collector
 
                 setupCommonArguments(args) { MetadataVersion(*it) }

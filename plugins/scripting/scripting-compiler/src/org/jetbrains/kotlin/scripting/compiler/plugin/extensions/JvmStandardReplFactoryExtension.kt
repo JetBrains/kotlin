@@ -11,8 +11,9 @@ import com.intellij.core.JavaCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.GenericReplCompiler
 import org.jetbrains.kotlin.scripting.definitions.ScriptCompilationConfigurationFromLegacyTemplate
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -23,7 +24,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class JvmStandardReplFactoryExtension : ReplFactoryExtension {
 
@@ -37,7 +37,8 @@ class JvmStandardReplFactoryExtension : ReplFactoryExtension {
         projectEnvironment.parentDisposable,
         makeScriptDefinition(templateClasspath, templateClassName, baseClassLoader, configuration.jvmClasspathRoots),
         configuration,
-        configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
+        configuration.messageCollector
     )
 
     private fun makeScriptDefinition(

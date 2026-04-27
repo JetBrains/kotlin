@@ -79,6 +79,7 @@ private class CompilerLoggerAdapter(
     @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
     override fun fatal(message: String): Nothing {
         configuration.report(CliDiagnostics.KONAN_COMPILATION_ERROR, message)
+        @OptIn(MessageCollectorAccess::class)
         (configuration.messageCollector as? GroupingMessageCollector)?.flush()
         throw CompilationErrorException(message)
     }

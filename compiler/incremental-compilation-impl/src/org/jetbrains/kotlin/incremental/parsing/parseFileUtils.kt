@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -42,6 +43,7 @@ fun classesFqNames(files: Set<File>): Set<String> {
 private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable): Set<String> {
     val config = CompilerConfiguration.create()
     config.put(JVMConfigurationKeys.NO_JDK, true)
+    @OptIn(MessageCollectorAccess::class) // write access
     config.messageCollector = MessageCollector.NONE
     config.configureJdkClasspathRoots()
     val configFiles = EnvironmentConfigFiles.JVM_CONFIG_FILES

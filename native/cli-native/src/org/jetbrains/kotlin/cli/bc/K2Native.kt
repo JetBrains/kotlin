@@ -119,7 +119,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val intermediateKlib = createIntermediateKlib()
                 val klibArgs = prepareKlibArgumentsForOneStage(arguments, intermediateKlib.canonicalPath)
                 val klibCompilationExitCode = doExecutePhasedKlibCompilation(
-                    klibArgs, Services.EMPTY, configuration.messageCollector,
+                    klibArgs, Services.EMPTY, @OptIn(MessageCollectorAccess::class) configuration.messageCollector,
                     isOneStageCompilation = true
                 )
                 if (klibCompilationExitCode != ExitCode.OK) {
@@ -129,7 +129,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 val environmentForSecondStage = prepareEnvironment(arguments, configuration, rootDisposable)
                 runKonanDriver(configuration, environmentForSecondStage, rootDisposable)
             } else {
-                doExecutePhased(arguments, Services.EMPTY, configuration.messageCollector)
+                doExecutePhased(arguments, Services.EMPTY, @OptIn(MessageCollectorAccess::class) configuration.messageCollector)
                     ?: runKonanDriver(configuration, environment, rootDisposable)
             }
         } catch (e: Throwable) {
@@ -206,7 +206,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     val spawnedConfiguration = CompilerConfiguration.create()
 
                     val spawnedPerfManager = PerformanceManagerImpl.createChildIfNeeded(perfManager, start = true)
-                    spawnedConfiguration.messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                    @OptIn(MessageCollectorAccess::class) // write access
+                    spawnedConfiguration.messageCollector = configuration.messageCollector
                     spawnedConfiguration.perfManager = spawnedPerfManager
                     spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                     spawnedConfiguration.setupFromArguments(spawnedArguments)
