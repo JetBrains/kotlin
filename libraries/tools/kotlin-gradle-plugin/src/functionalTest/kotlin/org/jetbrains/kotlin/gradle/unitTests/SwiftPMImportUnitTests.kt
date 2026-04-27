@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPackageDependencyInputFiles
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
@@ -658,6 +659,13 @@ class SwiftPMImportUnitTests {
             FetchSyntheticImportProjectPackages.TASK_NAME
         )
 
+        val dumpTask = project.tasks.findByName(
+            lowerCamelCaseName(
+                DumpXcodeBuildArgs.TASK_NAME,
+                "iphonesimulator"
+            )
+        )
+
         val convertDefTask = project.tasks.findByName(
             lowerCamelCaseName(
                 ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
@@ -671,13 +679,22 @@ class SwiftPMImportUnitTests {
         assertNotNull(syntheticFetchTask, "Synthetic fetch task should be registered")
         assertIs<FetchSyntheticImportProjectPackages>(syntheticFetchTask)
 
+        assertNotNull(dumpTask, "Dump task should be registered")
+        assertIs<DumpXcodeBuildArgs>(dumpTask)
+
         assertNotNull(convertDefTask, "Convert task should be registered")
         assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(convertDefTask)
 
         assertEquals(
             syntheticFetchTask.swiftPMDependenciesCheckout.get(),
-            convertDefTask.swiftPMDependenciesCheckout.get(),
-            "Both fetch and convert task should use the same checkout directory"
+            dumpTask.swiftPMDependenciesCheckout.get(),
+            "Both fetch and dump task should use the same checkout directory"
+        )
+
+        assertEquals(
+            dumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            convertDefTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Convert task should consume the dump task output directory"
         )
 
         assertTrue(
@@ -729,9 +746,23 @@ class SwiftPMImportUnitTests {
             FetchSyntheticImportProjectPackages.TASK_NAME
         )
 
+        val fuzzDumpTask = fuzzProject.tasks.findByName(
+            lowerCamelCaseName(
+                DumpXcodeBuildArgs.TASK_NAME,
+                "iphonesimulator"
+            )
+        )
+
         val fuzzConvertDefTask = fuzzProject.tasks.findByName(
             lowerCamelCaseName(
                 ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME,
+                "iphonesimulator"
+            )
+        )
+
+        val buzzDumpTask = buzzProject.tasks.findByName(
+            lowerCamelCaseName(
+                DumpXcodeBuildArgs.TASK_NAME,
                 "iphonesimulator"
             )
         )
@@ -755,22 +786,40 @@ class SwiftPMImportUnitTests {
         assertIs<FetchSyntheticImportProjectPackages>(syntheticBuzzFetchTask)
 
 
+        assertNotNull(fuzzDumpTask, "Fuzz dump task should be registered")
+        assertIs<DumpXcodeBuildArgs>(fuzzDumpTask)
+
         assertNotNull(fuzzConvertDefTask, "Fuzz convert task should be registered")
         assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(fuzzConvertDefTask)
+
+        assertNotNull(buzzDumpTask, "Buzz dump task should be registered")
+        assertIs<DumpXcodeBuildArgs>(buzzDumpTask)
 
         assertNotNull(buzzConvertDefTask, "Buzz convert task should be registered")
         assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(buzzConvertDefTask)
 
         assertEquals(
             syntheticFuzzFetchTask.swiftPMDependenciesCheckout.get(),
-            fuzzConvertDefTask.swiftPMDependenciesCheckout.get(),
-            "Both fetch and convert task should use the same checkout directory"
+            fuzzDumpTask.swiftPMDependenciesCheckout.get(),
+            "Both fetch and dump task should use the same checkout directory"
         )
 
         assertEquals(
             syntheticBuzzFetchTask.swiftPMDependenciesCheckout.get(),
-            buzzConvertDefTask.swiftPMDependenciesCheckout.get(),
-            "Both fetch and convert task should use the same checkout directory"
+            buzzDumpTask.swiftPMDependenciesCheckout.get(),
+            "Both fetch and dump task should use the same checkout directory"
+        )
+
+        assertEquals(
+            fuzzDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            fuzzConvertDefTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Fuzz convert task should consume the fuzz dump output directory"
+        )
+
+        assertEquals(
+            buzzDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            buzzConvertDefTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Buzz convert task should consume the buzz dump output directory"
         )
 
         assertTrue(umbrellaFuzzFetchTask.gitIgnoreCheckoutDir.get(), "Fuzz fetch task should enable gitIgnoreCheckoutDir")
