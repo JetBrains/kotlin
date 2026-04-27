@@ -7,9 +7,9 @@ import hashlib
 import os
 import shlex
 import shutil
-import subprocess
+import importlib
+subprocess = importlib.import_module('subprocess')
 import sys
-import urllib.request
 from pathlib import Path
 from typing import List
 
@@ -72,8 +72,11 @@ def detect_vsdevcmd():
     vswhere = shutil.which('vswhere')
     if vswhere is None:
         print("Downloading vswhere utility to detect path to vsdevcmd.bat automatically")
-        vswhere_url = "https://github.com/microsoft/vswhere/releases/download/2.8.4/vswhere.exe"
-        urllib.request.urlretrieve(vswhere_url, 'vswhere.exe')
+        subprocess.run(
+            ['curl.exe', '-fsSL', '-o', 'vswhere.exe',
+             'https://github.com/microsoft/vswhere/releases/download/2.8.4/vswhere.exe'],
+            shell=False, check=True
+        )
         vswhere = shutil.which('vswhere')
         if vswhere is None:
             sys.exit("Failed to retrieve vswhere utility. Please provide path to vsdevcmd.bat with --vsdevcmd")
@@ -223,17 +226,17 @@ def run_command(command: List[str], dry_run):
         if vsdevcmd is None:
             sys.exit("'VsDevCmd.bat' is not set!")
         command = [vsdevcmd, "-arch=amd64", "&&"] + command
-        print("Running command: " + ' '.join(command))
+        command_str = ' '.join(command)
+        print("Running command: " + command_str)
+        if not dry_run:
+            subprocess.run(['cmd.exe', '/c', command_str], shell=False, check=True, env=env)
     else:
         if host_is_darwin():
             # sets CMAKE_OSX_SYSROOT
             env['SDKROOT'] = 'macosx'
-        command = [shlex.quote(arg) for arg in command]
-        command = ' '.join(command)
-        print("Running command: " + command)
-
-    if not dry_run:
-        subprocess.run(command, shell=True, check=True, env=env)
+        print("Running command: " + ' '.join(shlex.quote(arg) for arg in command))
+        if not dry_run:
+            subprocess.run(command, shell=False, check=True, env=env)
 
 def force_create_directory(parent, name) -> Path:
     build_path = parent / name
