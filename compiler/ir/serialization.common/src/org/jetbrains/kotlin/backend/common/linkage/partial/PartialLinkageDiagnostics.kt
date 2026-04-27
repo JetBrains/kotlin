@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 
-internal object PartialLinkageDiagnostics : KtDiagnosticsContainer() {
+object PartialLinkageDiagnostics : KtDiagnosticsContainer() {
     val MINOR_PARTIAL_LINKAGE_ISSUE = KtSourcelessDiagnosticFactory("MINOR_PARTIAL_LINKAGE_ISSUE", Severity.INFO, getRendererFactory())
     val MAJOR_PARTIAL_LINKAGE_ISSUE = KtSourcelessDiagnosticFactory("MAJOR_PARTIAL_LINKAGE_ISSUE", Severity.WARNING, getRendererFactory())
 

@@ -1626,6 +1626,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
     }
 
+    @TestMetadata("kmpDifferentAnnotationsSuppressed.args")
+    public void testKmpDifferentAnnotationsSuppressed() {
+      runTest("compiler/testData/cli/jvm/kmpDifferentAnnotationsSuppressed.args");
+    }
+
     @TestMetadata("kmpMissingActual.args")
     public void testKmpMissingActual() {
       runTest("compiler/testData/cli/jvm/kmpMissingActual.args");
