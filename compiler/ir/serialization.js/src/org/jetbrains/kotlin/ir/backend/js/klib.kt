@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
-import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
-import org.jetbrains.kotlin.ir.backend.js.wasm.collectAllExportNames
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -330,31 +327,7 @@ fun serializeModuleIntoKlib(
                 ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
             },
             metadataSerializer = metadataSerializer,
-            platformKlibCheckers = listOfNotNull(
-                { irDiagnosticReporter: IrDiagnosticReporter ->
-                    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
-                    JsKlibCheckers.makeChecker(
-                        irDiagnosticReporter,
-                        configuration,
-                        doCheckCalls = true,
-                        doModuleLevelChecks = true,
-                        cleanFilesIrData,
-                        moduleJsExportNames,
-                    )
-                }.takeIf {
-                    builtInsPlatform == BuiltInsPlatform.JS
-                            && !configuration.useFir // In K2, these checkers are being run within WebFir2IrPipelinePhase
-                },
-                { irDiagnosticReporter: IrDiagnosticReporter ->
-                    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/Wasm") }
-                    WasmKlibCheckers.makeChecker(
-                        irDiagnosticReporter,
-                        configuration,
-                        cleanFilesIrData,
-                        moduleFragment.collectAllExportNames(),
-                    )
-                }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
-            ),
+            platformKlibCheckers = emptyList(), // Platform checkers are already invoked during WebFir2IrPipelinePhase
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
                 { ioFile, compiledFile ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata, empty, empty)
