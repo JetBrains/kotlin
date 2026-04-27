@@ -28,6 +28,7 @@ Compiler:
  - compiler/frontend.java
  - compiler/incremental-compilation-impl
  - compiler/ir
+ - compiler/java-direct
  - compiler/javac-wrapper
  - compiler/jklib.tests
  - compiler/light-classes
