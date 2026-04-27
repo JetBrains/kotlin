@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.container.get
@@ -136,7 +137,7 @@ object JKlibIrCompilationPhase :
             symbolTable,
             irBuiltIns,
             linker = linker,
-            messageCollector = configuration.messageCollector,
+            messageCollector = @OptIn(MessageCollectorAccess::class) /* deprecated in IrPluginContext */ configuration.messageCollector,
         )
 
         // Deserialize modules

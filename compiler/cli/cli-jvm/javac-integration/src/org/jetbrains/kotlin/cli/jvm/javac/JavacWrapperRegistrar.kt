@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -37,7 +38,8 @@ object JavacWrapperRegistrar {
         lightClassGenerationSupport: LightClassGenerationSupport,
         packagePartsProviders: List<JvmPackagePartProvider>
     ): Boolean {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        @OptIn(MessageCollectorAccess::class)
+        val messageCollector = configuration.messageCollector
 
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)

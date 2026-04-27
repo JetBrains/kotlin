@@ -97,6 +97,7 @@ object CommonConfigurationKeys {
     val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("IGNORE_CONST_OPTIMIZATION_ERRORS")
 
     @JvmField
+    @MessageCollectorAccess
     val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("MESSAGE_COLLECTOR_KEY")
 
     @JvmField
@@ -233,6 +234,7 @@ var CompilerConfiguration.ignoreConstOptimizationErrors: Boolean
     get() = getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS)
     set(value) { put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, value) }
 
+@MessageCollectorAccess
 var CompilerConfiguration.messageCollector: MessageCollector
     get() = get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
     set(value) { put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, value) }

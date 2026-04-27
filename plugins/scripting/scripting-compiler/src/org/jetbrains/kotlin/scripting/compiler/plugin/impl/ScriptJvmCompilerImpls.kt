@@ -82,6 +82,7 @@ class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguratio
 
 class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
 
+    @OptIn(MessageCollectorAccess::class) // write access
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -160,6 +161,7 @@ private fun compileImpl(
 
     // TODO(KT-84516): cleanup
     val compilerConfiguration = context.environment.configuration.copy().apply {
+        @OptIn(MessageCollectorAccess::class) // write access
         this.messageCollector = messageCollector
         diagnosticsCollector = DiagnosticsCollectorImpl()
     }

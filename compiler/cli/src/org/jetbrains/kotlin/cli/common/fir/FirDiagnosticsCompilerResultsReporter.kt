@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -21,6 +22,7 @@ import java.io.InputStreamReader
 import java.util.*
 
 object FirDiagnosticsCompilerResultsReporter {
+    @OptIn(MessageCollectorAccess::class)
     fun reportToMessageCollector(
         diagnosticsCollector: BaseDiagnosticsCollector,
         configuration: CompilerConfiguration,

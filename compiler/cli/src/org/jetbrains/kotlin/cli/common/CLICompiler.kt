@@ -107,6 +107,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         configuration.treatWarningsAsErrors = arguments.allWarningsAsErrors
 
         val collector = GroupingMessageCollector(messageCollector, arguments.allWarningsAsErrors, arguments.reportAllWarnings).also {
+            @OptIn(MessageCollectorAccess::class) // write access
             configuration.messageCollector = it
         }
 

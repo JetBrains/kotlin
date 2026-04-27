@@ -248,7 +248,9 @@ private class Fir2IrPipeline(
 
         val pluginContext = Fir2IrPluginContext(
             componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable,
-            fir2IrConfiguration.messageCollector, fir2IrConfiguration.diagnosticReporter
+            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
+            fir2IrConfiguration.messageCollector,
+            fir2IrConfiguration.diagnosticReporter
         )
         if (fir2IrConfiguration.diagnosticReporter.hasErrors) {
             irActualizer?.runChecksAndFinalize(expectActualMap)
@@ -363,6 +365,7 @@ private class Fir2IrPipeline(
             mainIrFragment,
             irBuiltIns,
             IrValidatorConfig(checkUnboundSymbols = true),
+            @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
             fir2IrConfiguration.messageCollector,
             IrVerificationMode.ERROR,
         )
@@ -538,6 +541,7 @@ private class Fir2IrPipeline(
                     // Serializing IrExpressionBody in IrFunction.body is not supported
                     withCheckers(IrExpressionBodyInFunctionChecker)
                 },
+            @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
             fir2IrConfiguration.messageCollector,
             getSeverity = { error ->
                 if (validateForKlibSerialization) {

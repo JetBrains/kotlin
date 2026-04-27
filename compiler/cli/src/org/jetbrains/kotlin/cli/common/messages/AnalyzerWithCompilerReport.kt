@@ -44,6 +44,8 @@ class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguratio
         get() = CompilerEnvironment
 
     override lateinit var analysisResult: AnalysisResult
+
+    @OptIn(MessageCollectorAccess::class) // K1
     private val messageCollector = configuration.messageCollector
 
     private fun reportIncompleteHierarchies() {
