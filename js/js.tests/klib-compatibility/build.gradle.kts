@@ -109,26 +109,7 @@ fun Project.customFirstStageTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage"
-    ) {
-        if (addWritePermissionsForAllProperties)
-            testInputsCheck {
-                // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
-                // So to invoke older compilers, more permissions are given.
-                extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
-            }
-        if (addReadWritePermissionsForGradleCache)
-            System.getenv("GRADLE_RO_DEP_CACHE")?.let {
-                // Compiler's code in 1.9.20 accesses `kotlin-js-test` library in the Gradle cache using both read and write file permissions.
-                // `read` permission is used to check the existence of either `kotlin-test-js-1.9.20.jar` or `kotlin-test-js-1.9.20.klib`
-                // `write` file permission is weirdly needed within `com.sun.nio.zipfs.ZipFileSystem.<init>` to check whether a `kotlin-test-js-1.9.20.jar` is writable
-                // See invocation of `if (!Files.isWritable(zfpath))`, which throws `java.security.AccessControlException` in case of no `write` permission
-                //   in https://github.com/corretto/corretto-8/blob/8dc02d99b636df3812f38e1014821ceb2926b3c4/jdk/src/share/demo/nio/zipfs/src/com/sun/nio/zipfs/ZipFileSystem.java#L128
-                testInputsCheck {
-                    val kotlinTestJsGradleCache = "${File(it).absolutePath}/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-test-js/1.9.20/-"
-                    extraPermissions.add("""permission java.io.FilePermission "$kotlinTestJsGradleCache", "read, write";""")
-                }
-            }
-    }
+    )
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {

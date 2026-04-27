@@ -71,15 +71,6 @@ projectTests {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 
-    tasks.withType<Test>().configureEach {
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
-            }
-        }
-    }
-
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForICTestsKt")
     testData(project.isolated, "testData")
     testData(project(":jps:jps-plugin").isolated, "testData")

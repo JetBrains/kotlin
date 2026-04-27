@@ -45,9 +45,6 @@ projectTests {
         )
     ) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.TestGeneratorKt", generateTestsInBuildDirectory = true)

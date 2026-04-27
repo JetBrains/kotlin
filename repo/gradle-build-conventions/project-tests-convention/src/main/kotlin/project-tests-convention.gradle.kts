@@ -1,3 +1,6 @@
+import jdk.jfr.EventType
+import jdk.jfr.consumer.RecordingFile
+
 val extension = extensions.create("projectTests", ProjectTestsExtension::class)
 
 val provider = objects.newInstance<TestCompilerRuntimeArgumentProvider>().apply {

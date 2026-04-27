@@ -103,9 +103,6 @@ projectTests {
         )
     ) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
 
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first since some LL tests are complementary for the surface tests

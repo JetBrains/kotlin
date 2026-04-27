@@ -63,10 +63,6 @@ sourceSets {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
-
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
             // Ensure golden tests run first
             mustRunAfter(":analysis:analysis-api-fir:test")

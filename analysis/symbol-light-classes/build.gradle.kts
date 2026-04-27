@@ -44,9 +44,6 @@ sourceSets {
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
-        testInputsCheck {
-            allowFlightRecorder = true
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.light.classes.symbol.TestGeneratorKt")

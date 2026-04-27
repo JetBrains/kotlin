@@ -254,7 +254,6 @@
 /compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
-/compiler/test-security-manager/ "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 /compiler/tests-spec/ "Kotlin Frontend"
 /compiler/util/ "Kotlin Frontend"
 /compiler/util-io/ "Kotlin Common Backend"
