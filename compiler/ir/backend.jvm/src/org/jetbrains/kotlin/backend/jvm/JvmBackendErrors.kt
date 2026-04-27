@@ -40,6 +40,8 @@ object JvmBackendErrors : KtDiagnosticsContainer() {
 
     val PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError1<PsiElement, ClassId>(LanguageFeature.ForbidExposingLessVisibleTypesInInline)
 
+    val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0<PsiElement>(SourceElementPositioningStrategies.DEFAULT)
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJvmErrorMessages
     }
@@ -72,5 +74,7 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
             JvmBackendErrors.PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
             "Non-private inline function accesses a private class ''{0}''", CLASS_ID,
         )
+
+        map.put(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled")
     }
 }
