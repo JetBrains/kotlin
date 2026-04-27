@@ -1061,9 +1061,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
                 if (isAvailable(cursor) && isAvailable(container) && classIfCategory?.let(::isAvailable) ?: true) {
                     val propertyInfo = clang_index_getObjCPropertyDeclInfo(info.ptr)!!.pointed
-                    val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue())
-                    val setter = propertyInfo.setter?.let {
+                    val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue())?.let {
+                        if (it.availability != Availability.NOT_AVAILABLE) it else null
+                    }
+                    val setter = propertyInfo.setter?.let { it ->
                         getObjCMethod(it.pointed.cursor.readValue())
+                    }?.let {
+                        if (it.availability != Availability.NOT_AVAILABLE) it else null
                     }
 
                     if (getter != null) {
@@ -1139,7 +1143,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     }
 
     private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethod? {
-        if (!isAvailable(cursor)) {
+        val availability = getAvailability(cursor) ?: run {
+            assert(false) { "Unexpected availability for a method" }
             return null
         }
 
@@ -1174,7 +1179,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
                 isExplicitlyDesignatedInitializer = hasAttribute(cursor, OBJC_DESIGNATED_INITIALIZER),
                 isDirect = hasAttribute(cursor, OBJC_DIRECT),
-                swiftName = readSwiftName(cursor)
+                swiftName = readSwiftName(cursor),
+                availability = availability,
         )
     }
 

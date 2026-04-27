@@ -1097,6 +1097,13 @@ fun isAvailable(cursor: CValue<CXCursor>): Boolean = when (clang_getCursorAvaila
     CXAvailabilityKind.CXAvailability_NotAccessible -> false
 }
 
+fun getAvailability(cursor: CValue<CXCursor>): Availability? = when (clang_getCursorAvailability(cursor)) {
+    CXAvailabilityKind.CXAvailability_Available -> Availability.AVAILABLE
+    CXAvailabilityKind.CXAvailability_Deprecated -> Availability.DEPRECATED
+    CXAvailabilityKind.CXAvailability_NotAvailable -> Availability.NOT_AVAILABLE
+    CXAvailabilityKind.CXAvailability_NotAccessible -> null
+}
+
 fun isObjCInterfaceDeclForward(cursor: CValue<CXCursor>): Boolean {
     assert(cursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { cursor.kind }
 

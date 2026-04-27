@@ -315,9 +315,13 @@ private fun ObjCContainer.declaredMethods(isClass: Boolean): Sequence<ObjCMethod
         this.methods.asSequence().filter { it.isClass == isClass } +
                 if (this is ObjCClass) { includedCategoriesMethods(isClass) } else emptyList()
 
-@Suppress("UNUSED_PARAMETER")
-internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
-        this // TODO: exclude methods that are marked as unavailable in [container].
+internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> {
+    val unavailableSelectors = container.declaredMethods(isMeta)
+            .filter { it.availability == Availability.NOT_AVAILABLE }
+            .mapTo(mutableSetOf()) { it.selector }
+
+    return this.filter { it.selector !in unavailableSelectors }
+}
 
 internal fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.immediateSuperTypes.flatMap { it.methodsWithInherited(isClass) }
@@ -383,7 +387,7 @@ internal abstract class ObjCContainerStubBuilder(
         val superMethods = container.inheritedMethods(isMeta)
 
         // Add all methods declared in the class or protocol:
-        var methods = container.declaredMethods(isMeta)
+        var methods = container.declaredMethods(isMeta).filter { it.availability != Availability.NOT_AVAILABLE }
 
         // Exclude those which are identically declared in super types:
         methods -= superMethods
