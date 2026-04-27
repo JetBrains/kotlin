@@ -14,8 +14,7 @@ import org.gradle.api.tasks.testing.Test
  * Running tests locally will always execute all tests unless actively opted into the test federation.
  */
 internal val Project.testFederationEnabled: Provider<Boolean>
-    get() = providers.gradleProperty(TEST_FEDERATION_ENABLED_KEY).map { it.toBoolean() }
-        .orElse(providers.environmentVariable(TEST_FEDERATION_ENABLED_ENV_KEY).map { it.toBoolean() })
+    get() = providers.provider { false }
 
 
 /**

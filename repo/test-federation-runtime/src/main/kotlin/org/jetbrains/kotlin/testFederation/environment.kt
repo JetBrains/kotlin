@@ -16,8 +16,7 @@ internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_A
  * @return true: If the test federation is enabled (typically only on CI environments)
  * false: Locally: All tests will be executed.
  */
-val testFederationEnabled: Boolean
-    get() = resolve(TEST_FEDERATION_ENABLED_KEY, TEST_FEDERATION_ENABLED_ENV_KEY)?.toBoolean() ?: false
+val testFederationEnabled: Boolean = false
 
 /**
  * @return the current [TestFederationMode]. Only relevant if the [testFederationEnabled] returns true
