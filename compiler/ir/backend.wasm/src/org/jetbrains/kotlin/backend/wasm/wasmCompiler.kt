@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
-import org.jetbrains.kotlin.backend.wasm.WasmBackendErrors.WASM_BACKEND_MISSING_RESOURCE_FROM_COMPILER
+import org.jetbrains.kotlin.backend.wasm.WasmBackendErrors.WASM_BACKEND_MISSING_CUSTOM_FORMATTERS
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
@@ -746,7 +746,7 @@ fun writeCompilationResult(
         val classLoader = WasmCompilerResult::class.java.classLoader
         val customFormattersInputStream = classLoader.getResourceAsStream(fileName) ?: run {
             val message = "Custom formatters won't work because a required resource is missing from the compiler: $fileName"
-            configuration?.report(WASM_BACKEND_MISSING_RESOURCE_FROM_COMPILER, message)
+            configuration?.report(WASM_BACKEND_MISSING_CUSTOM_FORMATTERS, message)
             "console.warn(\"$message\");".byteInputStream()
         }
 
