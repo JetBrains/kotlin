@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.ConcurrentHashMap
 
 class JavaClassOverAst(
     node: JavaLightNode,
@@ -80,8 +81,11 @@ class JavaClassOverAst(
             else -> JavaVisibilities.PackageVisibility
         }
 
+    // FIR matches Java type parameters by object identity (see JavaClassCache.kt KDoc): repeated
+    // accesses through the same JavaClassOverAst must return the same JavaTypeParameter instances.
+    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
-        get() = computeTypeParameters(node, tree, resolutionContext)
+        get() = _typeParameters ?: computeTypeParameters(node, tree, resolutionContext).also { _typeParameters = it }
 
     override val supertypes: Collection<JavaClassifierType>
         get() {
@@ -117,7 +121,19 @@ class JavaClassOverAst(
                                 ?: "<error>")
         }
 
+    // Positive-only cache: same name → same JavaClass instance. Required so that the
+    // JavaTypeParameter instances of inner classes also satisfy FIR's identity contract
+    // (see JavaClassCache.kt KDoc). Negative results are intentionally not cached — the
+    // perf cost of re-resolving misses is acceptable; identity for nulls is meaningless.
+    private val innerClassCache = ConcurrentHashMap<Name, JavaClass>()
+
     override fun findInnerClass(name: Name): JavaClass? {
+        innerClassCache[name]?.let { return it }
+        val resolved = findInnerClassImpl(name) ?: return null
+        return innerClassCache.putIfAbsent(name, resolved) ?: resolved
+    }
+
+    private fun findInnerClassImpl(name: Name): JavaClass? {
         val nameString = name.asString()
         val innerClassNode = tree.getChildren(node).find { child ->
             tree.getType(child) == JavaSyntaxElementType.CLASS &&

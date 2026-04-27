@@ -267,8 +267,12 @@ class JavaMethodOverAst(
     containingClass: JavaClassOverAst,
 ) : JavaMemberOverAst(node, tree, containingClass), JavaMethod {
 
+    // FIR matches Java type parameters by object identity; preserve identity across repeated
+    // accesses on the same JavaMethodOverAst (see JavaClassCache.kt KDoc).
+    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
-        get() = computeTypeParameters(node, tree, containingClass.memberResolutionContext)
+        get() = _typeParameters
+            ?: computeTypeParameters(node, tree, containingClass.memberResolutionContext).also { _typeParameters = it }
 
     override val resolutionContext: JavaResolutionContext
         get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
@@ -339,8 +343,12 @@ class JavaConstructorOverAst(
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
 
+    // FIR matches Java type parameters by object identity; preserve identity across repeated
+    // accesses on the same JavaConstructorOverAst (see JavaClassCache.kt KDoc).
+    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
     override val typeParameters: List<JavaTypeParameter>
-        get() = computeTypeParameters(node, tree, containingClass.memberResolutionContext)
+        get() = _typeParameters
+            ?: computeTypeParameters(node, tree, containingClass.memberResolutionContext).also { _typeParameters = it }
 
     override val resolutionContext: JavaResolutionContext
         get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
