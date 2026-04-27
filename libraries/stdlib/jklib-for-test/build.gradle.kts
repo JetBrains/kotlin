@@ -50,6 +50,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
         include(
             "kotlin/Annotation.kt",
             "kotlin/Annotations.kt",
+            "kotlin/collections/PrimitiveIterators.kt",
             "kotlin/Any.kt",
             "kotlin/Array.kt",
             "kotlin/ArrayIntrinsics.kt",
@@ -68,6 +69,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/Primitives.kt",
             "kotlin/Unit.kt",
             "kotlin/annotation/Annotations.kt",
+            "kotlin/annotations/OptIn.kt",
             "kotlin/annotations/Multiplatform.kt",
             "kotlin/annotations/WasExperimental.kt",
             "kotlin/annotations/ReturnValue.kt",
@@ -79,6 +81,24 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/contextParameters/ContextOf.kt",
             "kotlin/contracts/ContractBuilder.kt",
             "kotlin/contracts/Effect.kt",
+            "kotlin/ranges/Progressions.kt",
+            "kotlin/ranges/PrimitiveRanges.kt",
+            "kotlin/ranges/ProgressionIterators.kt",
+            "kotlin/internal/progressionUtil.kt",
+            "kotlin/reflect/**",
+        )
+        exclude(
+            "kotlin/reflect/findAssociatedObject.kt"
+        )
+        into("src/common")
+    }
+
+    from(stdlibProjectDir.resolve("common-non-jvm/src")) {
+        include(
+            "kotlin/reflect/**",
+        )
+        exclude(
+            "kotlin/reflect/KTypeImpl.kt",
         )
         into("src/common")
     }
@@ -92,6 +112,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
 
     from("src/stubs/jvm/builtins") {
         include("**")
+        exclude("kotlin/reflect/**")
         into("src/jvm")
     }
 
@@ -106,9 +127,11 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "src/kotlin/collections/TypeAliases.kt",
             "src/kotlin/enums/EnumEntriesJVM.kt",
             "src/kotlin/io/Serializable.kt",
+            "src/kotlin/reflect/**",
             "builtins/*.kt"
         )
         exclude(
+            "src/kotlin/reflect/TypesJVM.kt",
             "builtins/Char.kt",
             "builtins/Collections.kt"
         )
@@ -178,10 +201,11 @@ fun JavaExec.configureJklibCompilation(
 
 
         val fullClasspath = klibCompileClasspath.files
-            .filter { it.extension == "jar" && !it.name.contains("sources") }
+            .filter { (it.extension == "jar" || it.isDirectory) && !it.name.contains("sources") }
             .map { it.absolutePath }
             .joinToString(File.pathSeparator)
 
+        logger.lifecycle("JKlib fullClasspath: '$fullClasspath'")
         args("-classpath", fullClasspath)
         args(jvmSourceFiles)
         args(commonSourceFiles)
