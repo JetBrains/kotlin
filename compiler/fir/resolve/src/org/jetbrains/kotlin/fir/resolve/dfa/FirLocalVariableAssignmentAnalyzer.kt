@@ -577,17 +577,16 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         //   control flow structures can cause incorrect smartcasts. KT-59691
 
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: MiniCfgData) {
-            val visitor = this
-            with(functionCall) {
-                setOfNotNull(explicitReceiver, dispatchReceiver, extensionReceiver).forEach { it.accept(visitor, data) }
-                // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
-                // TODO: this is not entirely correct (the lambda might be nested deep inside an expression), but also this
-                //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order. KT-59691
-                val (postponedFunctionArgs, normalArgs) = argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
-                normalArgs.forEach { it.accept(visitor, data) }
-                postponedFunctionArgs.forEach { it.accept(visitor, data) }
-                calleeReference.accept(visitor, data)
-            }
+            functionCall.explicitReceiver?.accept(this, data)
+            functionCall.dispatchReceiver?.accept(this, data)
+            functionCall.extensionReceiver?.accept(this, data)
+            // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
+            // TODO: this is not entirely correct (the lambda might be nested deep inside an expression), but also this
+            //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order. KT-59691
+            val (postponedFunctionArgs, normalArgs) = functionCall.argumentList.arguments.partition { it is FirAnonymousFunctionExpression }
+            normalArgs.forEach { it.accept(this, data) }
+            postponedFunctionArgs.forEach { it.accept(this, data) }
+            functionCall.calleeReference.accept(this, data)
         }
 
         override fun visitBlock(block: FirBlock, data: MiniCfgData) {
@@ -601,6 +600,14 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             if (property.isEffectivelyLocal) {
                 data.variableDeclarations.last()[property.name] = property
             }
+        }
+
+        override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: MiniCfgData) {
+            // An FirWrappedDelegateExpression contains the same expression twice for delegate creation:
+            // 'provideDelegateCall' contains 'expression' as its explicit receiver in a 'providedDelegate()' call.
+            // This causes 'expression' to be visited twice, thus an exponential growth in the number of expressions being analyzed.
+            // So, only visit 'expression', as the local variable analysis will be the same.
+            wrappedDelegateExpression.expression.accept(this, data)
         }
 
         override fun visitReplDeclarationReference(replDeclarationReference: FirReplDeclarationReference, data: MiniCfgData) {
