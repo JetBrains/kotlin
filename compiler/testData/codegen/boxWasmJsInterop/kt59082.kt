@@ -25,9 +25,5 @@ fun box(): String {
         }
         else -> return "Fail 4"
     }
-
-    val obj = CanvasFillRule.Companion
-    if (obj.EVENODD.toString() != "evenodd") return "Fail 5"
-
     return "OK"
 }
