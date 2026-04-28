@@ -2,13 +2,13 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol MyComparable: KotlinRuntime.KotlinBase {
+public protocol MyComparable: KotlinRuntime.KotlinBase, f_bounded_type._MyComparable {
     func compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32
 }
 @objc(_MyComparable)
-package protocol _MyComparable {
+public protocol _MyComparable {
 }
 public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
     public override init() {
@@ -50,6 +50,15 @@ extension f_bounded_type.MyComparable {
 }
 extension KotlinRuntimeSupport._KotlinExistential: f_bounded_type.MyComparable where Wrapped : f_bounded_type._MyComparable {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: f_bounded_type._MyComparable {
+}
+@_cdecl("MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer?) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any f_bounded_type.MyComparable
+    let _result: Swift.Int32 = _self.compareTo(other: { switch other { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
 @_cdecl("SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift")
 public func SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any f_bounded_type.MyComparable

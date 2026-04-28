@@ -136,15 +136,27 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Wrapped : ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._MutableStateFlow {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
+}
 extension ExportedKotlinPackages.kotlinx.coroutines.flow {
-    public protocol Flow: KotlinRuntime.KotlinBase, KotlinCoroutineSupport.KotlinFlow {
+    public protocol Flow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow._Flow, KotlinCoroutineSupport.KotlinFlow {
     }
-    public protocol FlowCollector: KotlinRuntime.KotlinBase {
+    public protocol FlowCollector: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
         func emit(
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) async throws -> Swift.Void
     }
-    public protocol MutableSharedFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, KotlinCoroutineSupport.KotlinMutableSharedFlow {
+    public protocol MutableSharedFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector, ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow, KotlinCoroutineSupport.KotlinMutableSharedFlow {
         var subscriptionCount: any KotlinCoroutineSupport.KotlinTypedStateFlow<Swift.Int32> {
             get
         }
@@ -157,7 +169,7 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
     }
-    public protocol MutableStateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow, KotlinCoroutineSupport.KotlinMutableStateFlow {
+    public protocol MutableStateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._MutableStateFlow, KotlinCoroutineSupport.KotlinMutableStateFlow {
         var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
             get
             set
@@ -167,33 +179,33 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             update: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool
     }
-    public protocol SharedFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, KotlinCoroutineSupport.KotlinSharedFlow {
+    public protocol SharedFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.Flow, ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow, KotlinCoroutineSupport.KotlinSharedFlow {
         var replayCache: [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
             get
         }
     }
-    public protocol StateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, KotlinCoroutineSupport.KotlinStateFlow {
+    public protocol StateFlow: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.coroutines.flow.SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow, KotlinCoroutineSupport.KotlinStateFlow {
         var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
             get
         }
     }
     @objc(_Flow)
-    package protocol _Flow {
+    public protocol _Flow {
     }
     @objc(_FlowCollector)
-    package protocol _FlowCollector {
+    public protocol _FlowCollector {
     }
     @objc(_MutableSharedFlow)
-    package protocol _MutableSharedFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
+    public protocol _MutableSharedFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._FlowCollector {
     }
     @objc(_MutableStateFlow)
-    package protocol _MutableStateFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow {
+    public protocol _MutableStateFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow._MutableSharedFlow {
     }
     @objc(_SharedFlow)
-    package protocol _SharedFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
+    public protocol _SharedFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._Flow {
     }
     @objc(_StateFlow)
-    package protocol _StateFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
+    public protocol _StateFlow: ExportedKotlinPackages.kotlinx.coroutines.flow._SharedFlow {
     }
     public static func flowCollector(
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void
@@ -230,4 +242,24 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
             }
         }())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector
     }
+}
+@_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift")
+public func kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _result: Swift.Void = _self.resetReplayCache()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlinx_coroutines_flow_MutableSharedFlow_tryEmit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow
+    let _result: Swift.Bool = _self.tryEmit(value: { switch value { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlinx_coroutines_flow_MutableStateFlow_compareAndSet__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ expect: Swift.UnsafeMutableRawPointer?, _ update: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow
+    let _result: Swift.Bool = _self.compareAndSet(expect: { switch expect { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }(), update: { switch update { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
 }

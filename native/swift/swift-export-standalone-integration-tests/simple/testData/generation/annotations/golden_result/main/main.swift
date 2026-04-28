@@ -14,19 +14,19 @@ public typealias renamedA = Swift.Void
 public protocol DeprecatedInterface: KotlinRuntime.KotlinBase {
     func foo() -> Swift.Void
 }
-public protocol InterfaceWithDeprecatedMembers: KotlinRuntime.KotlinBase {
+public protocol InterfaceWithDeprecatedMembers: KotlinRuntime.KotlinBase, main._InterfaceWithDeprecatedMembers {
     @available(*, deprecated, message: "Deprecated")
     func deprecatedWarningFunction() -> Swift.Void
     func regularFunction() -> Swift.Void
 }
-public protocol NonDeprecatedInterface: KotlinRuntime.KotlinBase {
+public protocol NonDeprecatedInterface: KotlinRuntime.KotlinBase, main._NonDeprecatedInterface {
     func bar() -> Swift.Void
 }
 @available(*, unavailable, message: "Obsoleted")
 public protocol SubDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface {
     func baz() -> Swift.Void
 }
-public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase {
+public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase, main._SwiftInterfaceC {
     func kotlinFunE(
         _ kotlinParamE: Swift.String
     ) -> Swift.Void
@@ -35,19 +35,19 @@ public protocol SwiftInterfaceC: KotlinRuntime.KotlinBase {
     ) -> Swift.Void
 }
 @objc(_DeprecatedInterface)
-package protocol _DeprecatedInterface {
+public protocol _DeprecatedInterface {
 }
 @objc(_InterfaceWithDeprecatedMembers)
-package protocol _InterfaceWithDeprecatedMembers {
+public protocol _InterfaceWithDeprecatedMembers {
 }
 @objc(_NonDeprecatedInterface)
-package protocol _NonDeprecatedInterface: main._DeprecatedInterface {
+public protocol _NonDeprecatedInterface: main._DeprecatedInterface {
 }
 @objc(_SubDeprecatedInterface)
-package protocol _SubDeprecatedInterface: main._DeprecatedInterface {
+public protocol _SubDeprecatedInterface: main._DeprecatedInterface {
 }
 @objc(_SwiftInterfaceC)
-package protocol _SwiftInterfaceC {
+public protocol _SwiftInterfaceC {
 }
 @_spi(Barnnotation) @_spi(Foonnotation)
 public final class Bar: main.Foo {
@@ -1281,6 +1281,54 @@ extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface w
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithDeprecatedMembers {
+}
+@available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
+package extension KotlinRuntimeSupport._KotlinExistentialPenBox {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._NonDeprecatedInterface {
+}
+@available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
+package extension KotlinRuntimeSupport._KotlinExistentialPenBox {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SwiftInterfaceC {
+}
+@available(*, deprecated, message: "Deprecated")
+@_cdecl("InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift")
+public func InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.InterfaceWithDeprecatedMembers
+    let _result: Swift.Void = _self.deprecatedWarningFunction()
+    return { _result; return true }()
+}
+
+@_cdecl("InterfaceWithDeprecatedMembers_regularFunction__reverse_swift")
+public func InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.InterfaceWithDeprecatedMembers
+    let _result: Swift.Void = _self.regularFunction()
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift")
+public func KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ swiftParamD: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SwiftInterfaceC
+    let _result: Swift.Void = _self.swiftFunD(swiftParamD: swiftParamD)
+    return { _result; return true }()
+}
+
+@_cdecl("KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift")
+public func KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ kotlinParamE: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.SwiftInterfaceC
+    let _result: Swift.Void = _self.kotlinFunE(kotlinParamE)
+    return { _result; return true }()
+}
+
+@_cdecl("NonDeprecatedInterface_bar__reverse_swift")
+public func NonDeprecatedInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.NonDeprecatedInterface
+    let _result: Swift.Void = _self.bar()
+    return { _result; return true }()
+}
+
 @_cdecl("PublicClassImplHiddenInterface_bar__reverse_swift")
 public func PublicClassImplHiddenInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = main.PublicClassImplHiddenInterface.__createClassWrapper(externalRCRef: `self`)!

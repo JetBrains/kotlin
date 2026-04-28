@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 @_spi(InternalLibApi)
 public typealias InternalLibAlias = Swift.String
 @_spi(InternalLibApi)
-public protocol InternalLibInterface: KotlinRuntime.KotlinBase {
+public protocol InternalLibInterface: KotlinRuntime.KotlinBase, lib._InternalLibInterface {
     @_spi(InternalLibApi)
     var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -17,7 +17,7 @@ public protocol InternalLibInterface: KotlinRuntime.KotlinBase {
     func bar() -> Swift.Void
 }
 @objc(_InternalLibInterface)
-package protocol _InternalLibInterface {
+public protocol _InternalLibInterface {
 }
 @_spi(ExperimentalLibApi)
 public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
@@ -194,4 +194,12 @@ extension lib.InternalLibInterface {
 }
 @_spi(InternalLibApi)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InternalLibInterface where Wrapped : lib._InternalLibInterface {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InternalLibInterface {
+}
+@_cdecl("InternalLibInterface_bar__reverse_swift")
+public func InternalLibInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any lib.InternalLibInterface
+    let _result: Swift.Void = _self.bar()
+    return { _result; return true }()
 }

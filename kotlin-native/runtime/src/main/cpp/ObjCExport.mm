@@ -939,6 +939,17 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
   objCExport(result).objCClass = clazz;
+
+  // Propagate the super's typeAdapter so that protocolWrapperFor / classWrapperFor resolve to the
+  // bound-public wrapper class rather than falling through to an anonymous existential. Without
+  // this, __createProtocolWrapper returns an existential whose default protocol implementation
+  // routes the method call back through the forward bridge — which lands on the Kotlin-side
+  // interface itable, which now holds the reverse trampoline, infinite-looping into SIGBUS.
+  // Setting the adapter makes initWithExternalRCRefUnsafe use the AsBestFittingWrapper path,
+  // which substitutes in the already-associated Swift subclass instance that holds the override.
+  if (objCExport(result).typeAdapter == nullptr) {
+    objCExport(result).typeAdapter = objCExport(superType).typeAdapter;
+  }
   return result;
 }
 

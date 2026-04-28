@@ -68,18 +68,22 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.ranges._ClosedRange {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Comparable {
+}
 extension ExportedKotlinPackages.kotlin {
-    public protocol Comparable: KotlinRuntime.KotlinBase {
+    public protocol Comparable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._Comparable {
         func _compareTo(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Int32
     }
     @objc(_Comparable)
-    package protocol _Comparable {
+    public protocol _Comparable {
     }
 }
 extension ExportedKotlinPackages.kotlin.ranges {
-    public protocol ClosedRange: KotlinRuntime.KotlinBase {
+    public protocol ClosedRange: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.ranges._ClosedRange {
         var endInclusive: any ExportedKotlinPackages.kotlin.Comparable {
             get
         }
@@ -92,6 +96,26 @@ extension ExportedKotlinPackages.kotlin.ranges {
         func isEmpty() -> Swift.Bool
     }
     @objc(_ClosedRange)
-    package protocol _ClosedRange {
+    public protocol _ClosedRange {
     }
+}
+@_cdecl("kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer?) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.Comparable
+    let _result: Swift.Int32 = _self._compareTo(other: { switch other { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable____reverse_swift")
+public func kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+    let _result: Swift.Bool = _self.contains(value: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: value) as! any ExportedKotlinPackages.kotlin.Comparable)
+    return _result
+}
+
+@_cdecl("kotlin_ranges_ClosedRange_isEmpty__reverse_swift")
+public func kotlin_ranges_ClosedRange_isEmpty__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
+    let _result: Swift.Bool = _self.isEmpty()
+    return _result
 }

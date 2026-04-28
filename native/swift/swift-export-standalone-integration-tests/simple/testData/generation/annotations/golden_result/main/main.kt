@@ -47,6 +47,58 @@ import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ImportedBridge("InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift")
+internal external fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(InterfaceWithDeprecatedMembers::class, "deprecatedWarningFunction")
+public fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse(self: InterfaceWithDeprecatedMembers): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(__self)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("InterfaceWithDeprecatedMembers_regularFunction__reverse_swift")
+internal external fun InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(InterfaceWithDeprecatedMembers::class, "regularFunction")
+public fun InterfaceWithDeprecatedMembers_regularFunction__reverse(self: InterfaceWithDeprecatedMembers): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(__self)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, swiftParamD: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(KotlinInterfaceC::class, "kotlinFunD")
+public fun KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse(self: KotlinInterfaceC, swiftParamD: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __swiftParamD = swiftParamD.objcPtr()
+    val __result = KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(__self, __swiftParamD)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift")
+internal external fun KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(self: kotlin.native.internal.NativePtr, kotlinParamE: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(KotlinInterfaceC::class, "kotlinFunE")
+public fun KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse(self: KotlinInterfaceC, kotlinParamE: kotlin.String): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __kotlinParamE = kotlinParamE.objcPtr()
+    val __result = KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(__self, __kotlinParamE)
+    return run<Unit> { __result }
+}
+
+@ImportedBridge("NonDeprecatedInterface_bar__reverse_swift")
+internal external fun NonDeprecatedInterface_bar__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(NonDeprecatedInterface::class, "bar")
+public fun NonDeprecatedInterface_bar__reverse(self: NonDeprecatedInterface): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = NonDeprecatedInterface_bar__reverse_swift(__self)
+    return run<Unit> { __result }
+}
+
 @ImportedBridge("PublicClassImplHiddenInterface_bar__reverse_swift")
 internal external fun PublicClassImplHiddenInterface_bar__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 

@@ -41,6 +41,7 @@ public class SirDeclarationFromKtSymbolProvider(
                             declaration = protocol,
                             bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
                             markerDeclaration = protocol.existentialMarker,
+                            penBoxMarkerConformance = protocol.penBoxMarkerConformance,
                             existentialExtension = protocol.existentialExtension,
                             auxExtension = protocol.auxExtension,
                             samConverter = protocol.samConverter,

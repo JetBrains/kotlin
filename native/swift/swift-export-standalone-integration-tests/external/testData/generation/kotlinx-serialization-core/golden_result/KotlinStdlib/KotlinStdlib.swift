@@ -4,12 +4,12 @@ import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinStdlib
 
 extension ExportedKotlinPackages.kotlin {
-    public protocol Annotation: KotlinRuntime.KotlinBase {
+    public protocol Annotation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._Annotation {
     }
     @objc(_Annotation)
-    package protocol _Annotation {
+    public protocol _Annotation {
     }
-    public protocol CharSequence: KotlinRuntime.KotlinBase {
+    public protocol CharSequence: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._CharSequence {
         var length: Swift.Int32 {
             get
         }
@@ -22,7 +22,7 @@ extension ExportedKotlinPackages.kotlin {
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
     }
     @objc(_CharSequence)
-    package protocol _CharSequence {
+    public protocol _CharSequence {
     }
     public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
@@ -6682,18 +6682,18 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
     }
 }
 extension ExportedKotlinPackages.kotlin.collections {
-    public protocol Iterable: KotlinRuntime.KotlinBase {
+    public protocol Iterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterable {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
     @objc(_Iterable)
-    package protocol _Iterable {
+    public protocol _Iterable {
     }
-    public protocol Iterator: KotlinRuntime.KotlinBase {
+    public protocol Iterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterator {
         func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func hasNext() -> Swift.Bool
     }
     @objc(_Iterator)
-    package protocol _Iterator {
+    public protocol _Iterator {
     }
     open class IntIterator: KotlinRuntime.KotlinBase {
         public final func next() -> Swift.Int32 {
@@ -7224,6 +7224,8 @@ extension ExportedKotlinPackages.kotlin.time {
 }
 extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Annotation {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
 extension ExportedKotlinPackages.kotlin.Annotation {
@@ -7232,6 +7234,8 @@ extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : Kotlin
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterable {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
@@ -7723,6 +7727,8 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeS
         }
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._CharSequence {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.CharSequence {
@@ -7735,10 +7741,26 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
+@_cdecl("kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UInt16 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.CharSequence
+    let _result: Swift.Unicode.UTF16.CodeUnit = _self._get(index: index)
+    return _result
+}
+
+@_cdecl("kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift")
+public func kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ startIndex: Swift.Int32, _ endIndex: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.CharSequence
+    let _result: any ExportedKotlinPackages.kotlin.CharSequence = _self.subSequence(startIndex: startIndex, endIndex: endIndex)
+    return _result.__externalRCRef()
+}
+
 @_cdecl("kotlin_Number_toByte__reverse_swift")
 public func kotlin_Number_toByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
     let _self = ExportedKotlinPackages.kotlin.Number.__createClassWrapper(externalRCRef: `self`)!
@@ -7812,6 +7834,27 @@ public func kotlin_collections_IntIterator_nextInt__reverse_swift(_ `self`: Swif
     let _self = ExportedKotlinPackages.kotlin.collections.IntIterator.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Int32 = _self.nextInt()
     return _result
+}
+
+@_cdecl("kotlin_collections_Iterable_iterator__reverse_swift")
+public func kotlin_collections_Iterable_iterator__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterable
+    let _result: any ExportedKotlinPackages.kotlin.collections.Iterator = _self.iterator()
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlin_collections_Iterator_hasNext__reverse_swift")
+public func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
+}
+
+@_cdecl("kotlin_collections_Iterator_next__reverse_swift")
+public func kotlin_collections_Iterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
+    return _result.map { it in it.__externalRCRef() } ?? nil
 }
 
 @_cdecl("kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")

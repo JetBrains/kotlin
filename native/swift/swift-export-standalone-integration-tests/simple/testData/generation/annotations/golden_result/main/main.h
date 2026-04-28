@@ -3,6 +3,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(void * self);
+
+_Bool InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(void * self);
+
+_Bool KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * swiftParamD);
+
+_Bool KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * kotlinParamE);
+
+_Bool NonDeprecatedInterface_bar__reverse_swift(void * self);
+
 _Bool PublicClassImplHiddenInterface_bar__reverse_swift(void * self);
 
 _Bool PublicClassImplHiddenInterface_foo__reverse_swift(void * self);

@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(void * self, void * arg);
+
+void * Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(void * self, void * arg);
+
 void * Bar_bar__TypesOfArguments__anyU20main_Foeble__(void * self, void * arg);
 
 void * Bar_baz_get(void * self);

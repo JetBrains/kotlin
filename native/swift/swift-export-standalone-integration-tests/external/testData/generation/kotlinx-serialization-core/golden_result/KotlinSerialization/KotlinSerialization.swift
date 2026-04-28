@@ -10,22 +10,22 @@ public typealias descriptors = ExportedKotlinPackages.kotlinx.serialization.desc
 public typealias builtins = ExportedKotlinPackages.kotlinx.serialization.builtins
 public typealias encoding = ExportedKotlinPackages.kotlinx.serialization.encoding
 public typealias BinaryFormat = ExportedKotlinPackages.kotlinx.serialization.BinaryFormat
-package typealias _BinaryFormat = ExportedKotlinPackages.kotlinx.serialization._BinaryFormat
+public typealias _BinaryFormat = ExportedKotlinPackages.kotlinx.serialization._BinaryFormat
 public typealias ContextualSerializer = ExportedKotlinPackages.kotlinx.serialization.ContextualSerializer
 public typealias DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy
-package typealias _DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy
+public typealias _DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy
 public typealias KSerializer = ExportedKotlinPackages.kotlinx.serialization.KSerializer
-package typealias _KSerializer = ExportedKotlinPackages.kotlinx.serialization._KSerializer
+public typealias _KSerializer = ExportedKotlinPackages.kotlinx.serialization._KSerializer
 public typealias MissingFieldException = ExportedKotlinPackages.kotlinx.serialization.MissingFieldException
 public typealias PolymorphicSerializer = ExportedKotlinPackages.kotlinx.serialization.PolymorphicSerializer
 public typealias SealedClassSerializer = ExportedKotlinPackages.kotlinx.serialization.SealedClassSerializer
 public typealias SerialFormat = ExportedKotlinPackages.kotlinx.serialization.SerialFormat
-package typealias _SerialFormat = ExportedKotlinPackages.kotlinx.serialization._SerialFormat
+public typealias _SerialFormat = ExportedKotlinPackages.kotlinx.serialization._SerialFormat
 public typealias SerializationException = ExportedKotlinPackages.kotlinx.serialization.SerializationException
 public typealias SerializationStrategy = ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy
-package typealias _SerializationStrategy = ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy
+public typealias _SerializationStrategy = ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy
 public typealias StringFormat = ExportedKotlinPackages.kotlinx.serialization.StringFormat
-package typealias _StringFormat = ExportedKotlinPackages.kotlinx.serialization._StringFormat
+public typealias _StringFormat = ExportedKotlinPackages.kotlinx.serialization._StringFormat
 public final class _ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Companion: KotlinRuntime.KotlinBase {
     public var DECODE_DONE: Swift.Int32 {
         get {
@@ -96,12 +96,12 @@ public func serializerOrNull(
     fatalError()
 }
 extension ExportedKotlinPackages.kotlinx.serialization {
-    public protocol BinaryFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerialFormat {
+    public protocol BinaryFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerialFormat, ExportedKotlinPackages.kotlinx.serialization._BinaryFormat {
     }
     @objc(_BinaryFormat)
-    package protocol _BinaryFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
+    public protocol _BinaryFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
-    public protocol DeserializationStrategy: KotlinRuntime.KotlinBase {
+    public protocol DeserializationStrategy: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
             get
         }
@@ -110,25 +110,25 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     }
     @objc(_DeserializationStrategy)
-    package protocol _DeserializationStrategy {
+    public protocol _DeserializationStrategy {
     }
-    public protocol KSerializer: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy {
+    public protocol KSerializer: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy, ExportedKotlinPackages.kotlinx.serialization._KSerializer {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
             get
         }
     }
     @objc(_KSerializer)
-    package protocol _KSerializer: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
+    public protocol _KSerializer: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
     }
-    public protocol SerialFormat: KotlinRuntime.KotlinBase {
+    public protocol SerialFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             get
         }
     }
     @objc(_SerialFormat)
-    package protocol _SerialFormat {
+    public protocol _SerialFormat {
     }
-    public protocol SerializationStrategy: KotlinRuntime.KotlinBase {
+    public protocol SerializationStrategy: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
             get
         }
@@ -138,12 +138,12 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> Swift.Void
     }
     @objc(_SerializationStrategy)
-    package protocol _SerializationStrategy {
+    public protocol _SerializationStrategy {
     }
-    public protocol StringFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerialFormat {
+    public protocol StringFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerialFormat, ExportedKotlinPackages.kotlinx.serialization._StringFormat {
     }
     @objc(_StringFormat)
-    package protocol _StringFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
+    public protocol _StringFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public final class ContextualSerializer: KotlinRuntime.KotlinBase {
@@ -392,14 +392,14 @@ extension ExportedKotlinPackages.kotlinx.serialization {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     @_spi(kotlinx$serialization$InternalSerializationApi)
-    public protocol GeneratedSerializer: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.KSerializer {
+    public protocol GeneratedSerializer: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.KSerializer, ExportedKotlinPackages.kotlinx.serialization.`internal`._GeneratedSerializer {
         @_spi(kotlinx$serialization$InternalSerializationApi)
         func childSerializers() -> ExportedKotlinPackages.kotlin.Array
         @_spi(kotlinx$serialization$InternalSerializationApi)
         func typeParametersSerializers() -> ExportedKotlinPackages.kotlin.Array
     }
     @objc(_GeneratedSerializer)
-    package protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
+    public protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
     open class AbstractCollectionSerializer: KotlinRuntime.KotlinBase {
@@ -936,10 +936,10 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.modules {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase {
+    public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
     }
     @objc(_SerializersModuleCollector)
-    package protocol _SerializersModuleCollector {
+    public protocol _SerializersModuleCollector {
     }
     public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase {
         package override init(
@@ -1010,7 +1010,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
-    public protocol SerialDescriptor: KotlinRuntime.KotlinBase {
+    public protocol SerialDescriptor: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.descriptors._SerialDescriptor {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         var annotations: [any ExportedKotlinPackages.kotlin.Annotation] {
             @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -1061,7 +1061,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         ) -> Swift.Bool
     }
     @objc(_SerialDescriptor)
-    package protocol _SerialDescriptor {
+    public protocol _SerialDescriptor {
     }
     public final class ClassSerialDescriptorBuilder: KotlinRuntime.KotlinBase {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -1732,16 +1732,16 @@ extension ExportedKotlinPackages.kotlinx.serialization.builtins {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public protocol ChunkedDecoder: KotlinRuntime.KotlinBase {
+    public protocol ChunkedDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding._ChunkedDecoder {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         func decodeStringChunked(
             consumeChunk: @escaping (Swift.String) -> Swift.Void
         ) -> Swift.Void
     }
     @objc(_ChunkedDecoder)
-    package protocol _ChunkedDecoder {
+    public protocol _ChunkedDecoder {
     }
-    public protocol CompositeDecoder: KotlinRuntime.KotlinBase {
+    public protocol CompositeDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             get
         }
@@ -1798,9 +1798,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Void
     }
     @objc(_CompositeDecoder)
-    package protocol _CompositeDecoder {
+    public protocol _CompositeDecoder {
     }
-    public protocol CompositeEncoder: KotlinRuntime.KotlinBase {
+    public protocol CompositeEncoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             get
         }
@@ -1863,9 +1863,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Bool
     }
     @objc(_CompositeEncoder)
-    package protocol _CompositeEncoder {
+    public protocol _CompositeEncoder {
     }
-    public protocol Decoder: KotlinRuntime.KotlinBase {
+    public protocol Decoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             get
         }
@@ -1893,9 +1893,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func decodeString() -> Swift.String
     }
     @objc(_Decoder)
-    package protocol _Decoder {
+    public protocol _Decoder {
     }
-    public protocol Encoder: KotlinRuntime.KotlinBase {
+    public protocol Encoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             get
         }
@@ -1946,7 +1946,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Void
     }
     @objc(_Encoder)
-    package protocol _Encoder {
+    public protocol _Encoder {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     open class AbstractDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder {
@@ -2325,6 +2325,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._BinaryFormat {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.BinaryFormat where Wrapped : ExportedKotlinPackages.kotlinx.serialization._BinaryFormat {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat {
@@ -2341,6 +2343,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy w
         return { switch kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy where Wrapped : ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy {
@@ -2352,6 +2356,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.KSerializer where Self : 
         }
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.KSerializer where Wrapped : ExportedKotlinPackages.kotlinx.serialization._KSerializer {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.KSerializer {
@@ -2362,6 +2368,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.SerialFormat where Self :
             return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_SerialFormat_serializersModule_get(self.__externalRCRef()))
         }
     }
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.SerialFormat where Wrapped : ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
 }
@@ -2380,11 +2388,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy whe
         return { kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil); return () }()
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy where Wrapped : ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.StringFormat where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization._StringFormat {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.StringFormat where Wrapped : ExportedKotlinPackages.kotlinx.serialization._StringFormat {
 }
@@ -2400,12 +2412,16 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSeria
         return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers(self.__externalRCRef()))
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.`internal`._GeneratedSerializer {
+}
 @_spi(kotlinx$serialization$InternalSerializationApi)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer where Wrapped : ExportedKotlinPackages.kotlinx.serialization.`internal`._GeneratedSerializer {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector where Self : KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
 }
 @_spi(kotlinx$serialization$ExperimentalSerializationApi)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector where Wrapped : ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector {
@@ -2484,6 +2500,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescrip
         return kotlinx_serialization_descriptors_SerialDescriptor_isElementOptional__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.descriptors._SerialDescriptor {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor where Wrapped : ExportedKotlinPackages.kotlinx.serialization.descriptors._SerialDescriptor {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -2498,6 +2516,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder w
             return { (arg0: Swift.String) in return { originalBlock(arg0); return true }() }
         }()); return () }()
     }
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._ChunkedDecoder {
 }
 @_spi(kotlinx$serialization$ExperimentalSerializationApi)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._ChunkedDecoder {
@@ -2589,6 +2609,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
     ) -> Swift.Void {
         return { kotlinx_serialization_encoding_CompositeDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(self.__externalRCRef(), descriptor.__externalRCRef()); return () }()
     }
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder {
 }
@@ -2683,6 +2705,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
         return kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self.__externalRCRef(), descriptor.__externalRCRef(), index)
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder {
@@ -2743,6 +2767,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder where Se
     public func decodeString() -> Swift.String {
         return kotlinx_serialization_encoding_Decoder_decodeString(self.__externalRCRef())
     }
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder {
 }
@@ -2830,10 +2856,61 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder where Se
         return { kotlinx_serialization_encoding_Encoder_encodeString__TypesOfArguments__Swift_String__(self.__externalRCRef(), value); return () }()
     }
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
+}
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder where Wrapped : ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder {
 }
+@_cdecl("kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift")
+public func kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ decoder: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.deserialize(decoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: decoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder)
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ encoder: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy
+    let _result: Swift.Void = _self.serialize(encoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: encoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, value: { switch value { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_descriptors_SerialDescriptor_getElementAnnotations__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlinx_serialization_descriptors_SerialDescriptor_getElementAnnotations__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Any {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+    let _result: Swift.Array<any ExportedKotlinPackages.kotlin.Annotation> = _self.getElementAnnotations(index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_descriptors_SerialDescriptor_getElementDescriptor__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlinx_serialization_descriptors_SerialDescriptor_getElementDescriptor__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor = _self.getElementDescriptor(index: index)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_descriptors_SerialDescriptor_getElementIndex__TypesOfArguments__Swift_String____reverse_swift")
+public func kotlinx_serialization_descriptors_SerialDescriptor_getElementIndex__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ name: Swift.String) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+    let _result: Swift.Int32 = _self.getElementIndex(name: name)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_descriptors_SerialDescriptor_getElementName__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlinx_serialization_descriptors_SerialDescriptor_getElementName__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+    let _result: Swift.String = _self.getElementName(index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_descriptors_SerialDescriptor_isElementOptional__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlinx_serialization_descriptors_SerialDescriptor_isElementOptional__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+    let _result: Swift.Bool = _self.isElementOptional(index: index)
+    return _result
+}
+
 @_cdecl("kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift")
 public func kotlinx_serialization_descriptors_SerialKind_hashCode__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
     let _self = ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind.__createClassWrapper(externalRCRef: `self`)!
@@ -3079,6 +3156,391 @@ public func kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesOf
     return { _result; return true }()
 }
 
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Bool = _self.decodeBooleanElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeByteElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeByteElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Int8 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Int8 = _self.decodeByteElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeCharElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeCharElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UInt16 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Unicode.UTF16.CodeUnit = _self.decodeCharElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Int32 = _self.decodeCollectionSize(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeDoubleElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeDoubleElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Double {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Double = _self.decodeDoubleElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeElementIndex__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Int32 = _self.decodeElementIndex(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeFloatElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeFloatElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Float {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Float = _self.decodeFloatElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeInlineElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeInlineElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder = _self.decodeInlineElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeIntElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeIntElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Int32 = _self.decodeIntElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeLongElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeLongElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Int64 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Int64 = _self.decodeLongElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeSequentially__reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeSequentially__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Bool = _self.decodeSequentially()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeShortElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeShortElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Int16 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Int16 = _self.decodeShortElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_decodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_decodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.String = _self.decodeStringElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeDecoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+    let _result: Swift.Void = _self.endStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Bool____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeBooleanElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Bool____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Bool) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeBooleanElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeByteElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int8____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeByteElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int8____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Int8) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeByteElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeCharElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Unicode_UTF16_CodeUnit____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeCharElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Unicode_UTF16_CodeUnit____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.UInt16) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeCharElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeDoubleElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Double____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeDoubleElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Double____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Double) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeDoubleElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeFloatElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Float____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeFloatElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Float____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Float) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeFloatElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeInlineElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeInlineElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder = _self.encodeInlineElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeIntElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeIntElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeIntElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeLongElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int64____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeLongElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int64____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Int64) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeLongElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeShortElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int16____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeShortElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_Int16____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.Int16) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeShortElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_encodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_String____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_encodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32, _ value: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.encodeStringElement(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index, value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Void = _self.endStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    let _result: Swift.Bool = _self.shouldEncodeElementDefault(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder = _self.beginStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeBoolean__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeBoolean__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Bool = _self.decodeBoolean()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeByte__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeByte__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int8 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Int8 = _self.decodeByte()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeChar__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeChar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UInt16 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Unicode.UTF16.CodeUnit = _self.decodeChar()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeDouble__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeDouble__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Double {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Double = _self.decodeDouble()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ enumDescriptor: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Int32 = _self.decodeEnum(enumDescriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: enumDescriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeFloat__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeFloat__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Float {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Float = _self.decodeFloat()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder = _self.decodeInline(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeInt__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeInt__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Int32 = _self.decodeInt()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeLong__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeLong__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int64 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Int64 = _self.decodeLong()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeNotNullMark__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeNotNullMark__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Bool = _self.decodeNotNullMark()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeNull__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeNull__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Optional<Swift.Never> = _self.decodeNull()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeShort__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeShort__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int16 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.Int16 = _self.decodeShort()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Decoder_decodeString__reverse_swift")
+public func kotlinx_serialization_encoding_Decoder_decodeString__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
+    let _result: Swift.String = _self.decodeString()
+    return _result
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer, _ collectionSize: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder = _self.beginCollection(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, collectionSize: collectionSize)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_beginStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder = _self.beginStructure(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeBoolean__TypesOfArguments__Swift_Bool____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeBoolean__TypesOfArguments__Swift_Bool____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Bool) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeBoolean(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeByte__TypesOfArguments__Swift_Int8____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeByte__TypesOfArguments__Swift_Int8____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int8) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeByte(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeChar__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeChar__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UInt16) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeChar(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeDouble__TypesOfArguments__Swift_Double____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeDouble__TypesOfArguments__Swift_Double____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Double) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeDouble(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeEnum__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ enumDescriptor: Swift.UnsafeMutableRawPointer, _ index: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeEnum(enumDescriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: enumDescriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, index: index)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeFloat__TypesOfArguments__Swift_Float____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeFloat__TypesOfArguments__Swift_Float____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Float) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeFloat(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeInline__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ descriptor: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder = _self.encodeInline(descriptor: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: descriptor) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor)
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeInt__TypesOfArguments__Swift_Int32____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeInt__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int32) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeInt(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeLong__TypesOfArguments__Swift_Int64____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeLong__TypesOfArguments__Swift_Int64____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int64) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeLong(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeNotNullMark__reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeNotNullMark__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeNotNullMark()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeNull__reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeNull__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeNull()
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeShort__TypesOfArguments__Swift_Int16____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeShort__TypesOfArguments__Swift_Int16____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.Int16) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeShort(value: value)
+    return { _result; return true }()
+}
+
+@_cdecl("kotlinx_serialization_encoding_Encoder_encodeString__TypesOfArguments__Swift_String____reverse_swift")
+public func kotlinx_serialization_encoding_Encoder_encodeString__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.String) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder
+    let _result: Swift.Void = _self.encodeString(value: value)
+    return { _result; return true }()
+}
+
 @_cdecl("kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift")
 public func kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ decoder: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
     let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer.__createClassWrapper(externalRCRef: `self`)!
@@ -3105,6 +3567,20 @@ public func kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPol
     let _self = ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Optional<any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy> = _self.findPolymorphicSerializerOrNull(encoder: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: encoder) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, value: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: value))
     return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("kotlinx_serialization_internal_GeneratedSerializer_childSerializers__reverse_swift")
+public func kotlinx_serialization_internal_GeneratedSerializer_childSerializers__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer
+    let _result: ExportedKotlinPackages.kotlin.Array = _self.childSerializers()
+    return _result.__externalRCRef()
+}
+
+@_cdecl("kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers__reverse_swift")
+public func kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer
+    let _result: ExportedKotlinPackages.kotlin.Array = _self.typeParametersSerializers()
+    return _result.__externalRCRef()
 }
 
 @_cdecl("kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")

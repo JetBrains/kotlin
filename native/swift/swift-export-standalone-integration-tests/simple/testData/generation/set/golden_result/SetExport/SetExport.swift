@@ -2,10 +2,10 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Foo: KotlinRuntime.KotlinBase {
+public protocol Foo: KotlinRuntime.KotlinBase, SetExport._Foo {
 }
 @objc(_Foo)
-package protocol _Foo {
+public protocol _Foo {
 }
 @available(*, unavailable, message: "Declaration uses unsupported types")
 public var testSetFoo: Swift.Never {
@@ -89,4 +89,6 @@ extension SetExport.Foo where Self : KotlinRuntimeSupport._KotlinBridgeable {
 extension SetExport.Foo {
 }
 extension KotlinRuntimeSupport._KotlinExistential: SetExport.Foo where Wrapped : SetExport._Foo {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: SetExport._Foo {
 }

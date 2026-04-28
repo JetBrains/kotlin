@@ -318,6 +318,14 @@ private class BridgeFunctionDescriptor(
 
         val cLevelParams = listOfNotNull(selfParameter) + parameters
 
+        // Reverse bridges flip conversion direction, so every parameter and the return must have
+        // a bidirectional bridge. Forward-only bridges (e.g., some objc-bridged parameter types
+        // seen in kotlinx-serialization-core's interface methods) can't be reversed — silently
+        // skip the reverse bridge for such methods rather than trip the require() at codegen time.
+        val allBridgesBidirectional = cLevelParams.all { it.bridge is BidirectionalBridge } &&
+                returnType is BidirectionalBridge
+        if (!allBridgesBidirectional) return emptyList()
+
         return listOf(
             SirReverseFunctionBridge(
                 name = cBridgeName,
@@ -421,18 +429,22 @@ private class BridgeFunctionDescriptor(
 
             cLevelParams.forEach { param ->
                 val paramName = param.name.kotlinIdentifier
+                // Escape the shadowed name AFTER prefixing so identifiers like `_` (reserved alone,
+                // and also reserved as `__`, `___`, ...) round-trip to safe backticked Kotlin.
+                val shadowedName = "__${param.name}".kotlinIdentifier
                 require(param.bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
                 val converted = (param.bridge as BidirectionalBridge).inKotlinSources.kotlinToSwift(typeNamer, paramName)
                 if (converted != paramName) {
-                    add("    val __$paramName = $converted")
+                    add("    val $shadowedName = $converted")
                 }
             }
 
             val callArgs = cLevelParams.joinToString { param ->
                 val paramName = param.name.kotlinIdentifier
+                val shadowedName = "__${param.name}".kotlinIdentifier
                 require(param.bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
                 val converted = (param.bridge as BidirectionalBridge).inKotlinSources.kotlinToSwift(typeNamer, paramName)
-                if (converted != paramName) "__$paramName" else paramName
+                if (converted != paramName) shadowedName else paramName
             }
 
             require(returnType is BidirectionalBridge) { "Parameter bridge must be bidirectional" }

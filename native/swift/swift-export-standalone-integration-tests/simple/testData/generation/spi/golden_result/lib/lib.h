@@ -3,6 +3,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool InternalLibInterface_bar__reverse_swift(void * self);
+
 _Bool ExperimentalLibClass_bar(void * self);
 
 NSString * ExperimentalLibClass_foo_get(void * self);

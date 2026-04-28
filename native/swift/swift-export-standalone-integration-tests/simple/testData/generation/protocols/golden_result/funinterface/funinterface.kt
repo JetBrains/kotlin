@@ -7,9 +7,71 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(funinterface._FunctionalInterfaceWithLeadingUnderscore::class, "__FunctionalInterfaceWithLeadingUnderscore")
 @file:kotlin.native.internal.objc.BindClassToObjCName(funinterface.functionalInterfaceWithAlreadyLowercaseLeading::class, "_functionalInterfaceWithAlreadyLowercaseLeading")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("funinterface_FunctionalInterface_invoke__reverse_swift")
+internal external fun funinterface_FunctionalInterface_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(funinterface.FunctionalInterface::class, "invoke")
+public fun funinterface_FunctionalInterface_invoke__reverse(self: funinterface.FunctionalInterface): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = funinterface_FunctionalInterface_invoke__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift")
+internal external fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation::class, "invoke")
+public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse(self: funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift")
+internal external fun funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(funinterface._123FunctionalInterfaceWithLeadingNumbers::class, "invoke")
+public fun funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse(self: funinterface._123FunctionalInterfaceWithLeadingNumbers): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift")
+internal external fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation::class, "invoke")
+public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse(self: funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift")
+internal external fun funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(funinterface._FunctionalInterfaceWithLeadingUnderscore::class, "invoke")
+public fun funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse(self: funinterface._FunctionalInterfaceWithLeadingUnderscore): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift(__self)
+    return __result
+}
+
+@ImportedBridge("funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift")
+internal external fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(funinterface.functionalInterfaceWithAlreadyLowercaseLeading::class, "invoke")
+public fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse(self: funinterface.functionalInterfaceWithAlreadyLowercaseLeading): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(__self)
+    return __result
+}
 
 @ExportedBridge("funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

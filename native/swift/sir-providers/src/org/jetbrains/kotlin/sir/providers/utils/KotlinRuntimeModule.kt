@@ -62,6 +62,7 @@ public object KotlinRuntimeSupportModule : SirModule() {
         mutableListOf(
             kotlinError,
             kotlinBridgeable,
+            kotlinExistentialPenBox,
             kotlinExistential,
         )
     }
@@ -92,11 +93,25 @@ public object KotlinRuntimeSupportModule : SirModule() {
 
     public val kotlinBridgeableType: SirExistentialType = SirExistentialType(kotlinBridgeable)
 
+    /**
+     * Non-generic intermediate class between [KotlinRuntimeModule.kotlinBase] and [kotlinExistential].
+     * Hosts @objc marker-protocol conformances via per-module extensions, so that generic
+     * `_KotlinExistential<Wrapped>` inherits them rather than declaring them directly —
+     * Swift forbids a generic class from conforming to an @objc protocol, but inheriting
+     * the conformance from a non-generic ancestor is legal.
+     */
+    public val kotlinExistentialPenBox: SirClass = buildClass {
+        origin = KotlinRuntimeElement()
+        name = "_KotlinExistentialPenBox"
+        visibility = SirVisibility.PUBLIC
+        superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
+
     public val kotlinExistential: SirClass = buildClass {
         origin = KotlinRuntimeElement()
         name = "_KotlinExistential"
         visibility = SirVisibility.PUBLIC
-        superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
+        superClass = SirNominalType(kotlinExistentialPenBox)
         protocols.add(kotlinBridgeable)
     }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 }

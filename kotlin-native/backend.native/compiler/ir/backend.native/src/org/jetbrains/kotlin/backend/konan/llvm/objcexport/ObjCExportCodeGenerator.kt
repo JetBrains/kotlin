@@ -478,6 +478,14 @@ internal class ObjCExportCodeGenerator(
             }
         }
 
+        // The following two also contain stuff from swift-export
+        generationState.bindClassToObjCNameClassAdapters.forEach { (name, ptr) ->
+            placedClassAdapters.putIfAbsent(name, ptr)
+        }
+        generationState.bindClassToObjCNameInterfaceAdapters.forEach { (name, ptr) ->
+            placedInterfaceAdapters.putIfAbsent(name, ptr)
+        }
+
         fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, prefix: String) {
             val sortedAdapters = nameToAdapter.toList().sortedBy { it.first }.map {
                 it.second

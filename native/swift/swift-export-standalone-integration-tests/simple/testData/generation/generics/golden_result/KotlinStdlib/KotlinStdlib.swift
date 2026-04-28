@@ -50,23 +50,27 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Comparable {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
+}
 extension ExportedKotlinPackages.kotlin.collections {
-    public protocol Iterator: KotlinRuntime.KotlinBase {
+    public protocol Iterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterator {
         func hasNext() -> Swift.Bool
         func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     }
     @objc(_Iterator)
-    package protocol _Iterator {
+    public protocol _Iterator {
     }
 }
 extension ExportedKotlinPackages.kotlin {
-    public protocol Comparable: KotlinRuntime.KotlinBase {
+    public protocol Comparable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._Comparable {
         func _compareTo(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Int32
     }
     @objc(_Comparable)
-    package protocol _Comparable {
+    public protocol _Comparable {
     }
     public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
@@ -111,4 +115,24 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
+}
+@_cdecl("kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ other: Swift.UnsafeMutableRawPointer?) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.Comparable
+    let _result: Swift.Int32 = _self._compareTo(other: { switch other { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("kotlin_collections_Iterator_hasNext__reverse_swift")
+public func kotlin_collections_Iterator_hasNext__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    let _result: Swift.Bool = _self.hasNext()
+    return _result
+}
+
+@_cdecl("kotlin_collections_Iterator_next__reverse_swift")
+public func kotlin_collections_Iterator_next__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.collections.Iterator
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.next()
+    return _result.map { it in it.__externalRCRef() } ?? nil
 }

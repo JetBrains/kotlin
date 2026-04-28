@@ -4,9 +4,21 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(RegularLibClass::class, "3lib15RegularLibClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(InternalLibInterface::class, "_InternalLibInterface")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("InternalLibInterface_bar__reverse_swift")
+internal external fun InternalLibInterface_bar__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(InternalLibInterface::class, "bar")
+public fun InternalLibInterface_bar__reverse(self: InternalLibInterface): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __result = InternalLibInterface_bar__reverse_swift(__self)
+    return run<Unit> { __result }
+}
 
 @ExportedBridge("ExperimentalLibClass_bar")
 @OptIn(ExperimentalLibApi::class)

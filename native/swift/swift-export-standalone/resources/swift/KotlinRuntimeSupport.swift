@@ -19,7 +19,11 @@ public protocol _KotlinBridgeable {
     func __externalRCRef() -> UnsafeMutableRawPointer!
 }
 
-public class _KotlinExistential<Wrapped>: KotlinBase {
+public class _KotlinExistentialPenBox: KotlinBase {
+
+}
+
+public class _KotlinExistential<Wrapped>: _KotlinExistentialPenBox {
 
 }
 

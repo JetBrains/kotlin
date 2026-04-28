@@ -53,10 +53,10 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         }
     }
 }
-public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
+public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase, main._InterfaceWithFactory {
 }
 @objc(_InterfaceWithFactory)
-package protocol _InterfaceWithFactory {
+public protocol _InterfaceWithFactory {
 }
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {
@@ -147,6 +147,8 @@ extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBri
 extension main.InterfaceWithFactory {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFactory {
 }
 extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {

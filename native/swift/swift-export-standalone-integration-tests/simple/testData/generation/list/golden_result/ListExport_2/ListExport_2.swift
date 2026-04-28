@@ -10,11 +10,13 @@ extension ExportedKotlinPackages.list2.MyList {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.list2.MyList where Wrapped : ExportedKotlinPackages.list2._MyList {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.list2._MyList {
+}
 extension ExportedKotlinPackages.list2 {
-    public protocol MyList: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.List {
+    public protocol MyList: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.List, ExportedKotlinPackages.list2._MyList {
     }
     @objc(_MyList)
-    package protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
+    public protocol _MyList: ExportedKotlinPackages.kotlin.collections._List {
     }
     public static func testListOptAny(
         l: any ExportedKotlinPackages.list2.MyList

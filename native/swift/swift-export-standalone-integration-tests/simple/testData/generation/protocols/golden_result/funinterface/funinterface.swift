@@ -50,6 +50,18 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funint
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading where Wrapped : ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface._FunctionalInterface {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface.__FunctionalInterfaceWithLeadingUnderscore {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface.__123FunctionalInterfaceWithLeadingNumbers {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface._XMLFunctionalInterfaceWithLeadingAbbreviation {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface.__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
+}
 extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke(self.__externalRCRef())
@@ -58,40 +70,40 @@ extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowe
 extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading {
 }
 extension ExportedKotlinPackages.funinterface {
-    public protocol FunctionalInterface: KotlinRuntime.KotlinBase {
+    public protocol FunctionalInterface: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface._FunctionalInterface {
         func callAsFunction() -> Swift.Int32
     }
-    public protocol XMLFunctionalInterfaceWithLeadingAbbreviation: KotlinRuntime.KotlinBase {
+    public protocol XMLFunctionalInterfaceWithLeadingAbbreviation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface._XMLFunctionalInterfaceWithLeadingAbbreviation {
         func callAsFunction() -> Swift.Int32
     }
-    public protocol _123FunctionalInterfaceWithLeadingNumbers: KotlinRuntime.KotlinBase {
+    public protocol _123FunctionalInterfaceWithLeadingNumbers: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.__123FunctionalInterfaceWithLeadingNumbers {
         func callAsFunction() -> Swift.Int32
     }
-    public protocol _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation: KotlinRuntime.KotlinBase {
+    public protocol _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
         func callAsFunction() -> Swift.Int32
     }
     @objc(_FunctionalInterface)
-    package protocol _FunctionalInterface {
+    public protocol _FunctionalInterface {
     }
-    public protocol _FunctionalInterfaceWithLeadingUnderscore: KotlinRuntime.KotlinBase {
+    public protocol _FunctionalInterfaceWithLeadingUnderscore: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.__FunctionalInterfaceWithLeadingUnderscore {
         func callAsFunction() -> Swift.Int32
     }
     @objc(_XMLFunctionalInterfaceWithLeadingAbbreviation)
-    package protocol _XMLFunctionalInterfaceWithLeadingAbbreviation {
+    public protocol _XMLFunctionalInterfaceWithLeadingAbbreviation {
     }
     @objc(__123FunctionalInterfaceWithLeadingNumbers)
-    package protocol __123FunctionalInterfaceWithLeadingNumbers {
+    public protocol __123FunctionalInterfaceWithLeadingNumbers {
     }
     @objc(__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation)
-    package protocol __123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
+    public protocol __123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
     }
     @objc(__FunctionalInterfaceWithLeadingUnderscore)
-    package protocol __FunctionalInterfaceWithLeadingUnderscore {
+    public protocol __FunctionalInterfaceWithLeadingUnderscore {
     }
     @objc(_functionalInterfaceWithAlreadyLowercaseLeading)
-    package protocol _functionalInterfaceWithAlreadyLowercaseLeading {
+    public protocol _functionalInterfaceWithAlreadyLowercaseLeading {
     }
-    public protocol functionalInterfaceWithAlreadyLowercaseLeading: KotlinRuntime.KotlinBase {
+    public protocol functionalInterfaceWithAlreadyLowercaseLeading: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
         func callAsFunction() -> Swift.Int32
     }
     public final class FunctorClass: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface._FunctionalInterface {
@@ -158,4 +170,45 @@ extension ExportedKotlinPackages.funinterface {
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation
     }
+}
+@_cdecl("funinterface_FunctionalInterface_invoke__reverse_swift")
+public func funinterface_FunctionalInterface_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.funinterface.FunctionalInterface
+    let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
+}
+
+@_cdecl("funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift")
+public func funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation
+    let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
+}
+
+@_cdecl("funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift")
+public func funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers
+    let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
+}
+
+@_cdecl("funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift")
+public func funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation
+    let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
+}
+
+@_cdecl("funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift")
+public func funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore
+    let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
+}
+
+@_cdecl("funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift")
+public func funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading
+    let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
 }

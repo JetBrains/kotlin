@@ -6,48 +6,48 @@ import KotlinStdlib
 public typealias BFun = (any main.B) -> Swift.Void
 public typealias BoxFun = () -> main.Box
 public typealias BoxFunIn = (main.Box) -> Swift.Int32
-public protocol A: KotlinRuntime.KotlinBase {
+public protocol A: KotlinRuntime.KotlinBase, main._A {
     var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get
     }
 }
-public protocol B: KotlinRuntime.KotlinBase {
+public protocol B: KotlinRuntime.KotlinBase, main._B {
     var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get
     }
 }
-public protocol Consumer: KotlinRuntime.KotlinBase {
+public protocol Consumer: KotlinRuntime.KotlinBase, main._Consumer {
     func consume(
         item: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void
 }
-public protocol ConsumerProducer: KotlinRuntime.KotlinBase, main.Consumer, main.Producer {
+public protocol ConsumerProducer: KotlinRuntime.KotlinBase, main.Consumer, main.Producer, main._ConsumerProducer {
 }
-public protocol Processor: KotlinRuntime.KotlinBase {
+public protocol Processor: KotlinRuntime.KotlinBase, main._Processor {
     func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
-public protocol Producer: KotlinRuntime.KotlinBase {
+public protocol Producer: KotlinRuntime.KotlinBase, main._Producer {
     func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
 }
 @objc(_A)
-package protocol _A {
+public protocol _A {
 }
 @objc(_B)
-package protocol _B {
+public protocol _B {
 }
 @objc(_Consumer)
-package protocol _Consumer {
+public protocol _Consumer {
 }
 @objc(_ConsumerProducer)
-package protocol _ConsumerProducer: main._Consumer, main._Producer {
+public protocol _ConsumerProducer: main._Consumer, main._Producer {
 }
 @objc(_Processor)
-package protocol _Processor {
+public protocol _Processor {
 }
 @objc(_Producer)
-package protocol _Producer {
+public protocol _Producer {
 }
 public final class AnyConsumer: KotlinRuntime.KotlinBase {
     public init() {
@@ -409,6 +409,39 @@ extension KotlinRuntimeSupport._KotlinExistential: main.A where Wrapped : main._
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.B where Wrapped : main._B {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Producer {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Consumer {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Processor {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._ConsumerProducer {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._A {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._B {
+}
+@_cdecl("Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ item: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Consumer
+    let _result: Swift.Void = _self.consume(item: { switch item { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+public func Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ input: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Processor
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.process(input: { switch input { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("Producer_produce__reverse_swift")
+public func Producer_produce__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Producer
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.produce()
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
 @_cdecl("StringProducer_produce__reverse_swift")
 public func StringProducer_produce__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
     let _self = main.StringProducer.__createClassWrapper(externalRCRef: `self`)!
