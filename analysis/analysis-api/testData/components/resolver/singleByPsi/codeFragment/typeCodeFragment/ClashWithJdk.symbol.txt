@@ -3,5 +3,5 @@ KtNameReferenceExpression(134,146): 'StringBuffer'
   usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      java/lang/StringBuffer
+      example/StringBuffer
     ]

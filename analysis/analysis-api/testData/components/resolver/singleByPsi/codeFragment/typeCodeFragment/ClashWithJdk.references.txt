@@ -4,4 +4,4 @@ KtNameReferenceExpression(134,146): 'StringBuffer'
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionSuccess
     symbols:
-      (in java.lang) class StringBuffer : java.lang.AbstractStringBuilder(), java.io.Serializable, kotlin.CharSequence
+      (in example) class StringBuffer

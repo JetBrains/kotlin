@@ -40,26 +40,18 @@ Tower Data Context:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|example/Foo|
                 Type: example.Foo
     Element 18
-        Scope: FirDefaultStarImportingScope
-    Element 19
         Scope: FirExplicitStarImportingScope
-    Element 20
-        Scope: FirDefaultSimpleImportingScope
-    Element 21
-        Scope: FirDefaultSimpleImportingScope
-    Element 22
-        Scope: FirPackageMemberScope
-    Element 23
+    Element 19
         Scope: FirExplicitSimpleImportingScope
+    Element 20
+        Scope: FirLocalScope
+    Element 21
+        Scope: FirLocalScope
+    Element 22
+        Scope: FirLocalScope
+    Element 23
+        Scope: FirLocalScope
     Element 24
-        Scope: FirLocalScope
-    Element 25
-        Scope: FirLocalScope
-    Element 26
-        Scope: FirLocalScope
-    Element 27
-        Scope: FirLocalScope
-    Element 28
         Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lval nString: R|kotlin/String|
