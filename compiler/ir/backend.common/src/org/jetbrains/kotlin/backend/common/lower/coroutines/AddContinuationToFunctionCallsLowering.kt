@@ -78,7 +78,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
-                    getReturnType(expression, newFun),
+                    suspendFunLoweredReturnType(expression, newFun),
                     newFun.symbol,
                     origin = expression.origin,
                     superQualifierSymbol = expression.superQualifierSymbol,
@@ -91,7 +91,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
         })
     }
 
-    protected open fun getReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType {
+    protected open fun suspendFunLoweredReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType {
         return newFun.returnType
     }
 
