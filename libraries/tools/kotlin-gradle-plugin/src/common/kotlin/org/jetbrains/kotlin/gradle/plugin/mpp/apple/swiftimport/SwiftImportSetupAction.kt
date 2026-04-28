@@ -279,7 +279,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         project.afterEvaluate {
-            if (swiftPMImportExtension.swiftPMDependencies.isEmpty()) return@afterEvaluate
             val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
             val normalizedDumpKey = swiftPMImportExtension.normalizedDumpTaskFingerprint(
                 xcodebuildPlatform = targetPlatform,
