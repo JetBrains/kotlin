@@ -1,0 +1,2 @@
+KtNameReferenceExpression(134,146): 'StringBuffer'
+  NO_CANDIDATES

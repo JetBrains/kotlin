@@ -2169,6 +2169,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
       }
 
       @Test
+      @TestMetadata("ClashWithJdk.kt")
+      public void testClashWithJdk() {
+        run("ClashWithJdk.kt");
+      }
+
+      @Test
       @TestMetadata("FromContextFile.kt")
       public void testFromContextFile() {
         run("FromContextFile.kt");
