@@ -28,7 +28,7 @@ internal fun <R, T> createCoroutineUninterceptedIntrinsic1(
     f.startCoroutineUninterceptedOrReturn(receiver, completion)
 }
 
-// Is replaced by Stack Switching intrinsic when -Xwasm-coroutines-stack-switching passed
+// Is not used by Stack Switching Implementation
 @Suppress("UNCHECKED_CAST")
 private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
