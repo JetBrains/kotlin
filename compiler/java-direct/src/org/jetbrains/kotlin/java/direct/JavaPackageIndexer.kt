@@ -72,6 +72,25 @@ internal class JavaPackageIndexer(
                 classesByName.getOrPut(className) { mutableListOf() }.add(entry)
             }
         }
+
+        // Top-level `.java` files of each directory root that declare a non-root package: register
+        // them under their declared package so they're discoverable even when the disk path does
+        // not mirror the package. This covers the test infrastructure case without implementing
+        // full scan for cases when file path does not match package structure.
+        for (dirRoot in dirRoots) {
+            for (file in dirRoot.children ?: continue) {
+                if (file.isDirectory) continue
+                if (!file.name.endsWith(".java")) continue
+                if (file.name == "package-info.java") continue
+                val entry = tryBuildFileEntry(file) ?: continue
+                if (entry.packageFqName.isRoot) continue
+                val classesByName = fileRootIndexBuilder.getOrPut(entry.packageFqName) { HashMap() }
+                for (className in entry.topLevelClassNames) {
+                    classesByName.getOrPut(className) { mutableListOf() }.add(entry)
+                }
+            }
+        }
+
         fileRootIndex = fileRootIndexBuilder
     }
 
