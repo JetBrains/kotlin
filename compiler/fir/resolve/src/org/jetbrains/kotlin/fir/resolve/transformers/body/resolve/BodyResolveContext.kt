@@ -794,8 +794,13 @@ class BodyResolveContext(
         val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
         val towerDataContext = codeFragmentContext.towerDataContext
 
-        val fragmentImportTowerDataElements = computeImportingScopes(file, holder.session, holder.scopeSession)
-            .map { it.asTowerDataElement(isLocal = false) }
+        val fragmentImportTowerDataElements = computeImportingScopes(
+            file,
+            holder.session,
+            holder.scopeSession,
+            includeDefaultImports = false,
+            includePackageImport = false
+        ).map { it.asTowerDataElement(isLocal = false) }
 
         val base = towerDataContext
             .addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)
