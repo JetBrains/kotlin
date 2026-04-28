@@ -112,7 +112,6 @@ val copyMinimalSources by tasks.registering(Sync::class) {
 
     from("src/stubs/jvm/builtins") {
         include("**")
-        exclude("kotlin/reflect/**")
         into("src/jvm")
     }
 
@@ -132,6 +131,10 @@ val copyMinimalSources by tasks.registering(Sync::class) {
         )
         exclude(
             "src/kotlin/reflect/TypesJVM.kt",
+            "src/kotlin/reflect/KClass.kt",
+            "src/kotlin/reflect/KFunction.kt",
+            "src/kotlin/reflect/KProperty.kt",
+            "src/kotlin/reflect/KType.kt",
             "builtins/Char.kt",
             "builtins/Collections.kt"
         )
