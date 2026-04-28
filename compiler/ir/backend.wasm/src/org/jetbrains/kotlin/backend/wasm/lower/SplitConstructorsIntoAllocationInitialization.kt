@@ -72,9 +72,30 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
             backendContext.originalCtorToInitNoAllocFnMap += originalConstructor.symbol to initializeDontAllocateFunction.symbol
 
             // TODO probably need to remap types like below with type parameters being copied
-            initializeDontAllocateFunction.body = originalConstructor.body!!.deepCopyWithSymbols(initializeDontAllocateFunction)
+//            initializeDontAllocateFunction.body = originalConstructor.body!!.deepCopyWithSymbols(initializeDontAllocateFunction)
+            initializeDontAllocateFunction.body = originalConstructor.body!!
+            // wont use this anymore
+            originalConstructor.body = null
 
-            // TODO missing anything else that needs to be copied?
+            assert(initializeDontAllocateFunction.parameters.isEmpty())
+
+            // add the explicit `this` parameter for initNoAlloc, by creating it as a dispatch parameter and then rewriting it
+            val dispatchReceiverParameter = initializeDontAllocateFunction.createDispatchReceiverParameterWithClassParent()
+            val correctedParameter = dispatchReceiverParameter.also { it.kind = IrParameterKind.Regular }
+            initializeDontAllocateFunction.parameters += correctedParameter
+
+            initializeDontAllocateFunction.parameters += originalConstructor.parameters
+
+            for (param in initializeDontAllocateFunction.parameters) {
+                param.parent = initializeDontAllocateFunction
+            }
+
+            // need to remap initNoAlloc parameter in the body, after changing it
+            val parameterMapping = mapOf(irClass.thisReceiver!!.symbol to initializeDontAllocateFunction.parameters[0].symbol)
+            initializeDontAllocateFunction.body?.transformChildrenVoid(ValueRemapper(parameterMapping))
+
+            // patch parents
+            initializeDontAllocateFunction.body?.patchDeclarationParents(initializeDontAllocateFunction)
 
             val newConstructorInitializeDoAllocate = irClass.addConstructor {
                 updateFrom(originalConstructor)
@@ -93,48 +114,16 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
 
             backendContext.originalCtorToSplitCtorMap += originalConstructor.symbol to newConstructorInitializeDoAllocate.symbol
 
-            assert(initializeDontAllocateFunction.parameters.isEmpty())
+            // for initNoAlloc, parameters are moved, so only need to copy these
+            newConstructorInitializeDoAllocate.copyParametersFrom(originalConstructor)
 
 
-            // add the explicit `this` parameter for initNoAlloc, by creating it as a dispatch parameter and then rewriting it
-            val dispatchReceiverParameter = initializeDontAllocateFunction.createDispatchReceiverParameterWithClassParent()
-            val correctedParameter = dispatchReceiverParameter.also { it.kind = IrParameterKind.Regular }
-            initializeDontAllocateFunction.parameters += correctedParameter
-
-//            initializeDontAllocateFunction.parameters += backendContext.irFactory.createValueParameter(
-//                startOffset = TODO(),
-//                endOffset = TODO(),
-//                origin = TODO(),
-//                kind = TODO(),
-//                name = TODO(),
-//                type = TODO(),
-//                isAssignable = TODO(),
-//                symbol = TODO(),
-//                varargElementType = TODO(),
-//                isCrossinline = TODO(),
-//                isNoinline = TODO(),
-//                isHidden = TODO()
-//            )
-
-
-            // copy "signatures" to both new functions
+            // copy non-parameter "signatures" to both new functions
             for (newlyCreated in listOf(newConstructorInitializeDoAllocate, initializeDontAllocateFunction)) {
                 newlyCreated.copyAnnotationsFrom(originalConstructor)
                 newlyCreated.copyTypeParametersFrom(originalConstructor)
-                newlyCreated.copyParametersFrom(originalConstructor)
             }
 
-            // only initNoAlloc needs to have the parameters remapped, as the body of the new constructor is simple and defined manually below
-            val initializeDontAllocateFunctionParameterSymbolsWithoutThis =
-                initializeDontAllocateFunction.parameters.map { it.symbol }.drop(1)
-            val parameterMapping =
-                originalConstructor.parameters.map { it.symbol }
-                    .zip(initializeDontAllocateFunctionParameterSymbolsWithoutThis)
-                    .toMap()
-                    // also need to map the this receiver to the new parameter
-                    .plus(irClass.thisReceiver!!.symbol to initializeDontAllocateFunction.parameters[0].symbol)
-
-            initializeDontAllocateFunction.body?.transformChildrenVoid(ValueRemapper(parameterMapping))
 
             assert(originalConstructor.dispatchReceiverParameter == null)
             assert(newConstructorInitializeDoAllocate.dispatchReceiverParameter == null)
