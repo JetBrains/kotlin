@@ -18,7 +18,6 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
     internal var result: Any? = null
     @UsedFromCompilerGeneratedCode
     internal var exception: Throwable? = null
-    protected var finallyPath: Array<Int>? = null
 
     protected open val _context: CoroutineContext? = resultContinuation?.context
     public override val context: CoroutineContext get() = _context!!
@@ -29,7 +28,9 @@ internal abstract class CoroutineImpl<T, R>(protected val resultContinuation: Co
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
 
-    // remove after bootstrap
+    // Remove after bootstrap.
+    // By now bootstrap uses older symbols resolver that does not
+    // resolve CoroutineImpl to CoroutineImplStateMachine/StackSwitching
     @Suppress("UNCHECKED_CAST")
     override fun resumeWith(result: Result<T>) {
 

@@ -34,10 +34,6 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
         this.result = result.getOrNull()
         exception = result.exceptionOrNull()
 
-        if (exception != null) {
-            state = exceptionState
-        }
-
         try {
             val outcome = doResume()
             this.result = outcome
@@ -98,7 +94,7 @@ internal class WasmContinuation<T, R>(
             resumeThrowImpl(it, wasmCont)
         } ?: resumeWithImpl(this, wasmCont)
 
-        if (resumeResult == COROUTINE_SUSPENDED) {
+        if (resumeResult === COROUTINE_SUSPENDED) {
             wasSuspended = true
             return COROUTINE_SUSPENDED
         }
