@@ -47,11 +47,11 @@ class FunctionHeapTypeSymbol(val type: IdSignature) : Type.FunctionType() {
 class ContHeapTypeSymbol(val arity: Int) : Type.ContType() {
     override fun hashCode(): Int = arity
     override fun equals(other: Any?): Boolean = other is ContHeapTypeSymbol && arity == other.arity
-    override fun toString(): String = "ContTypeSymbol:$arity"
+    override fun toString(): String = "ContHeapTypeSymbol:$arity"
 }
 
 class ContFunctionHeapTypeSymbol(val arity: Int) : Type.ContFunctionType() {
     override fun hashCode(): Int = arity
     override fun equals(other: Any?): Boolean = other is ContFunctionHeapTypeSymbol && arity == other.arity
-    override fun toString(): String = "ContTypeSymbol:$arity"
+    override fun toString(): String = "ContFunctionHeapTypeSymbol:$arity"
 }
