@@ -18,8 +18,8 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
-    implementation(libs.org.jetbrains.syntax.api)
-    implementation(libs.org.jetbrains.java.syntax.jvm)
+    compileOnly(libs.org.jetbrains.syntax.api)
+    compileOnly(libs.org.jetbrains.java.syntax.jvm)
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
 
@@ -37,6 +37,8 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.org.jetbrains.syntax.api)
+    testRuntimeOnly(libs.org.jetbrains.java.syntax.jvm)
 }
 
 sourceSets {
@@ -47,11 +49,7 @@ sourceSets {
 
 optInToExperimentalCompilerApi()
 
-publish()
-
 runtimeJar()
-sourcesJar()
-javadocJar()
 
 projectTests {
     testTask(

@@ -288,6 +288,7 @@ val fe10CompilerModules = arrayOf(
     ":kotlin-util-klib-metadata",
     ":compiler:backend",
     ":compiler:javac-wrapper",
+    ":kotlin-java-direct",
     ":compiler:incremental-compilation-impl",
     ":js:js.ast",
     ":js:js.sourcemap",

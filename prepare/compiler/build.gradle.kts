@@ -132,6 +132,11 @@ configurations.all {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
+}
+
 dependencies {
     api(kotlinStdlib("jdk8"))
     api(project(":kotlin-script-runtime"))
@@ -220,6 +225,9 @@ dependencies {
     fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
+
+    fatJarContents(libs.org.jetbrains.syntax.api) { isTransitive = false }
+    fatJarContents(libs.org.jetbrains.java.syntax.jvm) { isTransitive = false }
 
     // Used by JS parser
     fatJarContents(libs.antlr.runtime) { isTransitive = false }
