@@ -114,9 +114,9 @@ open class AbstractFirWasmJsCodegenBoxTest(
     }
 }
 
-open class AbstractFirWasmJsStackSwitchingCodegenBoxTest(
-    pathToTestDir: String = "compiler/testData/codegen/",
-    testGroupOutputDirPrefix: String = "codegen/firBox/stackSwitching"
+open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
+    testGroupOutputDirPrefix: String = "codegen/firBox/coroutinesStackSwitching"
 ) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
 
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
