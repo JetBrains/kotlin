@@ -865,7 +865,6 @@ class BodyGenerator(
                     functionTypeReference
                 )
             }
-            body.commentGroupEnd()
         } else {
             // Static function call
             body.buildCall(declarationCodegenContext.referenceFunction(function.symbol), location)
@@ -893,7 +892,7 @@ class BodyGenerator(
 
         val specialITableSlot = backendContext.specialSlotITableTypes.indexOf(klassSymbol)
         if (specialITableSlot != -1) {
-            body.commentGroupStart { "Special Interface call: ${function.fqNameWhenAvailable}" }
+            body.commentGroupStart { "Special Interface lookup: ${function.fqNameWhenAvailable}" }
             generateSpecialITableFromAny(location)
             body.buildStructGet(
                 Synthetics.GcTypes.specialSlotITableType,
@@ -903,7 +902,7 @@ class BodyGenerator(
         } else if (klassSymbol.isFunction()) {
             val functionalInterfaceSlot = getFunctionalInterfaceSlot(klassSymbol.owner)
 
-            body.commentGroupStart { "Functional Interface call: ${function.fqNameWhenAvailable}" }
+            body.commentGroupStart { "Functional Interface lookup: ${function.fqNameWhenAvailable}" }
             generateSpecialITableFromAny(location)
             body.buildStructGet(
                 Synthetics.GcTypes.specialSlotITableType,
@@ -917,7 +916,7 @@ class BodyGenerator(
                 Synthetics.GcTypes.wasmAnyArrayType
             )
         } else {
-            body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
+            body.commentGroupStart { "Interface lookup: ${function.fqNameWhenAvailable}" }
             body.buildConstI64(linkerDataContext.referenceTypeId(klassSymbol), location)
             body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
         }
@@ -926,6 +925,7 @@ class BodyGenerator(
         val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klassSymbol).methods
             .indexOfFirst { it.function == function }
         body.buildStructGet(vTableGcTypeReference, vfSlot, location)
+        body.commentGroupEnd()
     }
 
     private fun generateRefCast(fromType: IrType, toType: IrType, isRefNullCast: Boolean, location: SourceLocation) {
@@ -1231,7 +1231,6 @@ class BodyGenerator(
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
                     // Throwable
                     body.buildGetLocal(objectToThrow, location)
-
                     if (backendContext.isWasmJsTarget) {
                         body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getJsError), location)
                     }
@@ -1257,7 +1256,6 @@ class BodyGenerator(
                 val zeroArgContType = typeCodegenContext.referenceHeapContType(1)
 
                 body.buildFunctionTypedBlock("on_suspend", typeCodegenContext.resumeBlockTypeSymbol) { idx ->
-                    // result: Result<T>
                     body.buildGetLocal(kotlinContinuation, location)
                     body.buildGetLocal(wasmContinuation, location)
                     val contHandle = body.createNewContHandle(contTagId, idx)
@@ -1698,7 +1696,6 @@ class BodyGenerator(
             else -> parentClass
         }
         generateInterfaceVTableLookup(function, klass.symbol, location)
-        body.commentGroupEnd()
     }
 
     // Return true if function is recognized as intrinsic.
