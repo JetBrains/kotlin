@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
@@ -26,6 +27,7 @@ abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
      */
     internal abstract val platform: Property<BinaryenPlatform>
 
+    @ExperimentalWasmRuntimeDsl
     final override val env: Provider<BinaryenEnv> = produceEnv()
 
     override val executable: Provider<String> = env.map { it.executable }

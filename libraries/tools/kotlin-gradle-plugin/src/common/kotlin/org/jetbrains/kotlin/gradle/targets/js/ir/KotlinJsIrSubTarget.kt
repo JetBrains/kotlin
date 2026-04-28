@@ -9,6 +9,7 @@ import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
@@ -61,18 +62,6 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    internal fun configure() {
-        target.compilations.configureEach { compilation ->
-            compilation.compileTaskProvider.configure { task ->
-                task.compilerOptions {
-                    freeCompilerArgs.add(compilation.outputModuleName.map { "$PER_MODULE_OUTPUT_NAME=$it" })
-                }
-            }
-        }
-
-        configureTests()
-    }
-
     private val produceBinary: Unit by lazy {
         configureMainCompilation()
     }
@@ -85,10 +74,15 @@ abstract class KotlinJsIrSubTarget(
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
+    @ExperimentalWasmRuntimeDsl
+    fun addSubTargetConfigurator(configurator: SubTargetConfigurator<*, *>) {
+        subTargetConfigurators.add(configurator)
+    }
+
     internal fun disambiguateCamelCased(vararg names: String?): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
-    private fun configureTests() {
+    internal fun configureTests() {
         testRuns = project.objects.domainObjectContainer(KotlinJsPlatformTestRun::class.java) { name ->
             KotlinJsPlatformTestRun(name, target)
         }.also {

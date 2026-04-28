@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnv
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
@@ -26,6 +27,7 @@ abstract class BaseNodeJsEnvSpec : EnvSpec<NodeJsEnv>() {
      */
     internal abstract val platform: Property<Platform>
 
+    @ExperimentalWasmRuntimeDsl
     final override val env: Provider<NodeJsEnv> = produceEnv()
 
     override val executable: Provider<String> = env.map { it.executable }

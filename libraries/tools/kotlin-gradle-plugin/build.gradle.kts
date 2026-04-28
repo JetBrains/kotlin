@@ -31,6 +31,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
+                "org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
@@ -96,6 +97,7 @@ binaryCompatibilityValidator {
             "org.jetbrains.kotlin.gradle.testing.internal",
         )
         ignoredMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+        ignoredMarkers.add("org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl")
 
         inputClasses.from(project.sourceSets.main.map { it.output.classesDirs })
         inputClasses.from(project.sourceSets.common.map { it.output.classesDirs })

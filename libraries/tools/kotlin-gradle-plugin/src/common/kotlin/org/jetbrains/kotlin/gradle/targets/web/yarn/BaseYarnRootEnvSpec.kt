@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.web.yarn
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
@@ -61,6 +62,7 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
      */
     abstract val resolutions: ListProperty<YarnResolution>
 
+    @ExperimentalWasmRuntimeDsl
     final override val env: Provider<YarnEnv> = produceEnv()
 
     override val executable: Provider<String> = env.map { it.executable }

@@ -11,6 +11,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.ExperimentalWasmRuntimeDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
@@ -59,9 +60,13 @@ constructor(
     private val propertiesProvider = PropertiesProvider(project)
     internal val shouldGenerateTypeScriptDefinitions: Property<Boolean> = project.objects.property<Boolean>(false)
 
-    override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary> = project.objects.domainObjectContainer(
-        KotlinJsIrSubTargetWithBinary::class.java
-    )
+    override val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTarget> = project.objects.domainObjectContainer(
+        KotlinJsIrSubTarget::class.java
+    ).also {
+        it.configureEach {
+            it.configureSubTarget()
+        }
+    }
 
     override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
         project.objects.domainObjectContainer(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
@@ -153,7 +158,7 @@ constructor(
             }
     }
 
-    private fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+    private fun <T : KotlinJsIrSubTarget> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
         val subTarget = project.objects.newInstance(type, this).also(configure)
         subTargets.add(subTarget)
         return subTarget
@@ -211,10 +216,9 @@ constructor(
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(SwcConfigurator(this))
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
+            addSubTargetConfigurator(SwcConfigurator(this))
+            addSubTargetConfigurator(LibraryConfigurator(this))
+            addSubTargetConfigurator(WebpackConfigurator(this))
         }
     }
 
@@ -234,10 +238,9 @@ constructor(
         }
 
         addSubTarget(KotlinNodeJsIr::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(SwcConfigurator(this))
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(NodeJsEnvironmentConfigurator(this))
+            addSubTargetConfigurator(SwcConfigurator(this))
+            addSubTargetConfigurator(LibraryConfigurator(this))
+            addSubTargetConfigurator(NodeJsEnvironmentConfigurator(this))
         }
     }
 
@@ -256,16 +259,23 @@ constructor(
         )
 
         addSubTarget(KotlinD8Ir::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
+            addSubTargetConfigurator(LibraryConfigurator(this))
+            addSubTargetConfigurator(D8EnvironmentConfigurator(this))
         }
     }
 
     override val d8: KotlinWasmD8Dsl by d8LazyDelegate
 
     private fun KotlinJsIrSubTarget.configureSubTarget() {
-        configure()
+        target.compilations.configureEach { compilation ->
+            compilation.compileTaskProvider.configure { task ->
+                task.compilerOptions {
+                    freeCompilerArgs.add(compilation.outputModuleName.map { "$PER_MODULE_OUTPUT_NAME=$it" })
+                }
+            }
+        }
+
+        configureTests()
     }
 
     override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {

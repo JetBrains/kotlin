@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinD8Ir
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTargetWithBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
 import org.jetbrains.kotlin.gradle.utils.withType
 
@@ -25,8 +26,8 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
      * Container for all execution environments enabled for this target.
      * Currently, the only supported environments are Node.js, browser, and D8.
      */
-    // note: this should be annotated with @InternalKotlinGradlePluginApi
-    val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary>
+    @InternalKotlinGradlePluginApi
+    val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTarget>
 
     /**
      * Returns the configuration options for D8 execution environment

@@ -62,7 +62,7 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
      * Currently, the only supported environments are Node.js and browser.
      */
     @InternalKotlinGradlePluginApi
-    val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTargetWithBinary>
+    val subTargets: NamedDomainObjectContainer<KotlinJsIrSubTarget>
 
     /**
      * Internal property. It is not intended to be used by build script or plugin authors.
