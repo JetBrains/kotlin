@@ -69,7 +69,7 @@ internal fun <T> checkNotPendingSuspend(wasmCont: WasmContinuation<T, T>, comple
     if (!wasmCont.wasmContBox.pendingSuspend) {
         // Block returned COROUTINE_SUSPENDED but resume was called synchronously.
         // Signal the outer that result goes via completion, not direct return.
-        (completion as? WasmContinuation<*, *>)?.wasSuspended = true
+        wasm_ref_cast_null<WasmContinuation<*, *>>(completion).wasSuspended = true
     } else {
         wasmCont.wasmContBox.pendingSuspend = false
         suspendIntrinsic(wasmCont.wasmContBox)
