@@ -56,6 +56,8 @@
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn org.xerial.snappy.SnappyBundleActivator
 -dontwarn gnu.trove.TObjectHashingStrategy
+-dontwarn fleet.util.multiplatform.Actual
+-dontwarn java.nio.CharBuffer
 
 # Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.*

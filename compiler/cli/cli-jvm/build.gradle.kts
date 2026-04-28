@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":compiler:javac-wrapper"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-java-direct"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
