@@ -19,6 +19,12 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.native.interop.gen.jvm.CCallMode
 import org.jetbrains.kotlin.native.interop.indexer.*
 
+private fun ObjCMethod.isAvailableInKotlinApi(): Boolean =
+        availability != Availability.NOT_AVAILABLE
+
+private fun Sequence<ObjCMethod>.availableInKotlinApi(): Sequence<ObjCMethod> =
+        filter { it.isAvailableInKotlinApi() }
+
 internal fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean = false): List<String> {
     val selectorParts = this.selector.split(":")
 
@@ -321,6 +327,7 @@ internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, is
             .mapTo(mutableSetOf()) { it.selector }
 
     return this.filter { it.selector !in unavailableSelectors }
+            .availableInKotlinApi()
 }
 
 internal fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
@@ -336,24 +343,33 @@ internal fun ObjCClass.getDesignatedInitializerSelectors(result: MutableSet<Stri
     // Swift considers all super initializers to be available (unless otherwise specified explicitly),
     // but seems to consider them as non-designated if class declares its own ones explicitly.
     // Simulate the similar behaviour:
-    val explicitlyDesignatedInitializers = this.methods.filter { it.isExplicitlyDesignatedInitializer && !it.isClass }
+    val explicitlyDesignatedInitializers = this.methods.filter {
+        it.isExplicitlyDesignatedInitializer && !it.isClass && it.isAvailableInKotlinApi()
+    }
 
     if (explicitlyDesignatedInitializers.isNotEmpty()) {
         explicitlyDesignatedInitializers.mapTo(result) { it.selector }
     } else {
-        this.declaredMethods(isClass = false).filter { it.isInit }.mapTo(result) { it.selector }
+        this.declaredMethods(isClass = false)
+                .availableInKotlinApi()
+                .filter { it.isInit }
+                .mapTo(result) { it.selector }
         this.baseClass?.getDesignatedInitializerSelectors(result)
     }
 
     this.superTypes.filterIsInstance<ObjCProtocol>()
-            .flatMap { it.declaredMethods(isClass = false) }.filter { it.isInit }
+            .flatMap { it.declaredMethods(isClass = false) }
+            .availableInKotlinApi()
+            .filter { it.isInit }
             .mapTo(result) { it.selector }
 
     return result
 }
 
 internal fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
-        container.superTypes.any { superType -> superType.methods.any(this::replaces) }
+        container.superTypes.any { superType ->
+            superType.methods.any { it.isAvailableInKotlinApi() && this.replaces(it) }
+        }
 
 private fun ObjCClass.includedCategoriesMethods(isMeta: Boolean): List<ObjCMethod> =
         includedCategories.flatMap { category ->
@@ -387,7 +403,7 @@ internal abstract class ObjCContainerStubBuilder(
         val superMethods = container.inheritedMethods(isMeta)
 
         // Add all methods declared in the class or protocol:
-        var methods = container.declaredMethods(isMeta).filter { it.availability != Availability.NOT_AVAILABLE }
+        var methods = container.declaredMethods(isMeta).availableInKotlinApi()
 
         // Exclude those which are identically declared in super types:
         methods -= superMethods
@@ -397,7 +413,9 @@ internal abstract class ObjCContainerStubBuilder(
 
         // Add methods from adopted protocols that must be implemented according to Kotlin rules:
         if (container is ObjCClass) {
-            methods += container.protocolsWithSupers.flatMap { it.declaredMethods(isMeta) }.filter { !it.isOptional }
+            methods += container.protocolsWithSupers.flatMap { it.declaredMethods(isMeta) }
+                    .availableInKotlinApi()
+                    .filter { !it.isOptional }
         }
 
         // Add methods inherited from multiple supertypes that must be defined according to Kotlin rules:
@@ -625,9 +643,11 @@ internal class ObjCCategoryStubBuilder(
     private val generatedMembers = context.generatedObjCCategoriesMembers
             .getOrPut(category.clazz, { GeneratedObjCCategoriesMembers() })
 
-    private val methodToBuilder = category.methods.filter { generatedMembers.register(it) }.map {
-        it to ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context)
-    }.toMap()
+    private val methodToBuilder = category.methods.asSequence()
+            .availableInKotlinApi()
+            .filter { generatedMembers.register(it) }
+            .map { it to ObjCMethodStubBuilder(it, category, isDesignatedInitializer = false, context = context) }
+            .toMap()
 
     private val methodBuilders get() = methodToBuilder.values
 
