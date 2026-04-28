@@ -218,7 +218,6 @@ open class VfsBasedProjectEnvironment(
                 fileSearchScope,
                 javaAnnotationProvider,
                 localFs,
-                { localFs.findFileByPath(it)?.takeIf { vf -> psiSearchScope.contains(vf) } },
                 defaultFinderProvider
             ) ?: defaultFinderProvider()
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
