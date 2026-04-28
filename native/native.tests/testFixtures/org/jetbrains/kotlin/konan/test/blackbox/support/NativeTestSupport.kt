@@ -279,7 +279,7 @@ object NativeTestSupport {
             .readValue(
                 enforcedProperties,
                 transform = { str -> GC.entries.firstOrNull { it.shortcut == str.lowercase() } },
-                default = GC.PARALLEL_MARK_CONCURRENT_SWEEP
+                default = GC.CONCURRENT_MARK_AND_SWEEP
             ).let { GCType(it) }
 
     private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
