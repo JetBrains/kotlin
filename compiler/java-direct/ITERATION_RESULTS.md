@@ -31,6 +31,114 @@
 
 ---
 
+## Coverage gap: shared FIR regressions invisible to java-direct suite — 2026-04-28
+
+### Overview
+
+Investigation of why the java-direct suite (1168/1168 box, 1454/1456 phased) stayed
+green while `KotlinFullPipelineTestsGenerated` started failing 57 modules after the
+shared FIR files (`FirJavaFacade.kt`, `JavaTypeConversion.kt`, `javaAnnotationsMapping.kt`,
+`ConeRawScopeSubstitutor.kt`) were dropped from a clean-branch cherry-pick.
+
+### Root cause of the coverage gap
+
+The shared FIR files contain java-direct-specific branches that fire only when
+`JavaClassifierType.classifier == null` (i.e. the type points outside java-direct's
+source index — JDK, library binaries, sibling source files not yet indexed at the
+time of access). The java-direct test data in
+`testData/codegen/box{,Jvm}` and `testData/diagnostics/...` overwhelmingly references
+classes that ARE in the same `// FILE:` group, so java-direct resolves their classifier
+locally and the new branches never run. Real-world Kotlin modules
+(`KotlinFullPipelineTestsGenerated`) compile a single Java source set that references
+many types from JARs on the classpath — that is where `classifier == null` is the rule
+rather than the exception.
+
+Empirical evidence: `analysis-api-impl-base` failed with
+`MISSING_DEPENDENCY_CLASS: Cannot access class 'List'` on a Kotlin call to a Java
+method whose return type is `java.util.List<String>` (star-imported in `JdkClassFinder.java`).
+The classifier is null in java-direct's model; the reverted FIR `null` branch
+collapses to `ClassId.topLevel(FqName(classifierQualifiedName))` and drops every
+type argument, raw-type inference, nested-FQN split, and inherited-inner-class lookup.
+
+### Changes
+
+Added a new test data directory `compiler/testData/diagnostics/tests/jvm/javaDirectGap/`
+with 8 phased/diagnostic tests targeting individual shared-FIR branches:
+
+| File | Targets | Status with reverted FIR |
+|------|---------|--------------------------|
+| `sealedJavaCrossFilePermits.kt` | `FirJavaFacade.setSealedClassInheritors` cross-file `permits` (classifier == null branch) | **FAILS** — `NO_ELSE_IN_WHEN` because inheritors aren't registered |
+| `nonAbstractSealedJava.kt` | `FirJavaFacade.isJavaNonAbstractSealed` flag | passes (path not exercised by current Kotlin code) |
+| `javaRecordExplicitCanonicalConstructor.kt` | `FirJavaFacade.isCanonicalRecordConstructorForSource` (source-based finder) | passes (test infra still uses javac for record bytecode) |
+| `javaConstFieldFromKotlinTopLevel.kt` | `FirJavaFacade.lazyInitializer` cross-language const callback | passes (annotation arg path not strict enough) |
+| `javaUtilStarImportList.kt` | `JavaTypeConversion` null-classifier raw/type-arg path for `java.util.*` star-import | passes (test infra resolves via binary classpath) |
+| `dottedJdkNestedClassFqn.kt` | `JavaTypeConversion.findClassIdByFqNameString` for `java.util.Map.Entry` | passes (binary classpath fallback) |
+| `inheritedInnerFromKotlinSupertype.kt` | `JavaResolutionContext.resolveFromLocalScope` inherited-inner walk | passes (java-direct's own inheritance walk handles it) |
+| `javaTypeUseAnnotation.kt` | `JavaTypeConversion.filterTypeUseAnnotations` callback | passes (filtering not observable in this scenario) |
+
+The first one — cross-file sealed permits — is a confirmed regression catcher: it
+fails today with the reverted FIR code, and will turn green once the
+`setSealedClassInheritors` branch handling `classifier == null` is restored.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/sealedJavaCrossFilePermits.kt` | New: 3 sibling Java sources with `sealed permits`, plus Kotlin `when` |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/nonAbstractSealedJava.kt` | New: non-abstract sealed Java class |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/javaRecordExplicitCanonicalConstructor.kt` | New: Java record with explicit canonical constructor |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/javaConstFieldFromKotlinTopLevel.kt` | New: Java field initialized via `KConstsKt.FOO` |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/javaUtilStarImportList.kt` | New: Java star-import of `java.util.*`, `List<String>` and `Map.Entry` round trip |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/dottedJdkNestedClassFqn.kt` | New: Java method using `java.util.Map.Entry<...>` via dotted FQN |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/inheritedInnerFromKotlinSupertype.kt` | New: Java class extending Kotlin class, referencing inherited inner by simple name |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/javaTypeUseAnnotation.kt` | New: Java method with `@Target(TYPE_USE)` annotation on parameter and return |
+
+The new tests are auto-picked up by `JavaUsingAstPhasedTestGenerated` (under
+`Tests > Jvm > JavaDirectGap`) and by the PSI phased runner (which currently
+ignores them — they're additional coverage for both).
+
+### Test Results
+
+`./gradlew :kotlin-java-direct:test --tests "*JavaDirectGap*"` — 8 tests run, 7 pass,
+1 fails (`testSealedJavaCrossFilePermits`, as designed to catch the regression).
+
+### Key Learnings
+
+- **Test-data filter is necessary but not sufficient.** Including a file based on
+  presence of `// FILE: *.java` matches the right shape but doesn't guarantee the
+  scenarios reach java-direct-specific FIR branches. The dominant case in test data
+  is "all referenced Java types live in sibling `// FILE:` blocks", which keeps
+  classifier non-null and routes through the well-trodden `JavaClass` branch.
+- **Cross-source-file references inside one module** (java-direct's "classifier == null"
+  case) is the gap: Sub1 referenced from Base.java when both are in the same source
+  set but processed at different times. The new sealed-permits test exercises exactly
+  that.
+- **Some scenarios that *should* fail with the reverted FIR don't, in our test infra.**
+  Examples (records, type-use annotations, star-import generics) appear handled by
+  binary-classpath fallback or by the test framework's javac step; they need a
+  modularized-tests-style two-module setup to force binary loading. This is a known
+  follow-up — the failing test plus the placeholder tests are still useful as
+  documentation of the intended scenarios.
+- **`MISSING_DEPENDENCY_CLASS` and `NO_ELSE_IN_WHEN` are good signals.** Both fire
+  late in the FIR pipeline once a type's symbol can't be located; phased diagnostic
+  tests surface them as `IllegalStateException` from the
+  `NoFirCompilationErrorsHandler`. Watch for these strings when triaging future
+  shared-FIR regressions.
+
+### Follow-ups (not in this iteration)
+
+- Lift `boxModernJdk/testsWithJava17/sealed` and `boxModernJdk/testsWithJava17/records`
+  into `JavaUsingAstBoxTestGenerated` (currently excluded from the test data roots
+  in `compiler/java-direct/testFixtures/.../TestGenerator.kt`). Sealed and record
+  tests there have inline Java FILE blocks but go through a JDK-17-specific code
+  path the java-direct generator doesn't currently cover.
+- Investigate why the 4 placeholder tests don't trigger the reverted-state failure
+  in our infra. If they truly can't, consider a small two-module fixture where the
+  Java side is compiled to bytecode and re-fed to a second module — that mimics
+  the real-world classpath scenario the modularized tests exercise.
+
+---
+
 ## Post-refactoring review: readability cosmetics — 2026-04-22
 
 ### Overview
