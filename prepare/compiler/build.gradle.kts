@@ -98,7 +98,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
-    ":kotlin-java-direct",
     ":libraries:tools:mutability-annotations-compat",
     ":plugins:jvm-abi-gen",
     ":kotlin-jklib-compiler"
@@ -131,6 +130,11 @@ configurations.all {
     resolutionStrategy {
         preferProjectModules()
     }
+}
+
+repositories {
+    mavenCentral()
+    maven { setUrl("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") }
 }
 
 dependencies {
@@ -221,6 +225,9 @@ dependencies {
     fatJarContentsStripMetadata(intellijJDom()) { isTransitive = false }
     fatJarContentsStripMetadata(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
     fatJarContentsStripVersions(commonDependency("one.util:streamex")) { isTransitive = false }
+
+    fatJarContents(libs.org.jetbrains.syntax.api) { isTransitive = false }
+    fatJarContents(libs.org.jetbrains.java.syntax.jvm) { isTransitive = false }
 
     // Used by JS parser
     fatJarContents(libs.antlr.runtime) { isTransitive = false }
