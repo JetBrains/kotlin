@@ -651,6 +651,38 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/codeFragments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CodeFragments {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/codeFragments/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCodeFragments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/codeFragments"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("blockCodeFragment.kt")
+    public void testBlockCodeFragment() {
+      run("blockCodeFragment.kt");
+    }
+
+    @Test
+    @TestMetadata("expressionCodeFragment.kt")
+    public void testExpressionCodeFragment() {
+      run("expressionCodeFragment.kt");
+    }
+
+    @Test
+    @TestMetadata("typeCodeFragment.kt")
+    public void testTypeCodeFragment() {
+      run("typeCodeFragment.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/contextParameters")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextParameters {
