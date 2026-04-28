@@ -198,7 +198,7 @@ FILE: unsupportedContextParameters.kt
             public get(): R|kotlin/Boolean|
 
     }
-    public final fun runWithA(block: R|@ContextFunctionTypeParams(1) context(kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
+    public final fun runWithA(block: R|context(kotlin/String) () -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun localFunctionsContextParametersWithoutType(): R|kotlin/Unit| {
         lval t2: <ERROR TYPE REF: Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]> = <Ambiguity: context, [kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context, kotlin/context]>#(<Unresolved name: a>#)

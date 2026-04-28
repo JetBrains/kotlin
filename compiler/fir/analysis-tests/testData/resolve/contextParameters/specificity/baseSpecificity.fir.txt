@@ -17,7 +17,7 @@ FILE: baseSpecificity.kt
         }
 
     }
-    public final fun <A, R> context(context: R|A|, block: R|@ContextFunctionTypeParams(1) context(A) () -> R|): R|R| {
+    public final fun <A, R> context(context: R|A|, block: R|context(A) () -> R|): R|R| {
         ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/context|)
     }
     public final fun foo1a(): R|kotlin/Unit| {

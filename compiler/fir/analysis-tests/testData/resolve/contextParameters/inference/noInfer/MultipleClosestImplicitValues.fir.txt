@@ -38,6 +38,6 @@ FILE: MultipleClosestImplicitValues.kt
         }
         )
     }
-    public final fun <T1, T2, R> context(with1: R|T1|, with2: R|T2|, block: R|@ContextFunctionTypeParams(2) context(T1, T2) () -> R|): R|R| {
+    public final fun <T1, T2, R> context(with1: R|T1|, with2: R|T2|, block: R|context(T1, T2) () -> R|): R|R| {
         ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function2.invoke: R|R|>|(R|<local>/with1|, R|<local>/with2|)
     }

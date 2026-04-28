@@ -44,6 +44,6 @@ FILE: MismatchingClosestImplicitValue.kt
     public final fun <T, R> with(receiver: R|T|, block: R|T.() -> R|): R|R| {
         ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
     }
-    public final fun <T, R> context(with: R|T|, block: R|@ContextFunctionTypeParams(1) context(T) () -> R|): R|R| {
+    public final fun <T, R> context(with: R|T|, block: R|context(T) () -> R|): R|R| {
         ^context R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/with|)
     }
