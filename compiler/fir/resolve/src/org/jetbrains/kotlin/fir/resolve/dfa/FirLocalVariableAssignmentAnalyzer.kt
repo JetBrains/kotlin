@@ -578,8 +578,12 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
 
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: MiniCfgData) {
             functionCall.explicitReceiver?.accept(this, data)
-            functionCall.dispatchReceiver?.accept(this, data)
-            functionCall.extensionReceiver?.accept(this, data)
+            if (functionCall.dispatchReceiver !== functionCall.explicitReceiver) {
+                functionCall.dispatchReceiver?.accept(this, data)
+            }
+            if (functionCall.extensionReceiver !== functionCall.explicitReceiver && functionCall.extensionReceiver !== functionCall.dispatchReceiver) {
+                functionCall.extensionReceiver?.accept(this, data)
+            }
             // Delay processing of lambda args because lambda body are evaluated after all arguments have been evaluated.
             // TODO: this is not entirely correct (the lambda might be nested deep inside an expression), but also this
             //  entire override should be unnecessary as long as the full CFG builder visits everything in the right order. KT-59691
