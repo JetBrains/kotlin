@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchSco
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 
-class JavaDirectComponentRegistrar : CompilerPluginRegistrar() {
+class JavaDirectPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         JavaClassFinderFactory.registerExtension(JavaClassFinderOverAstFactory(configuration))
     }

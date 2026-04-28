@@ -54,7 +54,13 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_11_0,
+            JdkMajorVersion.JDK_17_0,
+            JdkMajorVersion.JDK_21_0
+        )
+    ) {
         useJUnitPlatform()
         workingDir = rootDir
     }
@@ -67,12 +73,14 @@ projectTests {
     withJvmStdlibAndReflect()
     withScriptRuntime()
     withMockJdkAnnotationsJar()
+    withMockJDKModifiedRuntime()
     withTestJar()
     withScriptingPlugin()
     withMockJdkRuntime()
     withStdlibCommon()
     withAnnotations()
+    withThirdPartyJsr305()
     withThirdPartyAnnotations()
     withThirdPartyJava8Annotations()
-    withThirdPartyJsr305()
+    withThirdPartyJava9Annotations()
 }
