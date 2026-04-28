@@ -28,24 +28,16 @@ Tower Data Context:
     Element 13
         Scope: FirExplicitSimpleImportingScope
     Element 14
-        Scope: FirDefaultStarImportingScope
-    Element 15
         Scope: FirExplicitStarImportingScope
-    Element 16
-        Scope: FirDefaultSimpleImportingScope
-    Element 17
-        Scope: FirDefaultSimpleImportingScope
-    Element 18
-        Scope: FirPackageMemberScope
-    Element 19
+    Element 15
         Scope: FirExplicitSimpleImportingScope
-    Element 20
+    Element 16
         Scope: FirLocalScope
-    Element 21
+    Element 17
         Scope: FirLocalScope
-    Element 22
+    Element 18
         Scope: FirLocalScope
-    Element 23
+    Element 19
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol value: R|example/Foo|
