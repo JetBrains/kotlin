@@ -70,6 +70,12 @@ public class SerializationJsBoxWithInlinedFunInKlibTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("constructorException.kt")
+  public void testConstructorException() {
+    run("constructorException.kt");
+  }
+
+  @Test
   @TestMetadata("contextualByDefault.kt")
   public void testContextualByDefault() {
     run("contextualByDefault.kt");

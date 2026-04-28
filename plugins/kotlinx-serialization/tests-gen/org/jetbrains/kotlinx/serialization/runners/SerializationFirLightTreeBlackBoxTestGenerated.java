@@ -73,6 +73,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("constructorException.kt")
+    public void testConstructorException() {
+      run("constructorException.kt");
+    }
+
+    @Test
     @TestMetadata("contextualByDefault.kt")
     public void testContextualByDefault() {
       run("contextualByDefault.kt");

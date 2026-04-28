@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.jvm.functionByName
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -62,6 +65,17 @@ open class SerializerIrGenerator(
     protected val generatedSerialDescPropertyDescriptor = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD
     ) { true }?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
+
+    private val serializationExceptionClass =
+        compilerContext.getClassFromRuntime("SerializationException", SerializationPackages.packageFqName).owner
+
+    private val serializationExceptionConstructor = serializationExceptionClass.constructors.single {
+        it.hasShape(regularParameters = 2)
+    }.symbol
+
+    private val illegalArgumentExceptionClass =
+        compilerContext.referenceClassId(StandardClassIds.byName("IllegalArgumentException"))?.owner
+            ?: error("Class kotlin.IllegalArgumentException wasn't found in builtins.")
 
     protected val irAnySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
@@ -512,7 +526,7 @@ open class SerializerIrGenerator(
         if (serializableIrClass.shouldHaveGeneratedMethods() && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
-            +irReturn(irInvoke(deserCtor, args, typeArgs))
+            +irReturn(wrapConstructorIllegalArgumentException(irInvoke(deserCtor, args, typeArgs)))
         } else {
             if (irClass.isLocal) {
                 // if the serializer is local, then the serializable class too, since they must be in the same scope
@@ -576,10 +590,51 @@ open class SerializerIrGenerator(
                 }
             }
 
-            val serializerVar = irTemporary(irInvoke(ctor, ctorArgs, typeArgs), "serializable")
+            val serializerVar = irTemporary(
+                wrapConstructorIllegalArgumentException(irInvoke(ctor, ctorArgs, typeArgs)),
+                "serializable"
+            )
             generateSetStandaloneProperties(serializerVar, serialPropertiesMap::getValue, serialPropertiesIndexes::getValue, bitMasks)
             +irReturn(irGet(serializerVar))
         }
+    }
+
+    private fun IrBuilderWithScope.wrapConstructorIllegalArgumentException(constructorCall: IrExpression): IrExpression {
+        val serializationException = buildVariable(
+            scope.getLocalDeclarationParent(),
+            startOffset,
+            endOffset,
+            IrDeclarationOrigin.CATCH_PARAMETER,
+            Name.identifier("e"),
+            serializationExceptionClass.defaultType
+        )
+        val illegalArgumentException = buildVariable(
+            scope.getLocalDeclarationParent(),
+            startOffset,
+            endOffset,
+            IrDeclarationOrigin.CATCH_PARAMETER,
+            Name.identifier("e"),
+            illegalArgumentExceptionClass.defaultType
+        )
+
+        return irTry(
+            constructorCall.type,
+            constructorCall,
+            listOf(
+                irCatch(serializationException, irThrow(irGet(serializationException))),
+                irCatch(
+                    illegalArgumentException,
+                    irThrow(
+                        irInvoke(
+                            serializationExceptionConstructor,
+                            irString("Failed to construct '$serialName'"),
+                            irGet(illegalArgumentException)
+                        )
+                    )
+                )
+            ),
+            null
+        )
     }
 
     private fun IrBlockBodyBuilder.generateSetStandaloneProperties(
