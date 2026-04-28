@@ -31,12 +31,11 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
         localFs: VirtualFileSystem,
-        findLocalFile: (String) -> VirtualFile?,
         defaultFinderProvider: (() -> JavaClassFinder)?,
     ): JavaClassFinder {
         // Collect source roots as VirtualFiles so all subsequent reads/walks go through VFS caches.
         val roots: List<VirtualFile> = configuration.javaSourceRoots
-            .mapNotNull(findLocalFile)
+            .mapNotNull(localFs::findFileByPath)
 
         // For library session (no Java sources), just use the default finder
         if (roots.isEmpty()) {

@@ -3,7 +3,7 @@
 // JVM_TARGET: 17
 // FILE: Base.java
 
-public sealed class Base permits Sub1, Sub2 {}
+public abstract sealed class Base permits Sub1, Sub2 {}
 
 // FILE: Sub1.java
 

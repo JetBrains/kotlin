@@ -1,8 +1,10 @@
 # Java-Direct: Iteration Results Log
 
-**Current status**: 1168/1168 box + 1454/1456 phased (2679/2681, 99.9%), 2 known won't-fix.
+**Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%). Phased and
+box generators now actually route `// FILE: *.java` blocks through java-direct AST;
+prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-04-22 (Phases A-E complete, archive reset)
+**Last Updated**: 2026-04-28 (test framework wired through java-direct)
 
 ### Entry Template
 
@@ -28,6 +30,139 @@
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Test framework wiring: java-direct AST was never used — 2026-04-28
+
+### Overview
+
+Follow-up on the "Coverage gap…" entry below. Investigating why
+`testSealedJavaCrossFilePermits` failed with the FIR fix in place, instrumentation
+revealed that `JavaUsingAstPhasedTestGenerated` did **not** route `// FILE: *.java`
+blocks through java-direct's AST at all. The 7 placeholder tests passed for the same
+reason: every Java class was loaded via PSI (`JavaClassFinderImpl`), so the
+`classifier == null` branches in the four shared FIR files were never exercised.
+
+After two infrastructure fixes (and a small `JavaPackageIndexer` extension), all 8
+tests now actually drive java-direct, and the suite is **2793/2793** green.
+
+### Root cause #1 — scope filter rejected directory source roots
+
+`VfsBasedProjectEnvironment.getFirJavaFacade` passed a `findLocalFile` callback to
+`JavaClassFinderFactory.createJavaClassFinder` that filtered through
+`psiSearchScope.contains(vf)`:
+
+```kotlin
+{ localFs.findFileByPath(it)?.takeIf { vf -> psiSearchScope.contains(vf) } }
+```
+
+For the `<main>` module the scope is `AllJavaSourcesInProjectScope`, whose
+`contains(file)` rejects directories (line 18: `(extension == "java" || ...) && !isDirectory`).
+The factory uses the callback to resolve `configuration.javaSourceRoots` — *directory*
+paths — so every entry came back `null`, the factory found 0 source roots, and fell
+back to `defaultFinderProvider()` (PSI).
+
+For `<regular dependencies of main>` the scope is `librariesScope` (no directory
+check), so the dependency session got `CombinedJavaClassFinder` — but that session
+never resolves user-Java classes referenced from Kotlin source.
+
+**Design issue:** the `findLocalFile` callback conflated two things: path-to-VirtualFile
+resolution (which can target a directory) and scope membership (defined at the
+`.java`-file level). The PSI-based finder doesn't have this issue — it applies scope
+inside its class-lookup methods, never to source-root paths.
+
+**Fix (refactor):** drop `findLocalFile` from `JavaClassFinderFactory` API entirely.
+The factory implementation resolves source-root paths directly via
+`localFs.findFileByPath`. If an implementation needs class-file scope filtering, the
+existing `scope` parameter is still there.
+
+### Root cause #2 — package indexer rejected files whose disk path didn't match `package`
+
+After fix #1, `J` from `testDottedJdkNestedClassFqn` resolved as `JavaClassOverAst`
+correctly. But `testWithUnitType` regressed: `JavaUtils.java` (declaring `package test;`)
+written flat at `java-sources/main/JavaUtils.java` became invisible. javac is tolerant
+(it places `.class` by declared package, ignoring source location), but
+`JavaPackageIndexer.tryBuildFileEntry` enforces directory-mirrors-package and skipped
+the file. The lookup for `<root>/JavaUtils` matched the directory but failed parse-time
+(declared `test`); the lookup for `test.JavaUtils` walked `test/` which doesn't exist.
+
+**Fix:** in `JavaPackageIndexer.init`, after the file-root scan, also scan each
+directory root's top-level `.java` files. Files declaring a non-root package are
+registered in `fileRootIndex` under their declared package — so they're discoverable
+even when disk path doesn't mirror the package. Top-level files declaring the root
+package are still picked up by the regular root walk, so we skip them here to avoid
+duplicates. Real-world layouts (`src/main/java/com/example/`) have no `.java` files
+at the top of the source root, so this scan is essentially free for non-test workloads.
+
+### Root cause #3 — failing test data was self-inconsistent
+
+`sealedJavaCrossFilePermits.kt` declared `Base` as `sealed class` (non-abstract). The
+java-direct path correctly registered `Sub1`/`Sub2` as inheritors, but
+`FirJavaFacade.isJavaNonAbstractSealed` set `true` for non-abstract sealed Java
+classes; `FirWhenExhaustivenessComputer` then required `is Base` in addition to
+`is Sub1, is Sub2`. The `when` in the test had only Sub1/Sub2, so it was non-exhaustive
+regardless of inheritor registration.
+
+**Fix:** change Base to `abstract sealed`. Now `isJavaNonAbstractSealed` stays false
+and `is Sub1, is Sub2` is exhaustive — the test cleanly catches the regression.
+
+### How we diagnosed it
+
+`JavaClassFinderOverAstFactory.createJavaClassFinder` was being called twice (once
+for `<regular dependencies>`, once for `<main>`) with different `psiSearchScope`
+hashes. Tracing `findLocalFile` per source-root path showed `resolved=null` for the
+java-sources directory in the `<main>` call but `resolved=<path>` for the `<deps>`
+call — confirming the scope filter was the discriminator. Tracing
+`FirJavaFacade.findClass` showed `classFinder=JavaClassFinderImpl` (PSI) for `<main>`,
+not `CombinedJavaClassFinder` — so user Java classes never reached java-direct.
+
+Don't trust "test passes" as evidence that java-direct ran. Verify by stack-trace or
+by checking which `JavaClassFinder` the source session's `JavaSymbolProvider` ended up
+with.
+
+### Status update for the gap-test table
+
+The 8 tests under `compiler/testData/diagnostics/tests/jvm/javaDirectGap/` now all
+actually exercise java-direct's AST. With the FIR fixes in place: all 8 pass. With the
+shared FIR files reverted, `testSealedJavaCrossFilePermits` is the confirmed regression
+catcher (the original design intent). The other 7 are positive coverage for
+java-direct AST paths that were previously untested.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/cli/src/.../extensions/JavaClassFinderFactory.kt` | Drop `findLocalFile: (String) -> VirtualFile?` parameter; clarify `scope`/`localFs` doc |
+| `compiler/cli/src/.../VfsBasedProjectEnvironment.kt` | Stop passing the broken scope-filter lambda |
+| `compiler/java-direct/src/.../JavaDirectPluginRegistrar.kt` | Resolve source roots via `localFs::findFileByPath` (no callback) |
+| `compiler/java-direct/src/.../JavaPackageIndexer.kt` | Pre-index top-level `.java` files declaring non-root packages |
+| `compiler/testData/diagnostics/tests/jvm/javaDirectGap/sealedJavaCrossFilePermits.kt` | `sealed` → `abstract sealed` so the `when` is exhaustive without `is Base` |
+
+### Test Results
+
+`./gradlew :kotlin-java-direct:test` — 2793 tests, 0 failures. (Up from 2679/2681
+because the 8 javaDirectGap tests now run, and `JavaUsingAstPhasedTestGenerated`'s
+existing tests are also routed through java-direct AST instead of PSI.)
+
+### Key Learnings
+
+- **`JavaUsingAstPhasedTestGenerated` did NOT exercise java-direct before this fix.**
+  The pluggable `JavaClassFinderFactory` was registered, the AST finder was even
+  *constructed*, but for the `<main>` module its source roots were filtered out and
+  the factory fell back to PSI. Existing 1454 phased + 1168 box tests were green
+  through pure PSI paths — they validated FIR behavior, not java-direct.
+- **API design: don't conflate path resolution with class-scope membership.** The
+  `findLocalFile` callback's contract was "scope-restricted path resolution", but
+  `AbstractProjectFileSearchScope` is a class-file scope, not a path scope. Source
+  roots are directories; passing them through a class-scope filter is meaningless.
+- **java-direct's package indexer assumed standard Java layout.** Test frameworks
+  often write files flat regardless of `package` declaration. javac is tolerant about
+  this; java-direct now is too, for top-level files of a directory root.
+- **Verifying that a test exercises java-direct requires instrumentation.** Stack
+  trace `JavaSymbolProvider.classCache` lookups, check the `classFinder` field on
+  `FirJavaFacade`. Tests passing or failing is not evidence of which finder served
+  the classes.
 
 ---
 
