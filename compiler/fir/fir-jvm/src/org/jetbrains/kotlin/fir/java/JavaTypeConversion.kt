@@ -113,15 +113,11 @@ private fun JavaType?.toConeTypeProjection(
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
-        val isTypeUseAnnotation: (String) -> Boolean = { fqName ->
-            isTypeUseAnnotationClass(fqName, session)
-        }
-
-        val typeUseAnnotations = filterTypeUseAnnotations(isTypeUseAnnotation)
+        val typeUseAnnotations = filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }
 
         val additionalTypeUseAnnotations = additionalAnnotations?.filter { annotation ->
             val fqName = annotation.classId?.asSingleFqName()?.asString() ?: return@filter false
-            isTypeUseAnnotation(fqName)
+            isTypeUseAnnotationClass(fqName, session)
         }
 
         val convertedAnnotations = buildList {
@@ -315,30 +311,13 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val qualifiedName = this.classifierQualifiedName
 
             var classId = if (!isResolved) {
-                // Resolve the name - this handles both simple names and nested class references like "Map.Entry"
+                // Handles both simple names and nested class references like "Map.Entry".
                 resolveTypeName(qualifiedName, this, session)
             } else {
-                // For resolved names, try the resolve callback to correctly handle nested class FQNs.
-                // ClassId.topLevel would incorrectly split "a.X.Y" as package "a.X", class "Y"
-                // when the actual class is package "a", nested class "X.Y".
-                // We use the resolve callback instead of findClassId because findClassId probes the
-                // session's symbol provider directly, which in LL-FIR can trigger lazy resolution of
-                // the very class being resolved, causing infinite recursion.
-                // The resolve callback returns null by default (PSI types), safely falling back to
-                // ClassId.topLevel. For java-direct types, it uses the resolution context to generate
-                // correct ClassId candidates without triggering LL-FIR lazy resolution cycles.
-                resolve(
-                    tryResolve = { candidateClassId ->
-                        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId)
-                        // Reject builtins-only classes to match PSI behavior.
-                        // PSI resolves classes through compiled .class files and light classes.
-                        // Kotlin builtins (origin=BuiltIns) exist only in FIR's symbol provider,
-                        // not as .class files, so PSI can't resolve them. When stdlib is on the
-                        // classpath, these classes have origin=Library instead of BuiltIns.
-                        symbol != null && symbol.origin != FirDeclarationOrigin.BuiltIns
-                    },
-                    getSupertypeClassIds = { classId -> getResolvedSupertypeClassIds(classId, session) },
-                ) ?: ClassId.topLevel(FqName(qualifiedName))
+                // For resolved names, prefer the resolve callback so nested-class FQNs split
+                // correctly: ClassId.topLevel would mis-split "a.X.Y" as package "a.X" / class "Y"
+                // when the actual class is package "a" / nested class "X.Y".
+                resolveSymbolBasedClassId(session) ?: ClassId.topLevel(FqName(qualifiedName))
             }
 
             classId = if (mode.insideAnnotation) {
@@ -408,24 +387,38 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     }
 }
 
+/**
+ * Resolves a [JavaClassifierType] to a [ClassId] via the symbol-provider, using the type's own
+ * resolution context to enumerate candidates. Returns `null` if no candidate resolves.
+ *
+ * The callback probes the symbol provider with `getClassLikeSymbolByClassId`, rejecting
+ * builtins-only classes to match PSI behavior: PSI resolves through compiled `.class` files and
+ * light classes, while Kotlin builtins (origin=BuiltIns) exist only in FIR's symbol provider with
+ * no `.class` backing. When stdlib is on the classpath these classes have origin=Library instead.
+ *
+ * Preferred over probing the symbol provider directly with a synthesized ClassId (e.g.
+ * [findClassIdByFqNameString]) because in LL-FIR a direct probe can trigger lazy resolution of the
+ * very class being resolved, causing infinite recursion. The resolve callback returns `null` by
+ * default for PSI types (safely falling back to caller's default), and uses the java-direct
+ * resolution context for AST-backed types.
+ */
+private fun JavaClassifierType.resolveSymbolBasedClassId(session: FirSession): ClassId? = resolve(
+    tryResolve = { candidateClassId ->
+        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId)
+        symbol != null && symbol.origin != FirDeclarationOrigin.BuiltIns
+    },
+    getSupertypeClassIds = { classId -> getResolvedSupertypeClassIds(classId, session) },
+)
+
 private fun resolveTypeName(
     name: String,
     javaType: JavaClassifierType,
     session: FirSession
 ): ClassId {
-    // Try ClassId-based resolution which avoids package/class ambiguity.
-    // The callback checks if a ClassId exists in the symbol provider.
-    val resolvedClassId = javaType.resolve(
-        tryResolve = { candidateClassId ->
-            val symbol = session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId)
-            symbol != null && symbol.origin != FirDeclarationOrigin.BuiltIns
-        },
-        getSupertypeClassIds = { classId -> getResolvedSupertypeClassIds(classId, session) },
-    )
-    if (resolvedClassId != null) return resolvedClassId
-
-    // Fall back to probing different package/class boundaries for the raw name
-    return findClassIdByFqNameString(name, session) ?: ClassId.topLevel(FqName(name))
+    // ClassId-based resolution avoids package/class ambiguity; fall back to FQN probing if it fails.
+    return javaType.resolveSymbolBasedClassId(session)
+        ?: findClassIdByFqNameString(name, session)
+        ?: ClassId.topLevel(FqName(name))
 }
 
 /**
@@ -456,7 +449,7 @@ private fun getResolvedSupertypeClassIds(classId: ClassId, session: FirSession):
  * where `J1 → KFirst → SuperClass<String>`, this finds `SuperClass<String>` and returns `[String]`.
  *
  * @param classId the resolved ClassId of the inner class (e.g., SuperClass.NestedInSuperClass)
- * @param containingClassIds ClassIds from innermost containing class to outermos
+ * @param containingClassIds ClassIds from innermost containing class to outermost
  * @param session the FIR session
  * @return the outer type arguments, or null if they can't be determined
  */
@@ -528,7 +521,7 @@ private fun substituteTypeArgs(
     declaringClass: FirRegularClass,
 ): ConeClassLikeType {
     if (actualType.typeArguments.isEmpty() || declaringClass.typeParameters.isEmpty()) return declaredSupertype
-    // Build substitution map: type parameter -> actual type argumen
+    // Build substitution map: type parameter -> actual type argument
     val substitutionMap = mutableMapOf<ConeTypeParameterLookupTag, ConeTypeProjection>()
     for ((index, typeParam) in declaringClass.typeParameters.withIndex()) {
         if (index < actualType.typeArguments.size) {
@@ -536,7 +529,6 @@ private fun substituteTypeArgs(
         }
     }
     if (substitutionMap.isEmpty()) return declaredSupertype
-    // Substitute type arguments in the declared supertype
     val newArgs = Array(declaredSupertype.typeArguments.size) { index ->
         when (val arg = declaredSupertype.typeArguments[index]) {
             is ConeTypeParameterType -> substitutionMap[arg.lookupTag] ?: arg

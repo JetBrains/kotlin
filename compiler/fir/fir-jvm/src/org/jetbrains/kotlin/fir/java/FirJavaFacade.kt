@@ -110,8 +110,11 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             javaTypeParameterStack.addStack(parentStack)
         }
 
-        // Lazy enhancement of annotations, type parameter bounds, and super types is staged via
-        // FirJavaClass.annotations / typeParameters / superTypeRefs — see FirLazyJavaDeclarationList.
+        // Annotations, type-parameter bounds, and supertypes can refer back into this class via
+        // the symbol-resolver cache during enhancement. To keep that cycle from observing an
+        // unenhanced FirJavaTypeRef where FirResolvedTypeRef is expected, all three are published
+        // lazily via FirJavaClass.annotations / typeParameters / superTypeRefs (see
+        // FirLazyJavaDeclarationList for staging order).
         return createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
     }
 
@@ -334,12 +337,10 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 origin = mappedJavaEnumFunctionsOrigin,
             )
 
-            // For java-direct source classes (classSource == null): use Library to avoid the validation
-            // check in FirPropertyAccessorImpl that requires a source element for Source origin. Library
-            // origin still creates a proper getter (not a Java backing field) which EnumExternalEntriesLowering
-            // can intercept to generate the correct intrinsic mapping.
-            // Note: the values()/valueOf() branch above does not need the same guard — those are plain
-            // functions, so they do not trigger FirPropertyAccessorImpl's source-element validation.
+            // For java-direct source classes (classSource == null): use Library to avoid the
+            // FirPropertyAccessorImpl source-element validation that fires only on the entries
+            // getter (not on values()/valueOf()). Library still produces a proper getter that
+            // EnumExternalEntriesLowering can intercept for the correct intrinsic mapping.
             val enumEntriesOrigin = when {
                 firJavaClass.origin.fromSource && classSource != null -> FirDeclarationOrigin.Source
                 else -> FirDeclarationOrigin.Library
@@ -549,14 +550,10 @@ private fun convertJavaFieldToFir(
             annotationList = FirLazyJavaAnnotationList(javaField, moduleData)
 
             lazyInitializer = lazy {
-                // First, try simple evaluation (handles literals and same-file references)
                 javaField.initializerValue?.createConstantIfAny(session)
-                    ?: run {
-                        // Try callback-based resolution for cross-language references (e.g., Java -> Kotlin)
-                        javaField.resolveInitializerValue { classQualifier, fieldName ->
-                            resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
-                        }?.createConstantIfAny(session)
-                    }
+                    ?: javaField.resolveInitializerValue { classQualifier, fieldName ->
+                        resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
+                    }?.createConstantIfAny(session)
             }
 
             lazyHasConstantInitializer = lazy {
