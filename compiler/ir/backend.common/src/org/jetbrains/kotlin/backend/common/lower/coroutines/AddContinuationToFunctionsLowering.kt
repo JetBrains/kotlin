@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -35,13 +34,11 @@ import kotlin.collections.plusAssign
  * functions can return special values like [kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED]
  * which might not be a subtype of original return type.
  */
-fun defaultLoweredSuspendFunctionReturnType(f: IrFunction, context: CommonBackendContext): IrType =
-    if (f.returnType.isNullable()) context.irBuiltIns.anyNType else context.irBuiltIns.anyType
 
 open class AddContinuationToNonLocalSuspendFunctionsLowering(open val context: CommonBackendContext) : DeclarationTransformer {
 
     protected open fun lowerReturnType(f: IrFunction): IrType =
-        defaultLoweredSuspendFunctionReturnType(f, context)
+        suspendFunctionReturnTypeAsAny(f, context)
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
@@ -57,15 +54,12 @@ open class AddContinuationToNonLocalSuspendFunctionsLowering(open val context: C
  */
 class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
 
-    private fun lowerReturnType(f: IrFunction): IrType =
-        defaultLoweredSuspendFunctionReturnType(f, context)
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 declaration.transformChildrenVoid()
                 return if (declaration.isSuspend) {
-                    transformSuspendFunction(context, declaration, ::lowerReturnType)
+                    transformSuspendFunction(context, declaration)
                 } else {
                     declaration
                 }
@@ -77,7 +71,9 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
 private fun transformSuspendFunction(
     context: CommonBackendContext,
     function: IrSimpleFunction,
-    lowerReturnType: (IrFunction) -> IrType,
+    lowerReturnType: (IrFunction) -> IrType = { f ->
+        suspendFunctionReturnTypeAsAny(f, context)
+    },
 ): IrSimpleFunction {
     val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context, lowerReturnType)
     // Using custom mapping because number of parameters doesn't match
@@ -112,7 +108,7 @@ private fun transformSuspendFunction(
 fun IrSimpleFunction.getOrCreateFunctionWithContinuationStub(
     context: CommonBackendContext,
     lowerReturnType: (IrFunction) -> IrType = { f ->
-        defaultLoweredSuspendFunctionReturnType(f, context)
+        suspendFunctionReturnTypeAsAny(f, context)
     }
 ): IrSimpleFunction {
     return this.functionWithContinuations ?: createSuspendFunctionStub(context, lowerReturnType).also {
@@ -162,3 +158,6 @@ private fun IrSimpleFunction.createSuspendFunctionStub(
 private fun IrFunction.continuationType(context: CommonBackendContext): IrType {
     return context.symbols.continuationClass.typeWith(returnType)
 }
+
+fun suspendFunctionReturnTypeAsAny(f: IrFunction, context: CommonBackendContext): IrType =
+    if (f.returnType.isNullable()) context.irBuiltIns.anyNType else context.irBuiltIns.anyType

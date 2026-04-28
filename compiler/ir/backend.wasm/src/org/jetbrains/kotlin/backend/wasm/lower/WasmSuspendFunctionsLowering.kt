@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-class WasmSuspendFunctionsLowering(
-    context: WasmBackendContext
-) : JsSuspendFunctionsLowering(context) {
-    val wasmCoroutinesStackSwitching = context.wasmCoroutinesStackSwitching
+class WasmSuspendFunctionsLowering(context: WasmBackendContext) :
+    JsSuspendFunctionsLowering<WasmBackendContext>(context) {
 
     override fun lower(irModule: IrModuleFragment) {
-        if (wasmCoroutinesStackSwitching) return
+        if (context.wasmCoroutinesStackSwitching) return
         super.lower(irModule)
     }
 }

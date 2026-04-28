@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 class WasmAddContinuationToFunctionCallsLowering(
     override val context: WasmBackendContext
 ) : AddContinuationToFunctionCallsLowering(context) {
-    override fun getReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType =
+    override fun suspendFunLoweredReturnType(expression: IrCall, newFun: IrSimpleFunction): IrType =
         if (context.wasmCoroutinesStackSwitching) {
             expression.type
         } else {
-            super.getReturnType(expression, newFun)
+            super.suspendFunLoweredReturnType(expression, newFun)
         }
 }
