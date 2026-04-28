@@ -327,7 +327,6 @@ fun serializeModuleIntoKlib(
                 ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
             },
             metadataSerializer = metadataSerializer,
-            platformKlibCheckers = emptyList(), // Platform checkers are already invoked during WebFir2IrPipelinePhase
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
                 { ioFile, compiledFile ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata, empty, empty)
