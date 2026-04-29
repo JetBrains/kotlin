@@ -30,10 +30,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                 }
 
                 val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toRegularClassSymbol(useSiteSession) ?: return null
-                val typeParamCount = firClass.typeParameterSymbols.size
-                val nullabilities = BooleanArray(typeParamCount) { index ->
-                    type.typeArguments.getOrNull(index)?.type?.isMarkedNullable == true
-                }
+                val nullabilities = BooleanArray(type.typeArguments.size) { type.typeArguments[it].type?.isMarkedNullable == true }
                 ConeRawType.create(
                     type.withArguments(
                         firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession, nullabilities = nullabilities)
