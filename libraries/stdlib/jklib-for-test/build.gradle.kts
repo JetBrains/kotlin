@@ -109,6 +109,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/contracts/Effect.kt",
             "kotlin/util/Standard.kt",
             "kotlin/annotations/Annotations.kt",
+            "kotlin/annotations/OptIn.kt",
             "kotlin/concurrent/atomics/ExperimentalAtomicApi.kt",
             "kotlin/annotations/ExperimentalStdlibApi.kt",
         )

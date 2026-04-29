@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JKLIB
 fun topLevelMethod() {
     var z = 1
 
