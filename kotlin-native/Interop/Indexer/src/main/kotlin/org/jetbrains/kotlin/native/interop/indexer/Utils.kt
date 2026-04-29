@@ -1049,6 +1049,9 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
 fun ObjCMethod.replaces(other: ObjCMethod): Boolean =
         this.isClass == other.isClass && this.selector == other.selector
 
+fun UnavailableObjCMethod.replaces(other: UnavailableObjCMethod): Boolean =
+        this.isClass == other.isClass && this.selector == other.selector
+
 fun ObjCProperty.replaces(other: ObjCProperty): Boolean =
         this.getter.replaces(other.getter)
 

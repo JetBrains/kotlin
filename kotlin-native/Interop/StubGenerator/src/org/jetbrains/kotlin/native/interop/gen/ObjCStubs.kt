@@ -315,9 +315,16 @@ private fun ObjCContainer.declaredMethods(isClass: Boolean): Sequence<ObjCMethod
         this.methods.asSequence().filter { it.isClass == isClass } +
                 if (this is ObjCClass) { includedCategoriesMethods(isClass) } else emptyList()
 
-@Suppress("UNUSED_PARAMETER")
-internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
-        this // TODO: exclude methods that are marked as unavailable in [container].
+private fun ObjCContainer.declaredUnavailableMethods(isClass: Boolean): Sequence<UnavailableObjCMethod> =
+        this.unavailableMethods.asSequence().filter { it.isClass == isClass } +
+                if (this is ObjCClass) { includedCategoriesUnavailableMethods(isClass) } else emptyList()
+
+internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> {
+    val unavailableSelectors = container.declaredUnavailableMethods(isMeta)
+            .mapTo(mutableSetOf()) { it.selector }
+
+    return this.filter { it.selector !in unavailableSelectors }
+}
 
 internal fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.immediateSuperTypes.flatMap { it.methodsWithInherited(isClass) }
@@ -354,6 +361,11 @@ internal fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
 private fun ObjCClass.includedCategoriesMethods(isMeta: Boolean): List<ObjCMethod> =
         includedCategories.flatMap { category ->
             category.declaredMethods(isMeta)
+        }
+
+private fun ObjCClass.includedCategoriesUnavailableMethods(isMeta: Boolean): List<UnavailableObjCMethod> =
+        includedCategories.flatMap { category ->
+            category.declaredUnavailableMethods(isMeta)
         }
 
 private fun ObjCClass.includedCategoriesProperties(isMeta: Boolean): List<ObjCProperty> =
@@ -393,7 +405,9 @@ internal abstract class ObjCContainerStubBuilder(
 
         // Add methods from adopted protocols that must be implemented according to Kotlin rules:
         if (container is ObjCClass) {
-            methods += container.protocolsWithSupers.flatMap { it.declaredMethods(isMeta) }.filter { !it.isOptional }
+            methods += container.protocolsWithSupers.flatMap { it.declaredMethods(isMeta) }
+                    .inheritedTo(container, isMeta)
+                    .filter { !it.isOptional }
         }
 
         // Add methods inherited from multiple supertypes that must be defined according to Kotlin rules:
