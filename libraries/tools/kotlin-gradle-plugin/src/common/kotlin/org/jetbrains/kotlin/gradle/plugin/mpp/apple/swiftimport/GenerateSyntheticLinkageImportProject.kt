@@ -118,6 +118,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
 
         failOnNonIdempotentChangesIfNeeded {
             val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
+            cleanPreviouslyGeneratedSyntheticFiles(packageRoot)
             when (syntheticProductType.get()) {
                 SyntheticProductType.DYNAMIC -> {
                     generatePackageManifest(
@@ -172,6 +173,18 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             }
         }
     }
+
+    private fun cleanPreviouslyGeneratedSyntheticFiles(packageRoot: File) {
+        // Regeneration must drop obsolete generated subpackages when projects move between identifier buckets, while keeping fetched state like Package.resolved and .swiftpm intact.
+        packageRoot.listFiles()
+            .orEmpty()
+            .filter {
+                it.name !in listOf(".swiftpm", ".build", "Package.resolved")
+            }.forEach {
+                it.deleteRecursively()
+            }
+    }
+
 
     private fun failOnNonIdempotentChangesIfNeeded(work: () -> Unit) {
         if (!failOnNonIdempotentChanges.get()) {

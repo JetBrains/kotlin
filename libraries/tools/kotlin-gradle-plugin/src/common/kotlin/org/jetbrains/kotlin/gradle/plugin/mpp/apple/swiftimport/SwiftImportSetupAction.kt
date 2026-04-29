@@ -46,7 +46,6 @@ import java.io.File
 import java.io.ObjectInputStream
 import kotlin.io.readLines
 import kotlin.io.resolve
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     if (project.kotlinPropertiesProvider.disableSwiftPMImport) return@KotlinProjectSetupAction
@@ -172,70 +171,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         syntheticImportProjectGenerationTaskForLinkageForCli,
     )
 
-    project.afterEvaluate {
-        val persistedPackageResolved = providePersistedPackageResolved()
-
-        syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
-            taskProvider.sourceFile.set(persistedPackageResolved)
-        }
-
-        when (val packageIdentifier = identifierSynchronizationOrNull()) {
-            is PackageResolvedSynchronization.Identifier -> {
-                val packageResolvedSynchronizationIdentifier = packageIdentifier.identifier
-                val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
-                kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all {
-                    val projectPath = project.path
-
-                    aggregationService.get().contribute(
-                        identifier = packageResolvedSynchronizationIdentifier,
-                        projectPathContribution = projectPath,
-                    )
-
-                    val sharedCheckoutDir = provideIdentifierCheckoutDir(packageResolvedSynchronizationIdentifier)
-
-                    val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
-                        identifier = packageResolvedSynchronizationIdentifier,
-                        aggregationService = aggregationService,
-                        isMacOSHost = isMacOSHost,
-                    )
-                    val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
-                        identifier = packageResolvedSynchronizationIdentifier,
-                        aggregationService = aggregationService,
-                        checkOutDir = sharedCheckoutDir,
-                        actualGeneratedClaimer = actualGeneratedClaimer,
-                        isMacOSHost = isMacOSHost,
-                    )
-
-                    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
-                        it.dependsOn(actualFetchClaimer)
-                        it.onlyIf("Shared Package.resolved exists") {
-                            persistedPackageResolved.asFile.exists()
-                        }
-                    }
-                }
-            }
-            // If none, after resolution in synthetic we sync back to persisted location.
-            // With identifier, it would cause the umbrella package to be overridden
-            else -> {
-                syncSyntheticPackageResolvedToPersisted.configure { taskProvider ->
-                    taskProvider.sourceFile.set(
-                        fetchSyntheticImportProjectPackages.map { task ->
-                            task.syntheticLockFile.get()
-                        }
-                    )
-                    taskProvider.destinationFile.set(persistedPackageResolved)
-                    taskProvider.onlyIf("Synthetic Package.resolved exists") {
-                        taskProvider.sourceFile.get().asFile.exists()
-                    }
-                }
-
-                fetchSyntheticImportProjectPackages.configure {
-                    it.finalizedBy(syncSyntheticPackageResolvedToPersisted)
-                }
-            }
-        }
-    }
-
     syntheticImportTasks.forEach {
         it.configure {
             it.onlyIf {
@@ -269,33 +204,131 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         val targetSdk = target.konanTarget.appleTarget.sdk
 
 
-        val dumpXcodebuildArgsTask = registerDumpXcodebuildArgsTask(
-            outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)),
-            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
-            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
-            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
-            targetSdk = targetSdk,
-            targetPlatform = targetPlatform,
-            isMacOSHost = isMacOSHost,
-        )
-
-        dumpXcodebuildArgsTask.configure {
-            it.architectures.add(target.konanTarget.appleArchitecture)
-        }
-
         val defFilesAndLdDumpGenerationTask = registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
             discoverModulesImplicitly = swiftPMImportExtension.discoverClangModulesImplicitly,
             isMacOSHost = isMacOSHost,
             targetSdk = targetSdk,
         )
 
-        defFilesAndLdDumpGenerationTask.configure { defFile ->
-            defFile.architectures.set(dumpXcodebuildArgsTask.map { it.architectures.get() })
+        project.afterEvaluate {
 
-            defFile.dumpedXcodeBuildArgsDir.set(
-                dumpXcodebuildArgsTask.map { it.dumpedXcodeBuildArgsDir.get() }
-            )
+            val persistedPackageResolved = providePersistedPackageResolved()
+
+            when (val packageIdentifier = identifierSynchronizationOrNull()) {
+                is PackageResolvedSynchronization.Identifier -> {
+                    val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
+                    val umbrellaPackageRoot = provideIdentifierPackageRoot(packageIdentifier.identifier)
+                    val umbrellaCheckoutDir = provideIdentifierCheckoutDir(packageIdentifier.identifier)
+
+                    kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all {
+                        val projectPath = project.path
+
+                        aggregationService.get().contribute(
+                            identifier = packageIdentifier.identifier,
+                            projectPathContribution = projectPath,
+                        )
+
+                        val sharedCheckoutDir = provideIdentifierCheckoutDir(packageIdentifier.identifier)
+
+                        val actualGeneratedClaimer = locateOrRegisterUmbrellaPackageGenerateTask(
+                            identifier = packageIdentifier.identifier,
+                            aggregationService = aggregationService,
+                            isMacOSHost = isMacOSHost,
+                        )
+                        val actualFetchClaimer = locateOrRegisterUmbrellaFetchTask(
+                            identifier = packageIdentifier.identifier,
+                            aggregationService = aggregationService,
+                            checkOutDir = sharedCheckoutDir,
+                            actualGeneratedClaimer = actualGeneratedClaimer,
+                            isMacOSHost = isMacOSHost,
+                        )
+
+                        syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure {
+                            it.dependsOn(actualFetchClaimer)
+                            it.onlyIf("Shared Package.resolved exists") {
+                                persistedPackageResolved.asFile.exists()
+                            }
+                        }
+                    }
+
+                    val claimedDumpTask = locateOrRegisterSharedUmbrellaDumpXcodebuildArgs(
+                        aggregationService = aggregationService,
+                        identifier = packageIdentifier.identifier,
+                        actualFetchClaimer = aggregationService.get().getClaimedFetchTask(packageIdentifier.identifier),
+                        umbrellaPackageRoot = umbrellaPackageRoot,
+                        umbrellaCheckoutDir = umbrellaCheckoutDir,
+                        computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+                        targetSdk = targetSdk,
+                        targetPlatform = targetPlatform,
+                        architecture = target.konanTarget.appleArchitecture,
+                        isMacOSHost = isMacOSHost,
+                    )
+
+
+                    defFilesAndLdDumpGenerationTask.configure { defFile ->
+                        defFile.architectures.set(setOf(target.konanTarget.appleArchitecture))
+                        defFile.dependsOn(claimedDumpTask.taskPath)
+                        defFile.dumpedXcodeBuildArgsDir.set(
+                            project.layout.dir(project.provider { File(claimedDumpTask.dumpedArgsDir) })
+                        )
+                    }
+                }
+                else -> {
+
+                    syncPersistedPackageResolvedToSyntheticSwiftPMPackage.configure { taskProvider ->
+                        taskProvider.sourceFile.set(persistedPackageResolved)
+                    }
+
+                    val dumpXcodebuildArgsTask = registerDumpXcodebuildArgsTask(
+                        taskName = lowerCamelCaseName(
+                            DumpXcodeBuildArgs.TASK_NAME,
+                            targetSdk,
+                        ),
+                        outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)),
+                        computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+                        hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
+                        targetSdk = targetSdk,
+                        targetPlatform = targetPlatform,
+                        isMacOSHost = isMacOSHost,
+                    )
+
+                    dumpXcodebuildArgsTask.configure { dumpTask ->
+                        dumpTask.architectures.add(target.konanTarget.appleArchitecture)
+                        dumpTask.dependsOn(fetchSyntheticImportProjectPackages)
+                        dumpTask.resolvedPackagesState.from(
+                            fetchSyntheticImportProjectPackages.map { it.inputManifests },
+                            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
+                        )
+                        dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
+                        dumpTask.syntheticImportProjectRoot.set(
+                            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() }
+                        )
+                    }
+
+                    defFilesAndLdDumpGenerationTask.configure { defFile ->
+                        defFile.architectures.set(dumpXcodebuildArgsTask.map { it.architectures.get() })
+                        defFile.dumpedXcodeBuildArgsDir.set(
+                            dumpXcodebuildArgsTask.map { it.dumpedXcodeBuildArgsDir.get() }
+                        )
+                    }
+
+                    syncSyntheticPackageResolvedToPersisted.configure { taskProvider ->
+                        taskProvider.sourceFile.set(
+                            fetchSyntheticImportProjectPackages.map { task ->
+                                task.syntheticLockFile.get()
+                            }
+                        )
+                        taskProvider.destinationFile.set(persistedPackageResolved)
+                        taskProvider.onlyIf("Synthetic Package.resolved exists") {
+                            taskProvider.sourceFile.get().asFile.exists()
+                        }
+                    }
+
+                    fetchSyntheticImportProjectPackages.configure {
+                        it.finalizedBy(syncSyntheticPackageResolvedToPersisted)
+                    }
+                }
+            }
         }
 
         tasks.configureEach { task ->
@@ -500,7 +533,7 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
 ): String? {
     val candidateFetchTaskName =
         FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)
-    val projectCandidateFetchTaskName = "${project.path}:$candidateFetchTaskName"
+    val projectCandidateFetchTaskName = ("${project.path}:$candidateFetchTaskName").replace("::", ":")
 
     val isFetchClaimed =
         aggregationService.get().claimFetchTask(identifier, projectCandidateFetchTaskName)
@@ -535,7 +568,7 @@ private fun Project.locateOrRegisterUmbrellaPackageGenerateTask(
 
     val candidateGenerateTaskName =
         GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)
-    val projectCandidateGenerateTaskName = "${project.path}:$candidateGenerateTaskName"
+    val projectCandidateGenerateTaskName = ("${project.path}:$candidateGenerateTaskName").replace("::", ":")
 
     val isGeneratedClaimed =
         aggregationService.get().claimGenerateTask(identifier, projectCandidateGenerateTaskName)
@@ -559,7 +592,8 @@ private fun Project.locateOrRegisterUmbrellaPackageGenerateTask(
         task.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         task.onlyIf { aggregatedTransitiveDependenciesProvider.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
         task.useOnlyTransitiveImportedDependencies()
-        task.syntheticProductType.set(SyntheticProductType.INFERRED)
+        // The umbrella package is also used as the shared dump source, so it keeps the same dynamic synthetic shape as the local cinterop/ld-dump package.
+        task.syntheticProductType.set(SyntheticProductType.DYNAMIC)
         task.syntheticImportProjectRoot.set(swiftPMRootPath)
         task.dependencyIdentifierToImportedSwiftPMDependencies.set(
             aggregatedTransitiveDependenciesProvider
@@ -739,38 +773,81 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
 }
 
 private fun Project.registerDumpXcodebuildArgsTask(
+    taskName: String,
     outputDir: Provider<Directory>,
     computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
-    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
-    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
     targetSdk: String,
     targetPlatform: String,
     isMacOSHost: Boolean,
 ): TaskProvider<DumpXcodeBuildArgs> {
     return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
-        lowerCamelCaseName(
-            DumpXcodeBuildArgs.TASK_NAME,
-            targetSdk,
-        ),
+        taskName,
     ) { dumpTask ->
         dumpTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
-        dumpTask.dependsOn(fetchSyntheticImportProjectPackages)
         dumpTask.dependsOn(computeLocalPackageDependencyInputFiles)
-        dumpTask.resolvedPackagesState.from(
-            fetchSyntheticImportProjectPackages.map { it.inputManifests },
-            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
-        )
         dumpTask.xcodebuildPlatform.set(targetPlatform)
         dumpTask.xcodebuildSdk.set(targetSdk)
-        dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
-        dumpTask.syntheticImportProjectRoot.set(
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() }
-        )
         dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         dumpTask.dumpedXcodeBuildArgsDir.set(outputDir)
     }
+}
+
+private fun Project.locateOrRegisterSharedUmbrellaDumpXcodebuildArgs(
+    aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
+    identifier: String,
+    actualFetchClaimer: String?,
+    umbrellaPackageRoot: Provider<Directory>,
+    umbrellaCheckoutDir: Provider<Directory>,
+    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
+    targetSdk: String,
+    targetPlatform: String,
+    architecture: org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture,
+    isMacOSHost: Boolean,
+): ClaimedDumpTask {
+    val normalizedDumpKey = listOf(identifier, targetPlatform, targetSdk, architecture.name).joinToString("|")
+    val candidateTaskName = lowerCamelCaseName(
+        DumpXcodeBuildArgs.TASK_NAME,
+        "umbrella",
+        identifier,
+        targetSdk,
+    )
+    val projectCandidateTaskName = ("${project.path}:$candidateTaskName").replace("::", ":")
+    val candidateOutputDir = layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir("umbrella_$targetSdk")).get().asFile.path
+
+    val isClaimed = aggregationService.get().claimDumpTask(normalizedDumpKey, projectCandidateTaskName, candidateOutputDir, architecture)
+    val claimedTask = aggregationService.get().getClaimedDumpTask(normalizedDumpKey)
+
+    if (isClaimed) {
+        registerDumpXcodebuildArgsTask(
+            taskName = candidateTaskName,
+            outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir("umbrella_$targetSdk")),
+            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
+            hasDirectOrTransitiveSwiftPMDependencies = project.provider { true },
+            targetSdk = targetSdk,
+            targetPlatform = targetPlatform,
+            isMacOSHost = isMacOSHost,
+        ).configure { dumpTask ->
+            dumpTask.architectures.add(architecture)
+            dumpTask.dependsOn(actualFetchClaimer)
+            dumpTask.resolvedPackagesState.from(
+                umbrellaPackageRoot.map { directory ->
+                    project.fileTree(directory).matching {
+                        it.exclude(".swiftpm")
+                        it.exclude(".build")
+                        it.include("**/Package.swift")
+                    }
+                },
+                umbrellaPackageRoot.map { it.file("Package.resolved") },
+            )
+            dumpTask.swiftPMDependenciesCheckout.set(umbrellaCheckoutDir)
+            dumpTask.syntheticImportProjectRoot.set(umbrellaPackageRoot)
+        }
+        // Identifier mode shares one umbrella dump per target configuration, and projects only reuse its dumped artifacts during local def materialization.
+    }
+
+    return claimedTask ?: error("Claimed umbrella dump task is missing")
 }
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"

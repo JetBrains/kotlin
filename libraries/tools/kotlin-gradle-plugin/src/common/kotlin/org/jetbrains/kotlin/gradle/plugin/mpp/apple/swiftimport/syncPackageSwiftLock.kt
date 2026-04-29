@@ -22,6 +22,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.utils.contentEquals
 
 import java.io.File
@@ -132,6 +133,7 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
 
     private val claimedGenerateTaskByIdentifier = mutableMapOf<String, String>()
     private val claimedFetchTaskByIdentifier = mutableMapOf<String, String>()
+    private val claimedDumpTaskByKey = mutableMapOf<String, ClaimedDumpTask>()
 
     /** Registers a project's contribution for [identifier]. */
     fun contribute(
@@ -158,8 +160,19 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
         }
     }
 
+    fun claimDumpTask(normalizedKey: String, taskName: String, dumpedArgsDir: String, appleArch: AppleArchitecture): Boolean {
+        synchronized(stateLock) {
+            val claimedDumpTask = claimedDumpTaskByKey.getOrPut(normalizedKey) {
+                ClaimedDumpTask(taskPath = taskName, dumpedArgsDir = dumpedArgsDir, architectures = mutableSetOf())
+            }
+            claimedDumpTask.architectures.add(appleArch)
+            return taskName == claimedDumpTask.taskPath
+        }
+    }
+
     fun getClaimedGenerateTask(identifier: String): String? = claimedGenerateTaskByIdentifier[identifier]
     fun getClaimedFetchTask(identifier: String): String? = claimedFetchTaskByIdentifier[identifier]
+    fun getClaimedDumpTask(normalizedKey: String): ClaimedDumpTask? = claimedDumpTaskByKey[normalizedKey]
 
     fun buildAggregatedResultDependencies(identifier: String): List<String> {
         val projectPaths = synchronized(stateLock) {
@@ -181,3 +194,9 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
             ) {}
     }
 }
+
+internal data class ClaimedDumpTask(
+    val taskPath: String,
+    val dumpedArgsDir: String,
+    val architectures: MutableSet<AppleArchitecture> = mutableSetOf(),
+)
