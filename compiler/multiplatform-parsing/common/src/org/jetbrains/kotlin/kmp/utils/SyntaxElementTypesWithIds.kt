@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.kmp.utils
 
 import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.impl.fastutil.ints.Int2IntOpenHashMap
 
 abstract class SyntaxElementTypesWithIds {
     companion object {
         const val NO_ID: Int = 0
     }
 
-    private val indexToIdMap: MutableMap<Int, Int> = mutableMapOf()
+    private val indexToIdMap: Int2IntOpenHashMap = Int2IntOpenHashMap()
 
     /**
      * Returns [NO_ID] (`0`) if an element has no associated ID.
