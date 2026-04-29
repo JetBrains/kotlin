@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.commonizer.mergedtree.AssociatedClassifierIdsResolve
 import org.jetbrains.kotlin.commonizer.mergedtree.AssociatedClassifierIdsResolverCache
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
+import org.jetbrains.kotlin.commonizer.utils.KtInlineSourceCommonizerTestCase
+import org.jetbrains.kotlin.commonizer.utils.buildDummySupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.utils.createCirProvidedClassifiers
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRoot
 import org.jetbrains.kotlin.commonizer.utils.createCirTreeRootFromSourceCode
@@ -345,15 +347,19 @@ class AssociatedClassifierIdsResolverTest : AbstractInlineSourcesCommonizationTe
     }
 }
 
-private fun createCommonClassifierIdResolver(
+private fun KtInlineSourceCommonizerTestCase.createCommonClassifierIdResolver(
     vararg root: CirTreeRoot,
-    dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
+    dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY,
 ): AssociatedClassifierIdsResolver {
     return AssociatedClassifierIdsResolver(
         TargetDependent(root.withIndex().associate { [index, root] -> LeafCommonizerTarget(index.toString()) to root })
             .mapValue(::CirClassifierIndex),
         targetDependencies = root.withIndex()
             .associate { [index, _] -> LeafCommonizerTarget(index.toString()) to CirProvidedClassifiers.EMPTY }.toTargetDependent(),
+        supportExpectClassSupplier = buildDummySupportExpectClassSupplier(
+            targets = root.withIndex().map { LeafCommonizerTarget(it.index.toString()) },
+            disposable = testRootDisposable,
+        ),
         commonDependencies = dependencies,
         cache = AssociatedClassifierIdsResolverCache.None
     )

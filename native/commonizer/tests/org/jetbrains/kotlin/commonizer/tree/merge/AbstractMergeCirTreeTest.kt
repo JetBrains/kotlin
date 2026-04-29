@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.commonizer.tree.merge
 
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.tree.CirTreeModule
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
@@ -26,7 +27,7 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
 
         return org.jetbrains.kotlin.commonizer.tree.mergeCirTree(
             storageManager,
-            createDefaultKnownClassifiers(),
+            createDefaultKnownClassifiers(supportExpectClassSupplier),
             TargetDependent(*modules),
             DefaultCommonizerSettings,
             supportExpectClassSupplier,
@@ -94,7 +95,7 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
             .toTargetDependent()
     }
 
-    private fun createDefaultKnownClassifiers(): CirKnownClassifiers {
+    private fun createDefaultKnownClassifiers(supportExpectClassSupplier: SupportExpectClassSupplier): CirKnownClassifiers {
         return CirKnownClassifiers(
             TargetDependent.empty(),
             TargetDependent.empty(),
@@ -104,7 +105,8 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
                 CirProvidedClassifiers.by(
                     MockModulesProvider.create(loadStdlibMetadata())
                 )
-            )
+            ),
+            supportExpectClassSupplier,
         )
     }
 }

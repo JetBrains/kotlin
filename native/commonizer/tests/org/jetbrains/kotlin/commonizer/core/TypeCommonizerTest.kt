@@ -104,7 +104,8 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             classifierIndices = roots.mapValue(::CirClassifierIndex),
             targetDependencies = targetDependencies,
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            commonDependencies = commonDependencies
+            commonDependencies = commonDependencies,
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable),
         ).also { classifiers ->
             mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings, supportExpectClassSupplier)
         }

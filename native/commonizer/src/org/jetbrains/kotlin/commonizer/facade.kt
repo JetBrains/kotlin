@@ -56,14 +56,15 @@ internal fun commonizeTarget(
     if (availableTrees.size == 0) return null
 
     parameters.logger.progress(output, "Commonized declarations from ${inputs.targets}") {
+        val supportExpectClassSupplier = SupportExpectClassSupplier(availableTrees.targets, parameters.supportLibraryModulesProvider)
         val classifiers = CirKnownClassifiers(
             classifierIndices = availableTrees.mapValue(::CirClassifierIndex),
             targetDependencies = availableTrees.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(allowedDuplicates = allowedDuplicates),
-            commonDependencies = parameters.dependencyClassifiers(output)
+            commonDependencies = parameters.dependencyClassifiers(output),
+            supportExpectClassSupplier = supportExpectClassSupplier,
         )
 
-        val supportExpectClassSupplier = SupportExpectClassSupplier(availableTrees.targets, parameters.supportLibraryModulesProvider)
         val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees, parameters.settings, supportExpectClassSupplier)
 
         InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers, parameters.settings, supportExpectClassSupplier).invoke(mergedTree)

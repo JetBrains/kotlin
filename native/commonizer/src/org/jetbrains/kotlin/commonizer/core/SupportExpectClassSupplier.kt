@@ -18,7 +18,7 @@ import kotlin.collections.toMap
 
 class SupportExpectClassSupplier internal constructor(
     private val targets: List<CommonizerTarget>,
-    private val supportLibraryModulesProvider: TargetDependent<ModulesProvider>,
+    internal val supportLibraryModulesProvider: TargetDependent<ModulesProvider>,
 ) {
     internal constructor(targets: List<CommonizerTarget>, repository: CommonizerSupportLibraryRepository)
             : this(targets, repository.toModulesProvider(targets))
@@ -35,7 +35,7 @@ class SupportExpectClassSupplier internal constructor(
     private fun loadAllClassifiersAvailableFor(target: CommonizerTarget) =
         allClassifiersCache.getOrPut(target) { supportLibraryModulesProviderFor(target).loadAllClassifiers() }
 
-    private fun getProvidedClassifiers(target: CommonizerTarget): CirProvidedClassifiers =
+    internal fun getProvidedClassifiers(target: CommonizerTarget): CirProvidedClassifiers =
         loadAllClassifiersAvailableFor(target).takeIf { it.isNotEmpty() }
             ?.let { CirProvidedClassifiersByModules(false, it) }
             ?: CirProvidedClassifiers.EMPTY
@@ -48,7 +48,7 @@ class SupportExpectClassSupplier internal constructor(
             allClassifiers.filterValues { it.isLeafWithin(allClassifiers) }
         }
 
-    private fun CirEntityId.expandThroughDependencies(
+    internal fun CirEntityId.expandThroughDependencies(
         dependencies: CirProvidedClassifiers,
         arguments: List<CirTypeProjection>,
     ): CirEntityId? {

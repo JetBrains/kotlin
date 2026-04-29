@@ -8,19 +8,22 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.TargetDependent
+import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 import org.jetbrains.kotlin.commonizer.utils.CommonizerSet
 
 internal fun AssociatedClassifierIdsResolver(
     classifierIndices: TargetDependent<CirClassifierIndex>,
     targetDependencies: TargetDependent<CirProvidedClassifiers>,
+    supportExpectClassSupplier: SupportExpectClassSupplier,
     commonDependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY,
     cache: AssociatedClassifierIdsResolverCache = AssociatedClassifierIdsResolverCache.create()
 ): AssociatedClassifierIdsResolver {
-    return AssociatedClassifierIdsResolverImpl(classifierIndices, targetDependencies, commonDependencies, cache)
+    return AssociatedClassifierIdsResolverImpl(classifierIndices, targetDependencies, supportExpectClassSupplier, commonDependencies, cache)
 }
 
 interface AssociatedClassifierIdsResolver {
@@ -60,6 +63,7 @@ internal interface AssociatedClassifierIdsResolverCache {
 private class AssociatedClassifierIdsResolverImpl(
     private val classifierIndices: TargetDependent<CirClassifierIndex>,
     private val targetDependencies: TargetDependent<CirProvidedClassifiers>,
+    private val supportExpectClassSupplier: SupportExpectClassSupplier,
     private val commonDependencies: CirProvidedClassifiers,
     private val cache: AssociatedClassifierIdsResolverCache
 ) : AssociatedClassifierIdsResolver {
@@ -77,6 +81,8 @@ private class AssociatedClassifierIdsResolverImpl(
 
         visited.add(id)
         queue.add(id)
+
+        val allLeaves = classifierIndices.targets.allLeaves()
 
         while (queue.isNotEmpty()) {
             val nextClassifierId = queue.removeFirst()
@@ -125,6 +131,18 @@ private class AssociatedClassifierIdsResolverImpl(
                 if (classifier is CirProvided.TypeAlias) {
                     if (visited.add(classifier.underlyingType.classifierId)) {
                         queue.add(classifier.underlyingType.classifierId)
+                    }
+                }
+            }
+
+            // See: `HierarchicalSupportLibraryCommonizerTest.testIncompleteHierarchyAmbiguity`
+            for (leaf in allLeaves) {
+                with(supportExpectClassSupplier) {
+                    val targetSupportDependencies = supportExpectClassSupplier.getProvidedClassifiers(leaf)
+                    nextClassifierId.expandThroughDependencies(targetSupportDependencies, emptyList())
+                }?.let { expandedClassifier ->
+                    if (visited.add(expandedClassifier)) {
+                        queue.add(expandedClassifier)
                     }
                 }
             }
