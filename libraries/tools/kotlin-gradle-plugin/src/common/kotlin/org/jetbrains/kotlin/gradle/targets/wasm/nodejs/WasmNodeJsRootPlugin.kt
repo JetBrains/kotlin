@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.wasm.nodejs
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.TASKS_GROUP_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsRootPluginApplier
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.NpmToolingEnv
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.configureNodeJsEnvironmentTasks
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
@@ -74,64 +76,77 @@ abstract class WasmNodeJsRootPlugin internal constructor() : CommonNodeJsRootPlu
 
         val allDeps = nodeJsRoot.versions.allDependencies
 
-        val npmTooling = target.extensions.create(
+        val wasmNpmToolingExtension = createWasmNpmToolingExtension(target, packageManagerName, allDeps)
+        val npmTooling = wasmNpmToolingExtension.produceEnv()
+
+        registerKotlinToolingSetupTask(target, npmTooling, allDeps, nodeJsRoot, nodeJs)
+
+        nodeJsRoot.npmTooling.value(npmTooling)
+    }
+
+    private fun createWasmNpmToolingExtension(
+        target: Project,
+        packageManagerName: Provider<String>,
+        allDeps: List<NpmPackageVersion>,
+    ): WasmNpmTooling {
+        val extension = target.extensions.create(
             "wasmNpmTooling",
             WasmNpmTooling::class.java
-        ).apply {
-            this.allDeps.set(allDeps)
-            this.defaultInstallationDir.set(
-                target.objects.directoryProperty()
-                    .fileValue(target.userKotlinPersistentDir.resolve(NPM_TOOLING_DIR_NAME))
-                    .zip(packageManagerName) { toolingDir, name ->
-                        toolingDir.dir(name)
-                    }
-            )
-        }.produceEnv()
+        )
+        extension.allDeps.set(allDeps)
+        extension.installationDir.convention(
+            target.objects.directoryProperty()
+                .fileValue(target.userKotlinPersistentDir.resolve(NPM_TOOLING_DIR_NAME))
+                .zip(packageManagerName) { toolingDir, name ->
+                    toolingDir.dir(name)
+                }
+        )
+        return extension
+    }
 
-        target.registerTask<KotlinToolingSetupTask>(extensionName(KotlinToolingSetupTask.BASE_NAME)) { toolingInstall ->
-
-            toolingInstall.onlyIf("Output directory is set explicitly. All installed dependencies are expected in the output directory.") {
+    private fun registerKotlinToolingSetupTask(
+        target: Project,
+        npmTooling: Provider<NpmToolingEnv>,
+        allDeps: List<NpmPackageVersion>,
+        nodeJsRoot: WasmNodeJsRootExtension,
+        nodeJs: WasmNodeJsEnvSpec,
+    ) {
+        target.registerTask<KotlinToolingSetupTask>(extensionName(KotlinToolingSetupTask.BASE_NAME)) { task ->
+            task.onlyIf("Output directory is set explicitly. All installed dependencies are expected in the output directory.") {
                 !npmTooling.get().explicitDir
             }
 
-            toolingInstall
-                .versionsHash
+            task.versionsHash
                 .value(npmTooling.map { it.version })
                 .disallowChanges()
 
-            toolingInstall
-                .tools
+            task.tools
                 .value(allDeps)
                 .disallowChanges()
 
-            toolingInstall
-                .destination
+            task.destination
                 .fileProvider(npmTooling.map { it.dir })
                 .disallowChanges()
 
-            toolingInstall
-                .nodeModules
+            task.nodeModules
                 .fileProvider(npmTooling.map { it.dir.resolve("node_modules") })
                 .disallowChanges()
 
-            toolingInstall.configureNodeJsEnvironmentTasks(
+            task.configureNodeJsEnvironmentTasks(
                 nodeJsRoot,
                 nodeJs
             )
 
             with(nodeJs) {
-                toolingInstall.dependsOn(target.nodeJsSetupTaskProvider)
+                task.dependsOn(target.nodeJsSetupTaskProvider)
             }
-            toolingInstall.group = TASKS_GROUP_NAME
-            toolingInstall.description = "Find, download and link NPM dependencies and projects"
+            task.group = TASKS_GROUP_NAME
+            task.description = "Find, download and link NPM dependencies and projects"
 
-            toolingInstall.outputs.upToDateWhen {
-                toolingInstall.nodeModules.getFile().exists()
+            task.outputs.upToDateWhen {
+                task.nodeModules.getFile().exists()
             }
         }
-
-        nodeJsRoot.npmTooling
-            .value(npmTooling)
     }
 
     companion object : HasPlatformDisambiguator by WasmPlatformDisambiguator {

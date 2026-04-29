@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.RESTORE_YARN_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.Companion.STORE_YARN_LOCK_BASE_NAME
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.yarn.BaseYarnRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.getExecOperations
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -158,13 +161,19 @@ internal class YarnPluginApplier(
             )
         }
 
+        val lockFile: RegularFileProperty =
+            project.objects.fileProperty().fileProvider(
+                project.provider {
+                    yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
+                }
+            )
+
         project.tasks.register(platformDisambiguate.extensionName(RESTORE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) {
-            val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
-            it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
+            it.inputFile.set(lockFile)
             it.outputDirectory.set(nodeJsRoot.rootPackageDirectory)
             it.fileName.set(LockCopyTask.YARN_LOCK)
             it.onlyIf {
-                lockFile.exists()
+                lockFile.orNull?.asFile?.exists() == true
             }
         }
 
@@ -175,6 +184,10 @@ internal class YarnPluginApplier(
         yarnRootExtension.postInstallTasks.value(
             listOf(yarnRootExtension.storeYarnLockTaskProvider)
         ).disallowChanges()
+
+        project.tasks.withType<RequiresNpmDependenciesTask>().configureEach { task ->
+            task.npmDependenciesLockFiles.from(lockFile)
+        }
     }
 
     private fun ExtensionContainer.createYarnEnvSpec(

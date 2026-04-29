@@ -76,5 +76,6 @@ internal class KotlinWasmD8(
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> = emptySet()
 
+    @Deprecated("No longer used")
     override fun getPath(): String = "$testPath:kotlinTestFrameworkStub"
 }

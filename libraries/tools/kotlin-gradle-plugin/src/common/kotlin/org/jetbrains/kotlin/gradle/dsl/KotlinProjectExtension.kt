@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -92,7 +91,7 @@ internal fun KotlinBaseExtension.explicitApiModeAsCompilerArg(): String? {
 
 @KotlinGradlePluginPublicDsl
 abstract class KotlinProjectExtension @Inject constructor(
-    override val project: Project
+    override val project: Project,
 ) : KotlinBaseExtension,
     HasMutableExtras,
     HasProject,
@@ -203,7 +202,7 @@ abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Proje
 abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
 
 abstract class KotlinJvmProjectExtension @Inject constructor(
-    project: Project
+    project: Project,
 ) : KotlinSingleJavaTargetExtension(project),
     KotlinJvmExtension {
     @Suppress("DEPRECATION_ERROR")
@@ -214,7 +213,7 @@ abstract class KotlinJvmProjectExtension @Inject constructor(
     override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>>()
 
     open fun target(
-        @Suppress("DEPRECATION_ERROR") body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit
+        @Suppress("DEPRECATION_ERROR") body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit,
     ) {
         project.launch(Undispatched) { targetFuture.await().body() }
     }
@@ -238,7 +237,10 @@ private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPubli
 }
 
 @Suppress("unused")
-@Deprecated("KotlinJsProjectExtension is deprecated and will be removed in the future: https://kotl.in/t6m3vu", level = DeprecationLevel.ERROR)
+@Deprecated(
+    "KotlinJsProjectExtension is deprecated and will be removed in the future: https://kotl.in/t6m3vu",
+    level = DeprecationLevel.ERROR
+)
 abstract class KotlinJsProjectExtension(project: Project) :
     KotlinSingleTargetExtension<KotlinJsTargetDsl>(project),
     KotlinJsCompilerTypeHolder {
@@ -250,8 +252,9 @@ abstract class KotlinJsProjectExtension(project: Project) :
 
     fun registerTargetObserver(
         @Suppress("UNUSED_PARAMETER")
-        observer: (KotlinJsTargetDsl?) -> Unit
-    ) {}
+        observer: (KotlinJsTargetDsl?) -> Unit,
+    ) {
+    }
 
     @Suppress("DEPRECATION_ERROR")
     private fun jsInternal(
@@ -325,7 +328,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
 }
 
 abstract class KotlinAndroidProjectExtension @Inject constructor(
-    project: Project
+    project: Project,
 ) : KotlinSingleTargetExtension<KotlinAndroidTarget>(project),
     KotlinAndroidExtension {
     override val target: KotlinAndroidTarget get() = targetFuture.getOrThrow()
@@ -360,7 +363,8 @@ abstract class KotlinAndroidProjectExtension @Inject constructor(
             return super.sourceSets
         }
         @Deprecated("Assigning new value to 'sourceSets' is deprecated", level = DeprecationLevel.ERROR)
-        set(_) {}
+        set(_) {
+        }
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

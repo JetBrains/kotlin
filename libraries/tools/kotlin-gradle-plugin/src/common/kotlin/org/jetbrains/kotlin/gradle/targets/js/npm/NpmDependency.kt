@@ -68,11 +68,16 @@ internal fun directoryNpmDependency(
     )
 }
 
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7.")
 fun String.isFileVersion() =
-    startsWith(FILE_VERSION_PREFIX)
+    _isFileVersion()
+
+// TODO rename to isFileVersion when isFileVersion is removed.
+internal fun String._isFileVersion() =
+    startsWith(FILE_VERSION_PREFIX_)
 
 internal fun fileVersion(directory: File): String =
-    "$FILE_VERSION_PREFIX${directory.absolutePath}"
+    "$FILE_VERSION_PREFIX_${directory.absolutePath}"
 
 internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)
@@ -84,4 +89,8 @@ internal fun moduleName(directory: File): String {
     return directory.name
 }
 
-const val FILE_VERSION_PREFIX = "file:"
+// TODO rename to FILE_VERSION_PREFIX when FILE_VERSION_PREFIX is removed.
+private const val FILE_VERSION_PREFIX_ = "file:"
+
+@Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7.")
+const val FILE_VERSION_PREFIX = FILE_VERSION_PREFIX_

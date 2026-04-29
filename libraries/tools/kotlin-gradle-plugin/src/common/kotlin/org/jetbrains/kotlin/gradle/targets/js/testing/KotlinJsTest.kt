@@ -16,7 +16,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
@@ -35,8 +35,11 @@ internal constructor(
     private val objects: ObjectFactory,
     execOps: ExecOperations,
 ) : KotlinTest(execOps),
-    RequiresNpmDependencies {
+    RequiresNpmDependenciesTask {
 
+    /**
+     * Environment variables to be passed to the process.
+     */
     @Input
     var environment = mutableMapOf<String, String>()
 
@@ -59,7 +62,7 @@ internal constructor(
     val testFrameworkSettings: String
         @Input get() = testFramework!!.settingsState
 
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     @InputFile
     @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
@@ -68,7 +71,7 @@ internal constructor(
     var debug: Boolean = false
 
     @Suppress("unused")
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
@@ -80,7 +83,7 @@ internal constructor(
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:NormalizeLineEndings
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val compilationOutputs: FileCollection by lazy {
         compilation.output.allOutputs
     }
@@ -100,7 +103,6 @@ internal constructor(
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
-
 
     @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha()"), level = DeprecationLevel.ERROR)
     fun useNodeJs() = useMocha()

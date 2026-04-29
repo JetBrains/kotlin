@@ -109,7 +109,7 @@ abstract class PublicPackageJsonTask :
 
     private fun MutableMap<String, String>.processDependencies() {
         filter { (_, version) ->
-            version.isFileVersion()
+            version._isFileVersion()
         }.forEach { (key, _) ->
             remove(key)
         }

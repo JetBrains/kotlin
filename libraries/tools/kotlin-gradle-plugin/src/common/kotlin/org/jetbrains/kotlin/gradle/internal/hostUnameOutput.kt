@@ -12,7 +12,7 @@ import org.gradle.internal.os.OperatingSystem
 internal val ProviderFactory.unameExecResult: Provider<String>
     get() {
         val cmd = exec {
-            if (OperatingSystem.current().isWindows){
+            if (OperatingSystem.current().isWindows) {
                 it.executable = "powershell"
                 it.args = listOf("-NoProfile", "-Command", "(Get-WmiObject Win32_Processor).Architecture")
             } else {

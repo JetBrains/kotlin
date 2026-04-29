@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
+import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
@@ -35,7 +36,7 @@ constructor(
     @Internal
     @Transient
     final override val compilation: KotlinJsIrCompilation,
-) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
+) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependenciesTask {
 
     @get:Internal
     internal abstract val versions: Property<NpmVersions>
@@ -61,7 +62,7 @@ constructor(
     var sourceMapStackTraces = true
 
     @Optional
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     @InputFile
     @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
@@ -103,6 +104,7 @@ constructor(
     }
 
     companion object {
+
         fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
@@ -110,10 +112,7 @@ constructor(
         ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
-            val nodeJsRoot = compilation.webTargetVariant(
-                { NodeJsRootPlugin.apply(project.rootProject) },
-                { WasmNodeJsRootPlugin.apply(project.rootProject) },
-            )
+            val nodeJsRoot = compilation.nodeJsRoot()
             val nodeJsEnvSpec = compilation.webTargetVariant(
                 { NodeJsPlugin.apply(project) },
                 { WasmNodeJsPlugin.apply(project) },
@@ -121,12 +120,7 @@ constructor(
 
             val npmProject = compilation.npmProject
 
-            val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
-                compilation.webTargetVariant(
-                    { npmProject.dir.map { it.asFile } },
-                    { (nodeJsRoot as WasmNodeJsRootExtension).npmTooling.map { it.dir } },
-                )
-            )
+            val npmToolingDir = compilation.npmToolingDir()
 
             val isWasm: Boolean = compilation.webTargetVariant(
                 jsVariant = false,
@@ -136,29 +130,29 @@ constructor(
             return project.registerTask(
                 name,
                 listOf(compilation)
-            ) {
-                it.versions.value(nodeJsRoot.versions)
+            ) { task ->
+                task.versions.value(nodeJsRoot.versions)
                     .disallowChanges()
-                it.executable = nodeJsEnvSpec.executable.get()
+                task.executable = nodeJsEnvSpec.executable.get()
                 if (compilation.target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                    it.workingDir(npmProject.dir)
-                    it.dependsOn(
+                    task.workingDir(npmProject.dir)
+                    task.dependsOn(
                         nodeJsRoot.npmInstallTaskProvider,
                     )
-                    it.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
+                    task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
 
                     if (isWasm) {
-                        it.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
+                        task.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
                     }
                 }
 
-                it.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
+                task.npmToolingEnvDir.value(npmToolingDir).disallowChanges()
 
                 with(nodeJsEnvSpec) {
-                    it.dependsOn(project.nodeJsSetupTaskProvider)
+                    task.dependsOn(project.nodeJsSetupTaskProvider)
                 }
-                it.dependsOn(compilation.compileTaskProvider)
-                it.configuration()
+                task.dependsOn(compilation.compileTaskProvider)
+                task.configuration()
             }
         }
 

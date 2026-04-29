@@ -13,7 +13,7 @@ private const val SESSIONS_DIR_NAME = "sessions"
 private const val METADATA_DIR_NAME = "metadata"
 private const val ERRORS_DIR_NAME = "errors"
 
-@Suppress("unused") // will be used in the followup KT-58223 issues
+//@Suppress("unused") // will be used in the followup KT-58223 issues
 internal val Project.userKotlinPersistentDir
     get() = kotlinPropertiesProvider.kotlinUserHomeDir?.let { File(it) }
         ?: File(System.getProperty("user.home")).resolve(".kotlin")

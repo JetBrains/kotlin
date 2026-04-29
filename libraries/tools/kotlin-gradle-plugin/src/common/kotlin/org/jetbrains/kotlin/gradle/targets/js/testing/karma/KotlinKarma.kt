@@ -102,6 +102,8 @@ class KotlinKarma internal constructor(
 
     override val executable: Provider<String> = nodeJsEnvSpec.executable
 
+    //override fun getPath() = "$basePath:kotlinKarma"
+    @Deprecated("No longer used")
     override fun getPath() = "$basePath:kotlinKarma"
 
     override val settingsState: String

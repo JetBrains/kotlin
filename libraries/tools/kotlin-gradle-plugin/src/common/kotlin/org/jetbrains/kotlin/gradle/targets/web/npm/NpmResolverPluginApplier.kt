@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+import org.jetbrains.kotlin.gradle.utils.withType
 
 /**
  * A utility class that applies the configuration for resolving NPM dependencies
@@ -31,14 +32,11 @@ internal class NpmResolverPluginApplier(
         singleNodeJsApply(project)
         nodeJsRoot.resolver.addProject(project)
         project.whenEvaluated {
-            project.tasks
-                .implementing(RequiresNpmDependencies::class)
+            project.tasks.withType<RequiresNpmDependenciesTask>()
                 .matching { task ->
-                    task as RequiresNpmDependencies
                     task.enabled && requiredNpmDependenciesPredicate(task)
                 }
                 .configureEach { task ->
-                    task as RequiresNpmDependencies
                     // KotlinJsTest delegates npm dependencies to testFramework,
                     // which can be defined after this configure action
                     if (task !is KotlinJsTest) {

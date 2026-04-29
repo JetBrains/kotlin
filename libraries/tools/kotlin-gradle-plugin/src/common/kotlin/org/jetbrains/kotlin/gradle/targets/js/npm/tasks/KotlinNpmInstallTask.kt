@@ -30,7 +30,7 @@ abstract class KotlinNpmInstallTask :
     @Input
     val args: MutableList<String> = mutableListOf()
 
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles

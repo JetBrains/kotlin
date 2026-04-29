@@ -99,11 +99,11 @@ class KotlinProjectNpmResolver(
 }
 
 
-/**
- * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
- *
- * TODO properly express within the type system? The result should be a TaskCollection<T & R>
- */
-internal fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
-    @Suppress("UNCHECKED_CAST")
-    withType(kclass.java as Class<T>)
+///**
+// * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
+// *
+// * TODO properly express within the type system? The result should be a TaskCollection<T & R>
+// */
+//internal fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
+//    @Suppress("UNCHECKED_CAST")
+//    withType(kclass.java as Class<T>)

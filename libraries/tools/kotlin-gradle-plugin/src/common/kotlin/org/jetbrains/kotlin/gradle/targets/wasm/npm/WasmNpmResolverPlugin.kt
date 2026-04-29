@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolverPluginApplier
 abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverPlugin {
     override fun apply(project: Project) {
         NpmResolverPluginApplier(
-            { WasmNodeJsRootPlugin.Companion.apply(project.rootProject) },
-            { WasmNodeJsPlugin.Companion.apply(project) },
+            { WasmNodeJsRootPlugin.apply(project.rootProject) },
+            { WasmNodeJsPlugin.apply(project) },
             /**
              * For wasm we don't need to add NPM dependencies
              * We install all npm dependencies in [org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask]

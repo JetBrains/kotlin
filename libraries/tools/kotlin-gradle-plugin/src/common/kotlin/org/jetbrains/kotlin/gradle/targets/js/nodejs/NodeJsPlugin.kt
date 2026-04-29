@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.CommonNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.NodeJsPluginApplier
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
+import org.jetbrains.kotlin.gradle.utils.withType
 
 /**
  * Abstract base class for applying Node.js-specific configurations and tasks to a Gradle project.
@@ -21,13 +22,27 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
  * - Automatically setting up tasks like downloading and installing a local Node.js/npm version.
  */
 abstract class NodeJsPlugin internal constructor() : CommonNodeJsPlugin {
-    override fun apply(target: Project) {
+
+    override fun apply(project: Project) {
         NodeJsPluginApplier(
             platformDisambiguate = JsPlatformDisambiguator,
             nodeJsEnvSpecKlass = NodeJsEnvSpec::class,
             nodeJsEnvSpecName = NodeJsEnvSpec.EXTENSION_NAME,
             nodeJsRootApply = { NodeJsRootPlugin.apply(it) }
-        ).apply(target)
+        ).apply(project)
+
+        configureNodeJsExecTaskConventions(project)
+    }
+
+    private fun configureNodeJsExecTaskConventions(project: Project) {
+        project.tasks.withType<NodeJsExec>().configureEach { task ->
+            task.npmDependenciesLockFiles.from(
+                task.npmToolingEnvDir.file("package-lock.json")
+            )
+            task.npmDependenciesLockFiles.from(
+                task.npmToolingEnvDir.file("yarn.lock")
+            )
+        }
     }
 
     companion object {

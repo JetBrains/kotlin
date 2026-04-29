@@ -3283,7 +3283,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpec$C
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	protected fun exec ()V
@@ -4242,7 +4242,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/subtargets/DefaultDist
 	public fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public synthetic fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	protected fun createTestExecutionSpec ()Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public final fun environment (Ljava/lang/String;Ljava/lang/String;)V
@@ -4403,7 +4403,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMo
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask$Companion;
 	public static final field NAME Ljava/lang/String;
 	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
@@ -4422,7 +4422,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/Infrastructure
 	public final fun setValue (Z)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public fun cssSupport (Lorg/gradle/api/Action;)V
 	public final fun doExecute ()V
 	public final fun getArgs ()Ljava/util/List;

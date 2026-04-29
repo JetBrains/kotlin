@@ -22,13 +22,13 @@ internal open class KotlinJsIrTargetPreset(
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project
 ) {
-    protected open val isMpp: Boolean
-        get() = true
+//    protected open val isMpp: Boolean
+//        get() = true
 
     override val platformType: KotlinPlatformType = KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        return project.objects.KotlinJsIrTarget(project, platformType, isMpp).apply {
+        return project.objects.KotlinJsIrTarget(project, platformType).apply {
             this.outputModuleName.convention(buildNpmProjectName(project, name, DEFAULT_JS_NAME))
             KotlinJsIrTargetMetrics.collectMetrics(
                 isBrowserConfigured = isBrowserConfigured,
@@ -55,19 +55,19 @@ internal open class KotlinJsIrTargetPreset(
     }
 }
 
-internal class KotlinJsIrSingleTargetPreset(
-    project: Project,
-) : KotlinJsIrTargetPreset(
-    project
-) {
-    override val isMpp: Boolean
-        get() = false
-
-    // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
-    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
-        return null
-    }
-
-    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
-        KotlinJsIrTargetConfigurator()
-}
+//internal class KotlinJsIrSingleTargetPreset(
+//    project: Project,
+//) : KotlinJsIrTargetPreset(
+//    project
+//) {
+//    override val isMpp: Boolean
+//        get() = false
+//
+//    // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
+//    override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
+//        return null
+//    }
+//
+//    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
+//        KotlinJsIrTargetConfigurator()
+//}

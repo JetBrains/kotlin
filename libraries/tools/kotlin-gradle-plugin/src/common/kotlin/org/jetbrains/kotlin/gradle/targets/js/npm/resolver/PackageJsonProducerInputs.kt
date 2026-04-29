@@ -13,7 +13,7 @@ class PackageJsonProducerInputs(
     @get:Input
     val internalDependencies: Collection<String>,
 
-    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
@@ -23,5 +23,5 @@ class PackageJsonProducerInputs(
     val externalDependencies: Collection<String>,
 
     @get:Input
-    val fileCollectionDependencies: Collection<File>
+    val fileCollectionDependencies: Collection<File>,
 )

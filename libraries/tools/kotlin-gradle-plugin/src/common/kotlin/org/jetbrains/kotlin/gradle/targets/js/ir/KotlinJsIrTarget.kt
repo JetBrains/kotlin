@@ -38,15 +38,14 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Comp
 internal fun ObjectFactory.KotlinJsIrTarget(
     project: Project,
     platformType: KotlinPlatformType,
-    isMpp: Boolean,
-): KotlinJsIrTarget = newInstance(project, platformType, isMpp)
+): KotlinJsIrTarget = newInstance(project, platformType)
 
 abstract class KotlinJsIrTarget
 @Inject
 constructor(
     project: Project,
     platformType: KotlinPlatformType,
-    internal val isMpp: Boolean,
+    internal val isMpp: Boolean = true,
 ) :
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -108,19 +107,19 @@ constructor(
         }
     }
 
-    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
-        val usageContexts = super.createUsageContexts(producingCompilation)
-
-        if (isMpp) return usageContexts
-
-        return usageContexts +
-                DefaultKotlinUsageContext(
-                    compilation = compilations.getByName(MAIN_COMPILATION_NAME),
-                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
-                    overrideConfigurationArtifacts = project.setProperty { emptyList() }
-                )
-    }
+//    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
+//        return super.createUsageContexts(producingCompilation)
+////
+////        if (isMpp) return usageContexts
+////
+////        return usageContexts +
+////                DefaultKotlinUsageContext(
+////                    compilation = compilations.getByName(MAIN_COMPILATION_NAME),
+////                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
+////                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
+////                    overrideConfigurationArtifacts = project.setProperty { emptyList() }
+////                )
+//    }
 
     internal val commonFakeApiElementsConfigurationName: String
         get() = lowerCamelCaseName(
