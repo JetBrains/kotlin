@@ -1,5 +1,6 @@
 // Char issues
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// RUN_THIRD_PARTY_OPTIMIZER
 
 // MODULE: main
 // FILE: externals.js

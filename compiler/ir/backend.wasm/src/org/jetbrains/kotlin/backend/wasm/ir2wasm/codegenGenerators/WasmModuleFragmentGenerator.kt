@@ -235,17 +235,17 @@ fun compileIrFile(
     fileContext.testFunctionDeclarator?.apply {
         linkerDataContext.addTestFunDeclarator(symbol)
     }
-    fileContext.closureCallExports.forEach { (exportSignature, function) ->
-        linkerDataContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
+    fileContext.closureCallTrampolines.forEach { (signatureString, function) ->
+        linkerDataContext.addEquivalentFunction("__closureTrampoline_$signatureString", function.symbol)
     }
-    fileContext.kotlinClosureToJsConverters.forEach { (exportSignature, function) ->
-        linkerDataContext.addEquivalentFunction("<2>_$exportSignature", function.symbol)
+    fileContext.kotlinClosureToJsConverters.forEach { (signatureString, function) ->
+        linkerDataContext.addEquivalentFunction("__kotlinToJsClosure_$signatureString", function.symbol)
     }
     fileContext.jsClosureCallers.forEach { (exportSignature, function) ->
-        linkerDataContext.addEquivalentFunction("<3>_$exportSignature", function.symbol)
+        linkerDataContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
     }
     fileContext.jsToKotlinClosures.forEach { (exportSignature, function) ->
-        linkerDataContext.addEquivalentFunction("<4>_$exportSignature", function.symbol)
+        linkerDataContext.addEquivalentFunction("<2>_$exportSignature", function.symbol)
     }
     fileContext.objectInstanceFieldInitializer?.apply {
         linkerDataContext.addObjectInstanceFieldInitializer(symbol)
