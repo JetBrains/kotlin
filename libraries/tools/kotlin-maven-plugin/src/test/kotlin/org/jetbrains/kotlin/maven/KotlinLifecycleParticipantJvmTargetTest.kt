@@ -25,6 +25,7 @@ class KotlinLifecycleParticipantJvmTargetTest {
 
     @Test
     fun `normalizeToKotlinJvmTarget - java 8 short form`() {
+        println("Let's print something")
         assertEquals("1.8", KotlinLifecycleParticipant.normalizeToKotlinJvmTarget("8"))
     }
 
