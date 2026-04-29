@@ -63,8 +63,12 @@ val copyMinimalSources by tasks.registering(Sync::class) {
     }
 
     from(stdlibProjectDir.resolve("jvm-minimal-for-test/common-src")) {
-        include("EnumEntries.kt")
-        into("src/common/kotlin/enums")
+        include(
+            "EnumEntries.kt",
+            "Serializable.kt",
+            "minimalCollections.kt"
+        )
+        into("src/common")
     }
 
     from(stdlibProjectDir.resolve("src")) {
