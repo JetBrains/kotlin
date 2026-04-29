@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.native.pipeline
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -55,6 +56,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
             PartialLinkageDiagnostics,
             IrInlinerErrors,
+            NativeBackendDiagnostics
         )
 
         val arguments = input.arguments

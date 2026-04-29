@@ -13,6 +13,7 @@ dependencies {
     // This dependency is required only because of PackagePartClassUtils in TestProcessor.
     // TODO (KT-84117)
     implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:frontend.common-psi")) // required for error reporting
     api(project(":native:native.config"))
     api(project(":native:base"))
 }
