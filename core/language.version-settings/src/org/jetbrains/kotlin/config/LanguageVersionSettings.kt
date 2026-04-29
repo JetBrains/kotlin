@@ -512,7 +512,6 @@ enum class LanguageFeature(
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
     JsAllowExportingValueClasses(sinceVersion = KOTLIN_2_4, "KT-72198"),
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = KOTLIN_2_4, "KT-64358"),
-    JavaDirect(sinceVersion = KOTLIN_2_4, "KT-70023"),
 
     // 2.5
 
@@ -679,6 +678,8 @@ enum class LanguageFeature(
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
     TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
+
+    JavaDirect(sinceVersion = null, "KT-70023"),
     ;
 
     constructor(
