@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.backend.konan.driver
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.util.PerformanceManager
 
 /**
@@ -30,6 +34,11 @@ internal open class BasicNativeBackendPhaseContext(
     @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
     override val messageCollector: MessageCollector
         get() = config.configuration.messageCollector
+
+    override val diagnosticReporter: IrDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            config.configuration.diagnosticsCollector,
+            config.configuration.languageVersionSettings
+    )
 
     override fun dispose() {
 

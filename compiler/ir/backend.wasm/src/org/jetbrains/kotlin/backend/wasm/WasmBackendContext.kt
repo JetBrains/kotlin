@@ -121,13 +121,15 @@ class WasmBackendContext(
     // Unit test support, mostly borrowed from the JS implementation
     //
 
+    override val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+        configuration.diagnosticsCollector,
+        configuration.languageVersionSettings,
+    )
+
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
         irBuiltIns,
-        KtDiagnosticReporterWithImplicitIrBasedContext(
-            configuration.diagnosticsCollector,
-            configuration.languageVersionSettings,
-        )
+        diagnosticReporter
     )
 
     override val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()

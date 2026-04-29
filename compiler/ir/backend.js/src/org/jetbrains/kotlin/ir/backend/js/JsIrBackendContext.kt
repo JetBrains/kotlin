@@ -155,13 +155,15 @@ class JsIrBackendContext(
         }
     }
 
+    override val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+        configuration.diagnosticsCollector,
+        configuration.languageVersionSettings
+    )
+
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
         configuration.partialLinkageConfig,
         irBuiltIns,
-        KtDiagnosticReporterWithImplicitIrBasedContext(
-            configuration.diagnosticsCollector,
-            configuration.languageVersionSettings
-        )
+        diagnosticReporter
     )
 
     internal var nextAssociatedObjectKey = 0

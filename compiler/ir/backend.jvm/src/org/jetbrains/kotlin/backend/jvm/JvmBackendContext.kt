@@ -69,7 +69,7 @@ class JvmBackendContext(
         this, generatorExtensions.cachedFields
     )
 
-    val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
+    override val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
     override val symbols = JvmSymbols(this)
 
