@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -23,7 +22,9 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.config.fakeOverrideValidator
@@ -62,7 +63,6 @@ internal interface LinkKlibsContext : NativeBackendPhaseContext {
 
 data class LinkKlibsInput(
         val moduleDescriptor: ModuleDescriptor,
-        val environment: KotlinCoreEnvironment,
 )
 
 internal class LinkKlibsOutput(
@@ -84,7 +84,7 @@ internal fun LinkKlibsContext.linkKlibs(
         input: LinkKlibsInput
 ): LinkKlibsOutput {
     val symbolTable = symbolTable!!
-    val (moduleDescriptor, environment) = input
+    val moduleDescriptor = input.moduleDescriptor
     // Translate AST to high level IR.
 
     val translator = Psi2IrTranslator(
@@ -111,6 +111,13 @@ internal fun LinkKlibsContext.linkKlibs(
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
 
+    val symbols = BackendNativeSymbols(
+            this,
+            generatorContext.irBuiltIns,
+            this.config.configuration
+    )
+
+    val mainModule = IrModuleFragmentImpl(moduleDescriptor)
     val irDeserializer = run {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
@@ -179,16 +186,11 @@ internal fun LinkKlibsContext.linkKlibs(
             }
 
             ensureCStructsAndEnumsAreLoadedForCaching(linker, libraryToCacheModule)
+            linker.init(mainModule)
+            ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
+            linker.postProcess(generatorContext.irBuiltIns, inOrAfterLinkageStep = true)
         }
     }
-    val symbols = BackendNativeSymbols(
-            this,
-            generatorContext.irBuiltIns,
-            this.config.configuration
-    )
-    val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), listOf(irDeserializer))
-
-    irDeserializer.postProcess(generatorContext.irBuiltIns, inOrAfterLinkageStep = true)
 
     generateImplForCStructsAndEnums(irDeserializer, generatorContext.irBuiltIns, symbols)
 
