@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyCollector
 import org.gradle.util.GradleVersion
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConv
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
+import javax.inject.Inject
 
 /**
  * - [org.gradle.api.artifacts.dsl.Dependencies] is accessible since 7.6
@@ -33,9 +35,13 @@ internal sealed class KotlinTopLevelDependenciesBlock {
     object UnavailableInCurrentGradleVersion : KotlinTopLevelDependenciesBlock()
 }
 
-internal abstract class KotlinDependenciesImpl : KotlinDependencies {
+internal abstract class KotlinDependenciesImpl @Inject constructor(
+    private val ownProject: Project
+) : KotlinDependencies {
     override fun kotlin(module: String) = kotlin(module, null)
-    override fun kotlin(module: String, version: String?): Dependency = project.dependencyFactory
+
+    // Dependencies.getProject() is deprecated in Gradle 9.5
+    override fun kotlin(module: String, version: String?): Dependency = ownProject.dependencyFactory
         .create("org.jetbrains.kotlin", "kotlin-$module", version)
 }
 
@@ -43,7 +49,9 @@ internal val KotlinMultiplatformExtension.dependencies: KotlinTopLevelDependenci
     if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) {
         KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion
     } else {
-        KotlinTopLevelDependenciesBlock.Dependencies(project.objects.newInstance(KotlinDependenciesImpl::class.java))
+        KotlinTopLevelDependenciesBlock.Dependencies(
+            project.objects.newInstance(KotlinDependenciesImpl::class.java, project)
+        )
     }
 }
 
