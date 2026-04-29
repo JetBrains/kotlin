@@ -52,16 +52,35 @@ class SupportExpectClassSupplier internal constructor(
         dependencies: CirProvidedClassifiers,
         arguments: List<CirTypeProjection>,
     ): CirEntityId? {
-        val dependencyClassifier = dependencies.classifier(this)
-            ?.takeIf { it.typeParameters.size == arguments.size }
+        var result = this
+        var next = dependencies.classifier(this)?.also {
+            if (it.typeParameters.size != arguments.size) {
+                return null
+            }
+        }
 
-        return dependencyClassifier?.dependencyClassifierToCir(
-            classifierId = this,
-            outerType = null,
-            arguments = arguments,
-            isMarkedNullable = false,
-            classifiers = dependencies,
-        )?.expandedType()?.classifierId
+        // This loop only runs a single iteration on the actual support library because
+        // leaf platform klibs contain copies of typealiases from shared source sets with
+        // the proper typealias type `undelyingType`s.
+        // In tests, however, leaf platform source sets do not, so an explicit traversal
+        // of shared source sets' metadata is needed.
+        while (next != null && next is CirProvided.TypeAlias) {
+            result = next.dependencyClassifierToCir(
+                classifierId = this,
+                outerType = null,
+                arguments = arguments,
+                isMarkedNullable = false,
+                classifiers = dependencies,
+            )?.expandedType()?.classifierId ?: break
+
+            next = dependencies.classifier(result)?.also {
+                if (it.typeParameters.size != arguments.size) {
+                    return null
+                }
+            }
+        }
+
+        return result
     }
 
     private fun findSupportExpectClassFor(targetsToTypes: Map<CommonizerTarget, CirClassType>): CirEntityId? {
