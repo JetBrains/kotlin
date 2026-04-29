@@ -73,7 +73,7 @@ class PostponedArgumentsAnalyzer(
             is ConeLambdaWithTypeVariableAsExpectedTypeAtom ->
                 analyzeLambda(
                     c,
-                    argument.transformToResolvedLambda(candidate, c.getBuilder(), resolutionContext),
+                    argument.transformToResolvedLambda(c.getBuilder(), resolutionContext),
                     candidate, forOverloadByLambdaReturnType = false, withPCLASession
                 )
 
@@ -160,14 +160,14 @@ class PostponedArgumentsAnalyzer(
 
         if (!runContextSensitiveResolutionAndApplyResultsIfSuccessful(atom, topLevelCandidate, substitutedExpectedType)) {
             ArgumentCheckingProcessor.resolveArgumentExpression(
-                topLevelCandidate,
+                topLevelCandidate.csBuilder,
                 atom.fallbackSubAtom,
+                atom.containingCallCandidate,
                 substitutedExpectedType,
                 CheckerSinkImpl(topLevelCandidate),
                 context = resolutionContext,
                 isReceiver = false,
                 isDispatch = false,
-                atom.containingCallCandidate,
             )
         }
     }
@@ -220,14 +220,14 @@ class PostponedArgumentsAnalyzer(
         atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
 
         ArgumentCheckingProcessor.resolveArgumentExpression(
-            topLevelCandidate,
+            topLevelCandidate.csBuilder,
             ConeResolutionAtom.createRawAtom(newExpression),
+            atom.containingCallCandidate,
             substitutedExpectedType,
             CheckerSinkImpl(topLevelCandidate),
             context = resolutionContext,
             isReceiver = false,
             isDispatch = false,
-            atom.containingCallCandidate,
         )
 
         return true
@@ -407,14 +407,14 @@ class PostponedArgumentsAnalyzer(
             // Nested lambdas need to be resolved even when we have a contradiction.
             if (!builder.hasContradiction || atom is ConeResolutionAtomWithPostponedChild) {
                 ArgumentCheckingProcessor.resolveArgumentExpression(
-                    candidate,
+                    candidate.csBuilder,
                     atom,
+                    lambda.containingCallCandidate ?: candidate,
                     substituteAlreadyFixedVariables(lambda.returnType),
                     checkerSink,
                     context = resolutionContext,
                     isReceiver = false,
                     isDispatch = false,
-                    lambda.containingCallCandidate ?: candidate,
                     anonymousFunctionIfReturnExpression = lambda.anonymousFunction,
                 )
             }
@@ -478,7 +478,6 @@ class PostponedArgumentsAnalyzer(
 }
 
 fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
-    currentCandidate: Candidate,
     csBuilder: ConstraintSystemBuilder,
     context: ResolutionContext,
     expectedType: ConeKotlinType? = null,
@@ -487,8 +486,8 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     val fixedExpectedType = csBuilder.buildCurrentSubstitutor().asCone()
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = ArgumentCheckingProcessor.createResolvedLambdaAtomDuringCompletion(
-        currentCandidate, csBuilder, ConeResolutionAtomWithPostponedChild(expression), fixedExpectedType,
-        context, returnTypeVariable, containingCallCandidate,
+        csBuilder, containingCallCandidate, ConeResolutionAtomWithPostponedChild(expression),
+        fixedExpectedType, context, returnTypeVariable,
         anonymousFunctionIfReturnExpression = anonymousFunctionIfReturnExpression,
     )
 

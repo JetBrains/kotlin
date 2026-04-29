@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor.a
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaParameterType
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
-import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -35,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
@@ -50,14 +50,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal object ArgumentCheckingProcessor {
     private data class ArgumentContext(
-        val currentCandidate: Candidate,
         val csBuilder: ConstraintSystemBuilder,
+        /**
+         * [containingCallCandidate] is the immediate candidate that contains the atom being resolved.
+         * Note that relation `containingCallCandidate.csBuilder === csBuilder` is **not** guaranteed since during
+         * completion of postponed lambda / collection literal we use `csBuilder` of some arbitrary outer call.
+         */
+        val containingCallCandidate: Candidate,
         val expectedType: ConeKotlinType?,
         val sink: CheckerSink?,
         val context: ResolutionContext,
         val isReceiver: Boolean,
         val isDispatch: Boolean,
-        val containingCallCandidate: Candidate,
         /**
          * See [org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch.anonymousFunctionIfReturnExpression]
          */
@@ -74,64 +78,56 @@ internal object ArgumentCheckingProcessor {
     // -------------------------------------------- Public API --------------------------------------------
 
     fun resolveArgumentExpression(
-        currentCandidate: Candidate,
+        csBuilder: ConstraintSystemBuilder,
         atom: ConeResolutionAtom,
+        containingCallCandidate: Candidate,
         expectedType: ConeKotlinType?,
         sink: CheckerSink,
         context: ResolutionContext,
         isReceiver: Boolean,
         isDispatch: Boolean,
-        /**
-         * Note the difference between [currentCandidate] and [containingCallCandidate].
-         *  - [currentCandidate] is for the call being completed right now
-         *  - [containingCallCandidate] is for the call which contains the argument directly
-         *
-         *  They often coincide, but not always.
-         */
-        containingCallCandidate: Candidate,
         anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ) {
         val argumentContext = ArgumentContext(
-            currentCandidate, currentCandidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch,
-            containingCallCandidate, anonymousFunctionIfReturnExpression,
+            csBuilder, containingCallCandidate,
+            expectedType, sink, context, isReceiver, isDispatch,
+            anonymousFunctionIfReturnExpression,
         )
         argumentContext.resolveArgumentExpression(atom)
     }
 
     fun resolvePlainArgumentType(
-        currentCandidate: Candidate,
+        csBuilder: ConstraintSystemBuilder,
         atom: ConeResolutionAtom,
+        containingCallCandidate: Candidate,
         argumentType: ConeKotlinType,
         expectedType: ConeKotlinType?,
         sink: CheckerSink,
         context: ResolutionContext,
         isReceiver: Boolean,
         isDispatch: Boolean,
-        containingCallCandidate: Candidate,
         sourceForReceiver: KtSourceElement? = null,
     ) {
         val argumentContext = ArgumentContext(
-            currentCandidate, currentCandidate.csBuilder,
+            csBuilder, containingCallCandidate,
             expectedType, sink, context, isReceiver, isDispatch,
-            containingCallCandidate,
         )
         argumentContext.resolvePlainArgumentType(atom, argumentType, sourceForReceiver = sourceForReceiver)
     }
 
     fun createResolvedLambdaAtomDuringCompletion(
-        currentCandidate: Candidate,
         csBuilder: ConstraintSystemBuilder,
+        containingCallCandidate: Candidate,
         atom: ConeResolutionAtomWithPostponedChild,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
         returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
-        containingCallCandidate: Candidate,
         anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ): ConeResolvedLambdaAtom {
         val argumentContext = ArgumentContext(
-            currentCandidate, csBuilder, expectedType, sink = null,
-            context, isReceiver = false, isDispatch = false,
-            containingCallCandidate, anonymousFunctionIfReturnExpression,
+            csBuilder, containingCallCandidate, expectedType,
+            sink = null, context, isReceiver = false, isDispatch = false,
+            anonymousFunctionIfReturnExpression,
         )
         return argumentContext.createResolvedLambdaAtom(atom, duringCompletion = true, returnTypeVariable)
     }
@@ -266,7 +262,7 @@ internal object ArgumentCheckingProcessor {
             }
 
             if (isFromSimpleToCustom || isForUnitCoercion) {
-                currentCandidate.addFunctionKindConversionOfArgument(
+                containingCallCandidate.addFunctionKindConversionOfArgument(
                     expression,
                     Candidate.FunctionConversionDescription(
                         isFromSimpleToCustom,
@@ -380,9 +376,13 @@ internal object ArgumentCheckingProcessor {
             if (variableWithConstraints != null) {
                 // Retrieve type using proper logic in ResultTypeResolver.
                 // Might return null in case of PCLA when all constraints are non-proper.
-                context(currentCandidate.system) {
-                    (context.inferenceComponents.resultTypeResolver
-                        .findResultTypeOrNull(variableWithConstraints, UNKNOWN) as ConeKotlinType?)
+
+                // The cast must always succeed because we only have one implementation of ConstraintSystemBuilder
+                // But even if it does not, this code is diagnostics only
+                (csBuilder as? ResultTypeResolver.Context)?.run {
+                    context.inferenceComponents.resultTypeResolver
+                        .findResultTypeOrNull(variableWithConstraints, UNKNOWN)
+                        ?.asCone()
                         ?.applyIf(type.isMarkedNullable) {
                             withNullability(type.isMarkedNullable, session.typeContext)
                         }?.let {
@@ -419,7 +419,7 @@ internal object ArgumentCheckingProcessor {
             containingCallCandidate, anonymousFunctionIfReturnExpression,
         )
         atom.setPostponedSubAtom(postponedAtom)
-        currentCandidate.addPostponedAtom(postponedAtom)
+        containingCallCandidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessSimpleNameReferenceForContextSensitiveResolution(
@@ -437,7 +437,7 @@ internal object ArgumentCheckingProcessor {
         )
 
         atom.setPostponedSubAtom(postponedAtom)
-        currentCandidate.addPostponedAtom(postponedAtom)
+        containingCallCandidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessQualifierWithContextSensitiveAlternative(
@@ -468,7 +468,7 @@ internal object ArgumentCheckingProcessor {
         resolveArgumentExpression(atom.fallbackSubAtom!!)
 
         atom.setPostponedSubAtom(postponedAtom)
-        currentCandidate.addPostponedAtom(postponedAtom)
+        containingCallCandidate.addPostponedAtom(postponedAtom)
     }
 
     /**
@@ -487,7 +487,7 @@ internal object ArgumentCheckingProcessor {
 
         val postponedAtom = ConeCollectionLiteralAtom(expression, expectedType, containingCallCandidate)
         atom.setPostponedSubAtom(postponedAtom)
-        currentCandidate.addPostponedAtom(postponedAtom)
+        containingCallCandidate.addPostponedAtom(postponedAtom)
     }
 
     private fun ArgumentContext.preprocessLambdaArgument(atom: ConeResolutionAtomWithPostponedChild) {
@@ -500,7 +500,7 @@ internal object ArgumentCheckingProcessor {
     /**
      * @return true in case [ConeLambdaWithTypeVariableAsExpectedTypeAtom] was created and set as
      * [ConeResolutionAtomWithPostponedChild.subAtom] of the [atom] and a postponed atom of the
-     * [ArgumentCheckingProcessor.ArgumentContext.currentCandidate].
+     * [ArgumentCheckingProcessor.ArgumentContext.containingCallCandidate].
      * In case of false result, this function works as pure (it does not change inference state).
      */
     private fun ArgumentContext.createLambdaWithTypeVariableAsExpectedTypeAtomIfNeeded(
@@ -524,7 +524,7 @@ internal object ArgumentCheckingProcessor {
             containingCallCandidate,
             anonymousFunctionIfReturnExpression,
         ).also {
-            currentCandidate.addPostponedAtom(it)
+            containingCallCandidate.addPostponedAtom(it)
             atom.setPostponedSubAtom(it)
         }
         return true
@@ -550,7 +550,7 @@ internal object ArgumentCheckingProcessor {
         ) ?: extractLambdaInfo(expression, sourceForFunctionExpression = expression.source)
 
         atom.setPostponedSubAtom(resolvedArgument)
-        currentCandidate.addPostponedAtom(resolvedArgument)
+        containingCallCandidate.addPostponedAtom(resolvedArgument)
 
         if (expectedType != null) {
             val parameters = resolvedArgument.parameterTypes
@@ -597,7 +597,9 @@ internal object ArgumentCheckingProcessor {
         val receiverType = lambda.receiverType
         val returnType = lambda.returnType ?: typeVariable.defaultType
 
-        val defaultType = runIf(currentCandidate.symbol.origin == FirDeclarationOrigin.DynamicScope) { ConeDynamicType.create(session) }
+        val defaultType = runIf(containingCallCandidate.symbol.origin == FirDeclarationOrigin.DynamicScope) {
+            ConeDynamicType.create(session)
+        }
 
         val parameters = lambda.valueParameters.mapIndexed { i, it ->
             it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
@@ -696,7 +698,7 @@ internal object ArgumentCheckingProcessor {
         val expectedClassLikeType = expectedType.lowerBoundIfFlexible() as? ConeClassLikeType ?: return null
 
         // Already compatible
-        if (c.currentCandidate.csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType)) return null
+        if (c.csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType)) return null
 
         // The expected return type must be Unit
         val expectedReturnType = expectedClassLikeType.returnType(c.session)

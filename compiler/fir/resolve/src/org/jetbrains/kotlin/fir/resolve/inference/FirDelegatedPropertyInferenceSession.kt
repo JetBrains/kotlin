@@ -186,7 +186,7 @@ class FirDelegatedPropertyInferenceSession(
                     )
                 }
 
-                override fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate {
+                private fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate {
                     // Reversed here bc we want top-most call to avoid exponential visit
                     return notCompletedCalls.asReversed().first {
                         var found = false

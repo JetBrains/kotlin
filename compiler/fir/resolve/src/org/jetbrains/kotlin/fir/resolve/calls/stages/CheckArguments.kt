@@ -83,14 +83,14 @@ internal object CheckArguments : ResolutionStage() {
         argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
         val expectedType = prepareExpectedType(callInfo, argument, parameter)
         ArgumentCheckingProcessor.resolveArgumentExpression(
-            this,
+            csBuilder,
             atom,
+            containingCallCandidate = this,
             expectedType,
             sink,
             context,
             isReceiver,
             isDispatch = false,
-            containingCallCandidate = this,
         )
     }
 }

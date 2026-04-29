@@ -340,8 +340,6 @@ class FirCallCompleter(
             ) {
                 analyzer.analyze(candidate.system, postponedResolvedAtom, candidate, withPCLASession, precalculatedBoundsForCL)
             }
-
-            override fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate = candidate
         }
         completer.complete(
             candidate.system.asConstraintSystemCompleterContext(),
