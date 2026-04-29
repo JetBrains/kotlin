@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -103,9 +104,13 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                     diagnosticsCollector = DiagnosticsCollectorImpl()
                 }
 
+                val project = context.environment.project
                 val [sourceFiles, sourceDependencies] =
-                    collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) {
-                        context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
+                    collectRefinedSourcesAndUpdateEnvironment(context, KtFileScriptSource(snippetKtFile), messageCollector) { source ->
+                        context.scriptConfigurationsProvider?.let {
+                            it.project = project
+                            it.getScriptCompilationConfiguration(source, initialConfiguration)
+                        }
                     }
 
                 val firstFailure = sourceDependencies.firstOrNull { it.sourceDependencies is ResultWithDiagnostics.Failure }
@@ -114,7 +119,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (firstFailure != null)
                     return firstFailure
 
-                val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
+                val ktFiles = sourceFiles.map { it.getKtFile(definition, project) }
 
                 checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
 
@@ -126,11 +131,13 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 // registerPackageFragmentProvidersIfNeeded already tries to avoid duplicated registering, but impact on
                 // executing it on every snippet needs to be evaluated first
                 if (state.history.isEmpty()) {
-                    @Suppress("DEPRECATION")
-                    val updatedConfiguration = ScriptConfigurationsProvider.getInstance(context.environment.project)
-                        ?.getScriptConfigurationResult(snippetKtFile, context.baseScriptCompilationConfiguration)
-                        ?.valueOrNull()?.configuration
-                        ?: context.baseScriptCompilationConfiguration
+                    val updatedConfiguration = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider)
+                        .firstOrNull()?.let {
+                            it.project = project
+                            it.getScriptCompilationConfiguration(
+                                KtFileScriptSource(snippetKtFile), context.baseScriptCompilationConfiguration
+                            )?.valueOrNull()?.configuration
+                        } ?: context.baseScriptCompilationConfiguration
                     registerPackageFragmentProvidersIfNeeded(
                         updatedConfiguration,
                         context.environment
@@ -191,16 +198,18 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
                 state.history.push(lineId, scriptDescriptor)
 
-                val configurationsProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
+                val configurationsProvider = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
                 makeCompiledScript(
                     generationState,
                     snippet,
-                    { it.getKtFile(definition, context.environment.project).declarations.firstIsInstance<KtScript>().fqName },
+                    { it.getKtFile(definition, project).declarations.firstIsInstance<KtScript>().fqName },
                     sourceDependencies,
                     { source ->
-                        configurationsProvider?.getScriptCompilationConfiguration(source, context.baseScriptCompilationConfiguration)
-                            ?.valueOrNull()?.configuration
-                            ?: context.baseScriptCompilationConfiguration
+                        configurationsProvider?.let {
+                            it.project = project
+                            it.getScriptCompilationConfiguration(source, context.baseScriptCompilationConfiguration)
+                                ?.valueOrNull()?.configuration
+                        } ?: context.baseScriptCompilationConfiguration
                     },
                     extractResultFields(irBackendInput.irModuleFragment)
                 ).onSuccess { compiledScript ->

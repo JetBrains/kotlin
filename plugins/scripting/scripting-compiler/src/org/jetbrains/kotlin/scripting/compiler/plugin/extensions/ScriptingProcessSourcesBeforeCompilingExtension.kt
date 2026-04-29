@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irComposite
-import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.powerassert.diagram.irExplain
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptCompilationConfiguration
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -208,7 +207,6 @@ class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenera
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         for (file in moduleFragment.files) {
             val scriptCompilationConfiguration = file.declarations.firstIsInstanceOrNull<IrScript>()?.scriptCompilationConfiguration
-                ?: file.getKtFile()?.findScriptDefinition()?.compilationConfiguration
             val explainFieldName =
                 scriptCompilationConfiguration?.get(ScriptCompilationConfiguration.explainField) ?: return
             val source = SourceFile.findSource(file) ?: return
@@ -220,7 +218,7 @@ class ScriptingIrExplainGenerationExtension(val project: MockProject) : IrGenera
 class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : ProcessSourcesBeforeCompilingExtension {
 
     override fun processSources(sources: Collection<KtFile>, configuration: CompilerConfiguration): Collection<KtFile> {
-        val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { ScriptDefinitionProvider.getInstance(project) }
+        val definitionProvider by lazy(LazyThreadSafetyMode.NONE) { configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull() }
 
         fun KtFile.isStandaloneScript(): Boolean {
             val scriptDefinition = definitionProvider?.findDefinition(KtFileScriptSource(this))

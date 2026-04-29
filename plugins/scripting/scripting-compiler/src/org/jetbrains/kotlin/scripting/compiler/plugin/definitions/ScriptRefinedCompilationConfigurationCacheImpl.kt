@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.definitions
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.toSystemIndependentScriptPath
+import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -36,11 +38,14 @@ class ScriptRefinedCompilationConfigurationCacheImpl : ScriptRefinedCompilationC
 
 class ScriptRefinedCompilationConfigurationCacheOverConfigurationsProvider(
     private val legacyConfigurationsProvider: ScriptConfigurationsProvider,
-    private val definitionsProvider: ScriptCompilationConfigurationProvider?
+    private val definitionsProvider: ScriptCompilationConfigurationProvider?,
+    private val project: Project,
 ) : ScriptRefinedCompilationConfigurationCache {
 
     override fun getRefinedCompilationConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
         definitionsProvider?.findBaseCompilationConfiguration(sourceCode).let { providedConfiguration ->
+            @OptIn(K1SpecificScriptingServiceAccessor::class)
+            legacyConfigurationsProvider.project = project
             legacyConfigurationsProvider.getScriptCompilationConfiguration(sourceCode, providedConfiguration?.valueOrNull())
                 ?.onSuccess { it.configuration?.asSuccess() ?: return@getRefinedCompilationConfiguration null }
         }

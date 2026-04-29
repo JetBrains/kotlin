@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.rethrow
@@ -38,6 +40,7 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.function.Consumer
 import java.util.stream.Collectors
+import kotlin.script.experimental.api.valueOrNull
 
 abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
     @JvmField
@@ -186,13 +189,18 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             }
             files.addAll(additionalDependencies)
 
-            @OptIn(K1SpecificScriptingServiceAccessor::class)
-            val externalImportsProvider: ScriptConfigurationsProvider? = ScriptConfigurationsProvider.getInstance(myEnvironment!!.project)
+            val environment = myEnvironment
+            val externalImportsProvider: ScriptConfigurationsProvider? = environment?.configuration?.getCompilerExtensions(
+                ScriptConfigurationsProvider
+            )?.firstOrNull()
             if (externalImportsProvider != null) {
-                myEnvironment!!.getSourceFiles().forEach(
+                environment.getSourceFiles().forEach(
                     Consumer { file: KtFile ->
-                        @Suppress("DEPRECATION")
-                        val refinedConfiguration = externalImportsProvider.getScriptConfiguration(file)
+                        @OptIn(K1SpecificScriptingServiceAccessor::class)
+                        externalImportsProvider.project = environment.project
+                        val refinedConfiguration = externalImportsProvider.getScriptCompilationConfiguration(
+                            KtFileScriptSource(file)
+                        )?.valueOrNull()
                         if (refinedConfiguration != null) {
                             files.addAll(refinedConfiguration.dependenciesClassPath)
                         }

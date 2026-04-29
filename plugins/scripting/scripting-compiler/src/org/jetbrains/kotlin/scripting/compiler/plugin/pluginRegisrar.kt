@@ -68,14 +68,6 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
             ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
-            project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
-            project.registerService(
-                ScriptConfigurationsProvider::class.java,
-                CliScriptConfigurationsProvider(project) {
-                    ScriptDefinitionProvider.getInstance(project)
-                        ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
-                }
-            )
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
@@ -110,10 +102,17 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
 
         CollectAdditionalSourceFilesExtension.registerExtension(CollectAdditionalScriptSourcesExtension())
         ScriptEvaluationExtension.registerExtension(JvmCliScriptEvaluationExtension())
+        val scriptDefinitionProvider = CliScriptDefinitionProvider()
+        ScriptDefinitionProvider.registerExtension(scriptDefinitionProvider)
+        ScriptConfigurationsProvider.registerExtension(
+            CliScriptConfigurationsProvider(project = null) {
+                scriptDefinitionProvider
+            }
+        )
 
         val hostConfiguration = configuration.scriptingHostConfiguration as? ScriptingHostConfiguration
             ?: defaultJvmScriptingHostConfiguration
-        CompilerConfigurationExtension.registerExtension(ScriptingCompilerConfigurationExtension(hostConfiguration))
+        CompilerConfigurationExtension.registerExtension(ScriptingCompilerConfigurationExtension(hostConfiguration, scriptDefinitionProvider))
     }
 
     override val pluginId: String get() = KOTLIN_SCRIPTING_PLUGIN_ID

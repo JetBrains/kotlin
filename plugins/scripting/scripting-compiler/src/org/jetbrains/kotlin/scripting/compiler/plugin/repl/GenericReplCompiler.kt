@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -83,12 +84,18 @@ open class GenericReplCompiler(
                 Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            val wrapper = ScriptConfigurationsProvider.getInstance(checker.environment.project)?.getScriptCompilationConfiguration(KtFileScriptSource(psiFile))?.valueOrNull()
+            val environment = checker.environment
+            val wrapper = environment.configuration.getCompilerExtensions(
+                ScriptConfigurationsProvider
+            ).firstOrNull()?.let {
+                it.project = environment.project
+                it.getScriptCompilationConfiguration(KtFileScriptSource(psiFile))?.valueOrNull()
+            }
             val newDependencies = wrapper?.configuration?.toDependencies(wrapper.dependenciesClassPath)
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {
                 compilerState.lastDependencies = newDependencies
-                classpathAddendum = newDependencies?.let { checker.environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) }
+                classpathAddendum = newDependencies?.let { environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) }
             }
 
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
@@ -107,12 +114,12 @@ open class GenericReplCompiler(
             val generationState = GenerationState(psiFile.project, compilerState.analyzerEngine.module, compilerConfiguration)
 
             val generatorExtensions =
-                object : JvmGeneratorExtensionsImpl(checker.environment.configuration) {
+                object : JvmGeneratorExtensionsImpl(environment.configuration) {
                     override fun getPreviousScripts() =
                         compilerState.history.map { compilerState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
             val codegenFactory = JvmIrCodegenFactory(
-                checker.environment.configuration,
+                environment.configuration,
                 compilerState.mangler, compilerState.symbolTable, generatorExtensions
             )
 

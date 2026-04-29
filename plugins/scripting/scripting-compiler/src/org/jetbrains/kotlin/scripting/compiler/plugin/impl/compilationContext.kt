@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -89,7 +90,7 @@ fun createIsolatedCompilationContext(
 
     return SharedScriptCompilationContext(
         parentDisposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
-        ScriptConfigurationsProvider.getInstance(environment.project)
+        kotlinCompilerConfiguration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     ).applyConfigure()
 }
 
@@ -110,7 +111,7 @@ internal fun createCompilationContextFromEnvironment(
 
     return SharedScriptCompilationContext(
         null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState,
-        ScriptConfigurationsProvider.getInstance(environment.project)
+        environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     ).applyConfigure()
 }
 

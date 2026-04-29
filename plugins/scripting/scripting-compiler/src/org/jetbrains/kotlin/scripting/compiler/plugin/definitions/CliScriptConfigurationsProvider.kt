@@ -20,7 +20,7 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 
 class CliScriptConfigurationsProvider(
-    project: Project,
+    project: Project?,
     getScriptDefinitionProvider: () -> ScriptDefinitionProvider
 ) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
@@ -54,7 +54,8 @@ class CliScriptConfigurationsProvider(
 
     @OptIn(K1SpecificScriptingServiceAccessor::class)
     private fun calculateRefinedConfiguration(
-        source: SourceCode, providedConfiguration: ScriptCompilationConfiguration?
+        source: SourceCode,
+        providedConfiguration: ScriptCompilationConfiguration?
     ): ScriptCompilationConfigurationResult? {
         val path = source.locationId ?: return null
         val cached = cache[path]
