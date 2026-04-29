@@ -791,7 +791,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 descriptorSerializerContext = descriptorSerializerContext,
                 featureFlags = featureFlags,
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
-                configuration = configuration,
                 targetRuntimeVersion = targetRuntimeVersion,
             )
         }

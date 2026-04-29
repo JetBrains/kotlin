@@ -27,7 +27,6 @@ class ComposeExtensionRegistrarConfigurator(testServices: TestServices) : Enviro
             ComposeIrGenerationExtension(
                 useK2 = true,
                 featureFlags = FeatureFlags(configuration.get(ComposeConfiguration.FEATURE_FLAGS, emptyList())),
-                configuration = configuration,
             )
         )
     }
