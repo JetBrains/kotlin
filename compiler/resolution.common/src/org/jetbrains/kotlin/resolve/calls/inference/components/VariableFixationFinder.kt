@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 /**
  * For the K1's DI to properly instantiate it with [LegacyVariableReadinessCalculator], this class must be `abstract`.
@@ -125,8 +123,14 @@ abstract class VariableFixationFinder(
         if (allTypeVariables.isEmpty()) return null
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            c.notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, c,
-            languageVersionSettings,
+            c.notFixedTypeVariables, postponedArguments,
+            topLevelType.takeIf {
+                if (languageVersionSettings.supportsFeature(LanguageFeature.CallCompletionRefinementsFor25))
+                    completionMode.preventFixingTypeVariablesRelatedToReturnType
+                else
+                    completionMode == PARTIAL
+            },
+            c, languageVersionSettings,
         )
 
         val candidate = variableReadinessCalculator.chooseBestTypeVariableCandidateWithLogging(allTypeVariables, dependencyProvider)

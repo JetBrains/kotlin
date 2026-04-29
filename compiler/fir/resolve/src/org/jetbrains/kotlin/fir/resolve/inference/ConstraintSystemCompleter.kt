@@ -41,6 +41,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private val languageVersionSettings = components.session.languageVersionSettings
     private val isEagerLambdaAnalysisEnabled = languageVersionSettings.supportsFeature(LanguageFeature.EagerLambdaAnalysis)
 
+    // 1. Fix variables for input types first
+    // 2. Avoid fixing type variables related to the call return type for PARTIAL-like modes (like UNTIL_FIRST_LAMBDA)
+    private val completionRefinementsFor25Enabled = languageVersionSettings.supportsFeature(LanguageFeature.CallCompletionRefinementsFor25)
+
     /**
      * see basic impl at [org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer.analyze]
      */
@@ -173,15 +177,17 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             if (wasBuiltNewExpectedTypeForSomeArgument)
                 continue
 
-            val postponedAtomsDependingOnFunctionType = postponedArguments.filter { it is ConeFunctionTypeRelatedPostponedResolvedAtom }
+            val postponedAtomsDependingOnFunctionType = postponedArguments.filterIsInstance<ConeFunctionTypeRelatedPostponedResolvedAtom>()
 
-            if (completionMode.allLambdasShouldBeAnalyzed) {
+            // Eventually, those steps will become unconditional
+            if (completionMode.allLambdasShouldBeAnalyzed || completionRefinementsFor25Enabled) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedAtomsDependingOnFunctionType) {
                     val nextVariable = postponedArgumentsInputTypesResolver.findNextReadyVariableForParameterType(
                         argument,
                         postponedArguments,
                         topLevelType,
+                        if (completionRefinementsFor25Enabled) completionMode else ConstraintSystemCompletionMode.FULL,
                         dependencyProvider,
                     )
 
@@ -198,7 +204,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
                     if (argumentWasTransformed)
                         continue@completion
                 }
+            }
 
+            // Likely unnecessary or even a harmful step: it doesn't actually ensure that the postponed atom is ready, but just picking
+            // the first one.
+            // TODO: Consider removing this step (KT-86043)
+            if (completionMode.allLambdasShouldBeAnalyzed) {
                 // Stage 5: analyze the next ready postponed argument with revisable expected type
                 if (analyzeNextReadyPostponedArgumentWithRevisableExpectedType(postponedArguments) {
                         analyzerWithLambdaTracker.analyze(it)

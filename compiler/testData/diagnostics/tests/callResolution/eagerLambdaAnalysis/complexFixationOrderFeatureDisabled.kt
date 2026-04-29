@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // ISSUE: KT-51400
-// LANGUAGE: -EagerLambdaAnalysis
+// LANGUAGE: -EagerLambdaAnalysis -CallCompletionRefinementsFor25
 // FIR_DUMP
 import kotlin.reflect.KFunction0
 
