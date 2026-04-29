@@ -12,6 +12,10 @@ import java.util.Arrays
 internal object ArraysUtilJVM {
     @JvmStatic
     fun <T> asList(array: Array<T>): MutableList<T> {
-        return Arrays.asList(*array)
+        val list = java.util.ArrayList<T>(array.size)
+        for (element in array) {
+            list.add(element)
+        }
+        return list
     }
 }

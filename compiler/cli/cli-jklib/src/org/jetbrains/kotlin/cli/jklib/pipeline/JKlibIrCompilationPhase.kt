@@ -116,7 +116,6 @@ object JKlibIrCompilationPhase :
         val symbolTable = SymbolTable(IdSignatureDescriptor(mangler), IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, mainModule)
         val irBuiltIns = IrBuiltInsOverDescriptors(mainModule.builtIns, typeTranslator, symbolTable)
-
         val stubGenerator = DeclarationStubGeneratorImpl(
             mainModule,
             symbolTable,
@@ -161,14 +160,6 @@ object JKlibIrCompilationPhase :
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
             }
         }
-
-        irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
-            irBuiltIns,
-            symbolTable,
-            typeTranslator,
-            getPackageFragment = null,
-            referenceFunctionsWhenKFunctionAreReferenced = true
-        )
 
         linker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()

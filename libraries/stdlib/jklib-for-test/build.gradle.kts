@@ -58,7 +58,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
     into(layout.buildDirectory.dir("src/genesis-minimal"))
 
     from("src/stubs") {
-        include("kotlin/**")
+        include("**")
         into("src/common")
     }
 
