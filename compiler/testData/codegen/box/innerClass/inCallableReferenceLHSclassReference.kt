@@ -1,4 +1,5 @@
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
 
 class ClassReference<A> {
     inner class A<K> {

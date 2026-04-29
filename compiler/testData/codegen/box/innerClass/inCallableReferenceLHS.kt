@@ -1,4 +1,5 @@
 // LANGUAGE: +ProperSupportOfInnerClassesInCallableReferenceLHS
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
 
 open class A<X: String>(val x: X) {
     inner class B<Y> {

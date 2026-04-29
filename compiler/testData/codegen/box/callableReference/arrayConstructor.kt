@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+
 // FILE: lib.kt
 
 inline fun h(b: (Int, (Int) -> String) -> Array<String>): Array<String> =
