@@ -40,3 +40,4 @@ internal class KotlinGradlePluginExtensionPointInternal<T> : KotlinGradlePluginE
         project.registeredExtensions.addAll(extensions)
     }
 }
+/* Dummy change */
