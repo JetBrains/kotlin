@@ -35,7 +35,7 @@ open class CustomBytecodeTextTest : CodegenTestCase() {
                 }
             }
             """,
-            myEnvironment.project
+            myEnvironment!!.project
         )
 
         val text = generateToText()

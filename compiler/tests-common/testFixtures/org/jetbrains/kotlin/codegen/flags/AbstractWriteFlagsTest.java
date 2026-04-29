@@ -69,7 +69,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) throws Exception {
         @SuppressWarnings("unchecked")
         List<TestFile> testFiles = (List<TestFile>) files;
-        compile(testFiles);
+        compile(testFiles, true);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 
