@@ -207,10 +207,14 @@ internal fun JavaAnnotationArgument.toFirExpression(
             if (classId != null) {
                 val fieldName = entryName
 
-                // Try to resolve as a const field (Kotlin const vals or Java static final fields)
-                val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
-                if (constValue != null) {
-                    return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
+                // PSI/binary classifiers split const-references from real enum entries at structure-build
+                // time (the former become JavaLiteralAnnotationArgument), so they don't need this
+                // fallback. java-direct can't disambiguate at parse time and opts in via couldBeConstReference.
+                if (couldBeConstReference) {
+                    val constValue = fieldName?.let { resolveConstFieldValue(session, classId, it) }
+                    if (constValue != null) {
+                        return constValue.createConstantOrError(session, expectedArrayElementTypeIfArray)
+                    }
                 }
 
                 buildEnumEntryDeserializedAccessExpression {
