@@ -49,7 +49,8 @@ internal fun nullableContrefIntrinsic(): contref1? {
 }
 
 @PublishedApi
-internal fun <T> getWasmCont(completion: Continuation<T>): WasmContinuation<T, T> {
+internal suspend fun <T> getWasmCont(): WasmContinuation<T, T> {
+    val completion = getContinuation<T>()
     val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic(), false)
     val freshCont = WasmContinuation<T, T>(wasmContBox, completion)
     wasmContBox.pendingSuspend = true
@@ -65,12 +66,8 @@ internal fun <T> getWasmContResult(wasmCont: WasmContinuation<T, T>): T {
 }
 
 @PublishedApi
-internal fun <T> checkNotPendingSuspend(wasmCont: WasmContinuation<T, T>, completion: Continuation<T>) {
-    if (!wasmCont.wasmContBox.pendingSuspend) {
-        // Block returned COROUTINE_SUSPENDED but resume was called synchronously.
-        // Signal the outer that result goes via completion, not direct return.
-        wasm_ref_cast_null<WasmContinuation<*, *>>(completion).wasSuspended = true
-    } else {
+internal fun <T> checkNotPendingSuspend(wasmCont: WasmContinuation<T, T>) {
+    if (wasmCont.wasmContBox.pendingSuspend) {
         wasmCont.wasmContBox.pendingSuspend = false
         suspendIntrinsic(wasmCont.wasmContBox)
     }
@@ -81,13 +78,12 @@ internal fun <T> checkNotPendingSuspend(wasmCont: WasmContinuation<T, T>, comple
 @UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST")
 internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturnStackSwitching(block: (Continuation<T>) -> Any?): T {
-    val completion = getContinuation<T>()
-    val freshCont = getWasmCont(completion)
+    val freshCont = getWasmCont<T>()
     val blockResult = block(freshCont)
 
     if (blockResult !== COROUTINE_SUSPENDED) return blockResult as T
 
-    checkNotPendingSuspend(freshCont, completion)
+    checkNotPendingSuspend(freshCont)
 
     return getWasmContResult(freshCont)
 }

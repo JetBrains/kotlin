@@ -11,7 +11,6 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmPrimitiveConstructor
 import kotlin.wasm.internal.WasmStackSwitchingOnly
-import kotlin.wasm.internal.nullableContrefIntrinsic
 import kotlin.wasm.internal.reftypes.contref1
 import kotlin.wasm.internal.resumeThrowImpl
 import kotlin.wasm.internal.resumeWithImpl
@@ -83,16 +82,11 @@ internal class WasmContinuation<T, R>(
     }
 
     override fun doResume(): Any? {
-        val wasmCont = wasmContBox.wasmContinuation ?: run {
-            val e = exception
-            if (e != null) throw e
-            return result
-        }
-        wasmContBox.wasmContinuation = nullableContrefIntrinsic()  // consume before calling resume to prevent re-use
+        val wasmCont = wasmContBox.wasmContinuation!!
 
         val resumeResult: Any? = exception?.let {
             resumeThrowImpl(it, wasmCont)
-        } ?: resumeWithImpl(this, wasmCont)
+        } ?: resumeWithImpl(_resultContinuation, wasmCont)
 
         if (resumeResult === COROUTINE_SUSPENDED) {
             wasSuspended = true
