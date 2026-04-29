@@ -72,6 +72,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_IR_EXPECT_FLAG
+            +JvmEnvironmentConfigurationDirectives.NO_RUNTIME
         }
 
         useFailureSuppressors(
