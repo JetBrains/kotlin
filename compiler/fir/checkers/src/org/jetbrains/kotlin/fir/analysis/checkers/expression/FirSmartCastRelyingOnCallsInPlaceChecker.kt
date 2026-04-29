@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.cfa.evaluatedInPlace
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.FindCapturedWrites
 import org.jetbrains.kotlin.fir.analysis.cfa.util.FindVisibleWrites
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PathAwareControlFlowInfo
@@ -39,7 +39,15 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.reflect.full.memberProperties
 
 object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerKind.Common) {
@@ -101,20 +109,27 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
 
         override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CapturedVariableCheckerData) {
             if (!smartCastExpression.isStable) return
-            smartCastExpression.originalExpression.checkExpressionCapturedVariable(data)
+            smartCastExpression.originalExpression.checkExpressionCapturedVariable(data, smartCastExpression.smartcastType.coneType)
         }
 
         private fun isHasWriteFromNestedNode(
             pathInfo: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>?,
             propertySymbol: FirPropertySymbol,
-            currentGraphOwner: ControlFlowGraph
+            smartCastType: ConeKotlinType,
+            data: CapturedVariableCheckerData
         ): Boolean {
             // Check if there are Captured writes from different lambda contexts
             // We want to warn only if writes are in nested lambdas, not if they're in parent scope before the current lambda
             return pathInfo?.values?.any { controlFlowInfo ->
                 controlFlowInfo[PropertyAccessType.Captured]?.get(propertySymbol)?.any { writeNode ->
-                    if (writeNode !is VariableAssignmentNode) return@any false
-                    writeNode.owner != currentGraphOwner
+                    if (writeNode is VariableAssignmentNode) {
+                        val assignedValue = writeNode.fir.rValue
+                        val assignedType = assignedValue.resolvedType
+                        // If the assigned type is NOT a subtype of the smart cast type, report it
+                        !AbstractTypeChecker.isSubtypeOf(data.context.session.typeContext, assignedType, smartCastType)
+                    } else {
+                        false
+                    }
                 } == true
             } == true
 
@@ -123,7 +138,8 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
         private fun isHasWrites(
             statement: FirStatement,
             data: CapturedVariableCheckerData,
-            propertySymbol: FirPropertySymbol
+            propertySymbol: FirPropertySymbol,
+            smartCastType: ConeKotlinType
         ): Boolean {
             val accessNode = data.visibleWrites.keys.find { node ->
                 node.fir == statement
@@ -131,26 +147,25 @@ object FirSmartCastRelyingOnCallsInPlaceChecker : FirFunctionChecker(MppCheckerK
             if (accessNode == null) return false
 
             val pathInfo = accessNode.let { data.visibleWrites[it] }
-            val currentGraphOwner = accessNode.owner
-            val hasCapturedWritesFromDifferentLambda = isHasWriteFromNestedNode(pathInfo, propertySymbol, currentGraphOwner)
+            val hasCapturedWritesFromDifferentLambda = isHasWriteFromNestedNode(pathInfo, propertySymbol, smartCastType, data)
             return hasCapturedWritesFromDifferentLambda
         }
 
-        private fun FirExpression.checkExpressionCapturedVariable(data: CapturedVariableCheckerData) {
+        private fun FirExpression.checkExpressionCapturedVariable(data: CapturedVariableCheckerData, smartCastType: ConeKotlinType) {
             if (this is FirQualifiedAccessExpression) {
                 val symbol = this.calleeReference.toResolvedVariableSymbol() as? FirPropertySymbol ?: return
-                val hasWrites = isHasWrites(this, data, symbol)
+                val hasWrites = isHasWrites(this, data, symbol, smartCastType)
                 if (hasWrites) {
                     checkCapturedVariable(symbol, data, this.source)
                 }
                 val receiver = this.explicitReceiver?.unwrapErrorExpression()?.unwrapArgument()
-                receiver?.checkExpressionCapturedVariable(data)
+                receiver?.checkExpressionCapturedVariable(data, smartCastType)
             }
             if (this is FirCheckNotNullCall) {
-                this.argument.checkExpressionCapturedVariable(data)
+                this.argument.checkExpressionCapturedVariable(data, smartCastType)
             }
             if (this is FirSafeCallExpression) {
-                this.receiver.checkExpressionCapturedVariable(data)
+                this.receiver.checkExpressionCapturedVariable(data, smartCastType)
             }
         }
 

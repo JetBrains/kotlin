@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // DIAGNOSTICS: -UNUSED_VARIABLE
+// WITH_STDLIB
 
 import kotlin.contracts.*
 
@@ -98,25 +99,6 @@ fun useCaseNestedLambdas() {
     x = null
 }
 
-fun regularFunction(block: () -> Int) {
-    block()
-}
-
-inline fun inlineFunction(block: () -> Int) {
-    block()
-}
-
-fun useCaseWithoutContractWithStable() {
-    var x: String? = "hello"
-    if (x != null) {
-        regularFunction {
-            x.length
-        }
-        inlineFunction {
-            x.length
-        }
-    }
-}
 
 fun nestedSmartcastInOtherInPlaceLambda() {
     var x: String? = maybeString()
@@ -136,7 +118,7 @@ fun sameOwnerWrite() {
     var x: String? = maybeString()
     testCallsInPlace {
         if (x != null) {
-            x.length
+            <!SMARTCAST_RELYING_ON_CALLS_IN_PLACE!>x<!>.length
         }
         x = null
         2

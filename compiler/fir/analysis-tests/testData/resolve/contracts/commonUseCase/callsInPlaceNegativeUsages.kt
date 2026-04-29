@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // DIAGNOSTICS: -UNUSED_VARIABLE
+// WITH_STDLIB
 
 import kotlin.contracts.*
 
@@ -25,6 +26,14 @@ fun exactlyOnce(block: () -> Unit) {
 }
 
 fun regular(block: () -> Unit) {
+    block()
+}
+
+inline fun <R> run2(block: () -> R): R {
+    return block()
+}
+
+inline fun inlineFunction(block: () -> Int) {
     block()
 }
 
@@ -83,6 +92,34 @@ fun badCastOnFunctionParameter(x: Any?) {
         }
     }
 }
+
+fun useCaseWithoutContractWithStable() {
+    var x: String? = "hello"
+    if (x != null) {
+        regular {
+            x.length
+        }
+        inlineFunction {
+            x.length
+        }
+    }
+}
+
+fun sameAssignmentTest() {
+    var x: Int? = null
+
+    run2 {
+        x = 1
+    }
+
+    checkNotNull(x)
+
+    run2 {
+        assertNotEquals(x, 2)
+    }
+}
+
+fun assertNotEquals(unexpected: Any?, actual: Any?) {}
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, equalityExpression, functionDeclaration, functionalType,
 ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, smartcast,
