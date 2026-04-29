@@ -49,6 +49,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
     }
 
     protected open fun extractConfigurationKind(files: List<F>): ConfigurationKind {
+        @Suppress("RedundantCompanionReference")
         return Companion.extractConfigurationKind(files)
     }
 
@@ -66,8 +67,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
     protected fun createConfiguration(
         kind: ConfigurationKind,
         jdkKind: TestJdkKind,
-        classpath: List<File?>,
-        javaSource: List<File?>,
+        classpath: List<File>,
+        javaSource: List<File>,
         testFilesWithConfigurationDirectives: List<TestFile>
     ): CompilerConfiguration {
         val configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, javaSource)
@@ -108,7 +109,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
         @JvmField val name: String,
         @JvmField val dependenciesSymbols: List<String>,
         @JvmField val friendsSymbols: List<String>,
-        @JvmField val dependsOnSymbols: List<String> = listOf(), // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        @JvmField val dependsOnSymbols: List<String> = listOf(),
     ) : Comparable<TestModule> {
 
         val dependencies: MutableList<TestModule> = arrayListOf()

@@ -57,7 +57,7 @@ abstract class CustomScriptCodegenTest : CodegenTestCase() {
     private fun generateScriptClass(): Class<*> = generateClass("ScriptTest")
 
     private fun loadScript(text: String) {
-        myFiles = CodegenTestFiles.create("scriptTest.kts", text, myEnvironment.project)
+        myFiles = CodegenTestFiles.create("scriptTest.kts", text, myEnvironment!!.project)
     }
 
     private fun createScriptTestEnvironment(vararg scriptDefinitions: String) {
@@ -94,7 +94,7 @@ abstract class CustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-private inline fun <reified T> containingDependencyPath(): File? {
+private inline fun <reified T> containingDependencyPath(): File {
     return File(T::class.java.protectionDomain.codeSource.location.toURI().path)
 }
 

@@ -37,7 +37,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
-        setupEnvironment(myEnvironment)
+        setupEnvironment(myEnvironment!!)
 
 
         // All files but last are Klib's sources.
