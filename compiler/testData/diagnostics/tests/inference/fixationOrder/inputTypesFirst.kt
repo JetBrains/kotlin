@@ -1,6 +1,7 @@
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DUMP_INFERENCE_LOGS: MARKDOWN
+// LANGUAGE: +CallCompletionRefinementsFor25
 // ISSUE: KT-86042
 
 interface Out<out T1, out T2>
@@ -23,7 +24,7 @@ fun test(base: Base, derived: Derived) {
     bar(
         foo(
             derived, "",
-            { <!RETURN_TYPE_MISMATCH!>base<!> },
+            { base },
             { "" }
         )
     )

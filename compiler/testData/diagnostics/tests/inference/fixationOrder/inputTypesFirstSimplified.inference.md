@@ -226,8 +226,28 @@ foo#(R|<local>/derived|, String(), foo@fun <implicit>.<anonymous>(): <implicit> 
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-2. `TypeVariable(R1) == Derived` _from Fix variable R1_
-3. Choose `TypeVariable(I)` with `Readiness(
+2. Choose `TypeVariable(I)` with `Readiness(
+   	 true ALLOWED
+   	 true HAS_PROPER_CONSTRAINTS
+   	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+   	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+   	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+   	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+   	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+   	 true HAS_PROPER_NON_ILT_CONSTRAINT
+   	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+   	false HAS_PROPER_EQUALITY_CONSTRAINT
+   	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+   )`
+3. `TypeVariable(I) == kotlin/String` _from Fix variable I_
+
+##### Continue Call Completion:
+
+1. `Base <: TypeVariable(R1)` _from LambdaArgument_
+2. `kotlin/String <: TypeVariable(R2)` _from LambdaArgument_
+3. Choose `TypeVariable(R1)` with `Readiness(
    	 true ALLOWED
    	 true HAS_PROPER_CONSTRAINTS
    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -257,14 +277,8 @@ foo#(R|<local>/derived|, String(), foo@fun <implicit>.<anonymous>(): <implicit> 
        	false HAS_PROPER_EQUALITY_CONSTRAINT
        	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
        )`
-4. `TypeVariable(I) == kotlin/String` _from Fix variable I_
-
-##### Continue Call Completion:
-
-1. `Base <: Derived` _from LambdaArgument_
-2. __NewConstraintError: `Base <: Derived`__
-3. `kotlin/String <: TypeVariable(R2)` _from LambdaArgument_
-4. Choose `TypeVariable(R2)` with `Readiness(
+4. `TypeVariable(R1) == Base` _from Fix variable R1_
+5. Choose `TypeVariable(R2)` with `Readiness(
    	false ALLOWED
    	false HAS_PROPER_CONSTRAINTS
    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -283,7 +297,7 @@ foo#(R|<local>/derived|, String(), foo@fun <implicit>.<anonymous>(): <implicit> 
 ### Call 4
 
 ```
-bar#(R?C|/foo|(R|<local>/derived|, String(), foo@fun <anonymous>(it: R|kotlin/String|): R|Derived| <inline=Unknown>  {
+bar#(R?C|/foo|(R|<local>/derived|, String(), foo@fun <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {
     R|<local>/base|
 }
 , foo@fun <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {
@@ -295,7 +309,7 @@ bar#(R?C|/foo|(R|<local>/derived|, String(), foo@fun <anonymous>(it: R|kotlin/St
 #### Candidate 1: `FirNamedFunctionSymbol /bar` --- `fun bar(x: Any): Unit`
 ##### Resolution Stages > CheckArguments:
 
-1. `TypeVariable(R2) <: kotlin/Any` _from Argument R?C|/foo|(R|<local>/derived|, String(), foo <anonymous>(it: R|kotlin/String|): R|Derived| <inline=Unknown>  {↩    R|<local>/base|↩}↩, foo <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {↩    String()↩}↩)_
+1. `TypeVariable(R2) <: kotlin/Any` _from Argument R?C|/foo|(R|<local>/derived|, String(), foo <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {↩    R|<local>/base|↩}↩, foo <anonymous>(it: R|kotlin/String|): <implicit> <inline=Unknown>  {↩    String()↩}↩)_
 
 ##### Call Completion:
 

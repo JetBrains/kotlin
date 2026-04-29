@@ -532,14 +532,29 @@ enum class LanguageFeature(
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),
     ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-396"),
-    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107"), // Do not hesitate to move it to KOTLIN_2_6 once it's introduced
-    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
-    InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
     EnhancementsOfSecondIncorporationKind25(KOTLIN_2_5, "KT-85879"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
+
+    CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_5, "KT-86042"),
+    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
+    InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
+
+    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107") {
+        fun versionCheck() {
+            sinceVersion?.let {
+                require(CallCompletionRefinementsFor25.sinceVersion != null && CallCompletionRefinementsFor25.sinceVersion <= it)
+                require(UnitConversionsOnArbitraryExpressions.sinceVersion != null && UnitConversionsOnArbitraryExpressions.sinceVersion <= it)
+                require(InferThrowableTypeParameterToUpperBound.sinceVersion != null && InferThrowableTypeParameterToUpperBound.sinceVersion <= it)
+            }
+        }
+
+        init {
+            versionCheck()
+        }
+    },
 
     // 2.6
 
