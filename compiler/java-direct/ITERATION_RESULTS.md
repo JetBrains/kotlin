@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-04-28 (test framework wired through java-direct)
+**Last Updated**: 2026-04-29 (PSI-path regression in shared FIR closed via gate properties)
 
 ### Entry Template
 
@@ -30,6 +30,180 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## PSI-path regression in shared FIR files: gate the java-direct fallbacks — 2026-04-29
+
+### Overview
+
+Investigated a ~5% regression on `KotlinFullPipelineTestsGenerated` (PSI path,
+java-direct off) that appeared after the java-direct development cycle. Root cause: the
+java-direct-specific resolution fallbacks added to shared FIR files run unconditionally
+on the PSI/binary path even though they have no effect there. Closed by adding three
+opt-in `Boolean` properties to the `JavaType` / `JavaField` / `JavaEnumValueAnnotationArgument`
+interfaces (default `false`) and gating the FIR call sites on them. java-direct overrides
+to `true` to keep the existing fallbacks active for its path.
+
+### How the regression was identified
+
+Branch state before the work: top two commits were
+`66086559d511 ~ undo changes outside of java-direct` (reverts the shared-FIR/structure
+changes accumulated during java-direct development) and
+`a9e0e74fd498 ~ undo apply by default` (returns `LanguageFeature.JavaDirect` to
+`sinceVersion = null` and the registrar guard back). With both reverted, the branch HEAD
+is a pure baseline; reverting just the top commit re-applies the shared-FIR changes
+without turning java-direct on.
+
+Three SAME_THREAD measurements of `KotlinFullPipelineTestsGenerated` (single rep each,
+XML test-phase wall time, build kept warm between runs) confirmed the regression as a
+PSI-path issue, not a java-direct issue:
+
+| Config | Time | Δ vs baseline |
+|---|---:|---:|
+| Baseline (HEAD as-is, external changes reverted) | 236.27s | — |
+| Regression (revert of top commit, no fix) | 241.57s | **+2.24%** |
+| With first gate (`couldBeConstReference`) | 230.30s | -2.53% |
+| With all three gates | 235.30s | -0.41% |
+
+The regression-vs-fix delta of ~5% matches the originally observed FP-test slowdown.
+All "with-fix*" configurations are within single-run noise (~±2%) of baseline.
+
+### Root cause
+
+Three call sites in shared FIR files take a callback that's wasted on PSI/binary input:
+
+1. **`javaAnnotationsMapping.toFirExpression`'s `JavaEnumValueAnnotationArgument` branch**
+   calls `resolveConstFieldValue(session, classId, fieldName)` for every enum-shaped
+   annotation argument — including dominant cases like `@Retention(RUNTIME)`,
+   `@Target(METHOD)`, `@Target({TYPE, FIELD})`. The helper does
+   `session.symbolProvider.getClassLikeSymbolByClassId(classId)`, allocates a
+   `filterIsInstance<FirProperty>()` list of declarations, walks both the class and its
+   companion, then probes `session.symbolProvider.getTopLevelPropertySymbols(...)`. PSI
+   never reaches this code path with a real const-reference because PSI splits literal
+   const refs (`KConstsKt.WARNING`) into `JavaLiteralAnnotationArgument` at structure-build
+   time; only java-direct (which can't disambiguate at parse time) needs the fallback.
+
+2. **`JavaTypeConversion.toFirJavaTypeRef` and `toConeTypeProjection`** both call
+   `filterTypeUseAnnotations { fqName -> isTypeUseAnnotationClass(fqName, session) }` per
+   type-ref / type-projection. PSI's `JavaTypeImpl` doesn't override
+   `filterTypeUseAnnotations`, so the default impl just returns `annotations`; the cost
+   is one closure capturing `session` plus a virtual-dispatch round-trip per call. Cheap
+   per call, but `annotationBuilder` fires once per Java type ref during enhancement, so
+   it adds up.
+
+3. **`FirJavaFacade.convertJavaFieldToFir`'s `lazyInitializer`** falls back to
+   `javaField.resolveInitializerValue { … }` when `initializerValue` is `null`. PSI's
+   `JavaFieldImpl` doesn't override `resolveInitializerValue`, so the fallback returns
+   `null` again — but at the cost of one closure capturing `session` and
+   `classId.packageFqName`. Hits every cross-language const-evaluation site.
+
+Other branches in the reverted commit (`setSealedClassInheritors` cross-file path,
+`enumEntriesOrigin`, `isPrimary` for source records, the entire `null`-classifier branch
+in `JavaTypeConversion`) are dead code on the PSI path because they're guarded by
+`classifier == null` or `source == null` — so they cannot have caused the regression.
+
+### Fix
+
+Three `Boolean` opt-in properties (default `false`) — PSI/binary inherit the default and
+never enter the costly branch; java-direct overrides to `true` and continues to take its
+existing fallback path:
+
+- `JavaEnumValueAnnotationArgument.couldBeConstReference` — gates `resolveConstFieldValue`.
+  PSI structurally splits const-vs-enum at build time; java-direct can't, so it opts in.
+- `JavaType.needsTypeUseAnnotationFiltering` — gates the `filterTypeUseAnnotations`
+  callback closure. PSI's javac-wrapper pre-filters at the structure level; java-direct
+  filters at FIR call time.
+- `JavaField.supportsExternalInitializerResolution` — gates the
+  `resolveInitializerValue` callback closure. PSI evaluates Java-side constants at
+  structure-build time; java-direct uses the FIR callback for cross-language const refs.
+
+Additionally, `resolveConstFieldValue` short-circuits when `firClass.classKind ==
+ClassKind.ENUM_CLASS`. Real enum classes can only have const properties via their
+companion (entries are `FirEnumEntry`, not `FirProperty`), and the top-level/facade
+fallback doesn't apply to an `<EnumClass>.X` shape. This eliminates the
+`filterIsInstance<FirProperty>()` allocation and the top-level lookup for the dominant
+"actual enum entry" case on java-direct's own path.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/.../structure/annotationArguments.kt` | Add `JavaEnumValueAnnotationArgument.couldBeConstReference: Boolean = false` |
+| `core/compiler.common.jvm/src/.../structure/javaTypes.kt` | Add `JavaType.needsTypeUseAnnotationFiltering: Boolean = false` |
+| `core/compiler.common.jvm/src/.../structure/javaElements.kt` | Add `JavaField.supportsExternalInitializerResolution: Boolean = false` |
+| `compiler/fir/fir-jvm/src/.../fir/java/javaAnnotationsMapping.kt` | Gate `resolveConstFieldValue` on `couldBeConstReference`; short-circuit `resolveConstFieldValue` for enum classes |
+| `compiler/fir/fir-jvm/src/.../fir/java/JavaTypeConversion.kt` | Gate `filterTypeUseAnnotations` on `needsTypeUseAnnotationFiltering` at both call sites |
+| `compiler/fir/fir-jvm/src/.../fir/java/FirJavaFacade.kt` | Gate `resolveInitializerValue` callback on `supportsExternalInitializerResolution` |
+| `compiler/java-direct/src/.../model/JavaAnnotationOverAst.kt` | Override `couldBeConstReference = true` on `JavaEnumValueAnnotationArgumentOverAst` |
+| `compiler/java-direct/src/.../model/JavaTypeOverAst.kt` | Override `needsTypeUseAnnotationFiltering = true` on `JavaTypeOverAst` |
+| `compiler/java-direct/src/.../model/JavaMemberOverAst.kt` | Override `supportsExternalInitializerResolution = true` on `JavaFieldOverAst` |
+
+### Test Results
+
+- `kotlin-java-direct:test` (`JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`):
+  **2692/2692 green**, no FAILED markers. Run twice — once with only the first gate, once
+  with all three gates plus the enum short-circuit. java-direct functionality preserved
+  in both states.
+- `KotlinFullPipelineTestsGenerated` (SAME_THREAD): see table above. Regression closed.
+
+### Methodology notes
+
+- `ExecutionMode.SAME_THREAD` was set in
+  `GenerateModularizedIsolatedTests.kt:27` and the test class was regenerated via
+  `:compiler:fir:modularized-tests:generateTests` so all 414 modules run sequentially —
+  needed for stable wall-clock timing under SUM-not-MAX semantics. Revert before merge.
+- The XML `time="…"` field in
+  `compiler/fir/modularized-tests/build/test-results/test/TEST-…KotlinFullPipelineTestsGenerated.xml`
+  is the right metric; Gradle's "BUILD SUCCESSFUL in Xm Ys" mixes test phase with build
+  phase, and the build phase shrinks dramatically across runs as caches warm up,
+  inflating the BUILD-SUCCESSFUL delta vs. real test-phase delta.
+- Single-rep noise looked to be ~±2% on this corpus. Three reps each would tighten the
+  signal, but the regression-vs-fix delta of ~+5% / +11s is well above noise on a single
+  rep.
+
+### Key Learnings
+
+- **Adding overridable interface methods with default impls to shared types is not free
+  for the default-path callers.** Even when the default impl is "return the same thing
+  the caller already has", every call still pays a virtual-dispatch and a callback
+  closure allocation. When the call site is hot (per-Java-type-ref or per-annotation-arg
+  during FIR enhancement), this can cost a few percent on workloads that don't need the
+  override at all. Pairing every such method with a `Boolean` "`needsX`" gate on the same
+  interface is the cheap way to keep the API additive without taxing the default path.
+- **`isResolved` is not a substitute for "needs the const fallback".** java-direct's
+  `JavaEnumValueAnnotationArgumentOverAst.isResolved` returns `true` for the easy
+  "simple-imported" case (where `enumClassId` is built from a known import), so gating on
+  `!isResolved` would have skipped the const fallback for the very case it's needed —
+  `@SomeAnno(SomeImportedClass.SOME_CONST)`. The right gate is "could this argument
+  ever be a const reference" — orthogonal to "is the enum class identifier already
+  known".
+- **Enum classes never carry const FirProperty members directly.** Their entries are
+  `FirEnumEntry`. Code that walks `firClass.declarations.filterIsInstance<FirProperty>()`
+  looking for a const named like the entry will always come up empty. Detecting this
+  shape upfront skips a list allocation and a top-level symbol probe per
+  enum-typed annotation argument — meaningful on java-direct's path where the same
+  fallback runs (`couldBeConstReference = true`).
+- **Branches guarded by `classifier == null` / `source == null` cannot affect the PSI
+  path.** Several reverted blocks in `FirJavaFacade` (`setSealedClassInheritors` cross-
+  file lookup, `enumEntriesOrigin` for source enums, `isPrimary` for source records,
+  the whole `null`-classifier branch in `JavaTypeConversion`) only fire for java-direct.
+  Those should not be searched for the source of a PSI-only regression.
+
+### Follow-ups not in this iteration
+
+- Re-measure on `IntelliJFullPipelineTestsGenerated` (Java-heavy, ~10× annotation
+  density vs. Kotlin pipeline). The two follow-up gates
+  (`needsTypeUseAnnotationFiltering`, `supportsExternalInitializerResolution`) showed no
+  measurable benefit on the Kotlin pipeline; their per-call cost is small and may need a
+  larger / annotation-heavier corpus to surface in single-rep timing.
+- Multi-rep run (3+ reps each) of all four configurations to tighten the noise envelope
+  below ±1%.
+- The same `resolveConstFieldValue` runs on java-direct's path (`couldBeConstReference =
+  true`); for further tightening of the java-direct/PSI gap on this code path, look at
+  caching the `(classId, fieldName) → constValue?` lookup at the session level — most
+  call traffic is for a small set of well-known JDK enum entries that produce the same
+  null answer many times over.
 
 ---
 
