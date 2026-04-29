@@ -91,9 +91,9 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
             configuration.configureContentRootsFromClassPath(arguments)
         }
 
-        if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.JavaDirect) || arguments.javaDirect) {
+//        if (configuration.languageVersionSettings.supportsFeature(LanguageFeature.JavaDirect) || arguments.javaDirect) {
             configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, JavaDirectPluginRegistrar())
-        }
+//        }
         configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, arguments.disableStandardScript)
 
         if (arguments.script || arguments.expression != null) {
