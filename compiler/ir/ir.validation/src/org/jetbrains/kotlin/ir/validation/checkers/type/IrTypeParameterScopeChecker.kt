@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.ir.validation.checkers.type
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isTopLevelInPackage
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.validation.checkers.IrTypeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.context.ContextUpdater
 import org.jetbrains.kotlin.ir.validation.checkers.context.TypeParameterScopeUpdater
+import org.jetbrains.kotlin.name.FqName
 
 /**
  * Makes sure that all the type parameter references are within the scope of the corresponding type parameters.
@@ -38,11 +41,19 @@ object IrTypeParameterScopeChecker : IrTypeChecker {
         typeParameterSymbol: IrTypeParameterSymbol,
     ) {
         if (!context.typeParameterScopeStack.isVisibleInCurrentScope(typeParameterSymbol)) {
+            if (element.isTypeOfCall()) return
             context.error(
                 element,
                 "The following element references a type parameter '${typeParameterSymbol.owner.render()}' that is not available " +
                         "in the current scope."
             )
         }
+    }
+
+    private fun IrElement.isTypeOfCall(): Boolean {
+        if (this !is IrCall) return false
+        val symbol = this.symbol
+        if (!symbol.isBound) return false
+        return symbol.owner.isTopLevelInPackage("typeOf", FqName("kotlin.reflect"))
     }
 }
