@@ -19,16 +19,6 @@ val substrateStdlibCompilerDependencies by configurations.creating {
     isCanBeResolved = true
 }
 
-val klibCompileClasspath by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-    }
-}
-
 dependencies {
     // 1. Dependencies to RUN the JKlib Compiler
     jklibCompilerClasspath(project(":compiler:cli-jklib"))
@@ -43,12 +33,6 @@ dependencies {
     // Used to read XML metadata files inside META-INF
     substrateStdlibCompilerDependencies(commonDependency("org.codehaus.woodstox:stax2-api"))
     substrateStdlibCompilerDependencies(commonDependency("com.fasterxml:aalto-xml"))
-
-    // 2. Dependencies to COMPILE the minimal stdlib KLIB
-    klibCompileClasspath(project(":kotlin-stdlib"))
-    klibCompileClasspath(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) {
-        isTransitive = false
-    }
 }
 
 val outputKlib = layout.buildDirectory.file("libs/kotlin-stdlib-jvm-ir.klib")
@@ -75,6 +59,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
         include(
             "kotlin/Annotation.kt",
             "kotlin/Annotations.kt",
+            "kotlin/collections/PrimitiveIterators.kt",
             "kotlin/Any.kt",
             "kotlin/Array.kt",
             "kotlin/ArrayIntrinsics.kt",
@@ -95,6 +80,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/Primitives.kt",
             "kotlin/Unit.kt",
             "kotlin/annotation/Annotations.kt",
+            "kotlin/annotations/OptIn.kt",
             "kotlin/annotations/Multiplatform.kt",
             "kotlin/annotations/WasExperimental.kt",
             "kotlin/annotations/ReturnValue.kt",
@@ -164,7 +150,6 @@ val copyMinimalSources by tasks.registering(Sync::class) {
 fun JavaExec.configureJklibCompilation(
     sourceTask: TaskProvider<Sync>,
     klibOutput: Provider<RegularFile>,
-    klibCompileClasspath: FileCollection,
 ) {
     dependsOn(sourceTask)
 
@@ -177,7 +162,6 @@ fun JavaExec.configureJklibCompilation(
         include("**/*.kt")
     }
     inputs.files(sourceTree)
-    inputs.files(klibCompileClasspath)
     outputs.file(klibOutput)
 
     doFirst {
@@ -208,9 +192,6 @@ fun JavaExec.configureJklibCompilation(
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
         )
 
-        val fullClasspath = klibCompileClasspath.asPath
-        
-        args("-classpath", fullClasspath)
         args(jvmSourceFiles)
         args(commonSourceFiles)
     }
@@ -223,7 +204,7 @@ val compileStdlib by tasks.registering(JavaExec::class) {
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(8))
     })
-    configureJklibCompilation(copyMinimalSources, outputKlib, klibCompileClasspath)
+    configureJklibCompilation(copyMinimalSources, outputKlib)
 
     args("-nowarn")
 }
