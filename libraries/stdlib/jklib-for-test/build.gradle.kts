@@ -204,7 +204,6 @@ fun JavaExec.configureJklibCompilation(
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalExtendedContracts",
-            "-Xcompile-builtins-as-part-of-stdlib",
             "-Xreturn-value-checker=full",
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
         )
