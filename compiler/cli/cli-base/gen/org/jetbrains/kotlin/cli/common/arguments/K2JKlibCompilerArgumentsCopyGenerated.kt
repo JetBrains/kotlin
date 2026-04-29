@@ -14,7 +14,6 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
     to.compileIr = from.compileIr
     to.destination = from.destination
     to.enhanceTypeParameterTypesToDefNotNull = from.enhanceTypeParameterTypesToDefNotNull
-    to.expectBuiltinsAsPartOfStdlib = from.expectBuiltinsAsPartOfStdlib
     to.friendModules = from.friendModules
     to.friendPaths = from.friendPaths?.copyOf()
     to.inheritMultifileParts = from.inheritMultifileParts
