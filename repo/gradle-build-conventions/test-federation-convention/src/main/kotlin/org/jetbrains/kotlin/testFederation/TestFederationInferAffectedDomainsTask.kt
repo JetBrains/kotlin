@@ -78,3 +78,4 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
     }
 }
 
+/* dummy */
