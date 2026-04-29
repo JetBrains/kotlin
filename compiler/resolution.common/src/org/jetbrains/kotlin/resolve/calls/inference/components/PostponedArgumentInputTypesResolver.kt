@@ -572,6 +572,7 @@ class PostponedArgumentInputTypesResolver(
                 argument,
                 postponedArguments,
                 topLevelType,
+                ConstraintSystemCompletionMode.FULL,
                 dependencyProvider,
             ),
         )
@@ -582,6 +583,7 @@ class PostponedArgumentInputTypesResolver(
         argument: PostponedResolvedAtomMarker,
         postponedArguments: List<PostponedResolvedAtomMarker>,
         topLevelType: KotlinTypeMarker,
+        completionMode: ConstraintSystemCompletionMode,
         dependencyProvider: TypeVariableDependencyInformationProvider,
     ): VariableFixationFinder.VariableForFixation? {
         val expectedType = argument.expectedFunctionType() ?: return null
@@ -597,7 +599,7 @@ class PostponedArgumentInputTypesResolver(
                 expectedType.extractArgumentsForFunctionTypeOrSubtype()
             else
                 argument.inputTypes,
-            dependencyProvider, postponedArguments, topLevelType,
+            dependencyProvider, postponedArguments, completionMode, topLevelType,
         )
     }
 
@@ -638,6 +640,7 @@ class PostponedArgumentInputTypesResolver(
         types: Collection<KotlinTypeMarker>,
         dependencyProvider: TypeVariableDependencyInformationProvider,
         postponedArguments: List<PostponedResolvedAtomMarker>,
+        completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker,
     ): VariableFixationFinder.VariableForFixation? {
         val outerTypeVariables = c.outerTypeVariables.orEmpty()
@@ -648,7 +651,7 @@ class PostponedArgumentInputTypesResolver(
         return variableFixationFinder.findFirstVariableForFixation(
             relatedVariables,
             postponedArguments,
-            ConstraintSystemCompletionMode.FULL,
+            completionMode,
             topLevelType,
         )
     }

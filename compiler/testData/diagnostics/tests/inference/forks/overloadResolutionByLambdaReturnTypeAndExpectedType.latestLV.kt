@@ -21,12 +21,12 @@ fun <E> foo(m: MyList<E>, c: C) {
             myListOf(x)
         } // ok in K2, error in k1
 
-        val y1: MyList<String> = m.limitedFlatMap { x ->
-            myListOf(x)
+        val y1: MyList<String> = m.<!OVERLOAD_RESOLUTION_AMBIGUITY!>limitedFlatMap<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> ->
+            <!CANNOT_INFER_PARAMETER_TYPE!>myListOf<!>(x)
         } // ok in K1 and K2
 
-        val y2: MyList<E> <!INITIALIZER_TYPE_MISMATCH!>=<!> m.limitedFlatMap { x ->
-            myListOf(x)
+        val y2: MyList<E> = m.<!OVERLOAD_RESOLUTION_AMBIGUITY!>limitedFlatMap<!> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!> ->
+            <!CANNOT_INFER_PARAMETER_TYPE!>myListOf<!>(x)
         } // error in K1 and K2
     }
 }

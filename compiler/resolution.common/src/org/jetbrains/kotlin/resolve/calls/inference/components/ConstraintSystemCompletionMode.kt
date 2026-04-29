@@ -11,17 +11,20 @@ enum class ConstraintSystemCompletionMode(
     val allLambdasShouldBeAnalyzed: Boolean = allPostponedAtomsShouldBeAnalyzed,
     val shouldForkPointConstraintsBeResolved: Boolean,
     val fixNotInferredTypeVariablesToErrorType: Boolean,
+    val preventFixingTypeVariablesRelatedToReturnType: Boolean,
 ) {
     FULL(
         allPostponedAtomsShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = true,
         fixNotInferredTypeVariablesToErrorType = true,
+        preventFixingTypeVariablesRelatedToReturnType = false,
     ),
     PCLA_POSTPONED_CALL(
         allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
+        preventFixingTypeVariablesRelatedToReturnType = false,
     ),
 
     /**
@@ -39,6 +42,7 @@ enum class ConstraintSystemCompletionMode(
         allLambdasShouldBeAnalyzed = false,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
+        preventFixingTypeVariablesRelatedToReturnType = true,
     ),
 
     @ExclusiveForOverloadResolutionByLambdaReturnType
@@ -49,6 +53,7 @@ enum class ConstraintSystemCompletionMode(
         shouldForkPointConstraintsBeResolved = true,
         // We shouldn't do it here because of input type semi-fixing
         fixNotInferredTypeVariablesToErrorType = false,
+        preventFixingTypeVariablesRelatedToReturnType = true,
     );
 
     @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
