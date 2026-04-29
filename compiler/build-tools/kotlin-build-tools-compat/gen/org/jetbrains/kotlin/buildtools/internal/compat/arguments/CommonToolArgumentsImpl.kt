@@ -86,7 +86,7 @@ internal abstract class CommonToolArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  public fun applyCompilerArguments(arguments: CommonToolArguments) {
+  protected fun applyCompilerArguments(arguments: CommonToolArguments) {
     try { this[WERROR] = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
     try { this[WEXTRA] = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }
