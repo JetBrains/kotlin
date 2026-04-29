@@ -35,7 +35,7 @@ open class CustomBytecodeTextTest : CodegenTestCase() {
                 }
             }
             """,
-            myEnvironment.project
+            myEnvironment!!.project
         )
 
         val text = generateToText()
@@ -44,13 +44,13 @@ open class CustomBytecodeTextTest : CodegenTestCase() {
             "actual bytecode:\n$text",
             getstatics,
             listOf(
-                "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
-                "GETSTATIC MyEnum.${'$'}ENTRIES : Lkotlin/enums/EnumEntries;",
+                $$"GETSTATIC MyEnum.$VALUES : [LMyEnum;",
+                $$"GETSTATIC MyEnum.$ENTRIES : Lkotlin/enums/EnumEntries;",
                 "GETSTATIC MyEnum.ENTRY1 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
-                "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
+                $$"GETSTATIC MyEnum.$VALUES : [LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",

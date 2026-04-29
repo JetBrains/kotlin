@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.FirParser.Psi
 
 open class ReflectionClassLoaderTest : CodegenTestCase() {
     override val useFir: Boolean
@@ -16,7 +15,7 @@ open class ReflectionClassLoaderTest : CodegenTestCase() {
     override val firParser: FirParser
         get() = FirParser.LightTree
 
-    override fun getPrefix() = "reflection/classLoaders"
+    override val prefix get() = "reflection/classLoaders"
 
     override fun setUp() {
         super.setUp()
