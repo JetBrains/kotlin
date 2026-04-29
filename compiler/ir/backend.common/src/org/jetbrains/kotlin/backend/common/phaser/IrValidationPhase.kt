@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.InlineFunctionUseS
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
@@ -43,7 +44,9 @@ abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(contex
             .withBasicChecks()
             .withCheckers(IrValueAccessScopeChecker)
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
-            //.withCheckers(IrTypeParameterScopeChecker) // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
+            .applyIf(context.configuration.enableIrTypeParameterScopeChecks) {
+                withCheckers(IrTypeParameterScopeChecker)
+            }
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker.Strict)
             }
