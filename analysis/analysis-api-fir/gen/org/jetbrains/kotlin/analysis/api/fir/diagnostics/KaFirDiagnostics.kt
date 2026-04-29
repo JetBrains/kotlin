@@ -4217,6 +4217,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val annotation: KaClassLikeSymbol
     }
 
+    interface ExpectedTypealias : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExpectedTypealias::class
+    }
+
     interface RedundantVisibilityModifier : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = RedundantVisibilityModifier::class
     }

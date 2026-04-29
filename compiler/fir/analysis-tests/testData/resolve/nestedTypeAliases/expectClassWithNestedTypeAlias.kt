@@ -8,7 +8,7 @@
 <!WRONG_MODIFIER_TARGET!>expect<!> typealias TopLevelExpectTA = String
 
 expect class My {
-    typealias Numbers = List<Int> // Missing diagnostic about phobition of nested typealiases in expect classes
+    <!EXPECTED_TYPEALIAS!>typealias Numbers = List<Int><!> // Missing diagnostic about phobition of nested typealiases in expect classes
 }
 
 // MODULE: platform()()(common)

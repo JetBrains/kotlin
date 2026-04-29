@@ -2095,6 +2095,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val TYPEALIAS_EXPANDS_TO_COMPILER_REQUIRED_ANNOTATION by deprecationError<KtElement>(LanguageFeature.ForbidTypeAliasToCompilerRequiredAnnotation) {
             parameter<FirRegularClassSymbol>("annotation")
         }
+        val EXPECTED_TYPEALIAS by error<KtElement>()
     }
 
     val EXTRA_CHECKERS by object : DiagnosticGroup("Extra checkers") {

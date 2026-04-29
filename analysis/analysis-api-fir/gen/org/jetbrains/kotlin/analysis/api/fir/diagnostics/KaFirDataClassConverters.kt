@@ -6106,6 +6106,12 @@ private fun KaDiagnosticConverterBuilder.addConversions134() {
             token,
         )
     }
+    add(FirErrors.EXPECTED_TYPEALIAS) { firDiagnostic ->
+        ExpectedTypealiasImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.UNUSED_VARIABLE) { firDiagnostic ->
         UnusedVariableImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -5055,6 +5055,11 @@ internal class TypealiasExpandsToCompilerRequiredAnnotationWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.TypealiasExpandsToCompilerRequiredAnnotationWarning
 
+internal class ExpectedTypealiasImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExpectedTypealias
+
 internal class RedundantVisibilityModifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
