@@ -25,7 +25,6 @@ data class JsIrAfterFrontendBackendInput(
     val icData: List<KotlinFileSerializedData>,
     override val diagnosticReporter: BaseDiagnosticsCollector,
     val hasErrors: Boolean,
-    override val descriptorMangler: KotlinMangler.DescriptorMangler?,
     override val irMangler: KotlinMangler.IrMangler,
     val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
 ) : IrBackendInput()
@@ -36,7 +35,6 @@ data class WasmAfterFrontendBackendInput(
     val icData: List<KotlinFileSerializedData>,
     override val diagnosticReporter: BaseDiagnosticsCollector,
     val hasErrors: Boolean,
-    override val descriptorMangler: KotlinMangler.DescriptorMangler?,
     override val irMangler: KotlinMangler.IrMangler,
     val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
 ) : IrBackendInput()
@@ -46,7 +44,6 @@ class JvmIrBackendInput(
     val codegenFactory: JvmIrCodegenFactory,
     val backendInput: JvmIrCodegenFactory.BackendInput,
     val sourceFiles: List<KtSourceFile>,
-    override val descriptorMangler: KotlinMangler.DescriptorMangler?,
     override val irMangler: KotlinMangler.IrMangler,
 ) : IrBackendInput() {
     override val irModuleFragment: IrModuleFragment
@@ -73,9 +70,6 @@ data class DeserializedFromKlibBackendInput<A : LoadedIrPipelineArtifact>(
 
     override val irBuiltIns: IrBuiltIns
         get() = moduleInfo.bultins
-
-    override val descriptorMangler: KotlinMangler.DescriptorMangler?
-        get() = moduleInfo.symbolTable.signaturer?.mangler
 
     override val irMangler: KotlinMangler.IrMangler
         get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler

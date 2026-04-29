@@ -23,17 +23,6 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     abstract val irBuiltIns: IrBuiltIns
 
     /**
-     * The mangler instance that was used to build declaration signatures from (possibly deserialized) K1 descriptors for this backend,
-     * or `null` if this artifact was compiled using the K2 frontend.
-     *
-     * This instance can be used to verify signatures in tests.
-     *
-     * @see org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.DescriptorMangleComputer
-     * @see org.jetbrains.kotlin.ir.util.IdSignature
-     */
-    abstract val descriptorMangler: KotlinMangler.DescriptorMangler?
-
-    /**
      * The mangler instance that was used to build declaration signatures from IR declarations for this backend.
      *
      * @see org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
