@@ -81,6 +81,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
 
         assert(irClass.getSuperClassNotAny()!!.isExternalObjCClass())
         val allInitMethodsInfo = irClass.getSuperClassNotAny()!!.constructors
+                .filterNot { it.isObjCUnavailable() }
                 .mapNotNull { it.getObjCInitMethod()?.getExternalObjCMethodInfo() }
                 .filter { it.selector !in allImplementedSelectors }
                 .distinctBy { it.selector }

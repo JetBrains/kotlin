@@ -488,6 +488,7 @@ class StubIrTextEmitter(
                 else -> "($protocolGetter, $binaryName)"
             }
         }
+        AnnotationStub.ObjC.Unavailable -> "@ObjCUnavailable"
         AnnotationStub.CCall.CString ->
             "@CCall.CString"
         AnnotationStub.CCall.WCString ->

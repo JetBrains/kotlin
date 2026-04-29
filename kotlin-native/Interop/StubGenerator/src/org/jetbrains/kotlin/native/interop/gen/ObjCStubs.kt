@@ -116,6 +116,9 @@ private class ObjCMethodStubBuilder(
     private val isDeprecatedCategoryMethod: Boolean =
             container is ObjCCategory && container in container.clazz.includedCategories
 
+    private val isUnavailable: Boolean =
+            method.isUnavailableIn(container)
+
     init {
         val returnType = method.getReturnType(container.classOrProtocol)
         isStret = returnType.isStret(context.configuration.target)
@@ -190,7 +193,13 @@ private class ObjCMethodStubBuilder(
                     val designated = isDesignatedInitializer ||
                             context.configuration.disableDesignatedInitializerChecks
 
-                    val annotations = listOf(AnnotationStub.ObjC.Constructor(method.selector, designated))
+                    val annotations = buildList {
+                        if (isUnavailable) {
+                            add(AnnotationStub.ObjC.Unavailable)
+                            add(deprecatedUnavailableObjCDeclaration)
+                        }
+                        add(AnnotationStub.ObjC.Constructor(method.selector, designated))
+                    }
                     val constructor = ConstructorStub(parameters, annotations, isPrimary = false, origin = origin)
                     constructor
                 }
@@ -246,6 +255,12 @@ private class ObjCMethodStubBuilder(
         if (isDeprecatedCategoryMethod && annotations.filterIsInstance<AnnotationStub.Deprecated>().isEmpty()) {
             val target = if (method.isClass) "class" else "instance"
             annotations += AnnotationStub.Deprecated(message = "Use $target method instead", replaceWith = "", level = DeprecationLevel.WARNING)
+        }
+        if (isUnavailable && deprecatedUnavailableObjCDeclaration !in annotations) {
+            annotations += AnnotationStub.ObjC.Unavailable
+            if (annotations.filterIsInstance<AnnotationStub.Deprecated>().isEmpty()) {
+                annotations += deprecatedUnavailableObjCDeclaration
+            }
         }
         return listOfNotNull(
                 FunctionStub(
@@ -315,14 +330,22 @@ private fun ObjCContainer.declaredMethods(isClass: Boolean): Sequence<ObjCMethod
         this.methods.asSequence().filter { it.isClass == isClass } +
                 if (this is ObjCClass) { includedCategoriesMethods(isClass) } else emptyList()
 
-@Suppress("UNUSED_PARAMETER")
-internal fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> =
-        this // TODO: exclude methods that are marked as unavailable in [container].
+private fun ObjCMethod.isUnavailableIn(container: ObjCContainer): Boolean =
+        container.declaredUnavailableMethods(isClass).any { it.selector == selector }
+
+private fun ObjCContainer.declaredUnavailableMethods(isClass: Boolean): Sequence<UnavailableObjCMethod> =
+        this.unavailableMethods.asSequence().filter { it.isClass == isClass } +
+                if (this is ObjCClass) { includedCategoriesUnavailableMethods(isClass) } else emptyList()
+
+private val deprecatedUnavailableObjCDeclaration = AnnotationStub.Deprecated(
+        "This Objective-C declaration is unavailable",
+        "",
+        DeprecationLevel.WARNING
+)
 
 internal fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.immediateSuperTypes.flatMap { it.methodsWithInherited(isClass) }
                 .distinctBy { it.selector }
-                .inheritedTo(this, isClass)
 
 internal fun ObjCClassOrProtocol.methodsWithInherited(isClass: Boolean): Sequence<ObjCMethod> =
         (this.declaredMethods(isClass) + this.inheritedMethods(isClass)).distinctBy { it.selector }
@@ -354,6 +377,11 @@ internal fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
 private fun ObjCClass.includedCategoriesMethods(isMeta: Boolean): List<ObjCMethod> =
         includedCategories.flatMap { category ->
             category.declaredMethods(isMeta)
+        }
+
+private fun ObjCClass.includedCategoriesUnavailableMethods(isMeta: Boolean): List<UnavailableObjCMethod> =
+        includedCategories.flatMap { category ->
+            category.declaredUnavailableMethods(isMeta)
         }
 
 private fun ObjCClass.includedCategoriesProperties(isMeta: Boolean): List<ObjCProperty> =
@@ -399,7 +427,7 @@ internal abstract class ObjCContainerStubBuilder(
         // Add methods inherited from multiple supertypes that must be defined according to Kotlin rules:
         methods += container.immediateSuperTypes
                 .flatMap { superType ->
-                    val methodsWithInherited = superType.methodsWithInherited(isMeta).inheritedTo(container, isMeta)
+                    val methodsWithInherited = superType.methodsWithInherited(isMeta)
                     // Select only those which are represented as non-abstract in Kotlin:
                     when (superType) {
                         is ObjCClass -> methodsWithInherited

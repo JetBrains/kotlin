@@ -10269,6 +10269,11 @@ open annotation class kotlinx.cinterop/ObjCSignatureOverride : kotlin/Annotation
 }
 
 // Targets: [native]
+open annotation class kotlinx.cinterop/ObjCUnavailable : kotlin/Annotation { // kotlinx.cinterop/ObjCUnavailable|null[0]
+    constructor <init>() // kotlinx.cinterop/ObjCUnavailable.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlinx.cinterop/UnsafeNumber : kotlin/Annotation { // kotlinx.cinterop/UnsafeNumber|null[0]
     constructor <init>(kotlin/Array<kotlin/String>) // kotlinx.cinterop/UnsafeNumber.<init>|<init>(kotlin.Array<kotlin.String>){}[0]
 

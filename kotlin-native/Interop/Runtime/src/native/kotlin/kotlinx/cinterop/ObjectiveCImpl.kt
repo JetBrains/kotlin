@@ -130,6 +130,11 @@ public annotation class ExternalObjCClass(val protocolGetter: String = "", val b
 @InternalForKotlinNative
 public annotation class ObjCMethod(val selector: String, val encoding: String, val isStret: Boolean = false)
 
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.BINARY)
+@InternalForKotlinNative
+public annotation class ObjCUnavailable
+
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 @InternalForKotlinNative

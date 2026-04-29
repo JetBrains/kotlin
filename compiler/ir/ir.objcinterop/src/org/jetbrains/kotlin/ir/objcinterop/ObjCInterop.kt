@@ -41,6 +41,7 @@ val objCDirectFqName = NativeStandardInteropNames.objCDirectClassId.asSingleFqNa
 val objCMethodFqName = NativeStandardInteropNames.objCMethodClassId.asSingleFqName()
 val objCConstructorFqName = NativeStandardInteropNames.objCConstructorClassId.asSingleFqName()
 val objCFactoryFqName = NativeStandardInteropNames.objCFactoryClassId.asSingleFqName()
+val objCUnavailableFqName = NativeStandardInteropNames.objCUnavailableClassId.asSingleFqName()
 
 fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName &&
@@ -140,6 +141,9 @@ private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
 
     return methodInfo
 }
+
+fun IrDeclaration.isObjCUnavailable(): Boolean =
+    annotations.hasAnnotation(objCUnavailableFqName)
 
 private fun objCMethodInfo(annotation: IrAnnotation) = ObjCMethodInfo(
         selector = annotation.getAnnotationStringValue("selector"),

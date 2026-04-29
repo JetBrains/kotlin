@@ -265,6 +265,7 @@ abstract class EnumDef(val spelling: String, val baseType: Type) : TypeDeclarati
 sealed class ObjCContainer {
     abstract val protocols: List<ObjCProtocol>
     abstract val methods: List<ObjCMethod>
+    abstract val unavailableMethods: List<UnavailableObjCMethod>
     abstract val properties: List<ObjCProperty>
 }
 
@@ -289,6 +290,16 @@ data class ObjCMethod(
         // Fast path, avoid allocating copies.
         returnType
     }
+}
+
+data class UnavailableObjCMethod(val selector: String, val isClass: Boolean)
+
+sealed class ObjCMethodWithAvailability {
+    class Available(val method: ObjCMethod) : ObjCMethodWithAvailability()
+    class Unavailable(val method: UnavailableObjCMethod) : ObjCMethodWithAvailability()
+
+    val methodIfAvailable: ObjCMethod?
+        get() = (this as? Available)?.method
 }
 
 // Clang seems to allow using instancetype only inside certain kinds of types.

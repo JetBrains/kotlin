@@ -50,6 +50,7 @@ private class EnumDefImpl(
 private interface ObjCContainerImpl {
     val protocols: MutableList<ObjCProtocol>
     val methods: MutableList<ObjCMethod>
+    val unavailableMethods: MutableList<UnavailableObjCMethod>
     val properties: MutableList<ObjCProperty>
 }
 
@@ -62,6 +63,7 @@ private class ObjCProtocolImpl(
 ) : ObjCProtocol(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
+    override val unavailableMethods = mutableListOf<UnavailableObjCMethod>()
     override val properties = mutableListOf<ObjCProperty>()
 }
 
@@ -75,6 +77,7 @@ private class ObjCClassImpl(
 ) : ObjCClass(name), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
+    override val unavailableMethods = mutableListOf<UnavailableObjCMethod>()
     override val properties = mutableListOf<ObjCProperty>()
     override var baseClass: ObjCClass? = null
     override val includedCategories = mutableListOf<ObjCCategory>()
@@ -86,6 +89,7 @@ private class ObjCCategoryImpl(
 ) : ObjCCategory(name, clazz), ObjCContainerImpl {
     override val protocols = mutableListOf<ObjCProtocol>()
     override val methods = mutableListOf<ObjCMethod>()
+    override val unavailableMethods = mutableListOf<UnavailableObjCMethod>()
     override val properties = mutableListOf<ObjCProperty>()
 }
 
@@ -578,8 +582,16 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
                 CXCursorKind.CXCursor_ObjCClassMethodDecl, CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> {
                     getObjCMethod(child)?.let { method ->
-                        result.methods.removeAll { method.replaces(it) }
-                        result.methods.add(method)
+                        when (method) {
+                            is ObjCMethodWithAvailability.Available -> {
+                                result.methods.removeAll { method.method.replaces(it) }
+                                result.methods.add(method.method)
+                            }
+                            is ObjCMethodWithAvailability.Unavailable -> {
+                                result.unavailableMethods.removeAll { method.method.replaces(it) }
+                                result.unavailableMethods.add(method.method)
+                            }
+                        }
                     }
                 }
                 else -> {
@@ -1061,9 +1073,9 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 }
                 if (isAvailable(cursor) && isAvailable(container) && classIfCategory?.let(::isAvailable) ?: true) {
                     val propertyInfo = clang_index_getObjCPropertyDeclInfo(info.ptr)!!.pointed
-                    val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue())
+                    val getter = getObjCMethod(propertyInfo.getter!!.pointed.cursor.readValue())?.methodIfAvailable
                     val setter = propertyInfo.setter?.let {
-                        getObjCMethod(it.pointed.cursor.readValue())
+                        getObjCMethod(it.pointed.cursor.readValue())?.methodIfAvailable
                     }
 
                     if (getter != null) {
@@ -1138,16 +1150,22 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         return FunctionDecl(name, parameters, returnType, isVararg, directAccess)
     }
 
-    private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethod? {
-        if (!isAvailable(cursor)) {
-            return null
-        }
-
+    private fun getObjCMethod(cursor: CValue<CXCursor>): ObjCMethodWithAvailability? {
         val selector = clang_getCursorDisplayName(cursor).convertAndDispose()
 
         // Ignore some very special methods:
         when (selector) {
             "dealloc", "retain", "release", "autorelease", "retainCount", "self" -> return null
+        }
+
+        val isClass = when (cursor.kind) {
+            CXCursorKind.CXCursor_ObjCClassMethodDecl -> true
+            CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> false
+            else -> error(cursor.kind)
+        }
+
+        if (!isAvailable(cursor)) {
+            return ObjCMethodWithAvailability.Unavailable(UnavailableObjCMethod(selector, isClass))
         }
 
         val encoding = clang_getDeclObjCTypeEncoding(cursor).convertAndDispose()
@@ -1158,13 +1176,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             return null // TODO: make a more universal fix.
         }
 
-        val isClass = when (cursor.kind) {
-            CXCursorKind.CXCursor_ObjCClassMethodDecl -> true
-            CXCursorKind.CXCursor_ObjCInstanceMethodDecl -> false
-            else -> error(cursor.kind)
-        }
-
-        return ObjCMethod(
+        val method = ObjCMethod(
                 selector, encoding, parameters, returnType,
                 isVariadic = clang_Cursor_isVariadic(cursor) != 0,
                 isClass = isClass,
@@ -1176,6 +1188,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                 isDirect = hasAttribute(cursor, OBJC_DIRECT),
                 swiftName = readSwiftName(cursor)
         )
+        return ObjCMethodWithAvailability.Available(method)
     }
 
     // Skip functions which parameter or return type is TemplateRef

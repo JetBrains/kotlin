@@ -442,6 +442,7 @@ private class MappingExtensions(
                     ("align" to KmAnnotationArgument.IntValue(align))
             )
             is AnnotationStub.ExperimentalForeignApi -> emptyMap()
+            AnnotationStub.ObjC.Unavailable -> emptyMap()
         }
         return KmAnnotation(classifier.fqNameSerialized, args)
     }
