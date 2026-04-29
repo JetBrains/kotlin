@@ -172,11 +172,10 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                         for (i in 0 until call.typeArguments.size) typeArguments[i] = call.typeArguments[i]
                         for (i in 0 until call.arguments.size - 1) arguments[i] = call.arguments[i]
                     }
-                    val functionSymbol = symbols.coroutinesStackSwitchingIntrinsics.resumeWasmContinuationAndReturnResult
+                    val functionSymbol = symbols.coroutinesStackSwitchingIntrinsics.resumeWithImpl
                     return builder.irCall(functionSymbol).apply {
-                        arguments[0] = contRefArg
-                        arguments[1] = call.arguments.last()
-                        typeArguments[0] = call.typeArguments.last()
+                        arguments[0] = call.arguments.last()
+                        arguments[1] = contRefArg
                     }
                 } else {
                     val createSymbol = symbols.createSimpleCoroutineFromSuspendFunction

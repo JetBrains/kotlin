@@ -20,10 +20,7 @@ import kotlin.wasm.internal.resumeWithImpl
 @UsedFromCompilerGeneratedCode
 internal abstract class CoroutineImplStackSwitching<T, R>(
     resultContinuation: Continuation<R>,
-    val rethrowExceptions: Boolean = false
 ) : CoroutineImpl<T, R>(resultContinuation) {
-
-    internal var wasSuspended = false
 
     protected val _resultContinuation = resultContinuation
     override val _context: CoroutineContext = resultContinuation.context
@@ -49,13 +46,10 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
 
         // top-level completion reached -- invoke and return
         if (exception != null) {
-            if (rethrowExceptions && !wasSuspended) throw exception!!
             completion.resumeWithException(exception!!)
         } else {
-            if (rethrowExceptions && !wasSuspended) return // prevent double-completion
             completion.resume(this.result as R)
         }
-        return
     }
 }
 
@@ -67,8 +61,7 @@ internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
 internal class WasmContinuation<T, R>(
     internal val wasmContBox: WasmContinuationBox,
     completion: Continuation<R>,
-    rethrowExceptions: Boolean = false
-) : CoroutineImplStackSwitching<T, R>(completion, rethrowExceptions) {
+) : CoroutineImplStackSwitching<T, R>(completion) {
 
     override fun resumeWith(result: Result<T>) {
         // Handle synchronous resume inside user's block
@@ -88,10 +81,6 @@ internal class WasmContinuation<T, R>(
             resumeThrowImpl(it, wasmCont)
         } ?: resumeWithImpl(_resultContinuation, wasmCont)
 
-        if (resumeResult === COROUTINE_SUSPENDED) {
-            wasSuspended = true
-            return COROUTINE_SUSPENDED
-        }
         return resumeResult
     }
 }

@@ -95,13 +95,6 @@ internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
     implementedAsIntrinsic
 }
 
-@UsedFromCompilerGeneratedCode
-internal fun <R> resumeWasmContinuationAndReturnResult(contref: contref1, completion: Continuation<R>): Any? {
-    val wasmContinuation = WasmContinuation<Continuation<R>, R>(WasmContinuationBox(contref, false), completion, rethrowExceptions = true)
-    wasmContinuation.resume(completion)
-    return if (wasmContinuation.wasSuspended) COROUTINE_SUSPENDED else wasmContinuation.result
-}
-
 internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {
     return suspendFunction0ToContref(f)
 }
