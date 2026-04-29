@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpAfterInliningVerifyingHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
@@ -46,7 +45,6 @@ abstract class AbstractFirJsHeaderModeCodegenTestBase(
         configureJsHeaderModeHandlers(
             ::FirDiagnosticsHandler,
             ::NoIrCompilationErrorsHandler,
-            { IrMangledNameAndSignatureDumpHandler(it, BackendKinds.IrBackend) },
             ::KlibBackendDiagnosticsHandler,
             ::KlibAbiDumpAfterInliningVerifyingHandler,
         )
@@ -79,7 +77,6 @@ fun TestConfigurationBuilder.commonConfigurationForJsHeaderModeTest(
 fun TestConfigurationBuilder.configureJsHeaderModeHandlers(
     firDiagnosticsHandler: Constructor<FirAnalysisHandler>,
     irCompilationErrorsHandler: Constructor<BackendInputHandler<IrBackendInput>>,
-    irDumpHandler: Constructor<BackendInputHandler<IrBackendInput>>,
     klibDiagnosticsHandler: Constructor<BinaryArtifactHandler<BinaryArtifacts.KLib>>,
     klibAbiDumpHandler: Constructor<BinaryArtifactHandler<BinaryArtifacts.KLib>>,
 ) {
@@ -89,7 +86,6 @@ fun TestConfigurationBuilder.configureJsHeaderModeHandlers(
 
     irHandlersStep {
         useHandlers(irCompilationErrorsHandler)
-        useHandlers(irDumpHandler)
     }
 
     loweredIrHandlersStep {
