@@ -11,7 +11,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isClassWithFqName
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.getOwnerIfBound
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
@@ -97,7 +103,8 @@ class IrObjCFunctionNameMangleComputer(private val function: IrFunction) : ObjCF
         (if (function is IrConstructor && function.isObjCConstructor) function.getObjCInitMethod() else function)?.getObjCMethodInfo()
 
     override fun getExtensionReceiverClassName(): Name? =
-        function.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.run { type.getClass()!!.name }
+        function.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrFail
+            ?.let { it.getOwnerIfBound()?.name ?: Name.identifier((it.signature as IdSignature.CommonSignature).shortName) }
 
     override fun isObjCConstructor(): Boolean =
         function is IrConstructor && function.isObjCConstructor
