@@ -27,7 +27,7 @@ internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
 }
 
 @DoNotIntrinsify
-private fun <T : Comparable<T>> compareToDoNotIntrinsicify(a: Comparable<T>, b: T) =
+private fun compareToDoNotIntrinsicify(a: Comparable<Any?>, b: Any?): Int =
     a.compareTo(b)
 
 internal fun primitiveCompareTo(a: dynamic, b: dynamic): Int =
