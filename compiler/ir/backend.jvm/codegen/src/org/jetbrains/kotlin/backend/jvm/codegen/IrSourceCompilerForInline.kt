@@ -173,7 +173,7 @@ class IrSourceCompilerForInline(
 
     // TODO: Find a way to avoid using PSI here
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
-        codegen.context.ktDiagnosticReporter
+        codegen.context.diagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
             .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }

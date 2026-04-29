@@ -195,8 +195,8 @@ class ClassCodegen private constructor(
         generateInnerAndOuterClasses()
 
         visitor.done(config.generateSmapCopyToAnnotation)
-        jvmMethodSignatureClashDetector.reportErrorsTo(context.ktDiagnosticReporter)
-        jvmFieldSignatureClashDetector.reportErrorsTo(context.ktDiagnosticReporter)
+        jvmMethodSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
+        jvmFieldSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
     }
 
     private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {

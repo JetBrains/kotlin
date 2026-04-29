@@ -113,11 +113,11 @@ class IrInlineIntrinsicsSupport(
         generateExternalEntriesForEnumTypeIfNeeded(type, classCodegen)
 
     override fun reportSuspendTypeUnsupported() {
-        classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)
+        classCodegen.context.diagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)
     }
 
     override fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name) {
-        classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile)
+        classCodegen.context.diagnosticReporter.at(reportErrorsOn, containingFile)
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
 

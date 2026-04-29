@@ -54,7 +54,7 @@ internal fun MethodNode.acceptWithStateMachine(
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
         isForNamedFunction = irFunction.isSuspend,
         reportSuspensionPointInsideMonitor = {
-            classCodegen.context.ktDiagnosticReporter.at(irFunction, classCodegen.irClass)
+            classCodegen.context.diagnosticReporter.at(irFunction, classCodegen.irClass)
                 .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, it)
         },
         lineNumber = lineNumber,

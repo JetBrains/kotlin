@@ -968,7 +968,7 @@ class ExpressionCodegen(
 
     private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
         if (config.isInlineDisabled) {
-            context.ktDiagnosticReporter.at(expression, irFunction).report(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
+            context.diagnosticReporter.at(expression, irFunction).report(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
             genThrow(mv, "java/lang/UnsupportedOperationException", "Non-local returns are not allowed with inlining disabled")
         } else {
             generateGlobalReturnFlag(mv, label)

@@ -69,7 +69,7 @@ class JvmBackendContext(
         this, generatorExtensions.cachedFields
     )
 
-    val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
+    val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
     override val symbols = JvmSymbols(this)
 
@@ -117,7 +117,7 @@ class JvmBackendContext(
         state.reportDuplicateClassNameError = { origin, internalName, duplicateClasses ->
             val declaration = (origin as JvmIrDeclarationOrigin).declaration
             if (declaration != null) {
-                ktDiagnosticReporter.at(declaration).report(JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName, duplicateClasses)
+                diagnosticReporter.at(declaration).report(JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName, duplicateClasses)
             }
         }
     }
