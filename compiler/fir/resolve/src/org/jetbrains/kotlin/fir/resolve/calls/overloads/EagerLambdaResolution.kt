@@ -73,6 +73,11 @@ private fun runEagerLambdaAnalysisForFirstReadyLambda(
 
     try {
         for (lambdaAtomGroup in lambdaAtomGroups) {
+            // We haven't found lambda atoms for some candidates.
+            // It might happen because some of them are ConeLambdaWithTypeVariableAsExpectedTypeAtom which we currently ignore.
+            if (lambdaAtomGroup.size < candidates.size) continue
+            check(lambdaAtomGroup.size <= candidates.size)
+
             if (!lambdaAtomGroup.same { it.atom.parameterTypes.size }) continue
             if (!lambdaAtomGroup.all { it.atom.expectedType?.isSomeFunctionType(components.session) == true }) continue
             if (!runEagerLambdaAnalysisForLambdaAtomGroup(lambdaAtomGroup, call)) continue
