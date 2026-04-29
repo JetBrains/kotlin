@@ -69,9 +69,11 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.makeScriptCompilerArguments
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -422,7 +424,11 @@ internal class LLFirSessionFactory(
 
     @OptIn(ExperimentalCompilerApi::class)
     private fun FirSessionConfigurator.registerScriptExtensions(file: KtFile) {
-        val scriptDefinition = file.findScriptDefinition() ?: errorWithAttachment("Cannot load script definition") {
+        val scriptDefinitionProvider = CliScriptDefinitionProvider()
+        val scriptDefinition = runIf(file.isScript()) {
+            scriptDefinitionProvider.findDefinition(KtFileScriptSource(file))
+                ?: scriptDefinitionProvider.getDefaultDefinition()
+        } ?: errorWithAttachment("Cannot load script definition") {
             withVirtualFileEntry("file", file.virtualFile)
         }
 

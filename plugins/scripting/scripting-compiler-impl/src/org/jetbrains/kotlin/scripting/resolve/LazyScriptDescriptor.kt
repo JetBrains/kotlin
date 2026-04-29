@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.scripting.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.*
@@ -122,10 +124,13 @@ class LazyScriptDescriptor(
     val scriptCompilationConfiguration: () -> ScriptCompilationConfiguration = resolveSession.storageManager.createLazyValue {
         run {
             val containingFile = scriptInfo.script.containingKtFile
-            val provider = ScriptConfigurationsProvider.getInstance(containingFile.project)
-            @Suppress("DEPRECATION")
-            provider?.getScriptConfiguration(containingFile)?.configuration
-                ?: containingFile.findScriptDefinition()?.compilationConfiguration
+            val configuration = resolveSession.trace[BindingContext.COMPILER_CONFIGURATION, module]
+            val scriptDefinitionProvider = configuration?.getCompilerExtensions(ScriptDefinitionProvider)?.firstOrNull()
+            val scriptDefinition = runIf(containingFile.isScript()) {
+                scriptDefinitionProvider?.findDefinition(KtFileScriptSource(containingFile))
+                    ?: scriptDefinitionProvider?.getDefaultDefinition()
+            }
+            scriptDefinition?.compilationConfiguration
         }
             ?: throw IllegalArgumentException("Unable to find script compilation configuration for the script ${scriptInfo.script.containingFile}")
     }
@@ -213,16 +218,6 @@ class LazyScriptDescriptor(
 
     private val scriptImplicitReceivers: () -> List<ClassDescriptor> = resolveSession.storageManager.createLazyValue {
         val res = ArrayList<ClassDescriptor>()
-
-        @Suppress("DEPRECATION")
-        val importedScriptsFiles = ScriptConfigurationsProvider.getInstance(scriptInfo.script.project)
-            ?.getScriptConfiguration(scriptInfo.script.containingKtFile)?.importedScripts
-        if (importedScriptsFiles != null) {
-            val findImportedScriptDescriptor = ImportedScriptDescriptorsFinder()
-            importedScriptsFiles.mapNotNullTo(res) {
-                findImportedScriptDescriptor(it)
-            }
-        }
 
         // TODO: we may want to treat getScriptingClass call here the same way as in scriptProvidedProperties
         scriptCompilationConfiguration()[ScriptCompilationConfiguration.implicitReceivers]?.mapNotNullTo(res) { receiver ->

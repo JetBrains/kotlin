@@ -30,14 +30,5 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
 
     @OptIn(K1SpecificScriptingServiceAccessor::class)
     override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> =
-        ktFile.takeIf { runReadAction { it.isScript() } }?.let { file ->
-            @Suppress("DEPRECATION")
-            val refinedConfiguration = ScriptConfigurationsProvider.getInstance(file.project)
-                ?.getScriptConfiguration(file.originalFile as KtFile)
-            refinedConfiguration?.defaultImports?.map {
-                ScriptExtraImportImpl(
-                    ImportPath.fromString(it)
-                )
-            }
-        }.orEmpty()
+        emptyList()
 }

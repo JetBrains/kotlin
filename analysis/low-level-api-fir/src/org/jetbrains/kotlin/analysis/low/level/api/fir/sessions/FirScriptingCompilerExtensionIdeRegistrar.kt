@@ -32,12 +32,11 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
     private val scriptDefinitions: List<ScriptDefinition>,
 ) : FirExtensionRegistrar() {
 
-    @OptIn(K1SpecificScriptingServiceAccessor::class)
     override fun ExtensionRegistrarContext.configurePlugin() {
         +FirScriptDefinitionProviderService.getFactory {
             hostConfiguration.with {
                 scriptCompilationConfigurationProvider.replaceOnlyDefault {
-                    val provider = ScriptDefinitionProvider.getInstance(project) ?: run {
+                    val provider = run {
                         if (scriptDefinitionSources.isNotEmpty() || scriptDefinitions.isNotEmpty()) {
                             CliScriptDefinitionProvider().also {
                                 it.setScriptDefinitionsSources(scriptDefinitionSources)
@@ -50,13 +49,7 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
                     }
                 }
                 scriptRefinedCompilationConfigurationsCache.replaceOnlyDefault {
-                    val providerFromProject = ScriptConfigurationsProvider.getInstance(project)
-                    providerFromProject?.let {
-                        ScriptRefinedCompilationConfigurationCacheOverConfigurationsProvider(
-                            legacyConfigurationsProvider = it,
-                            definitionsProvider = this@with[ScriptingHostConfiguration.scriptCompilationConfigurationProvider]
-                        )
-                    } ?: ScriptRefinedCompilationConfigurationCacheImpl()
+                    ScriptRefinedCompilationConfigurationCacheImpl()
                 }
             }
         }

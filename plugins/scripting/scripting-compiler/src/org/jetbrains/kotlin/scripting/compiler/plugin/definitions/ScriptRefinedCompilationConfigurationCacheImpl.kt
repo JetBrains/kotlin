@@ -40,10 +40,7 @@ class ScriptRefinedCompilationConfigurationCacheOverConfigurationsProvider(
 ) : ScriptRefinedCompilationConfigurationCache {
 
     override fun getRefinedCompilationConfiguration(sourceCode: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration>? =
-        definitionsProvider?.findBaseCompilationConfiguration(sourceCode).let { providedConfiguration ->
-            legacyConfigurationsProvider.getScriptCompilationConfiguration(sourceCode, providedConfiguration?.valueOrNull())
-                ?.onSuccess { it.configuration?.asSuccess() ?: return@getRefinedCompilationConfiguration null }
-        }
+        null
 
     override fun storeRefinedCompilationConfiguration(
         sourceCode: SourceCode,

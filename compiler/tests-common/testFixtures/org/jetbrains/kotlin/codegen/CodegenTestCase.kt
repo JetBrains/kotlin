@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
@@ -186,13 +187,15 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             }
             files.addAll(additionalDependencies)
 
-            @OptIn(K1SpecificScriptingServiceAccessor::class)
-            val externalImportsProvider: ScriptConfigurationsProvider? = ScriptConfigurationsProvider.getInstance(myEnvironment!!.project)
+            val environment = myEnvironment
+            val externalImportsProvider: ScriptConfigurationsProvider? = environment?.configuration?.getCompilerExtensions(
+                ScriptConfigurationsProvider
+            )?.firstOrNull()
             if (externalImportsProvider != null) {
-                myEnvironment!!.getSourceFiles().forEach(
+                environment.getSourceFiles().forEach(
                     Consumer { file: KtFile ->
                         @Suppress("DEPRECATION")
-                        val refinedConfiguration = externalImportsProvider.getScriptConfiguration(file)
+                        val refinedConfiguration = externalImportsProvider.getScriptConfiguration(environment.project, file)
                         if (refinedConfiguration != null) {
                             files.addAll(refinedConfiguration.dependenciesClassPath)
                         }
