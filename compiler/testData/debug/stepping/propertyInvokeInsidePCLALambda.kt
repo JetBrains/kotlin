@@ -82,10 +82,8 @@ fun box(): String {
 // EXPECTATIONS JS_IR
 // test.kt:22 box
 // test.kt:23 box
-// test.kt:23 box$lambda
 // test.kt:23 box
 // test.kt:16 bar
-// test.kt:16 bar$lambda
 // test.kt:16 bar
 // test.kt:6 generate
 // test.kt:3 <init>

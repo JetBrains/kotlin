@@ -5,24 +5,16 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
-import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isInlinedCode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.shouldIgnore
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import java.util.IdentityHashMap
 
 private val IrElement.hasSyntheticOrUndefinedLocation: Boolean
     get() = startOffset in SYNTHETIC_OFFSET..UNDEFINED_OFFSET ||
@@ -40,33 +32,6 @@ private enum class LocationType {
 
     abstract fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry): LineAndColumn
 }
-
-private val debugFriendlyOrigins = IdentityHashMap<IrDeclarationOrigin, Boolean>().apply {
-    set(IrDeclarationOrigin.DEFINED, true)
-    set(IrDeclarationOrigin.LOCAL_FUNCTION, true)
-    set(IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, true)
-    set(IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER, true)
-    set(IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION, true)
-    set(AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE, true)
-    set(ENUM_ENTRIES_INITIALIZER_ORIGIN, true)
-}
-
-private val IrDeclaration.isInlinedCode: Boolean
-    get() = this is IrFunction && (isInline || origin == IrDeclarationOrigin.INLINE_LAMBDA)
-
-private val IrDeclaration.isStdlibDeclaration: Boolean
-    get() = getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
-
-private val IrDeclaration.isArtificialDeclarationOfLambdaImpl: Boolean
-    get() = parentClassOrNull?.origin == WebCallableReferenceLowering.LAMBDA_IMPL &&
-            origin != IrDeclarationOrigin.DEFINED &&
-            origin != AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
-
-private val IrSymbol?.shouldIgnore: Boolean
-    get() {
-        val owner = this?.owner as? IrDeclaration ?: return false
-        return owner.isStdlibDeclaration || owner.isArtificialDeclarationOfLambdaImpl || owner.origin !in debugFriendlyOrigins
-    }
 
 sealed class LocationProvider {
     abstract fun getSourceLocation(element: IrElement, declaration: IrSymbol?, fileEntry: IrFileEntry?): SourceLocation

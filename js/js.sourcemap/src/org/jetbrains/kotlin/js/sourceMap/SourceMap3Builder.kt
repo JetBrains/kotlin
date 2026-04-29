@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.js.sourceMap
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
+import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import java.io.File
 import java.io.IOException
@@ -150,6 +151,7 @@ class SourceMap3Builder(
         val nameIndex = name?.let(this::getNameIndex) ?: -1
 
         if (!currentMappingIsEmpty &&
+            source != JsLocation.IGNORED.file &&
             previousSourceIndex == sourceIndex &&
             previousSourceLine == sourceLine &&
             previousSourceColumn == sourceColumn

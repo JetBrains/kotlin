@@ -56,7 +56,6 @@ fun box(): String =
 // test.kt:7 foo
 // test.kt:9 foo
 // test.kt:10 foo
-// test.kt:10 foo
 // test.kt:13 foo
 // test.kt:11 foo$nested
 // test.kt:14 foo

@@ -214,101 +214,69 @@ fun box(): String {
 // EXPECTATIONS JS_IR
 // test.kt:9 box
 // test.kt:9 box
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:9 box
 // test.kt:9 box$lambda
 // test.kt:9 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:9 box$lambda
 // test.kt:9 box$lambda$lambda
-
 // test.kt:11 box
 // test.kt:13 box
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:13 box
 // test.kt:11 box$lambda
+
 // test.kt:12 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:12 box$lambda
 // test.kt:11 box$lambda$lambda
 // test.kt:15 box
-
 // test.kt:19 box
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:19 box
 // test.kt:16 box$lambda
 // test.kt:18 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:18 box$lambda
 // test.kt:17 box$lambda$lambda
 // test.kt:21 box
-
 // test.kt:27 box
-// test.kt:9 <init>
-// test.kt:9 <init>
+
 // test.kt:27 box
 // test.kt:22 box$lambda
 // test.kt:25 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:25 box$lambda
 // test.kt:23 box$lambda$lambda
 // test.kt:29 box
-
 // test.kt:35 box
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:35 box
 // test.kt:31 box$lambda
 // test.kt:34 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:34 box$lambda
+
 // test.kt:33 box$lambda$lambda
 // test.kt:37 box
-
 // test.kt:45 box
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:45 box
 // test.kt:39 box$lambda
 // test.kt:43 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:43 box$lambda
 // test.kt:41 box$lambda$lambda
 // test.kt:48 box
+// test.kt:55 box
+// test.kt:55 box
 
-// test.kt:55 box
-// test.kt:9 <init>
-// test.kt:9 <init>
-// test.kt:55 box
 // test.kt:51 box$lambda
 // test.kt:54 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:54 box$lambda
 // test.kt:53 box$lambda$lambda
 // test.kt:58 box
-
 // test.kt:67 box
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:67 box
 // test.kt:61 box$lambda
 // test.kt:65 box$lambda
-// test.kt:9 <init>
-// test.kt:9 <init>
 // test.kt:65 box$lambda
 // test.kt:63 box$lambda$lambda
 
 // test.kt:69 box
+
+
+
 
 // EXPECTATIONS NATIVE
 // test.kt:9 box

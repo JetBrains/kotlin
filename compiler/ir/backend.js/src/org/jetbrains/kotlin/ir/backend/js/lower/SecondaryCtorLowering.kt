@@ -43,6 +43,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
  */
 @PhasePrerequisites(InnerClassesLowering::class)
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
+    companion object {
+        val SECONDARY_CONSTRUCTOR_INIT_ORIGIN by IrDeclarationOriginImpl.Regular
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (context.es6mode) return null
@@ -191,7 +194,7 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
         modality = Modality.FINAL
         isInline = constructor.isInline
         isExternal = constructor.isExternal
-        origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+        origin = SecondaryConstructorLowering.SECONDARY_CONSTRUCTOR_INIT_ORIGIN
     }.also { initFunction ->
         initFunction.parent = constructor.parent
         initFunction.copyTypeParametersFrom(constructor.parentAsClass)

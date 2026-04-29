@@ -90,9 +90,6 @@ fun box() {
 // test.kt:25 box
 // test.kt:28 box
 // test.kt:29 box
-// test.kt:14 <get-y>
-// test.kt:14 <get-y>
-// test.kt:14 <get-y>
 // test.kt:31 box
 // test.kt:33 box
 

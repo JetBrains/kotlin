@@ -44,7 +44,6 @@ fun throwIfLess(a: Int, b: Int) {
 // test.kt:15 throwIfLess
 // test.kt:16 throwIfLess
 // test.kt:8 box
-// test.kt:8 box
 // test.kt:9 box
 // test.kt:15 throwIfLess
 // test.kt:16 throwIfLess

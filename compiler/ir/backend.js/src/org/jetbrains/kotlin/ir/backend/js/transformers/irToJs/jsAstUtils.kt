@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
+import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
@@ -16,6 +17,9 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
+import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
+import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryConstructorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
@@ -26,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -45,6 +50,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -688,6 +694,8 @@ fun IrElement.getStartSourceLocation(fileEntry: IrFileEntry) =
     getSourceLocation(fileEntry) { startOffset }
 
 inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: IrElement.() -> Int): JsLocation? {
+    if (this is IrDeclaration && this.symbol.shouldIgnore)
+        return JsLocation.IGNORED
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
     val offset = offsetSelector()
@@ -747,3 +755,32 @@ private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: Ir
 
     return currentFunctionsIncludingParents.none { it.isEs6ConstructorReplacement || it.shouldBeCompiledAsGenerator || it.isCoroutine() }
 }
+
+private val debugFriendlyOrigins: Set<IrDeclarationOrigin> = hashSetOf(
+    IrDeclarationOrigin.DEFINED,
+    IrDeclarationOrigin.LOCAL_FUNCTION,
+    IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION,
+    AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE,
+    ENUM_ENTRIES_INITIALIZER_ORIGIN,
+    SecondaryConstructorLowering.SECONDARY_CONSTRUCTOR_INIT_ORIGIN,
+    JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
+)
+
+val IrDeclaration.isInlinedCode: Boolean
+    get() = this is IrFunction && (isInline || origin == IrDeclarationOrigin.INLINE_LAMBDA)
+
+val IrDeclaration.isStdlibDeclaration: Boolean
+    get() = getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
+
+val IrDeclaration.isArtificialDeclarationOfLambdaImpl: Boolean
+    get() = parentClassOrNull?.origin == WebCallableReferenceLowering.LAMBDA_IMPL &&
+            origin != IrDeclarationOrigin.DEFINED &&
+            origin != AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
+
+val IrSymbol?.shouldIgnore: Boolean
+    get() {
+        val owner = this?.owner as? IrDeclaration ?: return false
+        return owner.isStdlibDeclaration || owner.isArtificialDeclarationOfLambdaImpl || owner.origin !in debugFriendlyOrigins
+    }

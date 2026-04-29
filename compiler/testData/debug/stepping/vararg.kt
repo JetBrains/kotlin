@@ -78,13 +78,10 @@ fun box(): String {
 // test.kt:19 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 <init properties test.kt>
 // test.kt:11 box
-// test.kt:4 <get-array>
 // test.kt:12 box
 // test.kt:7 sum
 // test.kt:15 box
-// test.kt:4 <get-array>
 // test.kt:15 box
 // test.kt:7 sum
 // test.kt:16 box
