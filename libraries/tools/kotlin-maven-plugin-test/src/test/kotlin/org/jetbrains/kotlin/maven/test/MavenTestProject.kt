@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import java.nio.file.Path
 import kotlin.io.path.*
 
+private const val NESTED_MAVEN_OPTS =
+    "-Xms64m -Xmx1g -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Djava.awt.headless=true"
+
+private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf("-B", "-ntp", "-nsu")
+
 class MavenTestProject(
     val name: String,
     val context: MavenTestExecutionContext,
@@ -49,8 +54,10 @@ class MavenTestProject(
         val javaHome = context.jdkProvider.getJavaHome(buildOptions.javaVersion) ?:
             throw RuntimeException("Can't find path for ${buildOptions.javaVersion}")
         verifier.setEnvironmentVariable("JAVA_HOME", javaHome.absolutePathString())
+        verifier.setEnvironmentVariable("MAVEN_OPTS", nestedMavenOpts(environmentVariables["MAVEN_OPTS"]))
 
         for ((key, value) in environmentVariables) {
+            if (key == "MAVEN_OPTS") continue
             verifier.setEnvironmentVariable(key, value)
         }
 
@@ -59,6 +66,7 @@ class MavenTestProject(
         verifier.logFileName = "build.log"
 
         verifier.setSystemProperty("kotlin.version", context.kotlinVersion)
+        verifier.addCliArguments(*NESTED_MAVEN_CLI_ARGUMENTS)
         verifier.addCliArguments("--settings", settingsFile.absolutePathString())
 
         if (buildOptions.toolchains.isNotEmpty()) {
@@ -99,6 +107,11 @@ class MavenTestProject(
         return verifier
     }
 
+    private fun nestedMavenOpts(extraMavenOpts: String?): String =
+        listOf(NESTED_MAVEN_OPTS, extraMavenOpts)
+            .filterNot { it.isNullOrBlank() }
+            .joinToString(" ")
+
     @Suppress("unused")
     fun makeSnapshotTo(base: String) {
         check(!isTeamCityRun) { "Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!" }
@@ -109,4 +122,3 @@ class MavenTestProject(
         workDir.copyToRecursively(newWorkDir, overwrite = true, followLinks = true)
     }
 }
-
