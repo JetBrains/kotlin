@@ -238,8 +238,8 @@ fun compileIrFile(
     fileContext.closureCallTrampolines.forEach { (signatureString, function) ->
         linkerDataContext.addEquivalentFunction("__closureTrampoline_$signatureString", function.symbol)
     }
-    fileContext.kotlinClosureToJsConverters.forEach { (signatureString, function) ->
-        linkerDataContext.addEquivalentFunction("__kotlinToJsClosure_$signatureString", function.symbol)
+    fileContext.kotlinClosureToJsConverters.forEach { (arity, function) ->
+        linkerDataContext.addEquivalentFunction("__kotlinToJsClosure_$arity", function.symbol)
     }
     fileContext.jsClosureCallers.forEach { (exportSignature, function) ->
         linkerDataContext.addEquivalentFunction("<1>_$exportSignature", function.symbol)
