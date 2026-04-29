@@ -11,7 +11,7 @@ import kotlin.js.collections.*
 
 private class JsArrayView<E> : JsArray<E>()
 
-private fun UNSUPPORTED_OPERATION() {
+private fun UNSUPPORTED_OPERATION(): Nothing {
     throw UnsupportedOperationException()
 }
 
@@ -49,7 +49,7 @@ internal fun <E> createJsReadonlyArrayViewFrom(list: List<E>): JsReadonlyArray<E
     createJsArrayViewWith(
         listSize = { list.size },
         listGet = { i -> list[i] },
-        listSet = ::UNSUPPORTED_OPERATION.asDynamic(),
+        listSet = { _, _ -> UNSUPPORTED_OPERATION() },
         listDecreaseSize = ::UNSUPPORTED_OPERATION.asDynamic(),
         listIncreaseSize = ::UNSUPPORTED_OPERATION.asDynamic()
     )
@@ -112,8 +112,8 @@ private class JsSetView<E> : JsSet<E>()
 internal fun <E> createJsReadonlySetViewFrom(set: Set<E>): JsReadonlySet<E> =
     createJsSetViewWith<E>(
         setSize = { set.size },
-        setAdd = ::UNSUPPORTED_OPERATION.asDynamic(),
-        setRemove = ::UNSUPPORTED_OPERATION.asDynamic(),
+        setAdd = { _ -> UNSUPPORTED_OPERATION() },
+        setRemove = { _ -> UNSUPPORTED_OPERATION() },
         setClear = ::UNSUPPORTED_OPERATION.asDynamic(),
         setContains = { v -> set.contains(v) },
         valuesIterator = { createJsIteratorFrom(set.iterator()) },
@@ -171,8 +171,8 @@ internal fun <K, V> createJsReadonlyMapViewFrom(map: Map<K, V>): JsReadonlyMap<K
         mapSize = { map.size },
         mapGet = { k -> map[k] },
         mapContains = { k -> map.containsKey(k) },
-        mapPut = ::UNSUPPORTED_OPERATION.asDynamic(),
-        mapRemove = ::UNSUPPORTED_OPERATION.asDynamic(),
+        mapPut = { _, _ -> UNSUPPORTED_OPERATION() },
+        mapRemove = { _ -> UNSUPPORTED_OPERATION() },
         mapClear = ::UNSUPPORTED_OPERATION.asDynamic(),
         keysIterator = { createJsIteratorFrom(map.keys.iterator()) },
         valuesIterator = { createJsIteratorFrom(map.values.iterator()) },
