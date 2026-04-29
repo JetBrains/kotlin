@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.SetProperty
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.InputFiles
@@ -25,13 +22,10 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.utils.contentEquals
-import org.jetbrains.kotlin.gradle.utils.getFile
 
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.forEach
 
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -55,10 +49,8 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
     fun sync() {
         if (!sourceFile.isPresent) return
         workerExecutor.noIsolation().submit(SyncPackageResolvedWorkAction::class.java) { params ->
-            params.fs.set(fs)
             params.sourceFile.set(sourceFile)
             params.destinationFile.set(destinationFile)
-
         }
     }
 
@@ -72,17 +64,17 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
 internal interface SyncPackageResolvedParameters : WorkParameters {
     val sourceFile: RegularFileProperty
     val destinationFile: RegularFileProperty
-    val fs: Property<FileSystemOperations>
 }
 
-internal abstract class SyncPackageResolvedWorkAction : WorkAction<SyncPackageResolvedParameters> {
+internal abstract class SyncPackageResolvedWorkAction @Inject constructor(
+    private val fs: FileSystemOperations,
+) : WorkAction<SyncPackageResolvedParameters> {
     override fun execute() {
         sync(
             parameters.sourceFile.get().asFile,
             parameters.destinationFile.get().asFile,
-            parameters.fs.get()
+            fs
         )
-
     }
 
     private fun sync(
