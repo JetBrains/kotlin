@@ -12,6 +12,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -55,10 +56,11 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
                 it.include("**/Package.swift")
             }
 
-    @get:Internal
+    @get:OutputDirectory
     val swiftPMDependenciesCheckout: DirectoryProperty = project.objects.directoryProperty().convention(
         project.layout.buildDirectory.dir("kotlin/swiftPMCheckout")
     )
+    // The checkout directory also contains fetched binary artifacts, so fetch must rerun when this tree is missing even if Package.resolved still exists.
 
     @get:Input
     val gitIgnoreCheckoutDir : Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
