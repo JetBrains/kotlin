@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.InputFiles
@@ -19,10 +22,17 @@ import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.utils.contentEquals
+import org.jetbrains.kotlin.gradle.utils.getFile
 
 import java.io.File
 import javax.inject.Inject
+import kotlin.collections.forEach
+
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class SyncPackageResolvedTask : DefaultTask() {
@@ -38,31 +48,60 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
     @get:Inject
     abstract val fs: FileSystemOperations
 
+    @get:Inject
+    protected abstract val workerExecutor: WorkerExecutor
+
     @TaskAction
     fun sync() {
         if (!sourceFile.isPresent) return
+        workerExecutor.noIsolation().submit(SyncPackageResolvedWorkAction::class.java) { params ->
+            params.fs.set(fs)
+            params.sourceFile.set(sourceFile)
+            params.destinationFile.set(destinationFile)
 
-        val src = sourceFile.get().asFile
-        val dest = destinationFile.get().asFile
-
-        if (!src.exists()) {
-            if (dest.exists()) {
-                dest.delete()
-            }
-            return
         }
-
-        if (hasSameContent(src, dest)) return
-
-        if (!dest.parentFile.exists()) dest.parentFile.mkdirs()
-
-        copySwiftLockFile(fs, src, dest)
     }
 
     companion object {
         const val TASK_NAME = "syncPersistedPackageResolved"
         const val SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME = "syncSyntheticPackageResolvedToPersisted"
         const val SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME = "syncPersistedPackageResolvedToSynthetic"
+    }
+}
+
+internal interface SyncPackageResolvedParameters : WorkParameters {
+    val sourceFile: RegularFileProperty
+    val destinationFile: RegularFileProperty
+    var fs: Property<FileSystemOperations>
+}
+
+internal abstract class SyncPackageResolvedWorkAction : WorkAction<SyncPackageResolvedParameters> {
+    override fun execute() {
+        sync(
+            parameters.sourceFile.get().asFile,
+            parameters.destinationFile.get().asFile,
+            parameters.fs.get()
+        )
+
+    }
+
+    private fun sync(
+        sourceFile: File,
+        destinationFile: File,
+        fs: FileSystemOperations,
+    ) {
+        if (!sourceFile.exists()) {
+            if (destinationFile.exists()) {
+                destinationFile.delete()
+            }
+            return
+        }
+
+        if (hasSameContent(sourceFile, destinationFile)) return
+
+        if (!destinationFile.parentFile.exists()) destinationFile.parentFile.mkdirs()
+
+        copySwiftLockFile(fs, sourceFile, destinationFile)
     }
 }
 
@@ -137,7 +176,6 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
 
         return projectPaths
     }
-
 
 
     companion object {
