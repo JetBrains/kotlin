@@ -91,3 +91,10 @@ projectTests {
 runtimeJar()
 emptySourcesJar()
 emptyJavadocJar()
+
+tasks.test.configure {
+    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
+        classpath.from(supportLibKlibs)
+        property = "kotlin.internal.commonizer.supportLibClassesDir"
+    }
+}
