@@ -551,9 +551,11 @@ private fun convertJavaFieldToFir(
 
             lazyInitializer = lazy {
                 javaField.initializerValue?.createConstantIfAny(session)
-                    ?: javaField.resolveInitializerValue { classQualifier, fieldName ->
-                        resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
-                    }?.createConstantIfAny(session)
+                    ?: if (javaField.supportsExternalInitializerResolution) {
+                        javaField.resolveInitializerValue { classQualifier, fieldName ->
+                            resolveExternalFieldValue(session, classQualifier, fieldName, classId.packageFqName)
+                        }?.createConstantIfAny(session)
+                    } else null
             }
 
             lazyHasConstantInitializer = lazy {

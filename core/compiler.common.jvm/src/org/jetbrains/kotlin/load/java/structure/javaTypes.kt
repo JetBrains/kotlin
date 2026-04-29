@@ -21,18 +21,26 @@ import org.jetbrains.kotlin.name.ClassId
 
 interface JavaType : ListBasedJavaAnnotationOwner {
     /**
+     * Whether [filterTypeUseAnnotations] does anything beyond returning [annotations]. Lets the
+     * caller skip allocating the callback closure on impls that pre-filter at structure-build
+     * time (PSI/binary). java-direct overrides this to `true` because its annotations are not
+     * pre-filtered.
+     */
+    val needsTypeUseAnnotationFiltering: Boolean get() = false
+
+    /**
      * Filters annotations to only include TYPE_USE annotations.
-     * 
-     * This is used when converting Java types to FIR - only annotations with 
+     *
+     * This is used when converting Java types to FIR - only annotations with
      * `@Target(ElementType.TYPE_USE)` should appear on types.
-     * 
+     *
      * The default implementation returns all annotations unchanged, assuming that
      * the implementation has already filtered them (as javac-wrapper does at the
      * Java structure level).
-     * 
+     *
      * Implementations that don't pre-filter (like java-direct) should override this
-     * to use the callback for filtering.
-     * 
+     * to use the callback for filtering, and also override [needsTypeUseAnnotationFiltering].
+     *
      * @param isTypeUseAnnotation callback that checks if a given annotation class has TYPE_USE target.
      *        The callback receives the fully qualified annotation class name and returns true if it's TYPE_USE.
      * @return collection of annotations that are TYPE_USE annotations
