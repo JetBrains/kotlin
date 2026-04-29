@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.mergedtree
 
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 
 class CirKnownClassifiers(
@@ -14,8 +15,9 @@ class CirKnownClassifiers(
     val targetDependencies: TargetDependent<CirProvidedClassifiers>,
     val commonizedNodes: CirCommonizedClassifierNodes,
     val commonDependencies: CirProvidedClassifiers,
+    val supportExpectClassSupplier: SupportExpectClassSupplier,
     val associatedIdsResolver: AssociatedClassifierIdsResolver =
-        AssociatedClassifierIdsResolver(classifierIndices, targetDependencies, commonDependencies),
+        AssociatedClassifierIdsResolver(classifierIndices, targetDependencies, supportExpectClassSupplier, commonDependencies),
 )
 
 /** A set of all CIR nodes built for commonized classes and type aliases. */

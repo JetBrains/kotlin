@@ -82,7 +82,8 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
         override fun addClassNode(classId: CirEntityId, node: CirClassNode) = error("This method should not be called")
         override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) = error("This method should not be called")
     },
-    commonDependencies = CirProvidedClassifiers.EMPTY
+    commonDependencies = CirProvidedClassifiers.EMPTY,
+    supportExpectClassSupplier = SupportExpectClassSupplier.empty(),
 )
 
 fun createEmptyInlineSourceModule(name: String): InlineSourceBuilder.Module {

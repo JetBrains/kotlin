@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.mapValue
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
@@ -91,7 +92,8 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                         )
                     )
                 )
-            )
+            ),
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable),
         )
 
         val supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable)
@@ -183,7 +185,8 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
             classifierIndices = roots.mapValue(::CirClassifierIndex),
             targetDependencies = roots.mapValue(CirTreeRoot::dependencies),
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            commonDependencies = CirProvidedClassifiers.EMPTY
+            commonDependencies = CirProvidedClassifiers.EMPTY,
+            supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable),
         )
 
         val supportExpectClassSupplier = buildDummySupportExpectClassSupplier(roots.targets, testRootDisposable)

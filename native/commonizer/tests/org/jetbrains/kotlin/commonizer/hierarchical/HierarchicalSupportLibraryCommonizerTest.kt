@@ -188,7 +188,7 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
     }
 
     // See the contents
-    fun ignoreTestIncompleteHierarchyAmbiguity() {
+    fun testIncompleteHierarchyAmbiguity() {
         val result = commonize {
             outputTarget("(iosArm64, iosX64)", "((iosArm64, iosX64), watchosArm64)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
@@ -259,10 +259,6 @@ class HierarchicalSupportLibraryCommonizerTest : AbstractInlineSourcesCommonizat
             """.trimIndent()
         )
 
-        // `org.jetbrains.kotlin.commonizer.mergedtree.AssociatedClassifierIdsResolverImpl.resolveAssociatedIds`
-        // will try resolving `NativeSomethingA` to associated IDs, and it will find `Int`, but not `Long`.
-        // Because of that, `fun foo(NativeSomethingA)` and `fun foo(Long)` won't be considered commonizable, even
-        // though `fun foo(Int)` and `fun foo(Long)` are.
         result.assertCommonized(
             "((iosArm64, iosX64), watchosArm64)",
             """
