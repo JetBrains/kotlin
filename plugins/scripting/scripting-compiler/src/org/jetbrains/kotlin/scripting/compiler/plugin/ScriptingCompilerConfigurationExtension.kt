@@ -10,6 +10,7 @@ import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.MessageCollectorAccess
@@ -24,38 +25,15 @@ import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class ScriptingCompilerConfigurationExtension(
-    val baseHostConfiguration: ScriptingHostConfiguration
+    val baseHostConfiguration: ScriptingHostConfiguration,
+    val scriptDefinitionProvider: ScriptDefinitionProvider?
 ) : CompilerConfigurationExtension {
     override fun updateConfiguration(project: Project, configuration: CompilerConfiguration) {
-
-        if (!configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) {
-            @Suppress("DEPRECATION")
-            val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
-            if (projectRoot != null) {
-                configuration.put(
-                    ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
-                    "projectRoot",
-                    projectRoot
-                )
-            }
-            val hostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
-                getEnvironment {
-                    configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
-                }
-            }
-
-            configureScriptDefinitions(configuration, hostConfiguration, this::class.java.classLoader)
-
-            val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
-            if (scriptDefinitionProvider != null) {
-                scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
-                scriptDefinitionProvider.setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
-            }
-        }
+        val scriptDefinitionProvider = configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull()
+        scriptDefinitionProvider.updateScriptingConfiguration(project, configuration, baseHostConfiguration, this::class.java.classLoader)
     }
 
     override fun updateFileRegistry(project: Project) {
-        val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
             // Register new file extensions
             val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
@@ -67,6 +45,37 @@ class ScriptingCompilerConfigurationExtension(
                     fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
                 }
             }
+        }
+    }
+}
+
+fun ScriptDefinitionProvider?.updateScriptingConfiguration(
+    project: Project,
+    configuration: CompilerConfiguration,
+    baseHostConfiguration: ScriptingHostConfiguration,
+    classLoader: ClassLoader,
+) {
+    if (!configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) {
+        @Suppress("DEPRECATION")
+        val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
+        if (projectRoot != null) {
+            configuration.put(
+                ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+                "projectRoot",
+                projectRoot
+            )
+        }
+        val hostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
+            getEnvironment {
+                configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
+            }
+        }
+
+        configureScriptDefinitions(configuration, hostConfiguration, classLoader)
+
+        if (this is CliScriptDefinitionProvider) {
+            setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+            setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
         }
     }
 }

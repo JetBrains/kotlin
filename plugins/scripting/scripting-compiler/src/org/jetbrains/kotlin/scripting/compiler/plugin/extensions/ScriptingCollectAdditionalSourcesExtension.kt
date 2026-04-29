@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.extensions
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.psi.KtFile
@@ -24,12 +25,12 @@ class ScriptingCollectAdditionalSourcesExtension(val project: MockProject) : Col
         configuration: CompilerConfiguration,
         project: Project
     ): Collection<KtFile> {
-        val scriptConfigurationProvider = ScriptConfigurationsProvider.getInstance(project)
+        val scriptConfigurationProvider = configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
         val (newSourcesClasspath, newSources, _) =
             @Suppress("DEPRECATION")
             collectScriptsCompilationDependencies(
                 knownSources.map { KtFileScriptSource(it) }
-            ) { scriptConfigurationProvider?.getScriptCompilationConfiguration(it) }
+            ) { scriptConfigurationProvider?.getScriptCompilationConfiguration(project,it) }
         configuration.addJvmClasspathRoots(newSourcesClasspath)
         return newSources.map { it.getKtFile(definition = null, project) }
     }

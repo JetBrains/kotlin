@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportInfo
@@ -15,10 +16,13 @@ interface ExtraImportsProviderExtension {
         "org.jetbrains.kotlin.extraImportsProviderExtension", ExtraImportsProviderExtension::class.java
     ) {
 
-        private class CompoundExtraImportsProviderExtension(val instances: List<ExtraImportsProviderExtension>) : ExtraImportsProviderExtension {
-            override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> = instances.flatMap {
-                withLinkageErrorLogger(it) { getExtraImports(ktFile) }
-            }
+        private class CompoundExtraImportsProviderExtension(
+            val instances: List<ExtraImportsProviderExtension>
+        ) : ExtraImportsProviderExtension {
+            override fun getExtraImports(ktFile: KtFile, configuration: CompilerConfiguration?): Collection<KtImportInfo> =
+                instances.flatMap {
+                    withLinkageErrorLogger(it) { getExtraImports(ktFile, configuration) }
+                }
         }
 
         fun getInstance(project: Project): ExtraImportsProviderExtension {
@@ -27,5 +31,5 @@ interface ExtraImportsProviderExtension {
         }
     }
 
-    fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo>
+    fun getExtraImports(ktFile: KtFile, configuration: CompilerConfiguration?): Collection<KtImportInfo>
 }

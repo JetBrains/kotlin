@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.scriptMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportException
 import org.jetbrains.kotlin.cli.reportInfo
@@ -93,7 +94,7 @@ abstract class AbstractScriptEvaluationExtension : ScriptEvaluationExtension {
         scriptMode: Boolean,
         freeArgs: List<String>,
     ): ExitCode {
-        val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(projectEnvironment.project)
+        val scriptDefinitionProvider = configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull()
         if (scriptDefinitionProvider == null) {
             configuration.report(CliDiagnostics.SCRIPTING_ERROR, "Unable to process the script, scripting plugin is not configured")
             return ExitCode.COMPILATION_ERROR

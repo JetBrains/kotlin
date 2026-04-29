@@ -159,7 +159,7 @@ class K2ReplCompiler(
                 compilerContext,
                 sharedLibrarySession,
                 sessionFactoryContext,
-                ScriptConfigurationsProvider.getInstance(project),
+                compilerContext.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull(),
             )
         }
     }
@@ -177,6 +177,8 @@ class K2ReplCompilationState(
     internal val scriptConfigurationsProvider: ScriptConfigurationsProvider?,
 ) {
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
+
+    val project get() = projectEnvironment.project
 }
 
 class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider() {
@@ -276,7 +278,7 @@ private fun compileImpl(
     val (classpath, newSources, sourceDependencies) =
         @Suppress("DEPRECATION")
         collectScriptsCompilationDependencies(allSourceFiles) {
-            state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialScriptCompilationConfiguration)
+            state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(state.project,it, initialScriptCompilationConfiguration)
         }
     allSourceFiles.addAll(newSources)
 
@@ -295,7 +297,7 @@ private fun compileImpl(
     // Updating compiler options
     val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
     val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
-        state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(file)?.valueOrNull()?.configuration?.get(
+        state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(state.project, file)?.valueOrNull()?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         )?.takeIf { it != baseCompilerOptions } ?: emptyList()
     }
@@ -388,7 +390,7 @@ private fun compileImpl(
         { it.getKtFile(definition, state.projectEnvironment.project).declarations.firstIsInstance<KtScript>().fqName },
         sourceDependencies,
         { script ->
-            state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(script, initialScriptCompilationConfiguration)
+            state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(state.project, script, initialScriptCompilationConfiguration)
                 ?.valueOrNull()?.configuration ?: initialScriptCompilationConfiguration
         },
         extractResultFields(irInput.irModuleFragment)
