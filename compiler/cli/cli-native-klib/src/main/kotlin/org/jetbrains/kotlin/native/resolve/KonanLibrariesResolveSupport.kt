@@ -82,6 +82,7 @@ private class CompilerLoggerAdapter(
     override fun fatal(message: String): Nothing {
         configuration.report(CliDiagnostics.KONAN_COMPILATION_ERROR, message)
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(configuration.diagnosticsCollector, configuration)
+        @OptIn(MessageCollectorAccess::class)
         (configuration.messageCollector as? GroupingMessageCollector)?.flush()
         throw CompilationErrorException(message)
     }
