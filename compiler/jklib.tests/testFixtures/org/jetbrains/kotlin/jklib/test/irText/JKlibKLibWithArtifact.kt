@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.services.CompilationStage
 
 class JKlibKLibWithArtifact(val cliArtifact: JKlibSerializationArtifact) : ResultingArtifact.Binary<JKlibKLibWithArtifact>() {
-    override val kind: ArtifactKind<JKlibKLibWithArtifact> get() = Kind
-
-    object Kind : ArtifactKind<JKlibKLibWithArtifact>("JKlibKLib", CompilationStage.FIRST)
+    @Suppress("UNCHECKED_CAST")
+    override val kind: ArtifactKind<JKlibKLibWithArtifact> get() = org.jetbrains.kotlin.test.model.ArtifactKinds.KLib as ArtifactKind<JKlibKLibWithArtifact>
 }

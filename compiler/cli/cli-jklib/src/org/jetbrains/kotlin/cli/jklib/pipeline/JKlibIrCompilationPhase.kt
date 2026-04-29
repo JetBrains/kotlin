@@ -162,13 +162,13 @@ object JKlibIrCompilationPhase :
             }
         }
 
-        irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
-            irBuiltIns,
-            symbolTable,
-            typeTranslator,
-            getPackageFragment = null,
-            referenceFunctionsWhenKFunctionAreReferenced = true
-        )
+//        irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
+//            irBuiltIns,
+//            symbolTable,
+//            typeTranslator,
+//            getPackageFragment = null,
+//            referenceFunctionsWhenKFunctionAreReferenced = true
+//        )
 
         linker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()

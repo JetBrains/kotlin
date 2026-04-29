@@ -126,7 +126,11 @@ class JKlibIrLinker(
             }
 
             // This is needed to avoid unbound symbols for some kotlin.Int functions.
-            mappedClassSymbols[FqName("kotlin.Int")]?.owner?.declarations
+            // val intSymbol = mappedClassSymbols[FqName("kotlin.Int")]
+            // if (intSymbol != null && intSymbol.isBound) {
+            //     // We don't need to do anything here, just accessing it is enough to
+            //     // trigger the lazy loading mechanism that populates mappedClassSymbols.
+            // }
 
             val funName = idSig.nameSegments.last()
             val mappedClassFqn = mappedClassFqnByFunctionName[funName] ?: return null

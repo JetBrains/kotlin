@@ -51,7 +51,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
             ::CoroutineHelpersSourceFilesProvider,
         )
 
-        useMetaTestConfigurators(::FirSpecificParserSuppressor, ::WithStdlibSkipper, ::WithReflectSkipper)
+        useMetaTestConfigurators(::FirSpecificParserSuppressor)
 
         facadeStep(::FirCliJKlibFacade)
         firHandlersStep {
