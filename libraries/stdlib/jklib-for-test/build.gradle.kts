@@ -76,7 +76,9 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/ArrayIntrinsics.kt",
             "kotlin/Arrays.kt",
             "kotlin/Boolean.kt",
+            "kotlin/Char.kt",
             "kotlin/CharSequence.kt",
+            "kotlin/Collections.kt",
             "kotlin/Comparable.kt",
             "kotlin/Enum.kt",
             "kotlin/Function.kt",
@@ -112,6 +114,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
     from(stdlibProjectDir.resolve("common/src")) {
         include(
             "kotlin/ExceptionsH.kt",
+            "kotlin/JvmAnnotationsH.kt"
         )
         into("src/common")
     }
@@ -134,14 +137,10 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "src/kotlin/io/Serializable.kt",
             "builtins/*.kt",
             "src/kotlin/jvm/Annotations.kt",
-            "runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
             "src/kotlin/reflect/KDeclarationContainer.kt",
             "runtime/kotlin/jvm/internal/Lambda.kt",
-            "runtime/kotlin/jvm/internal/FunctionBase.kt"
-        )
-        exclude(
-            "builtins/Char.kt",
-            "builtins/Collections.kt"
+            "runtime/kotlin/jvm/internal/FunctionBase.kt",
+            "runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
         )
         into("src/jvm")
     }
@@ -149,6 +148,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
     from(stdlibProjectDir.resolve("jvm-minimal-for-test/jvm-src")) {
         include(
             "minimalAtomics.kt",
+            "minimalCollections.kt",
             "minimalThrowables.kt",
         )
         into("src/jvm")
@@ -180,11 +180,9 @@ fun JavaExec.configureJklibCompilation(
         val allFiles = sourceTree.files
 
         val commonPathSegment = "${File.separator}common${File.separator}"
-        val commonFiles = allFiles.filter { it.path.contains(commonPathSegment) }
-        val jvmFiles = allFiles.filter { !it.path.contains(commonPathSegment) }
-
-        val jvmSourceFiles = jvmFiles.map { it.absolutePath }
-        val commonSourceFiles = commonFiles.map { it.absolutePath }
+        val (commonSourceFiles, jvmSourceFiles) = allFiles
+            .map { it.absolutePath }
+            .partition { it.contains(commonPathSegment) }
 
         logger.lifecycle("Compiling ${jvmSourceFiles.size} JVM files and ${commonSourceFiles.size} Common files, total ${allFiles.size}")
         logger.lifecycle("Running K2JKlibCompiler with Java version: ${System.getProperty("java.version")}")
@@ -202,20 +200,13 @@ fun JavaExec.configureJklibCompilation(
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalExtendedContracts",
-            "-Xcompile-builtins-as-part-of-stdlib",
             "-Xreturn-value-checker=full",
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
         )
 
-
-        val fullClasspath = klibCompileClasspath.files
-            .filter { it.extension == "jar" && !it.name.contains("sources") }
-            .map { it.absolutePath }
-            .joinToString(File.pathSeparator)
-
-        if (fullClasspath.isNotEmpty()) {
-            args("-classpath", fullClasspath)
-        }
+        val fullClasspath = klibCompileClasspath.asPath
+        
+        args("-classpath", fullClasspath)
         args(jvmSourceFiles)
         args(commonSourceFiles)
     }
