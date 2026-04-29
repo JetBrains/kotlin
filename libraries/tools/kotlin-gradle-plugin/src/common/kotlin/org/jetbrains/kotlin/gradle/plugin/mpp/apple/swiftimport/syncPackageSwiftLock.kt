@@ -72,7 +72,7 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
 internal interface SyncPackageResolvedParameters : WorkParameters {
     val sourceFile: RegularFileProperty
     val destinationFile: RegularFileProperty
-    var fs: Property<FileSystemOperations>
+    val fs: Property<FileSystemOperations>
 }
 
 internal abstract class SyncPackageResolvedWorkAction : WorkAction<SyncPackageResolvedParameters> {
