@@ -280,7 +280,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     }
 
     configureKlibArtifactsHandlersStep {
-        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler)
+        useHandlers(::KlibBackendDiagnosticsHandler, ::KlibAbiDumpAfterInliningVerifyingHandler, ::KlibAbiDumpHandler)
     }
 
     useFailureSuppressors(
