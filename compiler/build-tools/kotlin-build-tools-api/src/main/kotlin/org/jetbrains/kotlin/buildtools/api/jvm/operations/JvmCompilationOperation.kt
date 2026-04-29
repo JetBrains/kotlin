@@ -76,7 +76,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          *
          * @since 2.3.20
          */
-        public val compilerArguments: JvmCompilerArguments.Builder
+        public override val compilerArguments: JvmCompilerArguments.Builder
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -100,7 +100,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
          *
          * @since 2.3.20
          */
-        public fun build(): JvmCompilationOperation
+        public override fun build(): JvmCompilationOperation
 
         /**
          * Creates the configuration object for snapshot-based incremental compilation (IC) in JVM projects.

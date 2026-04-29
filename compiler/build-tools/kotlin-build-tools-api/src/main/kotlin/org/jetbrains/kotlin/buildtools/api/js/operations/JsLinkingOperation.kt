@@ -57,7 +57,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
          * Kotlin compiler configurable options for JS linking.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public val compilerArguments: JsArguments.Builder
+        public override val compilerArguments: JsArguments.Builder
 
         /**
          * The input klib file.
@@ -85,7 +85,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
         /**
          * Creates an immutable instance of [JsLinkingOperation] based on the configuration of this builder.
          */
-        public fun build(): JsLinkingOperation
+        public override fun build(): JsLinkingOperation
     }
 
     /**

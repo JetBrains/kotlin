@@ -56,6 +56,13 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
     public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V)
+
+    /**
+     * Constructs a new immutable [CommonKlibBasedArguments] instance with the options set in this builder.
+     *
+     * @since 2.4.20
+     */
+    override fun build(): CommonKlibBasedArguments
   }
 
   public companion object {

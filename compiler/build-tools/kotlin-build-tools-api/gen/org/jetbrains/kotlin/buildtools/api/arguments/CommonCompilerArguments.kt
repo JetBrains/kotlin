@@ -87,6 +87,13 @@ public interface CommonCompilerArguments : CommonToolArguments {
       level = DeprecationLevel.WARNING,
     )
     public operator fun contains(key: CommonCompilerArgument<*>): Boolean
+
+    /**
+     * Constructs a new immutable [CommonCompilerArguments] instance with the options set in this builder.
+     *
+     * @since 2.4.20
+     */
+    override fun build(): CommonCompilerArguments
   }
 
   public companion object {

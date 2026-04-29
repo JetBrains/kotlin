@@ -97,7 +97,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     /**
      * Constructs a new immutable [JvmCompilerArguments] instance with the options set in this builder.
      */
-    public fun build(): JvmCompilerArguments
+    override fun build(): JvmCompilerArguments
   }
 
   public companion object {

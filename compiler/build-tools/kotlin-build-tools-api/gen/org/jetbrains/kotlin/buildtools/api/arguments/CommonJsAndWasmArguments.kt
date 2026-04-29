@@ -54,6 +54,13 @@ public interface CommonJsAndWasmArguments : CommonKlibBasedArguments {
      * Set the [value] for option specified by [key], overriding any previous value for that option.
      */
     public operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V)
+
+    /**
+     * Constructs a new immutable [CommonJsAndWasmArguments] instance with the options set in this builder.
+     *
+     * @since 2.4.20
+     */
+    override fun build(): CommonJsAndWasmArguments
   }
 
   public companion object {

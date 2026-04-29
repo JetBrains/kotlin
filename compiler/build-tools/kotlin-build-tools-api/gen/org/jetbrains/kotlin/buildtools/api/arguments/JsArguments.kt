@@ -56,7 +56,7 @@ public interface JsArguments : CommonJsAndWasmArguments {
     /**
      * Constructs a new immutable [JsArguments] instance with the options set in this builder.
      */
-    public fun build(): JsArguments
+    override fun build(): JsArguments
   }
 
   public companion object {

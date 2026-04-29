@@ -85,6 +85,13 @@ public interface CommonToolArguments {
     public operator fun contains(key: CommonToolArgument<*>): Boolean
 
     /**
+     * Constructs a new immutable [CommonToolArguments] instance with the options set in this builder.
+     *
+     * @since 2.4.20
+     */
+    public fun build(): CommonToolArguments
+
+    /**
      * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
      *
      * @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed

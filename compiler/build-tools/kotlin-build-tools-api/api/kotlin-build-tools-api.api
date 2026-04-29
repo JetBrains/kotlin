@@ -8,7 +8,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilat
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BuildOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Builder;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Option;Ljava/lang/Object;)V
 }
 
@@ -524,6 +526,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments;
 	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;Ljava/lang/Object;)V
@@ -567,6 +570,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments$CommonJsAndWasmArgument;Ljava/lang/Object;)V
 }
@@ -596,6 +600,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;Ljava/lang/Object;)V
 }
@@ -623,6 +628,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$Builder {
 	public abstract fun applyArgumentStrings (Ljava/util/List;)V
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments;
 	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;Ljava/lang/Object;)V

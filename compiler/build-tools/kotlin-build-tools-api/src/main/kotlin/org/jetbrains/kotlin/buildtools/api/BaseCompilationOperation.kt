@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
@@ -36,6 +37,13 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
      */
     public interface Builder : BuildOperation.Builder {
         /**
+         * Kotlin compiler configurable options.
+         *
+         * @since 2.4.20
+         */
+        public val compilerArguments: CommonCompilerArguments.Builder
+
+        /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
          *
          * @return the previously set value for an option
@@ -51,6 +59,13 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
          * @since 2.4.0
          */
         public operator fun <V> set(key: Option<V>, value: V)
+
+        /**
+         * Creates an immutable instance of [BaseCompilationOperation] based on the configuration of this builder.
+         *
+         * @since 2.4.20
+         */
+        public fun build(): BaseCompilationOperation
     }
 
     public companion object {

@@ -51,12 +51,17 @@ internal class BtaApiOptionsGenerator(
                         addKdoc("\n\n@since 2.3.20")
                     }
                     generateGetPutFunctions(argumentTypeName, level)
-                    if (level.isLeaf()) {
-                        function("build") {
-                            addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
-                            addModifiers(KModifier.ABSTRACT)
-                            returns(ClassName(targetPackage, className))
+                    function("build") {
+                        addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
+                        addModifiers(KModifier.ABSTRACT)
+                        if (parentClass != null) {
+                            addModifiers(KModifier.OVERRIDE)
                         }
+                        if (!level.isLeaf()) {
+                            addKdoc("\n\n")
+                            addKdoc(KDOC_SINCE_2_4_20)
+                        }
+                        returns(ClassName(targetPackage, className))
                     }
                     if (parentClass == null) {
                         addApplyArgumentStringsFun()

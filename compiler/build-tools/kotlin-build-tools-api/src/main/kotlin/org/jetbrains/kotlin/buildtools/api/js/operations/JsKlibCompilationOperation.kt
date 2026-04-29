@@ -61,7 +61,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
          * Kotlin compiler configurable options for klib-based compilation.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public val compilerArguments: JsArguments.Builder
+        public override val compilerArguments: JsArguments.Builder
 
         /**
          * Creates the configuration object for history-based incremental compilation (IC) in JS projects.
@@ -94,7 +94,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
         /**
          * Creates an immutable instance of [JsKlibCompilationOperation] based on the configuration of this builder.
          */
-        public fun build(): JsKlibCompilationOperation
+        public override fun build(): JsKlibCompilationOperation
     }
 
     /**
