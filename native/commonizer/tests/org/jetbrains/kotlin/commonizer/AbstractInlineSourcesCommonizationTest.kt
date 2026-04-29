@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.De
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlin.test.assertIs
 import kotlin.test.fail
 
@@ -25,6 +27,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     data class Parameters(
         val outputTargets: Set<SharedCommonizerTarget>,
         val dependencies: TargetDependent<List<InlineSourceBuilder.Module>>,
+        val supportLibrarySources: Map<CommonizerTarget, InlineSourceBuilder.Module>,
         val targets: List<Target>,
         val settings: CommonizerSettings,
     )
@@ -46,6 +49,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         private var targets: List<Target> = emptyList()
 
+        private val supportLibrarySources: MutableMap<CommonizerTarget, InlineSourceBuilder.Module> = LinkedHashMap()
+
         private val inlineSourceBuilderFactory
             get() = DependencyAwareInlineSourceTestFactory(parentInlineSourceBuilder, dependencies.toTargetDependent())
 
@@ -66,19 +71,54 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             return target(parseCommonizerTarget(target), builder)
         }
 
+        private inline fun registerDependencyFor(
+            target: CommonizerTarget,
+            dependency: (List<InlineSourceBuilder.Module>) -> InlineSourceBuilder.Module,
+        ) {
+            val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
+            dependency(dependenciesList).let { dependenciesList.add(it) }
+        }
+
         fun registerDependency(vararg targets: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             targets.forEach { target ->
-                val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
-                val dependency = inlineSourceBuilderFactory[target].createModule {
-                    builder()
-                    name = "$target-dependency-${dependenciesList.size}-$name"
+                registerDependencyFor(target) { dependenciesList ->
+                    inlineSourceBuilderFactory[target].createModule {
+                        builder()
+                        name = "$target-dependency-${dependenciesList.size}-$name"
+                    }
                 }
-                dependenciesList.add(dependency)
             }
         }
 
         fun registerDependency(vararg targets: String, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             registerDependency(targets = targets.map(::parseCommonizerTarget).withAllLeaves().toTypedArray(), builder)
+        }
+
+        fun registerSupportLibrary(library: Map<String, InlineSourceBuilder.Module>) {
+            val withParsedKeys = library.mapKeys { parseCommonizerTarget(it.key) }.also { supportLibrarySources += it }
+
+            fun CommonizerTarget.getAllContainingSharedModules() = withParsedKeys
+                .filter { (target, _) -> allLeaves().isSubsetOf(target.allLeaves()) }
+
+            // To properly compile sample code for output targets (written in `assertEquals()`),
+            // we must be able to resolve the resulting types in the dependencies.
+            for (it in outputTargets.orEmpty()) {
+                val (_, closestSharedSourceSet) = it.getAllContainingSharedModules().minBy { it.key.allLeaves().size }
+                registerDependencyFor(it) { closestSharedSourceSet }
+            }
+
+            // The commonizer only commonizes `fun foo(Long)` and `fun foo(Int)` if there's at least
+            // some typealias in the dependencies that is either `Long` or `Int` specifically, and if
+            // it's defined for each target.
+            // Unlike the frontend, the commonizer doesn't "see" further `dependsOn` dependencies, so
+            // we must add all the common source sets manually.
+            for (it in withParsedKeys.keys.allLeaves()) {
+                val closestSharedSourceSets = it.getAllContainingSharedModules().values
+
+                for (sourceSet in closestSharedSourceSets) {
+                    registerDependencyFor(it) { sourceSet }
+                }
+            }
         }
 
         fun simpleSingleSourceTarget(target: CommonizerTarget, @Language("kotlin") sourceContent: String) {
@@ -112,6 +152,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         fun build(): Parameters = Parameters(
             outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
+            supportLibrarySources = supportLibrarySources,
             targets = targets.toList(),
             settings = MapBasedCommonizerSettings(*settings.toTypedArray()),
         )
@@ -176,6 +217,12 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
                     .map { module -> createMetadata(module) }
                     .plus(loadStdlibMetadata())
                 MockModulesProvider.create(dependenciesMetadata)
+            },
+            supportLibraryModulesProvider = TargetDependent(outputTargets.withAllLeaves()) { target ->
+                val modules = supportLibrarySources
+                    .filterKeys { supportTarget -> target.allLeaves().isSubsetOf(supportTarget.allLeaves()) }
+                    .values.map { createMetadata(it) }
+                MockModulesProvider.create(modules)
             },
             targetProviders = TargetDependent(outputTargets.allLeaves()) { commonizerTarget ->
                 val target = targets.singleOrNull { it.target == commonizerTarget } ?: return@TargetDependent null
