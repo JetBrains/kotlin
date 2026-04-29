@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.*
 import com.google.gson.annotations.SerializedName
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -23,6 +22,7 @@ import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 import java.lang.reflect.Type
+import kotlin.collections.joinToString
 
 /**
  * Configuration options used to generate [webpack](https://webpack.js.org/)
@@ -322,6 +322,26 @@ data class KotlinWebpackConfig(
         appendLine()
     }
 
+    internal fun Appendable.appendBundledPlugin(pluginName: String, rawOptions: Map<String, Any>) {
+        val indent = "    ".repeat(7)
+        val formattedOptions = rawOptions
+            .map { "${it.key.jsQuoted()}: ${it.value}" }
+            .joinToString(separator = ",\n${indent}", prefix = indent)
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+            ;(function(config) {
+                const webpack = require("webpack"); 
+                const $pluginName = webpack.$pluginName;
+                config.plugins.push(new $pluginName({
+            $formattedOptions
+                }))
+            })(config);
+        """.trimIndent())
+        appendLine()
+    }
+
     private fun Appendable.appendDevServer() {
         if (devServer != null) {
 
@@ -353,28 +373,36 @@ data class KotlinWebpackConfig(
     private fun Appendable.appendDefinePluginForBrowser() {
         if (!defineNonBrowserEnvironmentProperties.get()) return
 
-        val expressions = defaultWasmDefinedExpressions()
-
-        //language=JavaScript 1.8
-        appendLine(
-            """
-                // Define plugin for browser
-                ;(function(config) {
-                    const webpack = require("webpack");
-
-                    config.plugins.push(
-                        new webpack.DefinePlugin({
-${expressions.formatDefinedExpressions()}
-                        })
-                    )
-                })(config);
-                
-            """.trimIndent()
-        )
+        appendBundledPlugin("DefinePlugin", defaultWasmDefinedExpressions())
     }
 
     private fun Appendable.appendSourceMaps() {
         if (!sourceMaps) return
+
+        fun devtoolToPluginOptions(devtool: String): Pair<String, Map<String, Any>> {
+            if (devtool == "eval") return "EvalDevToolModulePlugin" to mapOf()
+
+            val hidden = "hidden" in devtool
+            val inline = "inline" in devtool
+            val evalWrapped = "eval" in devtool
+            val cheap = "cheap" in devtool
+            val moduleMaps = "module" in devtool
+            val noSources = "nosources" in devtool
+
+            val plugin = if (evalWrapped) "EvalSourceMapDevToolPlugin" else "SourceMapDevToolPlugin"
+
+            val options = buildMap {
+                if (!evalWrapped) put("test", """/\.((c|m)?js|css)($|\?)/i""")
+                if (!evalWrapped) put("filename", if (inline) "null" else "\"[file].map[query]\"")
+                if (hidden) put("append", "false")
+                put("module", if (moduleMaps) true else !cheap)
+                put("columns", !cheap)
+                put("noSources", noSources)
+                put("ignoreList", "/NATIVE_IMPLEMENTATIONS.kt/")
+            }
+
+            return plugin to options
+        }
 
         //language=JavaScript 1.8
         appendLine(
@@ -385,14 +413,18 @@ ${expressions.formatDefinedExpressions()}
                         use: ["source-map-loader"],
                         enforce: "pre"
                 });
-                config.devtool = ${devtool?.let { "'$it'" } ?: false};
+                config.devtool = false;
                 config.ignoreWarnings = [
                     /Failed to parse source map/,
                     /Accessing import\.meta directly is unsupported \(only property access or destructuring is supported\)/
-                ]
-                
+                ];  
             """.trimIndent()
         )
+
+        devtool?.let {
+            val (plugin, options) = devtoolToPluginOptions(it)
+            appendBundledPlugin(plugin, options)
+        }
     }
 
     private fun Appendable.appendOptimization() {
@@ -548,7 +580,3 @@ private fun defaultWasmDefinedExpressions(): Map<String, String> = mapOf(
     "typeof inIon" to "JSON.stringify('undefined')",
     "typeof jscOptions" to "JSON.stringify('undefined')",
 )
-
-private fun Map<String, String>.formatDefinedExpressions() = map { (expression, value) ->
-    "${expression.jsQuoted()}: $value"
-}.joinToString(separator = ",\n") { "    ".repeat(7) + it }
