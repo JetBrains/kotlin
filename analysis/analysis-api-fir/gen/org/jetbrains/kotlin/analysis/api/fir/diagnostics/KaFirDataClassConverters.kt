@@ -8413,6 +8413,13 @@ private fun KaDiagnosticConverterBuilder.addConversions192() {
             token,
         )
     }
+    add(FirErrors.VAR_OVERWRITTEN_BEFORE_CAPTURED_LAMBDA) { firDiagnostic ->
+        VarOverwrittenBeforeCapturedLambdaImpl(
+            firSymbolBuilder.variableBuilder.buildVariableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED) { firDiagnostic ->
         InlineSuspendFunctionTypeUnsupportedImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -8668,6 +8675,13 @@ private fun KaDiagnosticConverterBuilder.addConversions198() {
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SMARTCAST_RELYING_ON_CALLS_IN_PLACE) { firDiagnostic ->
+        SmartcastRelyingOnCallsInPlaceImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
