@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon.common
 import java.io.File
 import java.nio.file.Files
 import java.rmi.registry.LocateRegistry
+import kotlin.io.path.Path
 
 
 internal const val MAX_PORT_NUMBER = 0xffff
@@ -28,10 +29,8 @@ enum class DaemonReportCategory {
     DEBUG, INFO, EXCEPTION;
 }
 
-
 fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String =
     "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
-
 
 fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
     val regex = makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
@@ -48,7 +47,6 @@ data class DaemonWithMetadata(
     val daemon: CompileService,
     val runFile: File,
     val jvmOptions: DaemonJVMOptions,
-    val javaLanguageVersion: JavaLanguageVersion,
 )
 
 // TODO: write metadata into discovery file to speed up selection
@@ -58,12 +56,13 @@ data class DaemonWithMetadata(
 fun walkDaemons(
     registryDir: File,
     compilerId: CompilerId,
+    javaLanguageVersion: JavaLanguageVersion,
     fileToCompareTimestamp: File,
     filter: (File, Int) -> Boolean = { _, _ -> true },
     report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
 ): Sequence<DaemonWithMetadata> {
-    val classPathDigest = compilerId.digest()
-    val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
+    val runFileDigest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) })
+    val portExtractor = makePortFromRunFilenameExtractor(runFileDigest)
     return registryDir.walk()
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
@@ -95,8 +94,7 @@ fun walkDaemons(
             try {
                 daemon?.let {
                     val jvmOptions = it.getDaemonJVMOptions().get()
-                    val javaLanguageVersion = it.getJavaLanguageVersion().get()
-                    DaemonWithMetadata(it, file, jvmOptions, javaLanguageVersion)
+                    DaemonWithMetadata(it, file, jvmOptions)
                 }
             } catch (e: Exception) {
                 report(DaemonReportCategory.INFO, "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}")

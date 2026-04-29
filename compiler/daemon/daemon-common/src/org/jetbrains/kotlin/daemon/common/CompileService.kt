@@ -95,9 +95,6 @@ interface CompileService : Remote {
     fun getKotlinVersion(): CallResult<String>
 
     @Throws(RemoteException::class)
-    fun getJavaLanguageVersion(): CallResult<JavaLanguageVersion>
-
-    @Throws(RemoteException::class)
     fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions>
 
     @Throws(RemoteException::class)

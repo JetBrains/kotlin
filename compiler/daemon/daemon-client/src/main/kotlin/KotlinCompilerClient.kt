@@ -465,11 +465,11 @@ object KotlinCompilerClient {
             walkDaemons(
                 registryDir,
                 compilerId,
+                javaLanguageVersion,
                 timestampMarker,
                 report = report,
                 filter = { file, _ -> file !in ignoredDaemonSessionFiles })
                 .toList()
-                .filter { it.javaLanguageVersion == javaLanguageVersion }
         } finally {
             timestampMarker.delete()
         }

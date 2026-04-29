@@ -100,6 +100,7 @@ class EventManagerImpl : EventManager {
 abstract class CompileServiceImplBase(
     val daemonOptions: DaemonOptions,
     val compilerId: CompilerId,
+    val javaLanguageVersion: JavaLanguageVersion,
     val port: Int,
     val timer: Timer,
     val onShutdown: () -> Unit,
@@ -248,7 +249,7 @@ abstract class CompileServiceImplBase(
             runFileDir,
             makeRunFilenameString(
                 timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                digest = compilerId.digest(),
+                digest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) }),
                 port = port.toString()
             )
         )
@@ -682,7 +683,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-        configurationInputs: ConfigurationInputs? = null
+        configurationInputs: ConfigurationInputs? = null,
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
@@ -816,11 +817,11 @@ class CompileServiceImpl(
     compilerId: CompilerId,
     daemonOptions: DaemonOptions,
     val daemonJVMOptions: DaemonJVMOptions,
-    val javaLanguageVersion: JavaLanguageVersion,
+    javaLanguageVersion: JavaLanguageVersion,
     port: Int,
     timer: Timer,
     onShutdown: () -> Unit,
-) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer, onShutdown) {
+) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, javaLanguageVersion, port, timer, onShutdown) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,
@@ -845,10 +846,6 @@ class CompileServiceImpl(
         } catch (e: Exception) {
             CompileService.CallResult.Error("Unknown Kotlin version")
         }
-    }
-
-    override fun getJavaLanguageVersion(): CompileService.CallResult<JavaLanguageVersion> = ifAlive {
-        CompileService.CallResult.Good(javaLanguageVersion)
     }
 
     override fun getDaemonOptions(): CompileService.CallResult<DaemonOptions> = ifAlive {
@@ -1123,11 +1120,11 @@ class CompileServiceImpl(
             val aliveWithOpts = walkDaemons(
                 File(daemonOptions.runFilesPathOrDefault),
                 compilerId,
+                javaLanguageVersion,
                 runFile,
                 filter = { _, p -> p != port },
                 report = { _, msg -> log.info(msg) }
             ).toList()
-                .filter { it.javaLanguageVersion == javaLanguageVersion }
                 .sortedWith(comparator)
 
             fun hasHigherPriorityThan(other: DaemonWithMetadata): Boolean =
