@@ -111,7 +111,7 @@ fun serializeModuleAndAllDependenciesToMetadata(
         moduleRoot.resolve(sourceFile.name).writeText(sourceFile.content)
     }
 
-    for (dependency in module.dependencies) {
+    for (dependency in module.dependencies + module.refinesDependencies) {
         if (dependency !in dependencyToMetadata) {
             val [configuration, dependencyArtifact] = serializeModuleAndAllDependenciesToMetadata(
                 dependency, disposable, dependencyToMetadata, compiledDependenciesRoot,
@@ -129,7 +129,11 @@ fun serializeModuleAndAllDependenciesToMetadata(
         regularDependencies = module.dependencies.map { dependency ->
             dependencyToMetadata[dependency]?.let { JvmClasspathRoot(File(it.destination)) }
                 ?: error("Missing dependency metadata for ${dependency.name}")
-        }
+        },
+        refinesDependencies = module.refinesDependencies.map { dependency ->
+            dependencyToMetadata[dependency]?.destination
+                ?: error("Missing dependency metadata for ${dependency.name}")
+        },
     )
 }
 

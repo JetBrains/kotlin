@@ -20,7 +20,8 @@ interface InlineSourceBuilder {
     data class SourceFile(val name: String, @param:Language("kotlin") val content: String)
 
     data class Module(
-        val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>
+        val name: String, val sourceFiles: List<SourceFile>, val dependencies: List<Module>,
+        val refinesDependencies: List<Module>,
     )
 
     @InlineSourcesCommonizationTestDsl
@@ -29,6 +30,7 @@ interface InlineSourceBuilder {
         var name: String = "test-module"
         private var sourceFiles: List<SourceFile> = emptyList()
         private var dependencies: List<Module> = emptyList()
+        private var refinesDependencies: List<Module> = emptyList()
 
 
         @ModuleBuilderDsl
@@ -46,7 +48,12 @@ interface InlineSourceBuilder {
             this.dependencies += module.copy(name = "${this.name}-dependency-${module.name}-${dependencies.size}")
         }
 
-        fun build(): Module = Module(name, sourceFiles.toList(), dependencies.toList())
+        @ModuleBuilderDsl
+        fun refinesDependency(module: Module) {
+            this.refinesDependencies += module.copy(name = "${this.name}-refinesDependency-${module.name}-${refinesDependencies.size}")
+        }
+
+        fun build(): Module = Module(name, sourceFiles.toList(), dependencies.toList(), refinesDependencies.toList())
     }
 
     fun createModule(builder: ModuleBuilder.() -> Unit): Module {
