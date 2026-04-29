@@ -116,4 +116,8 @@ class BuildSessionLogger(
 
     override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?) =
         metricsContainer.report(metric, value, subprojectName, weight)
+
+    override fun report(metric: StringListMetrics, value: List<String>, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
+
 }

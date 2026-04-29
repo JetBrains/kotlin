@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.statistics
 
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.junit.Test
 import java.io.File
@@ -14,6 +15,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.MessageDigest
+import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
 private const val SOURCE_CODE_RELATIVE_PATH =
@@ -21,16 +23,18 @@ private const val SOURCE_CODE_RELATIVE_PATH =
 private const val BOOLEAN_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/BooleanMetrics.kt"
 private const val STRING_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/StringMetrics.kt"
 private const val NUMERICAL_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/NumericalMetrics.kt"
+private const val STRING_LIST_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/StringListMetrics.kt"
 
-private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(10, "e5977271b41292cf0774046f52fcc814")
+private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(11, "40e47acb47836c109beadaa9c6334410")
 private val BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH = Pair(29, "1996c736f9263217f073e662baf41373")
 private val NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH = Pair(3, "bcc6f0dba7d9db8e58408f8c0ff57965")
+private val STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH = Pair(1, "40e47acb47836c109beadaa9c6334410")
 private val SOURCE_FOLDER_EXPECTED_VERSION_AND_HASH =
     Pair(
         STRING_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH.first +
-                NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first,
-        "86fb86878cd730955f7685f935bfc152"
+                NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first + STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH.first,
+        "626062cba4ec71e2306715a0a16909f3"
     )
 private const val HASH_ALG = "MD5"
 
@@ -49,8 +53,7 @@ class ModuleChangesCatchingTest {
             Pair(StringMetrics.VERSION, calculateFileChecksum(STRING_METRICS_RELATIVE_PATH))
         assertEquals(
             STRING_METRICS_EXPECTED_VERSION_AND_HASH, actualStringMetricsVersionAndHash,
-            "Hash of ${StringMetrics::class.qualifiedName} has been changed, please increase VERSION value. " +
-                    "Also you need to update hash and version in this test class."
+            errorMessage(StringMetrics::class)
         )
     }
 
@@ -63,8 +66,7 @@ class ModuleChangesCatchingTest {
             Pair(BooleanMetrics.VERSION, calculateFileChecksum(BOOLEAN_METRICS_RELATIVE_PATH))
         assertEquals(
             BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH, actualBooleanMetricsVersionAndHash,
-            "Hash of ${BooleanMetrics::class.qualifiedName} has been changed, please increase VERSION value. " +
-                    "Also you need to update hash and version in this test class."
+            errorMessage(BooleanMetrics::class)
         )
     }
 
@@ -77,10 +79,26 @@ class ModuleChangesCatchingTest {
             Pair(NumericalMetrics.VERSION, calculateFileChecksum(NUMERICAL_METRICS_RELATIVE_PATH))
         assertEquals(
             NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH, actualNumericalMetricsVersionAndHash,
-            "Hash of ${NumericalMetrics::class.qualifiedName} has been changed, please increase VERSION value. " +
-                    "Also you need to update hash and version in this test class."
+            errorMessage(NumericalMetrics::class)
         )
     }
+
+    /**
+     * Test checks for that the version of [StringListMetrics] was increased after changes in this file
+     */
+    @Test
+    fun testChecksCorrectChangingStringListMetricsVersion() {
+        val actualVersionAndHash =
+            Pair(StringListMetrics.VERSION, calculateFileChecksum(STRING_METRICS_RELATIVE_PATH))
+        assertEquals(
+            STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH, actualVersionAndHash,
+            errorMessage(StringListMetrics::class)
+        )
+    }
+
+    private fun errorMessage(clazz: KClass<*>): String =
+        "Hash of ${clazz.qualifiedName} has been changed, please increase VERSION value. " +
+                "Also you need to update hash and version in this test class."
 
     @Test
     fun testChecksTotalFilesChecksum() {
@@ -88,11 +106,12 @@ class ModuleChangesCatchingTest {
             setOf(
                 Paths.get(STRING_METRICS_RELATIVE_PATH).toAbsolutePath().toString(),
                 Paths.get(BOOLEAN_METRICS_RELATIVE_PATH).toAbsolutePath().toString(),
-                Paths.get(NUMERICAL_METRICS_RELATIVE_PATH).toAbsolutePath().toString()
+                Paths.get(NUMERICAL_METRICS_RELATIVE_PATH).toAbsolutePath().toString(),
+                Paths.get(STRING_LIST_METRICS_RELATIVE_PATH).toAbsolutePath().toString()
             )
         val actualSourceFolderVersionAndHash =
             Pair(
-                NumericalMetrics.VERSION + StringMetrics.VERSION + BooleanMetrics.VERSION,
+                NumericalMetrics.VERSION + StringMetrics.VERSION + BooleanMetrics.VERSION + StringListMetrics.VERSION,
                 calculateDirectoryCheckSum(SOURCE_CODE_RELATIVE_PATH, pathToExclude)
             )
         assertEquals(

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -93,7 +94,7 @@ internal object CompilerArgumentMetrics : FusMetrics {
             is K2JVMCompilerArguments -> {
                 val args = K2JVMCompilerArguments()
                 parseCommandLineArguments(argsArray.toList(), args)
-                metricsConsumer.report(StringMetrics.JVM_DEFAULTS, args.jvmDefaultStable ?: JvmDefaultMode.DISABLE.description)
+                metricsConsumer.report(StringListMetrics.JVM_DEFAULTS, args.jvmDefaultStable ?: JvmDefaultMode.DISABLE.description)
 
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
@@ -126,7 +127,7 @@ internal object CompilerArgumentMetrics : FusMetrics {
 
                 if (args.irProduceJs) {
                     metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
-                    metricsConsumer.report(StringMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
+                    metricsConsumer.report(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
 
                     metricsConsumer.report(BooleanMetrics.JS_GENERATE_DTS, args.generateDts)
                     metricsConsumer.report(StringMetrics.JS_ES_TARGET, args.target ?: "default")
@@ -298,7 +299,7 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         if (firRunnerEnabled) {
             metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
         }
-        metricsContainer.report(StringMetrics.KOTLIN_COMPILER_EXECUTION_POLICY, executionPolicy.propertyValue)
+        metricsContainer.report(StringListMetrics.KOTLIN_COMPILER_EXECUTION_POLICY, executionPolicy.propertyValue)
     }
 }
 
@@ -359,10 +360,10 @@ internal object KotlinJsBinaryTypeMetrics : FusMetrics {
             val isExecutableConfigured = jsTarget.binaries.withType<Executable>().isNotEmpty()
             project.addConfigurationMetrics { metricContainer ->
                 when {
-                    isLibraryConfigured && isExecutableConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "both")
-                    isLibraryConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "library")
-                    isExecutableConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "executable")
-                    !isExecutableConfigured && !isLibraryConfigured -> metricContainer.put(StringMetrics.JS_BINARY_TYPE, "none")
+                    isLibraryConfigured && isExecutableConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "both")
+                    isLibraryConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "library")
+                    isExecutableConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "executable")
+                    !isExecutableConfigured && !isLibraryConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "none")
                 }
             }
         }
@@ -373,10 +374,10 @@ internal object KotlinJsIrTargetMetrics : FusMetrics {
     internal fun collectMetrics(isBrowserConfigured: Boolean, isNodejsConfigured: Boolean, project: Project) {
         project.addConfigurationMetrics { metricContainer ->
             when {
-                isBrowserConfigured && isNodejsConfigured -> metricContainer.put(StringMetrics.JS_TARGET_MODE, "both")
-                isBrowserConfigured -> metricContainer.put(StringMetrics.JS_TARGET_MODE, "browser")
-                isNodejsConfigured -> metricContainer.put(StringMetrics.JS_TARGET_MODE, "nodejs")
-                !isBrowserConfigured && !isNodejsConfigured -> metricContainer.put(StringMetrics.JS_TARGET_MODE, "none")
+                isBrowserConfigured && isNodejsConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "both")
+                isBrowserConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "browser")
+                isNodejsConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "nodejs")
+                !isBrowserConfigured && !isNodejsConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "none")
             }
         }
     }
@@ -388,7 +389,7 @@ internal object MultiplatformTargetMetrics : FusMetrics {
         val targetName = if (target is KotlinNativeTarget) target.konanTarget.name
         else target.platformType.name
         project.addConfigurationMetrics {
-            it.put(StringMetrics.MPP_PLATFORMS, targetName)
+            it.put(StringListMetrics.MPP_PLATFORMS, targetName)
         }
     }
 }

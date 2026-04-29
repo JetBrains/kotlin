@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import kotlin.test.assertNotNull
 
@@ -50,6 +51,7 @@ internal class StubFUSConsumer : StatisticsValuesConsumer {
     val booleanMetrics = mutableMapOf<BooleanMetrics, Boolean>()
     val numericalMetrics = mutableMapOf<NumericalMetrics, Long>()
     val stringMetrics = mutableMapOf<StringMetrics, String>()
+    val stringListMetrics = mutableMapOf<StringListMetrics, List<String>>()
 
     override fun report(
         metric: BooleanMetrics,
@@ -78,6 +80,11 @@ internal class StubFUSConsumer : StatisticsValuesConsumer {
         weight: Long?,
     ): Boolean {
         stringMetrics[metric] = value
+        return true
+    }
+
+    override fun report(metric: StringListMetrics, value: List<String>, subprojectName: String?, weight: Long?): Boolean {
+        stringListMetrics[metric] = value
         return true
     }
 }

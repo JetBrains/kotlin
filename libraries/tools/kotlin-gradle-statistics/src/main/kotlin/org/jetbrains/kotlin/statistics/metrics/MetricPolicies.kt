@@ -10,30 +10,13 @@ import org.jetbrains.kotlin.statistics.ValueAnonymizer
 import org.jetbrains.kotlin.statistics.anonymizeComponentVersion
 import kotlin.math.abs
 
+enum class StringListOverridePolicy {
+    CONCAT,
+}
 
-enum class StringOverridePolicy : IMetricContainerFactory<String> {
-    OVERRIDE {
-        override fun newMetricContainer(): IMetricContainer<String> = OverrideStringMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? =
-            OverrideStringMetricContainer().also {
-                it.addValueFromStringPresentation(state, separator)
-            }
-    },
-    OVERRIDE_VERSION_IF_NOT_SET {
-        override fun newMetricContainer(): IMetricContainer<String> = OverrideVersionMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? =
-            OverrideVersionMetricContainer(state)
-    },
-    CONCAT {
-        override fun newMetricContainer(): IMetricContainer<String> = ConcatMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<String>? = ConcatMetricContainer().also {
-            it.addValueFromStringPresentation(state, separator)
-        }
-    }
-
+enum class StringOverridePolicy {
+    OVERRIDE,
+    OVERRIDE_VERSION_IF_NOT_SET
     //Should be useful counting container?
 }
 
@@ -46,46 +29,15 @@ private fun applyIfLong(v: String, action: (Long) -> IMetricContainer<Long>): IM
     }
 }
 
-enum class NumberOverridePolicy : IMetricContainerFactory<Long> {
-    OVERRIDE {
-        override fun newMetricContainer(): IMetricContainer<Long> = OverrideLongMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Long>? = applyIfLong(state) { value ->
-            OverrideLongMetricContainer().also { it.addValue(value) }
-        }
-    },
-    SUM {
-        override fun newMetricContainer(): IMetricContainer<Long> = SumMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Long>? = SumMetricContainer().also {
-            it.addValueFromStringPresentation(state, separator)
-        }
-    },
-    AVERAGE {
-        override fun newMetricContainer(): IMetricContainer<Long> = AverageMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Long>? = AverageMetricContainer().also {
-            it.addValueFromStringPresentation(state, separator)
-        }
-
-    }
+enum class NumberOverridePolicy  {
+    OVERRIDE,
+    SUM,
+    AVERAGE
 }
 
-enum class BooleanOverridePolicy : IMetricContainerFactory<Boolean> {
-    OVERRIDE {
-        override fun newMetricContainer(): IMetricContainer<Boolean> = OverrideBooleanMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Boolean>? =
-            OverrideBooleanMetricContainer().also {
-                it.addValueFromStringPresentation(state, separator)
-            }
-    },
-    OR {
-        override fun newMetricContainer(): IMetricContainer<Boolean> = OrMetricContainer()
-
-        override fun fromStringRepresentation(state: String, separator: String): IMetricContainer<Boolean>? =
-            OrMetricContainer(state.toBoolean())
-    }
+enum class BooleanOverridePolicy {
+    OVERRIDE,
+    OR,
 
     // may be add disctribution counter metric container
 }

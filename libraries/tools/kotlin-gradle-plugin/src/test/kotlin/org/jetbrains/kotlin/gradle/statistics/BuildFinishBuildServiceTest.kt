@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService.Com
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
@@ -36,7 +37,7 @@ class BuildFinishBuildServiceTest {
 
                 ${NumericalMetrics.COMPILATION_DURATION}=10
                 ${StringMetrics.OS_VERSION}=1.0.0-SNAPSHOT
-                ${StringMetrics.IDES_INSTALLED}=invalid_version,AS,WC
+                ${StringListMetrics.IDES_INSTALLED}=invalid_version,AS,WC
                 ${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=true
                 ${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=true
  
@@ -64,7 +65,7 @@ class BuildFinishBuildServiceTest {
             """
                 ${BooleanMetrics.BUILD_SCAN_BUILD_REPORT}=true
                 ${StringMetrics.OS_VERSION}=2.0.0-SNAPSHOT
-                ${StringMetrics.IDES_INSTALLED}=IU
+                ${StringListMetrics.IDES_INSTALLED}=IU
                 ${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=false
                 ${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=false
                 BUILD FINISHED
@@ -87,7 +88,7 @@ class BuildFinishBuildServiceTest {
         val profileContent = fusProfileFile.readText()
         assertContains(profileContent, "${NumericalMetrics.COMPILATION_DURATION}=20", message = "Profile file should contain valid metrics")
         assertContains(profileContent, "${StringMetrics.OS_VERSION}=2.0.0-snapshot")
-        assertContains(profileContent, "${StringMetrics.IDES_INSTALLED}=AS;IU;WC;UNEXPECTED-VALUE")
+        assertContains(profileContent, "${StringListMetrics.IDES_INSTALLED}=AS;IU;UNEXPECTED-VALUE;WC")
         assertContains(profileContent, "${BooleanMetrics.ENABLED_COMPILER_REFERENCE_INDEX}=true")
         assertContains(profileContent, "${BooleanMetrics.KOTLIN_PROGRESSIVE_MODE}=false")
         assertTrue("Profile file should not contain metrics from another build") {

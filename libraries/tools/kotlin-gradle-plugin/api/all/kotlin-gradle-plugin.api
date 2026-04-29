@@ -2108,6 +2108,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/MetricContainer
 	public final fun addToConsumer (Lorg/jetbrains/kotlin/statistics/metrics/StatisticsValuesConsumer;)V
 	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/BooleanMetrics;Z)Ljava/lang/Boolean;
 	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/NumericalMetrics;J)Ljava/lang/Long;
+	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/StringListMetrics;Ljava/lang/String;)Ljava/util/List;
+	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/StringListMetrics;Ljava/util/List;)Ljava/util/List;
 	public final fun put (Lorg/jetbrains/kotlin/statistics/metrics/StringMetrics;Ljava/lang/String;)Ljava/lang/String;
 }
 

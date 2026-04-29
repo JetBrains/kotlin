@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.statistics
 
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
-import org.jetbrains.kotlin.statistics.metrics.ConcatMetricContainer
 import org.jetbrains.kotlin.statistics.metrics.NumberAnonymizationPolicy.RANDOM_10_PERCENT
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -61,12 +60,12 @@ class MetricPolicyTest {
     @Test
     fun versionStringValidation() {
         val separator = "0123"
-        val container = MetricsContainer(metricValuesSeparator = separator)
+        val container = MetricsContainer(metricConcatContainerValuesSeparator = separator)
         fun whenAdded(newValue: String, expected: String) {
-            container.report(StringMetrics.MPP_PLATFORMS, newValue)
-            val currentValue = container.getStringMetricPresentation(StringMetrics.MPP_PLATFORMS)!!
+            container.report(StringListMetrics.MPP_PLATFORMS, newValue)
+            val currentValue = container.getMetric(StringListMetrics.MPP_PLATFORMS)!!.toStringRepresentation()
             assertEquals(expected, currentValue)
-            val regex = StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp(separator)
+            val regex = StringListMetrics.MPP_PLATFORMS.anonymization.validationRegexp(separator)
             assertTrue(currentValue.matches(Regex(regex)), "'${currentValue}' should match '${regex}'")
         }
         whenAdded("js", "js")
