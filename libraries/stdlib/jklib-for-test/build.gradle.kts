@@ -19,7 +19,18 @@ val substrateStdlibCompilerDependencies by configurations.creating {
     isCanBeResolved = true
 }
 
+val klibCompileClasspath by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+    }
+}
+
 dependencies {
+    // 1. Dependencies to RUN the JKlib Compiler
     jklibCompilerClasspath(project(":compiler:cli-jklib"))
     jklibCompilerClasspath(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) {
         isTransitive = false
@@ -32,6 +43,12 @@ dependencies {
     // Used to read XML metadata files inside META-INF
     substrateStdlibCompilerDependencies(commonDependency("org.codehaus.woodstox:stax2-api"))
     substrateStdlibCompilerDependencies(commonDependency("com.fasterxml:aalto-xml"))
+
+    // 2. Dependencies to COMPILE the minimal stdlib KLIB
+    klibCompileClasspath(project(":kotlin-stdlib"))
+    klibCompileClasspath(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) {
+        isTransitive = false
+    }
 }
 
 val outputKlib = layout.buildDirectory.file("libs/kotlin-stdlib-jvm-ir.klib")
@@ -42,7 +59,15 @@ val copyMinimalSources by tasks.registering(Sync::class) {
 
     from("src/stubs") {
         include("kotlin/**")
-        include("kotlin/util/**")
+        into("src/common")
+    }
+
+    from(stdlibProjectDir.resolve("jvm-minimal-for-test/common-src")) {
+        include(
+            "EnumEntries.kt",
+            "Serializable.kt",
+            "minimalCollections.kt"
+        )
         into("src/common")
     }
 
@@ -55,7 +80,9 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/ArrayIntrinsics.kt",
             "kotlin/Arrays.kt",
             "kotlin/Boolean.kt",
+            "kotlin/Char.kt",
             "kotlin/CharSequence.kt",
+            "kotlin/Collections.kt",
             "kotlin/Comparable.kt",
             "kotlin/Enum.kt",
             "kotlin/Function.kt",
@@ -79,6 +106,11 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "kotlin/contextParameters/ContextOf.kt",
             "kotlin/contracts/ContractBuilder.kt",
             "kotlin/contracts/Effect.kt",
+            "kotlin/util/Standard.kt",
+            "kotlin/annotations/Annotations.kt",
+            "kotlin/collections/Arrays.kt",
+            "kotlin/concurrent/atomics/ExperimentalAtomicApi.kt",
+            "kotlin/annotations/ExperimentalStdlibApi.kt"
         )
         into("src/common")
     }
@@ -86,6 +118,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
     from(stdlibProjectDir.resolve("common/src")) {
         include(
             "kotlin/ExceptionsH.kt",
+            "kotlin/JvmAnnotationsH.kt"
         )
         into("src/common")
     }
@@ -106,11 +139,12 @@ val copyMinimalSources by tasks.registering(Sync::class) {
             "src/kotlin/collections/TypeAliases.kt",
             "src/kotlin/enums/EnumEntriesJVM.kt",
             "src/kotlin/io/Serializable.kt",
-            "builtins/*.kt"
-        )
-        exclude(
-            "builtins/Char.kt",
-            "builtins/Collections.kt"
+            "builtins/*.kt",
+            "src/kotlin/jvm/Annotations.kt",
+            "src/kotlin/reflect/KDeclarationContainer.kt",
+            "runtime/kotlin/jvm/internal/Lambda.kt",
+            "runtime/kotlin/jvm/internal/FunctionBase.kt",
+            "runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
         )
         into("src/jvm")
     }
@@ -118,6 +152,7 @@ val copyMinimalSources by tasks.registering(Sync::class) {
     from(stdlibProjectDir.resolve("jvm-minimal-for-test/jvm-src")) {
         include(
             "minimalAtomics.kt",
+            "minimalCollections.kt",
             "minimalThrowables.kt",
         )
         into("src/jvm")
@@ -149,11 +184,9 @@ fun JavaExec.configureJklibCompilation(
         val allFiles = sourceTree.files
 
         val commonPathSegment = "${File.separator}common${File.separator}"
-        val commonFiles = allFiles.filter { it.path.contains(commonPathSegment) }
-        val jvmFiles = allFiles.filter { !it.path.contains(commonPathSegment) }
-
-        val jvmSourceFiles = jvmFiles.map { it.absolutePath }
-        val commonSourceFiles = commonFiles.map { it.absolutePath }
+        val (commonSourceFiles, jvmSourceFiles) = allFiles
+            .map { it.absolutePath }
+            .partition { it.contains(commonPathSegment) }
 
         logger.lifecycle("Compiling ${jvmSourceFiles.size} JVM files and ${commonSourceFiles.size} Common files, total ${allFiles.size}")
         logger.lifecycle("Running K2JKlibCompiler with Java version: ${System.getProperty("java.version")}")
@@ -176,44 +209,11 @@ fun JavaExec.configureJklibCompilation(
             "-Xcommon-sources=${(commonSourceFiles).joinToString(",")}",
         )
 
-
-        val fullClasspath = klibCompileClasspath.files
-            .filter { it.extension == "jar" && !it.name.contains("sources") }
-            .map { it.absolutePath }
-            .joinToString(File.pathSeparator)
-
+        val fullClasspath = klibCompileClasspath.asPath
+        
         args("-classpath", fullClasspath)
         args(jvmSourceFiles)
         args(commonSourceFiles)
-    }
-}
-
-val fullStdlibJar by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-    }
-}
-
-val klibCompileClasspath by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-    }
-}
-
-dependencies {
-    fullStdlibJar(project(":kotlin-stdlib"))
-
-    klibCompileClasspath(project(":kotlin-stdlib"))
-    klibCompileClasspath(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) {
-        isTransitive = false
     }
 }
 
