@@ -66,7 +66,7 @@ fun CompilerConfiguration.reportException(e: CompilationException) {
 }
 
 fun CompilerConfiguration.reportException(e: Throwable) {
-    reportException(OutputMessageUtil.renderException(e), null)
+    reportException(OutputMessageUtil.renderException(e), location = null)
 }
 
 @OptIn(MessageCollectorAccess::class)
