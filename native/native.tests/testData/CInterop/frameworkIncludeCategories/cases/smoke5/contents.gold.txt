@@ -13,8 +13,6 @@ library {
     @kotlinx/cinterop/ExternalObjCClass
     public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
 
-      protected /* secondary */ constructor()
-
       // companion object: Companion
 
       // nested class: Companion

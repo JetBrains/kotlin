@@ -518,21 +518,26 @@ private class InteropTransformerPart1(
 
                 val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
 
-                val initCall = builder.genLoweredObjCMethodCall(
-                        initMethodInfo,
-                        superQualifier = delegatingCallConstructingClass.symbol,
-                        receiver = builder.irGet(constructedClass.thisReceiver!!),
-                        arguments = expression.arguments,
-                        call = expression,
-                        method = initMethod
-                )
-
-                val superConstructor = delegatingCallConstructingClass
-                        .constructors.single { it.parameters.isEmpty() }
-
                 return builder.irBlock(expression) {
+                    val initArguments = expression.arguments.map { arg ->
+                        arg?.let { irTemporary(it) }
+                    }
+                    val initCall = genLoweredObjCMethodCall(
+                            initMethodInfo,
+                            superQualifier = delegatingCallConstructingClass.symbol,
+                            receiver = irGet(constructedClass.thisReceiver!!),
+                            arguments = initArguments.map { arg ->
+                                arg?.let { irGet(it) }
+                            },
+                            call = expression,
+                            method = initMethod
+                    )
                     // Required for the IR to be valid, will be ignored in codegen:
-                    +irDelegatingConstructorCall(superConstructor)
+                    +irDelegatingConstructorCall(constructor).apply {
+                        initArguments.forEachIndexed { index, arg ->
+                            arguments[index] = arg?.let { irGet(it) }
+                        }
+                    }
                     +irCall(symbols.interopObjCObjectSuperInitCheck).apply {
                         arguments[0] = irGet(constructedClass.thisReceiver!!)
                         arguments[1] = initCall

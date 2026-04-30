@@ -13,8 +13,6 @@ library {
     @kotlinx/cinterop/ExternalObjCClass
     public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
 
-      protected /* secondary */ constructor()
-
       @kotlinx/cinterop/ObjCMethod(selector = "wasInMyClass", encoding = "v16@0:8", isStret = false)
       public open external fun wasInMyClass(): kotlin/Unit
 

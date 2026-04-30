@@ -538,8 +538,8 @@ internal abstract class ObjCContainerStubBuilder(
     }
 
     private fun buildBody(): Pair<List<PropertyStub>, List<FunctionalStub>> {
-        val defaultConstructor =  if (container is ObjCClass && methodToStub.values.none { it.isDefaultConstructor() }) {
-            // Always generate default constructor.
+        val defaultConstructor = if (container is ObjCClass && isMeta && methodToStub.values.none { it.isDefaultConstructor() }) {
+            // Always generate a default constructor for meta classes.
             // If it is not produced for an init method, then include it manually:
             ConstructorStub(
                     isPrimary = false,

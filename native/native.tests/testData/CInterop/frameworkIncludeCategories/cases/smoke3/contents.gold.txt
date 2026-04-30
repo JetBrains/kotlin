@@ -11,8 +11,6 @@ library {
     @kotlinx/cinterop/ExternalObjCClass
     public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
 
-      protected /* secondary */ constructor()
-
       @kotlinx/cinterop/ObjCConstructor(designated = true, initSelector = "initWithFloat:")
       public /* secondary */ constructor(float: kotlin/Float)
 

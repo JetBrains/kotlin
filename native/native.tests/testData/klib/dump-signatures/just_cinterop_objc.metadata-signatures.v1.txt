@@ -1,4 +1,3 @@
-just_cinterop_c/Bar.<init>|-5645683436151566731[100]
 just_cinterop_c/Bar.Companion|null[100]
 just_cinterop_c/Bar.privateProperty.<get-privateProperty>|-8267707224930489207[100]
 just_cinterop_c/Bar.privateProperty.<set-privateProperty>|4621602037959244694[100]

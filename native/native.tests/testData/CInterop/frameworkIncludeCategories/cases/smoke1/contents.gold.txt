@@ -14,8 +14,6 @@ library {
     @kotlinx/cinterop/ExternalObjCClass
     public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
 
-      protected /* secondary */ constructor()
-
       @kotlinx/cinterop/ObjCMethod(selector = "categoryInstanceMethod", encoding = "v16@0:8", isStret = false)
       public open external fun categoryInstanceMethod(): kotlin/Unit
 
@@ -52,8 +50,6 @@ library {
 
     @kotlinx/cinterop/ExternalObjCClass
     public open class dependency/SkipClass : kotlinx/cinterop/ObjCObjectBase {
-
-      protected /* secondary */ constructor()
 
       @kotlinx/cinterop/ObjCMethod(selector = "instanceMethod", encoding = "v16@0:8", isStret = false)
       public open external fun instanceMethod(): kotlin/Unit

@@ -11,8 +11,6 @@ library {
     @kotlinx/cinterop/ExternalObjCClass
     public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
 
-      protected /* secondary */ constructor()
-
       @kotlinx/cinterop/ObjCConstructor(designated = true, initSelector = "initWithAnother:")
       public /* secondary */ constructor(another: dependency/MyClass?)
 

@@ -1,4 +1,3 @@
-just_cinterop_c/Bar.<init>|<init>(){}[100]
 just_cinterop_c/Bar.Companion|null[100]
 just_cinterop_c/Bar.privateProperty.<get-privateProperty>|objc:privateProperty#Accessor[100]
 just_cinterop_c/Bar.privateProperty.<set-privateProperty>|objc:setPrivateProperty:#Accessor[100]

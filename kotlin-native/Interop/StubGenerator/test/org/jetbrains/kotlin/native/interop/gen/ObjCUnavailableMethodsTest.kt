@@ -98,10 +98,26 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
 
         val unavailableInitSubclassStub = classStub(unavailableInitSubclass)
         assertEquals(emptyList(), unavailableInitSubclassStub.objCConstructorSelectors())
+        assertEquals(emptyList(), unavailableInitSubclassStub.constructors)
+    }
+
+    @Test
+    fun `objc meta class has synthetic default constructor`() {
+        val clazz = TestObjCClass("MyClass")
+
         assertEquals(
                 listOf(StubOrigin.Synthetic.DefaultConstructor),
-                unavailableInitSubclassStub.constructors.map { it.origin }
+                metaClassStub(clazz).constructors.map { it.origin }
         )
+    }
+
+    @Test
+    fun `objc meta class does not duplicate class init constructor`() {
+        val clazz = TestObjCClass("MyClass", methods = listOf(objCMethod("init", isClass = true, isInit = true)))
+        val metaClass = metaClassStub(clazz)
+
+        assertEquals(1, metaClass.constructors.size)
+        assertEquals(listOf("init"), metaClass.objCConstructorSelectors())
     }
 
     private fun indexObjCClass(headerContents: String, className: String = "Foo"): ObjCClass =
@@ -111,6 +127,11 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
             ObjCClassStubBuilder(TestStubsBuildingContext(), clazz).build()
                     .filterIsInstance<ClassStub.Simple>()
                     .single { it.classifier.topLevelName == clazz.name }
+
+    private fun metaClassStub(clazz: ObjCClass): ClassStub.Simple =
+            ObjCClassStubBuilder(TestStubsBuildingContext(), clazz).build()
+                    .filterIsInstance<ClassStub.Simple>()
+                    .single { it.classifier.topLevelName == "${clazz.name}Meta" }
 
     private fun ClassStub.Simple.objCConstructorSelectors(): List<String> =
             constructors.mapNotNull { (it.origin as? StubOrigin.ObjCMethod)?.method?.selector }
