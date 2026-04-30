@@ -1,0 +1,2 @@
+includedClasses: foo.api.**, foo.PublicClass
+includedAnnotatedWith: foo.PublicClass, foo.PublicField, foo.PublicProperty

@@ -1,0 +1,10 @@
+abi_version=2.3.0
+builtins_platform=NATIVE
+compiler_version=2.3.20
+depends=stdlib
+ir_signature_versions=1,2
+language_features=+ContextParameters +MultiPlatformProjects
+metadata_version=2.3.0
+native_targets=linux_x64
+short_name=testproject
+unique_name=testproject

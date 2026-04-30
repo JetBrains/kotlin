@@ -1,0 +1,1 @@
+excludedClasses: com.company.**

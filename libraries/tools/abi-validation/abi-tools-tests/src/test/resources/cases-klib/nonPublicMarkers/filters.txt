@@ -1,0 +1,1 @@
+excludedAnnotatedWith: annotations.HiddenClass, annotations.HiddenCtor, annotations.HiddenProperty, annotations.HiddenGetter, annotations.HiddenSetter, annotations.HiddenFunction

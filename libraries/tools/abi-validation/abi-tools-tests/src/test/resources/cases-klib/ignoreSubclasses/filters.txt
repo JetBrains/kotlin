@@ -1,0 +1,1 @@
+excludedClasses: subclasses.A.B

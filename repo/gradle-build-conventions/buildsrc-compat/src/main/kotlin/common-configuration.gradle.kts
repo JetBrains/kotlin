@@ -372,8 +372,6 @@ fun Project.configureTests() {
             ":kotlinx-metadata-klib",
             ":libraries:tools:abi-validation:abi-tools",
             ":libraries:tools:abi-validation:abi-tools-api",
-            ":libraries:tools:abi-validation:abi-tools-tests",
-            ":libraries:tools:abi-validation:kgp-integration-tests",
             ":libraries:tools:analysis-api-based-klib-reader",
             ":native:kotlin-klib-commonizer-api",
             ":native:kotlin-native-utils",

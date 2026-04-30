@@ -1,0 +1,1 @@
+excludedAnnotatedWith: cases.companions.PrivateApi

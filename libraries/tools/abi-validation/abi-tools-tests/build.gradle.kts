@@ -1,88 +1,67 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.kotlin.dsl.project
 
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
-// source set for test cases
-val compilingSourceSet = sourceSets.create("compiling") {
-    java.srcDir("src/compiling/kotlin")
+val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
+val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
+    extendsFrom(buildToolsApiImpl.get())
 }
 
-// unrunnable tests - shared code for different ABI tools implementations
-val sharedTestsSourceSet = sourceSets.create("sharedTests")
-
-// source sets for runnable tests
-val testOriginalSourceSet = sourceSets.create("testOriginal") {
-    kotlin.srcDirs(sharedTestsSourceSet.kotlin.srcDirs)
-}
-val testEmbeddableSourceSet = sourceSets.create("testEmbeddable") {
-    kotlin.srcDirs(sharedTestsSourceSet.kotlin.srcDirs)
+val abiToolsImpl = configurations.dependencyScope("abiToolsImpl")
+val abiToolsImplResolvable = configurations.resolvable("abiToolsImplResolvable") {
+    extendsFrom(abiToolsImpl.get())
 }
 
-
-// Inherit runtime configuration from the conventional `test` to get common runtime-only deps
-// we copy dependencies from the `test` source set because some of them can be added in common configurations
-configurations.getByName("sharedTestsRuntimeOnly").extendsFrom(configurations.getByName("testRuntimeOnly"))
-configurations.getByName("sharedTestsImplementation").extendsFrom(configurations.getByName("testImplementation"))
-
-configurations.getByName("testOriginalRuntimeOnly").extendsFrom(configurations.getByName("testRuntimeOnly"))
-configurations.getByName("testOriginalImplementation").extendsFrom(configurations.getByName("testImplementation"))
-
-configurations.getByName("testEmbeddableRuntimeOnly").extendsFrom(configurations.getByName("testRuntimeOnly"))
-configurations.getByName("testEmbeddableImplementation").extendsFrom(configurations.getByName("testImplementation"))
-
+val ABI_TOOLS_EMBEDDABLE_PROPERTY = "abi.tools.embeddable.classpath"
+val BUILD_TOOLS_IMPL_PROPERTY = "build.tools.impl.classpath"
 
 dependencies {
     // common dependencies for all tests
     testImplementation(kotlinStdlib())
     testImplementation(kotlinTest("junit"))
 
-    "compilingImplementation"(kotlinStdlib())
+    testImplementation(project(":libraries:tools:abi-validation:abi-tools-api"))
+    testImplementation(project(":libraries:tools:abi-validation:abi-tools"))
+    testImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
 
-    "sharedTestsCompileOnly"(project(":libraries:tools:abi-validation:abi-tools-api"))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.platform.launcher)
 
-    "testOriginalImplementation"(project(":libraries:tools:abi-validation:abi-tools"))
-    "testEmbeddableImplementation"(project(":libraries:tools:abi-validation:abi-tools-embeddable"))
-}
-
-tasks.named<KotlinCompile>("compileCompilingKotlin") {
-    compilerOptions.freeCompilerArgs.add("-jvm-default=enable")
-}
-
-// don't use `test` task
-tasks.test {
-    enabled = false
+    buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    abiToolsImpl(project(":libraries:tools:abi-validation:abi-tools"))
 }
 
 projectTests {
-    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
-        group = "verification"
-        testClassesDirs = testOriginalSourceSet.output.classesDirs
-        classpath = testOriginalSourceSet.runtimeClasspath
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        val initDumps = project.providers.gradleProperty("init.dumps").orNull?.toBoolean() ?: false
+        val overwriteDumps = project.providers.gradleProperty("overwrite.output").orNull?.toBoolean() ?: false
 
-        useJUnit()
-        systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
-        systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
+        useJUnitPlatform()
+        systemProperty("overwrite.output", overwriteDumps)
+        systemProperty("init.dumps", initDumps)
 
-        dependsOn(compilingSourceSet.output)
+
+        testInputsCheck {
+            with(extraPermissions) {
+                add("permission java.io.FilePermission \"<no_path>/lib\", \"read\";")
+                add("permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";")
+                add("permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";")
+                add("permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";")
+                add("permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";")
+
+                if (initDumps || overwriteDumps) {
+                    add("permission java.io.FilePermission \"src/test/resources/cases/-\", \"read,write\";")
+                    add("permission java.io.FilePermission \"src/test/resources/cases-klib/-\", \"read,write\";")
+                }
+            }
+
+            addClasspathProperty(buildToolsApiImplResolvable.get(), BUILD_TOOLS_IMPL_PROPERTY)
+            addClasspathProperty(abiToolsImplResolvable.get(), ABI_TOOLS_EMBEDDABLE_PROPERTY)
+        }
     }
-
-    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
-        group = "verification"
-        testClassesDirs = testEmbeddableSourceSet.output.classesDirs
-        classpath = testEmbeddableSourceSet.runtimeClasspath
-
-        useJUnit()
-        systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
-        systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
-
-        dependsOn(compilingSourceSet.output)
-    }
-}
-
-tasks.check {
-    dependsOn("testOriginal")
-    dependsOn("testEmbeddable")
 }

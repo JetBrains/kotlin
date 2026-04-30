@@ -1,0 +1,1 @@
+excludedClasses: examples.classes.a, examples.classes.d, examples.classes.testFun

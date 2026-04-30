@@ -1,0 +1,1 @@
+excludedAnnotatedWith: cases.marker.HiddenField, cases.marker.HiddenProperty, cases.marker.HiddenMethod

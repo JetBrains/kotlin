@@ -1,5 +1,0 @@
-public final class com/company/subsub2/Subsub2Class {
-	public fun <init> ()V
-	public final fun getProp ()I
-}
-
