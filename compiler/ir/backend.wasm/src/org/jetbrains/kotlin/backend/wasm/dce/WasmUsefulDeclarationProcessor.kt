@@ -102,14 +102,6 @@ internal class WasmUsefulDeclarationProcessor(
                 }!!.owner.enqueue(from, "suspend invoke")
                 true
             }
-            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeWithIntrinsic,
-            context.wasmSymbols.coroutinesStackSwitchingIntrinsics?.resumeThrowIntrinsic -> {
-                val intrinsics = context.wasmSymbols.coroutinesStackSwitchingIntrinsics
-                val buildResumeIntrinsicSuspendResult =
-                    intrinsics.buildResumeIntrinsicSuspendResult.owner
-                buildResumeIntrinsicSuspendResult.enqueue(from, "intrinsic ${buildResumeIntrinsicSuspendResult.name}")
-                true
-            }
             context.wasmSymbols.boxIntrinsic -> {
                 val type = call.typeArguments[0]!!
                 if (type == context.irBuiltIns.booleanType) {

@@ -11,7 +11,6 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.WasmContinuation
 import kotlin.coroutines.WasmContinuationBox
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.resume
 import kotlin.internal.DoNotInlineOnFirstStage
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.reftypes.contref1
@@ -32,15 +31,6 @@ internal fun resumeWithIntrinsic(): Any? {
 @ExcludedFromCodegen
 internal fun resumeThrowIntrinsic(): Any? {
     implementedAsIntrinsic
-}
-
-@UsedFromCompilerGeneratedCode
-internal fun buildResumeIntrinsicSuspendResult(
-    continuation: Any,
-    remainingFunction: contref1,
-): Any {
-    wasm_ref_cast_null<WasmContinuationBox>(continuation).wasmContinuation = remainingFunction
-    return COROUTINE_SUSPENDED
 }
 
 @ExcludedFromCodegen

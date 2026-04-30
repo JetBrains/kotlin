@@ -985,6 +985,25 @@ class BodyGenerator(
         body.buildStructGet(typeCodegenContext.referenceVTableGcType(irBuiltIns.anyClass), VTABLE_SPECIAL_ITABLE_FIELD_ID, location)
     }
 
+    private fun generateResumeIntrinsicsEpilogue(wasmContinuation: WasmLocal, location: SourceLocation) {
+        body.buildSetLocal(wasmContinuation, location)
+
+        // cast to WasmContinuationBox
+        val wasmContBoxTypeSymbol =
+            wasmSymbols.coroutinesStackSwitchingIntrinsics.suspendIntrinsic
+                .owner.parameters[0].type.getRuntimeClass(irBuiltIns).symbol
+        val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
+        val wasmContBoxHeapType = typeCodegenContext.referenceHeapType(wasmContBoxTypeSymbol)
+        body.buildRefCastStatic(wasmContBoxHeapType, location)
+        body.buildGetLocal(wasmContinuation, location)
+
+        // store contref in WasmContinuationBox
+        body.buildStructSet(wasmContBoxGcType, 4, location)
+
+        // return COROUTINE_SUSPENDED
+        body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutineSuspendedGetter), location)
+    }
+
     // Return true if generated.
     // Assumes call arguments are already on the stack
     private fun tryToGenerateIntrinsicCall(
@@ -1240,7 +1259,7 @@ class BodyGenerator(
                     body.buildResumeThrow(zeroArgContType, exceptionTagId, contHandle, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult), location)
+                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
 
             wasmSymbols.coroutinesStackSwitchingIntrinsics?.nullableContrefIntrinsic -> {
@@ -1262,7 +1281,7 @@ class BodyGenerator(
                     body.buildResume(zeroArgContType, contHandle, location)
                     body.buildInstr(WasmOp.RETURN, location)
                 }
-                body.buildCall(declarationCodegenContext.referenceFunction(wasmSymbols.coroutinesStackSwitchingIntrinsics.buildResumeIntrinsicSuspendResult), location)
+                generateResumeIntrinsicsEpilogue(wasmContinuation, location)
             }
 
             in wasmSymbols.coroutinesStackSwitchingIntrinsics?.suspendFunctionToContref ?: emptyList() -> {
