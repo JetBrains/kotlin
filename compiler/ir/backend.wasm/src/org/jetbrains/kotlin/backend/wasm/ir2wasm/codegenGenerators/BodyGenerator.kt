@@ -990,7 +990,7 @@ class BodyGenerator(
 
         // cast to WasmContinuationBox
         val wasmContBoxTypeSymbol =
-            wasmSymbols.coroutinesStackSwitchingIntrinsics.suspendIntrinsic
+            wasmSymbols.coroutinesStackSwitchingIntrinsics!!.suspendIntrinsic
                 .owner.parameters[0].type.getRuntimeClass(irBuiltIns).symbol
         val wasmContBoxGcType = typeCodegenContext.referenceGcType(wasmContBoxTypeSymbol)
         val wasmContBoxHeapType = typeCodegenContext.referenceHeapType(wasmContBoxTypeSymbol)
