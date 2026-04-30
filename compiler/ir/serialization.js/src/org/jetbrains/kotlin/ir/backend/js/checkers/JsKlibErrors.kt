@@ -29,6 +29,8 @@ object JsKlibErrors : KtDiagnosticsContainer() {
         LanguageFeature.ForbidCaptureInlinableLambdasInJsCode
     )
 
+    val JS_SOURCE_MAP_WARNING by warningWithoutSource()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJsKlibErrorMessages
     }
@@ -90,5 +92,6 @@ private object KtDefaultJsKlibErrorMessages : BaseDiagnosticRendererFactory() {
             "Illegal capturing of inline parameter ''{0}''. Add ''noinline'' modifier to the parameter declaration",
             IrDiagnosticRenderers.DECLARATION_NAME
         )
+        map.put(JsKlibErrors.JS_SOURCE_MAP_WARNING, "{0}")
     }
 }

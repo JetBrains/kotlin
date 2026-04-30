@@ -36,6 +36,9 @@ fun ErrorReportingContext.reportCompilationWarning(message: String) {
 fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =
     createCompilerMessageLocation(containingFile, this.startOffset, this.endOffset)
 
+fun IrFile.getCompilerMessageLocation(element: IrElement): CompilerMessageLocation? =
+    createCompilerMessageLocation(this, element.startOffset, element.endOffset)
+
 fun IrBuilderWithScope.getCompilerMessageLocation(): CompilerMessageLocation? {
     val declaration = this.scope.scopeOwnerSymbol.owner as? IrDeclaration ?: return null
     val file = declaration.getPackageFragment() as? IrFile ?: return null
