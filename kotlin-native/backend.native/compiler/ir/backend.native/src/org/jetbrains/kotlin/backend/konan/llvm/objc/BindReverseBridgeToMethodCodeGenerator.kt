@@ -36,9 +36,9 @@ internal fun CodeGenerator.collectReverseBridgeAdapters(file: IrFile): Map<IrCla
 }
 
 private fun CodeGenerator.resolveReverseBridgeAdapter(
-    irClass: IrClass,
-    layoutBuilder: ClassLayoutBuilder,
-    bridge: BindReverseBridgeToMethod,
+        irClass: IrClass,
+        layoutBuilder: ClassLayoutBuilder,
+        bridge: BindReverseBridgeToMethod,
 ): KotlinToObjCMethodAdapter? {
     val targetFunction = irClass.declarations
             .filterIsInstance<IrSimpleFunction>()
@@ -59,9 +59,9 @@ private fun CodeGenerator.resolveReverseBridgeAdapter(
     }
 
     return KotlinToObjCMethodAdapter(
-        selector = bridge.targetMethod,
-        itablePlace = itablePlace,
-        vtableIndex = vtableIndex,
-        kotlinImpl = llvmFunction(bridge.bridgeFunction).toConstPointer(),
+            selector = bridge.targetMethod,
+            itablePlace = itablePlace,
+            vtableIndex = vtableIndex,
+            kotlinImpl = llvmFunction(bridge.bridgeFunction).toConstPointer(),
     )
 }

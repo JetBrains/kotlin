@@ -944,7 +944,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
   // bound-public wrapper class rather than falling through to an anonymous existential. Without
   // this, __createProtocolWrapper returns an existential whose default protocol implementation
   // routes the method call back through the forward bridge — which lands on the Kotlin-side
-  // interface itable, which now holds the reverse trampoline, infinite-looping into SIGBUS.
+  // interface itable, which now holds the reverse trampoline, infinite-recurring into stack overflow.
   // Setting the adapter makes initWithExternalRCRefUnsafe use the AsBestFittingWrapper path,
   // which substitutes in the already-associated Swift subclass instance that holds the override.
   if (objCExport(result).typeAdapter == nullptr) {

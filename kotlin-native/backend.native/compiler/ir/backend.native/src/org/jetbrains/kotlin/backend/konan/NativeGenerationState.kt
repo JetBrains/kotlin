@@ -94,10 +94,6 @@ internal class NativeGenerationState(
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
 
-    // Adapters created via @BindClassToObjCName annotations. Populated per-file by
-    // processBindClassToObjCNameAnnotations, consumed at the end of ObjC export generation
-    // so they end up in Kotlin_ObjCExport_sortedClassAdapters / sortedProtocolAdapters.
-    // Keyed by ObjC name so collisions across files surface deterministically.
     val bindClassToObjCNameClassAdapters = mutableMapOf<String, ConstPointer>()
     val bindClassToObjCNameInterfaceAdapters = mutableMapOf<String, ConstPointer>()
 
