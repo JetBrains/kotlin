@@ -239,6 +239,11 @@ class LazyScriptDescriptor(
             }
         }
 
+        // TODO: we may want to treat getScriptingClass call here the same way as in scriptProvidedProperties
+        scriptCompilationConfiguration()[ScriptCompilationConfiguration.implicitReceivers]?.mapNotNullTo(res) { receiver ->
+            findTypeDescriptor(getScriptingClass(receiver), Errors.MISSING_SCRIPT_RECEIVER_CLASS)
+        }
+
         res
     }
 
