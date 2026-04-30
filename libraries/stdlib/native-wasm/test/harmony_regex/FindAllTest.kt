@@ -67,4 +67,15 @@ class FindAllTest {
         assertEquals(1, result.count())
         assertEquals("0 => dx", result[0])
     }
+
+    @Test fun testGroupCapturingInLookarounds() {
+        "(?<=a(b)?)cd".toRegex().let { regex ->
+            assertEquals("0 => cd; 1 => b", regex.allGroups("abcd")[0])
+            assertEquals("0 => cd; 1 => null", regex.allGroups("abacd")[0])
+        }
+        "ab(?=(cd)?)(?:cd)?e".toRegex().let { regex ->
+            assertEquals("0 => abcde; 1 => cd", regex.allGroups("abcde")[0])
+            assertEquals("0 => abe; 1 => null", regex.allGroups("abcdabe")[0])
+        }
+    }
 }
