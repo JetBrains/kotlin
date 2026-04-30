@@ -184,6 +184,8 @@ fun JavaExec.configureJklibCompilation(
             "-module-name", "kotlin-stdlib",
             "-Xstdlib-compilation",
             "-d", outputPath,
+
+
             "-Xmulti-platform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-opt-in=kotlin.ExperimentalMultiplatform",

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.addSourcesForDependsOnClosure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import java.io.File
 
 class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -24,6 +25,9 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
         if (stdlibKlib != null) {
             configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(stdlibKlib))
         }
+
+
+
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("klib-output")
         val outputFile = File(tempDir, "${module.name}.klib")

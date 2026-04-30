@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.standardLibrariesPathProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
@@ -48,15 +49,19 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
             testServices.assertions.fail { "WITH_REFLECT is not supported in JKlib tests" }
         }
 
-        configuration.configureJdkClasspathRoots()
-
         val javaFiles = module.files.filter { it.name.endsWith(".java") }
         if (javaFiles.isEmpty()) return
 
+        configuration.configureJdkClasspathRoots()
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
 
         val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
-        val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
+        val stdlibJar = testServices.standardLibrariesPathProvider.runtimeJarForTests()
+        val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath } + stdlibJar.absolutePath
+
+
+
+
 
         try {
             val compiledJar = MockLibraryUtil.compileJavaFilesLibraryToJar(

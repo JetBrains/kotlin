@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // FILE: samConversionInGenericConstructorCall.kt
 fun test3(
     f1: (String) -> String,
