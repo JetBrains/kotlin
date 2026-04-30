@@ -336,7 +336,6 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     override fun equals(other: Any?): Boolean {
         if (other !is CustomBitSet) return false
-        if (size != other.size) return false
         if (lazy != null || other.lazy != null) {
             if (cardinality() != other.cardinality()) return false
             forEachBit {
@@ -344,11 +343,19 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             return true
         }
-
-        for (i in 0 until size) {
+        // Dense-dense: compare logical content. `size` is treated as an upper bound;
+        // stale-high words past the lower size are required to be zero, so the result
+        // is correct even if one side has stale `size`.
+        val minSize = minOf(size, other.size)
+        for (i in 0 until minSize) {
             if (data[i] != other.data[i]) return false
         }
-
+        for (i in minSize until size) {
+            if (data[i] != 0L) return false
+        }
+        for (i in minSize until other.size) {
+            if (other.data[i] != 0L) return false
+        }
         return true
     }
 
