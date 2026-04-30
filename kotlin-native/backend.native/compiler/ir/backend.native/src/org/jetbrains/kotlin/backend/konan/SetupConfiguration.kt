@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.konan.config.konanPrintBitcode
 import org.jetbrains.kotlin.konan.config.konanPrintFiles
 import org.jetbrains.kotlin.konan.config.konanPrintIr
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
-import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanRefinesModules
 import org.jetbrains.kotlin.konan.config.konanShortModuleName
 import org.jetbrains.kotlin.konan.config.konanTarget
@@ -143,8 +142,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     konanPrintIr = arguments.printIr
     konanPrintBitcode = arguments.printBitCode
     konanPrintFiles = arguments.printFiles
-
-    konanPurgeUserLibs = arguments.purgeUserLibs
 
     arguments.writeDependenciesOfProducedKlibTo?.let { konanWriteDependenciesOfProducedKlibTo = it }
 

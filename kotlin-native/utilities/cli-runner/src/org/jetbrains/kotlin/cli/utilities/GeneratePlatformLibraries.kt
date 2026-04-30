@@ -268,7 +268,7 @@ private fun generateLibrary(
                 "-target", target.visibleName,
                 "-def", defFile.absolutePath,
                 "-compiler-option", "-fmodules-cache-path=${tmpDirectory.child("clangModulesCache").absolutePath}",
-                "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
+                "-no-default-libs", "-no-endorsed-libs", "-nopack",
                 "-Xdisable-experimental-annotation",
                 *cinteropOptions.additionalArguments.toTypedArray(),
                 "-$SHORT_MODULE_NAME", def.shortLibraryName,

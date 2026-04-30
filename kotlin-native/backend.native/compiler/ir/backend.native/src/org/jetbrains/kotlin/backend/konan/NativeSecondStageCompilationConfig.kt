@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.konan.config.konanDataDir
 import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanManifestAddend
-import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.config.llvmLtoPasses
 import org.jetbrains.kotlin.konan.config.llvmModulePasses
@@ -436,7 +435,7 @@ class NativeSecondStageCompilationConfig(
             // Later upon the subsequent `getFullList()` call, some of the implicit dependencies will be added. But only if they
             // are mentioned in `depends=` manifest property in root libraries. Which means only a small really required subset
             // of them will be added.
-            it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs
+            it.library.isExplicitlySpecifiedByUserInCLIArgument
         }.getFullList()
     }
 
@@ -703,9 +702,6 @@ class NativeSecondStageCompilationConfig(
 
     val languageVersionSettings: LanguageVersionSettings
         get() = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
-
-    val purgeUserLibs: Boolean
-        get() = configuration.konanPurgeUserLibs
 
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 
 internal fun NativeFirstStagePhaseContext.firSerializerBase(
@@ -27,7 +26,7 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
 ): SerializerOutput {
     val usedLibraries = fir2IrOutput?.let {
         config.loadedKlibs.all.filter { library ->
-            if (library.isExplicitlySpecifiedByUserInCLIArgument && !configuration.konanPurgeUserLibs) {
+            if (library.isExplicitlySpecifiedByUserInCLIArgument) {
                 // This is the dependency explicitly specified by the user in one of the compiler's CLI arguments: -library, -Xinclude.
                 //
                 // We assume such a library as "used" even if we cannot immediately prove there are declarations belonging to it

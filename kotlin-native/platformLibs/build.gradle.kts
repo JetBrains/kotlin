@@ -103,7 +103,6 @@ enabledTargets(platformManager).forEach { target ->
             }.toTypedArray()
 
             this.extraOpts.addAll(
-                    "-Xpurge-user-libs",
                     "-Xshort-module-name", df.name,
                     "-Xdisable-experimental-annotation",
                     "-no-default-libs",

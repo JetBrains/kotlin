@@ -16106,7 +16106,7 @@
                                         "shortName": null,
                                         "deprecatedName": "-purge_user_libs",
                                         "description": {
-                                            "current": "Don't link unused libraries even if explicitly specified.",
+                                            "current": "Don't link unused libraries even if explicitly specified.\nThis option is deprecated and will be removed in one of the future releases.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
@@ -16129,7 +16129,7 @@
                                         "releaseVersionsMetadata": {
                                             "introducedVersion": "1.5.20",
                                             "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
+                                            "deprecatedVersion": "2.4.20",
                                             "removedVersion": null
                                         },
                                         "argumentType": {

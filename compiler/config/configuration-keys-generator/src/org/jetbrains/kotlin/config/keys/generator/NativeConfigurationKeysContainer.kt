@@ -58,7 +58,6 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val KONAN_PRINT_IR by key<Boolean>()
     val KONAN_PRINT_FILES by key<Boolean>()
     val KONAN_PRODUCED_ARTIFACT_KIND by key<CompilerOutputKind>()
-    val KONAN_PURGE_USER_LIBS by key<Boolean>()
     val RUNTIME_FILE by key<String>()
     val KONAN_INCLUDED_LIBRARIES by key<List<String>>("Klibs processed in the same manner as source files.")
     val KONAN_SHORT_MODULE_NAME by key<String>("Short module name for IDE and export.")

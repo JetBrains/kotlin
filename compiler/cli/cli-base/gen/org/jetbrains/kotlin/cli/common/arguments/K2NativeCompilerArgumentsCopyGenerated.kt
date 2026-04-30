@@ -81,6 +81,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.printIr = from.printIr
     to.produce = from.produce
     to.propertyLazyInitialization = from.propertyLazyInitialization
+    @Suppress("DEPRECATION")
     to.purgeUserLibs = from.purgeUserLibs
     to.refinesPaths = from.refinesPaths.copyOf()
     to.runtimeFile = from.runtimeFile

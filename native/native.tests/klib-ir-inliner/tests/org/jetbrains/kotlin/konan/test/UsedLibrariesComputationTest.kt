@@ -68,6 +68,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         }.compileToKlibsViaCli(extraCliArgs = listOf("-l", additionalUnusedModulePath, "-Xpurge-user-libs")) { _, successKlib ->
             successKlib.assertDependencyNames(
                 /* implicit unavoidable dependency */ "stdlib",
+                /* because '-Xpurge-user-libs' has no effect anymore */ "additional",
             )
         }
 

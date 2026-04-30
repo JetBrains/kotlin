@@ -665,11 +665,16 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xpurge-user-libs"
         deprecatedName = "-purge_user_libs"
-        description = "Don't link unused libraries even if explicitly specified.".asReleaseDependent()
+        description = "Don't link unused libraries even if explicitly specified.\nThis option is deprecated and will be removed in one of the future releases.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
+            deprecatedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 

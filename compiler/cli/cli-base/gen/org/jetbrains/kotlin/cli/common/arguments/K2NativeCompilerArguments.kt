@@ -509,10 +509,12 @@ This library must be one of the ones passed with '-library'.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xpurge-user-libs",
         deprecatedName = "--purge_user_libs",
-        description = "Don't link unused libraries even if explicitly specified.",
+        description = """Don't link unused libraries even if explicitly specified.
+This option is deprecated and will be removed in one of the future releases.""",
     )
     var purgeUserLibs: Boolean = false
         set(value) {
