@@ -9,9 +9,19 @@ import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.klibFlag
 
 /**
- * Indicates whether this [Klib] is from the Kotlin/Native distribution.
+ * Indicates whether this [Klib] is implicitly loaded from the Kotlin/Native distribution.
+ *
+ * Note: "Implicitly" means that the user has not explicitly specified this library in compiler's CLI
+ * arguments such as `-library` or `-Xinclude`.
  */
 // TODO (KT-61096): Move this attribute to a Native-related module.
-var Klib.isFromKotlinNativeDistribution: Boolean by klibFlag()
+var Klib.isImplicitlyLoadedFromKotlinNativeDistribution: Boolean by klibFlag()
     // TODO (KT-61096): After moving, make the setter to be internal.
     set
+
+/**
+ * Indicates whether this [Klib] is explicitly specified by the user in compiler's CLI arguments.
+ * The opposite to [isImplicitlyLoadedFromKotlinNativeDistribution].
+ */
+val Klib.isExplicitlySpecifiedByUserInCLIArgument: Boolean
+    get() = !isImplicitlyLoadedFromKotlinNativeDistribution
