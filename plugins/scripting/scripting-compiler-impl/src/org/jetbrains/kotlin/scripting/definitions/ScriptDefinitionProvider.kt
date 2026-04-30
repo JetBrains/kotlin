@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import kotlin.script.experimental.api.SourceCode
 
@@ -21,5 +22,9 @@ interface ScriptDefinitionProvider {
     companion object : ExtensionPointDescriptor<ScriptDefinitionProvider>(
         "org.jetbrains.kotlin.scriptDefinitionProvider",
         ScriptDefinitionProvider::class.java
-    )
+    ) {
+        @K1SpecificScriptingServiceAccessor
+        fun getInstance(project: Project): ScriptDefinitionProvider? =
+            project.getService(ScriptDefinitionProvider::class.java)
+    }
 }

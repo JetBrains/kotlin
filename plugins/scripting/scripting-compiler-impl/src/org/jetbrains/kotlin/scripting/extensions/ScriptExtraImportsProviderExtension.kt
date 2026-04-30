@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.scripting.extensions
 
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportInfo
@@ -25,10 +27,19 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
 
         override val aliasName: String? get() = importPath.alias?.asString()
 
-        override val importedFqName: FqName? get() = importPath.fqName
+        override val importedFqName: FqName get() = importPath.fqName
     }
 
     @OptIn(K1SpecificScriptingServiceAccessor::class)
-    override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> =
-        emptyList()
+    override fun getExtraImports(ktFile: KtFile, configuration: CompilerConfiguration?): Collection<KtImportInfo> =
+        ktFile.takeIf { runReadAction { it.isScript() } }?.let { file ->
+            @Suppress("DEPRECATION")
+            val refinedConfiguration = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)
+                ?.firstOrNull()?.getScriptConfiguration(file.project, file.originalFile as KtFile)
+            refinedConfiguration?.defaultImports?.map {
+                ScriptExtraImportImpl(
+                    ImportPath.fromString(it)
+                )
+            }
+        }.orEmpty()
 }

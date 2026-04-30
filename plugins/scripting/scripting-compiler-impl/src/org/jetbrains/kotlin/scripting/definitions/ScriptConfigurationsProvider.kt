@@ -59,5 +59,9 @@ open class ScriptConfigurationsProvider {
     companion object : ExtensionPointDescriptor<ScriptConfigurationsProvider>(
         "org.jetbrains.kotlin.scriptConfigurationsProvider",
         ScriptConfigurationsProvider::class.java
-    )
+    ) {
+        @K1SpecificScriptingServiceAccessor
+        fun getInstance(project: Project): ScriptConfigurationsProvider? =
+            project.getService(ScriptConfigurationsProvider::class.java)
+    }
 }

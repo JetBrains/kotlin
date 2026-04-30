@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtension
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.test.configureWithCustomScriptDef
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
@@ -32,6 +34,9 @@ internal class CustomScriptDefinitionEnvironmentConfigurator(testServices: TestS
     override fun legacyRegisterCompilerExtensions(project: Project, module: TestModule, configuration: CompilerConfiguration) {
         val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
 
-        ScriptingCompilerConfigurationExtension(hostConfiguration).updateConfiguration(project, configuration)
+        ScriptingCompilerConfigurationExtension(
+            hostConfiguration,
+            configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull()
+        ).updateConfiguration(project, configuration)
     }
 }

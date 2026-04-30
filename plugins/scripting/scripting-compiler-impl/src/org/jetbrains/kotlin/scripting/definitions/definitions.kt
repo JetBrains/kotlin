@@ -8,14 +8,18 @@ package org.jetbrains.kotlin.scripting.definitions
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.script.experimental.api.SourceCode
@@ -38,6 +42,34 @@ fun PsiFile.isScript(): Boolean {
     // virtual file directly from the viewProvider is the only way of obtaining it
     val virtualFile = virtualFile ?: originalFile.virtualFile ?: viewProvider.virtualFile
     return !virtualFile.isNonScript()
+}
+
+fun PsiFile.findScriptDefinition(): ScriptDefinition? {
+    return if (isScript()) findScriptDefinition(project, KtFileScriptSource(this))
+    else null
+}
+
+@Deprecated("Use PsiFile.findScriptDefinition() instead")
+fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
+    if (!isValid || isNonScript()) return null
+
+    // Do not use psiFile.script here because this method can be called during indexes access
+    // and accessing stubs may cause deadlock
+    // TODO: measure performance effect and if necessary consider detecting indexing here or using separate logic for non-IDE operations to speed up filtering
+    if (runReadAction { PsiManager.getInstance(project).findFile(this) as? KtFile }/*?.script*/ == null) return null
+
+    return findScriptDefinition(project, VirtualFileScriptSource(this))
+}
+
+fun findScriptDefinition(project: Project, script: SourceCode): ScriptDefinition {
+    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project)
+        ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+    return scriptDefinitionProvider.findDefinition(script)
+        ?: scriptDefinitionProvider.getDefaultDefinition()
+            .also {
+                Logger.getInstance("org.jetbrains.kotlin.scripting.definitions")
+                    .debug("Default definition is used for ${script.locationId}")
+            }
 }
 
 private const val JAVA_CLASS_FILE_TYPE_DOT_DEFAULT_EXTENSION = ".class"

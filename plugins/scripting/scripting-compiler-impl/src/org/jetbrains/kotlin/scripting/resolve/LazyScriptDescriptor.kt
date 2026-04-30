@@ -224,6 +224,21 @@ class LazyScriptDescriptor(
             findTypeDescriptor(getScriptingClass(receiver), Errors.MISSING_SCRIPT_RECEIVER_CLASS)
         }
 
+        val containingFile = scriptInfo.script.containingKtFile
+        val configuration = resolveSession.trace[BindingContext.COMPILER_CONFIGURATION, module]
+        val scriptConfigurationProvider = configuration?.getCompilerExtensions(ScriptConfigurationsProvider)?.firstOrNull()
+
+        @Suppress("DEPRECATION")
+        val importedScriptsFiles = scriptConfigurationProvider?.getScriptConfiguration(
+            scriptInfo.script.project, containingFile
+        )?.importedScripts
+        if (importedScriptsFiles != null) {
+            val findImportedScriptDescriptor = ImportedScriptDescriptorsFinder()
+            importedScriptsFiles.mapNotNullTo(res) {
+                findImportedScriptDescriptor(it)
+            }
+        }
+
         res
     }
 

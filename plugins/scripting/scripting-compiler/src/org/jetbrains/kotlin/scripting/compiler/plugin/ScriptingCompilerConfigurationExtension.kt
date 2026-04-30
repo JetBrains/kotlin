@@ -26,7 +26,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 
 class ScriptingCompilerConfigurationExtension(
     val baseHostConfiguration: ScriptingHostConfiguration,
-    val scriptDefinitionProvider: ScriptDefinitionProvider? = null
+    val scriptDefinitionProvider: ScriptDefinitionProvider?
 ) : CompilerConfigurationExtension {
     override fun updateConfiguration(project: Project, configuration: CompilerConfiguration) {
 
