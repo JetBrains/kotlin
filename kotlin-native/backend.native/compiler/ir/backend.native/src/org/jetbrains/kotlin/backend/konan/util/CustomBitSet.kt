@@ -35,7 +35,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     private fun ensureCapacity(index: Int) {
-        check(lazy == null) { "ensureCapacity called while in lazy mode" }
+        check(!isLazy) { "ensureCapacity called while in lazy mode" }
         if (data.size <= index) {
             val oldData = data
             data = LongArray((oldData.size * 2).coerceAtLeast(index + 1))
@@ -45,10 +45,12 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     private fun updateLazySize() {
+        check(isLazy) { "updateLazySize called while in dense mode" }
         size = lazy!!.maxOrNull()?.let { it.ushr(6) + 1 } ?: 0
     }
 
     private fun shrinkDenseSize() {
+        check(!isLazy) { "shrinkDenseSize called while in lazy mode" }
         while (size > 0 && data[size - 1] == 0L) size--
     }
 
