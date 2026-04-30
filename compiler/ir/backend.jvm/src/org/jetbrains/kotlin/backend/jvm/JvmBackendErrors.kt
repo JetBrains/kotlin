@@ -42,6 +42,8 @@ object JvmBackendErrors : KtDiagnosticsContainer() {
 
     val NON_LOCAL_RETURN_IN_DISABLED_INLINE by error0<PsiElement>(SourceElementPositioningStrategies.DEFAULT)
 
+    val INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION by warningWithoutSource()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJvmErrorMessages
     }
@@ -76,5 +78,7 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(JvmBackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE, "Non-local returns are not allowed with inlining disabled")
+
+        map.put(JvmBackendErrors.INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION, "{0}")
     }
 }
