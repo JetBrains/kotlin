@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgume
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.hasDeclarationsAccessedDuringFrontendResolve
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -427,7 +426,18 @@ class NativeSecondStageCompilationConfig(
      * Returns the list of libraries in reverse topological order.
      */
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList()
+        return resolvedLibraries.filterRoots {
+            // Let's leave only those dependencies (roots) that have been explicitly specified by the used in compiler's CLI.
+            //
+            // The implicit dependencies (those that are loaded from the Kotlin/Native distribution: stdlib & platform libraries)
+            // should be skipped. There might be 100+ platform libraries per a target, and we don't want ALL of them to participate
+            // in the expensive IR-linkage process.
+            //
+            // Later upon the subsequent `getFullList()` call, some of the implicit dependencies will be added. But only if they
+            // are mentioned in `depends=` manifest property in root libraries. Which means only a small really required subset
+            // of them will be added.
+            it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs
+        }.getFullList()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
