@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.*
@@ -97,7 +95,7 @@ private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhase
         get() = (this@psiLocation as? DeclarationDescriptorWithSource)?.source?.getPsi()?.let { MessageUtil.psiElementToMessageLocation(it) }
 
     override fun reportWarning(text: String) {
-        context.reportCompilationWarning(text)
+        context.diagnosticReporter.report(NativeBackendDiagnostics.OBJC_EXPORT_WARNING, text)
     }
 
     override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
@@ -105,11 +103,11 @@ private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhase
                 "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
         )
 
-        context.messageCollector.report(CompilerMessageSeverity.WARNING, text, location)
+        context.diagnosticReporter.report(NativeBackendDiagnostics.OBJC_EXPORT_WARNING, text, location)
     }
 
     override fun reportError(text: String) {
-        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, null)
+        context.diagnosticReporter.report(NativeBackendDiagnostics.NATIVE_BACKEND_ERROR, text, null)
     }
 
     override fun reportError(declaration: DeclarationDescriptor, text: String) {
@@ -117,7 +115,7 @@ private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhase
                 "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
         )
 
-        context.messageCollector.report(CompilerMessageSeverity.ERROR, text, location)
+        context.diagnosticReporter.report(NativeBackendDiagnostics.NATIVE_BACKEND_ERROR, text, location)
     }
 
     override fun reportException(throwable: Throwable) {
