@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-04-29 (PSI-path regression in shared FIR closed via gate properties)
+**Last Updated**: 2026-04-30 (PSI-CLASS-FINDER design doc revised to a three-phase plan)
 
 ### Entry Template
 
@@ -30,6 +30,101 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Design doc revision: three-phase plan for PSI removal — 2026-04-30 (later)
+
+### Overview
+
+Reframed `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` from a single-step
+`BinaryJavaClassFinder` proposal into an explicit three-phase plan: Phase 1 lands
+`BinaryJavaClassFinder` as a short-lived stepping stone (not kept across releases);
+Phase 2 collapses the abstraction, moves binary lookups into
+`JvmClassFileBasedSymbolProvider`, and makes `FirJavaFacade.classFinder` source-only;
+Phase 3 keeps PSI for **1–2 releases as a source-only fallback** behind a flag, after
+which PSI is removed from the JVM-FIR / `java-direct` compilation path entirely. No
+production source files were modified.
+
+### Changes
+
+- Rewrote §0 Executive Summary with three replacement diagrams (today / Phase 1 /
+  end-state) and an explicit "PSI removed at end of Phase 3" goal.
+- Restructured §2.1 around strategic goals (across all phases) plus per-phase
+  constraints; added the IntelliJ-platform-dependency removal goal.
+- Marked the existing `BinaryJavaClassFinder` design (§2.2) and cycle-avoidance (§2.3)
+  as Phase-1-specific.
+- Added new §2.4 Phase 2 (structural refactoring) and new §2.5 Phase 3 (source-only
+  PSI/AST switch).
+- Renumbered the migration plan (§2.6) to span all three phases; renumbered Risks
+  (§2.7) into per-phase subsections including indirect-caller audit, narrowed
+  `FirSession.javaSymbolProvider` semantics, AST/PSI source parity gate, and PSI
+  removal blast radius.
+- Renumbered Alternatives (§2.8) to record explicitly that "Keep `BinaryJavaClassFinder`
+  long-term" and "Keep PSI as a binary-side fallback" were considered and rejected.
+
+### Test Results
+
+N/A (documentation only).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | Three-phase plan revision (§0, §2.1–§2.8). |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; updated `Last Updated` line. |
+
+### Key Learnings
+
+- The transitional fallback for the PSI removal effort belongs on the *source* side
+  (Phase 3), not on the binary side; binary PSI is removed at the end of Phase 1 with
+  no transitional residence.
+- `BinaryJavaClassFinder` is justified strictly as a risk-isolation device — observable
+  equivalence with PSI, A/B-flag-flippable — and is dissolved in Phase 2; keeping it
+  long-term would re-introduce a parallel class-finder abstraction on top of a symbol
+  provider stack that already owns the data source.
+- The dominant cost of the structural Phase 2 is the audit of the four indirect
+  callers of `session.javaSymbolProvider` (`FirJvmConflictsChecker`,
+  `FirDirectJavaActualDeclarationExtractor`, Lombok `AbstractBuilderGenerator`, and
+  out-of-scope `KaFirJavaInteroperabilityComponent`); this is paid once and unblocks
+  the contract narrowing of `FirSession.javaSymbolProvider` to "source-only Java".
+- Phase 3's PSI removal completes the IntelliJ-platform-dependency shedding for the
+  JVM-FIR / `java-direct` compilation path; full deletion of `JavaClassFinderImpl` is
+  separate (K1 frontend and LL-FIR keep their own copies and are out of scope).
+
+---
+
+## Design doc: `PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` — 2026-04-30
+
+### Overview
+
+Design-only deliverable: a new `implDocs/` document that maps every PSI `JavaClassFinder` entry
+point reachable in production with `java-direct` enabled, and proposes a `BinaryJavaClassFinder`
+backed by `JvmDependenciesIndex` / `KotlinClassFinder` + `BinaryJavaClass` to replace the
+PSI binary half of `CombinedJavaClassFinder`. No production source files are modified.
+
+### Changes
+
+- Added `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`.
+- This entry in `ITERATION_RESULTS.md`.
+
+### Test Results
+
+N/A (documentation only).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | New design doc (Part 1: where PSI is used; Part 2: replacement plan). |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry. |
+
+### Key Learnings
+
+- `JavaClassFinderOverAstFactory` builds `CombinedJavaClassFinder(source, PSI-binary)` for **both** source and library FIR sessions in production — the test-fixture (`VfsBasedProjectEnvironmentOverAst`) only exercises PSI in the library session.
+- `JvmClassFileBasedSymbolProvider.extractClassMetadata`'s no-metadata branch (`JvmClassFileBasedSymbolProvider.kt:180`) is the only place in FIR core that asks the facade to materialize a `JavaClass` from a binary `.class` — and the bytes are already in hand via `KotlinClassFinder.Result.ClassFileContent`, so a replacement does not need extra I/O.
+- The `FirJavaFacade ↔ JvmClassFileBasedSymbolProvider` cycle is avoided by making `BinaryJavaClassFinder` a **peer** of the deserializer (both fed by `JvmDependenciesIndex`), not a wrapper around it.
+- `JavaClassFinder.findClasses` (multi-result) has no production FIR caller — only PSI's own `JavaClassFinderImpl` and LL-FIR's `LLCombinedJavaSymbolProvider` use it; the replacement does not need to support it.
 
 ---
 
