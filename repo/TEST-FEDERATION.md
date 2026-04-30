@@ -4,7 +4,7 @@ The mono-repository is split into multiple 'Domains' (like 'Compiler', 'Analysis
 The CI can verify commits into such Domains independently.
 'Plain old tests' of 'unaffected Domains' are not required to be executed on CI.
 
-## Defining Domains
+## Defining Domains !
 
 Domains are defined in the [domains.yaml](./domains.yaml) file
 e.g. the `Native` domain could be defined as:
