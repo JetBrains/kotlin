@@ -85,14 +85,17 @@ internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
     implementedAsIntrinsic
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <T> suspendFunction0ToContrefImpl(f: (suspend () -> T)): contref1 {
     return suspendFunction0ToContref(f)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <R, T> suspendFunction1ToContrefImpl(f: (suspend R.() -> T), receiver: R): contref1 {
     return suspendFunction1ToContref(f, receiver)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun <R, P, T> suspendFunction2ToContrefImpl(f: (suspend R.(P) -> T), receiver: R, param: P): contref1 {
     return suspendFunction2ToContref(f, receiver, param)
 }
