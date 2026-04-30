@@ -13,13 +13,23 @@ class CustomBitSetTest {
         require(bits.size < LAZY_CONVERSION_THRESHOLD) { "Too many bits for sparse helper; use denseOf instead" }
         val bs = CustomBitSet()
         bits.forEach { bs.set(it) }
+        assertSparse(bs)
         return bs
     }
 
     private fun denseOf(vararg bits: Int): CustomBitSet {
         val bs = CustomBitSet(1)
         bits.forEach { bs.set(it) }
+        assertDense(bs)
         return bs
+    }
+
+    private fun assertSparse(bs: CustomBitSet, message: String? = null) {
+        assertTrue(bs.isLazy, message ?: "bitset is dense, expected sparse (lazy)")
+    }
+
+    private fun assertDense(bs: CustomBitSet, message: String? = null) {
+        assertFalse(bs.isLazy, message ?: "bitset is sparse (lazy), expected dense")
     }
 
     private fun CustomBitSet.toBitList(): List<Int> {
@@ -87,6 +97,7 @@ class CustomBitSetTest {
         val bs = CustomBitSet()
         bs.set(0)
         bs.set(64)   // second word, still sparse (2 < threshold)
+        assertSparse(bs)
         assertEquals(2, bs.cardinality())
         assertTrue(bs[0])
         assertTrue(bs[64])
@@ -123,8 +134,10 @@ class CustomBitSetTest {
     @Test fun transitionAt8BitsAllBitsRetained() {
         val bs = CustomBitSet()
         for (i in 0 until 7) bs.set(i * 10)
+        assertSparse(bs, "premature dense conversion at 7 bits (threshold is 8)")
         assertEquals(7, bs.cardinality())
         bs.set(70)   // 8th bit — triggers buildFromLazy
+        assertDense(bs, "8th set did not trigger dense conversion")
         assertEquals(8, bs.cardinality())
         for (i in 0 until 7) assertTrue(bs[i * 10], "bit ${i * 10} should survive transition")
         assertTrue(bs[70])
@@ -134,6 +147,7 @@ class CustomBitSetTest {
         val bits = intArrayOf(0, 10, 20, 30, 40, 50, 60, 70)
         val converted = CustomBitSet()
         bits.forEach { converted.set(it) }   // 8th set triggers conversion
+        assertDense(converted, "8th set did not trigger dense conversion")
 
         val neverSparse = denseOf(*bits)
 
@@ -146,9 +160,12 @@ class CustomBitSetTest {
         val bs = CustomBitSet()
         for (i in 0 until 7) bs.set(i)
         val beforeTransition = bs.copy()
+        assertSparse(beforeTransition, "copy of sparse bitset is unexpectedly dense")
 
         bs.set(7)   // transition
+        assertDense(bs, "8th set did not trigger dense conversion")
         val afterTransition = bs.copy()
+        assertDense(afterTransition, "copy of dense bitset is unexpectedly sparse")
 
         assertEquals(7, beforeTransition.cardinality())
         for (i in 0 until 7) assertTrue(beforeTransition[i])
@@ -161,6 +178,7 @@ class CustomBitSetTest {
 
     @Test fun denseModeSetAndGetAcrossWords() {
         val bs = CustomBitSet(200)
+        assertDense(bs, "CustomBitSet(nodesCount) is unexpectedly sparse")
         for (bit in listOf(0, 63, 64, 127, 128, 191, 192)) {
             bs.set(bit)
             assertTrue(bs[bit], "bit $bit should be set")
@@ -275,6 +293,7 @@ class CustomBitSetTest {
         val a = denseOf(0, 64)
         val b = sparseOf(64, 128)
         a.or(b)
+        assertDense(a, "or(sparse another) unexpectedly switched dense this to lazy")
         assertEquals(listOf(0, 64, 128), a.toBitList())
     }
 
@@ -282,6 +301,7 @@ class CustomBitSetTest {
         val a = sparseOf(0, 10)
         val b = denseOf(10, 64)
         a.or(b)
+        assertDense(a, "or(dense another) failed to convert this from lazy to dense")
         assertEquals(listOf(0, 10, 64), a.toBitList())
     }
 
@@ -289,6 +309,7 @@ class CustomBitSetTest {
         val a = denseOf(0, 64, 128)
         val b = sparseOf(0, 64)
         a.and(b)
+        assertSparse(a, "and(sparse another) failed to switch dense this to lazy")
         assertEquals(listOf(0, 64), a.toBitList())
     }
 
@@ -296,6 +317,7 @@ class CustomBitSetTest {
         val a = sparseOf(0, 5)
         val b = denseOf(5, 64)
         a.and(b)
+        assertSparse(a, "and lazy retainAll path unexpectedly switched to dense")
         assertEquals(listOf(5), a.toBitList())
     }
 
@@ -303,6 +325,7 @@ class CustomBitSetTest {
         val a = denseOf(0, 64, 128)
         val b = sparseOf(64)
         a.andNot(b)
+        assertDense(a, "andNot(sparse) per-bit clear path unexpectedly switched dense to lazy")
         assertEquals(listOf(0, 128), a.toBitList())
     }
 
@@ -310,6 +333,7 @@ class CustomBitSetTest {
         val a = sparseOf(0, 5, 10)
         val b = denseOf(5)
         a.andNot(b)
+        assertSparse(a, "andNot lazy retainAll path unexpectedly switched to dense")
         assertEquals(listOf(0, 10), a.toBitList())
     }
 
@@ -460,6 +484,7 @@ class CustomBitSetTest {
         val a = denseOf(0)       // size=1
         val b = denseOf(0, 64)   // size=2
         b.and(a)
+        assertDense(b, "dense-dense and unexpectedly switched to lazy")
         assertEquals(listOf(0), b.toBitList())
         assertEquals(1, b.size)
     }
@@ -467,7 +492,9 @@ class CustomBitSetTest {
     @Test fun andDenseWithEmptyResultsInEmpty() {
         val a = denseOf(0, 64, 128)
         val empty = CustomBitSet(100)
+        assertDense(empty, "CustomBitSet(nodesCount) is unexpectedly sparse")
         a.and(empty)
+        assertDense(a, "dense-dense and unexpectedly switched to lazy")
         assertTrue(a.isEmpty)
         assertEquals(0, a.cardinality())
         assertEquals(0, a.size)
@@ -478,6 +505,7 @@ class CustomBitSetTest {
         val a = denseOf(0, 64)   // size=2
         val b = sparseOf(0)      // size=1
         a.and(b)
+        assertSparse(a, "and(sparse another) failed to switch dense this to lazy")
         assertEquals(listOf(0), a.toBitList())
         assertEquals(1, a.size)
     }
@@ -487,6 +515,7 @@ class CustomBitSetTest {
         val a = sparseOf(0, 64)  // size=2
         val b = sparseOf(0)      // size=1
         a.and(b)
+        assertSparse(a, "and lazy retainAll path unexpectedly switched to dense")
         assertEquals(listOf(0), a.toBitList())
         assertEquals(1, a.size)
     }
@@ -496,6 +525,7 @@ class CustomBitSetTest {
         val a = sparseOf(0, 64)  // size=2; bit 64 in word 1
         val b = sparseOf(64)
         a.andNot(b)
+        assertSparse(a, "andNot lazy retainAll path unexpectedly switched to dense")
         assertEquals(listOf(0), a.toBitList())
         assertEquals(1, a.size)
     }
@@ -599,6 +629,7 @@ class CustomBitSetTest {
         val a = denseOf(0)            // size=1
         val b = sparseOf(0, 1_000_000)
         a.andNot(b)
+        assertDense(a, "andNot(sparse) per-bit clear path unexpectedly switched dense to lazy")
         assertEquals(0, a.size)
         assertTrue(a.isEmpty)
     }

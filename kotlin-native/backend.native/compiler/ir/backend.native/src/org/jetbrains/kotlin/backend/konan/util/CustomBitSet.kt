@@ -19,6 +19,8 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     private var data = data
     private var lazy: IntSet? = null
 
+    internal val isLazy: Boolean get() = lazy != null
+
     constructor() : this(0, EMPTY) {
         lazy = IntArraySet(LAZY_CONVERSION_THRESHOLD)
     }
