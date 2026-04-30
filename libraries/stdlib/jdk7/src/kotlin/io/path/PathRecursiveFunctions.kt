@@ -202,9 +202,13 @@ public fun Path.copyToRecursively(
 
     val normalizedTarget = target.normalize()
 
-    fun destination(source: Path): Path {
+    fun destinationUnchecked(source: Path): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
-        val destination = target.resolve(relativePath.pathString)
+        return target.resolve(relativePath.pathString)
+    }
+
+    fun destination(source: Path): Path {
+        val destination = destinationUnchecked(source)
         if (!destination.normalize().startsWith(normalizedTarget)) {
             throw IllegalFileNameException(
                 source,
@@ -216,7 +220,7 @@ public fun Path.copyToRecursively(
     }
 
     fun error(source: Path, exception: Exception): FileVisitResult {
-        return onError(source, destination(source), exception).toFileVisitResult()
+        return onError(source, destinationUnchecked(source), exception).toFileVisitResult()
     }
 
     val stack = arrayListOf<Path>()
