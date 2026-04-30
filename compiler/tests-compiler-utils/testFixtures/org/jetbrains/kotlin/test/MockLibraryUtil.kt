@@ -204,7 +204,8 @@ object MockLibraryUtil {
         val args = mutableListOf(
             sourcesPath,
             K2JVMCompilerArguments::destination.cliArgument, outDir.absolutePath,
-            K2JVMCompilerArguments::classpath.cliArgument, classpath.joinToString(File.pathSeparator)
+            K2JVMCompilerArguments::classpath.cliArgument, classpath.joinToString(File.pathSeparator),
+            K2JVMCompilerArguments::noStdlib.cliArgument
         ) + extraOptions
 
         runJvmCompiler(args)

@@ -177,6 +177,8 @@ projectTests {
         testInputsCheck {
             allowFlightRecorder.set(true)
         }
+        withMockJdkRuntime()
+        withStdlibCommon()
     }
 
     nativeTestTask(
@@ -198,11 +200,6 @@ projectTests {
 
     // For test task only
     testData(project(":js:js.translator").isolated, "testData/_commonFiles")
-    withMockJdkRuntime()
-    withStdlibCommon()
-    // Only for CompilerFacilityTestForSerializationGenerated.testSerializationPlugin
-    @OptIn(KotlinCompilerDistUsage::class)
-    withDist()
 }
 
 fun Test.setUpJsIrBoxTests() {
