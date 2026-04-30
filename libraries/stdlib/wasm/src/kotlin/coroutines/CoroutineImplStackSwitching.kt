@@ -11,6 +11,7 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmPrimitiveConstructor
 import kotlin.wasm.internal.WasmStackSwitchingOnly
+import kotlin.wasm.internal.nullableContrefIntrinsic
 import kotlin.wasm.internal.reftypes.contref1
 import kotlin.wasm.internal.resumeThrowImpl
 import kotlin.wasm.internal.resumeWithImpl
@@ -18,8 +19,10 @@ import kotlin.wasm.internal.resumeWithImpl
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal abstract class CoroutineImplStackSwitching<T, R>(
+internal class CoroutineImplStackSwitching<T, R>(
     resultContinuation: Continuation<R>,
+    internal val wasmContBox: WasmContinuationBox =
+        WasmContinuationBox(nullableContrefIntrinsic(), false)
 ) : CoroutineImpl<T, R>(resultContinuation) {
 
     protected val _resultContinuation = resultContinuation
@@ -29,6 +32,11 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
     override fun resumeWith(result: Result<T>) {
         this.result = result.getOrNull()
         exception = result.exceptionOrNull()
+
+        if (wasmContBox.pendingSuspend) {
+            wasmContBox.pendingSuspend = false
+            return
+        }
 
         try {
             val outcome = doResume()
@@ -51,28 +59,6 @@ internal abstract class CoroutineImplStackSwitching<T, R>(
             completion.resume(this.result as R)
         }
     }
-}
-
-internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
-    var wasmContinuation: contref1?,
-    var pendingSuspend: Boolean
-)
-
-internal class WasmContinuation<T, R>(
-    internal val wasmContBox: WasmContinuationBox,
-    completion: Continuation<R>,
-) : CoroutineImplStackSwitching<T, R>(completion) {
-
-    override fun resumeWith(result: Result<T>) {
-        // Handle synchronous resume inside user's block
-        if (wasmContBox.pendingSuspend) {
-            this.result = result.getOrNull()
-            this.exception = result.exceptionOrNull()
-            wasmContBox.pendingSuspend = false
-            return
-        }
-        super.resumeWith(result)
-    }
 
     override fun doResume(): Any? {
         val wasmCont = wasmContBox.wasmContinuation!!
@@ -84,3 +70,8 @@ internal class WasmContinuation<T, R>(
         return resumeResult
     }
 }
+
+internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(
+    var wasmContinuation: contref1?,
+    var pendingSuspend: Boolean
+)

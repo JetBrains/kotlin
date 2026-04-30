@@ -8,7 +8,7 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.WasmContinuation
+import kotlin.coroutines.CoroutineImplStackSwitching
 import kotlin.coroutines.WasmContinuationBox
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.DoNotInlineOnFirstStage
@@ -39,24 +39,24 @@ internal fun nullableContrefIntrinsic(): contref1? {
 }
 
 @PublishedApi
-internal suspend fun <T> getWasmCont(): WasmContinuation<T, T> {
+internal suspend fun <T> getWasmCont(): CoroutineImplStackSwitching<T, T> {
     val completion = getContinuation<T>()
     val wasmContBox = WasmContinuationBox(nullableContrefIntrinsic(), false)
-    val freshCont = WasmContinuation<T, T>(wasmContBox, completion)
+    val freshCont = CoroutineImplStackSwitching<T, T>(completion, wasmContBox)
     wasmContBox.pendingSuspend = true
     return freshCont
 }
 
 @Suppress("UNCHECKED_CAST")
 @PublishedApi
-internal fun <T> getWasmContResult(wasmCont: WasmContinuation<T, T>): T {
+internal fun <T> getWasmContResult(wasmCont: CoroutineImplStackSwitching<T, T>): T {
     val e = wasmCont.exception
     if (e != null) throw e
     return wasmCont.result as T
 }
 
 @PublishedApi
-internal fun <T> checkNotPendingSuspend(wasmCont: WasmContinuation<T, T>) {
+internal fun <T> checkNotPendingSuspend(wasmCont: CoroutineImplStackSwitching<T, T>) {
     if (wasmCont.wasmContBox.pendingSuspend) {
         wasmCont.wasmContBox.pendingSuspend = false
         suspendIntrinsic(wasmCont.wasmContBox)
