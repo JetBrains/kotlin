@@ -11,7 +11,6 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -32,7 +31,6 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
     private val logger = Logging.getLogger(DevServerWorkAction::class.java.name)
 
     override fun execute() {
-        println("HELLO")
         val contentDir = parameters.contentDirectory.getFile()
         val rootDir = parameters.rootDirectory.getFile()
         val serverHost = parameters.host.get()
@@ -52,27 +50,19 @@ internal abstract class DevServerWorkAction : WorkAction<DevServerWorkAction.Dev
             )
         }
 
-        server.createContext("/__shutdown") { exchange ->
-            exchange.sendResponseHeaders(204, -1)
-            Thread {
-                lockFile.delete()
-                server.stop(0)
-            }.start()
-        }
-
         server.executor = null
 
         server.start()
         logger.lifecycle("Development server started at http://$serverHost:$serverPort")
         logger.lifecycle("Serving files from: $contentDir and $rootDir")
 
-        if (parameters.continuous.get()) return
-
         val shutdownHook = Thread {
             lockFile.delete()
             server.stop(0)
         }
         Runtime.getRuntime().addShutdownHook(shutdownHook)
+
+        if (parameters.continuous.get()) return
 
         try {
             Thread.currentThread().join()

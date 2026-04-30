@@ -16,7 +16,10 @@ import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.ServerSocket
 import java.net.URL
+import java.net.URLConnection
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -52,12 +55,9 @@ internal abstract class KotlinSimpleDevServerTask
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("simpleDevServer", Handle::class.java)
             if (deploymentHandle == null) {
-                println("HELLO 0")
-
                 val workQueue = workerExecutor.processIsolation()
 
                 workQueue.submit(DevServerWorkAction::class.java) { params ->
-                    println("HELLO 1")
                     params.contentDirectory.set(contentDirectory)
                     params.rootDirectory.set(rootDirectory)
                     params.host.set(host)
@@ -70,11 +70,6 @@ internal abstract class KotlinSimpleDevServerTask
                     "simpleDevServer",
                     DeploymentRegistry.ChangeBehavior.BLOCK,
                     Handle::class.java,
-                    workerExecutor,
-                    contentDirectory.get().asFile,
-                    rootDirectory,
-                    host.get(),
-                    serverPort,
                     lockFile,
                 )
             }
@@ -92,11 +87,11 @@ internal abstract class KotlinSimpleDevServerTask
         }
     }
 
-    fun findFreePort(startPort: Int = 8080): Int {
+    private fun findFreePort(startPort: Int = 8080): Int {
         var port = startPort
         while (true) {
             try {
-                java.net.ServerSocket(port).use { return port }
+                ServerSocket(port).use { return port }
             } catch (_: Exception) {
                 port++
             }
@@ -104,11 +99,6 @@ internal abstract class KotlinSimpleDevServerTask
     }
 
     internal abstract class Handle @Inject constructor(
-        private val workerExecutor: WorkerExecutor,
-        private val contentDirectory: File,
-        private val rootDirectory: File,
-        private val host: String,
-        private val serverPort: Int,
         private val lockFile: File,
     ) : DeploymentHandle {
 
@@ -119,15 +109,6 @@ internal abstract class KotlinSimpleDevServerTask
         }
 
         override fun stop() {
-            URL(
-                "http",
-                host,
-                serverPort,
-                "__shutdown"
-            )
-                .openConnection()
-                .getInputStream()
-                .close()
         }
     }
 }
