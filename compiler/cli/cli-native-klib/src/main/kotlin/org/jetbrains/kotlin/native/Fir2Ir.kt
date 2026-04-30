@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
@@ -36,7 +35,7 @@ fun NativeFirstStagePhaseContext.fir2Ir(
 ): Fir2IrOutput {
     val loadedKlibs = config.loadedKlibs
     val configuration = config.configuration
-    val diagnosticsReporter = DiagnosticsCollectorImpl()
+    val diagnosticsReporter = config.configuration.diagnosticsCollector
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
     val actualizedResult = input.convertToIrAndActualize(
@@ -101,8 +100,6 @@ fun NativeFirstStagePhaseContext.fir2Ir(
     }
 
     val symbols = PreSerializationNativeSymbols.Impl(actualizedResult.irBuiltIns)
-
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, configuration)
 
     if (diagnosticsReporter.hasErrors) {
         throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
