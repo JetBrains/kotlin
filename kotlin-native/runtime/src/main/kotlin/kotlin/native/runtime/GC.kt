@@ -135,7 +135,7 @@ public object GC {
      * Note, that if after a collection heapBytes > [targetHeapBytes] (which may happen if [autotune] is false,
      * or [maxHeapBytes] is set too low), the next collection will be triggered almost immediately.
      *
-     * Default: 100 MiB (10 MiB on watchOS)
+     * Default: 10 MiB
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
