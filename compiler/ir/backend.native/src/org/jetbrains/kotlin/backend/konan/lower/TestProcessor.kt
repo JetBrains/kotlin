@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
 import org.jetbrains.kotlin.backend.common.ir.wrapWithLambdaCall
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.reportWarning
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -266,7 +266,8 @@ class TestProcessor(
                                   function: IrFunction,
                                   kinds: Collection<Pair<TestProcessorFunctionKind, /* ignored: */ Boolean>>) {
 
-            fun warn(msg: String) = context.reportWarning(msg, irFile, function)
+            fun warn(msg: String) = context.diagnosticReporter.at(function, irFile)
+                .report(NativeBackendDiagnostics.NATIVE_TEST_PROCESSOR_WARNING, msg)
 
             kinds.forEach { (kind, ignored) ->
                 val annotation = kind.annotationFqName
@@ -332,22 +333,22 @@ class TestProcessor(
             annotatedFunction: IrFunctionSymbol
         ) {
             if (function.owner != annotatedFunction.owner) {
-                context.reportWarning(
-                    "Super method has a test annotation ${kind.annotationFqName} but the overriding method doesn't. " +
-                            "Note that the overriding method will still be executed.",
-                    irFile,
-                    function.owner
-                )
+                context.diagnosticReporter.at(function.owner, irFile)
+                    .report(
+                        NativeBackendDiagnostics.NATIVE_TEST_PROCESSOR_WARNING,
+                        "Super method has a test annotation ${kind.annotationFqName} but the overriding method doesn't. " +
+                                "Note that the overriding method will still be executed.",
+                    )
             }
         }
 
         private fun warnAboutLoneIgnore(functionSymbol: IrFunctionSymbol): Unit = with(functionSymbol) {
             if (hasAnnotation(IGNORE_FQ_NAME) && !hasAnnotation(TestProcessorFunctionKind.TEST.annotationFqName)) {
-                context.reportWarning(
-                    "Unused $IGNORE_FQ_NAME annotation (not paired with ${TestProcessorFunctionKind.TEST.annotationFqName}).",
-                    irFile,
-                    owner
-                )
+                context.diagnosticReporter.at(owner, irFile)
+                    .report(
+                        NativeBackendDiagnostics.NATIVE_TEST_PROCESSOR_WARNING,
+                        "Unused $IGNORE_FQ_NAME annotation (not paired with ${TestProcessorFunctionKind.TEST.annotationFqName})."
+                    )
             }
         }
 
