@@ -99,6 +99,8 @@ public class LoadDescriptorUtil {
         );
     }
 
+    private static final java.util.concurrent.ConcurrentHashMap<String, File> cachedJars = new java.util.concurrent.ConcurrentHashMap<>();
+
     @NotNull
     public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
             @NotNull File javaRoot,
@@ -118,7 +120,9 @@ public class LoadDescriptorUtil {
         if (withForeignAnnotations) {
             String foreignAnnotationsPath =
                     System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH);
-            javaBinaryRoots.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(foreignAnnotationsPath, "foreign-annotations"));
+            javaBinaryRoots.add(cachedJars.computeIfAbsent("foreign-annotations", key -> 
+                MockLibraryUtilExt.compileJavaFilesLibraryToJar(foreignAnnotationsPath, "foreign-annotations")
+            ));
         }
         javaBinaryRoots.add(KtTestUtil.getAnnotationsJar());
         javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
@@ -168,9 +172,11 @@ public class LoadDescriptorUtil {
 
         classpath.add(ForTestCompileRuntime.runtimeJarForTests());
         if (useJetbrainsAnnotationsWithTypeUse) {
-            classpath.add(MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+            classpath.add(cachedJars.computeIfAbsent("foreign-annotations", key -> 
+                MockLibraryUtilExt.compileJavaFilesLibraryToJar(
                     System.getProperty(KOTLIN_THIRDPARTY_JAVA8_ANNOTATIONS_PATH, FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH),
                     "foreign-annotations"
+                )
             ));
         }
         classpath.add(KtTestUtil.getAnnotationsJar());

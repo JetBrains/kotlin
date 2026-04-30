@@ -38,6 +38,7 @@ import kotlin.io.path.createTempDirectory
 open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
         const val JSR_305_TEST_ANNOTATIONS_PATH = "diagnostics/helpers/jsr305_test_annotations"
+        private val cachedJars = java.util.concurrent.ConcurrentHashMap<String, File>()
     }
 
     override val directiveContainers: List<DirectivesContainer>
@@ -82,59 +83,65 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
         val annotationPath = registeredDirectives[ForeignAnnotationsDirectives.ANNOTATIONS_PATH].singleOrNull()
             ?: JavaForeignAnnotationType.Java8Annotations
-        val javaFilesDir = createTempDirectory().toFile().also {
-            File(annotationPath.path).copyRecursively(it)
-        }
+        
         val jsr305JarFile = createJsr305Jar(configuration)
         val useJava11ToCompileIncludedJavaFiles =
             registeredDirectives[JvmEnvironmentConfigurationDirectives.JDK_KIND].singleOrNull() == TestJdkKind.FULL_JDK_11
-        val foreignAnnotationsJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
-            javaFilesDir.path,
-            "foreign-annotations",
-            assertions = JUnit5Assertions,
-            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath,
-            useJava11 = useJava11ToCompileIncludedJavaFiles
-        )
+            
+        val foreignAnnotationsJar = cachedJars.getOrPut("foreign-annotations-${annotationPath.name}") {
+            val javaFilesDir = createTempDirectory().toFile().also {
+                File(annotationPath.path).copyRecursively(it)
+            }
+            MockLibraryUtil.compileJavaFilesLibraryToJar(
+                javaFilesDir.path,
+                "foreign-annotations",
+                assertions = JUnit5Assertions,
+                extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath,
+                useJava11 = useJava11ToCompileIncludedJavaFiles
+            )
+        }
+        
         configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
         testServices.register(AdditionalClassPathForJavaCompilationOrAnalysis::class, AdditionalClassPathForJavaCompilationOrAnalysis(listOf(jsr305JarFile.absolutePath)))
         configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.jvmAnnotationsForTests())
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
-            val resourceUri = this::class.java.classLoader.getResource(JSR_305_TEST_ANNOTATIONS_PATH)!!.toURI()
-            val target = createTempDirectory().toFile()
-            when (resourceUri.scheme) {
-                "jar" -> {
-                    val array = resourceUri.toString().split("!")
-                    val jarUri = URI.create(array[0])
-                    val pathInsideJar = array[1]
-                    val path = jarUri.toString().substringAfterLast(":")
-                    ZipFile(path).use { zipFile ->
-                        val prefix = pathInsideJar.removePrefix("/")
-                        zipFile.entries().asSequence()
-                            .filter { entry -> !entry.isDirectory && entry.name.startsWith(prefix) }
-                            .forEach { entry ->
-                                val relativePath = entry.name.removePrefix(prefix)
-                                val targetFile = File(target, relativePath)
-                                targetFile.parentFile.mkdirs()
-                                zipFile.getInputStream(entry).use { input ->
-                                    targetFile.outputStream().use { output ->
-                                        input.copyTo(output)
+            val jar = cachedJars.getOrPut("jsr-305-test-annotations") {
+                val resourceUri = this::class.java.classLoader.getResource(JSR_305_TEST_ANNOTATIONS_PATH)!!.toURI()
+                val target = createTempDirectory().toFile()
+                when (resourceUri.scheme) {
+                    "jar" -> {
+                        val array = resourceUri.toString().split("!")
+                        val jarUri = URI.create(array[0])
+                        val pathInsideJar = array[1]
+                        val path = jarUri.toString().substringAfterLast(":")
+                        ZipFile(path).use { zipFile ->
+                            val prefix = pathInsideJar.removePrefix("/")
+                            zipFile.entries().asSequence()
+                                .filter { entry -> !entry.isDirectory && entry.name.startsWith(prefix) }
+                                .forEach { entry ->
+                                    val relativePath = entry.name.removePrefix(prefix)
+                                    val targetFile = File(target, relativePath)
+                                    targetFile.parentFile.mkdirs()
+                                    zipFile.getInputStream(entry).use { input ->
+                                        targetFile.outputStream().use { output ->
+                                            input.copyTo(output)
+                                        }
                                     }
                                 }
-                            }
+                        }
                     }
+                    "file" -> File(resourceUri).copyRecursively(target)
+                    else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
                 }
-                "file" -> File(resourceUri).copyRecursively(target)
-                else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
-            }
-            configuration.addJvmClasspathRoot(
                 MockLibraryUtil.compileJavaFilesLibraryToJar(
                     target.path,
                     "jsr-305-test-annotations",
                     assertions = JUnit5Assertions,
                     extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath
                 )
-            )
+            }
+            configuration.addJvmClasspathRoot(jar)
             configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
         }
 
@@ -151,15 +158,17 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
     }
 
     private fun createJsr305Jar(configuration: CompilerConfiguration): File {
-        val jsr305FilesDir = createTempDirectory().toFile().also {
-            File(JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
-        }
+        return cachedJars.getOrPut("jsr305") {
+            val jsr305FilesDir = createTempDirectory().toFile().also {
+                File(JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
+            }
 
-        return MockLibraryUtil.compileJavaFilesLibraryToJar(
-            jsr305FilesDir.path,
-            "jsr305",
-            assertions = JUnit5Assertions,
-            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
-        )
+            MockLibraryUtil.compileJavaFilesLibraryToJar(
+                jsr305FilesDir.path,
+                "jsr305",
+                assertions = JUnit5Assertions,
+                extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
+            )
+        }
     }
 }
