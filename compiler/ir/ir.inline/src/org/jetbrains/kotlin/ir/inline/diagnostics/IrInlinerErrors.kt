@@ -39,6 +39,8 @@ object IrInlinerErrors : KtDiagnosticsContainer() {
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
+    val IR_SYNTHETIC_ACCESSOR_LOWERING_WARNING by warning1<PsiElement, String>()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultSerializationErrorMessages
     }
@@ -72,6 +74,7 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
             Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)
         )
+        map.put(IrInlinerErrors.IR_SYNTHETIC_ACCESSOR_LOWERING_WARNING, "{0}", KtDiagnosticRenderers.TO_STRING)
     }
 
     private fun renderCascadingInlining(inlinedFunctionBlocks: List<IrInlinedFunctionBlock>) =
