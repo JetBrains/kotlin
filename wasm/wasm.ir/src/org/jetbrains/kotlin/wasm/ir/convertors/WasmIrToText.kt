@@ -130,14 +130,12 @@ class WasmIrToText(
                 WasmOp.PSEUDO_ANNOTATION_BRANCH_HINT -> {
                     val likely = (wasmInstr.firstImmediateOrNull() as WasmImmediate.ConstU8).value != 0u.toUByte()
                     newLine()
-                    stringBuilder.append("@metadata.code.branch_hint ${if (likely) "likely" else "unlikely"}")
+                    stringBuilder.append("(@metadata.code.branch_hint ${if (likely) "likely" else "unlikely"})")
                 }
                 WasmOp.PSEUDO_ANNOTATION_TRACE_INST -> {
                     val markId = (wasmInstr.firstImmediateOrNull() as WasmImmediate.ConstI32).value
-                    stringBuilder.append("  ;; @metadata.code.trace_inst mark=$markId")
-                }
-                WasmOp.PSEUDO_ANNOTATION_JS_CALLED -> {
-                    stringBuilder.append("  ;; @binaryen.js.called")
+                    newLine()
+                    stringBuilder.append("(@metadata.code.trace_inst mark=$markId)")
                 }
                 else -> error("Unknown pseudo op $op")
             }
@@ -415,6 +413,10 @@ class WasmIrToText(
     }
 
     private fun appendDefinedFunction(function: WasmFunction.Defined) {
+        function.functionAnnotations.forEach { annotation ->
+            newLine()
+            stringBuilder.append("(@${annotation.sectionName})")
+        }
         newLineList("func") {
             appendModuleFieldReference(function)
             val functionType = resolver.resolve(function.type) as WasmFunctionType

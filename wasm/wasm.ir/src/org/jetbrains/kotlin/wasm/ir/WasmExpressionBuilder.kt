@@ -403,18 +403,6 @@ open class WasmExpressionBuilder(
         )
     }
 
-    /**
-     * Mark this function as called from JavaScript.
-     * Call this at the start of a function before emitting any real instructions.
-     *
-     */
-    fun buildJsCalled() {
-        buildInstr(
-            WasmOp.PSEUDO_ANNOTATION_JS_CALLED,
-            SourceLocation.NoLocation("Annotation pseudo-instruction")
-        )
-    }
-
     inline fun commentPreviousInstr(text: () -> String) {
         if (!skipCommentInstructions) {
             buildInstr(

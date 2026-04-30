@@ -43,6 +43,22 @@ sealed class WasmNamedModuleField {
     open val name: String = ""
 }
 
+/**
+ * Function-level annotations that apply to the whole function (always at byte offset 0).
+ * These are distinct from instruction-level annotations (e.g., branch hints) which carry
+ * a meaningful byte offset into the function body.
+ * Subclasses may carry arbitrary payload data for the annotation.
+ */
+sealed class WasmFunctionAnnotation {
+    /** The custom section name this annotation corresponds to in the binary format. */
+    abstract val sectionName: String
+
+    /** Marks the function as callable from JavaScript. Emits a binaryen.js.called annotation. */
+    data object JsCalled : WasmFunctionAnnotation() {
+        override val sectionName = "binaryen.js.called"
+    }
+}
+
 sealed class WasmFunction(
     override val name: String,
     val type: WasmHeapType.Type.FunctionType,
@@ -54,6 +70,7 @@ sealed class WasmFunction(
         val instructions: MutableList<WasmInstr> = mutableListOf(),
         val startLocation: SourceLocation = SourceLocation.IgnoredLocation,
         val endLocation: SourceLocation = SourceLocation.IgnoredLocation,
+        val functionAnnotations: MutableSet<WasmFunctionAnnotation> = mutableSetOf(),
     ) : WasmFunction(name, type)
 
     class Imported(

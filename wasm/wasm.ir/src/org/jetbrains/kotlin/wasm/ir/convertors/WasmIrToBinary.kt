@@ -370,10 +370,6 @@ class WasmIrToBinary(
                     val markId = (instr.firstImmediateOrNull()!! as WasmImmediate.ConstI32).value
                     annotations.add(ResolvedAnnotation(AnnotationKind.TRACE_INST, byteOffset, markId))
                 }
-                WasmOp.PSEUDO_ANNOTATION_JS_CALLED -> {
-                    require(byteOffset == 0) { "js.called annotation must be emitted at function start." }
-                    annotations.add(ResolvedAnnotation(AnnotationKind.JS_CALLED, byteOffset))
-                }
                 WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> {}
                 WasmOp.PSEUDO_COMMENT_GROUP_START -> {}
                 WasmOp.PSEUDO_COMMENT_GROUP_END -> {}
@@ -704,6 +700,14 @@ class WasmIrToBinary(
             // Code annotation offsets are relative to the first byte
             // of the locals.
             currentFunctionCodeStart = b.written
+
+            for (annotation in function.functionAnnotations) {
+                val annotations = currentFunctionAnnotations ?: mutableListOf<ResolvedAnnotation>().also { currentFunctionAnnotations = it }
+                val kind = when (annotation) {
+                    WasmFunctionAnnotation.JsCalled -> AnnotationKind.JS_CALLED
+                }
+                annotations.add(ResolvedAnnotation(kind, 0))
+            }
 
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->

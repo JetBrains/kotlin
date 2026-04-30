@@ -434,9 +434,6 @@ enum class WasmOp(
     PSEUDO_ANNOTATION_TRACE_INST("<annotation-trace-inst>", WASM_OP_PSEUDO_OPCODE,
                                  // trace mark ID
                                  CONST_I32),
-    // marker at function start
-    PSEUDO_ANNOTATION_JS_CALLED("<annotation-js-called>", WASM_OP_PSEUDO_OPCODE),
-
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())

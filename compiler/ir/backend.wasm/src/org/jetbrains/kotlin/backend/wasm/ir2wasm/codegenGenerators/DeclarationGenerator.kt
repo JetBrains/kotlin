@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.wasm.ir.WasmExternRef
 import org.jetbrains.kotlin.wasm.ir.WasmF32
 import org.jetbrains.kotlin.wasm.ir.WasmF64
 import org.jetbrains.kotlin.wasm.ir.WasmFunction
+import org.jetbrains.kotlin.wasm.ir.WasmFunctionAnnotation
 import org.jetbrains.kotlin.wasm.ir.WasmGlobal
 import org.jetbrains.kotlin.wasm.ir.WasmHeapType
 import org.jetbrains.kotlin.wasm.ir.WasmI32
@@ -209,6 +210,10 @@ class DeclarationGenerator(
 
         val declarationBody = declaration.body
         require(declarationBody is IrBlockBody) { "Only IrBlockBody is supported" }
+
+        if (declaration.symbol in backendContext.jsCalledFunctions) {
+            function.functionAnnotations.add(WasmFunctionAnnotation.JsCalled)
+        }
 
         if (declaration is IrConstructor) {
             bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
