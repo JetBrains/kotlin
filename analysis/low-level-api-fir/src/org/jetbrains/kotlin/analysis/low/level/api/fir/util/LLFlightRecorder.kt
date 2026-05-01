@@ -237,7 +237,8 @@ object LLFlightRecorder : LLEventTracker {
         return declaration.valueParameters.joinToString(",") { it.name.asString() }
     }
 
-    private fun path(containingDeclarations: List<FirDeclaration>, target: FirElementWithResolveState): String = buildString {
+    @KaImplementationDetail
+    internal fun path(containingDeclarations: List<FirDeclaration>, target: FirElementWithResolveState): String = buildString {
         for (entry in containingDeclarations) {
             append(name(entry))
             append(":")
