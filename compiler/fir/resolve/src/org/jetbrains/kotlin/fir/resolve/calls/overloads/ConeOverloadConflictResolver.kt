@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.UByte
 import org.jetbrains.kotlin.name.StandardClassIds.UInt
 import org.jetbrains.kotlin.name.StandardClassIds.ULong
 import org.jetbrains.kotlin.name.StandardClassIds.UShort
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemMarker
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -114,7 +115,24 @@ class ConeOverloadConflictResolver(
             )
         }
 
-        val afterELA = runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(filteredOverrides, components = transformerComponents)
+        return filteredOverrides
+            .chooseMaximallySpecificCandidatesWithELA(discriminationFlags, isFirstRound = true)
+            .also { if (it.size == 1) return it } // Fast-path
+            .chooseMaximallySpecificCandidatesWithELA(discriminationFlags, isFirstRound = false)
+    }
+
+    private fun Set<Candidate>.chooseMaximallySpecificCandidatesWithELA(
+        discriminationFlags: DiscriminationFlags,
+        isFirstRound: Boolean,
+    ): Set<Candidate> {
+        val afterELA = runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
+            this, components = transformerComponents,
+            @OptIn(ConstraintSystemCompletionMode.ExclusiveForOverloadResolutionByLambdaReturnType::class)
+            when {
+                isFirstRound -> ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA
+                else -> ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA_SECOND_ROUND
+            }
+        )
 
         // Fast-path
         if (afterELA.size == 1) return afterELA

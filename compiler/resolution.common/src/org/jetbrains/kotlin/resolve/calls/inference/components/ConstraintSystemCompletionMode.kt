@@ -12,6 +12,7 @@ enum class ConstraintSystemCompletionMode(
     val shouldForkPointConstraintsBeResolved: Boolean,
     val fixNotInferredTypeVariablesToErrorType: Boolean,
     val preventFixingTypeVariablesRelatedToReturnType: Boolean,
+    val isUntilFirstLambda: Boolean = false,
 ) {
     FULL(
         allPostponedAtomsShouldBeAnalyzed = true,
@@ -53,11 +54,20 @@ enum class ConstraintSystemCompletionMode(
         shouldForkPointConstraintsBeResolved = true,
         // We shouldn't do it here because of input type semi-fixing
         fixNotInferredTypeVariablesToErrorType = false,
+        isUntilFirstLambda = true,
         preventFixingTypeVariablesRelatedToReturnType = true,
-    );
+    ),
 
-    @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
-    fun isUntilFirstLambda(): Boolean = this == UNTIL_FIRST_LAMBDA
+    @ExclusiveForOverloadResolutionByLambdaReturnType
+    UNTIL_FIRST_LAMBDA_SECOND_ROUND(
+        allPostponedAtomsShouldBeAnalyzed = false,
+        allLambdasShouldBeAnalyzed = false,
+        shouldForkPointConstraintsBeResolved = true,
+        fixNotInferredTypeVariablesToErrorType = false,
+        isUntilFirstLambda = true,
+        // The only difference to UNTIL_FIRST_LAMBDA is that we don't prevent fixing type variables related to return type
+        preventFixingTypeVariablesRelatedToReturnType = false,
+    );
 
     init {
         // allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 class Flow<out T>
 
 @OverloadResolutionByLambdaReturnType

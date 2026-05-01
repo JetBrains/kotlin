@@ -44,7 +44,7 @@ FILE: complexFixationOrderFeatureEnabled.kt
                 ^ Int(0)
             }
             )
-            lval x2: <ERROR TYPE REF: Ambiguity: debounce, [/debounce, /debounce]> = R|<local>/i|.<Ambiguity: debounce, [/debounce, /debounce]>#(::R|/bar2|, ::R|/A.foo|, ::R|/bar|, <L> = debounce@fun <anonymous>(value: <ERROR TYPE REF: Cannot infer type for parameter value>): <ERROR TYPE REF: Cannot infer type variable TypeVariable(_R)> <inline=Unknown>  {
+            lval x2: R|kotlin/Number| = R|<local>/i|.R|/debounce|<R|kotlin/Number|, R|Inv<kotlin/reflect/KFunction0<kotlin/Int>>|, R|kotlin/reflect/KFunction0<kotlin/Int>|>(::R|/bar2|, ::R|/A.foo|, ::R|/bar|, <L> = debounce@fun <anonymous>(value: R|kotlin/Number|): R|kotlin/Int| <inline=NoInline>  {
                 ^ Int(0)
             }
             )

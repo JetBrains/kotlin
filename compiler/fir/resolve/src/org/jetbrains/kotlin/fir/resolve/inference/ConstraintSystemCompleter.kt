@@ -102,7 +102,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
 
         val analyzerWithLambdaTracker = AnalyzerWithLambdaTracker(
             analyzer,
-            stopAtFirstLambda = isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda(),
+            stopAtFirstLambda = isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda,
         )
 
         completion@ while (true) {
@@ -118,7 +118,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
 
             // Obsolete step for @OverloadResolutionByLambdaReturnType
-            if (!isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda() && hasLambdaToAnalyze(postponedArguments)) return
+            if (!isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda && hasLambdaToAnalyze(postponedArguments)) return
 
             if (analyzeContextSensitiveResolutionAlternatives(postponedArguments, analyzerWithLambdaTracker)) continue
 
