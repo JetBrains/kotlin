@@ -418,6 +418,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_INLINE_CLASSES", KotlinReleaseVersion(1, 3, 50))
 
     /**
+     * Enables `IntrinsicConstEvaluation` language feature.`
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_INTRINSIC_CONST_EVALUATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_INTRINSIC_CONST_EVALUATION", KotlinReleaseVersion(2, 4, 0))
+
+    /**
      * List backend phases.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -164,6 +164,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+  -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.

@@ -594,6 +594,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xintrinsic-const-evaluation",
+        description = "Enables `IntrinsicConstEvaluation` language feature.`",
+    )
+    @Enables(LanguageFeature.IntrinsicConstEvaluation)
+    var intrinsicConstEvaluation: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xlist-phases",
         description = "List backend phases.",
     )

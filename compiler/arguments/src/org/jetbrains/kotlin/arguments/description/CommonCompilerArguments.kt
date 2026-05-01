@@ -1341,4 +1341,19 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
+
+    compilerArgument {
+        name = "Xintrinsic-const-evaluation"
+        description = """
+            Enables `IntrinsicConstEvaluation` language feature.`
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.IntrinsicConstEvaluation),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
 }

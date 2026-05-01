@@ -3816,6 +3816,49 @@
                         }
                     },
                     {
+                        "name": "Xintrinsic-const-evaluation",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enables `IntrinsicConstEvaluation` language feature.`",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        }
+                    },
+                    {
                         "name": "Xlist-phases",
                         "shortName": null,
                         "deprecatedName": null,
