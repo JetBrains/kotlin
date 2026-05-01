@@ -1,0 +1,97 @@
+public final class kotlin/powerassert/CallExplanation : kotlin/powerassert/Explanation {
+	public fun <init> (ILjava/lang/String;Ljava/util/List;)V
+	public final fun getArguments ()Ljava/util/List;
+	public fun getExpressions ()Ljava/util/List;
+	public fun getOffset ()I
+	public fun getSource ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/powerassert/CallExplanation$Argument {
+	public fun <init> (IILkotlin/powerassert/CallExplanation$Argument$Kind;Ljava/util/List;)V
+	public final fun getEndOffset ()I
+	public final fun getExpressions ()Ljava/util/List;
+	public final fun getKind ()Lkotlin/powerassert/CallExplanation$Argument$Kind;
+	public final fun getStartOffset ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/powerassert/CallExplanation$Argument$Kind : java/lang/Enum {
+	public static final field CONTEXT Lkotlin/powerassert/CallExplanation$Argument$Kind;
+	public static final field DISPATCH Lkotlin/powerassert/CallExplanation$Argument$Kind;
+	public static final field EXTENSION Lkotlin/powerassert/CallExplanation$Argument$Kind;
+	public static final field VALUE Lkotlin/powerassert/CallExplanation$Argument$Kind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/powerassert/CallExplanation$Argument$Kind;
+	public static fun values ()[Lkotlin/powerassert/CallExplanation$Argument$Kind;
+}
+
+public final class kotlin/powerassert/DefaultMessageKt {
+	public static final fun toDefaultMessage (Lkotlin/powerassert/Explanation;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
+	public static synthetic fun toDefaultMessage$default (Lkotlin/powerassert/Explanation;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class kotlin/powerassert/EqualityExpression : kotlin/powerassert/Expression {
+	public fun <init> (IIILjava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+	public fun copy (I)Lkotlin/powerassert/EqualityExpression;
+	public synthetic fun copy (I)Lkotlin/powerassert/Expression;
+	public fun getDisplayOffset ()I
+	public fun getEndOffset ()I
+	public final fun getLhs ()Ljava/lang/Object;
+	public final fun getRhs ()Ljava/lang/Object;
+	public fun getStartOffset ()I
+	public fun getValue ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/powerassert/ExperimentalPowerAssert : java/lang/annotation/Annotation {
+}
+
+public abstract class kotlin/powerassert/Explanation {
+	public abstract fun getExpressions ()Ljava/util/List;
+	public abstract fun getOffset ()I
+	public abstract fun getSource ()Ljava/lang/String;
+}
+
+public abstract class kotlin/powerassert/Expression {
+	public abstract fun copy (I)Lkotlin/powerassert/Expression;
+	public abstract fun getDisplayOffset ()I
+	public abstract fun getEndOffset ()I
+	public abstract fun getStartOffset ()I
+	public abstract fun getValue ()Ljava/lang/Object;
+}
+
+public final class kotlin/powerassert/LiteralExpression : kotlin/powerassert/Expression {
+	public fun <init> (IIILjava/lang/Object;)V
+	public synthetic fun copy (I)Lkotlin/powerassert/Expression;
+	public fun copy (I)Lkotlin/powerassert/LiteralExpression;
+	public fun getDisplayOffset ()I
+	public fun getEndOffset ()I
+	public fun getStartOffset ()I
+	public fun getValue ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class kotlin/powerassert/PowerAssert : java/lang/annotation/Annotation {
+	public static final field Companion Lkotlin/powerassert/PowerAssert$Companion;
+	public static fun getExplanation ()Lkotlin/powerassert/CallExplanation;
+}
+
+public final class kotlin/powerassert/PowerAssert$Companion {
+	public final fun getExplanation ()Lkotlin/powerassert/CallExplanation;
+}
+
+public abstract interface annotation class kotlin/powerassert/PowerAssert$Ignore : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/powerassert/ValueExpression : kotlin/powerassert/Expression {
+	public fun <init> (IIILjava/lang/Object;)V
+	public synthetic fun copy (I)Lkotlin/powerassert/Expression;
+	public fun copy (I)Lkotlin/powerassert/ValueExpression;
+	public fun getDisplayOffset ()I
+	public fun getEndOffset ()I
+	public fun getStartOffset ()I
+	public fun getValue ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+

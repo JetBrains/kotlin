@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.configureDefaultPublishing
@@ -21,6 +22,9 @@ val emptyJavadocJar by tasks.registering(Jar::class) {
 
 kotlin {
     explicitApi()
+
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation()
 
     compilerOptions {
         freeCompilerArgs.addAll(

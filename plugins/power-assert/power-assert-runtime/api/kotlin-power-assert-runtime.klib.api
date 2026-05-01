@@ -1,0 +1,143 @@
+// Klib ABI Dump
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <org.jetbrains.kotlin:kotlin-power-assert-runtime>
+open annotation class kotlin.powerassert/ExperimentalPowerAssert : kotlin/Annotation { // kotlin.powerassert/ExperimentalPowerAssert|null[0]
+    constructor <init>() // kotlin.powerassert/ExperimentalPowerAssert.<init>|<init>(){}[0]
+}
+
+open annotation class kotlin.powerassert/PowerAssert : kotlin/Annotation { // kotlin.powerassert/PowerAssert|null[0]
+    constructor <init>() // kotlin.powerassert/PowerAssert.<init>|<init>(){}[0]
+
+    open annotation class Ignore : kotlin/Annotation { // kotlin.powerassert/PowerAssert.Ignore|null[0]
+        constructor <init>() // kotlin.powerassert/PowerAssert.Ignore.<init>|<init>(){}[0]
+    }
+
+    final object Companion { // kotlin.powerassert/PowerAssert.Companion|null[0]
+        final val explanation // kotlin.powerassert/PowerAssert.Companion.explanation|{}explanation[0]
+            final fun <get-explanation>(): kotlin.powerassert/CallExplanation? // kotlin.powerassert/PowerAssert.Companion.explanation.<get-explanation>|<get-explanation>(){}[0]
+    }
+}
+
+abstract class kotlin.powerassert/Explanation { // kotlin.powerassert/Explanation|null[0]
+    abstract val expressions // kotlin.powerassert/Explanation.expressions|{}expressions[0]
+        abstract fun <get-expressions>(): kotlin.collections/List<kotlin.powerassert/Expression> // kotlin.powerassert/Explanation.expressions.<get-expressions>|<get-expressions>(){}[0]
+    abstract val offset // kotlin.powerassert/Explanation.offset|{}offset[0]
+        abstract fun <get-offset>(): kotlin/Int // kotlin.powerassert/Explanation.offset.<get-offset>|<get-offset>(){}[0]
+    abstract val source // kotlin.powerassert/Explanation.source|{}source[0]
+        abstract fun <get-source>(): kotlin/String // kotlin.powerassert/Explanation.source.<get-source>|<get-source>(){}[0]
+}
+
+abstract class kotlin.powerassert/Expression { // kotlin.powerassert/Expression|null[0]
+    abstract val displayOffset // kotlin.powerassert/Expression.displayOffset|{}displayOffset[0]
+        abstract fun <get-displayOffset>(): kotlin/Int // kotlin.powerassert/Expression.displayOffset.<get-displayOffset>|<get-displayOffset>(){}[0]
+    abstract val endOffset // kotlin.powerassert/Expression.endOffset|{}endOffset[0]
+        abstract fun <get-endOffset>(): kotlin/Int // kotlin.powerassert/Expression.endOffset.<get-endOffset>|<get-endOffset>(){}[0]
+    abstract val startOffset // kotlin.powerassert/Expression.startOffset|{}startOffset[0]
+        abstract fun <get-startOffset>(): kotlin/Int // kotlin.powerassert/Expression.startOffset.<get-startOffset>|<get-startOffset>(){}[0]
+    abstract val value // kotlin.powerassert/Expression.value|{}value[0]
+        abstract fun <get-value>(): kotlin/Any? // kotlin.powerassert/Expression.value.<get-value>|<get-value>(){}[0]
+
+    abstract fun copy(kotlin/Int): kotlin.powerassert/Expression // kotlin.powerassert/Expression.copy|copy(kotlin.Int){}[0]
+}
+
+final class kotlin.powerassert/CallExplanation : kotlin.powerassert/Explanation { // kotlin.powerassert/CallExplanation|null[0]
+    constructor <init>(kotlin/Int, kotlin/String, kotlin.collections/List<kotlin.powerassert/CallExplanation.Argument?>) // kotlin.powerassert/CallExplanation.<init>|<init>(kotlin.Int;kotlin.String;kotlin.collections.List<kotlin.powerassert.CallExplanation.Argument?>){}[0]
+
+    final val arguments // kotlin.powerassert/CallExplanation.arguments|{}arguments[0]
+        final fun <get-arguments>(): kotlin.collections/List<kotlin.powerassert/CallExplanation.Argument?> // kotlin.powerassert/CallExplanation.arguments.<get-arguments>|<get-arguments>(){}[0]
+    final val expressions // kotlin.powerassert/CallExplanation.expressions|{}expressions[0]
+        final fun <get-expressions>(): kotlin.collections/List<kotlin.powerassert/Expression> // kotlin.powerassert/CallExplanation.expressions.<get-expressions>|<get-expressions>(){}[0]
+    final val offset // kotlin.powerassert/CallExplanation.offset|{}offset[0]
+        final fun <get-offset>(): kotlin/Int // kotlin.powerassert/CallExplanation.offset.<get-offset>|<get-offset>(){}[0]
+    final val source // kotlin.powerassert/CallExplanation.source|{}source[0]
+        final fun <get-source>(): kotlin/String // kotlin.powerassert/CallExplanation.source.<get-source>|<get-source>(){}[0]
+
+    final fun toString(): kotlin/String // kotlin.powerassert/CallExplanation.toString|toString(){}[0]
+
+    final class Argument { // kotlin.powerassert/CallExplanation.Argument|null[0]
+        constructor <init>(kotlin/Int, kotlin/Int, kotlin.powerassert/CallExplanation.Argument.Kind, kotlin.collections/List<kotlin.powerassert/Expression>) // kotlin.powerassert/CallExplanation.Argument.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.powerassert.CallExplanation.Argument.Kind;kotlin.collections.List<kotlin.powerassert.Expression>){}[0]
+
+        final val endOffset // kotlin.powerassert/CallExplanation.Argument.endOffset|{}endOffset[0]
+            final fun <get-endOffset>(): kotlin/Int // kotlin.powerassert/CallExplanation.Argument.endOffset.<get-endOffset>|<get-endOffset>(){}[0]
+        final val expressions // kotlin.powerassert/CallExplanation.Argument.expressions|{}expressions[0]
+            final fun <get-expressions>(): kotlin.collections/List<kotlin.powerassert/Expression> // kotlin.powerassert/CallExplanation.Argument.expressions.<get-expressions>|<get-expressions>(){}[0]
+        final val kind // kotlin.powerassert/CallExplanation.Argument.kind|{}kind[0]
+            final fun <get-kind>(): kotlin.powerassert/CallExplanation.Argument.Kind // kotlin.powerassert/CallExplanation.Argument.kind.<get-kind>|<get-kind>(){}[0]
+        final val startOffset // kotlin.powerassert/CallExplanation.Argument.startOffset|{}startOffset[0]
+            final fun <get-startOffset>(): kotlin/Int // kotlin.powerassert/CallExplanation.Argument.startOffset.<get-startOffset>|<get-startOffset>(){}[0]
+
+        final fun toString(): kotlin/String // kotlin.powerassert/CallExplanation.Argument.toString|toString(){}[0]
+
+        final enum class Kind : kotlin/Enum<kotlin.powerassert/CallExplanation.Argument.Kind> { // kotlin.powerassert/CallExplanation.Argument.Kind|null[0]
+            enum entry CONTEXT // kotlin.powerassert/CallExplanation.Argument.Kind.CONTEXT|null[0]
+            enum entry DISPATCH // kotlin.powerassert/CallExplanation.Argument.Kind.DISPATCH|null[0]
+            enum entry EXTENSION // kotlin.powerassert/CallExplanation.Argument.Kind.EXTENSION|null[0]
+            enum entry VALUE // kotlin.powerassert/CallExplanation.Argument.Kind.VALUE|null[0]
+
+            final val entries // kotlin.powerassert/CallExplanation.Argument.Kind.entries|#static{}entries[0]
+                final fun <get-entries>(): kotlin.enums/EnumEntries<kotlin.powerassert/CallExplanation.Argument.Kind> // kotlin.powerassert/CallExplanation.Argument.Kind.entries.<get-entries>|<get-entries>#static(){}[0]
+
+            final fun valueOf(kotlin/String): kotlin.powerassert/CallExplanation.Argument.Kind // kotlin.powerassert/CallExplanation.Argument.Kind.valueOf|valueOf#static(kotlin.String){}[0]
+            final fun values(): kotlin/Array<kotlin.powerassert/CallExplanation.Argument.Kind> // kotlin.powerassert/CallExplanation.Argument.Kind.values|values#static(){}[0]
+        }
+    }
+}
+
+final class kotlin.powerassert/EqualityExpression : kotlin.powerassert/Expression { // kotlin.powerassert/EqualityExpression|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Any?, kotlin/Any?, kotlin/Any?) // kotlin.powerassert/EqualityExpression.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Any?;kotlin.Any?;kotlin.Any?){}[0]
+
+    final val displayOffset // kotlin.powerassert/EqualityExpression.displayOffset|{}displayOffset[0]
+        final fun <get-displayOffset>(): kotlin/Int // kotlin.powerassert/EqualityExpression.displayOffset.<get-displayOffset>|<get-displayOffset>(){}[0]
+    final val endOffset // kotlin.powerassert/EqualityExpression.endOffset|{}endOffset[0]
+        final fun <get-endOffset>(): kotlin/Int // kotlin.powerassert/EqualityExpression.endOffset.<get-endOffset>|<get-endOffset>(){}[0]
+    final val lhs // kotlin.powerassert/EqualityExpression.lhs|{}lhs[0]
+        final fun <get-lhs>(): kotlin/Any? // kotlin.powerassert/EqualityExpression.lhs.<get-lhs>|<get-lhs>(){}[0]
+    final val rhs // kotlin.powerassert/EqualityExpression.rhs|{}rhs[0]
+        final fun <get-rhs>(): kotlin/Any? // kotlin.powerassert/EqualityExpression.rhs.<get-rhs>|<get-rhs>(){}[0]
+    final val startOffset // kotlin.powerassert/EqualityExpression.startOffset|{}startOffset[0]
+        final fun <get-startOffset>(): kotlin/Int // kotlin.powerassert/EqualityExpression.startOffset.<get-startOffset>|<get-startOffset>(){}[0]
+    final val value // kotlin.powerassert/EqualityExpression.value|{}value[0]
+        final fun <get-value>(): kotlin/Any? // kotlin.powerassert/EqualityExpression.value.<get-value>|<get-value>(){}[0]
+
+    final fun copy(kotlin/Int): kotlin.powerassert/EqualityExpression // kotlin.powerassert/EqualityExpression.copy|copy(kotlin.Int){}[0]
+    final fun toString(): kotlin/String // kotlin.powerassert/EqualityExpression.toString|toString(){}[0]
+}
+
+final class kotlin.powerassert/LiteralExpression : kotlin.powerassert/Expression { // kotlin.powerassert/LiteralExpression|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Any?) // kotlin.powerassert/LiteralExpression.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Any?){}[0]
+
+    final val displayOffset // kotlin.powerassert/LiteralExpression.displayOffset|{}displayOffset[0]
+        final fun <get-displayOffset>(): kotlin/Int // kotlin.powerassert/LiteralExpression.displayOffset.<get-displayOffset>|<get-displayOffset>(){}[0]
+    final val endOffset // kotlin.powerassert/LiteralExpression.endOffset|{}endOffset[0]
+        final fun <get-endOffset>(): kotlin/Int // kotlin.powerassert/LiteralExpression.endOffset.<get-endOffset>|<get-endOffset>(){}[0]
+    final val startOffset // kotlin.powerassert/LiteralExpression.startOffset|{}startOffset[0]
+        final fun <get-startOffset>(): kotlin/Int // kotlin.powerassert/LiteralExpression.startOffset.<get-startOffset>|<get-startOffset>(){}[0]
+    final val value // kotlin.powerassert/LiteralExpression.value|{}value[0]
+        final fun <get-value>(): kotlin/Any? // kotlin.powerassert/LiteralExpression.value.<get-value>|<get-value>(){}[0]
+
+    final fun copy(kotlin/Int): kotlin.powerassert/LiteralExpression // kotlin.powerassert/LiteralExpression.copy|copy(kotlin.Int){}[0]
+    final fun toString(): kotlin/String // kotlin.powerassert/LiteralExpression.toString|toString(){}[0]
+}
+
+final class kotlin.powerassert/ValueExpression : kotlin.powerassert/Expression { // kotlin.powerassert/ValueExpression|null[0]
+    constructor <init>(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Any?) // kotlin.powerassert/ValueExpression.<init>|<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Any?){}[0]
+
+    final val displayOffset // kotlin.powerassert/ValueExpression.displayOffset|{}displayOffset[0]
+        final fun <get-displayOffset>(): kotlin/Int // kotlin.powerassert/ValueExpression.displayOffset.<get-displayOffset>|<get-displayOffset>(){}[0]
+    final val endOffset // kotlin.powerassert/ValueExpression.endOffset|{}endOffset[0]
+        final fun <get-endOffset>(): kotlin/Int // kotlin.powerassert/ValueExpression.endOffset.<get-endOffset>|<get-endOffset>(){}[0]
+    final val startOffset // kotlin.powerassert/ValueExpression.startOffset|{}startOffset[0]
+        final fun <get-startOffset>(): kotlin/Int // kotlin.powerassert/ValueExpression.startOffset.<get-startOffset>|<get-startOffset>(){}[0]
+    final val value // kotlin.powerassert/ValueExpression.value|{}value[0]
+        final fun <get-value>(): kotlin/Any? // kotlin.powerassert/ValueExpression.value.<get-value>|<get-value>(){}[0]
+
+    final fun copy(kotlin/Int): kotlin.powerassert/ValueExpression // kotlin.powerassert/ValueExpression.copy|copy(kotlin.Int){}[0]
+    final fun toString(): kotlin/String // kotlin.powerassert/ValueExpression.toString|toString(){}[0]
+}
+
+final fun (kotlin.powerassert/Explanation).kotlin.powerassert/toDefaultMessage(kotlin/Function1<kotlin.powerassert/Expression, kotlin/String?> = ...): kotlin/String // kotlin.powerassert/toDefaultMessage|toDefaultMessage@kotlin.powerassert.Explanation(kotlin.Function1<kotlin.powerassert.Expression,kotlin.String?>){}[0]
