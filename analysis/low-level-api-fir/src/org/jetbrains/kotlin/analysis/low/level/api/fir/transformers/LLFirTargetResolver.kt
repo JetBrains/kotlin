@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDesignationEnt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.nullableJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLEventRecorder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLEventTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.canHaveDeferredReturnTypeCalculation
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -78,6 +82,7 @@ internal sealed class LLFirTargetResolver(
     val resolveTargetScopeSession: ScopeSession get() = resolveTargetSession.getScopeSession()
     private val lockProvider: LLFirLockProvider get() = LLFirGlobalResolveComponents.getInstance(resolveTargetSession).lockProvider
     private val requiresJumpingLock: Boolean get() = resolverPhase.isItAllowedToCallLazyResolveToTheSamePhase
+    private val FirSession.eventRecorder: LLEventRecorder? by FirSession.nullableSessionComponentAccessor<LLEventRecorder>()
 
     val containingDeclarations: List<FirDeclaration>
         field = mutableListOf()
@@ -323,7 +328,7 @@ internal sealed class LLFirTargetResolver(
      * @see doLazyResolveUnderLock
      */
     protected fun performResolve(target: FirElementWithResolveState) {
-        val event = LLFlightRecorder.phase(target, containingDeclarations, resolverPhase)
+        val event = (resolveTargetSession.eventRecorder ?: LLFlightRecorder).phase(target, containingDeclarations, resolverPhase)
 
         try {
             resolveDependencies(target)

@@ -7,43 +7,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import jdk.jfr.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLPartialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder.name
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder.path
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder.phase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirBackingField
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
@@ -51,7 +24,7 @@ import org.jetbrains.kotlin.utils.exceptions.shouldIjPlatformExceptionBeRethrown
 private const val KOTLIN_CODE_ANALYSIS_EVENT_CATEGORY = "Kotlin Code Analysis"
 
 @KaImplementationDetail
-object LLFlightRecorder {
+object LLFlightRecorder : LLEventTracker {
     private val includePhaseTraces: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
         System.getProperty("kotlin.analysis.jfr.includePhaseTraces") == "true"
                 || System.getenv("KOTLIN_ANALYSIS_JFR_INCLUDE_PHASE_TRACES") == "true"
@@ -67,10 +40,10 @@ object LLFlightRecorder {
      * @param containingDeclarations The list of declarations enclosing [target] starting from the [FirFile].
      * @param phase The phase the declaration was analyzed to.
      */
-    internal fun phase(
+    override fun phase(
         target: FirElementWithResolveState,
         containingDeclarations: List<FirDeclaration>,
-        requestedPhase: FirResolvePhase
+        requestedPhase: FirResolvePhase,
     ): LLPhaseEventCompleter? {
         if (includePhaseTraces) {
             if (!phaseWithTraceEventType.isEnabled) {
@@ -159,7 +132,7 @@ object LLFlightRecorder {
     internal fun readyPhase(
         target: FirElementWithResolveState,
         containingDeclarations: List<FirDeclaration>,
-        requestedPhase: FirResolvePhase
+        requestedPhase: FirResolvePhase,
     ) {
         if (!readyPhaseEventType.isEnabled) {
             return
@@ -182,7 +155,10 @@ object LLFlightRecorder {
      * @param declaration The analyzed declaration.
      * @param phase The phase the [declaration] is being analyzed to.
      */
-    internal fun phaseSuspension(declaration: FirElementWithResolveState, requestedPhase: FirResolvePhase): LLPhaseSuspensionEventCompleter? {
+    internal fun phaseSuspension(
+        declaration: FirElementWithResolveState,
+        requestedPhase: FirResolvePhase,
+    ): LLPhaseSuspensionEventCompleter? {
         if (!phaseSuspensionEventType.isEnabled) {
             return null
         }
@@ -313,10 +289,7 @@ private val PHASE_COMPACT_NAMES = run {
     }
 }
 
-internal interface LLPhaseEventCompleter {
-    fun notifyCompleted()
-    fun notifyCompletedWithFailure(throwable: Throwable)
-}
+interface LLPhaseEventCompleter : LLEvent
 
 @Suppress("unused")
 @Name("org.jetbrains.kotlin.LLPhase")
@@ -335,7 +308,7 @@ private class LLPhaseEvent(
     private val phase: Byte,
 
     @Label("Module Kind")
-    private val moduleKind: Byte
+    private val moduleKind: Byte,
 ) : LLAbstractPhaseEvent() {
     @Label("Execution Result")
     @Description("0 - Success, 1 - Cancellation, 2 - Exception")
@@ -359,7 +332,7 @@ private class LLPhaseWithTraceEvent(
     private val phase: Byte,
 
     @Label("Module Kind")
-    private val moduleKind: Byte
+    private val moduleKind: Byte,
 ) : LLAbstractPhaseEvent() {
     @Label("Execution Result")
     @Description("0 - Success, 1 - Cancellation, 2 - Exception")
@@ -400,7 +373,7 @@ private class LLPartialBodyAnalysisEvent(
     private val count: Int,
 
     @Label("Analysis Attempt Number")
-    private val attempt: Int
+    private val attempt: Int,
 ) : Event()
 
 @Suppress("unused")
@@ -421,7 +394,7 @@ private class LLReadyPhaseEvent(
     private val moduleKind: Byte,
 
     @Label("Phase")
-    private val phase: Byte
+    private val phase: Byte,
 ) : Event()
 
 internal interface LLPhaseSuspensionEventCompleter {
@@ -439,7 +412,7 @@ private class LLPhaseSuspensionEvent(
     private val hash: Int,
 
     @Label("Phase")
-    private val phase: Byte
+    private val phase: Byte,
 ) : Event(), LLPhaseSuspensionEventCompleter {
     override fun notifyCompleted() {
         end()
@@ -456,5 +429,5 @@ private class LLPhaseSuspensionEvent(
 private class LLStopWorldInvalidation(
     @Label("Invalidation State")
     @Description("If true, the invalidation has been requested, otherwise it has completed")
-    private val state: Boolean
+    private val state: Boolean,
 ) : Event()
