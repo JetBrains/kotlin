@@ -214,7 +214,7 @@ public inline fun <K, V> Map<out K, V>.count(predicate: (Map.Entry<K, V>) -> Boo
 }
 
 /**
- * Performs the given [action] on each entry.
+ * Performs the given [action] on each entry in iteration order.
  */
 @kotlin.internal.HidesMembers
 public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit {

@@ -15199,70 +15199,70 @@ public inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (index: 
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun <T> Array<out T>.forEach(action: (T) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun ByteArray.forEach(action: (Byte) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun ShortArray.forEach(action: (Short) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun IntArray.forEach(action: (Int) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun LongArray.forEach(action: (Long) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun FloatArray.forEach(action: (Float) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun DoubleArray.forEach(action: (Double) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun BooleanArray.forEach(action: (Boolean) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 public inline fun CharArray.forEach(action: (Char) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15272,7 +15272,7 @@ public inline fun <T> Array<out T>.forEachIndexed(action: (index: Int, T) -> Uni
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15282,7 +15282,7 @@ public inline fun ByteArray.forEachIndexed(action: (index: Int, Byte) -> Unit): 
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15292,7 +15292,7 @@ public inline fun ShortArray.forEachIndexed(action: (index: Int, Short) -> Unit)
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15302,7 +15302,7 @@ public inline fun IntArray.forEachIndexed(action: (index: Int, Int) -> Unit): Un
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15312,7 +15312,7 @@ public inline fun LongArray.forEachIndexed(action: (index: Int, Long) -> Unit): 
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15322,7 +15322,7 @@ public inline fun FloatArray.forEachIndexed(action: (index: Int, Float) -> Unit)
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15332,7 +15332,7 @@ public inline fun DoubleArray.forEachIndexed(action: (index: Int, Double) -> Uni
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -15342,7 +15342,7 @@ public inline fun BooleanArray.forEachIndexed(action: (index: Int, Boolean) -> U
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */

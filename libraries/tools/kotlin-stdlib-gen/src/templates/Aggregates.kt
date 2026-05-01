@@ -1959,7 +1959,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
-        doc { "Performs the given [action] on each ${f.element}." }
+        doc { "Performs the given [action] on each ${f.element} in iteration order." }
         specialFor(Iterables, Maps) { annotation("@kotlin.internal.HidesMembers") }
         returns("Unit")
         body {
@@ -1978,7 +1978,7 @@ object Aggregates : TemplateGroupBase() {
 
         doc {
             """
-            Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}.
+            Performs the given [action] on each ${f.element} in iteration order, providing sequential index with the ${f.element}.
             @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
             and performs the action on the ${f.element}.
             """ }

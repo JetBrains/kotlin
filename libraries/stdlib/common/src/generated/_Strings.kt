@@ -1192,14 +1192,14 @@ public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (inde
 }
 
 /**
- * Performs the given [action] on each character.
+ * Performs the given [action] on each character in iteration order.
  */
 public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
     for (element in this) action(element)
 }
 
 /**
- * Performs the given [action] on each character, providing sequential index with the character.
+ * Performs the given [action] on each character in iteration order, providing sequential index with the character.
  * @param [action] function that takes the index of a character and the character itself
  * and performs the action on the character.
  */
