@@ -36,21 +36,4 @@ class AllEqualUIntArrayTest {
         assertFalse(uintArrayOf(1u, 2u).allEqualBy { it % 2u })
         assertTrue(uintArrayOf(1u, 2u).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(uintArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(uintArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(uintArrayOf(1u).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(uintArrayOf(1u, 1u).allEqualWith { a, b -> a == b })
-        assertFalse(uintArrayOf(1u, 2u).allEqualWith { a, b -> a == b })
-        assertFalse(uintArrayOf(2u, 1u).allEqualWith { a, b -> a == b })
-        assertTrue(uintArrayOf(1u, 1u, 1u).allEqualWith { a, b -> a == b })
-        assertFalse(uintArrayOf(1u, 1u, 2u).allEqualWith { a, b -> a == b })
-        assertFalse(uintArrayOf(2u, 1u, 1u).allEqualWith { a, b -> a == b })
-        assertTrue(uintArrayOf(1u, 2u, 1u).allEqualWith { _, _ -> true })
-        assertFalse(uintArrayOf(1u, 1u, 1u).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(uintArrayOf(1u, 2u, 1u).allEqualWith { a, b -> a <= b })
-    }
 }

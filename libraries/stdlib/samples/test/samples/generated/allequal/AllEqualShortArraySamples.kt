@@ -38,15 +38,4 @@ class AllEqualShortArraySamples {
         assertPrints(values.allEqualBy { abs(it.toInt()) }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(shortArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = shortArrayOf(10, 12, 15)
-        assertPrints(similar.allEqualWith { a, b -> a / 10 == b / 10 }, "true")
-
-        val dissimilar = shortArrayOf(10, 12, 25)
-        assertPrints(dissimilar.allEqualWith { a, b -> a / 10 == b / 10 }, "false")
-    }
 }

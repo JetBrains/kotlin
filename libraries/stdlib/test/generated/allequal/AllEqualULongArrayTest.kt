@@ -36,21 +36,4 @@ class AllEqualULongArrayTest {
         assertFalse(ulongArrayOf(1uL, 2uL).allEqualBy { it % 2uL })
         assertTrue(ulongArrayOf(1uL, 2uL).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(ulongArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(ulongArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(ulongArrayOf(1uL).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(ulongArrayOf(1uL, 1uL).allEqualWith { a, b -> a == b })
-        assertFalse(ulongArrayOf(1uL, 2uL).allEqualWith { a, b -> a == b })
-        assertFalse(ulongArrayOf(2uL, 1uL).allEqualWith { a, b -> a == b })
-        assertTrue(ulongArrayOf(1uL, 1uL, 1uL).allEqualWith { a, b -> a == b })
-        assertFalse(ulongArrayOf(1uL, 1uL, 2uL).allEqualWith { a, b -> a == b })
-        assertFalse(ulongArrayOf(2uL, 1uL, 1uL).allEqualWith { a, b -> a == b })
-        assertTrue(ulongArrayOf(1uL, 2uL, 1uL).allEqualWith { _, _ -> true })
-        assertFalse(ulongArrayOf(1uL, 1uL, 1uL).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(ulongArrayOf(1uL, 2uL, 1uL).allEqualWith { a, b -> a <= b })
-    }
 }

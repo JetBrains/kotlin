@@ -36,21 +36,4 @@ class AllEqualUByteArrayTest {
         assertFalse(ubyteArrayOf(1u, 2u).allEqualBy { it.toUInt() % 2u })
         assertTrue(ubyteArrayOf(1u, 2u).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(ubyteArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(ubyteArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(ubyteArrayOf(1u).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(ubyteArrayOf(1u, 1u).allEqualWith { a, b -> a == b })
-        assertFalse(ubyteArrayOf(1u, 2u).allEqualWith { a, b -> a == b })
-        assertFalse(ubyteArrayOf(2u, 1u).allEqualWith { a, b -> a == b })
-        assertTrue(ubyteArrayOf(1u, 1u, 1u).allEqualWith { a, b -> a == b })
-        assertFalse(ubyteArrayOf(1u, 1u, 2u).allEqualWith { a, b -> a == b })
-        assertFalse(ubyteArrayOf(2u, 1u, 1u).allEqualWith { a, b -> a == b })
-        assertTrue(ubyteArrayOf(1u, 2u, 1u).allEqualWith { _, _ -> true })
-        assertFalse(ubyteArrayOf(1u, 1u, 1u).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(ubyteArrayOf(1u, 2u, 1u).allEqualWith { a, b -> a <= b })
-    }
 }

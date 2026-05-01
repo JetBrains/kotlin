@@ -33,21 +33,4 @@ class AllEqualSequencesSamples {
         assertPrints(sequenceOf("apple", "mango", "peach").allEqualBy { it.length }, "true")
         assertPrints(sequenceOf("apple", "mango", "peach").allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(sequenceOf<String>().allEqualWith { _, _ -> true }, "true")
-
-        assertPrints(sequenceOf("Apple", "APPLE", "apple").allEqualWith { a, b -> a.equals(b, ignoreCase = true) }, "true")
-
-        assertPrints(sequenceOf("apple", "apple", "orange").allEqualWith { a, b -> a.equals(b, ignoreCase = true) }, "false")
-
-        // `===` treats only identical references as equal, while `==` uses structural equality.
-        val first = listOf(1)
-        val second = listOf(1)
-        assertPrints(sequenceOf(first, first, first).allEqualWith { a, b -> a === b }, "true")
-
-        assertPrints(sequenceOf(first, first, second).allEqualWith { a, b -> a === b }, "false")
-        assertPrints(sequenceOf(first, first, second).allEqualWith { a, b -> a == b }, "true")
-    }
 }

@@ -37,15 +37,4 @@ class AllEqualCharArraySamples {
         assertPrints(values.allEqualBy { it.lowercaseChar() }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(charArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = charArrayOf('a', 'A', 'a')
-        assertPrints(similar.allEqualWith { a, b -> a.equals(b, ignoreCase = true) }, "true")
-
-        val dissimilar = charArrayOf('a', 'A', 'b')
-        assertPrints(dissimilar.allEqualWith { a, b -> a.equals(b, ignoreCase = true) }, "false")
-    }
 }

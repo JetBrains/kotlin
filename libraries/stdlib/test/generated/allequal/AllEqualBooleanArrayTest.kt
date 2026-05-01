@@ -36,21 +36,4 @@ class AllEqualBooleanArrayTest {
         assertFalse(booleanArrayOf(true, false).allEqualBy { it })
         assertTrue(booleanArrayOf(true, false).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(booleanArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(booleanArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(booleanArrayOf(true).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(booleanArrayOf(true, true).allEqualWith { a, b -> a == b })
-        assertFalse(booleanArrayOf(true, false).allEqualWith { a, b -> a == b })
-        assertFalse(booleanArrayOf(false, true).allEqualWith { a, b -> a == b })
-        assertTrue(booleanArrayOf(true, true, true).allEqualWith { a, b -> a == b })
-        assertFalse(booleanArrayOf(true, true, false).allEqualWith { a, b -> a == b })
-        assertFalse(booleanArrayOf(false, true, true).allEqualWith { a, b -> a == b })
-        assertTrue(booleanArrayOf(true, false, true).allEqualWith { _, _ -> true })
-        assertFalse(booleanArrayOf(true, true, true).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(booleanArrayOf(false, true, false).allEqualWith { a, b -> !a || b })
-    }
 }

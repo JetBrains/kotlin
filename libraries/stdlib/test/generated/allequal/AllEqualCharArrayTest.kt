@@ -36,21 +36,4 @@ class AllEqualCharArrayTest {
         assertFalse(charArrayOf('a', 'B').allEqualBy { it.uppercaseChar() })
         assertTrue(charArrayOf('a', 'B').allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(charArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(charArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(charArrayOf('a').allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(charArrayOf('a', 'a').allEqualWith { a, b -> a == b })
-        assertFalse(charArrayOf('a', 'b').allEqualWith { a, b -> a == b })
-        assertFalse(charArrayOf('b', 'a').allEqualWith { a, b -> a == b })
-        assertTrue(charArrayOf('a', 'a', 'a').allEqualWith { a, b -> a == b })
-        assertFalse(charArrayOf('a', 'a', 'b').allEqualWith { a, b -> a == b })
-        assertFalse(charArrayOf('b', 'a', 'a').allEqualWith { a, b -> a == b })
-        assertTrue(charArrayOf('a', 'b', 'a').allEqualWith { _, _ -> true })
-        assertFalse(charArrayOf('a', 'a', 'a').allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(charArrayOf('a', 'b', 'a').allEqualWith { a, b -> a <= b })
-    }
 }

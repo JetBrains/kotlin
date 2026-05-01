@@ -38,15 +38,4 @@ class AllEqualFloatArraySamples {
         assertPrints(values.allEqualBy { abs(it) }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(floatArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = floatArrayOf(1.0f, 1.25f, 1.5f)
-        assertPrints(similar.allEqualWith { a, b -> a.toInt() == b.toInt() }, "true")
-
-        val dissimilar = floatArrayOf(1.0f, 1.25f, 2.0f)
-        assertPrints(dissimilar.allEqualWith { a, b -> a.toInt() == b.toInt() }, "false")
-    }
 }

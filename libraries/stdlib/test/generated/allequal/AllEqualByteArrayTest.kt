@@ -36,21 +36,4 @@ class AllEqualByteArrayTest {
         assertFalse(byteArrayOf(1, 2).allEqualBy { it * it })
         assertTrue(byteArrayOf(1, 2).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(byteArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(byteArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(byteArrayOf(1).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(byteArrayOf(1, 1).allEqualWith { a, b -> a == b })
-        assertFalse(byteArrayOf(1, 2).allEqualWith { a, b -> a == b })
-        assertFalse(byteArrayOf(2, 1).allEqualWith { a, b -> a == b })
-        assertTrue(byteArrayOf(1, 1, 1).allEqualWith { a, b -> a == b })
-        assertFalse(byteArrayOf(1, 1, 2).allEqualWith { a, b -> a == b })
-        assertFalse(byteArrayOf(2, 1, 1).allEqualWith { a, b -> a == b })
-        assertTrue(byteArrayOf(1, 2, 1).allEqualWith { _, _ -> true })
-        assertFalse(byteArrayOf(1, 1, 1).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(byteArrayOf(1, 2, 1).allEqualWith { a, b -> a <= b })
-    }
 }

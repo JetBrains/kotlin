@@ -334,56 +334,6 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
-    val f_allEqualWith = fn("allEqualWith(predicate: (T, T) -> Boolean)") {
-        includeDefault()
-        include(ArraysOfUnsigned)
-    } builder {
-        since("2.4")
-        annotation("@ExperimentalStdlibApi")
-        inline()
-        returns("Boolean")
-        doc {
-            """
-            Returns `true` if the given [predicate] returns `true` for every pair formed by the first
-            ${f.element} of the ${f.collection} and each subsequent ${f.element}.
-
-            Returns `true` if the ${f.collection} has fewer than two ${f.element.pluralize()}.
-
-            The [predicate] is expected to implement an equivalence relation; it is invoked with the first
-            ${f.element} as the first argument and each subsequent ${f.element} as the second argument.
-            """
-        }
-        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
-            doc {
-                doc + """
-                For example, `{ a, b -> a === b }` checks referential equality.
-                """
-            }
-        }
-        sample(allEqualSampleRef("allEqualWith"))
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return true
-            val first = iterator.next()
-            while (iterator.hasNext()) {
-                if (!predicate(first, iterator.next())) return false
-            }
-            return true
-            """
-        }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (size < 2) return true
-            val first = this[0]
-            for (i in 1..lastIndex) {
-                if (!predicate(first, this[i])) return false
-            }
-            return true
-            """
-        }
-    }
-
     val f_count_predicate = fn("count(predicate: (T) -> Boolean)") {
         includeDefault()
         include(Maps, CharSequences, ArraysOfUnsigned)

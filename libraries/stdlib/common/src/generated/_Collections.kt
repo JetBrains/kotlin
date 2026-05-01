@@ -1997,31 +1997,6 @@ public inline fun <T, K> Iterable<T>.allEqualBy(selector: (T) -> K): Boolean {
 }
 
 /**
- * Returns `true` if the given [predicate] returns `true` for every pair formed by the first
- * element of the collection and each subsequent element.
- * 
- * Returns `true` if the collection has fewer than two elements.
- * 
- * The [predicate] is expected to implement an equivalence relation; it is invoked with the first
- * element as the first argument and each subsequent element as the second argument.
- * 
- * For example, `{ a, b -> a === b }` checks referential equality.
- * 
- * @sample samples.generated.allequal.AllEqualIterablesSamples.allEqualWith
- */
-@SinceKotlin("2.4")
-@ExperimentalStdlibApi
-public inline fun <T> Iterable<T>.allEqualWith(predicate: (T, T) -> Boolean): Boolean {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return true
-    val first = iterator.next()
-    while (iterator.hasNext()) {
-        if (!predicate(first, iterator.next())) return false
-    }
-    return true
-}
-
-/**
  * Returns `true` if collection has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any

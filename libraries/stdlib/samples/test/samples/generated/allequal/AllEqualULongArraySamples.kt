@@ -36,15 +36,4 @@ class AllEqualULongArraySamples {
         assertPrints(values.allEqualBy { it % 2uL }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(ulongArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = ulongArrayOf(10uL, 12uL, 15uL)
-        assertPrints(similar.allEqualWith { a, b -> a / 10uL == b / 10uL }, "true")
-
-        val dissimilar = ulongArrayOf(10uL, 12uL, 25uL)
-        assertPrints(dissimilar.allEqualWith { a, b -> a / 10uL == b / 10uL }, "false")
-    }
 }

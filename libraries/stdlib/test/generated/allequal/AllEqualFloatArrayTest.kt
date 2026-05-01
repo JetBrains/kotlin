@@ -38,23 +38,6 @@ class AllEqualFloatArrayTest {
     }
 
     @Test
-    fun allEqualWith() {
-        assertTrue(floatArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(floatArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(floatArrayOf(1.0f).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(floatArrayOf(1.0f, 1.0f).allEqualWith { a, b -> a == b })
-        assertFalse(floatArrayOf(1.0f, 2.0f).allEqualWith { a, b -> a == b })
-        assertFalse(floatArrayOf(2.0f, 1.0f).allEqualWith { a, b -> a == b })
-        assertTrue(floatArrayOf(1.0f, 1.0f, 1.0f).allEqualWith { a, b -> a == b })
-        assertFalse(floatArrayOf(1.0f, 1.0f, 2.0f).allEqualWith { a, b -> a == b })
-        assertFalse(floatArrayOf(2.0f, 1.0f, 1.0f).allEqualWith { a, b -> a == b })
-        assertTrue(floatArrayOf(1.0f, 2.0f, 1.0f).allEqualWith { _, _ -> true })
-        assertFalse(floatArrayOf(1.0f, 1.0f, 1.0f).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(floatArrayOf(1.0f, 2.0f, 1.0f).allEqualWith { a, b -> a <= b })
-    }
-
-    @Test
     fun allEqualNaNFloat() {
         assertTrue(floatArrayOf(Float.NaN, Float.NaN).allEqual())
         assertTrue(floatArrayOf(Float.NaN, Float.NaN, Float.NaN).allEqual())

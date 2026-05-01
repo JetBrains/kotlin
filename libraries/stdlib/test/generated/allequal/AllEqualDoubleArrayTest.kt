@@ -38,23 +38,6 @@ class AllEqualDoubleArrayTest {
     }
 
     @Test
-    fun allEqualWith() {
-        assertTrue(doubleArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(doubleArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(doubleArrayOf(1.0).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(doubleArrayOf(1.0, 1.0).allEqualWith { a, b -> a == b })
-        assertFalse(doubleArrayOf(1.0, 2.0).allEqualWith { a, b -> a == b })
-        assertFalse(doubleArrayOf(2.0, 1.0).allEqualWith { a, b -> a == b })
-        assertTrue(doubleArrayOf(1.0, 1.0, 1.0).allEqualWith { a, b -> a == b })
-        assertFalse(doubleArrayOf(1.0, 1.0, 2.0).allEqualWith { a, b -> a == b })
-        assertFalse(doubleArrayOf(2.0, 1.0, 1.0).allEqualWith { a, b -> a == b })
-        assertTrue(doubleArrayOf(1.0, 2.0, 1.0).allEqualWith { _, _ -> true })
-        assertFalse(doubleArrayOf(1.0, 1.0, 1.0).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(doubleArrayOf(1.0, 2.0, 1.0).allEqualWith { a, b -> a <= b })
-    }
-
-    @Test
     fun allEqualNaNDouble() {
         assertTrue(doubleArrayOf(Double.NaN, Double.NaN).allEqual())
         assertTrue(doubleArrayOf(Double.NaN, Double.NaN, Double.NaN).allEqual())

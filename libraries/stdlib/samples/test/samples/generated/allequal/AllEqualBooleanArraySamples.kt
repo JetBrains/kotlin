@@ -37,15 +37,4 @@ class AllEqualBooleanArraySamples {
         assertPrints(values.allEqualBy { it }, "false")
         assertPrints(values.allEqualBy { !it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(booleanArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = booleanArrayOf(true, true, true)
-        assertPrints(similar.allEqualWith { a, b -> a == b }, "true")
-
-        val dissimilar = booleanArrayOf(true, true, false)
-        assertPrints(dissimilar.allEqualWith { a, b -> a == b }, "false")
-    }
 }

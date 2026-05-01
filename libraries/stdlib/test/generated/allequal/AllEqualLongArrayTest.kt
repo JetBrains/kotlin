@@ -36,21 +36,4 @@ class AllEqualLongArrayTest {
         assertFalse(longArrayOf(1L, 2L).allEqualBy { it * it })
         assertTrue(longArrayOf(1L, 2L).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(longArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(longArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(longArrayOf(1L).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(longArrayOf(1L, 1L).allEqualWith { a, b -> a == b })
-        assertFalse(longArrayOf(1L, 2L).allEqualWith { a, b -> a == b })
-        assertFalse(longArrayOf(2L, 1L).allEqualWith { a, b -> a == b })
-        assertTrue(longArrayOf(1L, 1L, 1L).allEqualWith { a, b -> a == b })
-        assertFalse(longArrayOf(1L, 1L, 2L).allEqualWith { a, b -> a == b })
-        assertFalse(longArrayOf(2L, 1L, 1L).allEqualWith { a, b -> a == b })
-        assertTrue(longArrayOf(1L, 2L, 1L).allEqualWith { _, _ -> true })
-        assertFalse(longArrayOf(1L, 1L, 1L).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(longArrayOf(1L, 2L, 1L).allEqualWith { a, b -> a <= b })
-    }
 }

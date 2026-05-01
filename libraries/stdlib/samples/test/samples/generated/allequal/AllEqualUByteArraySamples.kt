@@ -36,15 +36,4 @@ class AllEqualUByteArraySamples {
         assertPrints(values.allEqualBy { it.toUInt() % 2u }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(ubyteArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = ubyteArrayOf(10u, 12u, 15u)
-        assertPrints(similar.allEqualWith { a, b -> a.toUInt() / 10u == b.toUInt() / 10u }, "true")
-
-        val dissimilar = ubyteArrayOf(10u, 12u, 25u)
-        assertPrints(dissimilar.allEqualWith { a, b -> a.toUInt() / 10u == b.toUInt() / 10u }, "false")
-    }
 }

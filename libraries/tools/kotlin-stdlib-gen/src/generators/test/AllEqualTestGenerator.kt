@@ -18,9 +18,7 @@ object AllEqualTestGenerator {
         val collectionClass = collectionClassName(family, primitive)
         val ctor = constructorName(family, primitive)
         val config = allEqualConfigFor(primitive)
-        val firstVsEach = firstVsEachCaseFor(primitive)
         val emptyCollection = emptyCollectionExpr(ctor, primitive)
-        val supportsReferentialEquality = family == Iterables || family == Sequences || family == ArraysOfObjects
         val fpTypes = when (primitive) {
             null -> PrimitiveType.floatingPointPrimitives.toList()
             in PrimitiveType.floatingPointPrimitives -> listOf(primitive)
@@ -32,7 +30,6 @@ object AllEqualTestGenerator {
             writeHeader(className)
             writeAllEqualTest(ctor, config, emptyCollection)
             writeAllEqualByTest(ctor, config, emptyCollection)
-            writeAllEqualWithTest(ctor, config, emptyCollection, supportsReferentialEquality, firstVsEach)
             for (fpType in fpTypes) {
                 writeFpTests(ctor, fpType)
             }
@@ -86,48 +83,6 @@ object AllEqualTestGenerator {
         assertTrue($ctor($equalSelectorArgs).allEqualBy { $selectorExpr })
         assertFalse($ctor($diffSelectorArgs).allEqualBy { $selectorExpr })
         assertTrue($ctor($diffSelectorArgs).allEqualBy { 0 })
-    }"""
-        )
-    }
-
-    private fun BufferedWriter.writeAllEqualWithTest(
-        ctor: String,
-        config: AllEqualTypeConfig,
-        emptyCollection: String,
-        supportsReferentialEquality: Boolean,
-        firstVsEach: FirstVsEachCase,
-    ) {
-        val equal = config.equalValue
-        val other = config.otherValue
-        val referentialBlock = if (supportsReferentialEquality) {
-            // Uses `List<Int>` so that `first == second` holds while `first === second` does not
-            // on every Kotlin target (strings are JS primitives and are always `===`-equal there).
-            """
-        // `===` distinguishes same references from equal-by-content but distinct instances.
-        val first = listOf(1)
-        val second = listOf(1)
-        assertTrue($ctor(first, first, first).allEqualWith { a, b -> a === b })
-        assertFalse($ctor(first, first, second).allEqualWith { a, b -> a === b })
-        assertTrue($ctor(first, first, second).allEqualWith { a, b -> a == b })"""
-        } else ""
-        val firstVsEachArgs = firstVsEach.values.joinToString()
-        appendLine(
-            """
-    @Test
-    fun allEqualWith() {
-        assertTrue($emptyCollection.allEqualWith { _, _ -> true })
-        assertTrue($emptyCollection.allEqualWith { _, _ -> false })
-        assertTrue($ctor($equal).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue($ctor($equal, $equal).allEqualWith { a, b -> a == b })
-        assertFalse($ctor($equal, $other).allEqualWith { a, b -> a == b })
-        assertFalse($ctor($other, $equal).allEqualWith { a, b -> a == b })
-        assertTrue($ctor($equal, $equal, $equal).allEqualWith { a, b -> a == b })
-        assertFalse($ctor($equal, $equal, $other).allEqualWith { a, b -> a == b })
-        assertFalse($ctor($other, $equal, $equal).allEqualWith { a, b -> a == b })
-        assertTrue($ctor($equal, $other, $equal).allEqualWith { _, _ -> true })
-        assertFalse($ctor($equal, $equal, $equal).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue($ctor($firstVsEachArgs).allEqualWith ${firstVsEach.predicateExpr})$referentialBlock
     }"""
         )
     }

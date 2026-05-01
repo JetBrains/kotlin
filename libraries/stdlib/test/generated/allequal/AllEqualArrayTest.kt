@@ -38,29 +38,6 @@ class AllEqualArrayTest {
     }
 
     @Test
-    fun allEqualWith() {
-        assertTrue(arrayOf<String>().allEqualWith { _, _ -> true })
-        assertTrue(arrayOf<String>().allEqualWith { _, _ -> false })
-        assertTrue(arrayOf("a").allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(arrayOf("a", "a").allEqualWith { a, b -> a == b })
-        assertFalse(arrayOf("a", "b").allEqualWith { a, b -> a == b })
-        assertFalse(arrayOf("b", "a").allEqualWith { a, b -> a == b })
-        assertTrue(arrayOf("a", "a", "a").allEqualWith { a, b -> a == b })
-        assertFalse(arrayOf("a", "a", "b").allEqualWith { a, b -> a == b })
-        assertFalse(arrayOf("b", "a", "a").allEqualWith { a, b -> a == b })
-        assertTrue(arrayOf("a", "b", "a").allEqualWith { _, _ -> true })
-        assertFalse(arrayOf("a", "a", "a").allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(arrayOf("a", "bb", "a").allEqualWith { a, b -> a.length <= b.length })
-        // `===` distinguishes same references from equal-by-content but distinct instances.
-        val first = listOf(1)
-        val second = listOf(1)
-        assertTrue(arrayOf(first, first, first).allEqualWith { a, b -> a === b })
-        assertFalse(arrayOf(first, first, second).allEqualWith { a, b -> a === b })
-        assertTrue(arrayOf(first, first, second).allEqualWith { a, b -> a == b })
-    }
-
-    @Test
     fun allEqualNaNDouble() {
         assertTrue(arrayOf(Double.NaN, Double.NaN).allEqual())
         assertTrue(arrayOf(Double.NaN, Double.NaN, Double.NaN).allEqual())

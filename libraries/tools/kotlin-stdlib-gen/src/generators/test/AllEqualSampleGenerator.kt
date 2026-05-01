@@ -18,17 +18,14 @@ object AllEqualSampleGenerator {
         val collectionClass = collectionClassName(family, primitive)
         val ctor = constructorName(family, primitive)
         val config = allEqualConfigFor(primitive)
-        val predicateSample = allEqualWithPredicateFor(primitive)
         val emptyCollection = emptyCollectionExpr(ctor, primitive)
         val isSequence = family == Sequences
-        val supportsReferentialEquality = family == Iterables || family == Sequences || family == ArraysOfObjects
 
         val className = "AllEqual${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/allequal/$className.kt") {
-            writeHeader(className, config.sampleNeedsAbsImport || predicateSample.needsAbsImport)
+            writeHeader(className, config.sampleNeedsAbsImport)
             writeAllEqualSample(ctor, config, emptyCollection, isSequence)
             writeAllEqualBySample(ctor, config, emptyCollection, isSequence)
-            writeAllEqualWithSample(ctor, config, predicateSample, emptyCollection, isSequence, supportsReferentialEquality)
             appendLine("}")
         }
     }
@@ -103,42 +100,4 @@ $valuesDecl$assertionLines
         )
     }
 
-    private fun BufferedWriter.writeAllEqualWithSample(
-        ctor: String,
-        config: AllEqualTypeConfig,
-        predicateSample: PredicateSample,
-        emptyCollection: String,
-        isSequence: Boolean,
-        supportsReferentialEquality: Boolean,
-    ) {
-        val predicateExpr = predicateSample.predicateExpr
-        val (positiveDecl, positiveRef) = valOrInline(isSequence, ctor, "similar", predicateSample.positiveValues.joinToString(", "))
-        val (negativeDecl, negativeRef) = valOrInline(isSequence, ctor, "dissimilar", predicateSample.negativeValues.joinToString(", "))
-        val referentialBlock = if (supportsReferentialEquality) {
-            // `List<Int>` is used because each call to `listOf(1)` produces a distinct instance on every
-            // Kotlin target, whereas string literals cannot be made `===`-distinct on Kotlin/JS.
-            val (sameRefsDecl, sameRefsRef) = valOrInline(isSequence, ctor, "sameRefs", "first, first, first")
-            val (mixedRefsDecl, mixedRefsRef) = valOrInline(isSequence, ctor, "mixedRefs", "first, first, second")
-            """
-
-        // `===` treats only identical references as equal, while `==` uses structural equality.
-        val first = listOf(1)
-        val second = listOf(1)
-${sameRefsDecl}        assertPrints($sameRefsRef.allEqualWith { a, b -> a === b }, "true")
-
-${mixedRefsDecl}        assertPrints($mixedRefsRef.allEqualWith { a, b -> a === b }, "false")
-        assertPrints($mixedRefsRef.allEqualWith { a, b -> a == b }, "true")"""
-        } else ""
-        appendLine(
-            """
-    @Sample
-    fun allEqualWith() {
-        assertPrints($emptyCollection.allEqualWith { _, _ -> true }, "true")
-
-$positiveDecl        assertPrints($positiveRef.allEqualWith $predicateExpr, "true")
-
-$negativeDecl        assertPrints($negativeRef.allEqualWith $predicateExpr, "false")$referentialBlock
-    }"""
-        )
-    }
 }

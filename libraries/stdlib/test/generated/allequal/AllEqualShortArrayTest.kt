@@ -36,21 +36,4 @@ class AllEqualShortArrayTest {
         assertFalse(shortArrayOf(1, 2).allEqualBy { it * it })
         assertTrue(shortArrayOf(1, 2).allEqualBy { 0 })
     }
-
-    @Test
-    fun allEqualWith() {
-        assertTrue(shortArrayOf().allEqualWith { _, _ -> true })
-        assertTrue(shortArrayOf().allEqualWith { _, _ -> false })
-        assertTrue(shortArrayOf(1).allEqualWith { _, _ -> error("should not be called") })
-        assertTrue(shortArrayOf(1, 1).allEqualWith { a, b -> a == b })
-        assertFalse(shortArrayOf(1, 2).allEqualWith { a, b -> a == b })
-        assertFalse(shortArrayOf(2, 1).allEqualWith { a, b -> a == b })
-        assertTrue(shortArrayOf(1, 1, 1).allEqualWith { a, b -> a == b })
-        assertFalse(shortArrayOf(1, 1, 2).allEqualWith { a, b -> a == b })
-        assertFalse(shortArrayOf(2, 1, 1).allEqualWith { a, b -> a == b })
-        assertTrue(shortArrayOf(1, 2, 1).allEqualWith { _, _ -> true })
-        assertFalse(shortArrayOf(1, 1, 1).allEqualWith { _, _ -> false })
-        // Regression: predicate distinguishes compare-with-first from adjacent-pair semantics.
-        assertTrue(shortArrayOf(1, 2, 1).allEqualWith { a, b -> a <= b })
-    }
 }

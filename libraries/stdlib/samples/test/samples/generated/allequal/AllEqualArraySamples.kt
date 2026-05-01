@@ -36,25 +36,4 @@ class AllEqualArraySamples {
         assertPrints(values.allEqualBy { it.length }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(arrayOf<String>().allEqualWith { _, _ -> true }, "true")
-
-        val similar = arrayOf("Apple", "APPLE", "apple")
-        assertPrints(similar.allEqualWith { a, b -> a.equals(b, ignoreCase = true) }, "true")
-
-        val dissimilar = arrayOf("apple", "apple", "orange")
-        assertPrints(dissimilar.allEqualWith { a, b -> a.equals(b, ignoreCase = true) }, "false")
-
-        // `===` treats only identical references as equal, while `==` uses structural equality.
-        val first = listOf(1)
-        val second = listOf(1)
-        val sameRefs = arrayOf(first, first, first)
-        assertPrints(sameRefs.allEqualWith { a, b -> a === b }, "true")
-
-        val mixedRefs = arrayOf(first, first, second)
-        assertPrints(mixedRefs.allEqualWith { a, b -> a === b }, "false")
-        assertPrints(mixedRefs.allEqualWith { a, b -> a == b }, "true")
-    }
 }

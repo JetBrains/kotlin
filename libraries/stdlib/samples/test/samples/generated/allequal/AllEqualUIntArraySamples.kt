@@ -36,15 +36,4 @@ class AllEqualUIntArraySamples {
         assertPrints(values.allEqualBy { it % 2u }, "true")
         assertPrints(values.allEqualBy { it }, "false")
     }
-
-    @Sample
-    fun allEqualWith() {
-        assertPrints(uintArrayOf().allEqualWith { _, _ -> true }, "true")
-
-        val similar = uintArrayOf(10u, 12u, 15u)
-        assertPrints(similar.allEqualWith { a, b -> a / 10u == b / 10u }, "true")
-
-        val dissimilar = uintArrayOf(10u, 12u, 25u)
-        assertPrints(dissimilar.allEqualWith { a, b -> a / 10u == b / 10u }, "false")
-    }
 }
