@@ -6,7 +6,7 @@
 R|<local>/x|.toArray#(R|<local>/y|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol java/util/ArrayList.toArray` --- `fun <T : Any!> toArray(p0: ft<Array<T!>, Array<out T!>?>): ft<Array<T!>, Array<out T!>?>↩`
+#### Candidate 1: `FirNamedFunctionSymbol java/util/ArrayList.toArray` --- `fun <T : Any!> toArray(p0: ft<Array<T!>, Array<out T!>?>): ft<Array<T!>, Array<out T!>?>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol java/util/ArrayList.toArray`s parameter 0
@@ -40,7 +40,7 @@ R|<local>/x|.toArray#(R|<local>/y|)
 Q|J|.asList#(R|<local>/x|.R?C|java/util/ArrayList.toArray|(R|<local>/y|))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /J.asList` --- `static fun <F : Any!> asList(a: ft<Array<F!>, Array<out F!>?>): ft<MutableList<F!>, List<F!>?>↩`
+#### Candidate 1: `FirNamedFunctionSymbol /J.asList` --- `static fun <F : Any!> asList(a: ft<Array<F!>, Array<out F!>?>): ft<MutableList<F!>, List<F!>?>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(F)` for `FirNamedFunctionSymbol /J.asList`s parameter 0

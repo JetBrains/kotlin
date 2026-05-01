@@ -6,7 +6,7 @@
 bar#(R|<local>/generic|, R|<local>/first|, R|<local>/second|, R|<local>/third|, R|<local>/fourth|, R|<local>/fifth|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /bar` --- `fun <U0 : Generic<U1, U2, U3, U4, U5, U6, U7, U8, U9, Ua, Ub, Uc, Ud, Ue, Uf>, U1 : Alpha, U2 : Beta, U3 : Gamma, U4 : Delta, U5 : Epsilon, U6 : Psi, U7 : Omega, U8 : Sigma, U9 : Rho, Ua : Mu, Ub : Nu, Uc : Pi, Ud : Dzeta, Ue : Teta, Uf : Jot> bar(generic: U0, first: U1.(U2) -> U3, second: U4.(U5) -> U6, third: U7.(U8) -> U9, fourth: Ua.(Ub) -> Uc, fifth: Ud.(Ue) -> Uf): Any↩`
+#### Candidate 1: `FirNamedFunctionSymbol /bar` --- `fun <U0 : Generic<U1, U2, U3, U4, U5, U6, U7, U8, U9, Ua, Ub, Uc, Ud, Ue, Uf>, U1 : Alpha, U2 : Beta, U3 : Gamma, U4 : Delta, U5 : Epsilon, U6 : Psi, U7 : Omega, U8 : Sigma, U9 : Rho, Ua : Mu, Ub : Nu, Uc : Pi, Ud : Dzeta, Ue : Teta, Uf : Jot> bar(generic: U0, first: U1.(U2) -> U3, second: U4.(U5) -> U6, third: U7.(U8) -> U9, fourth: Ua.(Ub) -> Uc, fifth: Ud.(Ue) -> Uf): Any`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(U0)` for `FirNamedFunctionSymbol /bar`s parameter 0
@@ -2240,7 +2240,7 @@ bar#(R|<local>/generic|, R|<local>/first|, R|<local>/second|, R|<local>/third|, 
 TODO#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/TODO` --- `@InlineOnly() fun TODO(): Nothing↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/TODO` --- `@InlineOnly() fun TODO(): Nothing`
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `kotlin/Nothing <: kotlin/Any` _from ExpectedType for some call_

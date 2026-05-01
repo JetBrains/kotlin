@@ -6,13 +6,13 @@
 mutableSetOf#<R|kotlin/Int|>()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/mutableSetOf` --- `@SinceKotlin(...) @InlineOnly() fun <T> mutableSetOf(): MutableSet<T>↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/mutableSetOf` --- `@SinceKotlin(...) @InlineOnly() fun <T> mutableSetOf(): MutableSet<T>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/mutableSetOf`s parameter 0
 2. `TypeVariable(T) == kotlin/Int` _from TypeParameter R|kotlin/Int|_
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/mutableSetOf` --- `fun <T> mutableSetOf(vararg elements: T): MutableSet<T>↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/mutableSetOf` --- `fun <T> mutableSetOf(vararg elements: T): MutableSet<T>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/mutableSetOf`s parameter 0
@@ -34,7 +34,7 @@ mutableSetOf#<R|kotlin/Int|>()
 mutableSetOf#<R|kotlin/Int|>()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/mutableSetOf` --- `@SinceKotlin(...) @InlineOnly() fun <T> mutableSetOf(): MutableSet<T>↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/mutableSetOf` --- `@SinceKotlin(...) @InlineOnly() fun <T> mutableSetOf(): MutableSet<T>`
 ##### Call Completion:
 
 1. Choose `TypeVariable(T)` with `Readiness(
@@ -60,7 +60,7 @@ mutableSetOf#<R|kotlin/Int|>()
 Q|Wrapper|.reverseOrder#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /Wrapper.reverseOrder` --- `static fun <W : Comparable<in W!>!> reverseOrder(): Comparator<W!>!↩`
+#### Candidate 1: `FirNamedFunctionSymbol /Wrapper.reverseOrder` --- `static fun <W : Comparable<in W!>!> reverseOrder(): Comparator<W!>!`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(W)` for `FirNamedFunctionSymbol /Wrapper.reverseOrder`s parameter 0
@@ -169,7 +169,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 )
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 0
@@ -218,7 +218,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
     1. `TypeVariable(R) <: kotlin/Comparable<TypeVariable(R)!>?`
 17. `(TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)> <: (TypeVariable(T)) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument <L> = flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol kotlin/collections/flatMapTo`s parameter 0
@@ -314,7 +314,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 )
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`
 ##### Call Completion:
 
 1. Choose `TypeVariable(T)` with `Readiness(
@@ -394,7 +394,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        )`
 2. `TypeVariable(T) == MergeFragment` _from Fix variable T_
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
 ##### Call Completion:
 
 1. Choose `TypeVariable(T)` with `Readiness(
@@ -474,21 +474,21 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
        )`
 2. `TypeVariable(T) == MergeFragment` _from Fix variable T_
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`
 ##### Continue Call Completion:
 
 1. New `TypeVariable(_R)` for lambda return type
 2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/collections/Iterable<TypeVariable(R)>` _from Argument flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
 ##### Continue Call Completion:
 
 1. New `TypeVariable(_R)` for lambda return type
 2. `(MergeFragment) -> TypeVariable(_R) <: (MergeFragment) -> kotlin/sequences/Sequence<TypeVariable(R)>` _from Argument flatMapTo <implicit>.<anonymous>(f: <implicit>): <implicit> <inline=Unknown>  {↩    f#.tailsAndBody#↩}↩_
     1. `TypeVariable(_R) <: kotlin/sequences/Sequence<TypeVariable(R)>`
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`
 ##### Continue Continue Call Completion:
 
 1. `kotlin/collections/MutableSet<kotlin/Int> <: TypeVariable(_R)` _from LambdaArgument_
@@ -535,13 +535,13 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 22. Combine `TypeVariable(R) <: kotlin/Comparable<in kotlin/Int!>!` with `TypeVariable(_R) <: kotlin/collections/Iterable<TypeVariable(R)>`
     1. `TypeVariable(_R) <: kotlin/collections/Iterable<kotlin/Comparable<in kotlin/Int!>!>`
 
-#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C↩`
+#### Candidate 2: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@SinceKotlin(...) @OverloadResolutionByLambdaReturnType() @JvmName(...) @IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C`
 ##### Continue Continue Call Completion:
 
 1. `kotlin/collections/MutableSet<kotlin/Int> <: TypeVariable(_R)` _from LambdaArgument_
 2. __NewConstraintError: `kotlin/collections/MutableSet<kotlin/Int> <: kotlin/sequences/Sequence<TypeVariable(R)>`__
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/flatMapTo` --- `@IgnorableReturnValue() fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C`
 ##### Call Completion:
 
 1. Choose `TypeVariable(W)` with `Readiness(
@@ -813,7 +813,7 @@ R|<local>/fragments|.flatMapTo#(R?C|java/util/TreeSet.TreeSet|(Q|Wrapper|.R?C|/W
 R|<local>/<iterator>|.hasNext#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/MutableIterator.hasNext` --- `fun hasNext(): Boolean↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/collections/MutableIterator.hasNext` --- `fun hasNext(): Boolean`
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `kotlin/Boolean <: kotlin/Boolean` _from ExpectedType for some call_
@@ -824,7 +824,7 @@ R|<local>/<iterator>|.hasNext#()
 testFun#(R|<local>/f|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /testFun` --- `fun testFun(i: Int): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /testFun` --- `fun testFun(i: Int): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/Int <: kotlin/Int` _from Argument R|<local>/f|_

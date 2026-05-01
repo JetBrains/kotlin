@@ -28,7 +28,7 @@
 (this@R|/removeTraitIfPresent|.R|SubstitutionOverride</ToSmithyBuilder.toBuilder: R|SmithyBuilder<T>|>|() as R|B|).R|SubstitutionOverride</AbstractShapeBuilder.removeTrait: R|B|>|().build#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /AbstractShapeBuilder.build` --- `fun build(): T↩`
+#### Candidate 1: `FirNamedFunctionSymbol /AbstractShapeBuilder.build` --- `fun build(): T`
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `T <: T` _from ExpectedType for some call_

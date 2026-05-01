@@ -93,8 +93,8 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
 
     private fun CandidateNode.render(): String? {
         @OptIn(SymbolInternals::class)
-        val signature = FirRenderer.forReadability().renderElementAsString(owner.candidate.symbol.fir)
-        val title = "$indent#### Candidate ${index + 1}: `${owner.candidate.symbol}` --- `${makeSingleLine(signature)}`"
+        val signature = FirRenderer.forReadability().renderElementAsString(owner.candidate.symbol.fir, trim = true)
+        val title = "$indent#### Candidate ${index + 1}: `${owner.candidate.symbol}` --- `$signature`"
 
         val contents = blocks.renderList()?.joinToString("\n\n") ?: return null
         return listOf(title, contents).joinToString("\n")

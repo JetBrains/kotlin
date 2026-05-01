@@ -2240,7 +2240,7 @@ bar#(R|<local>/generic|, R|<local>/first|, R|<local>/second|, R|<local>/third|, 
 TODO#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol kotlin/TODO` --- `@InlineOnly() fun TODO(): Nothing↩`
+#### Candidate 1: `FirNamedFunctionSymbol kotlin/TODO` --- `@InlineOnly() fun TODO(): Nothing`
 ##### Continue Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `kotlin/Nothing <: kotlin/Any` _from ExpectedType for some call_
