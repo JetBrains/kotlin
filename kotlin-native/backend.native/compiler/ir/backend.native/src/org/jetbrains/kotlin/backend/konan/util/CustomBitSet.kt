@@ -33,12 +33,21 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     }
 
     private fun ensureCapacity(index: Int) {
-        if (lazy == null && data.size <= index) {
+        check(lazy == null) { "ensureCapacity called while in lazy mode" }
+        if (data.size <= index) {
             val oldData = data
             data = LongArray((oldData.size * 2).coerceAtLeast(index + 1))
             oldData.copyInto(data)
         }
         if (size <= index) size = index + 1
+    }
+
+    private fun updateLazySize() {
+        size = lazy!!.maxOrNull()?.let { it.ushr(6) + 1 } ?: 0
+    }
+
+    private fun shrinkDenseSize() {
+        while (size > 0 && data[size - 1] == 0L) size--
     }
 
     fun set(bitIndex: Int) {
@@ -57,14 +66,14 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     fun clear(bitIndex: Int) {
         lazy?.let { lazy ->
             lazy.remove(bitIndex)
-            size = if (lazy.isNotEmpty()) lazy.max().ushr(6) + 1 else 0
+            updateLazySize()
             return
         }
         val index = bitIndex shr 6
         val offset = bitIndex and 0x3f
         ensureCapacity(index)
         data[index] = data[index] and (1L shl offset).inv()
-        while (size > 0 && data[size - 1] == 0L) size--
+        shrinkDenseSize()
     }
 
     operator fun get(bitIndex: Int): Boolean {
@@ -207,6 +216,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     fun and(another: CustomBitSet) {
         lazy?.let { lazy ->
             lazy.retainAll { another[it] }
+            updateLazySize()
             return
         }
         another.lazy?.let { alazy ->
@@ -218,6 +228,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             }
             lazy = newLazy
             data = EMPTY
+            updateLazySize()
             return
         }
         val adata = another.data
@@ -229,11 +240,13 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         for (i in asize until size) {
             data[i] = 0L
         }
+        shrinkDenseSize()
     }
 
     fun andNot(another: CustomBitSet) {
         lazy?.let { lazy ->
             lazy.retainAll { !another[it] }
+            updateLazySize()
             return
         }
         another.lazy?.let { alazy ->
@@ -246,6 +259,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         for (i in 0 until asize) {
             data[i] = data[i] and adata[i].inv()
         }
+        shrinkDenseSize()
     }
 
     fun intersects(another: CustomBitSet): Boolean {
