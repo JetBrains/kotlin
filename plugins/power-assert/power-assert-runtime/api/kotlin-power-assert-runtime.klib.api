@@ -24,6 +24,8 @@ open annotation class kotlin.powerassert/PowerAssert : kotlin/Annotation { // ko
 }
 
 abstract class kotlin.powerassert/Explanation { // kotlin.powerassert/Explanation|null[0]
+    constructor <init>() // kotlin.powerassert/Explanation.<init>|<init>(){}[0]
+
     abstract val expressions // kotlin.powerassert/Explanation.expressions|{}expressions[0]
         abstract fun <get-expressions>(): kotlin.collections/List<kotlin.powerassert/Expression> // kotlin.powerassert/Explanation.expressions.<get-expressions>|<get-expressions>(){}[0]
     abstract val offset // kotlin.powerassert/Explanation.offset|{}offset[0]
@@ -33,6 +35,8 @@ abstract class kotlin.powerassert/Explanation { // kotlin.powerassert/Explanatio
 }
 
 abstract class kotlin.powerassert/Expression { // kotlin.powerassert/Expression|null[0]
+    constructor <init>() // kotlin.powerassert/Expression.<init>|<init>(){}[0]
+
     abstract val displayOffset // kotlin.powerassert/Expression.displayOffset|{}displayOffset[0]
         abstract fun <get-displayOffset>(): kotlin/Int // kotlin.powerassert/Expression.displayOffset.<get-displayOffset>|<get-displayOffset>(){}[0]
     abstract val endOffset // kotlin.powerassert/Expression.endOffset|{}endOffset[0]

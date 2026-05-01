@@ -9,7 +9,7 @@ package kotlin.powerassert
  * Provides information about a section of source code and its evaluation.
  */
 @ExperimentalPowerAssert
-public abstract class Explanation internal constructor() {
+public abstract class Explanation {
     /**
      * The source text character offset within the containing file.
      * Offset will always be at column 0 within the containing file,

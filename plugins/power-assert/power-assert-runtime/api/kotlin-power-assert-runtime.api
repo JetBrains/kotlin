@@ -48,12 +48,14 @@ public abstract interface annotation class kotlin/powerassert/ExperimentalPowerA
 }
 
 public abstract class kotlin/powerassert/Explanation {
+	public fun <init> ()V
 	public abstract fun getExpressions ()Ljava/util/List;
 	public abstract fun getOffset ()I
 	public abstract fun getSource ()Ljava/lang/String;
 }
 
 public abstract class kotlin/powerassert/Expression {
+	public fun <init> ()V
 	public abstract fun copy (I)Lkotlin/powerassert/Expression;
 	public abstract fun getDisplayOffset ()I
 	public abstract fun getEndOffset ()I

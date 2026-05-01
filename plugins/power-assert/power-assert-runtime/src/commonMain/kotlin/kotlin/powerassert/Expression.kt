@@ -21,7 +21,7 @@ package kotlin.powerassert
  * - And an expression with `value=mascot.name == "Kodee"`, `startOffset=0`, `endOffset=22`, and `displayOffset=12`.
  */
 @ExperimentalPowerAssert
-public abstract class Expression internal constructor() {
+public abstract class Expression {
     /**
      * The text character, within [Explanation.source], where the expression source code begins (inclusive).
      */
