@@ -70,8 +70,11 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             return
         }
         val index = bitIndex shr 6
+        if (index >= size) {
+            check(index >= data.size || data[index] == 0L)
+            return
+        }
         val offset = bitIndex and 0x3f
-        ensureCapacity(index)
         data[index] = data[index] and (1L shl offset).inv()
         shrinkDenseSize()
     }
@@ -367,6 +370,10 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
     companion object {
         private val EMPTY = LongArray(0)
 
-        fun valueOf(data: LongArray) = CustomBitSet(data.size, data)
+        // Create a CustomBitSet with data as the underlying storage.
+        // Does not copy the data array!
+        fun valueOf(data: LongArray): CustomBitSet {
+            return CustomBitSet(data.size, data).also { it.shrinkDenseSize() }
+        }
     }
 }

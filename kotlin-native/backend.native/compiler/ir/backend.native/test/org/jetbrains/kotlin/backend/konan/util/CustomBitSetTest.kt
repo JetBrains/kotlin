@@ -558,6 +558,51 @@ class CustomBitSetTest {
         }
     }
 
+    // ---- valueOf input handling ---------------------------------------------
+
+    @Test fun valueOfTrimsTrailingZeros() {
+        val bs = CustomBitSet.valueOf(longArrayOf(0L))
+        assertEquals(0, bs.size)
+        assertTrue(bs.isEmpty)
+        assertEquals(CustomBitSet(), bs)
+    }
+
+    @Test fun valueOfTrimsMultipleTrailingZeros() {
+        val bs = CustomBitSet.valueOf(longArrayOf(1L, 0L, 0L))
+        assertEquals(1, bs.size)
+        assertEquals(denseOf(0), bs)
+    }
+
+    @Test fun valueOfSharesCallerArray() {
+        // valueOf transfers ownership of the array to the bitset (no defensive copy).
+        // Caller-visible mutations propagate to the bitset.
+        val data = longArrayOf(1L)
+        val bs = CustomBitSet.valueOf(data)
+        assertTrue(bs[0])
+        data[0] = 0L
+        assertFalse(bs[0], "valueOf must share storage with caller")
+    }
+
+    // ---- clear must not allocate for out-of-range indices -------------------
+
+    @Test fun clearOutOfRangeBitDoesNotGrow() {
+        val bs = denseOf(0)
+        val sizeBefore = bs.size
+        bs.clear(1_000_000)   // huge index, never set
+        assertEquals(sizeBefore, bs.size)
+        assertTrue(bs[0])
+    }
+
+    @Test fun andNotWithSparseHavingBitsBeyondThisDoesNotGrow() {
+        // andNot's another.lazy path iterates and calls clear(it).
+        // If any of those bits are past this.size, we must not grow.
+        val a = denseOf(0)            // size=1
+        val b = sparseOf(0, 1_000_000)
+        a.andNot(b)
+        assertEquals(0, a.size)
+        assertTrue(a.isEmpty)
+    }
+
     // ---- Full-word (-1L) correctness ----------------------------------------
     // forEachBit uses `t = d and -d; d -= t`. For bit 63, -Long.MIN_VALUE
     // overflows back to Long.MIN_VALUE in two's complement, so the algorithm
