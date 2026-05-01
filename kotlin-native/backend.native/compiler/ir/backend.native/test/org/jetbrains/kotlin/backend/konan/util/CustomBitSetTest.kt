@@ -9,6 +9,747 @@ import kotlin.test.*
 
 class CustomBitSetTest {
 
+    // ---- Construction -------------------------------------------------------
+
+    @Test
+    fun defaultConstructorIsEmptyAndSparse() {
+        val bs = CustomBitSet()
+        assertTrue(bs.isEmpty)
+        assertEquals(0, bs.cardinality())
+        assertEquals(0, bs.size)
+        assertSparse(bs)
+    }
+
+    @Test
+    fun nodesCountConstructorIsEmptyAndDense() {
+        for (nodesCount in listOf(0, 1, 64, 100, 1_000)) {
+            val bs = CustomBitSet(nodesCount)
+            assertTrue(bs.isEmpty, "nodesCount=$nodesCount")
+            assertEquals(0, bs.cardinality(), "nodesCount=$nodesCount")
+            assertEquals(0, bs.size, "nodesCount=$nodesCount")
+            assertDense(bs, "nodesCount=$nodesCount")
+        }
+    }
+
+    @Test
+    fun emptyBitsetIsEmpty() {
+        forEachMode(intArrayOf()) { (bs) ->
+            assertTrue(bs.isEmpty)
+            assertEquals(0, bs.cardinality())
+            assertEquals(0, bs.size)
+        }
+    }
+
+    @Test
+    fun emptyConstructorVariantsAreEqual() {
+        // CustomBitSet(), CustomBitSet(N), and valueOf(longArrayOf()) all denote ∅.
+        val variants = listOf(
+                CustomBitSet(),
+                CustomBitSet(0),
+                CustomBitSet(64),
+                CustomBitSet.valueOf(longArrayOf()),
+                CustomBitSet.valueOf(longArrayOf(0L, 0L)),
+        )
+        for (a in variants) {
+            for (b in variants) {
+                assertEquals(a, b)
+                assertEquals(a.hashCode(), b.hashCode())
+            }
+        }
+    }
+
+    // ---- Bit operations -----------------------------------------------------
+    // These tests run in both sparse and dense representations.
+
+    @Test
+    fun setAndGet() {
+        forEachMode(intArrayOf(0, 63)) { (bs) ->
+            assertTrue(bs[0])
+            assertTrue(bs[63])
+            assertFalse(bs[1])
+            assertFalse(bs[64])
+            assertEquals(2, bs.cardinality())
+        }
+    }
+
+    @Test
+    fun setAndClear() {
+        forEachMode(intArrayOf(5)) { (bs) ->
+            assertTrue(bs[5])
+            bs.clear(5)
+            assertFalse(bs[5])
+            assertTrue(bs.isEmpty)
+            assertEquals(0, bs.cardinality())
+        }
+    }
+
+    @Test
+    fun setIsIdempotent() {
+        forEachMode(intArrayOf()) { (bs) ->
+            bs.set(5)
+            bs.set(5)
+            assertEquals(1, bs.cardinality())
+            assertTrue(bs[5])
+        }
+    }
+
+    @Test
+    fun clearUnsetBitIsNoOp() {
+        forEachMode(intArrayOf(0)) { (bs) ->
+            bs.clear(5)   // bit 5 not set; bit 5 is in-range (word 0)
+            assertTrue(bs[0])
+            assertFalse(bs[5])
+            assertEquals(1, bs.cardinality())
+        }
+    }
+
+    @Test
+    fun forEachBitReturnsSortedBits() {
+        forEachMode(intArrayOf(30, 5, 10)) { (bs) ->
+            assertEquals(listOf(5, 10, 30), bs.toBitList())
+        }
+    }
+
+    @Test
+    fun isNotEmptyWhenBitSet() {
+        forEachMode(intArrayOf(7)) { (bs) ->
+            assertFalse(bs.isEmpty)
+        }
+    }
+
+    @Test
+    fun copyIsIndependent() {
+        forEachMode(intArrayOf(3, 42)) { (bs) ->
+            val copy = bs.copy()
+            assertEquals(bs, copy)
+            // mutate copy: original unaffected
+            copy.set(100)
+            assertFalse(bs[100])
+            // mutate original: copy unaffected
+            bs.clear(3)
+            assertTrue(copy[3])
+        }
+    }
+
+    @Test
+    fun copyOfEmptyIsEmpty() {
+        forEachMode(intArrayOf()) { (bs) ->
+            val copy = bs.copy()
+            assertTrue(copy.isEmpty)
+            assertEquals(bs, copy)
+        }
+    }
+
+    @Test
+    fun booleanSetOperator() {
+        forEachMode(intArrayOf()) { (bs) ->
+            bs[5] = true
+            assertTrue(bs[5])
+            bs[5] = false
+            assertFalse(bs[5])
+        }
+    }
+
+    @Test
+    fun setAndGetAcrossWords() {
+        forEachMode(intArrayOf(0, 63, 64, 127, 128, 191, 192)) { (bs) ->
+            for (bit in listOf(0, 63, 64, 127, 128, 191, 192)) {
+                assertTrue(bs[bit], "bit $bit should be set")
+            }
+            assertEquals(7, bs.cardinality())
+        }
+    }
+
+    @Test
+    fun fullClearResetsAll() {
+        forEachMode(intArrayOf(0, 64, 128)) { (bs) ->
+            bs.clear()
+            assertTrue(bs.isEmpty)
+            assertEquals(0, bs.cardinality())
+            assertEquals(0, bs.toBitList().size)
+        }
+    }
+
+    @Test
+    fun clearBitUpdatesCardinality() {
+        forEachMode(intArrayOf(0, 128)) { (bs) ->
+            bs.clear(128)
+            assertEquals(1, bs.cardinality())
+            assertTrue(bs[0])
+            assertFalse(bs[128])
+        }
+    }
+
+    @Test
+    fun forEachWordVisitsSetWords() {
+        forEachMode(intArrayOf(0, 64)) { (bs) ->
+            val words = mutableListOf<Long>()
+            bs.forEachWord { words.add(it) }
+            assertTrue(words.size >= 2)
+            assertTrue(words[0] and 1L != 0L, "word 0 bit 0")
+            assertTrue(words[1] and 1L != 0L, "word 1 bit 0")
+        }
+    }
+
+    // ---- Threshold transition -----------------------------------------------
+
+    @Test
+    fun staysSparseUntilThreshold() {
+        val bs = CustomBitSet()
+        bs.set(0)
+        bs.set(64)   // second word, still sparse (2 < threshold)
+        assertSparse(bs)
+        assertEquals(2, bs.cardinality())
+        assertTrue(bs[0])
+        assertTrue(bs[64])
+    }
+
+    @Test
+    fun transitionAt8BitsAllBitsRetained() {
+        val bs = CustomBitSet()
+        for (i in 0 until 7) bs.set(i * 10)
+        assertSparse(bs, "premature dense conversion at 7 bits (threshold is 8)")
+        assertEquals(7, bs.cardinality())
+        bs.set(70)   // 8th bit — triggers buildFromLazy
+        assertDense(bs, "8th set did not trigger dense conversion")
+        assertEquals(8, bs.cardinality())
+        for (i in 0 until 7) assertTrue(bs[i * 10], "bit ${i * 10} should survive transition")
+        assertTrue(bs[70])
+    }
+
+    @Test
+    fun hashCodeConsistentAcrossTransition() {
+        val bits = intArrayOf(0, 10, 20, 30, 40, 50, 60, 70)
+        val converted = CustomBitSet()
+        bits.forEach { converted.set(it) }   // 8th set triggers conversion
+        assertDense(converted, "8th set did not trigger dense conversion")
+
+        val neverSparse = denseOf(*bits)
+
+        assertEquals(converted, neverSparse)
+        assertEquals(converted.hashCode(), neverSparse.hashCode())
+        assertEquals(converted.hashCodeLong(), neverSparse.hashCodeLong())
+    }
+
+    @Test
+    fun copyBeforeAndAfterTransitionAreCorrect() {
+        val bs = CustomBitSet()
+        for (i in 0 until 7) bs.set(i)
+        val beforeTransition = bs.copy()
+        assertSparse(beforeTransition, "copy of sparse bitset is unexpectedly dense")
+
+        bs.set(7)   // transition
+        assertDense(bs, "8th set did not trigger dense conversion")
+        val afterTransition = bs.copy()
+        assertDense(afterTransition, "copy of dense bitset is unexpectedly sparse")
+
+        assertEquals(7, beforeTransition.cardinality())
+        for (i in 0 until 7) assertTrue(beforeTransition[i])
+
+        assertEquals(bs, afterTransition)
+        assertEquals(8, afterTransition.cardinality())
+    }
+
+    // ---- Logical operations -------------------------------------------------
+    // Each test runs through every (sparse, dense) × (sparse, dense) combination
+    // for the two operands. The mode of either input — and of the result — is an
+    // implementation detail; only the bit-level outcome is asserted.
+
+    @Test
+    fun or() {
+        forEachMode(intArrayOf(0, 64), intArrayOf(64, 128)) { (a, b) ->
+            a.or(b)
+            assertEquals(listOf(0, 64, 128), a.toBitList())
+        }
+    }
+
+    @Test
+    fun orGrowsWhenNeeded() {
+        forEachMode(intArrayOf(0), intArrayOf(0, 200)) { (a, b) ->
+            a.or(b)
+            assertEquals(listOf(0, 200), a.toBitList())
+        }
+    }
+
+    @Test
+    fun and() {
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64, 128, 192)) { (a, b) ->
+            a.and(b)
+            assertEquals(listOf(64, 128), a.toBitList())
+        }
+    }
+
+    @Test
+    fun andNot() {
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64)) { (a, b) ->
+            a.andNot(b)
+            assertEquals(listOf(0, 128), a.toBitList())
+        }
+    }
+
+    @Test
+    fun intersectsOverlapping() {
+        forEachMode(intArrayOf(0, 64), intArrayOf(64, 128)) { (a, b) ->
+            assertTrue(a.intersects(b))
+        }
+    }
+
+    @Test
+    fun intersectsDisjoint() {
+        forEachMode(intArrayOf(0, 64), intArrayOf(128, 192)) { (a, b) ->
+            assertFalse(a.intersects(b))
+        }
+    }
+
+    @Test
+    fun containsSubset() {
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(64, 128)) { (a, b) ->
+            assertTrue(a.contains(b))
+        }
+    }
+
+    @Test
+    fun containsNotSubset() {
+        forEachMode(intArrayOf(64, 128), intArrayOf(0, 64, 128)) { (a, b) ->
+            assertFalse(a.contains(b))
+        }
+    }
+
+    @Test
+    fun intersectsSelfWhenNonEmpty() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            assertTrue(a.intersects(a))
+        }
+    }
+
+    @Test
+    fun containsSelf() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            assertTrue(a.contains(a))
+        }
+    }
+
+    @Test
+    fun orWithEmptyIsNoOp() {
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+            a.or(empty)
+            assertEquals(listOf(0, 64), a.toBitList())
+        }
+    }
+
+    @Test
+    fun intersectsEmptyIsFalse() {
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+            assertFalse(a.intersects(empty))
+        }
+    }
+
+    @Test
+    fun orHasChangedWithEmptyReturnsFalse() {
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+            assertFalse(a.orHasChanged(empty))
+            assertEquals(listOf(0, 64), a.toBitList())
+        }
+    }
+
+    @Test
+    fun orHasChangedNoChange() {
+        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { (a, b) ->
+            assertFalse(a.orHasChanged(b))
+            assertEquals(listOf(0, 64), a.toBitList())
+        }
+    }
+
+    @Test
+    fun orHasChangedAddsBit() {
+        forEachMode(intArrayOf(0), intArrayOf(0, 64)) { (a, b) ->
+            assertTrue(a.orHasChanged(b))
+            assertEquals(listOf(0, 64), a.toBitList())
+        }
+    }
+
+    @Test
+    fun orWithFilterArgOnlyAllowsFilteredBits() {
+        // only bit 64 passes the filter; bit 128 must not be added
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(64)) { (a, b, filter) ->
+            assertTrue(a.orWithFilterHasChanged(b, filter))
+            assertTrue(a[64])
+            assertFalse(a[128])
+        }
+    }
+
+    @Test
+    fun orWithFilterArgNoChangeWhenFilteredBitsAlreadySet() {
+        // 128 excluded by filter
+        forEachMode(intArrayOf(0, 64), intArrayOf(0, 64, 128), intArrayOf(0, 64)) { (a, b, filter) ->
+            assertFalse(a.orWithFilterHasChanged(b, filter))
+            assertFalse(a[128])
+        }
+    }
+
+    @Test
+    fun orWithFilterArgSizeAfterTrim() {
+        // ensureCapacity bounded by min(asize, fsize), so words past filter.size
+        // are never touched. size must reflect the actual highest set bit.
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(64)) { (a, b, filter) ->
+            a.orWithFilterHasChanged(b, filter)
+            assertEquals(listOf(0, 64), a.toBitList())
+            assertEquals(2, a.size)
+        }
+    }
+
+    @Test
+    fun orWithFilterArgEmptyIntersectionLeavesSizeZero() {
+        // Even with the right ensureCapacity bound, the AND of another and filter
+        // can be all zeros at the highest covered word. shrinkDenseSize catches it.
+        forEachMode(intArrayOf(), intArrayOf(0), intArrayOf(64)) { (a, b, filter) ->
+            a.orWithFilterHasChanged(b, filter)
+            assertTrue(a.isEmpty)
+            assertEquals(0, a.size)
+        }
+    }
+
+    @Test
+    fun orWithFilterArgEmptyFilterBlocksEverything() {
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf()) { (a, b, filter) ->
+            assertFalse(a.orWithFilterHasChanged(b, filter))
+            assertEquals(listOf(0), a.toBitList())
+        }
+    }
+
+    @Test
+    fun orWithFilterArgFilterMatchingAnotherAddsAllItsBits() {
+        // When filter ⊇ another, every bit in another passes — equivalent to orHasChanged
+        forEachMode(intArrayOf(0), intArrayOf(0, 64, 128), intArrayOf(0, 64, 128)) { (a, b, filter) ->
+            a.orWithFilterHasChanged(b, filter)
+            assertEquals(listOf(0, 64, 128), a.toBitList())
+        }
+    }
+
+    // ---- equals / hashCode --------------------------------------------------
+
+    @Test
+    fun equalsReflexive() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            assertEquals(a, a)
+            assertEquals(a.hashCode(), a.hashCode())
+        }
+    }
+
+    @Test
+    fun equalsContractAcrossModes() {
+        // Symmetry, equals/hashCode consistency, all four mode pairs.
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf(0, 64, 128)) { (a, b) ->
+            assertEquals(a, b)
+            assertEquals(b, a)
+            assertEquals(a.hashCode(), b.hashCode())
+            assertEquals(a.hashCodeLong(), b.hashCodeLong())
+        }
+    }
+
+    @Test
+    fun hashCodeLongRelationToHashCode() {
+        forEachMode(intArrayOf(0, 63, 64, 127)) { (bs) ->
+            val h = bs.hashCodeLong()
+            assertEquals(((h ushr 32) xor h).toInt(), bs.hashCode())
+        }
+    }
+
+    @Test
+    fun differentBitsMeansNotEqual() {
+        forEachMode(intArrayOf(0, 1), intArrayOf(0, 2)) { (a, b) ->
+            assertNotEquals(a, b)
+        }
+        forEachMode(intArrayOf(0, 64), intArrayOf(0, 128)) { (a, b) ->
+            assertNotEquals(a, b)
+        }
+    }
+
+    @Test
+    fun equalsAgainstNullAndOtherType() {
+        forEachMode(intArrayOf(0, 64)) { (bs) ->
+            assertFalse(bs.equals(null))
+            assertFalse(bs.equals("not a bitset"))
+            assertFalse(bs.equals(42))
+        }
+    }
+
+    @Test
+    fun hashCodeLongOfEmptyIsSeed() {
+        forEachMode(intArrayOf()) { (bs) ->
+            assertEquals(1234L, bs.hashCodeLong())
+        }
+    }
+
+    // ---- Size-tracking regressions ------------------------------------------
+    // Each scenario must hold across all sparse/dense combinations of the inputs.
+
+    @Test
+    fun andSizeAfterTrim() {
+        // a clears the high word of b, so b.size must shrink
+        forEachMode(intArrayOf(0, 64), intArrayOf(0)) { (a, b) ->
+            a.and(b)
+            assertEquals(listOf(0), a.toBitList())
+            assertEquals(1, a.size)
+        }
+    }
+
+    @Test
+    fun andWithEmptyResultsInEmpty() {
+        forEachMode(intArrayOf(0, 64, 128), intArrayOf()) { (a, b) ->
+            a.and(b)
+            assertTrue(a.isEmpty)
+            assertEquals(0, a.cardinality())
+            assertEquals(0, a.size)
+        }
+    }
+
+    @Test
+    fun andNotSizeAfterTrim() {
+        // andNot clears the high word of a, so a.size must shrink
+        forEachMode(intArrayOf(0, 64), intArrayOf(64)) { (a, b) ->
+            a.andNot(b)
+            assertEquals(listOf(0), a.toBitList())
+            assertEquals(1, a.size)
+        }
+    }
+
+    // ---- Edge cases ---------------------------------------------------------
+
+    @Test
+    fun orWithSelfIsIdempotent() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            val expected = a.copy()
+            a.or(a)
+            assertEquals(expected, a)
+        }
+    }
+
+    @Test
+    fun andWithSelfIsIdempotent() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            val expected = a.copy()
+            a.and(a)
+            assertEquals(expected, a)
+        }
+    }
+
+    @Test
+    fun andNotWithSelfIsEmpty() {
+        forEachMode(intArrayOf(0, 64, 128)) { (a) ->
+            a.andNot(a)
+            assertTrue(a.isEmpty)
+        }
+    }
+
+    @Test
+    fun anyBitsetContainsEmpty() {
+        forEachMode(intArrayOf(0, 64), intArrayOf()) { (a, empty) ->
+            assertTrue(a.contains(empty))
+        }
+    }
+
+    @Test
+    fun emptyDoesNotContainNonEmpty() {
+        forEachMode(intArrayOf(), intArrayOf(0)) { (empty, bs) ->
+            assertFalse(empty.contains(bs))
+        }
+    }
+
+    @Test
+    fun emptyBitsetOperations() {
+        forEachMode(intArrayOf(), intArrayOf()) { (a, b) ->
+            a.or(b)
+            assertTrue(a.isEmpty)
+            a.and(b)
+            assertTrue(a.isEmpty)
+            a.andNot(b)
+            assertTrue(a.isEmpty)
+            assertFalse(a.intersects(b))
+            assertTrue(a.contains(b))
+            assertTrue(b.contains(a))
+            assertEquals(a, b)
+        }
+    }
+
+    @Test
+    fun wordBoundaryBitsSetAndGet() {
+        for (bit in listOf(0, 63, 64, 127, 128)) {
+            forEachMode(intArrayOf(bit)) { (bs) ->
+                assertTrue(bs[bit], "bit $bit should be set")
+                if (bit > 0) assertFalse(bs[bit - 1], "bit ${bit - 1} should not be set")
+                assertEquals(1, bs.cardinality(), "cardinality for single bit $bit")
+            }
+        }
+    }
+
+    // ---- valueOf ------------------------------------------------------------
+
+    @Test
+    fun valueOfProducesCorrectBits() {
+        val bs = CustomBitSet.valueOf(longArrayOf(0b101L))
+        assertTrue(bs[0])
+        assertFalse(bs[1])
+        assertTrue(bs[2])
+        assertEquals(2, bs.cardinality())
+    }
+
+    @Test
+    fun valueOfPreservesInteriorZeros() {
+        val bs = CustomBitSet.valueOf(longArrayOf(1L, 0L, 1L))
+        assertEquals(3, bs.size)
+        assertTrue(bs[0])
+        assertFalse(bs[64])
+        assertTrue(bs[128])
+        assertEquals(2, bs.cardinality())
+    }
+
+    @Test
+    fun valueOfTrimsTrailingZeros() {
+        // empty input
+        assertEquals(CustomBitSet(), CustomBitSet.valueOf(longArrayOf()))
+        // single all-zero word
+        assertEquals(CustomBitSet(), CustomBitSet.valueOf(longArrayOf(0L)))
+        // multiple trailing zeros are stripped
+        assertEquals(denseOf(0), CustomBitSet.valueOf(longArrayOf(1L, 0L, 0L)))
+        assertEquals(1, CustomBitSet.valueOf(longArrayOf(1L, 0L, 0L)).size)
+    }
+
+    @Test
+    fun valueOfSharesCallerArray() {
+        // valueOf transfers ownership of the array to the bitset (no defensive copy).
+        // Caller-visible mutations propagate to the bitset.
+        val data = longArrayOf(1L)
+        val bs = CustomBitSet.valueOf(data)
+        assertTrue(bs[0])
+        data[0] = 0L
+        assertFalse(bs[0], "valueOf must share storage with caller")
+    }
+
+    // ---- No-spurious-allocation guarantees ----------------------------------
+
+    @Test
+    fun clearOutOfRangeBitDoesNotGrow() {
+        val bs = denseOf(0)
+        val sizeBefore = bs.size
+        bs.clear(1_000_000)   // huge index, never set
+        assertEquals(sizeBefore, bs.size)
+        assertTrue(bs[0])
+    }
+
+    @Test
+    fun andWithLargerOperandSharedBits() {
+        // and result is just the shared bits, regardless of operand sizes
+        forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { (a, b) ->
+            a.and(b)
+            assertEquals(listOf(0), a.toBitList())
+            assertEquals(1, a.size)
+        }
+    }
+
+    @Test
+    fun andWithLargerDisjointOperand() {
+        forEachMode(intArrayOf(0), intArrayOf(1_000)) { (a, b) ->
+            a.and(b)
+            assertTrue(a.isEmpty)
+            assertEquals(0, a.size)
+        }
+    }
+
+    @Test
+    fun andNotWithLargerSharedOperand() {
+        // andNot removes the shared bits; far-out bits in b are ignored without growth
+        forEachMode(intArrayOf(0), intArrayOf(0, 1_000)) { (a, b) ->
+            a.andNot(b)
+            assertTrue(a.isEmpty)
+            assertEquals(0, a.size)
+        }
+    }
+
+    @Test
+    fun andNotWithLargerDisjointOperand() {
+        forEachMode(intArrayOf(0), intArrayOf(1_000)) { (a, b) ->
+            a.andNot(b)
+            assertEquals(listOf(0), a.toBitList())
+            assertEquals(1, a.size)
+        }
+    }
+
+    // ---- Full-word (-1L) bit iteration --------------------------------------
+    // forEachBit uses `t = d and -d; d -= t`. For bit 63, -Long.MIN_VALUE
+    // overflows back to Long.MIN_VALUE in two's complement, so the algorithm
+    // must still isolate and clear the bit correctly.
+
+    @Test
+    fun fullWordCardinalityIs64() {
+        val bs = CustomBitSet.valueOf(longArrayOf(-1L))
+        assertEquals(64, bs.cardinality())
+    }
+
+    @Test
+    fun fullWordForEachBitVisitsAllBits() {
+        val bs = CustomBitSet.valueOf(longArrayOf(-1L))
+        val visited = mutableListOf<Int>()
+        bs.forEachBit { visited.add(it) }
+        assertEquals((0 until 64).toList(), visited.sorted())
+    }
+
+    @Test
+    fun fullWordGetBit63() {
+        val bs = CustomBitSet.valueOf(longArrayOf(-1L))
+        assertTrue(bs[63])
+        assertTrue(bs[0])
+    }
+
+    @Test
+    fun bit63IteratesCorrectly() {
+        // 1L shl 63 == Long.MIN_VALUE; in dense forEachBit, -Long.MIN_VALUE overflows
+        // to Long.MIN_VALUE so the bit-isolation arithmetic must still terminate.
+        forEachMode(intArrayOf(63)) { (bs) ->
+            assertEquals(1, bs.cardinality())
+            val bits = mutableListOf<Int>()
+            bs.forEachBit { bits.add(it) }
+            assertEquals(listOf(63), bits)
+        }
+    }
+
+    @Test
+    fun twoFullWordsCardinality() {
+        val bs = CustomBitSet.valueOf(longArrayOf(-1L, -1L))
+        assertEquals(128, bs.cardinality())
+        assertEquals((0 until 128).toList(), bs.toBitList())
+    }
+
+    @Test
+    fun fullWordEqualsSetBitByBit() {
+        val fromValOf = CustomBitSet.valueOf(longArrayOf(-1L))
+        val bySet = CustomBitSet(1)
+        for (i in 0 until 64) bySet.set(i)
+        assertEquals(fromValOf, bySet)
+        assertEquals(fromValOf.hashCode(), bySet.hashCode())
+        assertEquals(fromValOf.hashCodeLong(), bySet.hashCodeLong())
+    }
+
+    @Test
+    fun fullWordOrAndAndNot() {
+        val full = CustomBitSet.valueOf(longArrayOf(-1L))
+        val single = denseOf(0)
+
+        val orResult = full.copy().also { it.or(single) }
+        assertEquals(full, orResult)
+
+        val andResult = full.copy().also { it.and(single) }
+        assertEquals(single, andResult)
+
+        val andNotResult = full.copy().also { it.andNot(single) }
+        val expected = CustomBitSet(1)
+        for (i in 1 until 64) expected.set(i)
+        assertEquals(expected, andNotResult)
+        assertEquals(63, andNotResult.cardinality())
+    }
+
+    // ---- Helpers ------------------------------------------------------------
+
     private fun sparseOf(vararg bits: Int): CustomBitSet {
         require(bits.size < LAZY_CONVERSION_THRESHOLD) { "Too many bits for sparse helper; use denseOf instead" }
         val bs = CustomBitSet()
@@ -38,689 +779,40 @@ class CustomBitSetTest {
         return result.sorted()
     }
 
-    // ---- Construction -------------------------------------------------------
-
-    @Test fun emptyDefaultConstructorIsEmpty() {
-        val bs = CustomBitSet()
-        assertTrue(bs.isEmpty)
-        assertEquals(0, bs.cardinality())
-    }
-
-    @Test fun emptyDenseConstructorIsEmpty() {
-        val bs = CustomBitSet(100)
-        assertTrue(bs.isEmpty)
-        assertEquals(0, bs.cardinality())
-    }
-
-    @Test fun valueOfProducesCorrectBits() {
-        val bs = CustomBitSet.valueOf(longArrayOf(0b101L))
-        assertTrue(bs[0])
-        assertFalse(bs[1])
-        assertTrue(bs[2])
-        assertEquals(2, bs.cardinality())
-    }
-
-    @Test fun allEmptyConstructorVariantsAreEqual() {
-        val sparse = CustomBitSet()
-        val dense = CustomBitSet(64)
-        val fromEmpty = CustomBitSet.valueOf(longArrayOf())
-        assertEquals(sparse, dense)
-        assertEquals(sparse, fromEmpty)
-        assertEquals(dense, fromEmpty)
-        assertEquals(sparse.hashCode(), dense.hashCode())
-    }
-
-    // ---- Sparse mode (< LAZY_CONVERSION_THRESHOLD bits) ---------------------
-
-    @Test fun sparseModeSetAndGet() {
-        val bs = CustomBitSet()
-        bs.set(0)
-        bs.set(63)
-        assertTrue(bs[0])
-        assertTrue(bs[63])
-        assertFalse(bs[1])
-        assertFalse(bs[64])
-        assertEquals(2, bs.cardinality())
-    }
-
-    @Test fun sparseModeSetAndClear() {
-        val bs = CustomBitSet()
-        bs.set(5)
-        assertTrue(bs[5])
-        bs.clear(5)
-        assertFalse(bs[5])
-        assertTrue(bs.isEmpty)
-        assertEquals(0, bs.cardinality())
-    }
-
-    @Test fun sparseModeBitAcrossWordBoundary() {
-        val bs = CustomBitSet()
-        bs.set(0)
-        bs.set(64)   // second word, still sparse (2 < threshold)
-        assertSparse(bs)
-        assertEquals(2, bs.cardinality())
-        assertTrue(bs[0])
-        assertTrue(bs[64])
-    }
-
-    @Test fun sparseModeForEachBit() {
-        val bs = sparseOf(30, 5, 10)
-        assertEquals(listOf(5, 10, 30), bs.toBitList())
-    }
-
-    @Test fun sparseModeIsNotEmpty() {
-        val bs = sparseOf(7)
-        assertFalse(bs.isEmpty)
-    }
-
-    @Test fun sparseModeCopyIsIndependent() {
-        val bs = sparseOf(3, 42)
-        val copy = bs.copy()
-        assertEquals(bs, copy)
-        copy.set(100)
-        assertFalse(bs[100])
-    }
-
-    @Test fun sparseModeBooleanSetOperator() {
-        val bs = CustomBitSet()
-        bs[5] = true
-        assertTrue(bs[5])
-        bs[5] = false
-        assertFalse(bs[5])
-    }
-
-    // ---- Transition at threshold (8th bit triggers dense conversion) --------
-
-    @Test fun transitionAt8BitsAllBitsRetained() {
-        val bs = CustomBitSet()
-        for (i in 0 until 7) bs.set(i * 10)
-        assertSparse(bs, "premature dense conversion at 7 bits (threshold is 8)")
-        assertEquals(7, bs.cardinality())
-        bs.set(70)   // 8th bit — triggers buildFromLazy
-        assertDense(bs, "8th set did not trigger dense conversion")
-        assertEquals(8, bs.cardinality())
-        for (i in 0 until 7) assertTrue(bs[i * 10], "bit ${i * 10} should survive transition")
-        assertTrue(bs[70])
-    }
-
-    @Test fun hashCodeConsistentAcrossTransition() {
-        val bits = intArrayOf(0, 10, 20, 30, 40, 50, 60, 70)
-        val converted = CustomBitSet()
-        bits.forEach { converted.set(it) }   // 8th set triggers conversion
-        assertDense(converted, "8th set did not trigger dense conversion")
-
-        val neverSparse = denseOf(*bits)
-
-        assertEquals(converted, neverSparse)
-        assertEquals(converted.hashCode(), neverSparse.hashCode())
-        assertEquals(converted.hashCodeLong(), neverSparse.hashCodeLong())
-    }
-
-    @Test fun copyBeforeAndAfterTransitionAreCorrect() {
-        val bs = CustomBitSet()
-        for (i in 0 until 7) bs.set(i)
-        val beforeTransition = bs.copy()
-        assertSparse(beforeTransition, "copy of sparse bitset is unexpectedly dense")
-
-        bs.set(7)   // transition
-        assertDense(bs, "8th set did not trigger dense conversion")
-        val afterTransition = bs.copy()
-        assertDense(afterTransition, "copy of dense bitset is unexpectedly sparse")
-
-        assertEquals(7, beforeTransition.cardinality())
-        for (i in 0 until 7) assertTrue(beforeTransition[i])
-
-        assertEquals(bs, afterTransition)
-        assertEquals(8, afterTransition.cardinality())
-    }
-
-    // ---- Dense mode basics --------------------------------------------------
-
-    @Test fun denseModeSetAndGetAcrossWords() {
-        val bs = CustomBitSet(200)
-        assertDense(bs, "CustomBitSet(nodesCount) is unexpectedly sparse")
-        for (bit in listOf(0, 63, 64, 127, 128, 191, 192)) {
-            bs.set(bit)
-            assertTrue(bs[bit], "bit $bit should be set")
+    /**
+     * Run [block] with all sparse/dense combinations of bitsets built from [bitsArrays].
+     * Each operand is constructed independently in each of the two representations, so 2^N
+     * combinations are exercised. Sparse mode is skipped when the bit count is at or above
+     * the threshold. The lambda receives a [List] of bitsets that callers typically
+     * destructure with `(a) ->`, `(a, b) ->`, or `(a, b, c) ->`.
+     */
+    private fun forEachMode(
+            vararg bitsArrays: IntArray,
+            block: (List<CustomBitSet>) -> Unit,
+    ) {
+        val modeNames = listOf("sparse", "dense")
+        fun enumerate(index: Int, modes: List<String>) {
+            if (index == bitsArrays.size) {
+                // Build fresh bitsets at the leaf so mutations in one branch don't leak.
+                val bitsets = modes.mapIndexed { i, mode ->
+                    if (mode == "sparse") sparseOf(*bitsArrays[i]) else denseOf(*bitsArrays[i])
+                }
+                try {
+                    block(bitsets)
+                } catch (e: AssertionError) {
+                    val ctx = bitsArrays.indices.joinToString(", ") { i ->
+                        "${modes[i]}${bitsArrays[i].toList()}"
+                    }
+                    throw AssertionError("[$ctx] ${e.message}", e)
+                }
+                return
+            }
+            val bits = bitsArrays[index]
+            for (mode in modeNames) {
+                if (mode == "sparse" && bits.size >= LAZY_CONVERSION_THRESHOLD) continue
+                enumerate(index + 1, modes + mode)
+            }
         }
-        assertEquals(7, bs.cardinality())
-    }
-
-    @Test fun denseModeForEachBitOrder() {
-        val bs = denseOf(128, 0, 64)
-        assertEquals(listOf(0, 64, 128), bs.toBitList())
-    }
-
-    @Test fun denseModeForEachWordVisitsSetWords() {
-        val bs = denseOf(0, 64)   // words 0 and 1
-        val words = mutableListOf<Long>()
-        bs.forEachWord { words.add(it) }
-        assertTrue(words.size >= 2)
-        assertTrue(words[0] and 1L != 0L, "word 0 bit 0")
-        assertTrue(words[1] and 1L != 0L, "word 1 bit 0")
-    }
-
-    @Test fun denseModeFullClearResetsAll() {
-        val bs = denseOf(0, 64, 128)
-        bs.clear()
-        assertTrue(bs.isEmpty)
-        assertEquals(0, bs.cardinality())
-        assertEquals(0, bs.toBitList().size)
-    }
-
-    @Test fun denseClearBitUpdatesCardinality() {
-        val bs = denseOf(0, 128)
-        bs.clear(128)
-        assertEquals(1, bs.cardinality())
-        assertTrue(bs[0])
-        assertFalse(bs[128])
-    }
-
-    // ---- Logical operations: same mode --------------------------------------
-
-    @Test fun orSparseMergesBits() {
-        val a = sparseOf(0, 10)
-        val b = sparseOf(10, 20)
-        a.or(b)
-        assertEquals(listOf(0, 10, 20), a.toBitList())
-    }
-
-    @Test fun orDenseMergesBits() {
-        val a = denseOf(0, 64)
-        val b = denseOf(64, 128)
-        a.or(b)
-        assertEquals(listOf(0, 64, 128), a.toBitList())
-    }
-
-    @Test fun orDenseGrowsWhenNeeded() {
-        val a = denseOf(0)
-        val b = denseOf(0, 200)
-        a.or(b)
-        assertEquals(listOf(0, 200), a.toBitList())
-    }
-
-    @Test fun andSparseIntersects() {
-        val a = sparseOf(0, 5, 10)
-        val b = sparseOf(5, 10)
-        a.and(b)
-        assertEquals(listOf(5, 10), a.toBitList())
-    }
-
-    @Test fun andDenseIntersects() {
-        val a = denseOf(0, 64, 128)
-        val b = denseOf(64, 128, 192)
-        a.and(b)
-        assertEquals(listOf(64, 128), a.toBitList())
-    }
-
-    @Test fun andNotSparseRemovesBits() {
-        val a = sparseOf(0, 5, 10)
-        val b = sparseOf(5)
-        a.andNot(b)
-        assertEquals(listOf(0, 10), a.toBitList())
-    }
-
-    @Test fun andNotDenseRemovesBits() {
-        val a = denseOf(0, 64, 128)
-        val b = denseOf(64)
-        a.andNot(b)
-        assertEquals(listOf(0, 128), a.toBitList())
-    }
-
-    @Test fun intersectsSparse() {
-        assertTrue(sparseOf(0, 10).intersects(sparseOf(10, 20)))
-        assertFalse(sparseOf(0, 10).intersects(sparseOf(20, 30)))
-    }
-
-    @Test fun intersectsDense() {
-        assertTrue(denseOf(0, 64).intersects(denseOf(64, 128)))
-        assertFalse(denseOf(0, 64).intersects(denseOf(128, 192)))
-    }
-
-    @Test fun containsSparse() {
-        assertTrue(sparseOf(0, 5, 10).contains(sparseOf(5, 10)))
-        assertFalse(sparseOf(5, 10).contains(sparseOf(0, 5, 10)))
-    }
-
-    @Test fun containsDense() {
-        assertTrue(denseOf(0, 64, 128).contains(denseOf(64, 128)))
-        assertFalse(denseOf(64, 128).contains(denseOf(0, 64, 128)))
-    }
-
-    // ---- Logical operations: cross-mode (sparse ↔ dense) --------------------
-
-    @Test fun denseOrSparse() {
-        val a = denseOf(0, 64)
-        val b = sparseOf(64, 128)
-        a.or(b)
-        assertDense(a, "or(sparse another) unexpectedly switched dense this to lazy")
-        assertEquals(listOf(0, 64, 128), a.toBitList())
-    }
-
-    @Test fun sparseOrDense() {
-        val a = sparseOf(0, 10)
-        val b = denseOf(10, 64)
-        a.or(b)
-        assertDense(a, "or(dense another) failed to convert this from lazy to dense")
-        assertEquals(listOf(0, 10, 64), a.toBitList())
-    }
-
-    @Test fun denseAndSparse() {
-        val a = denseOf(0, 64, 128)
-        val b = sparseOf(0, 64)
-        a.and(b)
-        assertSparse(a, "and(sparse another) failed to switch dense this to lazy")
-        assertEquals(listOf(0, 64), a.toBitList())
-    }
-
-    @Test fun sparseAndDense() {
-        val a = sparseOf(0, 5)
-        val b = denseOf(5, 64)
-        a.and(b)
-        assertSparse(a, "and lazy retainAll path unexpectedly switched to dense")
-        assertEquals(listOf(5), a.toBitList())
-    }
-
-    @Test fun denseAndNotSparse() {
-        val a = denseOf(0, 64, 128)
-        val b = sparseOf(64)
-        a.andNot(b)
-        assertDense(a, "andNot(sparse) per-bit clear path unexpectedly switched dense to lazy")
-        assertEquals(listOf(0, 128), a.toBitList())
-    }
-
-    @Test fun sparseAndNotDense() {
-        val a = sparseOf(0, 5, 10)
-        val b = denseOf(5)
-        a.andNot(b)
-        assertSparse(a, "andNot lazy retainAll path unexpectedly switched to dense")
-        assertEquals(listOf(0, 10), a.toBitList())
-    }
-
-    @Test fun denseIntersectsSparse() {
-        assertTrue(denseOf(0, 64).intersects(sparseOf(64)))
-        assertFalse(denseOf(0, 64).intersects(sparseOf(128)))
-    }
-
-    @Test fun sparseIntersectsDense() {
-        assertTrue(sparseOf(0, 64).intersects(denseOf(64, 128)))
-        assertFalse(sparseOf(0, 64).intersects(denseOf(128, 192)))
-    }
-
-    @Test fun denseContainsSparse() {
-        assertTrue(denseOf(0, 64, 128).contains(sparseOf(0, 64)))
-        assertFalse(denseOf(0, 64).contains(sparseOf(0, 64, 128)))
-    }
-
-    @Test fun sparseContainsDense() {
-        assertTrue(sparseOf(0, 64).contains(denseOf(0, 64)))
-        assertFalse(sparseOf(0, 64).contains(denseOf(0, 64, 128)))
-    }
-
-    // ---- orHasChanged -------------------------------------------------------
-
-    @Test fun orHasChangedNoChangeReturnsFalse() {
-        val a = denseOf(0, 64)
-        val b = denseOf(0)   // subset of a
-        assertFalse(a.orHasChanged(b))
-        assertEquals(listOf(0, 64), a.toBitList())
-    }
-
-    @Test fun orHasChangedReturnsTrueAndSetsBit() {
-        val a = denseOf(0)
-        val b = denseOf(0, 64)
-        assertTrue(a.orHasChanged(b))
-        assertEquals(listOf(0, 64), a.toBitList())
-    }
-
-    @Test fun orHasChangedSparseNoChange() {
-        val a = sparseOf(0, 5)
-        val b = sparseOf(5)
-        assertFalse(a.orHasChanged(b))
-    }
-
-    @Test fun orHasChangedSparseChange() {
-        val a = sparseOf(0)
-        val b = sparseOf(0, 5)
-        assertTrue(a.orHasChanged(b))
-        assertTrue(a[5])
-    }
-
-    // ---- orWithFilterHasChanged ---------------------------------------------
-
-    @Test fun orWithFilterArgOnlyAllowsFilteredBits() {
-        val a = denseOf(0)
-        val b = denseOf(0, 64, 128)
-        val filter = denseOf(64)   // only bit 64 passes the filter
-        assertTrue(a.orWithFilterHasChanged(b, filter))
-        assertTrue(a[64])
-        assertFalse(a[128])        // 128 is not in filter — must not be added
-    }
-
-    @Test fun orWithFilterArgNoChangeWhenFilteredBitsAlreadySet() {
-        val a = denseOf(0, 64)
-        val b = denseOf(0, 64, 128)
-        val filter = denseOf(0, 64)   // 128 excluded by filter
-        assertFalse(a.orWithFilterHasChanged(b, filter))
-        assertFalse(a[128])
-    }
-
-    @Test fun orWithFilterArgSizeAfterTrim() {
-        // ensureCapacity bounded by min(asize, fsize), so words past filter.size
-        // are never touched. size must reflect the actual highest set bit.
-        val a = denseOf(0)            // size=1
-        val b = denseOf(0, 64, 128)   // size=3
-        val filter = denseOf(64)      // size=2
-        a.orWithFilterHasChanged(b, filter)
-        assertEquals(listOf(0, 64), a.toBitList())
-        assertEquals(2, a.size)
-    }
-
-    @Test fun orWithFilterArgEmptyIntersectionLeavesSizeZero() {
-        // Even with the right ensureCapacity bound, the AND of another and filter
-        // can be all zeros at the highest covered word. shrinkDenseSize catches it.
-        val a = denseOf()              // size=0
-        val b = denseOf(0)             // size=1
-        val filter = denseOf(64)       // size=2; filter.data[0]=0
-        a.orWithFilterHasChanged(b, filter)
-        assertTrue(a.isEmpty)
-        assertEquals(0, a.size)
-    }
-
-    // ---- equals / hashCode contracts ----------------------------------------
-
-    @Test fun equalsIsReflexive() {
-        val a = sparseOf(1, 2, 3)
-        assertEquals(a, a)
-        assertEquals(a.hashCode(), a.hashCode())
-    }
-
-    @Test fun equalsIsSymmetric() {
-        val a = sparseOf(1, 2, 3)
-        val b = sparseOf(1, 2, 3)
-        assertEquals(a, b)
-        assertEquals(b, a)
-    }
-
-    @Test fun equalImpliesSameHashCode() {
-        val a = sparseOf(0, 64, 128)
-        val b = sparseOf(0, 64, 128)
-        assertEquals(a, b)
-        assertEquals(a.hashCode(), b.hashCode())
-    }
-
-    @Test fun sparseDenseEqualWhenSameBits() {
-        val bits = intArrayOf(0, 5, 10, 20)
-        val sparse = sparseOf(*bits)
-        val dense = denseOf(*bits)
-        assertEquals(sparse, dense)
-        assertEquals(sparse.hashCode(), dense.hashCode())
-        assertEquals(sparse.hashCodeLong(), dense.hashCodeLong())
-    }
-
-    @Test fun sparseDenseEqualWithMultiWordBits() {
-        val bits = intArrayOf(0, 64, 128)
-        val sparse = sparseOf(*bits)
-        val dense = denseOf(*bits)
-        assertEquals(sparse, dense)
-        assertEquals(sparse.hashCode(), dense.hashCode())
-    }
-
-    @Test fun hashCodeLongRelationToHashCode() {
-        val bs = denseOf(0, 63, 64, 127)
-        val h = bs.hashCodeLong()
-        assertEquals(((h ushr 32) xor h).toInt(), bs.hashCode())
-    }
-
-    @Test fun differentBitsMeansNotEqual() {
-        assertNotEquals(sparseOf(0, 1), sparseOf(0, 2))
-        assertNotEquals(denseOf(0, 64), denseOf(0, 128))
-    }
-
-    // ---- Regression: size-tracking after logical operations -----------------
-
-    @Test fun andDenseBothEqualityAfterSizeLeak() {
-        // b.and(a) zeros out word 1 in b; b.size must shrink to 1
-        val a = denseOf(0)       // size=1
-        val b = denseOf(0, 64)   // size=2
-        b.and(a)
-        assertDense(b, "dense-dense and unexpectedly switched to lazy")
-        assertEquals(listOf(0), b.toBitList())
-        assertEquals(1, b.size)
-    }
-
-    @Test fun andDenseWithEmptyResultsInEmpty() {
-        val a = denseOf(0, 64, 128)
-        val empty = CustomBitSet(100)
-        assertDense(empty, "CustomBitSet(nodesCount) is unexpectedly sparse")
-        a.and(empty)
-        assertDense(a, "dense-dense and unexpectedly switched to lazy")
-        assertTrue(a.isEmpty)
-        assertEquals(0, a.cardinality())
-        assertEquals(0, a.size)
-    }
-
-    @Test fun andDensePlusSparseEqualityAfterSizeLeak() {
-        // a.and(b) where b is sparse switches a to lazy; a.size must reflect the new max
-        val a = denseOf(0, 64)   // size=2
-        val b = sparseOf(0)      // size=1
-        a.and(b)
-        assertSparse(a, "and(sparse another) failed to switch dense this to lazy")
-        assertEquals(listOf(0), a.toBitList())
-        assertEquals(1, a.size)
-    }
-
-    @Test fun andSparsePlusSparseEqualityAfterSizeLeak() {
-        // retainAll in lazy path must recompute size from the new max bit
-        val a = sparseOf(0, 64)  // size=2
-        val b = sparseOf(0)      // size=1
-        a.and(b)
-        assertSparse(a, "and lazy retainAll path unexpectedly switched to dense")
-        assertEquals(listOf(0), a.toBitList())
-        assertEquals(1, a.size)
-    }
-
-    @Test fun andNotSparseSizeLeakEquality() {
-        // retainAll in andNot lazy path must recompute size from the new max bit
-        val a = sparseOf(0, 64)  // size=2; bit 64 in word 1
-        val b = sparseOf(64)
-        a.andNot(b)
-        assertSparse(a, "andNot lazy retainAll path unexpectedly switched to dense")
-        assertEquals(listOf(0), a.toBitList())
-        assertEquals(1, a.size)
-    }
-
-    // ---- Edge cases ---------------------------------------------------------
-
-    @Test fun orWithSelfIsIdempotent() {
-        val a = denseOf(0, 64, 128)
-        val expected = a.copy()
-        a.or(a)
-        assertEquals(expected, a)
-    }
-
-    @Test fun andWithSelfIsIdempotent() {
-        val a = denseOf(0, 64, 128)
-        val expected = a.copy()
-        a.and(a)
-        assertEquals(expected, a)
-    }
-
-    @Test fun andNotWithSelfIsEmpty() {
-        val a = denseOf(0, 64, 128)
-        a.andNot(a)
-        assertTrue(a.isEmpty)
-    }
-
-    @Test fun anyBitsetContainsEmpty() {
-        val a = denseOf(0, 64)
-        assertTrue(a.contains(CustomBitSet()))
-        assertTrue(a.contains(CustomBitSet(100)))
-    }
-
-    @Test fun emptyDoesNotContainNonEmpty() {
-        val empty = CustomBitSet()
-        assertFalse(empty.contains(sparseOf(0)))
-    }
-
-    @Test fun emptyBitsetOperations() {
-        val a = CustomBitSet()
-        val b = CustomBitSet()
-        a.or(b)
-        assertTrue(a.isEmpty)
-        a.and(b)
-        assertTrue(a.isEmpty)
-        a.andNot(b)
-        assertTrue(a.isEmpty)
-        assertFalse(a.intersects(b))
-        assertTrue(a.contains(b))
-        assertTrue(b.contains(a))
-        assertEquals(a, b)
-    }
-
-    @Test fun wordBoundaryBitsSetAndGet() {
-        for (bit in listOf(0, 63, 64, 127, 128)) {
-            val bs = CustomBitSet()
-            bs.set(bit)
-            assertTrue(bs[bit], "bit $bit should be set")
-            if (bit > 0) assertFalse(bs[bit - 1], "bit ${bit - 1} should not be set")
-            assertEquals(1, bs.cardinality(), "cardinality for single bit $bit")
-        }
-    }
-
-    // ---- valueOf input handling ---------------------------------------------
-
-    @Test fun valueOfTrimsTrailingZeros() {
-        val bs = CustomBitSet.valueOf(longArrayOf(0L))
-        assertEquals(0, bs.size)
-        assertTrue(bs.isEmpty)
-        assertEquals(CustomBitSet(), bs)
-    }
-
-    @Test fun valueOfTrimsMultipleTrailingZeros() {
-        val bs = CustomBitSet.valueOf(longArrayOf(1L, 0L, 0L))
-        assertEquals(1, bs.size)
-        assertEquals(denseOf(0), bs)
-    }
-
-    @Test fun valueOfSharesCallerArray() {
-        // valueOf transfers ownership of the array to the bitset (no defensive copy).
-        // Caller-visible mutations propagate to the bitset.
-        val data = longArrayOf(1L)
-        val bs = CustomBitSet.valueOf(data)
-        assertTrue(bs[0])
-        data[0] = 0L
-        assertFalse(bs[0], "valueOf must share storage with caller")
-    }
-
-    // ---- clear must not allocate for out-of-range indices -------------------
-
-    @Test fun clearOutOfRangeBitDoesNotGrow() {
-        val bs = denseOf(0)
-        val sizeBefore = bs.size
-        bs.clear(1_000_000)   // huge index, never set
-        assertEquals(sizeBefore, bs.size)
-        assertTrue(bs[0])
-    }
-
-    @Test fun andNotWithSparseHavingBitsBeyondThisDoesNotGrow() {
-        // andNot's another.lazy path iterates and calls clear(it).
-        // If any of those bits are past this.size, we must not grow.
-        val a = denseOf(0)            // size=1
-        val b = sparseOf(0, 1_000_000)
-        a.andNot(b)
-        assertDense(a, "andNot(sparse) per-bit clear path unexpectedly switched dense to lazy")
-        assertEquals(0, a.size)
-        assertTrue(a.isEmpty)
-    }
-
-    @Test fun andWithDenseLargerThanThisProducesCorrectResult() {
-        // and should never grow this.size; another may have many words past this.
-        val a = denseOf(0)             // size=1
-        val b = denseOf(0, 1_000)      // size=16; AND result must just be {0}
-        a.and(b)
-        assertEquals(listOf(0), a.toBitList())
-        assertEquals(1, a.size)
-    }
-
-    @Test fun andWithDenseDisjointLargerThanThisProducesEmpty() {
-        val a = denseOf(0)             // size=1
-        val b = denseOf(1_000)         // size=16; no shared bits
-        a.and(b)
-        assertEquals(0, a.size)
-        assertTrue(a.isEmpty)
-    }
-
-    @Test fun andNotWithDenseLargerThanThisDoesNotGrow() {
-        // andNot result should equal this minus another's bits within this.size
-        val a = denseOf(0)             // size=1
-        val b = denseOf(1_000)         // size=16; bit 1000 not in a
-        a.andNot(b)
-        assertEquals(listOf(0), a.toBitList())
-        assertEquals(1, a.size)
-    }
-
-    // ---- Full-word (-1L) correctness ----------------------------------------
-    // forEachBit uses `t = d and -d; d -= t`. For bit 63, -Long.MIN_VALUE
-    // overflows back to Long.MIN_VALUE in two's complement, so the algorithm
-    // must still isolate and clear the bit correctly.
-
-    @Test fun fullWordCardinalityIs64() {
-        val bs = CustomBitSet.valueOf(longArrayOf(-1L))
-        assertEquals(64, bs.cardinality())
-    }
-
-    @Test fun fullWordForEachBitVisitsAllBits() {
-        val bs = CustomBitSet.valueOf(longArrayOf(-1L))
-        val visited = mutableListOf<Int>()
-        bs.forEachBit { visited.add(it) }
-        assertEquals((0 until 64).toList(), visited.sorted())
-    }
-
-    @Test fun fullWordGetBit63() {
-        val bs = CustomBitSet.valueOf(longArrayOf(-1L))
-        assertTrue(bs[63])
-        assertTrue(bs[0])
-    }
-
-    @Test fun bit63OnlyWordIteratesCorrectly() {
-        // 1L shl 63 == Long.MIN_VALUE; -Long.MIN_VALUE overflows to Long.MIN_VALUE
-        val bs = CustomBitSet.valueOf(longArrayOf(1L shl 63))
-        assertEquals(1, bs.cardinality())
-        val bits = mutableListOf<Int>()
-        bs.forEachBit { bits.add(it) }
-        assertEquals(listOf(63), bits)
-    }
-
-    @Test fun twoFullWordsCardinality() {
-        val bs = CustomBitSet.valueOf(longArrayOf(-1L, -1L))
-        assertEquals(128, bs.cardinality())
-        assertEquals((0 until 128).toList(), bs.toBitList())
-    }
-
-    @Test fun fullWordEqualsSetBitByBit() {
-        val fromValOf = CustomBitSet.valueOf(longArrayOf(-1L))
-        val bySet = CustomBitSet(1)
-        for (i in 0 until 64) bySet.set(i)
-        assertEquals(fromValOf, bySet)
-        assertEquals(fromValOf.hashCode(), bySet.hashCode())
-        assertEquals(fromValOf.hashCodeLong(), bySet.hashCodeLong())
-    }
-
-    @Test fun fullWordOrAndAndNot() {
-        val full = CustomBitSet.valueOf(longArrayOf(-1L))
-        val single = denseOf(0)
-
-        val orResult = full.copy().also { it.or(single) }
-        assertEquals(full, orResult)
-
-        val andResult = full.copy().also { it.and(single) }
-        assertEquals(single, andResult)
-
-        val andNotResult = full.copy().also { it.andNot(single) }
-        val expected = CustomBitSet(1)
-        for (i in 1 until 64) expected.set(i)
-        assertEquals(expected, andNotResult)
-        assertEquals(63, andNotResult.cardinality())
+        enumerate(0, emptyList())
     }
 }
