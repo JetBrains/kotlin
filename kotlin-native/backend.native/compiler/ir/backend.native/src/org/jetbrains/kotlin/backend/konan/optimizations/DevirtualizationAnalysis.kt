@@ -914,7 +914,7 @@ internal object DevirtualizationAnalysis {
                         if (marked[distNode.id])
                             distNode.types.or(node.types)
                         else {
-                            if (distNode.types.orWithFilterHasChanged(node.types) && !marked[distNode.id]) {
+                            if (distNode.types.orHasChanged(node.types) && !marked[distNode.id]) {
                                 marked.set(distNode.id)
                                 front[frontSize++] = distNode.id
                             }

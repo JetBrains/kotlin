@@ -333,34 +333,36 @@ class CustomBitSetTest {
         assertFalse(sparseOf(0, 64).contains(denseOf(0, 64, 128)))
     }
 
-    // ---- orWithFilterHasChanged ---------------------------------------------
+    // ---- orHasChanged -------------------------------------------------------
 
-    @Test fun orWithFilterNoChangeReturnsFalse() {
+    @Test fun orHasChangedNoChangeReturnsFalse() {
         val a = denseOf(0, 64)
         val b = denseOf(0)   // subset of a
-        assertFalse(a.orWithFilterHasChanged(b))
+        assertFalse(a.orHasChanged(b))
         assertEquals(listOf(0, 64), a.toBitList())
     }
 
-    @Test fun orWithFilterChangeReturnsTrueAndSetsBit() {
+    @Test fun orHasChangedReturnsTrueAndSetsBit() {
         val a = denseOf(0)
         val b = denseOf(0, 64)
-        assertTrue(a.orWithFilterHasChanged(b))
+        assertTrue(a.orHasChanged(b))
         assertEquals(listOf(0, 64), a.toBitList())
     }
 
-    @Test fun orWithFilterSparseNoChange() {
+    @Test fun orHasChangedSparseNoChange() {
         val a = sparseOf(0, 5)
         val b = sparseOf(5)
-        assertFalse(a.orWithFilterHasChanged(b))
+        assertFalse(a.orHasChanged(b))
     }
 
-    @Test fun orWithFilterSparseChange() {
+    @Test fun orHasChangedSparseChange() {
         val a = sparseOf(0)
         val b = sparseOf(0, 5)
-        assertTrue(a.orWithFilterHasChanged(b))
+        assertTrue(a.orHasChanged(b))
         assertTrue(a[5])
     }
+
+    // ---- orWithFilterHasChanged ---------------------------------------------
 
     @Test fun orWithFilterArgOnlyAllowsFilteredBits() {
         val a = denseOf(0)

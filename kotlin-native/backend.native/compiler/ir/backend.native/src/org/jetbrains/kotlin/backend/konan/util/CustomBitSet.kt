@@ -149,7 +149,7 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         }
     }
 
-    fun orWithFilterHasChanged(another: CustomBitSet): Boolean {
+    fun orHasChanged(another: CustomBitSet): Boolean {
         another.lazy?.let { alazy ->
             var changed = false
             alazy.forEach {
