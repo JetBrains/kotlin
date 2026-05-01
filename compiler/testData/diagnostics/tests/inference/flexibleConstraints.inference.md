@@ -6,7 +6,7 @@
 Q|JavaClass|.consume#(String())
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.consume` --- `static fun <C : Any!> consume(c: C!): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.consume` --- `static fun <C : Any!> consume(c: C!): Unit`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(C)` for `FirNamedFunctionSymbol /JavaClass.consume`s parameter 0
@@ -41,7 +41,7 @@ Q|JavaClass|.consume#(String())
 Q|JavaClass|.consume#(R|<local>/s|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.consume` --- `static fun <C : Any!> consume(c: C!): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.consume` --- `static fun <C : Any!> consume(c: C!): Unit`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(C)` for `FirNamedFunctionSymbol /JavaClass.consume`s parameter 0
@@ -76,7 +76,7 @@ Q|JavaClass|.consume#(R|<local>/s|)
 Q|JavaClass|.transform#(R|<local>/s|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transform` --- `static fun <T : Any!> transform(t: T!): T!↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transform` --- `static fun <T : Any!> transform(t: T!): T!`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /JavaClass.transform`s parameter 0
@@ -123,7 +123,7 @@ eatString#(Q|JavaClass|.R|/JavaClass.transform|<R|kotlin/String?|>(R|<local>/s|)
 Q|JavaClass|.transform#(R|<local>/s|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transform` --- `static fun <T : Any!> transform(t: T!): T!↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transform` --- `static fun <T : Any!> transform(t: T!): T!`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /JavaClass.transform`s parameter 0
@@ -170,7 +170,7 @@ eatString#(R|<local>/res|)
 Q|JavaClass|.transformNotNull#(R|<local>/s|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transformNotNull` --- `static fun <T : Any!> transformNotNull(t: T!): @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  T & Any↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transformNotNull` --- `static fun <T : Any!> transformNotNull(t: T!): @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  T & Any`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /JavaClass.transformNotNull`s parameter 0
@@ -212,7 +212,7 @@ Q|JavaClass|.transformNotNull#(R|<local>/s|)
 Q|JavaClass|.transformNotNull#(R|<local>/s|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transformNotNull` --- `static fun <T : Any!> transformNotNull(t: T!): @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  T & Any↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transformNotNull` --- `static fun <T : Any!> transformNotNull(t: T!): @EnhancedNullability @R|org/jetbrains/annotations/NotNull|()  T & Any`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /JavaClass.transformNotNull`s parameter 0
@@ -247,7 +247,7 @@ Q|JavaClass|.transformNotNull#(R|<local>/s|)
 Q|JavaClass|.transform#(R|<local>/arg|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transform` --- `static fun <T : Any!> transform(t: T!): T!↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.transform` --- `static fun <T : Any!> transform(t: T!): T!`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /JavaClass.transform`s parameter 0
@@ -282,7 +282,7 @@ Q|JavaClass|.transform#(R|<local>/arg|)
 Q|JavaClass|.consumeWithBounds#<R|kotlin/String|, >(R|<local>/s|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.consumeWithBounds` --- `static fun <T : Any!, U : T!> consumeWithBounds(u: U!): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /JavaClass.consumeWithBounds` --- `static fun <T : Any!, U : T!> consumeWithBounds(u: U!): Unit`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /JavaClass.consumeWithBounds`s parameter 0

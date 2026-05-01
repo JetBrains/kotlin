@@ -3,7 +3,7 @@
 ### Call 1
 
 ```
-@R|kotlin/Suppress|(String(UNCHECKED_CAST)) 
+@R|kotlin/Suppress|(String(UNCHECKED_CAST))
 ```
 
 #### Candidate 1: `FirConstructorSymbol kotlin/Suppress.Suppress` --- `constructor(vararg names: String): Suppress`
@@ -14,7 +14,7 @@
 ### Call 2
 
 ```
-@R|kotlin/Suppress|(String(UNCHECKED_CAST), String(CAST_NEVER_SUCCEEDS)) 
+@R|kotlin/Suppress|(String(UNCHECKED_CAST), String(CAST_NEVER_SUCCEEDS))
 ```
 
 #### Candidate 1: `FirConstructorSymbol kotlin/Suppress.Suppress` --- `constructor(vararg names: String): Suppress`
@@ -28,7 +28,7 @@
 (this@R|/removeTraitIfPresent|.R|SubstitutionOverride</ToSmithyBuilder.toBuilder: R|SmithyBuilder<T>|>|() as R|B|).R|SubstitutionOverride</AbstractShapeBuilder.removeTrait: R|B|>|().build#()
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /AbstractShapeBuilder.build` --- `fun build(): T↩`
+#### Candidate 1: `FirNamedFunctionSymbol /AbstractShapeBuilder.build` --- `fun build(): T`
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
 1. `T <: T` _from ExpectedType for some call_
@@ -36,7 +36,7 @@
 ### Call 4
 
 ```
-@R|kotlin/Suppress|(String(UNCHECKED_CAST)) 
+@R|kotlin/Suppress|(String(UNCHECKED_CAST))
 ```
 
 #### Candidate 1: `FirConstructorSymbol kotlin/Suppress.Suppress` --- `constructor(vararg names: String): Suppress`

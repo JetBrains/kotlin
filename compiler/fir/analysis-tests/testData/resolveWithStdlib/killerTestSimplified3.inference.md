@@ -6,7 +6,7 @@
 x#(String(), String(), String(), String(), String(), String(), String(), String(), String())
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /invoke` --- `fun <T : (A1, A2, A3, A4, A5, A6, A7, A8, A9) -> R, R, A1, A2, A3, A4, A5, A6, A7, A8, A9> Inv<T>.invoke(arg1: A1, arg2: A2, arg3: A3, arg4: A4, arg5: A5, arg6: A6, args7: A7, args8: A8, args9: A9): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /invoke` --- `fun <T : (A1, A2, A3, A4, A5, A6, A7, A8, A9) -> R, R, A1, A2, A3, A4, A5, A6, A7, A8, A9> Inv<T>.invoke(arg1: A1, arg2: A2, arg3: A3, arg4: A4, arg5: A5, arg6: A6, args7: A7, args8: A8, args9: A9): Unit`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /invoke`s parameter 0

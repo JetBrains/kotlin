@@ -37,7 +37,7 @@ super<R|Expression<A>|>()
 wrap#(R|<local>/t|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /wrap` --- `fun <K, R : K?> Expression<in R>.wrap(value: K): QueryParameter<K>↩`
+#### Candidate 1: `FirNamedFunctionSymbol /wrap` --- `fun <K, R : K?> Expression<in R>.wrap(value: K): QueryParameter<K>`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(K)` for `FirNamedFunctionSymbol /wrap`s parameter 0
