@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
-import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -76,6 +76,7 @@ internal class LinkKlibsOutput(
 }
 
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun LinkKlibsContext.linkKlibs(
         input: LinkKlibsInput
 ): LinkKlibsOutput {
@@ -83,16 +84,8 @@ internal fun LinkKlibsContext.linkKlibs(
     val moduleDescriptor = input.moduleDescriptor
     // Translate AST to high level IR.
 
-    val translator = Psi2IrTranslator(
-            config.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false),
-    )
-    val generatorContext = translator.createGeneratorContext(
-            moduleDescriptor,
-            bindingContext,
-            config.configuration,
-            symbolTable
-    )
+    val typeTranslator = TypeTranslatorImpl(symbolTable, config.configuration.languageVersionSettings, moduleDescriptor)
+    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
@@ -107,11 +100,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
 
-    val symbols = BackendNativeSymbols(
-            this,
-            generatorContext.irBuiltIns,
-            this.config.configuration
-    )
+    val symbols: BackendNativeSymbols
 
     val mainModule = IrModuleFragmentImpl(moduleDescriptor)
     val irDeserializer = run {
@@ -182,13 +171,20 @@ internal fun LinkKlibsContext.linkKlibs(
             }
 
             ensureCStructsAndEnumsAreLoadedForCaching(linker, libraryToCacheModule)
+
+            symbols = BackendNativeSymbols(
+                    this,
+                    irBuiltIns,
+                    this.config.configuration
+            )
+
             linker.init(mainModule)
             ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-            linker.postProcess(inOrAfterLinkageStep = true)
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
         }
     }
 
-    generateImplForCStructsAndEnums(irDeserializer, generatorContext.irBuiltIns, symbols)
+    generateImplForCStructsAndEnums(irDeserializer, irBuiltIns, symbols)
 
     config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
@@ -207,10 +203,10 @@ internal fun LinkKlibsContext.linkKlibs(
     if (stdlibIsBeingCached) {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
         (0..maxArity).forEach { arity ->
-            generatorContext.irBuiltIns.functionN(arity)
-            generatorContext.irBuiltIns.suspendFunctionN(arity)
-            generatorContext.irBuiltIns.kFunctionN(arity)
-            generatorContext.irBuiltIns.kSuspendFunctionN(arity)
+            irBuiltIns.functionN(arity)
+            irBuiltIns.suspendFunctionN(arity)
+            irBuiltIns.kFunctionN(arity)
+            irBuiltIns.kSuspendFunctionN(arity)
         }
     }
 
@@ -220,14 +216,14 @@ internal fun LinkKlibsContext.linkKlibs(
     }
 
     return if (libraryToCache == null) {
-        LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer)
+        LinkKlibsOutput(modules, mainModule, irBuiltIns, symbols, symbolTable, irDeserializer)
     } else {
         val libraryName = libraryToCache.klib.location.path
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
         LinkKlibsOutput(
                 irModules = modules.filterKeys { it != libraryName },
                 irModule = libraryModule,
-                irBuiltIns = generatorContext.irBuiltIns,
+                irBuiltIns = irBuiltIns,
                 symbols = symbols,
                 symbolTable = symbolTable,
                 irLinker = irDeserializer
