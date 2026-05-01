@@ -40,7 +40,7 @@ JavaBox#(Null(null))
 R|<local>/k|.foo#(R?C|/JavaBox.JavaBox|(Null(null)))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /K.foo` --- `fun foo(a: JavaBox<out String>): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol /K.foo` --- `fun foo(a: JavaBox<out String>): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `JavaBox<TypeVariable(T)> <: JavaBox<out kotlin/String>` _from Argument R?C|/JavaBox.JavaBox|(Null(null))_

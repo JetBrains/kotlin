@@ -74,7 +74,7 @@ GreaterOp#(this@R|/greater|, R?C|/Expression.Expression|(R|<local>/other|))
 R|<local>/countExpr|.greater#(IntegerLiteral(0))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /greater` --- `fun <T : Comparable<T>, S : T?> Expression<in S>.greater(other: T): GreaterOp↩`
+#### Candidate 1: `FirNamedFunctionSymbol /greater` --- `fun <T : Comparable<T>, S : T?> Expression<in S>.greater(other: T): GreaterOp`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /greater`s parameter 0
@@ -174,7 +174,7 @@ R|<local>/countExpr|.greater#(IntegerLiteral(0))
 R|<local>/countExpr|.greater#(String(0))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /greater` --- `fun <T : Comparable<T>, S : T?> Expression<in S>.greater(other: T): GreaterOp↩`
+#### Candidate 1: `FirNamedFunctionSymbol /greater` --- `fun <T : Comparable<T>, S : T?> Expression<in S>.greater(other: T): GreaterOp`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /greater`s parameter 0
@@ -274,7 +274,7 @@ R|<local>/countExpr|.greater#(String(0))
 R|<local>/countExpr|.greater#<R|kotlin/String|, R|kotlin/Nothing|>(String(0))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /greater` --- `fun <T : Comparable<T>, S : T?> Expression<in S>.greater(other: T): GreaterOp↩`
+#### Candidate 1: `FirNamedFunctionSymbol /greater` --- `fun <T : Comparable<T>, S : T?> Expression<in S>.greater(other: T): GreaterOp`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /greater`s parameter 0
