@@ -240,13 +240,13 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             updateLazySize()
             return
         }
+        // and only clears bits, so this.size never needs to grow
         val adata = another.data
-        val asize = another.size
-        ensureCapacity(asize - 1)
-        for (i in 0 until asize) {
+        val minSize = minOf(size, another.size)
+        for (i in 0 until minSize) {
             data[i] = data[i] and adata[i]
         }
-        for (i in asize until size) {
+        for (i in minSize until size) {
             data[i] = 0L
         }
         shrinkDenseSize()
@@ -262,12 +262,13 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
             alazy.forEach { clear(it) }
             return
         }
+        // andNot only clears bits, so this.size never needs to grow
         val adata = another.data
-        val asize = another.size
-        ensureCapacity(asize - 1)
-        for (i in 0 until asize) {
+        val minSize = minOf(size, another.size)
+        for (i in 0 until minSize) {
             data[i] = data[i] and adata[i].inv()
         }
+        // Every word over minSize stays unchanged
         shrinkDenseSize()
     }
 

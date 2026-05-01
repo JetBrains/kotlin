@@ -634,6 +634,32 @@ class CustomBitSetTest {
         assertTrue(a.isEmpty)
     }
 
+    @Test fun andWithDenseLargerThanThisProducesCorrectResult() {
+        // and should never grow this.size; another may have many words past this.
+        val a = denseOf(0)             // size=1
+        val b = denseOf(0, 1_000)      // size=16; AND result must just be {0}
+        a.and(b)
+        assertEquals(listOf(0), a.toBitList())
+        assertEquals(1, a.size)
+    }
+
+    @Test fun andWithDenseDisjointLargerThanThisProducesEmpty() {
+        val a = denseOf(0)             // size=1
+        val b = denseOf(1_000)         // size=16; no shared bits
+        a.and(b)
+        assertEquals(0, a.size)
+        assertTrue(a.isEmpty)
+    }
+
+    @Test fun andNotWithDenseLargerThanThisDoesNotGrow() {
+        // andNot result should equal this minus another's bits within this.size
+        val a = denseOf(0)             // size=1
+        val b = denseOf(1_000)         // size=16; bit 1000 not in a
+        a.andNot(b)
+        assertEquals(listOf(0), a.toBitList())
+        assertEquals(1, a.size)
+    }
+
     // ---- Full-word (-1L) correctness ----------------------------------------
     // forEachBit uses `t = d and -d; d -= t`. For bit 63, -Long.MIN_VALUE
     // overflows back to Long.MIN_VALUE in two's complement, so the algorithm
