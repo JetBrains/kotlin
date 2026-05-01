@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments
@@ -419,6 +420,6 @@ class Candidate(
     override fun toString(): String {
         val okOrFail = if (isSuccessful) "OK" else "FAIL"
         val step = "$passedStages/${callInfo.callKind.resolutionSequence.size}"
-        return "$okOrFail($step): $symbol"
+        return "$okOrFail($step): ${FirRenderer.forReadability().renderElementAsString(symbol.fir)}"
     }
 }
