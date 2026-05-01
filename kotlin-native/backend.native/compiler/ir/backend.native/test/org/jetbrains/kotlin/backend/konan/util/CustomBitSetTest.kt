@@ -379,6 +379,28 @@ class CustomBitSetTest {
         assertFalse(a[128])
     }
 
+    @Test fun orWithFilterArgSizeAfterTrim() {
+        // ensureCapacity bounded by min(asize, fsize), so words past filter.size
+        // are never touched. size must reflect the actual highest set bit.
+        val a = denseOf(0)            // size=1
+        val b = denseOf(0, 64, 128)   // size=3
+        val filter = denseOf(64)      // size=2
+        a.orWithFilterHasChanged(b, filter)
+        assertEquals(listOf(0, 64), a.toBitList())
+        assertEquals(2, a.size)
+    }
+
+    @Test fun orWithFilterArgEmptyIntersectionLeavesSizeZero() {
+        // Even with the right ensureCapacity bound, the AND of another and filter
+        // can be all zeros at the highest covered word. shrinkDenseSize catches it.
+        val a = denseOf()              // size=0
+        val b = denseOf(0)             // size=1
+        val filter = denseOf(64)       // size=2; filter.data[0]=0
+        a.orWithFilterHasChanged(b, filter)
+        assertTrue(a.isEmpty)
+        assertEquals(0, a.size)
+    }
+
     // ---- equals / hashCode contracts ----------------------------------------
 
     @Test fun equalsIsReflexive() {
@@ -432,13 +454,12 @@ class CustomBitSetTest {
     // ---- Regression: size-tracking after logical operations -----------------
 
     @Test fun andDenseBothEqualityAfterSizeLeak() {
-        // b.and(a) zeros out word 1 in b but does not shrink b.size
-        // b should still equal a afterwards
+        // b.and(a) zeros out word 1 in b; b.size must shrink to 1
         val a = denseOf(0)       // size=1
         val b = denseOf(0, 64)   // size=2
         b.and(a)
         assertEquals(listOf(0), b.toBitList())
-        assertEquals(a, b)
+        assertEquals(1, b.size)
     }
 
     @Test fun andDenseWithEmptyResultsInEmpty() {
@@ -447,34 +468,34 @@ class CustomBitSetTest {
         a.and(empty)
         assertTrue(a.isEmpty)
         assertEquals(0, a.cardinality())
-        assertEquals(CustomBitSet(), a)
+        assertEquals(0, a.size)
     }
 
     @Test fun andDensePlusSparseEqualityAfterSizeLeak() {
-        // a.and(b) where b is sparse switches a to lazy but leaves a.size unchanged
+        // a.and(b) where b is sparse switches a to lazy; a.size must reflect the new max
         val a = denseOf(0, 64)   // size=2
         val b = sparseOf(0)      // size=1
         a.and(b)
         assertEquals(listOf(0), a.toBitList())
-        assertEquals(b, a)
+        assertEquals(1, a.size)
     }
 
     @Test fun andSparsePlusSparseEqualityAfterSizeLeak() {
-        // retainAll in lazy path does not recompute size
+        // retainAll in lazy path must recompute size from the new max bit
         val a = sparseOf(0, 64)  // size=2
         val b = sparseOf(0)      // size=1
         a.and(b)
         assertEquals(listOf(0), a.toBitList())
-        assertEquals(b, a)
+        assertEquals(1, a.size)
     }
 
     @Test fun andNotSparseSizeLeakEquality() {
-        // retainAll in andNot lazy path does not recompute size
+        // retainAll in andNot lazy path must recompute size from the new max bit
         val a = sparseOf(0, 64)  // size=2; bit 64 in word 1
         val b = sparseOf(64)
         a.andNot(b)
         assertEquals(listOf(0), a.toBitList())
-        assertEquals(sparseOf(0), a)
+        assertEquals(1, a.size)
     }
 
     // ---- Edge cases ---------------------------------------------------------

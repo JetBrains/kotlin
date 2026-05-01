@@ -199,16 +199,18 @@ internal class CustomBitSet private constructor(size: Int, data: LongArray) {
         val fsize = filter.size
         val adata = another.data
         val asize = another.size
-        ensureCapacity(asize - 1)
+        val minSize = minOf(asize, fsize)
+        ensureCapacity(minSize - 1)
 
         var acc = 0L
-        for (i in 0 until asize.coerceAtMost(fsize)) {
+        for (i in 0 until minSize) {
             val d = data[i]
             val fd = fdata[i]
             val dd = d or (adata[i] and fd)
             acc = acc or (dd xor d)
             data[i] = dd
         }
+        shrinkDenseSize()
 
         return acc != 0L
     }
