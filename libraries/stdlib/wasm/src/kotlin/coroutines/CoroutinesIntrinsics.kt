@@ -132,6 +132,8 @@ public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
 ): CoroutineImpl<Any?, T> = object : CoroutineImpl<Any?, T>(completion) {
+    override val context: CoroutineContext = completion.context + SuspensionMarker()
+
     override fun doResume(): Any? {
         if (exception != null) throw exception as Throwable
         return result
