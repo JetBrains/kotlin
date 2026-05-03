@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
@@ -87,4 +88,5 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
     }
 }
 
-private val testDataDir = File("native/swift/swift-export-standalone-integration-tests/external/testData/execution")
+private val testDataDir = ForTestCompileRuntime
+    .transformTestDataPath("native/swift/swift-export-standalone-integration-tests/external/testData/execution")

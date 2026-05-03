@@ -222,6 +222,7 @@ projectTests {
     testData(project(":native:swift:swift-export-standalone-integration-tests:simple").isolated, "testData")
     testData(project(":native:swift:swift-export-standalone-integration-tests:external").isolated, "testData")
     testData(project(":native:swift:swift-export-standalone-integration-tests:coroutines").isolated, "testData")
+    testData(rootProject.isolated, "native/native.tests/testData/framework")
 
     nativeTestTask(
         "testSimpleITWithEmbeddable",

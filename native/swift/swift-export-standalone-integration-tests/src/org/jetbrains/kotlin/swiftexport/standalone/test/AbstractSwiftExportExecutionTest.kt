@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.creat
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemToolchainPath
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.junit.jupiter.api.Assumptions
@@ -34,7 +35,7 @@ import java.io.File
  * Harness is at native/native.tests/testData/framework/main-testing.swift
  */
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
-    private val testSuiteDir = File("native/native.tests/testData/framework")
+    private val testSuiteDir = getAbsoluteFile("native/native.tests/testData/framework")
 
     override fun runCompiledTest(
         testPathFull: File,
