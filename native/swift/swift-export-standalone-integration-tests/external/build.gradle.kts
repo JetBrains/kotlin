@@ -32,6 +32,7 @@ sourceSets {
 
 projectTests {
     testData(isolated, "testData")
+    testData(rootProject.isolated, "native/native.tests/testData/framework")
 
     nativeTestTaskWithExternalDependencies(
         "test",
