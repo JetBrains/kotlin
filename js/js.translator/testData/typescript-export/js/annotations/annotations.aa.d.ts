@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         function withIntroducedAt(x: number, y?: number, o1?: string, k?: string, o2?: string): string;
         function nonAscendingVersion(y?: number, o?: string, k?: string): void;
@@ -108,3 +107,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

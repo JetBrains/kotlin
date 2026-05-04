@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     /**
      * A simple exported function with just a description.
      */
@@ -306,3 +305,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

@@ -1,13 +1,3 @@
-// FILE: kotlin-kotlin-stdlib.d.mts
-type Nullable<T> = T | null | undefined
-declare function KtSingleton<T>(): T & (abstract new() => any);
-
-
-// FILE: kotlin-kotlin-test.d.mts
-type Nullable<T> = T | null | undefined
-declare function KtSingleton<T>(): T & (abstract new() => any);
-
-
 // FILE: kotlin_lib1.d.mts
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);

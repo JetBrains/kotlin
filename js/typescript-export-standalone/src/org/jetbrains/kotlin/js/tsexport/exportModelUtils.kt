@@ -125,21 +125,17 @@ internal fun KaNamedSymbol.getExportedIdentifier(): String {
 }
 
 context(_: KaSession)
-internal fun shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration: KaDeclarationSymbol): Boolean =
-    declaration.isJsImplicitExport() || shouldDeclarationBeExported(declaration)
-
-context(_: KaSession)
-internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Boolean {
+internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol, includingImplicitExport: Boolean = false): Boolean {
     if (declaration.isExpect || declaration.isJsExportIgnore() || !declaration.visibility.isPublicApi) {
         return false
     }
-    if (declaration.isExplicitlyExported()) {
+    if (declaration.isExplicitlyExported() || (includingImplicitExport && declaration.isJsImplicitExport())) {
         return true
     }
 
     if (declaration is KaCallableSymbol && declaration.isOverride) {
         return (declaration is KaNamedFunctionSymbol && declaration.isMethodOfAny)
-                || declaration.allOverriddenSymbols.any { shouldDeclarationBeExported(it) }
+                || declaration.allOverriddenSymbols.any { shouldDeclarationBeExported(it, includingImplicitExport) }
     }
 
     val parent = declaration.containingDeclaration
@@ -157,7 +153,7 @@ internal fun shouldDeclarationBeExported(declaration: KaDeclarationSymbol): Bool
     }
 
     if (parent != null) {
-        return shouldDeclarationBeExported(parent)
+        return shouldDeclarationBeExported(parent, includingImplicitExport)
     }
 
     // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
@@ -279,7 +275,7 @@ private fun KaNamedClassSymbol.shouldContainNotImplementableProperty(
     config: TypeScriptExportConfig,
     hasNonExportedAbstractMembers: Boolean,
 ): Boolean =
-    hasNonExportedAbstractMembers || isJsImplicitExport() ||
+    hasNonExportedAbstractMembers ||
             classId?.packageFqName == StandardNames.COLLECTIONS_PACKAGE_FQ_NAME ||
             (!config.implementableInterfaces && classKind == KaClassKind.INTERFACE && !isExternal && !isJsNoRuntime())
 
@@ -315,7 +311,7 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
                 }
             }
             ExportedType.PropertyType(
-                TypeExporter(config, typeParameterScope).exportType(superTypeWithDynamicArguments),
+                TypeExporter(config, typeParameterScope, null).exportType(superTypeWithDynamicArguments),
                 ExportedType.LiteralType.StringLiteralType(notImplementablePropertyName),
             )
         }
@@ -487,11 +483,6 @@ private fun KaNamedClassSymbol.collectAllImplementableAndNotImplementableInterfa
 
     while (stack.isNotEmpty()) {
         val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
-
-        if (processedClass.isJsImplicitExport()) {
-            result[processedClass] = false
-            continue
-        }
 
         if (!shouldDeclarationBeExported(processedClass)) continue
 

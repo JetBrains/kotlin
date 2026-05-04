@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         function processInterface(test: foo.TestInterface): string;
         function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
@@ -212,3 +211,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

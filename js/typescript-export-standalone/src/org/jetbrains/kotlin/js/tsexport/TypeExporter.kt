@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedParameter
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedType
@@ -25,7 +22,11 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
-internal class TypeExporter(private val config: TypeScriptExportConfig, private val scope: TypeParameterScope) {
+internal class TypeExporter(
+    private val config: TypeScriptExportConfig,
+    private val scope: TypeParameterScope,
+    private val transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>?,
+) {
     /**
      * Memoize already processed types during recursive traversal of a type to avoid stack overflow on self-referential types,
      * like type parameters whose upper bound references the type parameter itself.
@@ -140,7 +141,11 @@ internal class TypeExporter(private val config: TypeScriptExportConfig, private 
     context(_: KaSession)
     private fun exportClassType(type: KaClassType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         val symbol = type.symbol
-        val isExported = shouldDeclarationBeExportedImplicitlyOrExplicitly(symbol)
+        val isJsImplicitExport = symbol.isJsImplicitExport()
+        if (isJsImplicitExport) {
+            transitivelyExportedClasses?.add(symbol)
+        }
+        val isExported = isJsImplicitExport || shouldDeclarationBeExported(symbol)
         return when (symbol) {
             is KaNamedClassSymbol -> {
                 if (inlineClassesShouldBeUnboxed && symbol.isInline) {

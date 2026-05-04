@@ -1,8 +1,39 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
+    namespace kotlin {
+        class Pair<out A, out B> /* implements kotlin.io.Serializable */ {
+            constructor(first: A, second: B);
+            toString(): string;
+            copy(first?: A, second?: B): kotlin.Pair<A, B>;
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            get first(): A;
+            get second(): B;
+        }
+        namespace Pair {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new <A, B>() => Pair<A, B>;
+            }
+        }
+        class Triple<out A, out B, out C> /* implements kotlin.io.Serializable */ {
+            constructor(first: A, second: B, third: C);
+            toString(): string;
+            copy(first?: A, second?: B, third?: C): kotlin.Triple<A, B, C>;
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            get first(): A;
+            get second(): B;
+            get third(): C;
+        }
+        namespace Triple {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new <A, B, C>() => Triple<A, B, C>;
+            }
+        }
+    }
     namespace foo {
         function acceptValueClass(v: foo.IntValueClass): number;
         function createValueClass(x: number): foo.IntValueClass;
@@ -268,3 +299,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

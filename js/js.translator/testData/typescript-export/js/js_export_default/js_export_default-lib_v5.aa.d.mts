@@ -1,6 +1,5 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-
 export declare function getParent(): typeof Parent.$metadata$.type;
 declare abstract class Parent {
     static readonly getInstance: () => typeof Parent.$metadata$.type;
@@ -65,3 +64,4 @@ declare namespace Parent {
     }
 }
 export default Parent;
+

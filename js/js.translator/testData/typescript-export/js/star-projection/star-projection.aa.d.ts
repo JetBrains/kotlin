@@ -1,8 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
     function acceptList(x: any/* kotlin.collections.List<any> */): void;
     function returnList(): any/* kotlin.collections.List<any> */;
     function acceptMapStarKey(x: any/* kotlin.collections.Map<any, string> */): void;
@@ -27,3 +25,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

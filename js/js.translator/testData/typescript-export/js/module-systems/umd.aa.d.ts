@@ -1,6 +1,5 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-
 export declare namespace foo {
     const prop: number;
     function box(): string;
@@ -18,3 +17,4 @@ export declare namespace foo {
     }
 }
 export as namespace JS_TESTS;
+

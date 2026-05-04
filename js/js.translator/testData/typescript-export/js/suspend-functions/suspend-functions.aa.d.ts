@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         function sum(x: number, y: number): Promise<number>;
         function varargInt(x: Int32Array): Promise<number>;
@@ -127,3 +126,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

@@ -1,8 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
     function provideList(): any/* kotlin.collections.List<number> */;
     function provideMutableList(): any/* kotlin.collections.MutableList<number> */;
     function provideSet(): any/* kotlin.collections.Set<number> */;
@@ -17,3 +15,5 @@ declare namespace JS_TESTS {
     function consumeMutableMap(map: any/* kotlin.collections.MutableMap<string, number> */): boolean;
     function provideListAsync(): Promise<any/* kotlin.collections.List<number> */>;
 }
+
+

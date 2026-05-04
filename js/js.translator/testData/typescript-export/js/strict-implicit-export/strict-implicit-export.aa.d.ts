@@ -1,8 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
     namespace foo {
         const console: Console;
         const error: CompileError;
@@ -192,3 +190,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

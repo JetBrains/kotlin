@@ -1,6 +1,5 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-
 export declare class WithIgnoredCompanion {
     constructor();
     static bar(): string;
@@ -69,3 +68,4 @@ export declare namespace ObjectWithJsStatic {
         }
     }
 }
+
