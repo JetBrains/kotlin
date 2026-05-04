@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
+import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -53,7 +54,8 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
             IrActualizationErrors,
             CommonBackendErrors,
-            SerializationErrors
+            SerializationErrors,
+            IrValidationDiagnostics,
         )
 
         for (filler in configurationUpdaters) {
