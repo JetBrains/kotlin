@@ -9,7 +9,6 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
@@ -74,8 +73,8 @@ data class LlvmPipelineConfig(
                 if (dir.exists()) {
                     dir.resolve(phase) // This subdirectory does not have to exist: llvm will create it itself
                 } else {
-                    context.messageCollector.report(
-                            CompilerMessageSeverity.WARNING,
+                    context.diagnosticReporter.report(
+                            NativeBackendDiagnostics.LLVM_WARNING,
                             "Cannot dump LLVM IR to non-existent location: ${dir.absolutePath}")
                     null
                 }
@@ -90,7 +89,7 @@ private fun getCpuModel(context: NativeBackendPhaseContext): String {
     val target = context.config.target
     val configurables: Configurables = context.config.platform.configurables
     return configurables.targetCpu ?: run {
-        context.reportCompilationWarning("targetCpu for target $target was not set. Targeting `generic` cpu.")
+        context.diagnosticReporter.report(NativeBackendDiagnostics.LLVM_WARNING, "targetCpu for target $target was not set. Targeting `generic` cpu.")
         "generic"
     }
 }
@@ -102,7 +101,7 @@ private fun tryGetInlineThreshold(context: NativeBackendPhaseContext): Int? {
     val configurables: Configurables = context.config.platform.configurables
     return configurables.llvmInlineThreshold?.let {
         it.toIntOrNull() ?: run {
-            context.reportCompilationWarning(
+            context.diagnosticReporter.report(NativeBackendDiagnostics.LLVM_WARNING,
                     "`llvmInlineThreshold` should be an integer. Got `$it` instead. Using default value."
             )
             null
