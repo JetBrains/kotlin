@@ -68,6 +68,8 @@ javadocJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
+        javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
+
         addClasspathProperty("kotlin.jvm.abi.jar.path") {
             from(tasks.jar.map { it.archiveFile.get() })
         }

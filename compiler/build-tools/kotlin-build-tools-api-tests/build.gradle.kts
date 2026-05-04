@@ -215,6 +215,7 @@ testing {
                             @OptIn(TemporaryTestFederationApi::class)
                             isSmokeTest = true
 
+                            javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                             testInputsCheck {
@@ -248,7 +249,9 @@ testing {
                 if (businessLogicTestSuits.any { testTask.name.startsWith(it) }) {
                     projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                            javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+
                         }
                     }
                 }
