@@ -244,6 +244,9 @@ class BackendWasmSymbols(
 
     inner class CoroutinesStateMachineIntrinsics {
         val coroutineImpl = "CoroutineImplStateMachine".coroutinesClassId
+
+        val createSimpleCoroutineFromSuspendFunction =
+            CallableIds.createSimpleCoroutineFromSuspendFunction.functionSymbol()
     }
 
     val startCoroutineUninterceptedOrReturnIntrinsics = listOf(
@@ -257,9 +260,6 @@ class BackendWasmSymbols(
             CallableIds.createCoroutineUninterceptedIntrinsic0.functionSymbol(),
             CallableIds.createCoroutineUninterceptedIntrinsic1.functionSymbol(),
         )
-
-    val createSimpleCoroutineFromSuspendFunction =
-        CallableIds.createSimpleCoroutineFromSuspendFunction.functionSymbol()
 
     override val suspendCoroutineUninterceptedOrReturn =
         if (configuration.wasmCoroutinesStackSwitching)

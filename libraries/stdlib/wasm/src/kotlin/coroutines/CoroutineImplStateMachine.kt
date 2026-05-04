@@ -3,10 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:WasmCoroutineMode(isStackSwitchingMode = false)
+
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.wasm.internal.WasmCoroutineMode
 
 
 @SinceKotlin("1.3")

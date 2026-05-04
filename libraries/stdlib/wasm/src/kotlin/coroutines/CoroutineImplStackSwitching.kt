@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:WasmStackSwitchingOnly
+@file:WasmCoroutineMode(isStackSwitchingMode = true)
 
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.WasmPrimitiveConstructor
-import kotlin.wasm.internal.WasmStackSwitchingOnly
+import kotlin.wasm.internal.WasmCoroutineMode
 import kotlin.wasm.internal.nullableContrefIntrinsic
 import kotlin.wasm.internal.reftypes.contref1
 import kotlin.wasm.internal.resumeThrowImpl
