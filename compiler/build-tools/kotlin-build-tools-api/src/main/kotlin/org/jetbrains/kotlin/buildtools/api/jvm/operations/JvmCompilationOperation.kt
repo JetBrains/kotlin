@@ -243,6 +243,14 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
         public val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", KotlinReleaseVersion(2, 3, 20))
     }
 
+    // KT-86102 [BTA] Move CompilerArgumentsLogLevel to BaseCompilationOperation
+    /**
+     * Log levels for compiler arguments.
+     *
+     * For historical and backward compatibility reasons this enum is placed in the [JvmCompilationOperation] class, however
+     * it can be used with any operation that is a [BaseCompilationOperation] with the
+     * [BaseCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] option.
+     */
     public enum class CompilerArgumentsLogLevel {
         ERROR,
         WARNING,
