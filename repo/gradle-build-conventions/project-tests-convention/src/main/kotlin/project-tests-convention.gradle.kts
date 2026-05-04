@@ -56,7 +56,15 @@ tasks.withType<Test>().configureEach {
     ignoreFailures = false
 
     javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_11_0)
-    jvmArgs("--add-opens", "java.base/java.io=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
-    jvmArgs("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED")
+
+    jvmArgumentProviders.add(CommandLineArgumentProvider {
+        when {
+            javaLauncher.get().metadata.javaRuntimeVersion.startsWith("1.8.0") -> emptyList()
+            else -> listOf(
+                "--add-opens", "java.base/java.io=ALL-UNNAMED",
+                "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+                "--add-opens", "java.desktop/javax.swing=ALL-UNNAMED",
+            )
+        }
+    })
 }

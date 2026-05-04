@@ -58,6 +58,7 @@ sourceSets {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
         useJsIrBoxTests(buildDir = layout.buildDirectory)
     }
 

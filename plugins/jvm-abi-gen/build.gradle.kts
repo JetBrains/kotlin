@@ -66,6 +66,7 @@ javadocJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit4) {
+        javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_1_8)
         workingDir = rootDir
         dependsOn(":dist")
     }

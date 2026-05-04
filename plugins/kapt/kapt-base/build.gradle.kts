@@ -29,6 +29,7 @@ testsJar {}
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
     }
 
     withJvmStdlibAndReflect()

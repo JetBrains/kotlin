@@ -65,6 +65,7 @@ projectTests {
         jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
         useJUnitPlatform()
 
         @OptIn(TemporaryTestFederationApi::class)

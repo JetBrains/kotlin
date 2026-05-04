@@ -73,6 +73,7 @@ projectTests {
         ),
         jUnitMode = JUnitMode.JUnit4
     ) {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
         dependsOn(":dist")
         dependsOn(":kotlin-stdlib:compileKotlinWasmJs")
 

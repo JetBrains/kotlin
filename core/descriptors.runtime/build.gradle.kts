@@ -35,7 +35,9 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(jUnitMode = JUnitMode.JUnit4)
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
+    }
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 
