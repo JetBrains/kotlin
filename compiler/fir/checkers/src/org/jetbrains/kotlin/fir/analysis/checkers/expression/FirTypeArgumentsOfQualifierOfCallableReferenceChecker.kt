@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSour
 import org.jetbrains.kotlin.fir.analysis.checkers.toTypeArgumentsWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
@@ -52,8 +53,9 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
         classSymbol: FirClassLikeSymbol<*>,
         lhsType: ConeKotlinType,
     ): Severity? {
-        var warningWasReported = false
-        for (diagnostic in expression.nonFatalDiagnostics) {
+        var severity: Severity? = null
+
+        fun checkSingleAndUpdateSeverity(diagnostic: ConeDiagnostic) {
             when (diagnostic) {
                 is ConeWrongNumberOfTypeArgumentsError -> {
                     val positioning =
@@ -84,18 +86,17 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                                 positioningStrategy = positioning,
                             )
                         }
-                        warningWasReported = true
-                        continue
+                        severity = severity ?: Severity.WARNING
+                    } else {
+                        reporter.reportOn(
+                            diagnostic.source,
+                            FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+                            diagnostic.desiredCount,
+                            diagnostic.symbol,
+                            positioningStrategy = positioning,
+                        )
+                        severity = Severity.ERROR
                     }
-
-                    reporter.reportOn(
-                        diagnostic.source,
-                        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-                        diagnostic.desiredCount,
-                        diagnostic.symbol,
-                        positioningStrategy = positioning,
-                    )
-                    return Severity.ERROR
                 }
                 is ConeOuterClassArgumentsRequired -> {
                     reporter.reportOn(
@@ -103,19 +104,23 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED,
                         diagnostic.symbol,
                     )
-                    return Severity.ERROR
+                    severity = Severity.ERROR
+                }
+                else -> {
                 }
             }
         }
-        return Severity.WARNING.takeIf { warningWasReported }
+
+        for (diagnostic in expression.nonFatalDiagnostics) {
+            checkSingleAndUpdateSeverity(diagnostic)
+        }
+        return severity
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
         val lhs = expression.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
         val correspondingDeclaration = lhs.symbol ?: return
-        val lhsType = lhs.resolvedLhsTypeForCallableReferenceOrNull ?: return
-
         for (argument in lhs.typeArguments) {
             val errorTypeRef = (argument as? FirTypeProjectionWithVariance)?.typeRef as? FirErrorTypeRef ?: continue
 
@@ -123,6 +128,7 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                 reporter.reportOn(argument.source, FirErrors.PLACEHOLDER_PROJECTION_IN_QUALIFIER)
             }
         }
+        val lhsType = lhs.resolvedLhsTypeForCallableReferenceOrNull ?: return
 
         val nonFatalDiagnosticsCheckResult = checkNonFatalDiagnostics(expression, lhs, correspondingDeclaration, lhsType)
         if (nonFatalDiagnosticsCheckResult == Severity.ERROR) return
