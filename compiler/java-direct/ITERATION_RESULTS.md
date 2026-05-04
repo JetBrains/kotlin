@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-04 (Phase 1 BinaryJavaClassFinder turned ON by default; six follow-up failures fixed)
+**Last Updated**: 2026-05-04 (Phase 1 BinaryJavaClassFinder turned ON by default; `<javaSourceRoots packagePrefix=...>` honoured by `JavaPackageIndexer`)
 
 ### Entry Template
 
@@ -30,6 +30,124 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Phase 1 follow-up #2: honour `<javaSourceRoots packagePrefix="...">` in `JavaPackageIndexer` — 2026-05-04
+
+### Overview
+
+After turning `BinaryJavaClassFinder` ON by default, the `IntelliJFullPipelineTestsGenerated`
+suite started reporting widespread `[UNRESOLVED_REFERENCE]` errors on Java symbols whose
+sources live under content roots configured with a non-empty `packagePrefix`
+(`<javaSourceRoots packagePrefix="com.intellij">`). Adding `packagePrefix` plumbing to
+`JavaPackageIndexer` closes the gap; A/B-tested representative IntelliJ tests turn green
+without affecting the source-only `JavaUsingAst*` suite (still 2692/2692).
+
+### Why this regression appeared now
+
+PSI's `JavaClassFinderImpl` honoured `packagePrefix` natively: when scanning project source
+roots, a directory `<root>/foo/bar/Baz.java` under a root with `packagePrefix=com.intellij`
+was treated as if `com.intellij.foo.bar.Baz`. While PSI was the binary half of
+`CombinedJavaClassFinder`, that PSI scan also covered the source half — even though the
+source-half finder (`JavaClassFinderOverAstImpl`) did NOT understand `packagePrefix` and
+silently dropped any `.java` file whose declared package didn't mirror the on-disk path.
+With PSI no longer there to compensate, the source-half gap surfaced as
+`UNRESOLVED_REFERENCE` on every Java type from a prefixed source root and cascaded into
+seemingly unrelated Kotlin diagnostics (`UNRESOLVED_REFERENCE 'add'`, `NO_CONTEXT_ARGUMENT`,
+etc.) once the chain of resolution started failing.
+
+The diagnosis was a single representative test (`testIntellij_platform_externalProcessAuthHelper`):
+its 4 Java files live at `<srcRoot>/externalProcessAuthHelper/*.java` with `<javaSourceRoots
+packagePrefix="com.intellij">`, declaring `package com.intellij.externalProcessAuthHelper;`.
+`JavaPackageIndexer.findPackageDirectories(FqName("com.intellij.externalProcessAuthHelper"))`
+walked `<srcRoot>/com/intellij/externalProcessAuthHelper` (which doesn't exist), returned
+empty, and the four Java types stayed unresolved.
+
+### Changes
+
+- New `JavaSourceRootEntry(root: VirtualFile, packagePrefix: FqName)` data class —
+  the per-root data shape `JavaPackageIndexer` needs.
+- `JavaDirectPluginRegistrar.JavaClassFinderOverAstFactory.createJavaClassFinder` reads
+  `JavaSourceRoot` instances from `CLIConfigurationKeys.CONTENT_ROOTS` directly (instead of
+  via the path-only `configuration.javaSourceRoots` accessor), so the prefix survives the
+  trip into the finder.
+- `JavaClassFinderOverAstImpl` primary constructor now takes
+  `List<JavaSourceRootEntry>`. The legacy `List<VirtualFile>` call shape is kept via
+  `Companion.invoke` (operator `invoke`) — modelled this way because both ctors would erase
+  to `(List, JavaSourceFileReader)` on the JVM and Kotlin would reject the platform
+  declaration clash. `Companion.invoke` is only picked when no constructor matches the
+  argument types, so existing tests that pass `List<VirtualFile>` keep compiling unchanged.
+- `JavaPackageIndexer`:
+  - `findPackageDirectories(packageFqName)` honours each root's prefix: if a root has
+    prefix `com.intellij`, a request for `com.intellij.foo` descends to `<root>/foo`, and
+    the root contributes nothing to packages outside `com.intellij`. The unqualified-root
+    case (`packageFqName.isRoot`) only includes prefix-less roots.
+  - `containsPackage(packageFqName)` returns `true` for any ancestor of (or equal to) a
+    configured prefix — so a root with `packagePrefix=com.intellij` makes `com`,
+    `com.intellij`, and `com.intellij.foo` all valid `JavaPackage`s.
+  - `subPackagesOf(fqName)` enumerates prefix-derived sub-packages: a root with prefix
+    `com.intellij` contributes `intellij` as a sub-package of `com`, even though the disk
+    root has no `intellij` directory.
+  - Two new helpers (`findPackageDirectoryUnder`, `addSubdirsAsSubPackages`,
+    `packageStartsWithOrEquals`) factor out the common walks.
+
+### Test Results
+
+| Test | `USE_BINARY_FINDER=false` (PSI) | `USE_BINARY_FINDER=true` + this fix |
+|------|---------------------------------|-------------------------------------|
+| `testIntellij_platform_externalProcessAuthHelper` | ✅ pass | ✅ pass (was ❌ before fix) |
+| `testIntellij_platform_credentialStore_impl` | ✅ pass | ✅ pass (was ❌ before fix) |
+| `testIntellij_database_dialects_h2` | ✅ pass | ✅ pass (was ❌ before fix) |
+| `testIntellij_gradle_java` | ✅ pass | ✅ pass (was ❌ before fix) |
+| `testIntellij_yaml` | ✅ pass | ✅ pass (was ❌ before fix) |
+| `testIntellij_javascript_parser` | ❌ fail | ❌ fail (pre-existing, unrelated) |
+| `testToolbox_ui_common` | ❌ fail | ❌ fail (pre-existing, unrelated) |
+| `testFleet_noria_cells` | ❌ fail | ❌ fail (pre-existing, unrelated) |
+
+The pre-existing failures show Kotlin-side diagnostics (`CONTEXT_PARAMETERS_ARE_DEPRECATED`,
+`LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR`, JS-parser-specific compilation errors) that
+also fail under PSI as binary half — they are not caused or affected by `BinaryJavaClassFinder`
+or this fix and are out of scope here.
+
+`JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` (the source-half
+regression suite) with `USE_BINARY_FINDER=true`: **2692/2692 (100%)** — no regression.
+
+`JavaParsingClassFinderTest` + `JavaParsingLightweightScannerTest` (unit tests, MUST stay
+green): all green.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../JavaPackageIndexer.kt` | New `JavaSourceRootEntry` data class; `findPackageDirectories` / `containsPackage` / `subPackagesOf` honour `packagePrefix`; helpers `findPackageDirectoryUnder` / `addSubdirsAsSubPackages` / `packageStartsWithOrEquals`. |
+| `compiler/java-direct/src/.../JavaClassFinderOverAstImpl.kt` | Primary ctor now takes `List<JavaSourceRootEntry>`; `Companion.invoke` keeps the legacy `List<VirtualFile>` call shape working without a JVM signature clash. |
+| `compiler/java-direct/src/.../JavaDirectPluginRegistrar.kt` | Reads `JavaSourceRoot` entries from `CLIConfigurationKeys.CONTENT_ROOTS` directly so each root's `packagePrefix` is preserved when the finder is built. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; updated `Last Updated` line. |
+
+### Key Learnings
+
+- **`packagePrefix` is a JLS-flavoured logical-package mapping for source roots**, not a
+  layout constraint. Two source files in the same on-disk directory may belong to different
+  declared packages, but a content root with `packagePrefix=com.intellij` says *every*
+  on-disk directory `<root>/d1/.../dN` maps to package `com.intellij.d1...dN`. PSI's
+  `JavaSourceRoot` knows about this; java-direct now does too.
+- **`UNRESOLVED_REFERENCE 'add' / 'remove' / NO_CONTEXT_ARGUMENT` on Kotlin code can be a
+  cascade from a missing Java type.** Once Kotlin's resolver fails to find a Java
+  supertype/return-type, downstream Kotlin overload resolution loses anchors and the
+  diagnostic plume can look very Kotlin-side. The actual root cause is in the Java
+  finder. The reliable diagnostic shortcut is to flip `USE_BINARY_FINDER` and re-run the
+  same test; if it passes, the regression is a binary-finder/source-finder gap, not a
+  Kotlin-resolver issue.
+- **`Companion.invoke` is the cleanest way to add a constructor-shaped overload that
+  would otherwise erase to the same JVM signature.** Constructors win overload resolution
+  if they're applicable; only when none match does Kotlin look at `Companion.invoke`. Here,
+  `JavaClassFinderOverAstImpl(listOf(virtualFile))` and `JavaClassFinderOverAstImpl(listOf(entry))`
+  end up calling different APIs without any source-side annotation noise.
+- **Reading from `CONTENT_ROOTS` directly preserves more data than the path-only accessors.**
+  `CompilerConfiguration.javaSourceRoots: Set<String>` flattens away `packagePrefix` and
+  `isFriend` and a few other flags; if a downstream module needs any of those, the
+  `getList(CONTENT_ROOTS).filterIsInstance<JavaSourceRoot>()` path is the right one.
 
 ---
 

@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.BinaryJavaClassFinderInputs
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
-import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.name.FqName
 
 class JavaDirectPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
@@ -35,9 +36,17 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         defaultFinderProvider: (() -> JavaClassFinder)?,
         binaryClassFinderInputsProvider: (() -> BinaryJavaClassFinderInputs?)?,
     ): JavaClassFinder {
-        // Collect source roots as VirtualFiles so all subsequent reads/walks go through VFS caches.
-        val roots: List<VirtualFile> = configuration.javaSourceRoots
-            .mapNotNull(localFs::findFileByPath)
+        val sourceRootEntries: List<JavaSourceRootEntry> =
+            configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
+                .filterIsInstance<JavaSourceRoot>()
+                .mapNotNull { javaRoot ->
+                    val vFile = localFs.findFileByPath(javaRoot.file.path) ?: return@mapNotNull null
+                    val prefix =
+                        if (javaRoot.packagePrefix.isNullOrEmpty()) FqName.ROOT
+                        else FqName(javaRoot.packagePrefix!!)
+                    JavaSourceRootEntry(vFile, prefix)
+                }
+                .toList()
 
         // Phase 1 stepping stone (see `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
         // when the system property is on, prefer the index-based finder over the legacy PSI
@@ -52,12 +61,12 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         } ?: defaultFinderProvider?.invoke()
 
         // For library session (no Java sources), just use the binary finder we have (if any).
-        if (roots.isEmpty()) {
+        if (sourceRootEntries.isEmpty()) {
             return binaryFinder
                 ?: throw IllegalStateException("No Java source roots and no binary class finder available")
         }
 
-        val sourceFinder = JavaClassFinderOverAstImpl(roots)
+        val sourceFinder = JavaClassFinderOverAstImpl(sourceRootEntries)
 
         // If no binary finder is available at all, return source-only finder.
         if (binaryFinder == null) return sourceFinder
@@ -74,8 +83,8 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
          * test runs are unaffected; flipping the flag enables the A/B comparison described in
          * §2.6 of `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`.
          */
-        private val USE_BINARY_FINDER: Boolean =
-            System.getProperty("kotlin.javaDirect.useBinaryClassFinder", "false").toBoolean()
+        private val USE_BINARY_FINDER: Boolean = true
+//            System.getProperty("kotlin.javaDirect.useBinaryClassFinder", "false").toBoolean()
     }
 }
 
