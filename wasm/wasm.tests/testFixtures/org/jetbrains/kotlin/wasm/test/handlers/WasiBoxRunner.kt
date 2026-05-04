@@ -19,19 +19,16 @@ import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
-open class WasiBoxRunner(
-    testServices: TestServices,
-    val functionToRun: String = "runBoxTest",
+class WasiBoxRunner(
+    testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal open val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
             runWasmCode()
         }
     }
-
-    protected open fun saveOutput(output: String, dir: File) {}
 
     private fun runWasmCode() {
         val artifacts = modulesToArtifact.values.single() as WasmCompilationSetsBinaryArtifact
@@ -47,7 +44,7 @@ open class WasiBoxRunner(
             try {
                 let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
                 ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
-                boxTestPassed = jsModule.$functionToRun();
+                boxTestPassed = jsModule.runBoxTest();
             } catch(e) {
                 console.log('Failed with exception!');
                 console.log(e);
@@ -83,18 +80,16 @@ open class WasiBoxRunner(
 
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(modulesToArtifact.keys.first())
             val useNewExceptionProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
-            val wasmCoroutinesStackSwitching = WASM_COROUTINES_STACK_SWITCHING in testServices.moduleStructure.allDirectives
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
-                    wasmCoroutinesStackSwitching = wasmCoroutinesStackSwitching,
+                    wasmCoroutinesStackSwitching = false,
                     failsIn = failsIn,
                     entryFile = if (!vm.entryPointIsJsFile) "$WASM_BASE_FILE_NAME.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir,
-                    outputCollector = { output -> saveOutput(output, dir) }
                 )
             }
 
