@@ -17,7 +17,13 @@ import kotlin.text.iterator
  * until a class is actually looked up.
  */
 
-internal val PACKAGE_REGEX = Regex("""\bpackage\s+([\w.]+)\s*;""")
+// The trailing `;` is optional: while Java requires it, PSI's Java parser is error-tolerant and
+// accepts `package foo` without a semicolon. Several Kotlin diagnostic test-data files written
+// as inline `// FILE: foo/Bar.java` blocks declare `package foo` without `;` and rely on PSI's
+// tolerance — see e.g. `compiler/testData/diagnostics/tests/regressions/kt57845.kt`,
+// `EnumEntryVsStaticAmbiguity4.kt`, etc. Accepting both forms keeps source-side parity with PSI
+// once `BinaryJavaClassFinder` replaces the PSI binary half (no more silent fallback).
+internal val PACKAGE_REGEX = Regex("""\bpackage\s+([\w.]+)\s*;?""")
 internal val DECLARATION_REGEX = Regex("""\b(class|interface|enum|record)\s+([A-Za-z_]\w*)""")
 
 /**

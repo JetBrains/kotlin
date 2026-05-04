@@ -95,11 +95,21 @@ class JavaClassFinderOverAstImpl(
     }
 
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
+        // Recognise three cases as "package exists":
+        //  1. The package directly contains `.java` source files;
+        //  2. A `package-info.java` carries package-level annotations (no other classes);
+        //  3. The package is an ancestor of an indexed Java source file — e.g. a single file at
+        //     `priv/members/check/Foo.java` makes `priv` and `priv.members` valid Java packages
+        //     too, matching PSI's [org.jetbrains.kotlin.load.java.JavaClassFinderImpl.findPackage]
+        //     behaviour. Required for source parity once [BinaryJavaClassFinder] is the binary
+        //     half (it only consults binary roots and cannot see source-only ancestor packages),
+        //     otherwise dotted FQN references and star imports across non-direct ancestors fail
+        //     to resolve.
         val classesByName = packageIndexer.ensurePackageIndexed(fqName)
-        // A package with no class files may still exist via `package-info.java` carrying only
-        // package-level annotations — respect those so the annotations are not lost.
-        if (classesByName.isEmpty() && !packageInfoIndexer.hasPackageAnnotations(fqName)) return null
-        return JavaPackageOverAst(fqName, this)
+        if (classesByName.isNotEmpty()) return JavaPackageOverAst(fqName, this)
+        if (packageInfoIndexer.hasPackageAnnotations(fqName)) return JavaPackageOverAst(fqName, this)
+        if (packageIndexer.containsPackage(fqName)) return JavaPackageOverAst(fqName, this)
+        return null
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> =

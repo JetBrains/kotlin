@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-04-30 (Phase 1 of PSI replacement implemented behind a default-OFF flag)
+**Last Updated**: 2026-05-04 (Phase 1 BinaryJavaClassFinder turned ON by default; six follow-up failures fixed)
 
 ### Entry Template
 
@@ -30,6 +30,111 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Phase 1 follow-up: fix the six failures triggered by enabling `BinaryJavaClassFinder` — 2026-05-04
+
+### Overview
+
+The six Phase-1 follow-up failures listed in the 2026-04-30 entry below all came from the
+**source half** (`JavaClassFinderOverAstImpl`), not from `BinaryJavaClassFinder` itself.
+Once the binary half stops being PSI, the source half no longer benefits from PSI's
+silent fallback for two source-side gaps in java-direct:
+
+1. **Ancestor-package recognition.** `JavaClassFinderOverAstImpl.findPackage(fqName)` returned
+   `null` for any package that did not directly contain `.java` files — so for tests with
+   sources only at `priv/members/check/MyJClass.java`, the FIR pipeline could not resolve
+   the intermediate packages `priv` and `priv.members`, and dotted FQN references like
+   `priv.members.check.foo()` (kt57845) plus star imports such as `import third.*`
+   (`EnumEntryVsStaticAmbiguity4`) failed with `UNRESOLVED_IMPORT` /
+   `UNRESOLVED_REFERENCE`. PSI's `JavaClassFinderImpl.findPackage` recognised these
+   ancestors via `PsiPackage` lookups against the project source roots; with the
+   PSI binary half no longer present in `CombinedJavaClassFinder`, java-direct's source
+   half had to grow the same recognition.
+
+2. **Package declarations without a trailing semicolon.** Five of the six failing
+   test-data files (`EnumEntryVsStaticAmbiguity4.kt`, `protectedGetterWithPublicSetter.kt`,
+   `protectedWithGenericsInDifferentPackage.kt`, `kt57845.kt`,
+   `syntheticPropertyOnUnstableSmartcast.kt`, plus `annotationWithEnum.kt`) declare
+   their `// FILE: */*.java` blocks as `package foo` without `;`. PSI's Java parser
+   is error-tolerant and accepts that, but the lightweight pre-parse scanner used by
+   java-direct (`PACKAGE_REGEX`) required `;`. Files were silently rejected from the
+   index (the per-directory walk discards entries whose declared package mismatches the
+   directory path), so the Java classes inside them — `OtherTypes`, `Super`, `Nls`,
+   etc. — were `UNRESOLVED_REFERENCE` in the diagnostic output.
+
+Both gaps are independent and both contribute. They were only invisible while PSI was
+serving the binary half because PSI's package/class lookup found the same source files
+through its own scan.
+
+### How we diagnosed it
+
+Added a temporary `kotlin.javaDirect.actualDumpDir` system-property hook in
+`JUnit5Assertions.assertEqualsToFile` that wrote the failed-test `actual` text to a
+sibling file. Diffing each captured `.actual.txt` against the original test data
+showed the same shape across all six tests: the `// FILE: */*.java` block disappears
+from the diagnostic output (its diagnostics are gone), and the Kotlin half acquires
+`UNRESOLVED_IMPORT` / `UNRESOLVED_REFERENCE` markers on whatever symbol used to come
+from that Java block. That pattern uniquely points at the source-side index. The
+hook was reverted before submission.
+
+### Changes
+
+- `JavaPackageIndexer.containsPackage(packageFqName)` — new method. Returns `true` when
+  a directory mirroring the package exists in some source root, OR when any
+  `fileRootIndex` key equals `packageFqName` or is a sub-package of it. Cheap: walks
+  `findChild` chains and `fileRootIndex.keys` only — no file content reads.
+- `JavaClassFinderOverAstImpl.findPackage` — split the original `if (no classes && no
+  package-info-annotations) return null` into three explicit positive cases (direct
+  classes / package-info annotations / ancestor package via `containsPackage`).
+- `PACKAGE_REGEX` in `JavaSourceIndex.kt` — trailing `;` is now optional
+  (`...\s*;?` instead of `...\s*;`), matching PSI's error-tolerant Java parser. Added
+  unit test `testLightweightScannerPackageWithoutTrailingSemicolon`.
+
+### Test Results
+
+- `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` with the flag
+  default-ON (current state of `JavaDirectPluginRegistrar.kt`): **2692/2692 (100%)**,
+  no FAILED markers, all six previously-failing tests now pass.
+- `JavaParsingLightweightScannerTest` (unit tests, MUST stay green): all green,
+  including the new missing-`;` case.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../JavaPackageIndexer.kt` | Added `containsPackage(packageFqName)` for ancestor-package recognition. |
+| `compiler/java-direct/src/.../JavaClassFinderOverAstImpl.kt` | `findPackage` now also returns a package for ancestor fqNames via `containsPackage`. |
+| `compiler/java-direct/src/.../util/JavaSourceIndex.kt` | `PACKAGE_REGEX` accepts `package <fqn>` with optional trailing `;`. |
+| `compiler/java-direct/test/.../JavaParsingLightweightScannerTest.kt` | New unit test covering the missing-`;` case. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; updated `Last Updated` line. |
+
+### Key Learnings
+
+- **PSI's binary-side fallback was masking source-side gaps in java-direct**, not just
+  binary ones. Even though `findClass` / `findPackage` for source code is logically
+  the source half's responsibility, when the binary half is also a PSI implementation
+  scanning the project, it can find the same source files and silently cover for any
+  source-half index miss. Removing PSI from the binary half exposes those source-half
+  gaps immediately.
+- **`extractFileInfoLightweight` returning `null` is silent.** When the lightweight
+  scanner couldn't extract a package (because the file had no `;` after `package`),
+  the file was dropped from the index without warning. Top-level classes inside it
+  became invisible. The `JavaParsingLightweightScannerTest` suite had no missing-`;`
+  case; the new test closes that gap so future regex tightening is caught
+  immediately.
+- **The lightweight scanner needs to track PSI's tolerance, not Java's grammar.**
+  Test data — and IntelliJ-generated `.java` snippets in general — frequently rely on
+  PSI's error-tolerant parser. For java-direct to be a drop-in replacement of the
+  PSI source half, its pre-parse scanner has to accept the same superset of inputs
+  PSI does (or at least the subset used in the corpus we test against).
+- **Ancestor packages are first-class JLS entities.** A package exists once any
+  compilation unit declares it, including units of any sub-package — `package
+  a.b.c.Foo` makes `a`, `a.b`, and `a.b.c` all valid `JavaPackage`s. PSI's
+  `JavaClassFinderImpl` reflects this via the JVM `PsiPackage` model; the new
+  `containsPackage` reflects the same rule directly against the source-root
+  directory tree (and `fileRootIndex` for non-mirror file-roots).
 
 ---
 
