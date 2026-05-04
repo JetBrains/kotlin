@@ -262,9 +262,10 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             // All Gradle versions fit
             filteredVersions.count() == initialVersionsCount -> this
             // No Gradle versions fit
-            filteredVersions.count() == 0 -> error(
-                "Requested Gradle versions ${this.joinToString()} are not compatible with JDK ${requestedJdk.version}."
-            )
+            filteredVersions.isEmpty() -> {
+                println("Requested Gradle versions ${this.joinToString()} are not compatible with JDK ${requestedJdk.version}.")
+                emptySet()
+            }
             // Some Gradle versions fit
             filteredVersions.count() <= initialVersionsCount -> {
                 filteredVersions.toSet()
