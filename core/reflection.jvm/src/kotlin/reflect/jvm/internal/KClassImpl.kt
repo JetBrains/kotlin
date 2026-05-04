@@ -203,15 +203,17 @@ internal class KClassImpl<T : Any>(
                 return@lazySoft emptyList()
             }
 
-            if (useK1Implementation) {
+            if (useK1Implementation || isClassWithAdditionalConstructorsFromMappedType()) {
                 constructorDescriptors.map { descriptor ->
                     DescriptorKFunction(this@KClassImpl, descriptor) as KFunction<T>
                 }
-            } else if (jClass.isAnnotationPresent(Metadata::class.java)) {
-                // In case of a Kotlin synthetic class, there's no KmClass, and there should not be any constructors.
+            } else if (kmClass != null) {
                 constructorsMetadata.map { kmConstructor ->
                     createUnboundConstructor(kmConstructor, this@KClassImpl) as KFunction<T>
                 }
+            } else if (jClass.isAnnotationPresent(Metadata::class.java)) {
+                // In case of a Kotlin synthetic class, there's no KmClass, and there should be no constructors.
+                emptyList()
             } else if (!jClass.isAnnotation) {
                 jClass.declaredConstructors.mapNotNull { javaConstructor ->
                     JavaKConstructor(this@KClassImpl, javaConstructor, NO_RECEIVER) as KFunction<T>
@@ -222,6 +224,12 @@ internal class KClassImpl<T : Any>(
                 listOf(JavaAnnotationConstructor(this@KClassImpl) as KFunction<T>)
             }
         }
+
+        // TODO (KT-86101): support `JvmBuiltInsCustomizer.getConstructors` in new implementation.
+        private fun isClassWithAdditionalConstructorsFromMappedType(): Boolean =
+            kmClass != null && jClass.declaredConstructors.count {
+                Modifier.isPublic(it.modifiers) || Modifier.isProtected(it.modifiers)
+            } > constructorsMetadata.size
 
         val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
             val kmClass = kmClass
