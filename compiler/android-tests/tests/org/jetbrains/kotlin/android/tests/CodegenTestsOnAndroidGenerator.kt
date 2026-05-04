@@ -58,7 +58,7 @@ data class ConfigurationKey(val kind: ConfigurationKind, val jdkKind: TestJdkKin
 class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) {
     private var currentModuleIndex = 1
 
-    private val pathFilter: String? = System.getProperties().getProperty("kotlin.test.android.path.filter")
+    private val pathFilter: String? = System.getProperty("kotlin.test.android.path.filter")
 
     private val pendingUnitTestGenerators = hashMapOf<String, UnitTestFileWriter>()
 
@@ -110,16 +110,19 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun copyGradleWrapperAndPatch() {
+        val gradleWrapper = File(System.getProperty("kotlin.test.android.gradleWrapper"))
+        val gradlew = File(System.getProperty("kotlin.test.android.gradlew"))
+        val gradlewBat = File(System.getProperty("kotlin.test.android.gradlewBat"))
+
         val projectRoot = File(pathManager.tmpFolder)
         val target = File(projectRoot, "gradle/wrapper")
-        File("./gradle/wrapper/").copyRecursively(target)
-        val gradlew = File(projectRoot, "gradlew")
-        File("./gradlew").copyTo(gradlew).also {
+        gradleWrapper.copyRecursively(target)
+        gradlew.copyTo(File(projectRoot, "gradlew")).also {
             if (!SystemInfo.isWindows) {
                 it.setExecutable(true)
             }
         }
-        File("./gradlew.bat").copyTo(File(projectRoot, "gradlew.bat"))
+        gradlewBat.copyTo(File(projectRoot, "gradlew.bat"))
         val file = File(target, "gradle-wrapper.properties")
         file.readLines().map {
             when {
@@ -157,9 +160,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         println("Generating test files...")
 
         val folders = arrayOf(
-            File("compiler/testData/codegen/box"),
-            File("compiler/testData/codegen/boxJvm"),
-            File("compiler/testData/codegen/boxInline")
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/box"),
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/boxJvm"),
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/boxInline")
         )
 
         generateTestMethodsForDirectories(commonFlavor, reflectFlavor, *folders)
@@ -387,7 +390,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         continue
                     }
 
-                    patchFilesAndAddTest(file, module, services, filesHolder)
+                    patchFilesAndAddTest(file, module, services, filesHolder, pathManager)
                 }
             }
         }
@@ -474,7 +477,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             val tmpFolder = createTempDirectory().toAbsolutePath().toString()
             println("Created temporary folder for android tests: $tmpFolder")
             val rootFolder = Path("").toAbsolutePath().toString()
-            val pathManager = PathManager(rootFolder, tmpFolder)
+            val pathManager = PathManager(tmpFolder)
             generate(pathManager, true)
             println("Android test project is generated into $tmpFolder folder")
         }

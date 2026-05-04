@@ -30,7 +30,7 @@ private fun checkMultiFieldValueClass() {
     if (sum2 != 114) error(sum2.toString())
 
     checkParameters("test.B", "f-impl")
-    checkParameters("test.B", "g-EW5nZAA", "g-t7jd6Lo") // Android tests relocate package
+    checkParameters("test.B", "g-t7jd6Lo", "g-SNIjomc") // Android tests relocate package
 }
 
 private fun checkParameters(className: String, vararg expectedMethodNames: String) {

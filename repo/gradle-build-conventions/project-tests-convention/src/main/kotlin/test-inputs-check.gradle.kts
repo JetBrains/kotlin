@@ -133,6 +133,9 @@ tasks.withType<Test>().configureEach {
                         if (file.canonicalPath.endsWith("dist")) {
                             add("""permission java.io.FilePermission "${file.resolve("kotlinc").resolve("bin")}/-", "read,execute";""")
                         }
+                        if (file.canonicalPath.endsWith("/androidSdk")) {
+                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read,execute,write";""")
+                        }
                     }
                 } else if (file.extension == "class") {
                     listOfNotNull(
@@ -241,7 +244,7 @@ tasks.withType<Test>().configureEach {
                             "{{temp_dir}}",
                             listOf(tempDir, System.getProperty("java.io.tmpdir")).flatMap {
                                 parentsReadPermission(File(it)) +
-                                        """permission java.io.FilePermission "$it/-", "read,write,delete";""" +
+                                        """permission java.io.FilePermission "$it/-", "read,write,delete,execute";""" +
                                         """permission java.io.FilePermission "$it", "read";"""
                             }.joinToString("\n    ")
                         )
