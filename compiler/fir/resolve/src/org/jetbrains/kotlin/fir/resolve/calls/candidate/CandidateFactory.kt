@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
@@ -189,18 +190,6 @@ class CandidateFactory private constructor(
     ): Boolean {
         if (callInfo.isImplicitInvokeReceiver && companionBlocksAndExtensionsEnabled) return false
         return symbol.isRegularClassWithoutCompanion(callInfo.session)
-    }
-
-    private fun FirBasedSymbol<*>.requiresCompanionBlockOrExtensionLf(): Boolean {
-        if (this !is FirCallableSymbol) return false
-        if (isJavaOrEnhancement) return false
-        if (!isStatic) return false
-        // The only static Kotlin declarations that existed before were enum entries and Enum.entires/values/valueOf
-        if (this is FirEnumEntrySymbol) return false
-        (this.getContainingClassSymbol() as? FirClassSymbol)?.let { containingClassSymbol ->
-            if (this.fir.isGeneratedStaticEnumMember(containingClassSymbol.fir)) return false
-        }
-        return true
     }
 
     @OptIn(FirExtensionApiInternals::class)
