@@ -286,19 +286,19 @@ abstract class KotlinIrLinker(
         }
     }
 
-    fun deserializeIrModuleHeader(
+    fun getOrCreateDeserializerForModule(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
-        deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
+        deserializationStrategy: (String) -> DeserializationStrategy,
         _moduleName: String? = null
-    ): IrModuleFragment {
+    ): IrModuleDeserializer {
         assert(kotlinLibrary != null || _moduleName != null) { "Either library or explicit name have to be provided $moduleDescriptor" }
         val moduleName = kotlinLibrary?.uniqueName?.let { "<$it>" } ?: _moduleName!!
         assert(moduleDescriptor.name.asString() == moduleName) {
             "${moduleDescriptor.name.asString()} != $moduleName"
         }
 
-        val moduleDeserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
+        val deserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
             moduleName = moduleName,
             moduleDescriptor = moduleDescriptor,
             moduleDeserializer = createModuleDeserializer(
@@ -307,13 +307,22 @@ abstract class KotlinIrLinker(
                 strategyResolver = deserializationStrategy
             )
         )
-        val moduleFragment = moduleDeserializer.moduleFragment
 
+        val moduleFragment = deserializer.moduleFragment
         moduleFragment.kotlinLibrary = kotlinLibrary
         moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
+        return deserializer
+    }
 
+    fun deserializeIrModuleHeader(
+        moduleDescriptor: ModuleDescriptor,
+        kotlinLibrary: KotlinLibrary?,
+        deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
+        _moduleName: String? = null
+    ): IrModuleFragment {
+        val deserializer = getOrCreateDeserializerForModule(moduleDescriptor, kotlinLibrary, deserializationStrategy, _moduleName)
         // The IrModule and its IrFiles have been created during module initialization.
-        return moduleFragment
+        return deserializer.moduleFragment
     }
 
     private fun registerModuleDeserializer(
