@@ -1,5 +1,5 @@
 expression: Something.VALUE
 constant: 21
 constantValueKind: IntValue
-constantValueSource: BINARY_EXPRESSION
-constantValueSourceText: 5 + 8 * 2
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: Something.VALUE
