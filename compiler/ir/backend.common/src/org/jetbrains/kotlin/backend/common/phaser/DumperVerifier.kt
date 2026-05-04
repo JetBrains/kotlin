@@ -99,16 +99,14 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
         if (!state.isValidationNeeded()) return
         val messageCollector = context.messageCollector
         if (context !is BackendContextHolder) {
-            messageCollector.report(
-                CompilerMessageSeverity.LOGGING,
+            context.log(
                 "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: insufficient context."
             )
             return
         }
         val element = findKotlinBackendIr(context, data)
         if (element == null) {
-            messageCollector.report(
-                CompilerMessageSeverity.LOGGING,
+            context.log(
                 "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: IR not found."
             )
             return
