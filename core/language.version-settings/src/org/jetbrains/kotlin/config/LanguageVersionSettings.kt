@@ -595,7 +595,28 @@ enum class LanguageFeature(
     JvmInlineMultiFieldValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
+
     CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5),
+    ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956") {
+        fun companionBlocksVersionCheck() {
+            val companionBlocks = CompanionBlocksAndExtensions
+            if (companionBlocks.sinceVersion != null) {
+                require(sinceVersion != null && sinceVersion > companionBlocks.sinceVersion) {
+                    "Set $this.sinceVersion to ${companionBlocks.sinceVersion} + 1."
+                }
+            }
+            if (sinceVersion != null) {
+                require(companionBlocks.sinceVersion != null) {
+                    "Do not enable $this without $companionBlocks."
+                }
+            }
+        }
+
+        init {
+            companionBlocksVersionCheck()
+        }
+    },
+
     NameBasedDestructuring(sinceVersion = null, "KT-19627"),
     DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
     EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
