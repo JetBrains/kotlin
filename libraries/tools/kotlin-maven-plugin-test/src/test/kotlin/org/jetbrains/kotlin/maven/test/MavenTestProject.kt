@@ -55,9 +55,13 @@ class MavenTestProject(
             throw RuntimeException("Can't find path for ${buildOptions.javaVersion}")
         verifier.setEnvironmentVariable("JAVA_HOME", javaHome.absolutePathString())
         verifier.setEnvironmentVariable("MAVEN_OPTS", nestedMavenOpts(environmentVariables["MAVEN_OPTS"]))
+        verifier.setEnvironmentVariable(
+            "MAVEN_USER_HOME",
+            environmentVariables["MAVEN_USER_HOME"] ?: context.mavenUserHome.absolutePathString()
+        )
 
         for ((key, value) in environmentVariables) {
-            if (key == "MAVEN_OPTS") continue
+            if (key == "MAVEN_OPTS" || key == "MAVEN_USER_HOME") continue
             verifier.setEnvironmentVariable(key, value)
         }
 
