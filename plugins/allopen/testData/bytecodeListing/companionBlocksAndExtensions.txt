@@ -1,0 +1,28 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class AllOpen {
+    // source: 'companionBlocksAndExtensions.kt'
+}
+
+@AllOpen
+@kotlin.Metadata
+public class C {
+    // source: 'companionBlocksAndExtensions.kt'
+    private static @org.jetbrains.annotations.NotNull field bar: java.lang.String
+    static method <clinit>(): void
+    public method <init>(): void
+    public static method foo(): void
+    public static @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
+    public static method setBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class CompanionBlocksAndExtensionsKt {
+    // source: 'companionBlocksAndExtensions.kt'
+    private static @org.jetbrains.annotations.NotNull field bar: java.lang.String
+    static method <clinit>(): void
+    public final static @AllOpen method foo(): void
+    public synthetic deprecated static @AllOpen method getBar$annotations(): void
+    public final static @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
+    public final static method setBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+}

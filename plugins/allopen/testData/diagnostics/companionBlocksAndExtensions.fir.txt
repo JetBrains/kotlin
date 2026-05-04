@@ -1,0 +1,25 @@
+FILE: companionBlocksAndExtensions.kt
+    public final annotation class AllOpen : R|kotlin/Annotation| {
+        public constructor(): R|AllOpen| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|AllOpen|() public open class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open static fun foo(): R|kotlin/Unit| {
+        }
+
+        public open static var bar: R|kotlin/String| = String()
+            public static get(): R|kotlin/String|
+            public static set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    @R|AllOpen|() public final static fun R|C|.foo(): R|kotlin/Unit| {
+    }
+    @R|AllOpen|() public final static var R|C|.bar: R|kotlin/String| = String()
+        public static get(): R|kotlin/String|
+        public static set(value: R|kotlin/String|): R|kotlin/Unit|
