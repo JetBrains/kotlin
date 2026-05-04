@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
@@ -39,6 +40,10 @@ internal open class BasicNativeBackendPhaseContext(
             config.configuration.diagnosticsCollector,
             config.configuration.languageVersionSettings
     )
+
+    override fun log(message: String) {
+        config.configuration.reportLog(message)
+    }
 
     override fun dispose() {
 

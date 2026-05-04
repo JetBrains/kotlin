@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 interface ErrorReportingContext {
     val messageCollector: MessageCollector
     val diagnosticReporter: IrDiagnosticReporter
+
+    /**
+     * Writes the message to the output with `LOG` severity.
+     */
+    fun log(message: String)
 }
 
 fun IrElement.getCompilerMessageLocation(containingFile: IrFile): CompilerMessageLocation? =

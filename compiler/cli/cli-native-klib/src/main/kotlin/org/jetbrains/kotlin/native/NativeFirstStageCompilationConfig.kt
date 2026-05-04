@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -60,6 +61,10 @@ class NativeFirstStagePhaseContext(
         config.configuration.diagnosticsCollector,
         config.configuration.languageVersionSettings
     )
+
+    override fun log(message: String) {
+        config.configuration.reportLog(message)
+    }
 
     override val performanceManager: PerformanceManager?
         get() = config.configuration.perfManager

@@ -29,4 +29,8 @@ internal abstract class KonanBackendContext(config: NativeSecondStageCompilation
 
     override val messageCollector: MessageCollector
         get() = super<BasicNativeBackendPhaseContext>.messageCollector
+
+    override fun log(message: String) {
+        super<BasicNativeBackendPhaseContext>.log(message)
+    }
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.reportLog as reportLogAlias
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
@@ -46,9 +47,8 @@ fun CompilerConfiguration.reportInfo(message: String, location: CompilerMessageS
     messageCollector.report(CompilerMessageSeverity.INFO, message, location)
 }
 
-@OptIn(MessageCollectorAccess::class)
 fun CompilerConfiguration.reportLog(message: String, location: CompilerMessageSourceLocation? = null) {
-    messageCollector.report(CompilerMessageSeverity.LOGGING, message, location)
+    reportLogAlias(message, location)
 }
 
 @OptIn(MessageCollectorAccess::class)

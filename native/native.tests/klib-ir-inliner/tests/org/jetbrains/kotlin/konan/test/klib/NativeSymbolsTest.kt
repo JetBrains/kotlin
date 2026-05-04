@@ -55,6 +55,10 @@ class NativeSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseS
 
         override val diagnosticReporter: IrDiagnosticReporter
             get() = error("should not be called")
+
+        override fun log(message: String) {
+            error("should not be called")
+        }
     }
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
