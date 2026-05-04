@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.KmValueParameter
 import kotlin.metadata.declaresDefaultValue
@@ -22,7 +23,7 @@ internal class KotlinKParameter(
         kmParameter.name.takeUnless { it.startsWith("<") }
 
     override val type: KType by lazy(PUBLICATION) {
-        kmParameter.type.toKType(callable.container.jClass.classLoader, typeParameterTable) {
+        kmParameter.type.toKType(callable.container.jClass.safeClassLoader, typeParameterTable) {
             require(callable.container is KPackageImpl || callable.isConstructor) {
                 // For class callables, we'll also need to tweak instance receiver parameter type (see `DescriptorKParameter`).
                 "Only constructors and top-level callables are supported for now: ${callable.container}/${callable.name} $name"

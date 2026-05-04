@@ -388,13 +388,13 @@ internal class KClassImpl<T : Any>(
                 kmClass == null || !kmClass.isValue ->
                     null
                 kmClass.inlineClassUnderlyingType != null ->
-                    kmClass.inlineClassUnderlyingType?.toKType(jClass.classLoader, typeParameterTable)
+                    kmClass.inlineClassUnderlyingType?.toKType(jClass.safeClassLoader, typeParameterTable)
                 else -> {
                     val underlyingProperty = kmClass.properties.single {
                         it.name == kmClass.inlineClassUnderlyingPropertyName &&
                                 it.contextParameters.isEmpty() && it.receiverParameterType == null
                     }
-                    underlyingProperty.returnType.toKType(jClass.classLoader, typeParameterTable)
+                    underlyingProperty.returnType.toKType(jClass.safeClassLoader, typeParameterTable)
                 }
             }
         }
