@@ -37,6 +37,10 @@ class NativeFirstStageCompilationConfig(
         get() = configuration.konanManifestAddend?.let {
             File(it).loadProperties()
         }
+
+    fun withConfiguration(newConfiguration: CompilerConfiguration): NativeFirstStageCompilationConfig {
+        return NativeFirstStageCompilationConfig(newConfiguration, target, loadedKlibs)
+    }
 }
 
 class NativeFirstStagePhaseContext(
@@ -52,6 +56,10 @@ class NativeFirstStagePhaseContext(
         get() = config.configuration.perfManager
 
     override fun dispose() {}
+
+    fun withConfiguration(newConfiguration: CompilerConfiguration): NativeFirstStagePhaseContext {
+        return NativeFirstStagePhaseContext(config.withConfiguration(newConfiguration))
+    }
 }
 
 internal fun createFirstStageCompilationConfig(configuration: CompilerConfiguration): NativeFirstStageCompilationConfig {

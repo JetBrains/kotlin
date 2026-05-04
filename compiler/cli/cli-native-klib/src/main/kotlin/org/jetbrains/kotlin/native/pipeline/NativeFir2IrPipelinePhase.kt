@@ -121,7 +121,7 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
                 fir2IrResult.fir2irActualizedResult.irBuiltIns,
             ).lower(fir2IrResult.fir2irActualizedResult.irModuleFragment)
         } catch (_: KonanCompilationException) {
-            require(configuration.hasMessageCollectorErrors())
+            require(configuration.hasMessageCollectorErrors() || configuration.diagnosticsCollector.hasErrors)
             return null
         }
 

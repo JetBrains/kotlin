@@ -45,7 +45,7 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
             DiagnosticsCollectorImpl()
         )
         val output = phase.executePhase(input)
-            ?: return processErrorFromCliPhase(cliArtifact.configuration, testServices)
+            ?: return processErrorFromCliPhase(input.configuration, testServices)
         return Fir2IrCliBasedOutputArtifact(output)
     }
 }
