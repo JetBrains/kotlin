@@ -6,10 +6,11 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -33,12 +35,15 @@ import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
+import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
@@ -115,15 +120,14 @@ internal fun LinkKlibsContext.linkKlibs(
             generatorContext.irBuiltIns,
             this.config.configuration
     )
+    val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
 
     val irDeserializer = run {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
-        val irProviderForCEnumsAndCStructs =
-                IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
         val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
+                deserializationConfiguration = deserializationConfiguration,
                 cachedLibraries = config.cachedLibraries,
-                cenumsProvider = irProviderForCEnumsAndCStructs,
-                stubGenerator = stubGenerator,
+                symbols = symbols,
         )
 
         // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
@@ -191,19 +195,14 @@ internal fun LinkKlibsContext.linkKlibs(
                 dependenciesCount = dependencies.size
             }
 
-            // We need to run `buildAllEnumsAndStructsFrom` before `generateModuleFragment` because it adds references to symbolTable
-            // that should be bound.
-            if (libraryToCacheModule?.isFromCInteropLibrary() == true)
-                irProviderForCEnumsAndCStructs.referenceAllEnumsAndStructsFrom(libraryToCacheModule)
-
-            translator.addPostprocessingStep {
-                irProviderForCEnumsAndCStructs.generateBodies()
-            }
+            ensureCStructsAndEnumsAreLoadedForCaching(linker, libraryToCacheModule)
         }
     }
     val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), listOf(irDeserializer))
 
     irDeserializer.postProcess(inOrAfterLinkageStep = true)
+
+    generateImplForCStructsAndEnums(irDeserializer, symbols)
 
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true
@@ -253,19 +252,49 @@ internal fun LinkKlibsContext.linkKlibs(
     }
 }
 
+private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, libraryToCacheModule: ModuleDescriptor?) {
+    // Unlike other declarations from C-interop Klibs, we generate synthetic implementation for C structs and enums, which is then
+    // being lowered, and eventually ends up being compiled into assembly code, much like regular Kotlin classes.
+    // Normally it's only for the classes actually used from the lib/app being compiled, but if instead we're building a cache for
+    // a C-interop library, we want to load, process and cache everything. The consumer of the cached library will then have all the
+    // resulting assembly code for the C structs and enums already available, without a need for any special processing.
+    if (libraryToCacheModule?.isFromCInteropLibrary() == true) {
+        val interopModuleDeserializer = linker.getOrCreateDeserializerForModule(libraryToCacheModule, libraryToCacheModule.kotlinLibrary,
+                { DeserializationStrategy.ONLY_REFERENCED }, libraryToCacheModule.name.asString())
+        (interopModuleDeserializer as? KonanInteropModuleDeserializer)?.deserializeAllCStructsAndEnums()
+    }
+}
+
+private fun generateImplForCStructsAndEnums(linker: KonanIrLinker, symbols: BackendNativeSymbols) {
+    val implGen = IrImplementationGeneratorForCStructsAndEnums(linker.builtIns, symbols)
+    for (module in linker.modules.values) {
+        if (module.descriptor.isFromCInteropLibrary()) {
+            for (file in module.files) {
+                for (declaration in file.declarations) {
+                    if (declaration is IrClass) {
+                        implGen.generateImplIfCStructOrEnum(declaration)
+                    }
+                }
+            }
+        }
+    }
+}
+
 internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
-        private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
-        private val stubGenerator: DeclarationStubGenerator,
+        private val deserializationConfiguration: DeserializationConfiguration,
+        private val symbols: BackendNativeSymbols,
 ) : CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,
+            linker: KonanIrLinker,
     ): IrModuleDeserializer = KonanInteropModuleDeserializer(
+            deserializationConfiguration,
             moduleDescriptor,
             klib,
             cachedLibraries.isLibraryCached(klib),
-            cenumsProvider,
-            stubGenerator,
+            symbols,
+            linker,
     )
 }

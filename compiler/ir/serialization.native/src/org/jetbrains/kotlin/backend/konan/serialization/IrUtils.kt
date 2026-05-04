@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.sourceElement
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
@@ -64,19 +67,10 @@ private fun getSourceElementFromFir(topLevelLazyFir2IrDeclaration: AbstractFir2I
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getSourceElementFromDescriptor(topLevelDeclaration: IrDeclaration): SourceElement? {
-    val topLevelDeclarationDescriptor = if (topLevelDeclaration is IrLazyDeclarationBase) {
-        // There is always some descriptor.
-        topLevelDeclaration.descriptor
-    } else {
-        // There can be no descriptor. So take if with caution.
-        val symbol = topLevelDeclaration.symbol
-        if (symbol.hasDescriptor)
-            symbol.descriptor.takeUnless { it is IrBasedDeclarationDescriptor<*> }
-        else
-            null
-    }
-
-    return (topLevelDeclarationDescriptor?.containingDeclaration as? PackageFragmentDescriptor)?.source
+    val descriptor = topLevelDeclaration.getPackageFragment().symbol.descriptor
+    // FirPackageFragmentDescriptor does not implement getSource
+    if (descriptor is FirPackageFragmentDescriptor) return null
+    return descriptor.source
 }
 
 private tailrec fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when (val parent = this.parent) {
