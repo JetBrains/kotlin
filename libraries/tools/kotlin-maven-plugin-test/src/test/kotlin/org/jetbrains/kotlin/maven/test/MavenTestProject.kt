@@ -13,7 +13,7 @@ import kotlin.io.path.*
 private const val NESTED_MAVEN_OPTS =
     "-Xmx1g -XX:+AlwaysPreTouch -XX:+UseParallelGC -XX:TieredStopAtLevel=1"
 
-private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf<String>()
+private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf("-T 1C")
 
 class MavenTestProject(
     val name: String,
