@@ -26,5 +26,9 @@ interface ScriptDefinitionProvider {
         @K1SpecificScriptingServiceAccessor
         fun getInstance(project: Project): ScriptDefinitionProvider? =
             project.getService(ScriptDefinitionProvider::class.java)
+
+
+        fun getServiceIfCreated(project: Project): ScriptDefinitionProvider? =
+            project.getServiceIfCreated(ScriptDefinitionProvider::class.java)
     }
 }
