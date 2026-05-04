@@ -80,7 +80,7 @@ val CompilerOutputKind.isCache: Boolean
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(
             generationState.config.clang,
-            generationState.messageCollector,
+            generationState.diagnosticReporter,
             generationState.inVerbosePhase
     ).forEach {
         parseAndLinkBitcodeFile(generationState, generationState.llvm.module, it.absolutePath)
@@ -279,7 +279,7 @@ private fun embedAppleLinkerOptionsToBitcode(llvm: CodegenLlvmHelpers, config: N
     }
 
     val optionsToEmbed = findEmbeddableOptions(config.platform.configurables.linkerKonanFlags) +
-            llvm.dependenciesTracker.allNativeDependencies.flatMap { findEmbeddableOptions(it.linkerOpts) }
+            llvm.dependenciesTracker.allNativeDependencies.flatMap { findEmbeddableOptions(it.linkerOpts) }.toList()
 
     embedLlvmLinkOptions(llvm.llvmContext, llvm.module, optionsToEmbed)
 }

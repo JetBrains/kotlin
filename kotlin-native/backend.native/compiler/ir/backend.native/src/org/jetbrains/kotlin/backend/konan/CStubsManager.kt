@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -17,7 +17,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
         stubs += Stub(kotlinLocation, lines)
     }
 
-    fun compile(clang: ClangArgs, messageCollector: MessageCollector, verbose: Boolean): List<File> {
+    fun compile(clang: ClangArgs, diagnosticReporter: IrDiagnosticReporter, verbose: Boolean): List<File> {
         if (languageToStubs.isEmpty()) return emptyList()
 
         val bitcodes = languageToStubs.entries.map { (language, stubs) ->
@@ -54,7 +54,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
 
             val result = Command(clangCommand).getResult(withErrors = true)
             if (result.exitCode != 0) {
-                reportCompilationErrors(cSourcePath, stubs, result, messageCollector, verbose)
+                reportCompilationErrors(cSourcePath, stubs, result, diagnosticReporter, verbose)
             }
             bitcode
         }
@@ -66,7 +66,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
             cSourcePath: String,
             stubs: List<Stub>,
             result: Command.Result,
-            messageCollector: MessageCollector,
+            diagnosticReporter: IrDiagnosticReporter,
             verbose: Boolean
     ): Nothing {
         val regex = Regex("${Regex.escape(cSourcePath)}:([0-9]+):[0-9]+: error: .*")
@@ -88,15 +88,15 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
 
         if (errorLines.isNotEmpty()) {
             errorLines.forEach {
-                messageCollector.report(
-                        CompilerMessageSeverity.ERROR,
+                diagnosticReporter.report(
+                        NativeBackendDiagnostics.NATIVE_BACKEND_ERROR,
                         "Unable to compile C bridge" + if (verbose) " at $cSourceCopyPath:$it" else "",
                         lineToStub[it - 1].kotlinLocation
                 )
             }
         } else {
-            messageCollector.report(
-                    CompilerMessageSeverity.ERROR,
+            diagnosticReporter.report(
+                    NativeBackendDiagnostics.NATIVE_BACKEND_ERROR,
                     "Unable to compile C bridges",
                     null
             )
