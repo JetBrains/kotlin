@@ -1876,7 +1876,7 @@ public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Performs the given [action] on each character and returns the char sequence itself afterwards.
+ * Performs the given [action] on each character in iteration order and returns the char sequence itself afterwards.
  */
 @SinceKotlin("1.1")
 public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
@@ -1884,7 +1884,7 @@ public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
 }
 
 /**
- * Performs the given [action] on each character, providing sequential index with the character,
+ * Performs the given [action] on each character in iteration order, providing sequential index with the character,
  * and returns the char sequence itself afterwards.
  * @param [action] function that takes the index of a character and the character itself
  * and performs the action on the character.
@@ -2580,4 +2580,3 @@ public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
     return Sequence { this.iterator() }
 }
-

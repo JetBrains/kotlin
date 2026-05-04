@@ -638,7 +638,7 @@ public inline fun <K, V> Map<out K, V>.none(predicate: (Map.Entry<K, V>) -> Bool
 }
 
 /**
- * Performs the given [action] on each entry and returns the map itself afterwards.
+ * Performs the given [action] on each entry in iteration order and returns the map itself afterwards.
  */
 @SinceKotlin("1.1")
 public inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -> Unit): M {
@@ -646,7 +646,7 @@ public inline fun <K, V, M : Map<out K, V>> M.onEach(action: (Map.Entry<K, V>) -
 }
 
 /**
- * Performs the given [action] on each entry, providing sequential index with the entry,
+ * Performs the given [action] on each entry in iteration order, providing sequential index with the entry,
  * and returns the map itself afterwards.
  * @param [action] function that takes the index of an entry and the entry itself
  * and performs the action on the entry.
@@ -672,4 +672,3 @@ public inline fun <K, V> Map<out K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
 public fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     return entries.asSequence()
 }
-

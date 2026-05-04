@@ -1859,7 +1859,7 @@ object Aggregates : TemplateGroupBase() {
         include(Maps, CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        doc { "Performs the given [action] on each ${f.element} and returns the ${f.collection} itself afterwards." }
+        doc { "Performs the given [action] on each ${f.element} in iteration order and returns the ${f.collection} itself afterwards." }
 
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             since("1.4")
@@ -1884,7 +1884,7 @@ object Aggregates : TemplateGroupBase() {
 
         specialFor(Sequences) {
             returns("SELF")
-            doc { "Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass through it." }
+            doc { "Returns a sequence which performs the given [action] on each ${f.element} of the original sequence in iteration order as they pass through it." }
             sequenceClassification(intermediate, stateless)
             body {
                 """
@@ -1905,7 +1905,7 @@ object Aggregates : TemplateGroupBase() {
 
         doc {
             """
-                Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}, 
+                Performs the given [action] on each ${f.element} in iteration order, providing sequential index with the ${f.element},
                 and returns the ${f.collection} itself afterwards.
                 @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
                 and performs the action on the ${f.element}.
@@ -1935,7 +1935,7 @@ object Aggregates : TemplateGroupBase() {
             returns("SELF")
             doc {
                 """
-                Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass through it.
+                Returns a sequence which performs the given [action] on each ${f.element} of the original sequence in iteration order as they pass through it.
                 @param [action] function that takes the index of ${f.element.prefixWithArticle()} and the ${f.element} itself
                 and performs the action on the ${f.element}.
                 """
