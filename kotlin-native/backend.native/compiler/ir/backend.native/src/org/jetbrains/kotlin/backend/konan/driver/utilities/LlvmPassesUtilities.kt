@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.utilities
 import kotlinx.cinterop.*
 import llvm.LLVMModuleRef
 import llvm.LLVMPrintModuleToFile
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
@@ -34,16 +35,16 @@ private fun <Data, Context : NativeBackendPhaseContext> createLlvmDumperAction()
             if (state.phase.name in context.config.configuration.saveLlvmIr) {
                 val llvmModule = findLlvmModule(data, context)
                 if (llvmModule == null) {
-                    context.messageCollector.report(
-                            CompilerMessageSeverity.WARNING,
+                    context.diagnosticReporter.report(
+                            NativeBackendDiagnostics.LLVM_WARNING,
                             "Cannot dump LLVM IR ${state.beforeOrAfter.name.lowercase()} ${state.phase.name}")
                     return
                 }
                 val moduleName: String = llvmModule.getName()
                 val parentDirectory = context.config.saveLlvmIrDirectory
                 if (!parentDirectory.exists()) {
-                    context.messageCollector.report(
-                            CompilerMessageSeverity.WARNING,
+                    context.diagnosticReporter.report(
+                            NativeBackendDiagnostics.LLVM_WARNING,
                             "Cannot dump LLVM IR to non-existent location: ${parentDirectory.absolutePath}")
                     return
                 }
@@ -64,8 +65,8 @@ private fun <Data, Context : NativeBackendPhaseContext> createLlvmVerifierAction
             }
             val llvmModule = findLlvmModule(data, context)
             if (llvmModule == null) {
-                context.messageCollector.report(
-                        CompilerMessageSeverity.WARNING,
+                context.diagnosticReporter.report(
+                        NativeBackendDiagnostics.LLVM_WARNING,
                         "Cannot verify LLVM IR ${actionState.beforeOrAfter.name.lowercase()} ${actionState.phase.name}")
                 return
             }
