@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.RedundantCastsRemoverLowering
@@ -72,7 +72,7 @@ fun loweringsOfTheFirstPhase(
                 when {
                     actualCallee?.body == null -> true // does not have a body <=> should not be inlined
                     // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                    PreSerializationSymbols.isTypeOfIntrinsic(actualCallee.symbol) -> true
+                    actualCallee.symbol.isTypeOfIntrinsic() -> true
                     else -> false // forbidden
                 }
             }

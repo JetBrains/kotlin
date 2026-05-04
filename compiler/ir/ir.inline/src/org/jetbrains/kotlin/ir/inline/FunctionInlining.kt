@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -78,7 +77,7 @@ abstract class FunctionInlining(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
         expression.transformChildren(this, data)
 
-        if (expression is IrCall && PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
+        if (expression.isTypeOfIntrinsicCall()) {
             return expression
         }
         val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression

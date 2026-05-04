@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -128,7 +127,7 @@ internal class InlineFunctionBodyPreprocessor(
 
         override fun visitCall(expression: IrCall): IrCall {
             return super.visitCall(expression).also {
-                if (PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
+                if (expression.symbol.isTypeOfIntrinsic()) {
                     // We need to call super.remap here because we need to remap local classes.
                     it.typeArguments[0] = super.remapTypeImpl(reifiedTypeParameterSubstitutor.substitute(expression.typeArguments[0]!!))
                 }

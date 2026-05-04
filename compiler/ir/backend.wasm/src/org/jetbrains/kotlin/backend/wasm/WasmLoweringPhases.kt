@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
@@ -45,7 +45,7 @@ private fun createValidateIrAfterInliningAllFunctionsPhase(context: LoweringCont
             // No inline function call sites should remain at this stage.
             val inlineFunction = inlineFunctionUseSite.symbol.owner
             // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-            if (PreSerializationSymbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+            if (inlineFunction.symbol.isTypeOfIntrinsic()) return@check true
             return@check inlineFunction.body == null
         }
     )

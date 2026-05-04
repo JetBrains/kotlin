@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -281,7 +280,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
                 )
 
             override fun visitCall(expression: IrCall): IrExpression =
-                if (PreSerializationSymbols.isTypeOfIntrinsic(expression.symbol)) {
+                if (expression.symbol.isTypeOfIntrinsic()) {
                     createKType(expression.typeArguments[0]!!, hashSetOf())
                 } else {
                     super.visitCall(expression)
