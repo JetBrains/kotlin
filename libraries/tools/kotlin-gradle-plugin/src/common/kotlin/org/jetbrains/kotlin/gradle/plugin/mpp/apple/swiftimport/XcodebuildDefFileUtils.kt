@@ -21,8 +21,6 @@ internal object XcodebuildDefFileUtils {
     fun defFilesRelativeDir(sdk: String) = "kotlin/swiftImportDefs/$sdk"
     fun ldDumpRelativeDir(sdk: String) = "kotlin/swiftImportLdDump/$sdk"
     fun clangDumpRelativeDir(sdk: String) = "kotlin/swiftImportClangDump/$sdk"
-    fun sharedDumpRelativeDir(sdk: String) = "kotlin/swiftImportSharedDump/$sdk"
-    fun sharedDdRelativeDir(sdk: String) = "kotlin/swiftImportSharedDd/$sdk"
     const val SYNTHETIC_IMPORT_DD_DIR = "kotlin/swiftImportDd"
 
     fun defFileName(architecture: AppleArchitecture) = "${architecture.xcodebuildArch}.def"

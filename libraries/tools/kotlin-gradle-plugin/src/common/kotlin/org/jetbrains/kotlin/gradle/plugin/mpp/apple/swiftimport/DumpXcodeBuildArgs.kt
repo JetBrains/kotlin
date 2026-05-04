@@ -109,17 +109,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     abstract val transitiveSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
 
     @get:Internal
-    val sharedDumpIntermediatesDir: DirectoryProperty = project.objects.directoryProperty().convention(
-        xcodebuildSdk.flatMap {
-            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.sharedDumpRelativeDir(it))
-        }
-    )
-
-    @get:Internal
     val syntheticImportDd: DirectoryProperty = project.objects.directoryProperty().convention(
-        xcodebuildSdk.flatMap {
-            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.sharedDdRelativeDir(it))
-        }
+        project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
     )
 
     @get:Inject
@@ -151,7 +142,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             val claim = coordinationService.get().claimOrJoinXcodeDump(
                 packageResolvedHash = packageResolvedFingerprint,
                 identifierDepsHash = identifierDepsFingerprint,
-                sharedDumpRoot = sharedDumpIntermediatesDir.get().asFile,
+                sharedDumpRoot = dumpedXcodeBuildArgsDir.get().asFile,
             )
 
             when (claim) {
@@ -195,7 +186,19 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     private fun copySharedDumpToLocalOutput(sharedDumpDir: File) {
         val localDumpDir = dumpedXcodeBuildArgsDir.get().asFile
-        if (localDumpDir.canonicalFile == sharedDumpDir.canonicalFile) return
+        val canonicalLocalDumpDir = localDumpDir.canonicalFile
+        val canonicalSharedDumpDir = sharedDumpDir.canonicalFile
+        if (canonicalLocalDumpDir == canonicalSharedDumpDir) return
+
+        if (canonicalSharedDumpDir.isDescendantOf(canonicalLocalDumpDir)) {
+            deleteMaterializedDumpFiles(localDumpDir)
+            deleteStaleBucketDirs(localDumpDir, canonicalSharedDumpDir)
+            fs.copy {
+                it.from(sharedDumpDir)
+                it.into(localDumpDir)
+            }
+            return
+        }
 
         fs.delete {
             it.delete(localDumpDir)
@@ -204,6 +207,40 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             it.from(sharedDumpDir)
             it.into(localDumpDir)
         }
+    }
+
+    private fun deleteMaterializedDumpFiles(localDumpDir: File) {
+        fs.delete {
+            it.delete(localDumpDir.resolve("clangDump.sh"))
+            it.delete(localDumpDir.resolve("ldDump.sh"))
+            it.delete(localDumpDir.resolve("clang_args_dump"))
+            it.delete(localDumpDir.resolve("ld_args_dump"))
+        }
+    }
+
+    private fun deleteStaleBucketDirs(localDumpDir: File, currentBucketDir: File) {
+        fs.delete { delete ->
+            localDumpDir.resolve(SWIFT_PM_XCODE_DUMP_BUCKETS_DIR)
+                .listFiles()
+                .orEmpty()
+                .filter { it.isDirectory && it.name.matches(xcodeDumpBucketIdRegex) }
+                .filterNot { it.canonicalFile == currentBucketDir }
+                .forEach { delete.delete(it) }
+
+            localDumpDir.listFiles()
+                .orEmpty()
+                .filter { it.isDirectory && it.name.matches(xcodeDumpBucketIdRegex) }
+                .forEach { delete.delete(it) }
+        }
+    }
+
+    private fun File.isDescendantOf(parent: File): Boolean {
+        var current: File? = this
+        while (current != null) {
+            if (current == parent) return true
+            current = current.parentFile
+        }
+        return false
     }
 
     companion object {
@@ -251,7 +288,7 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<BuildService
             val bucketId = packageResolvedHash ?: identifierDepsHash
             val newBucket = MutableXcodeDumpBucket(
                 id = bucketId,
-                sharedDumpDir = sharedDumpRoot.resolve(bucketId),
+                sharedDumpDir = sharedDumpRoot.resolve(SWIFT_PM_XCODE_DUMP_BUCKETS_DIR).resolve(bucketId),
             )
             packageResolvedHash?.let { bucketsByPackageResolvedHash[it] = newBucket }
             bucketsByIdentifierDepsHash[identifierDepsHash] = newBucket
@@ -312,6 +349,9 @@ private data class MutableXcodeDumpBucket(
     fun toPublicBucket(): SwiftPMXcodeDumpBuildService.XcodeDumpBucket =
         SwiftPMXcodeDumpBuildService.XcodeDumpBucket(id, sharedDumpDir)
 }
+
+private const val SWIFT_PM_XCODE_DUMP_BUCKETS_DIR = ".buckets"
+private val xcodeDumpBucketIdRegex = Regex("[0-9a-f]{64}")
 
 internal fun normalizeXcodebuildArgs(args: List<String>): List<String> {
     return args.sorted()

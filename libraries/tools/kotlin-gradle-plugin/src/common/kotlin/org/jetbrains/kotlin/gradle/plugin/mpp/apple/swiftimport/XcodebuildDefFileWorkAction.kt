@@ -89,7 +89,12 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
                         && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
             }
 
-            val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())
+            val parsedLdCall = architectureSpecificProductLdCalls
+                .map { it to XcodebuildDefFileUtils.parseLdCall(it) }
+                .singleDistinctParsedCall(
+                    dumpKind = "ld",
+                    architecture = clangArchitecture,
+                )
 
             ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture))
                 .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))
@@ -102,5 +107,34 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
             ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture))
                 .writeText(parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
         }
+    }
+
+    private fun List<XcodebuildDefFileUtils.ParsedClangCall>.mergeParsedClangCalls(
+        architecture: String,
+    ): XcodebuildDefFileUtils.ParsedClangCall {
+        check(isNotEmpty()) {
+            "Expected at least one clang dump for architecture '$architecture'"
+        }
+
+        return XcodebuildDefFileUtils.ParsedClangCall(
+            cinteropClangArgs = flatMap { it.cinteropClangArgs }.distinct(),
+            compileTimeFrameworkSearchPaths = flatMapTo(linkedSetOf()) { it.compileTimeFrameworkSearchPaths },
+            includeSearchPaths = flatMapTo(linkedSetOf()) { it.includeSearchPaths },
+            explicitModuleMaps = flatMapTo(linkedSetOf()) { it.explicitModuleMaps },
+        )
+    }
+
+    private fun <T> List<Pair<File, T>>.singleDistinctParsedCall(
+        dumpKind: String,
+        architecture: String,
+    ): T {
+        val distinctCalls = distinctBy { it.second }
+        if (distinctCalls.size == 1) return distinctCalls.single().second
+
+        val dumpFiles = joinToString(separator = "\n") { (file, _) -> " - ${file.path}" }
+        error(
+            "Expected exactly one distinct $dumpKind dump for architecture '$architecture', " +
+                    "but found ${distinctCalls.size}. Matching dump files:\n$dumpFiles"
+        )
     }
 }

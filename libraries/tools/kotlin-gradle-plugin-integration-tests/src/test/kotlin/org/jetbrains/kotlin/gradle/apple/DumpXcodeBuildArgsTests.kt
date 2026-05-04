@@ -54,12 +54,15 @@ import kotlin.test.assertTrue
 @SwiftPMImportGradlePluginTests
 class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
+    private val xcodeDumpBucketName = Regex("[0-9a-f]{64}")
+    private val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clang_args_dump", "ld_args_dump")
+
     private fun TestProject.sharedDumpFingerprintDirs(vararg projectNames: String) =
         projectNames.flatMap { projectName ->
-            projectPath.resolve("$projectName/build/kotlin/swiftImportSharedDump/iphoneos").toFile()
+            projectPath.resolve("$projectName/build/kotlin/swiftImportClangDump/iphoneos/.buckets").toFile()
                 .listFiles()
                 .orEmpty()
-                .filter { it.isDirectory }
+                .filter { it.isDirectory && it.name.matches(xcodeDumpBucketName) }
         }
 
     private fun TestProject.localIphoneosDumpDir(projectName: String) =
@@ -77,21 +80,24 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
         sharedDumpDir: File,
         vararg localDumpDirs: Path,
     ) {
-        val sharedDumpFiles = dumpFilesByRelativePath(sharedDumpDir)
+        val sharedDumpFiles = materializedDumpFilesByRelativePath(sharedDumpDir)
         assertTrue(sharedDumpFiles.isNotEmpty(), "Shared dump bucket should contain xcodebuild dump files")
 
         localDumpDirs.forEach { localDumpDir ->
             assertDumpDirectoryContainsXcodebuildArgsDump(localDumpDir)
             assertEquals(
                 sharedDumpFiles,
-                dumpFilesByRelativePath(localDumpDir.toFile()),
+                materializedDumpFilesByRelativePath(localDumpDir.toFile()),
                 "Local dump directory should be a copy of the shared dump bucket"
             )
         }
     }
 
-    private fun dumpFilesByRelativePath(dumpDir: File): Map<String, String> =
-        dumpDir.walkTopDown()
+    private fun materializedDumpFilesByRelativePath(dumpDir: File): Map<String, String> =
+        materializedDumpEntries.asSequence()
+            .map { dumpDir.resolve(it) }
+            .filter { it.exists() }
+            .flatMap { it.walkTopDown().asSequence() }
             .filter { it.isFile }
             .associate { file ->
                 file.relativeTo(dumpDir).invariantSeparatorsPath to file.readText()
@@ -188,7 +194,6 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     filesToTrackFromLocalPackages.set(stubTrackedFiles)
                     syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
                     syntheticImportDd.set(project.layout.buildDirectory.dir("kotlin/customSwiftImportDd"))
-                    sharedDumpIntermediatesDir.set(project.layout.buildDirectory.dir("kotlin/customSharedSwiftImportDump"))
                     coordinationService.set(
                         SwiftPMXcodeDumpBuildService.registerIfAbsent(project)
                     )

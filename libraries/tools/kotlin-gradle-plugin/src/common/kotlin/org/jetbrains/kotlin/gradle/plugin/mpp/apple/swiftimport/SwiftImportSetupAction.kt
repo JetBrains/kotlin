@@ -288,7 +288,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             val claimedDumpTask = registerDumpXcodebuildArgsTask(
                 xcodeDumpBuildService = xcodeDumpBuildService,
                 taskName = candidateTaskName,
-                outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)),
                 computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
                 fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
                 syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
@@ -302,11 +301,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             )
 
             defFilesAndLdDumpGenerationTask.configure { task ->
-                task.dumpedXcodeBuildArgsDir.set(
-                    claimedDumpTask.map {
-                        it.dumpedXcodeBuildArgsDir.get()
-                    }
-                )
+                task.dumpedXcodeBuildArgsDir.set(claimedDumpTask.flatMap { it.dumpedXcodeBuildArgsDir })
                 task.dependsOn(claimedDumpTask)
             }
         }
@@ -754,7 +749,6 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
 private fun Project.registerDumpXcodebuildArgsTask(
     xcodeDumpBuildService: Provider<SwiftPMXcodeDumpBuildService>,
     taskName: String,
-    outputDir: Provider<Directory>,
     computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
     fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
     syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
@@ -793,12 +787,11 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.architectures.add(architecture)
         dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
-        dumpTask.dumpedXcodeBuildArgsDir.set(outputDir)
-        dumpTask.sharedDumpIntermediatesDir.set(
-            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.sharedDumpRelativeDir(targetSdk))
+        dumpTask.dumpedXcodeBuildArgsDir.set(
+            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk))
         )
         dumpTask.syntheticImportDd.set(
-            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.sharedDdRelativeDir(targetSdk))
+            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
         )
     }
 }

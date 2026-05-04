@@ -890,7 +890,7 @@ class SwiftPMImportUnitTests {
     }
 
     @Test
-    fun `project dependency consumers keep local convert wiring and shared dump roots`() {
+    fun `project dependency consumers keep local convert wiring and dump bucket roots`() {
         val rootProject = buildProject { configureRepositoriesForTests() }
 
         val mapsProject = swiftPMImportProject(
@@ -982,29 +982,24 @@ class SwiftPMImportUnitTests {
             "Each consumer should keep its own local dump output directory"
         )
         assertEquals(
-            leftProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDump/iphonesimulator").get().asFile,
-            leftDumpTask.sharedDumpIntermediatesDir.get().asFile,
-            "Left dump task should use its own build directory as the candidate shared dump root"
+            leftProject.layout.buildDirectory.dir("kotlin/swiftImportClangDump/iphonesimulator").get().asFile,
+            leftDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Left dump task should use its local clang dump directory as the local conversion input"
         )
         assertEquals(
-            rightProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDump/iphonesimulator").get().asFile,
-            rightDumpTask.sharedDumpIntermediatesDir.get().asFile,
-            "Right dump task should use its own build directory as the candidate shared dump root"
+            rightProject.layout.buildDirectory.dir("kotlin/swiftImportClangDump/iphonesimulator").get().asFile,
+            rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Right dump task should use its local clang dump directory as the local conversion input"
         )
         assertEquals(
-            leftProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDd/iphonesimulator").get().asFile,
+            leftProject.layout.buildDirectory.dir("kotlin/swiftImportDd").get().asFile,
             leftDumpTask.syntheticImportDd.get().asFile,
-            "Left dump task should use its own SDK-scoped build directory as the candidate shared derived data root"
+            "Left dump task should use its own build directory as the candidate derived data root"
         )
         assertEquals(
-            rightProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDd/iphonesimulator").get().asFile,
+            rightProject.layout.buildDirectory.dir("kotlin/swiftImportDd").get().asFile,
             rightDumpTask.syntheticImportDd.get().asFile,
-            "Right dump task should use its own SDK-scoped build directory as the candidate shared derived data root"
-        )
-        assertNotEquals(
-            leftDumpTask.sharedDumpIntermediatesDir.get().asFile,
-            rightDumpTask.sharedDumpIntermediatesDir.get().asFile,
-            "Shared dump roots are task-local candidates; execution-time claiming decides which bucket is reused"
+            "Right dump task should use its own build directory as the candidate derived data root"
         )
         assertNotEquals(
             leftDumpTask.syntheticImportDd.get().asFile,

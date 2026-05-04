@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSynthetic
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMXcodeDumpBuildService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
@@ -81,6 +82,10 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
                     architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
                     hasSwiftPMDependencies.set(true)
+                    packageResolvedSynchronization.set("identifier:default")
+                    directSwiftPMDependencies.set(extension.swiftPMDependencies)
+                    transitiveSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
+                    coordinationService.set(SwiftPMXcodeDumpBuildService.registerIfAbsent(project))
                     filesToTrackFromLocalPackages.set(stubTrackedFiles)
                     syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
                     swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
