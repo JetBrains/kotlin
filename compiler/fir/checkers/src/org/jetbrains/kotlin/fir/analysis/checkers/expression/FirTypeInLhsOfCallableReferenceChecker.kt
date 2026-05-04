@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
-object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+object FirTypeInLhsOfCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext)
     private val innerClassesProperlySupported: Boolean
