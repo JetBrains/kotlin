@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
 interface ErrorReportingContext {
-    val messageCollector: MessageCollector
     val diagnosticReporter: IrDiagnosticReporter
 
     /**

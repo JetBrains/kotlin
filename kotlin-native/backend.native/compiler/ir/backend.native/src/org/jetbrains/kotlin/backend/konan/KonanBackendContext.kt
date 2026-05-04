@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 
@@ -26,9 +25,6 @@ internal abstract class KonanBackendContext(config: NativeSecondStageCompilation
     }
 
     override val irFactory: IrFactory = IrFactoryImpl
-
-    override val messageCollector: MessageCollector
-        get() = super<BasicNativeBackendPhaseContext>.messageCollector
 
     override fun log(message: String) {
         super<BasicNativeBackendPhaseContext>.log(message)

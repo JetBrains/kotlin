@@ -18,11 +18,8 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LoggingContext
-import org.jetbrains.kotlin.config.MessageCollectorAccess
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.reportLog
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -39,10 +36,6 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
-
-    @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
-    override val messageCollector: MessageCollector
-        get() = configuration.messageCollector
 
     override fun log(message: String) {
         configuration.reportLog(message)

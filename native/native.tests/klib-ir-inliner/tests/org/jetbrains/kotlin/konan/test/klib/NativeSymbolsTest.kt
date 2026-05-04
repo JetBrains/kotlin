@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -50,8 +49,6 @@ class NativeSymbolsTest : AbstractSymbolsValidationTest(
 
 class NativeSymbolValidationHandler(testServices: TestServices) : IrSecondPhaseSymbolValidationHandler(testServices) {
     private val errorReportingContext = object : ErrorReportingContext {
-        override val messageCollector: MessageCollector
-            get() = error("should not be called")
 
         override val diagnosticReporter: IrDiagnosticReporter
             get() = error("should not be called")

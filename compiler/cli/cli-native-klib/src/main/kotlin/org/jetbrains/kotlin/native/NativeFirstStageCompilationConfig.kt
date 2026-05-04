@@ -10,12 +10,9 @@ import org.jetbrains.kotlin.backend.konan.NativeCompilationConfig
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -52,10 +49,6 @@ class NativeFirstStagePhaseContext(
     override val config: NativeFirstStageCompilationConfig,
 ) : NativePhaseContext {
     override var inVerbosePhase: Boolean = false
-
-    @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
-    override val messageCollector: MessageCollector
-        get() = config.configuration.messageCollector
 
     override val diagnosticReporter: IrDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         config.configuration.diagnosticsCollector,
