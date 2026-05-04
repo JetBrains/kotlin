@@ -190,6 +190,38 @@ internal class JavaPackageIndexer(
     }
 
     /**
+     * Returns `true` if [packageFqName] exists as a Java source package: either a directory
+     * mirroring the package exists in some source root, or a known file-root file lives in this
+     * package or any of its sub-packages.
+     *
+     * This recognises **ancestor** packages: e.g. a single file at
+     * `priv/members/check/Foo.java` makes the intermediate packages `priv` and `priv.members`
+     * valid even though those directories carry no `.java` files of their own. PSI's
+     * [org.jetbrains.kotlin.load.java.JavaClassFinderImpl.findPackage] used to recognise these
+     * the same way, so dotted FQN references (`priv.members.check.Foo()`) and star imports
+     * (`import priv.members.check.*`) need this recognition for source parity once
+     * [BinaryJavaClassFinder] is the binary half (the index-based binary finder only consults
+     * binary roots and cannot see the source-only ancestor packages).
+     *
+     * Cheaper than [ensurePackageIndexed]: walks `findChild` chains and `fileRootIndex.keys`,
+     * never reads file contents.
+     */
+    fun containsPackage(packageFqName: FqName): Boolean {
+        if (packageFqName.isRoot) return true
+        if (findPackageDirectories(packageFqName).isNotEmpty()) return true
+        // File-type source roots are rare; iterating `fileRootIndex.keys` is cheap.
+        if (fileRootIndex.isNotEmpty()) {
+            val prefix = packageFqName.asString()
+            val prefixDot = "$prefix."
+            for (knownPkg in fileRootIndex.keys) {
+                val k = knownPkg.asString()
+                if (k == prefix || k.startsWith(prefixDot)) return true
+            }
+        }
+        return false
+    }
+
+    /**
      * Returns the direct sub-packages of [fqName] by listing subdirectories in the source roots.
      * Does NOT trigger per-package indexing — uses directory structure directly, which is simpler
      * and faster than iterating all index keys with string prefix matching.
