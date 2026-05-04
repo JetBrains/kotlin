@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
@@ -128,8 +128,8 @@ fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context>
         if (!state.isDumpNeeded()) return
         val element = findKotlinBackendIr(context, data)
         if (element == null) {
-            context.messageCollector.report(
-                CompilerMessageSeverity.WARNING,
+            context.diagnosticReporter.report(
+                CommonBackendErrors.IR_DUMP_WARNING,
                 "Cannot dump IR ${state.beforeOrAfter} ${state.phase}: IR not found."
             )
             return
