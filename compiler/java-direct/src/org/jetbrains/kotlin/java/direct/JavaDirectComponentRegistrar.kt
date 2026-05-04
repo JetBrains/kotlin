@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
-import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.name.FqName
 
 class JavaDirectPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
@@ -33,16 +34,25 @@ class JavaClassFinderOverAstFactory(private val configuration: CompilerConfigura
         localFs: VirtualFileSystem,
         defaultFinderProvider: (() -> JavaClassFinder)?,
     ): JavaClassFinder {
-        val roots: List<VirtualFile> = configuration.javaSourceRoots
-            .mapNotNull(localFs::findFileByPath)
+        val sourceRootEntries: List<JavaSourceRootEntry> =
+            configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS).asSequence()
+                .filterIsInstance<JavaSourceRoot>()
+                .mapNotNull { javaRoot ->
+                    val vFile = localFs.findFileByPath(javaRoot.file.path) ?: return@mapNotNull null
+                    val prefix =
+                        if (javaRoot.packagePrefix.isNullOrEmpty()) FqName.ROOT
+                        else FqName(javaRoot.packagePrefix!!)
+                    JavaSourceRootEntry(vFile, prefix)
+                }
+                .toList()
 
         // For library session (no Java sources), just use the default finder
-        if (roots.isEmpty()) {
+        if (sourceRootEntries.isEmpty()) {
             return defaultFinderProvider?.invoke()
                 ?: throw IllegalStateException("No Java source roots and no default finder provider")
         }
 
-        val sourceFinder = JavaClassFinderOverAstImpl(roots)
+        val sourceFinder = JavaClassFinderOverAstImpl(sourceRootEntries)
 
         val binaryFinder = defaultFinderProvider?.invoke() ?: return sourceFinder
 

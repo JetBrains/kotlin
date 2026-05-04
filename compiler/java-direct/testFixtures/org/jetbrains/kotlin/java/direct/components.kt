@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -16,3 +19,9 @@ internal class JavaDirectConfigurator(testServices: TestServices) : EnvironmentC
         configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, JavaDirectPluginRegistrar())
     }
 }
+
+internal fun JavaClassFinderOverAstImpl(
+    sourceRoots: List<VirtualFile>,
+    sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
+): JavaClassFinderOverAstImpl =
+    JavaClassFinderOverAstImpl(JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots), sourceFileReader)

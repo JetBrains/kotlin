@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.name.Name
  * [JavaSupertypeGraph] used for inherited-inner-class resolution. All the state that is specific
  * to a single concern lives on the corresponding collaborator.
  */
-class JavaClassFinderOverAstImpl(
-    sourceRoots: List<VirtualFile>,
+class JavaClassFinderOverAstImpl internal constructor(
+    sourceRootEntries: List<JavaSourceRootEntry>,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {
 
@@ -44,7 +44,7 @@ class JavaClassFinderOverAstImpl(
         resolutionContextFactory = { tree -> JavaResolutionContext.create(tree, classFinder = this) },
     )
 
-    private val packageIndexer = JavaPackageIndexer(sourceRoots, sourceFileReader, packageInfoIndexer)
+    private val packageIndexer = JavaPackageIndexer(sourceRootEntries, sourceFileReader, packageInfoIndexer)
 
     private val classCache = JavaClassCache(
         sourceFileReader = sourceFileReader,
