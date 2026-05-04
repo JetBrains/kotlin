@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.addChild
  * Move intrinsics marked with @ExcludedFromCodegen to special excluded files.
  * All references to these declarations must be lowered or treated in a special way in a codegen.
  *
- * Also excludes declarations marked with @WasmStackSwitchingOnly when stack switching coroutines are not enabled.
+ * Also excludes optional coroutines declarations.
  */
 class ExcludeDeclarationsFromCodegen(private val context: WasmBackendContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
