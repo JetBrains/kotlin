@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 
 /**
  * @param allowNonCachedDeclarations
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 @OptIn(MessageCollectorAccess::class) // required for IrPluginContext where it's deprecated and TODO(KT-85920)
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
-    val diagnosticReporter: BaseDiagnosticsCollector,
+    diagnosticReporter: BaseDiagnosticsCollector,
     @property:MessageCollectorAccess
     val messageCollector: MessageCollector,
     val inlineConstTracker: InlineConstTracker?,
@@ -42,6 +44,9 @@ class Fir2IrConfiguration private constructor(
     val irVerificationSettings: IrVerificationSettings,
     val carefulApproximationOfContravariantProjectionForSam: Boolean,
 ) {
+    val diagnosticReporter: IrDiagnosticReporter =
+        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
+
     class IrVerificationSettings(
         val mode: IrVerificationMode,
         val validateForKlibSerialization: Boolean,

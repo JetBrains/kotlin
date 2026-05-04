@@ -292,10 +292,7 @@ private class Fir2IrPipeline(
             referenceAllCommonDependencies(outputs)
 
             IrActualizer(
-                KtDiagnosticReporterWithImplicitIrBasedContext(
-                    fir2IrConfiguration.diagnosticReporter,
-                    fir2IrConfiguration.languageVersionSettings
-                ),
+                fir2IrConfiguration.diagnosticReporter,
                 irTypeSystemContext,
                 fir2IrConfiguration.languageVersionSettings,
                 fir2IrConfiguration.expectActualTracker,
