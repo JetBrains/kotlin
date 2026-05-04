@@ -11,9 +11,9 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 private const val NESTED_MAVEN_OPTS =
-    ""
+    "-Xms64m -Xmx1g -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -Djava.awt.headless=true"
 
-private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf("-B", "-ntp", "-nsu")
+private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf<String>()
 
 class MavenTestProject(
     val name: String,
