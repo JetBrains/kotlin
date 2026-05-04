@@ -66,7 +66,7 @@ class KonanIrLinker(
         diagnosticReporter = irDiagnosticReporter,
     )
 
-    private val globalDeclarationTable = KonanGlobalDeclarationTable(builtIns)
+    private val globalDeclarationTable = KonanGlobalDeclarationTable(null)
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
@@ -105,6 +105,7 @@ class KonanIrLinker(
             cInteropModuleDeserializerFactory.createIrModuleDeserializer(
                 moduleDescriptor,
                 klib,
+                this,
             )
         }
         else -> {
