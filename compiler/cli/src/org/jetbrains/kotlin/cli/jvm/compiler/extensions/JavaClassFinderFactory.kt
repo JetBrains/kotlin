@@ -28,14 +28,23 @@ interface JavaClassFinderFactory {
      * @param annotationProvider Provider for Java annotations
      * @param localFs The local [VirtualFileSystem] used by the project; implementations resolve
      *        paths via [VirtualFileSystem.findFileByPath] so reads benefit from the VFS caching layer.
-     * @param defaultFinderProvider Optional provider for the platform's default JavaClassFinder.
+     * @param defaultFinderProvider Optional provider for the platform's default (PSI-based) JavaClassFinder.
      *        Can be used to create a hybrid finder that combines custom source-based lookup
      *        with the platform's binary class lookup. Returns null if no default is available.
+     * @param binaryClassFinderInputsProvider Optional provider for the raw inputs needed by an
+     *        index-based, PSI-free binary [JavaClassFinder]. The provider is queried lazily, and
+     *        returns `null` when the runtime environment cannot supply the inputs (e.g. when a
+     *        non-CLI [org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory] is registered).
+     *        When non-null, implementations may prefer the index-based finder over
+     *        [defaultFinderProvider] for the binary half of a hybrid finder. Phase 1 stepping
+     *        stone for removing the IntelliJ-platform / PSI dependency from JVM-FIR resolution
+     *        — see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`.
      */
     fun createJavaClassFinder(
         scope: AbstractProjectFileSearchScope,
         annotationProvider: JavaAnnotationProvider?,
         localFs: VirtualFileSystem,
         defaultFinderProvider: (() -> JavaClassFinder)? = null,
+        binaryClassFinderInputsProvider: (() -> BinaryJavaClassFinderInputs?)? = null,
     ): JavaClassFinder
 }

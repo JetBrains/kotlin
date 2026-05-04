@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-04-30 (PSI-CLASS-FINDER design doc revised to a three-phase plan)
+**Last Updated**: 2026-04-30 (Phase 1 of PSI replacement implemented behind a default-OFF flag)
 
 ### Entry Template
 
@@ -30,6 +30,111 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Phase 1: `BinaryJavaClassFinder` landed behind default-OFF flag — 2026-04-30 (later still)
+
+### Overview
+
+Implemented Phase 1 of the PSI removal plan documented in
+`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`: an index-based, PSI-free
+`BinaryJavaClassFinder` (placed inside the `java-direct` module) backed by the same
+`JvmDependenciesIndex` / `KotlinClassFinder` snapshot the deserializer already uses, plus the
+existing ASM-based `BinaryJavaClass`. It replaces the legacy PSI binary half of
+`CombinedJavaClassFinder` when the `kotlin.javaDirect.useBinaryClassFinder` system property
+is `true`. Default is `false`, so existing production behaviour is unchanged.
+
+### Changes
+
+- Added `compiler/java-direct/src/.../BinaryJavaClassFinder.kt`. ~205 lines. Mirrors
+  `KotlinCliJavaFileManagerImpl.findClass` for binary classes (top-level virtual file lookup
+  via `JvmDependenciesIndex.findClassVirtualFiles`, ASM materialization via `BinaryJavaClass`,
+  inner classes via `BinaryJavaClass.findInnerClass`, per-call fresh
+  `ClassifierResolutionContext` for type-parameter / inner-class isolation, scope-free resolver
+  for cross-classpath references).
+- Added `compiler/cli/src/.../extensions/BinaryJavaClassFinderInputs.kt`: a small data carrier
+  (`JvmDependenciesIndex` + `GlobalSearchScope` + `enableSearchInCtSym`) plumbed through
+  `JavaClassFinderFactory`. The carrier exists to avoid a circular dependency: `compiler/cli`
+  cannot reference types from `compiler/java-direct`, so `cli` ships the *inputs* and the
+  factory in `java-direct` constructs the actual finder.
+- `JavaClassFinderFactory.createJavaClassFinder` now takes an optional
+  `binaryClassFinderInputsProvider: (() -> BinaryJavaClassFinderInputs?)?` parameter (default
+  `null`). Lazy provider returns `null` outside CLI environments (e.g. LL-FIR), in which case
+  the factory falls back to the legacy PSI default — preserves existing behaviour for non-CLI
+  callers.
+- `VfsBasedProjectEnvironment.getFirJavaFacade` plumbs the inputs lazily by downcasting
+  `VirtualFileFinderFactory.getInstance(project)` to `CliVirtualFileFinderFactory` and
+  reading its `index` / `enableSearchInCtSym`.
+- `CliVirtualFileFinderFactory.index` and `enableSearchInCtSym` are now `val` (publicly
+  readable) so the environment can hand them off to the factory.
+- `JavaDirectPluginRegistrar.JavaClassFinderOverAstFactory.createJavaClassFinder` now reads
+  the system property `kotlin.javaDirect.useBinaryClassFinder` (default `false`). When `true`
+  and inputs are available, the binary half of `CombinedJavaClassFinder` is the new
+  `BinaryJavaClassFinder`; otherwise the legacy PSI `defaultFinderProvider()` is used.
+- `compiler/java-direct/build.gradle.kts`: added a one-line `systemProperty` passthrough so
+  the flag flows from `-Pkotlin.javaDirect.useBinaryClassFinder=true` into the test JVM.
+
+### Test Results
+
+- **Default (flag OFF)**: `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated`
+  = **2692/2692 (100%)**. No regression vs. baseline.
+- **Flag ON** (`-Pkotlin.javaDirect.useBinaryClassFinder=true`): **2686/2692 (99.78%)**. Six
+  remaining test-data divergences (all `assertEqualsToFile` diffs in the diagnostic phase),
+  documented as Phase-1 follow-up work below.
+
+### Phase-1 follow-up work
+
+The six failures under flag ON are documented for a follow-up iteration; the flag stays
+default-OFF so production parity is preserved while these are triaged:
+
+1. `JavaUsingAstPhasedTestGenerated.Tests.Imports.testEnumEntryVsStaticAmbiguity4`
+2. `JavaUsingAstPhasedTestGenerated.ResolveWithStdlib.J_k.testAnnotationWithEnum`
+3. `JavaUsingAstPhasedTestGenerated.Tests.Properties.testProtectedGetterWithPublicSetter`
+4. `JavaUsingAstPhasedTestGenerated.Tests.testProtectedWithGenericsInDifferentPackage`
+5. `JavaUsingAstPhasedTestGenerated.Tests.Regressions.testKt57845`
+6. `JavaUsingAstPhasedTestGenerated.Tests.SmartCasts.Inference.testSyntheticPropertyOnUnstableSmartcast`
+
+All six are `Actual data differs from file content: *.kt` diagnostic-phase divergences (no
+crashes, no compile errors). They likely involve subtle differences between PSI's package
+enumeration and the index-based `knownClassNamesInPackage` (e.g. how multi-file packages with
+mixed Java/Kotlin sources are unioned across source ∪ binary halves), or how
+`BinaryJavaPackage` reports `mayHaveAnnotations` differently from `JavaPackageImpl`.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../BinaryJavaClassFinder.kt` | New: ~205 lines, the index-based finder (Phase 1 stepping stone). |
+| `compiler/cli/src/.../extensions/BinaryJavaClassFinderInputs.kt` | New: small data carrier for the cli→java-direct plumbing. |
+| `compiler/cli/src/.../extensions/JavaClassFinderFactory.kt` | Added `binaryClassFinderInputsProvider` parameter. |
+| `compiler/cli/src/.../VfsBasedProjectEnvironment.kt` | Plumbs inputs lazily via `CliVirtualFileFinderFactory` downcast. |
+| `compiler/cli/cli-base/src/.../CliVirtualFileFinderFactory.kt` | Made `index` / `enableSearchInCtSym` public. |
+| `compiler/java-direct/src/.../JavaDirectPluginRegistrar.kt` | Reads the system-property flag and selects which binary finder to inject. |
+| `compiler/java-direct/build.gradle.kts` | One-line `systemProperty` passthrough for the flag. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; updated `Last Updated` line. |
+
+### Key Learnings
+
+- **`ClassifierResolutionContext` is mutable** — it accumulates type parameters and
+  inner-class info across every `BinaryJavaClass` it materializes. Sharing one instance
+  across `findClass` calls leaks type parameters from one class into the resolution of an
+  unrelated one (symptom: "Unresolved type for E"). The fix is to construct a fresh context
+  per top-level `findClass` invocation, exactly as `KotlinCliJavaFileManagerImpl.findClass`
+  line 151 does.
+- **The internal resolver must use `allScope` (not the finder's `scope`)** for cross-class
+  references inside bytecode signatures — otherwise references to JDK classes from a
+  library-scoped finder fail silently. Mirrors the same `allScope` choice in the reference
+  implementation.
+- **Circular module-dependency avoidance** — `compiler/cli` cannot depend on
+  `compiler/java-direct`, so the cli-side environment ships *inputs* (an index handle, a
+  scope, a flag) rather than constructing the `JavaClassFinder` itself; the `java-direct`
+  factory builds the finder from those inputs.
+- **Default-OFF flag** is a real safety net — even with all the structural plumbing in
+  place, a single edit error (forgotten function-signature change, stale build) shows up as
+  "BUILD FAILED" but **the test results directory still has the *previous* run's XMLs**,
+  giving a misleadingly clean count. Always verify test results were freshly written
+  *after* the BUILD FAILED was resolved.
 
 ---
 

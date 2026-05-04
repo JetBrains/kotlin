@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.extensionsStorage
+import org.jetbrains.kotlin.cli.jvm.compiler.extensions.BinaryJavaClassFinderInputs
 import org.jetbrains.kotlin.cli.jvm.compiler.extensions.JavaClassFinderFactory
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -213,12 +214,25 @@ open class VfsBasedProjectEnvironment(
         val defaultFinderProvider: () -> JavaClassFinder = {
             project.createJavaClassFinder(psiSearchScope, javaAnnotationProvider)
         }
+        // Phase 1 stepping stone for replacing the PSI binary half of `CombinedJavaClassFinder`
+        // with an index-based finder. We hand the raw inputs (CLI virtual-file-finder factory
+        // and the PSI search scope) to the [JavaClassFinderFactory] extension; the actual
+        // index-based [JavaClassFinder] is constructed by the extension in the `java-direct`
+        // module to avoid a circular dependency back into `compiler/cli`. Returns `null` when
+        // a non-CLI factory is registered (e.g. in LL-FIR / IDE environments), so consumers
+        // must always be ready to fall back to [defaultFinderProvider].
+        // See `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`.
+        val binaryClassFinderInputsProvider: () -> BinaryJavaClassFinderInputs? = {
+            (VirtualFileFinderFactory.getInstance(project) as? CliVirtualFileFinderFactory)
+                ?.let { BinaryJavaClassFinderInputs(it.index, psiSearchScope, it.enableSearchInCtSym) }
+        }
         val javaClassFinder = extensionsStorage?.get(JavaClassFinderFactory)?.firstOrNull() // TODO: selector?
             ?.createJavaClassFinder(
                 fileSearchScope,
                 javaAnnotationProvider,
                 localFs,
-                defaultFinderProvider
+                defaultFinderProvider,
+                binaryClassFinderInputsProvider,
             ) ?: defaultFinderProvider()
         return FirJavaFacadeForSource(firSession, baseModuleData, javaClassFinder)
     }

@@ -65,6 +65,12 @@ projectTests {
     ) {
         useJUnitPlatform()
         workingDir = rootDir
+        // Phase 1 stepping stone for replacing the PSI binary half of `CombinedJavaClassFinder`
+        // with `BinaryJavaClassFinder` (see `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`).
+        // Allows running the full suite with the new path enabled via:
+        //   ./gradlew :kotlin-java-direct:test -Pkotlin.javaDirect.useBinaryClassFinder=true ...
+        val flag = "kotlin.javaDirect.useBinaryClassFinder"
+        systemProperty(flag, project.findProperty(flag)?.toString() ?: "false")
     }
     testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler:fir:analysis-tests").isolated, "testData")
