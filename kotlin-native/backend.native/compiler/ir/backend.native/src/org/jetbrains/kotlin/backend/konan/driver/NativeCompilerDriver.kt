@@ -125,7 +125,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val llvmContext = LLVMContextCreate()!!
         var llvmModule: CPointer<LLVMOpaqueModule>? = null
         try {
-            llvmModule = parseBitcodeFile(engine.context, engine.context.messageCollector, llvmContext, bitcodeFilePath)
+            llvmModule = parseBitcodeFile(engine.context, engine.context.diagnosticReporter, llvmContext, bitcodeFilePath)
             val context = BitcodePostProcessingContextImpl(config, llvmModule, llvmContext)
             val depsPath = config.readSerializedDependencies
             val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {

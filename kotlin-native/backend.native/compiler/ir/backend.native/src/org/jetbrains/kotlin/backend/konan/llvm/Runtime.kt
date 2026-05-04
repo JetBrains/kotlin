@@ -20,7 +20,7 @@ internal class Runtime(
         private val llvmContext: LLVMContextRef,
         bitcodeFile: String
 ) {
-    val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.messageCollector, llvmContext, bitcodeFile)
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 

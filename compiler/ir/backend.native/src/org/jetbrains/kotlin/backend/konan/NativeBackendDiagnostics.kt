@@ -14,6 +14,7 @@ object NativeBackendDiagnostics : KtDiagnosticsContainer() {
     val OBJC_EXPORT_WARNING by warningWithoutSource()
     val NATIVE_ESCAPE_ANALYSIS_WARNING by strongWarningWithoutSource()
     val NATIVE_TEST_PROCESSOR_WARNING by warning1<PsiElement, String>()
+    val LLVM_WARNING by warningWithoutSource()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = Messages
 
@@ -23,6 +24,7 @@ object NativeBackendDiagnostics : KtDiagnosticsContainer() {
             map.put(OBJC_EXPORT_WARNING, MESSAGE_PLACEHOLDER)
             map.put(NATIVE_ESCAPE_ANALYSIS_WARNING, MESSAGE_PLACEHOLDER)
             map.put(NATIVE_TEST_PROCESSOR_WARNING, MESSAGE_PLACEHOLDER, KtDiagnosticRenderers.TO_STRING)
+            map.put(LLVM_WARNING, MESSAGE_PLACEHOLDER)
         }
     }
 }

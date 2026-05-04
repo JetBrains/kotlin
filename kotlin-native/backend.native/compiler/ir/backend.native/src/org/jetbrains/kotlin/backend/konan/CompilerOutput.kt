@@ -186,7 +186,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     }
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
-        val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
+        val parsedModule = parseBitcodeFile(generationState, generationState.diagnosticReporter, generationState.llvmContext, bitcodeFile)
         if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
             LLVMStripModuleDebugInfo(parsedModule)
         }
@@ -253,7 +253,7 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
 }
 
 private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
-    val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, path)
+    val parsedModule = parseBitcodeFile(generationState, generationState.diagnosticReporter, generationState.llvmContext, path)
     if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)
     }
