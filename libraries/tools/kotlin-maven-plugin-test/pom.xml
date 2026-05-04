@@ -185,13 +185,15 @@
                 </executions>
                 <configuration>
                     <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
+                    <forkCount>4</forkCount>
+                    <reuseForks>true</reuseForks>
                     <systemPropertyVariables>
                         <!-- Properties required for integration tests run -->
                         <!-- Path to maven repo with kotlin artifacts (i.e. kotlin-maven-plugin)
                         Can be provisioned with ./gradlew install publish -->
                         <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
                         <kotlin.version>${project.version}</kotlin.version>
-                        <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
+                        <kotlin.it.localRepo>${project.basedir}/local-repo-${surefire.forkNumber}</kotlin.it.localRepo>
                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
 
                         <!-- JDK configuration must follow this rule jdk\d+Home -->
