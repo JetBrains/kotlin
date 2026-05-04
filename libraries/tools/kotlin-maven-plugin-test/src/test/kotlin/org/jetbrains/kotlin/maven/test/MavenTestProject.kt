@@ -11,7 +11,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 private const val NESTED_MAVEN_OPTS =
-    "-Xms64m -Xmx1g -XX:+UseParallelGC -XX:TieredStopAtLevel=1"
+    "-Xmx1g -XX:+AlwaysPreTouch -XX:+UseParallelGC -XX:TieredStopAtLevel=1"
 
 private val NESTED_MAVEN_CLI_ARGUMENTS = arrayOf<String>()
 
