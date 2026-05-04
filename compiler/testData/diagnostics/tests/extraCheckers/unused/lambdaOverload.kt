@@ -6,7 +6,7 @@
 fun test1(): Boolean {
     var loadData = false
     listOf("").invokeInline {
-        <!ASSIGNED_VALUE_IS_NEVER_READ!>loadData<!> = true
+        loadData = true
         emptyList<String>()
     }
     return loadData
