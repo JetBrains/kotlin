@@ -11,9 +11,9 @@ public class C {
     private static @org.jetbrains.annotations.NotNull field bar: java.lang.String
     static method <clinit>(): void
     public method <init>(): void
-    public static method foo(): void
-    public static @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
-    public static method setBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final static method foo(): void
+    public final static @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
+    public final static method setBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
 @kotlin.Metadata
