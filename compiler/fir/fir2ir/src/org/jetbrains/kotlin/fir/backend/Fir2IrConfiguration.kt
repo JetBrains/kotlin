@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
  *  Code generation in the IDE is trickier, though, as declarations from any module can be potentially referenced.
  *  For such a scenario, there is a flag that relaxes consistency checks.
  */
-@OptIn(MessageCollectorAccess::class) // required for IrPluginContext where it's deprecated and TODO(KT-85920)
+@OptIn(MessageCollectorAccess::class) // required for IrPluginContext where it's deprecated
 class Fir2IrConfiguration private constructor(
     val languageVersionSettings: LanguageVersionSettings,
     diagnosticReporter: BaseDiagnosticsCollector,

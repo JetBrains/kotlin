@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -39,19 +40,15 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.validation.IrValidationError
-import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
-import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
-import org.jetbrains.kotlin.ir.validation.validateIr
-import org.jetbrains.kotlin.ir.validation.withBasicFirstStageChecks
-import org.jetbrains.kotlin.ir.validation.withVarargChecks
+import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -362,8 +359,7 @@ private class Fir2IrPipeline(
             mainIrFragment,
             irBuiltIns,
             IrValidatorConfig(checkUnboundSymbols = true),
-            @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
-            fir2IrConfiguration.messageCollector,
+            fir2IrConfiguration.diagnosticReporter,
             IrVerificationMode.ERROR,
         )
     }
@@ -495,8 +491,8 @@ private class Fir2IrPipeline(
             // It would be too confusing to blame plugins, even if one really contributed to an invalid IR as well,
             // when it is primarily our fault.
             hasIrValidationErrorFromFrontend -> null
-            verificationMode == IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
-            verificationMode == IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+            verificationMode == IrVerificationMode.WARNING -> IrValidationSeverity.WARNING
+            verificationMode == IrVerificationMode.ERROR -> IrValidationSeverity.ERROR
             else -> null
         }
 
@@ -538,8 +534,7 @@ private class Fir2IrPipeline(
                     // Serializing IrExpressionBody in IrFunction.body is not supported
                     withCheckers(IrExpressionBodyInFunctionChecker)
                 },
-            @OptIn(MessageCollectorAccess::class) // TODO(KT-85920)
-            fir2IrConfiguration.messageCollector,
+            fir2IrConfiguration.diagnosticReporter,
             getSeverity = { error ->
                 if (validateForKlibSerialization) {
                     // In case we are going to serialize the IR into Klib, we report the most severe violations as errors, unconditionally.
@@ -547,13 +542,13 @@ private class Fir2IrPipeline(
                     // or even from reporting those errors itself, because at this point there is not much that the user could do to
                     // mitigate them.
                     when (error.cause) {
-                        is IrValidationError.Cause.UnboundSymbol -> CompilerMessageSeverity.ERROR
-                        is IrExpressionBodyInFunctionChecker -> CompilerMessageSeverity.ERROR
-                        is IrFieldVisibilityChecker -> CompilerMessageSeverity.ERROR
+                        is IrValidationError.Cause.UnboundSymbol -> IrValidationSeverity.ERROR
+                        is IrExpressionBodyInFunctionChecker -> IrValidationSeverity.ERROR
+                        is IrFieldVisibilityChecker -> IrValidationSeverity.ERROR
                         is IrCrossFileFieldUsageChecker ->
                             if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs))
-                                CompilerMessageSeverity.ERROR
-                            else CompilerMessageSeverity.WARNING
+                                IrValidationSeverity.ERROR
+                            else IrValidationSeverity.WARNING
                         else -> regularSeverity
                     }
                 } else regularSeverity

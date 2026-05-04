@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.ir.validation
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -149,18 +151,23 @@ fun validateIr(
     }
 }
 
+enum class IrValidationSeverity(val factory: KtSourcelessDiagnosticFactory) {
+    WARNING(IrValidationDiagnostics.IR_VALIDATION_WARNING),
+    ERROR(IrValidationDiagnostics.IR_VALIDATION_ERROR),
+}
+
 /**
- * Verifies IR invariants, logs validation errors into [messageCollector].
+ * Verifies IR invariants, logs validation errors into [diagnosticReporter].
  *
- * If any error with [CompilerMessageSeverity.ERROR] severity is found, throws [IrValidationException] at the end,
+ * If any error with [IrValidationSeverity.ERROR] severity is found, throws [IrValidationException] at the end,
  * thus allowing to collect as many errors as possible instead of aborting after the first one.
  */
 fun validateIr(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
     validatorConfig: IrValidatorConfig,
-    messageCollector: MessageCollector,
-    getSeverity: (IrValidationError) -> CompilerMessageSeverity?,
+    diagnosticReporter: IrDiagnosticReporter,
+    getSeverity: (IrValidationError) -> IrValidationSeverity?,
     phaseName: String? = null,
     customMessagePrefix: String? = null,
 ): Boolean {
@@ -169,11 +176,10 @@ fun validateIr(
     validateIr(element, irBuiltIns, validatorConfig) { error ->
         val severity = getSeverity(error)
         if (severity != null) {
-            val phaseMessage = if (!phaseName.isNullOrEmpty()) "$phaseName: " else ""
-            messageCollector.report(error, severity, phaseName, customMessagePrefix)
+            diagnosticReporter.report(error, severity, phaseName, customMessagePrefix)
             hasAnyViolations = true
         }
-        if (severity == CompilerMessageSeverity.ERROR) {
+        if (severity == IrValidationSeverity.ERROR) {
             hasAnyErrors = true
         }
     }
@@ -185,7 +191,7 @@ fun validateIr(
 }
 
 /**
- * Verifies IR invariants, logs validation errors into [messageCollector].
+ * Verifies IR invariants, logs validation errors into [diagnosticReporter].
  *
  * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationException] at the end,
  * thus allowing to collect as many errors as possible instead of aborting after the first one.
@@ -194,27 +200,27 @@ fun validateIr(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
     validatorConfig: IrValidatorConfig,
-    messageCollector: MessageCollector,
+    diagnosticReporter: IrDiagnosticReporter,
     mode: IrVerificationMode,
     phaseName: String? = null,
     customMessagePrefix: String? = null,
 ): Boolean {
     val severity = when (mode) {
         IrVerificationMode.NONE -> return false
-        IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
-        IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+        IrVerificationMode.WARNING -> IrValidationSeverity.WARNING
+        IrVerificationMode.ERROR -> IrValidationSeverity.ERROR
     }
-    return validateIr(element, irBuiltIns, validatorConfig, messageCollector, { severity }, phaseName, customMessagePrefix)
+    return validateIr(element, irBuiltIns, validatorConfig, diagnosticReporter, { severity }, phaseName, customMessagePrefix)
 }
 
-fun MessageCollector.report(
+fun IrDiagnosticReporter.report(
     error: IrValidationError,
-    severity: CompilerMessageSeverity,
+    severity: IrValidationSeverity,
     phaseName: String?,
     customMessagePrefix: String?,
 ) {
     report(
-        severity,
+        severity.factory,
         error.render(phaseName, customMessagePrefix),
         error.file?.let {
             val sourceRangeInfo = it.fileEntry.getSourceRangeInfo(error.element.startOffset, error.element.endOffset)
