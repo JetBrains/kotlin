@@ -90,7 +90,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinDataFrameGradlePluginClasspath, kotlinxCoroutinesCoreGradlePluginClasspath)
         workingDir = rootDir
         val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)

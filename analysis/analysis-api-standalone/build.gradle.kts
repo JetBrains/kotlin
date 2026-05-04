@@ -62,7 +62,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
         testInputsCheck {
             allowFlightRecorder = true
         }

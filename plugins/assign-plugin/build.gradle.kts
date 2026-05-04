@@ -49,5 +49,5 @@ projectTests {
     withMockJdkAnnotationsJar()
     withTestJar()
 
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }

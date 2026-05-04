@@ -31,7 +31,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+    testTask(parallel = true) {
         workingDir = projectDir
     }
 }

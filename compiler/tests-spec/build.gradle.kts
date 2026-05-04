@@ -59,7 +59,7 @@ projectTests {
     withMockJdkRuntime()
     withStdlibCommon()
 
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         filter {
             excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
         }

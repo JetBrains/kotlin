@@ -42,7 +42,6 @@ projectTests {
 
     testTask(
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
-        jUnitMode = JUnitMode.JUnit5
     ) {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }

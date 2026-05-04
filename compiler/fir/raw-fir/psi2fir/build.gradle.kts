@@ -39,7 +39,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask() {
         workingDir = rootDir
     }
 

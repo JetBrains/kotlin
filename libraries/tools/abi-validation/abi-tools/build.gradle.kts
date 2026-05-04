@@ -12,8 +12,7 @@ publish()
 standardPublicJars()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
-        useJUnit()
+    testTask() {
         jvmArgs("-ea")
     }
 }

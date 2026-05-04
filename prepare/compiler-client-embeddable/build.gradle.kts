@@ -37,7 +37,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask() {
         dependsOn(":kotlin-compiler:jar")
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
         val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }

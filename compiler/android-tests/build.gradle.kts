@@ -44,7 +44,7 @@ val acceptAndroidSdkLicenses = with(androidSdkProvisioner) {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4) {
+    testTask() {
         develocity {
             testRetry.maxRetries.set(0)
         }

@@ -56,7 +56,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
         dependsOn(":dist")
         workingDir = rootDir
         val testRuntimeProvider = project.provider { testJsr223Runtime.asPath }
@@ -64,7 +64,7 @@ projectTests {
         configureProperties(testRuntimeProvider, testCompilationClasspathProvider)
     }
 
-    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+    testTask("embeddableTest", skipInLocalBuild = false) {
         workingDir = rootDir
         classpath = embeddableTestRuntime
         val testRuntimeProvider = project.provider { embeddableTestRuntime.asPath }

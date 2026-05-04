@@ -52,7 +52,7 @@ testing {
             addSnapshotBuildToolsImpl()
             targets.all {
                 projectTests {
-                    testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                    testTask(taskName = testTask.name, skipInLocalBuild = false) {
                         systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         systemProperty(
                             "kotlin.daemon.custom.run.files.path.for.tests",

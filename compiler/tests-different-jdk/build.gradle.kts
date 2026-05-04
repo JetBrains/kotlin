@@ -55,7 +55,6 @@ projectTests {
     ) {
         testTask(
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
-            jUnitMode = JUnitMode.JUnit5,
             maxMetaspaceSizeMb = 1024,
             skipInLocalBuild = false,
             defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)

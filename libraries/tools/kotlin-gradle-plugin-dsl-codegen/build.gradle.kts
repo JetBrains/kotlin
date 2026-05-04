@@ -58,8 +58,7 @@ fun JavaForkOptions.setKGPSourceRootPaths() {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4, parallel = true) {
-        useJUnit() // use JUnit4 as the `:generators` tests use JUnit 4, and we reuse the logic.
+    testTask(parallel = true) {
         setKGPSourceRootPaths()
     }
 }

@@ -28,7 +28,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+    testTask(parallel = true) {
         dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
         workingDir = rootDir
         val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath

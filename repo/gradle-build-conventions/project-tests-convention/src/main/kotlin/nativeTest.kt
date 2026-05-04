@@ -344,7 +344,6 @@ fun ProjectTestsExtension.nativeTestTask(
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    jUnitMode = JUnitMode.JUnit5,
     maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSizeMb = maxMetaspaceSizeMb,
     defineJDKEnvVariables = defineJDKEnvVariables,

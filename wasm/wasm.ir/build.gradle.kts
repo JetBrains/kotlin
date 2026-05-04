@@ -84,7 +84,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+    testTask(parallel = true) {
         dependsOn(unzipWabt)
         dependsOn(unzipTestSuite)
         systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")

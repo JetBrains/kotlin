@@ -24,7 +24,7 @@ sourceSets {
 configureJvmToolchain(JdkMajorVersion.JDK_11_0)
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         // This is required by lincheck model checking to be able to use `jdk.internal.misc.Unsafe` and similar classes under the hood.
         jvmArgs(
             "--add-opens",

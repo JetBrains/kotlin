@@ -32,7 +32,7 @@ projectTests {
 
     withJvmStdlibAndReflect()
 
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt", generateTestsInBuildDirectory = true)
 }

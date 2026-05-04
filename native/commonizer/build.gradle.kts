@@ -65,7 +65,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
     testData(project.isolated, "testData")
     withMockJdkRuntime()
 }

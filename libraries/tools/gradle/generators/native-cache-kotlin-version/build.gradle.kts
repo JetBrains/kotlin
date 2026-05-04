@@ -17,7 +17,7 @@ application {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         useJUnitPlatform()
     }
 }

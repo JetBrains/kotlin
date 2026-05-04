@@ -69,7 +69,7 @@ projectTests {
     fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
         val service = extensions.getByType<JavaToolchainService>()
 
-        testTask(taskName = name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        testTask(taskName = name, skipInLocalBuild = false) {
             useJUnitPlatform {
                 excludeTags = setOf("IgnoreJDK11")
             }

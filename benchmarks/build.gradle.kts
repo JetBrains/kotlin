@@ -75,7 +75,6 @@ tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
 projectTests {
     testTask(
         parallel = false, // Disable parallelization to get more robust performance measurements
-        jUnitMode = JUnitMode.JUnit4
     ) {
         workingDir = rootDir
         useJUnitPlatform()

@@ -21,7 +21,7 @@ sourceSets {
 configureKotlinCompileTasksGradleCompatibility()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 publish()

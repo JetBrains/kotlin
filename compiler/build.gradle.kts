@@ -50,7 +50,6 @@ sourceSets {
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit4,
         parallel = true,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
@@ -64,7 +63,7 @@ projectTests {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 
-    testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
+    testTask("fastJarFSLongTests", skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
     }
 

@@ -36,7 +36,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
+    testTask(parallel = true, maxHeapSizeMb = 3072) {
         dependsOn(":dist")
     }
 

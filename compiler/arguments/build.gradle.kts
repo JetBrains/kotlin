@@ -50,7 +50,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }

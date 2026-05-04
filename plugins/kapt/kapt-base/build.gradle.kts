@@ -27,7 +27,7 @@ sourceSets {
 testsJar {}
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         workingDir = rootDir
     }
 

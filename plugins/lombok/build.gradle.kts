@@ -45,7 +45,6 @@ sourceSets {
 
 projectTests {
     testTask(
-        jUnitMode = JUnitMode.JUnit5,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)
     ) {
         val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()

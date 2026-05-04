@@ -53,5 +53,9 @@ tasks.withType<Test>().configureEach {
                            .orElse(kotlinBuildProperties.isTeamcityBuild.map { if (it) 3 else 0 }))
         failOnPassedAfterRetry.set(extension.allowFlaky.convention(true).map { !it })
     }
+    develocity.testDistribution {
+        enabled = true
+        maxLocalExecutors = 0
+    }
     ignoreFailures = false
 }

@@ -131,7 +131,7 @@ sourcesJar()
 javadocJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         dependsOn(":dist")
         dependsOn(runtimeJar)
         systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))

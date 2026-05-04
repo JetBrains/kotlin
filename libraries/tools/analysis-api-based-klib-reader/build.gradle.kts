@@ -21,7 +21,7 @@ kotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         workingDir = rootDir
 
         val testProjectKlib = configurations.create("testProjectKlib") {

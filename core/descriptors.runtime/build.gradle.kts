@@ -35,7 +35,7 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(jUnitMode = JUnitMode.JUnit4)
+    testTask()
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 

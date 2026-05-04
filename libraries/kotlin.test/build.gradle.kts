@@ -206,6 +206,10 @@ kotlin {
         val jvmJUnitTest by getting {
             dependsOn(commonTest)
             kotlin.srcDir("junit/src/test/kotlin")
+            dependencies {
+                runtimeOnly(libs.junit.vintage.engine)
+                runtimeOnly(libs.junit.platform.launcher)
+            }
         }
         val jvmJUnit5 by getting {
             dependsOn(annotationsCommonMain)
@@ -330,7 +334,7 @@ tasks {
                 }
                 testClassesDirs = testCompilation.output.classesDirs
                 when (framework) {
-                    JvmTestFramework.JUnit -> useJUnit()
+                    JvmTestFramework.JUnit -> useJUnitPlatform()
                     JvmTestFramework.JUnit5 -> useJUnitPlatform()
                     JvmTestFramework.TestNG -> useTestNG()
                 }

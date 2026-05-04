@@ -71,7 +71,6 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        jUnitMode = JUnitMode.JUnit4
     ) {
         dependsOn(":dist")
         dependsOn(":kotlin-stdlib:compileKotlinWasmJs")

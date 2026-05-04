@@ -62,7 +62,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         addClasspathProperty(junit5Classpath, "junit5.classpath")
         addClasspathProperty(powerAssertJvmRuntimeClasspath, "powerAssertRuntime.jvm.classpath")
         addClasspathProperty(powerAssertJsRuntimeClasspath, "powerAssertRuntime.js.classpath")

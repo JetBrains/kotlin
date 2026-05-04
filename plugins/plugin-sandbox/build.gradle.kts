@@ -68,7 +68,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         useJUnitPlatform {
             excludeTags("sandbox-native")

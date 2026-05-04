@@ -5,7 +5,7 @@ plugins {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 }
 
 dependencies {

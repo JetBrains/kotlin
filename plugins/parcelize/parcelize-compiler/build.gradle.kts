@@ -124,7 +124,7 @@ val prepareRobolectricDependencies by tasks.registering(Copy::class) {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
+    testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)) {
         inputs.files(prepareRobolectricDependencies.map { it.outputs })
             .withNormalizer(ClasspathNormalizer::class)
             .withPropertyName("prepareRobolectricDependenciesOutput")

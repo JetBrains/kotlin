@@ -47,7 +47,7 @@ javadocJar()
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask()
 
     testGenerator("org.jetbrains.kotlin.noarg.TestGeneratorKt", generateTestsInBuildDirectory = true)
 

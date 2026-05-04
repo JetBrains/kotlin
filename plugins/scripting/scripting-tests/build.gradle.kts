@@ -50,7 +50,7 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
         workingDir = rootDir
         val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath

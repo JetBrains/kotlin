@@ -62,7 +62,7 @@ open class TestArgumentProvider @Inject constructor(
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         // Copy-pasted from Indexer build.gradle.kts.
         dependsOn(nativeDependencies.llvmDependency)
         jvmArgumentProviders.add(objects.newInstance<TestArgumentProvider>().apply {

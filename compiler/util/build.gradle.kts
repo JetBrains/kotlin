@@ -41,5 +41,5 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4)
+    testTask()
 }

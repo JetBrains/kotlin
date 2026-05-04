@@ -81,13 +81,12 @@ tasks.check {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         systemProperty("kotlin.unsafe.mem.test.mode", "default")
     }
 
     testTask(
         taskName = "testJdk25",
-        jUnitMode = JUnitMode.JUnit5,
         skipInLocalBuild = false,
     ) {
         systemProperty("kotlin.unsafe.mem.test.mode", "jdk25")

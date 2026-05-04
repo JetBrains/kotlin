@@ -211,7 +211,7 @@ testing {
                 }
                 targets.all {
                     projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                        testTask(taskName = testTask.name, skipInLocalBuild = false) {
                             @OptIn(TemporaryTestFederationApi::class)
                             isSmokeTest = true
 
@@ -247,7 +247,7 @@ testing {
             targets.all {
                 if (businessLogicTestSuits.any { testTask.name.startsWith(it) }) {
                     projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                        testTask(taskName = testTask.name, skipInLocalBuild = false) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         }
                     }

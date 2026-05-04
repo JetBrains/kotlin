@@ -57,24 +57,22 @@ tasks.test {
 }
 
 projectTests {
-    testTask(taskName = "testOriginal", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
+    testTask(taskName = "testOriginal", skipInLocalBuild = false) {
         group = "verification"
         testClassesDirs = testOriginalSourceSet.output.classesDirs
         classpath = testOriginalSourceSet.runtimeClasspath
 
-        useJUnit()
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
 
         dependsOn(compilingSourceSet.output)
     }
 
-    testTask(taskName = "testEmbeddable", skipInLocalBuild = false, jUnitMode = JUnitMode.JUnit4) {
+    testTask(taskName = "testEmbeddable", skipInLocalBuild = false) {
         group = "verification"
         testClassesDirs = testEmbeddableSourceSet.output.classesDirs
         classpath = testEmbeddableSourceSet.runtimeClasspath
 
-        useJUnit()
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", compilingSourceSet.output.classesDirs.asPath)
 

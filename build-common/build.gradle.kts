@@ -55,6 +55,6 @@ sourceSets {
 testsJarToBeUsedAlongWithFixtures()
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
-    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false)
+    testTask(parallel = true)
+    testTask("testJUnit5", skipInLocalBuild = false)
 }

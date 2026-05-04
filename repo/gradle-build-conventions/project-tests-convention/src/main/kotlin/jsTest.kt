@@ -23,7 +23,6 @@ fun ProjectTestsExtension.jsTestTask(
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> = testTask(
     taskName = taskName,
-    jUnitMode = JUnitMode.JUnit5,
     skipInLocalBuild = skipInLocalBuild,
 ) {
     testInputsCheck {

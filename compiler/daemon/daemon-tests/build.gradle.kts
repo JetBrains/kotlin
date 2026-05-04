@@ -25,7 +25,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask() {
         val testClassesDirs = testSourceSet.output.classesDirs
         doFirst {
             systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))

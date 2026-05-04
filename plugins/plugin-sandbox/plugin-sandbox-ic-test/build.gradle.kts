@@ -37,7 +37,7 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
+    testTask(maxHeapSizeMb = 3072) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
         with(wasmNodeJsKotlinBuild) {
             setupNodeJs(nodejsVersion)

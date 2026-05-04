@@ -27,11 +27,6 @@ import java.nio.file.Files
 import javax.inject.Inject
 
 
-// Mixing JUnit4 and Junit5 in one module proved to be problematic, consider using separate modules instead
-enum class JUnitMode {
-    JUnit4, JUnit5
-}
-
 private abstract class MuteWithDatabaseArgumentProvider @Inject constructor(objects: ObjectFactory) : CommandLineArgumentProvider {
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
@@ -81,14 +76,9 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     )
 }
 
-/**
- * @param parallel is redundant if @param jUnit5Enabled is true, because
- *   JUnit5 supports parallel test execution by itself, without gradle help
- */
 internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     parallel: Boolean = false,
-    jUnitMode: JUnitMode,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     maxMetaspaceSizeMb: Int = 512,
@@ -96,14 +86,9 @@ internal fun Project.createGeneralTestTask(
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
-    if (jUnitMode == JUnitMode.JUnit5) {
-        project.dependencies {
-            "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
-        }
-    } else {
-        project.dependencies {
-            "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit4"))
-        }
+    project.dependencies {
+        "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit4"))
+        "testRuntimeOnly"(project(":compiler:tests-mutes:mutes-junit5"))
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
@@ -121,18 +106,14 @@ internal fun Project.createGeneralTestTask(
             .withPathSensitivity(PathSensitivity.RELATIVE).withPathSensitivity(PathSensitivity.RELATIVE)
 
         muteWithDatabase()
-        if (jUnitMode == JUnitMode.JUnit4) {
-            jvmArgumentProviders.add {
-                listOf(
-                    "-javaagent:${classpath.find { it.name.contains("junit-foundation") }?.absolutePath ?:
-                    error("junit-foundation not found in ${classpath.joinToString("\n")}")}"
-                )
-            }
+        jvmArgumentProviders.add {
+            listOf(
+                "-javaagent:${classpath.find { it.name.contains("junit-foundation") }?.absolutePath ?:
+                error("junit-foundation not found in ${classpath.joinToString("\n")}")}"
+            )
         }
 
         doFirst {
-            if (jUnitMode == JUnitMode.JUnit5) return@doFirst
-
             val commandLineIncludePatterns = commandLineIncludePatterns.toMutableSet()
             val patterns = filter.includePatterns + commandLineIncludePatterns
             if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
@@ -216,10 +197,8 @@ internal fun Project.createGeneralTestTask(
         val junit5ParallelTestWorkers =
             project.kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: Runtime.getRuntime().availableProcessors()
 
-        val memoryPerTestProcessMb = if (jUnitMode == JUnitMode.JUnit5)
+        val memoryPerTestProcessMb =
             totalMaxMemoryForTestsMb.coerceIn(defaultMaxMemoryPerTestWorkerMb, defaultMaxMemoryPerTestWorkerMb * junit5ParallelTestWorkers)
-        else
-            defaultMaxMemoryPerTestWorkerMb
 
         maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m"
 
@@ -262,7 +241,7 @@ internal fun Project.createGeneralTestTask(
             }
         }
 
-        if (parallel && jUnitMode != JUnitMode.JUnit5) {
+        if (parallel) {
             val forks = (totalMaxMemoryForTestsMb / memoryPerTestProcessMb).coerceAtMost(16)
             maxParallelForks =
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").orNull?.toInt()
