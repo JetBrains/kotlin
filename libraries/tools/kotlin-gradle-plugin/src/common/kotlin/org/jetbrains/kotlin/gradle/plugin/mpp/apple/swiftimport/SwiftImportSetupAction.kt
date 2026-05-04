@@ -279,31 +279,35 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         project.afterEvaluate {
-            val aggregationService = SwiftPMLockTaskAggregationBuildService.registerIfAbsent(project)
-            val normalizedDumpKey = swiftPMImportExtension.normalizedDumpTaskFingerprint(
-                xcodebuildPlatform = targetPlatform,
-                xcodebuildSdk = targetSdk,
-                architectures = setOf(target.konanTarget.appleArchitecture),
-                additionalXcodeArgs = emptyList(),
-            )
+            val xcodeDumpBuildService = SwiftPMXcodeDumpBuildService.registerIfAbsent(project)
 
-            val claimedDumpTask = locateOrRegisterSharedDumpXcodebuildArgs(
-                aggregationService = aggregationService,
-                normalizedDumpKey = normalizedDumpKey,
+            val candidateTaskName = lowerCamelCaseName(
+                DumpXcodeBuildArgs.TASK_NAME,
+                targetSdk,
+            )
+            val claimedDumpTask = registerDumpXcodebuildArgsTask(
+                xcodeDumpBuildService = xcodeDumpBuildService,
+                taskName = candidateTaskName,
+                outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)),
                 computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
                 fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
                 syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
                 hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
+                swiftPMImportExtension = swiftPMImportExtension,
+                transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
                 targetSdk = targetSdk,
                 targetPlatform = targetPlatform,
                 architecture = target.konanTarget.appleArchitecture,
                 isMacOSHost = isMacOSHost,
             )
+
             defFilesAndLdDumpGenerationTask.configure { task ->
                 task.dumpedXcodeBuildArgsDir.set(
-                    project.layout.dir(project.provider { File(claimedDumpTask.dumpedArgsDir) })
+                    claimedDumpTask.map {
+                        it.dumpedXcodeBuildArgsDir.get()
+                    }
                 )
-                task.dependsOn(claimedDumpTask.taskPath)
+                task.dependsOn(claimedDumpTask)
             }
         }
 
@@ -503,7 +507,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
 private fun Project.locateOrRegisterUmbrellaFetchTask(
     identifier: String,
     aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
-    checkOutDir : Provider<Directory>,
+    checkOutDir: Provider<Directory>,
     actualGeneratedClaimer: String?,
     isMacOSHost: Boolean,
 ): String? {
@@ -748,12 +752,15 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
 }
 
 private fun Project.registerDumpXcodebuildArgsTask(
+    xcodeDumpBuildService: Provider<SwiftPMXcodeDumpBuildService>,
     taskName: String,
     outputDir: Provider<Directory>,
     computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
     fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
     syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
     hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
+    swiftPMImportExtension: SwiftPMImportExtension,
+    transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
     targetSdk: String,
     targetPlatform: String,
     architecture: org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture,
@@ -762,6 +769,7 @@ private fun Project.registerDumpXcodebuildArgsTask(
     return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
         taskName
     ) { dumpTask ->
+        dumpTask.usesService(xcodeDumpBuildService)
         dumpTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
         dumpTask.dependsOn(fetchSyntheticImportProjectPackages)
         dumpTask.dependsOn(computeLocalPackageDependencyInputFiles)
@@ -769,6 +777,13 @@ private fun Project.registerDumpXcodebuildArgsTask(
             fetchSyntheticImportProjectPackages.map { it.inputManifests },
             fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
         )
+        dumpTask.packageResolvedFile.set(
+            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile.get() }
+        )
+        dumpTask.coordinationService.set(xcodeDumpBuildService)
+        dumpTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
+        dumpTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
+        dumpTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
         dumpTask.xcodebuildPlatform.set(targetPlatform)
         dumpTask.xcodebuildSdk.set(targetSdk)
         dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
@@ -779,48 +794,15 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         dumpTask.dumpedXcodeBuildArgsDir.set(outputDir)
-    }
-}
-
-private fun Project.locateOrRegisterSharedDumpXcodebuildArgs(
-    aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
-    normalizedDumpKey: String,
-    computeLocalPackageDependencyInputFiles: TaskProvider<ComputeLocalPackageDependencyInputFiles>,
-    fetchSyntheticImportProjectPackages: TaskProvider<FetchSyntheticImportProjectPackages>,
-    syntheticImportProjectGenerationTaskForCinteropsAndLdDump: TaskProvider<GenerateSyntheticLinkageImportProject>,
-    hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
-    targetSdk: String,
-    targetPlatform: String,
-    architecture: org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture,
-    isMacOSHost: Boolean,
-): ClaimedDumpTask {
-    val candidateTaskName = lowerCamelCaseName(
-        DumpXcodeBuildArgs.TASK_NAME,
-        targetSdk,
-    )
-    val projectCandidateTaskName = "${project.path}:$candidateTaskName"
-    val candidateOutputDir = layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)).get().asFile.path
-    // The fingerprint only decides ownership; task names stay target-scoped so matching consumers can reuse the owner task directly.
-    val isClaimed = aggregationService.get().claimDumpTask(normalizedDumpKey, projectCandidateTaskName, candidateOutputDir)
-    val claimedTask = aggregationService.get().getClaimedDumpTask(normalizedDumpKey)
-
-    if (isClaimed) {
-        registerDumpXcodebuildArgsTask(
-            taskName = candidateTaskName,
-            outputDir = project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk)),
-            computeLocalPackageDependencyInputFiles = computeLocalPackageDependencyInputFiles,
-            fetchSyntheticImportProjectPackages = fetchSyntheticImportProjectPackages,
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
-            hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies,
-            targetSdk = targetSdk,
-            targetPlatform = targetPlatform,
-            architecture = architecture,
-            isMacOSHost = isMacOSHost,
+        dumpTask.sharedDumpIntermediatesDir.set(
+            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.sharedDumpRelativeDir(targetSdk))
+        )
+        dumpTask.syntheticImportDd.set(
+            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.sharedDdRelativeDir(targetSdk))
         )
     }
-
-    return claimedTask ?: error("Claimed dump task is missing")
 }
+
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
 internal fun searchForGradlew(path: File?): File? {
@@ -912,7 +894,7 @@ private fun Project.providerIdentifierRoot(identifier: String): Provider<Directo
 private fun Project.provideIdentifierPackageRoot(identifier: String): Provider<Directory> =
     providerIdentifierRoot(identifier).map { it.dir("swiftImport") }
 
-private fun Project.provideIdentifierCheckoutDir(identifier: String) : Provider<Directory> {
+private fun Project.provideIdentifierCheckoutDir(identifier: String): Provider<Directory> {
     return providerIdentifierRoot(identifier).map { it.dir("swiftPMCheckout") }
 }
 

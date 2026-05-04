@@ -37,6 +37,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotSame
 import kotlin.test.assertTrue
 
@@ -824,6 +825,226 @@ class SwiftPMImportUnitTests {
 
         assertTrue(umbrellaFuzzFetchTask.gitIgnoreCheckoutDir.get(), "Fuzz fetch task should enable gitIgnoreCheckoutDir")
         assertTrue(umbrellaBuzzFetchTask.gitIgnoreCheckoutDir.get(), "Buzz fetch task should enable gitIgnoreCheckoutDir")
+    }
+
+    @Test
+    fun `transitive swiftpm deps from project dependencies are wired as dump task inputs`() {
+        val rootProject = buildProject { configureRepositoriesForTests() }
+
+        val mapsProject = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("kmp-maps")
+            },
+            preApplyCode = {
+                val localPackageDir = project.projectDir.resolve("mapsPackage")
+                localPackageDir.mkdirs()
+                localPackageDir.resolve("Package.swift").writeText(
+                    """
+                    // swift-tools-version: 5.9
+                    import PackageDescription
+                    let package = Package(name: "MapsPackage")
+                    """.trimIndent()
+                )
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("mapsPackage"),
+                    products = listOf("MapsPackage"),
+                    packageName = "MapsPackage",
+                )
+            }
+        )
+
+        val consumer = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("consumer")
+            },
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.getByName("iosSimulatorArm64Main").dependencies {
+                    implementation(project(":kmp-maps"))
+                }
+            }
+        )
+
+        mapsProject.evaluate()
+        consumer.evaluate()
+
+        val consumerDumpTask = consumer.tasks.findByName(
+            lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "iphonesimulator")
+        )
+
+        assertNotNull(consumerDumpTask)
+        assertIs<DumpXcodeBuildArgs>(consumerDumpTask)
+        assertTrue(
+            consumerDumpTask.directSwiftPMDependencies.get().isEmpty(),
+            "Consumer dump task should not invent direct SwiftPM dependencies"
+        )
+        assertTrue(
+            consumerDumpTask.taskDependencies.getDependencies(consumerDumpTask)
+                .any { it.path == ":kmp-maps:serializeSwiftPMDependenciesMetadata" },
+            "Consumer dump task should depend on transitive SwiftPM metadata coming from the kmp-maps project"
+        )
+    }
+
+    @Test
+    fun `project dependency consumers keep local convert wiring and shared dump roots`() {
+        val rootProject = buildProject { configureRepositoriesForTests() }
+
+        val mapsProject = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("kmp-maps")
+            },
+            preApplyCode = {
+                val localPackageDir = project.projectDir.resolve("mapsPackage")
+                localPackageDir.mkdirs()
+                localPackageDir.resolve("Package.swift").writeText(
+                    """
+                    // swift-tools-version: 5.9
+                    import PackageDescription
+                    let package = Package(name: "MapsPackage")
+                    """.trimIndent()
+                )
+            },
+            swiftPMDependencies = { layout ->
+                localSwiftPackage(
+                    directory = layout.projectDirectory.dir("mapsPackage"),
+                    products = listOf("MapsPackage"),
+                    packageName = "MapsPackage",
+                )
+            }
+        )
+
+        val leftProject = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("left")
+            },
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.getByName("iosSimulatorArm64Main").dependencies {
+                    implementation(project(":kmp-maps"))
+                }
+            }
+        )
+
+        val rightProject = swiftPMImportProject(
+            projectBuilder = {
+                withParent(rootProject)
+                withName("right")
+            },
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.getByName("iosSimulatorArm64Main").dependencies {
+                    implementation(project(":kmp-maps"))
+                }
+            }
+        )
+
+        mapsProject.evaluate()
+        leftProject.evaluate()
+        rightProject.evaluate()
+
+        val mapsDumpTask = mapsProject.tasks.findByName(
+            lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "iphonesimulator")
+        )
+        val leftDumpTask = leftProject.tasks.findByName(
+            lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "iphonesimulator")
+        )
+        val rightDumpTask = rightProject.tasks.findByName(
+            lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "iphonesimulator")
+        )
+        val leftConvertTask = leftProject.tasks.findByName(
+            lowerCamelCaseName(ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME, "iphonesimulator")
+        )
+        val rightConvertTask = rightProject.tasks.findByName(
+            lowerCamelCaseName(ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME, "iphonesimulator")
+        )
+
+        assertNotNull(mapsDumpTask)
+        assertNotNull(leftDumpTask)
+        assertNotNull(rightDumpTask)
+        assertIs<DumpXcodeBuildArgs>(mapsDumpTask)
+        assertIs<DumpXcodeBuildArgs>(leftDumpTask)
+        assertIs<DumpXcodeBuildArgs>(rightDumpTask)
+
+        assertNotNull(leftConvertTask)
+        assertNotNull(rightConvertTask)
+        assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(leftConvertTask)
+        assertIs<ConvertSyntheticSwiftPMImportProjectIntoDefFile>(rightConvertTask)
+
+        assertNotEquals(
+            leftDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Each consumer should keep its own local dump output directory"
+        )
+        assertEquals(
+            leftProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDump/iphonesimulator").get().asFile,
+            leftDumpTask.sharedDumpIntermediatesDir.get().asFile,
+            "Left dump task should use its own build directory as the candidate shared dump root"
+        )
+        assertEquals(
+            rightProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDump/iphonesimulator").get().asFile,
+            rightDumpTask.sharedDumpIntermediatesDir.get().asFile,
+            "Right dump task should use its own build directory as the candidate shared dump root"
+        )
+        assertEquals(
+            leftProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDd/iphonesimulator").get().asFile,
+            leftDumpTask.syntheticImportDd.get().asFile,
+            "Left dump task should use its own SDK-scoped build directory as the candidate shared derived data root"
+        )
+        assertEquals(
+            rightProject.layout.buildDirectory.dir("kotlin/swiftImportSharedDd/iphonesimulator").get().asFile,
+            rightDumpTask.syntheticImportDd.get().asFile,
+            "Right dump task should use its own SDK-scoped build directory as the candidate shared derived data root"
+        )
+        assertNotEquals(
+            leftDumpTask.sharedDumpIntermediatesDir.get().asFile,
+            rightDumpTask.sharedDumpIntermediatesDir.get().asFile,
+            "Shared dump roots are task-local candidates; execution-time claiming decides which bucket is reused"
+        )
+        assertNotEquals(
+            leftDumpTask.syntheticImportDd.get().asFile,
+            rightDumpTask.syntheticImportDd.get().asFile,
+            "Shared derived data roots are task-local candidates; execution-time claiming decides which one is used"
+        )
+        assertEquals(
+            leftDumpTask.packageResolvedSynchronization.get(),
+            rightDumpTask.packageResolvedSynchronization.get(),
+            "Matching consumers should use the same Package.resolved synchronization fingerprint input"
+        )
+
+        assertEquals(
+            leftDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            leftConvertTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Left consumer convert task should consume its dump task's local dump directory"
+        )
+        assertEquals(
+            rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
+            rightConvertTask.dumpedXcodeBuildArgsDir.get().asFile,
+            "Right consumer convert task should consume its dump task's local dump directory"
+        )
+        assertTrue(
+            leftConvertTask.taskDependencies.getDependencies(leftConvertTask).contains(leftDumpTask),
+            "Left consumer convert task should depend on its local dump task"
+        )
+        assertTrue(
+            rightConvertTask.taskDependencies.getDependencies(rightConvertTask).contains(rightDumpTask),
+            "Right consumer convert task should depend on its local dump task"
+        )
+        assertEquals(
+            setOf(leftDumpTask),
+            leftConvertTask.taskDependencies.getDependencies(leftConvertTask).filterIsInstance<DumpXcodeBuildArgs>().toSet(),
+            "Left consumer convert task should only see its own dump task in its task dependency graph"
+        )
+        assertEquals(
+            setOf(rightDumpTask),
+            rightConvertTask.taskDependencies.getDependencies(rightConvertTask).filterIsInstance<DumpXcodeBuildArgs>().toSet(),
+            "Right consumer convert task should only see its own dump task in its task dependency graph"
+        )
     }
 }
 
