@@ -23,25 +23,21 @@ public final class CodeFragment {
    L0
     LINENUMBER 27 L0
     LDC Ljava/util/Map;.class
-    GETSTATIC kotlin/reflect/KTypeProjection.Companion : Lkotlin/reflect/KTypeProjection$Companion;
     LDC Ljava/util/Set;.class
-    GETSTATIC kotlin/reflect/KTypeProjection.Companion : Lkotlin/reflect/KTypeProjection$Companion;
     LDC Ljava/lang/String;.class
     INVOKESTATIC kotlin/jvm/internal/Reflection.typeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
-    INVOKEVIRTUAL kotlin/reflect/KTypeProjection$Companion.covariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+    INVOKESTATIC kotlin/reflect/KTypeProjection.covariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
     INVOKESTATIC kotlin/jvm/internal/Reflection.typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
-    INVOKEVIRTUAL kotlin/reflect/KTypeProjection$Companion.contravariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
-    GETSTATIC kotlin/reflect/KTypeProjection.Companion : Lkotlin/reflect/KTypeProjection$Companion;
+    INVOKESTATIC kotlin/reflect/KTypeProjection.contravariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
     LDC LA;.class
-    GETSTATIC kotlin/reflect/KTypeProjection.Companion : Lkotlin/reflect/KTypeProjection$Companion;
     GETSTATIC java/lang/Integer.TYPE : Ljava/lang/Class;
     INVOKESTATIC kotlin/jvm/internal/Reflection.typeOf (Ljava/lang/Class;)Lkotlin/reflect/KType;
-    INVOKEVIRTUAL kotlin/reflect/KTypeProjection$Companion.contravariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+    INVOKESTATIC kotlin/reflect/KTypeProjection.contravariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
     INVOKESTATIC kotlin/jvm/internal/Reflection.typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
-    INVOKEVIRTUAL kotlin/reflect/KTypeProjection$Companion.invariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
+    INVOKESTATIC kotlin/reflect/KTypeProjection.invariant (Lkotlin/reflect/KType;)Lkotlin/reflect/KTypeProjection;
     INVOKESTATIC kotlin/jvm/internal/Reflection.typeOf (Ljava/lang/Class;Lkotlin/reflect/KTypeProjection;Lkotlin/reflect/KTypeProjection;)Lkotlin/reflect/KType;
     INVOKEVIRTUAL java/lang/Object.toString ()Ljava/lang/String;
     ARETURN
-    MAXSTACK = 6
+    MAXSTACK = 4
     MAXLOCALS = 0
 }
