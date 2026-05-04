@@ -14,9 +14,9 @@ typealias GTA<T> = G<T>
 typealias NGTA = G<String>
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>::B
+    G::B
     G<String>::<!UNRESOLVED_REFERENCE!>B<!>
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GTA<!>::B
+    GTA::B
     GTA<String>::<!UNRESOLVED_REFERENCE!>B<!>
     NGTA::B
 }

@@ -22,13 +22,16 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.classTypeParameterSymbols
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInvalidStaticReceiverInCallableReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOuterClassArgumentsRequired
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePlaceholderProjectionInQualifierResolution
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -42,6 +45,16 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
     context(context: CheckerContext)
     private val innerClassesProperlySupported: Boolean
         get() = LanguageFeature.ProperSupportOfInnerClassesInCallableReferenceLHS.isEnabled()
+
+    context(context: CheckerContext)
+    private fun shouldErrorBeReportedOnInvalidReceiverForStatic(
+        callableReference: FirCallableReferenceAccess,
+        diagnostic: ConeInvalidStaticReceiverInCallableReference,
+    ): Boolean {
+        if (LanguageFeature.ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs.isEnabled()) return true
+        if (diagnostic.forObject && !diagnostic.dueToNullableMark) return true
+        return callableReference.toResolvedCallableSymbol()?.requiresCompanionBlockOrExtensionLf() == true
+    }
 
     /**
      * @return max. severity among reported diagnostics
@@ -105,6 +118,22 @@ object FirTypeArgumentsOfQualifierOfCallableReferenceChecker : FirCallableRefere
                         diagnostic.symbol,
                     )
                     severity = Severity.ERROR
+                }
+                is ConeInvalidStaticReceiverInCallableReference -> {
+                    val isError = shouldErrorBeReportedOnInvalidReceiverForStatic(expression, diagnostic)
+
+                    val factory = FirErrors.INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC.run {
+                        if (isError) errorFactory else warningFactory
+                    }
+
+                    val description = if (diagnostic.forObject) {
+                        "bound callable reference"
+                    } else {
+                        "callable reference to static"
+                    }
+
+                    reporter.reportOn(lhs.source, factory, description)
+                    // no need in updating severity
                 }
                 else -> {
                 }

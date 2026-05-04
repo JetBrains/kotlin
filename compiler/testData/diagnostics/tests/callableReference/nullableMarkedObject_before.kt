@@ -22,16 +22,16 @@ typealias GTNObj<K> = Obj?
 val `=====` = Unit
 
 fun test() {
-    val p1 = Obj?::f1
-    val p2 = Obj?::f2
+    val p1 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>Obj<!>?::f1
+    val p2 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>Obj<!>?::f2
     val p3 = Obj?::f3
     `=====`
-    val p4 = TObj?::f1
-    val p5 = TObj?::f2
+    val p4 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TObj<!>?::f1
+    val p5 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TObj<!>?::f2
     val p6 = TObj?::f3
     `=====`
-    val p7 = TNObj?::f1
-    val p8 = TNObj?::f2
+    val p7 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TNObj<!>?::f1
+    val p8 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TNObj<!>?::f2
     val p9 = TNObj?::f3
     `=====`
     val p10 = TNObj::f1

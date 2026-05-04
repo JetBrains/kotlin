@@ -14,15 +14,15 @@ companion fun NG.foo() { }
 companion val GtoNG.bar: Unit get() { }
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoG<!>::bar
+    G::foo
+    GtoG::bar
     NG::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoNG<!>::bar
+    GtoNG::bar
     NGtoG::foo
 
-    G<*>::bar
-    GtoG<Any>::foo
-    GtoNG<Nothing>::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>G<*><!>::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoG<Any><!>::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoNG<Nothing><!>::foo
 
     // wrong number
     NG<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>::foo

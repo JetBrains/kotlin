@@ -9,10 +9,10 @@ enum class NG { X }
 typealias GtoNG<A> = NG
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoNG<!>::values
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoNG<!>::entries
-    GtoNG<*>::values
-    GtoNG<Any>::values
+    GtoNG::values
+    GtoNG::entries
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoNG<*><!>::values
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoNG<Any><!>::values
 
     // wrong number
     GtoNG<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*, *><!>::values

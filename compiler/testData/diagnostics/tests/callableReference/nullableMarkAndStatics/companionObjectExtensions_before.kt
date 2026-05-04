@@ -9,15 +9,15 @@ fun C.Companion.foo() { }
 fun C.Companion?.bar() { }
 
 fun test() {
-    C?::foo
-    TAtoC?::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>C<!>?::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoC<!>?::foo
     TAtoNC::foo
-    TAtoNC?::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNC<!>?::foo
 
-    C?::bar
-    TAtoC?::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>C<!>?::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoC<!>?::bar
     TAtoNC::bar
-    TAtoNC?::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNC<!>?::bar
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,

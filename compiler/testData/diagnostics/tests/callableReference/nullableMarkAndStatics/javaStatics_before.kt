@@ -18,10 +18,10 @@ typealias TAtoC = C
 typealias TAtoNC = C?
 
 fun test() {
-    C?::foo
-    TAtoC?::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>C<!>?::foo
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoC<!>?::bar
     TAtoNC::foo
-    TAtoNC?::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNC<!>?::bar
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaType, nullableType, typeAliasDeclaration */

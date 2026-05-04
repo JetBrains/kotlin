@@ -22,10 +22,10 @@ typealias GtoNG<C> = NG
 typealias NGtoG = G<String>
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoG<!>::foo
+    G::foo
+    GtoG::foo
     NG::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoNG<!>::foo
+    GtoNG::foo
     NGtoG::foo
 
     G<*>::<!UNRESOLVED_REFERENCE!>foo<!>

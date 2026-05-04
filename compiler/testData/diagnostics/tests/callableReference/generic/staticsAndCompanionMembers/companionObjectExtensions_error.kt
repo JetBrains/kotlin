@@ -14,10 +14,10 @@ typealias GtoNG<C> = NG
 fun NG.Companion.foo() { }
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoG<!>::foo
+    G::foo
+    GtoG::foo
     NG::foo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoNG<!>::foo
+    GtoNG::foo
     NGtoG::foo
 
     G<*>::<!NONE_APPLICABLE!>foo<!>

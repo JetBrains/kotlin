@@ -18,7 +18,23 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 /**
  * [type] is always non-error type, errors/deprecation errors are stored in [diagnostic].
  */
-class CallableReferenceLhsAsType(val type: ConeKotlinType, val diagnostic: ConeDiagnostic?)
+class CallableReferenceLhsAsType(
+    val type: ConeKotlinType,
+    val diagnostic: ConeDiagnostic?,
+    val hasNullableMark: Boolean,
+    val hasExplicitTypeArguments: Boolean,
+) {
+    /**
+     * `true` if the corresponding [FirResolvedQualifier] was written without:
+     * - a nullable mark (`?`), and
+     * - any explicit type arguments.
+     *
+     * In other words, the LHS is a plain classifier reference such as `NG::foo`,
+     * as opposed to `NG?::foo`, `G<*>::foo`, or `G<*>?::foo`.
+     */
+    val isProperStaticReceiver: Boolean
+        get() = !hasNullableMark && !hasExplicitTypeArguments
+}
 
 class FirCallableReferenceLhsResolver(
     private val components: BodyResolveComponents,
@@ -30,9 +46,6 @@ class FirCallableReferenceLhsResolver(
      * Returns not-`null` iff LHS of callable reference _can be_ non-expression, i.e., resolved qualifier to a non-object.
      * Note, however, that this does not necessarily mean that the reference will be unbound because it can refer to
      * a member / extension of a companion object.
-     *
-     * TODO: Also see KT-85641: we return [CallableReferenceLhsAsType] here, but eventually create bound callable reference
-     *  for nullable-marked object qualifiers.
      */
     fun resolveLhsAsType(doubleColonExpression: FirCallableReferenceAccess): CallableReferenceLhsAsType? {
         val lhsExpression = doubleColonExpression.explicitReceiver ?: return null

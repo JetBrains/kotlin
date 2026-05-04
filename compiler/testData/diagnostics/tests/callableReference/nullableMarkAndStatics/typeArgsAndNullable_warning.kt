@@ -27,7 +27,7 @@ fun test() {
 
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>C<!>?::cmpFoo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoC<!>?::cmpFoo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>::cmpFoo
+    TAtoNC::cmpFoo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>?::cmpFoo
 
     C<*>?::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extFoo<!>
@@ -37,23 +37,23 @@ fun test() {
 
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>C<!>?::extFoo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoC<!>?::extFoo
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>::extFoo
+    TAtoNC::extFoo
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>?::extFoo
 
-    C<*>?::Nested
-    TAtoC<Any>?::Nested
-    TAtoNC<Any>::Nested
-    TAtoNC<Any>?::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>C<*><!>?::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoC<Any><!>?::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNC<Any><!>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNC<Any><!>?::Nested
 
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>C<!>?::Nested
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoC<!>?::Nested
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>::Nested
+    TAtoNC::Nested
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>TAtoNC<!>?::Nested
 
-    CE?::values
-    TAtoСE?::values
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>CE<!>?::values
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoСE<!>?::values
     TAtoNCE::values
-    TAtoNCE?::values
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>TAtoNCE<!>?::values
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, enumDeclaration, enumEntry,

@@ -308,6 +308,15 @@ class ConeWrongNumberOfTypeArgumentsError(
     override val reason: String get() = "Wrong number of type arguments"
 }
 
+class ConeInvalidStaticReceiverInCallableReference(
+    // alternative is `forStatic`
+    val forObject: Boolean,
+    // alternative is `dueToTypeArguments`
+    val dueToNullableMark: Boolean,
+) : ConeDiagnostic {
+    override val reason: String get() = "Receiver for static must not contain type arguments or nullable marks"
+}
+
 class ConeTypeArgumentsForOuterClass(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
     override val reason: String get() = "Type arguments for outer class maybe redundant"
 }

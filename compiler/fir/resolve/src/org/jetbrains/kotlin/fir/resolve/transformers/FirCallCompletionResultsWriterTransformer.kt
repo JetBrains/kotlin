@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionTypeConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -825,9 +828,11 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.resolvedType)
         val finalType = finallySubstituteOrSelf(initialType)
 
-        subCandidate.ifLhsResolvedToType { lhs ->
-            (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
-                ?.replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
+        subCandidate.ifLhsResolvedToType { lhs, kind ->
+            if (lhs.shouldBeConsideredType(kind)) {
+                (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
+                    ?.replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
+            }
         }
 
         callableReferenceAccess.replaceConeTypeOrNull(finalType)
@@ -1558,10 +1563,40 @@ fun ConeKotlinType.toExpectedType(
 internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(): Boolean =
     ResolutionResultOverridesOtherToPreserveCompatibility in diagnostics
 
+/**
+ * If the [LanguageFeature.CompanionBlocksAndExtensions] is enabled, we allow `JustSimpleQuailifer::staticMember` instead of
+ * `QualifierWithTypeArguments<...>::staticMember`. HOWEVER, in case the static receiver has explicit type arguments,
+ * we still have to pretend it is a type (because we need to report errors on incorrect types).
+ */
+context(_: SessionHolder)
+private fun CallableReferenceLhsAsType.shouldBeConsideredType(kind: CallableReferenceWithTypeLhsKind): Boolean {
+    return !isProperStaticReceiver
+            || kind == CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
+            || LanguageFeature.CompanionBlocksAndExtensions.isDisabled()
+}
+
+context(_: SessionHolder)
+private fun CallableReferenceLhsAsType.shouldReportInvalidStaticReceiver(kind: CallableReferenceWithTypeLhsKind): Boolean {
+    if (kind == CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER) return false
+    return hasExplicitTypeArguments && LanguageFeature.CompanionBlocksAndExtensions.isEnabled() || hasNullableMark
+}
+
+context(_: SessionHolder)
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
     val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
-    candidate.ifLhsResolvedToType { lhs ->
-        lhs.diagnostic?.let { newNonFatalDiagnostics.add(it) }
+    candidate.ifLhsResolvedToType { lhs, kind ->
+        if (lhs.diagnostic == null) {
+            if (lhs.shouldReportInvalidStaticReceiver(kind)) {
+                newNonFatalDiagnostics.add(
+                    ConeInvalidStaticReceiverInCallableReference(
+                        forObject = kind == CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER,
+                        dueToNullableMark = !lhs.hasExplicitTypeArguments,
+                    )
+                )
+            }
+        } else if (lhs.shouldBeConsideredType(kind)) {
+            newNonFatalDiagnostics.add(lhs.diagnostic)
+        }
     }
 
     if (candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
@@ -1595,11 +1630,25 @@ fun FirResolvedQualifier.appendNonFatalDiagnostics(vararg newDiagnostics: ConeDi
     }
 }
 
-internal inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsType) -> Unit) {
+private enum class CallableReferenceWithTypeLhsKind {
+    FOR_STATIC, FOR_CLASS_MEMBER, FOR_OBJECT_MEMBER
+}
+
+private inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsType, CallableReferenceWithTypeLhsKind) -> Unit) {
     val callableReferenceInfo = callInfo as? CallableReferenceInfo ?: return
-    callableReferenceInfo.lhsAsType?.let {
-        block(it)
+    val lhsAsType = callableReferenceInfo.lhsAsType ?: return
+
+    val kind = when {
+        callableReferenceInfo.explicitReceiver is FirExpressionStub -> CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
+        // fallback to FOR_CLASS_MEMBER when unresolved
+        symbol is FirErrorFunctionSymbol -> CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
+        (symbol as? FirCallableSymbol<*>)?.isStatic == true -> CallableReferenceWithTypeLhsKind.FOR_STATIC
+        // inner class constructor may be called on the object / companion object child
+        (symbol as? FirCallableSymbol<*>)?.isInner == true -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
+        symbol is FirConstructorSymbol -> CallableReferenceWithTypeLhsKind.FOR_STATIC
+        else -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
     }
+    block(lhsAsType, kind)
 }
 
 private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {

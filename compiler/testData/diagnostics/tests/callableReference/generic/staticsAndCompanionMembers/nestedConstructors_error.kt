@@ -18,15 +18,15 @@ typealias GtoNG<C> = NG
 typealias NGtoG = G<String>
 
 fun test() {
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>G<!>::Nested
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoG<!>::Nested
+    G::Nested
+    GtoG::Nested
     NG::Nested
-    <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>GtoNG<!>::Nested
+    GtoNG::Nested
     NGtoG::Nested
 
-    G<*>::Nested
-    GtoG<Any>::Nested
-    GtoNG<Nothing>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>G<*><!>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoG<Any><!>::Nested
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>GtoNG<Nothing><!>::Nested
 
     // wrong number
     NG<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>::Nested
