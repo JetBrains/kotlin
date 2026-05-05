@@ -424,6 +424,9 @@ object IrTree : AbstractTreeBuilder() {
     val functionWithLateBinding: Element by declarationWithLateBinding(simpleFunctionSymbol) {
         parent(simpleFunction)
     }
+    val constructorWithLateBinding: Element by declarationWithLateBinding(constructorSymbol) {
+        parent(constructor)
+    }
     val propertyWithLateBinding: Element by declarationWithLateBinding(propertySymbol) {
         parent(property)
     }
