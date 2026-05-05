@@ -570,19 +570,19 @@ class NativeSecondStageCompilationConfig(
         append("-pl")
     }
 
-    internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString).also { it.mkdirs() }
+    internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString)
     private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
         File(it).apply {
             if (!isDirectory) configuration.reportCompilationError("auto cache directory $this is not found or is not a directory")
         }
     } ?: File(distribution.systemCacheRootDirectory.absolutePath)
-    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString).also { it.mkdirs() }
+    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString)
     private val incrementalCacheRootDirectory = configuration.incrementalCacheDir?.let {
         File(it).apply {
             if (!isDirectory) configuration.reportCompilationError("incremental cache directory $this is not found or is not a directory")
         }
     }
-    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)?.also { it.mkdirs() }
+    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
