@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-05 (Step 3 of merged plan: Unification Stage 3 landed; Stage 2b deferred again — origin-agnostic BFS phase collapse blocked by mid-`SUPER_TYPES` resolution timing in compiler mode)
+**Last Updated**: 2026-05-05 (Step 4 of merged plan: Unification Stage 4 landed in `JavaResolutionContext.resolveFromLocalScope` — `findLocalClass` collapsed out of the `ClassId`-resolution path in favour of a `getContainingClassIds()` walk through the FIR `tryResolve` callback; AST classifier path retains `findLocalClass` as a Stage-5-deferred fast path)
 
 ### Entry Template
 
@@ -30,6 +30,111 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Merged plan Step 4: Unification Stage 4 (`findLocalClass` removed from `ClassId`-resolution path; `resolveFromLocalScope` walks `getContainingClassIds()` via FIR `tryResolve`) — 2026-05-05 (Step 4)
+
+### Overview
+
+Landed Step 4 of `MERGED_REFACTORING_PLAN_2026_05_04.md` — the resolver-unification "Stage 4 + Stage 5 (partial)" piece — on top of the green Step-3 baseline. The AST-side `JavaScopeResolver.findLocalClass` is no longer in the `ClassId`-resolution path: `JavaResolutionContext.resolveFromLocalScope` (step 2 of `resolveSimpleNameToClassIdImpl`, JLS 6.5.2) now walks `getContainingClassIds()` from innermost to outermost and probes the FIR symbol provider via `tryResolve(containingId.createNestedClassId(name))`. Stage 5's full collapse (shrinking the AST side to "type parameter?" + `containingClassIds` only) remains a deferred concern — `findLocalClass` is retained for the AST classifier path (`JavaTypeOverAst.computeClassifier`), where the j+k_complex.kt trip-wire from the Step-3 post-mortem still requires a structural `JavaClass` with its full outer-class chain.
+
+### Changes
+
+- **Stage 4 — `JavaResolutionContext.resolveFromLocalScope`**
+  - Replaced the previous AST-side 2a path:
+    ```kotlin
+    findLocalClass(Name.identifier(simpleName))?.let { localClass ->
+        val fqName = localClass.fqName
+        if (fqName != null) {
+            val classId = fqNameToClassId(fqName)
+            if (tryResolve(classId)) return classId
+        }
+    }
+    ```
+    with the Stage-4 spec's containing-chain FIR walk:
+    ```kotlin
+    val nameId = Name.identifier(simpleName)
+    for (containingId in getContainingClassIds()) {
+        val candidate = containingId.createNestedClassId(nameId)
+        if (tryResolve(candidate)) return candidate
+    }
+    ```
+  - The walk subsumes steps 1, 2, 4 of `JavaScopeResolver.findLocalClass` (directly-declared
+    inner classes anywhere up the containing chain) by relying on the FIR symbol
+    provider's existing `JvmSymbolProvider → JavaClassFinderOverAstImpl` chain to resolve
+    `containingId.createNestedClassId(name)` to the same AST node those AST-side queries
+    would have produced. JLS 6.3 innermost-wins ordering is preserved by iterating
+    `getContainingClassIds()` from innermost to outermost (its existing contract).
+  - Step 3 of the AST `findLocalClass` (inherited inners from supertypes) is covered by
+    the existing 2b path (aggregated map / two-phase BFS via
+    `resolveInheritedInnerClassToClassId`), unchanged.
+  - Step 5 of the AST `findLocalClass` (same-file top-level fast path) is intentionally
+    *not* reproduced inside `resolveFromLocalScope`: same-file top-level classes share
+    their `ClassId` with same-package cross-file classes
+    (`ClassId(packageFqName, simpleName)`), so they are picked up by the next step in
+    `resolveSimpleNameToClassIdImpl` — `resolveFromSamePackage`. No new `tryResolve`
+    cost: the same single probe happens, just one step later.
+  - The KDoc on `resolveFromLocalScope` is rewritten to describe the Stage-4 outcome,
+    cite the unification doc, and explicitly call out where each of the old
+    `findLocalClass` steps now lives.
+
+- **Stage 5 partial — `JavaScopeResolver.findLocalClass` (KDoc only)**
+  - Rewrote the KDoc to record the post-Stage-4 role: this method is no longer in the
+    `ClassId`-resolution path; it is the AST-side fast path used by the Java model layer
+    (`JavaTypeOverAst.computeClassifier`, `JavaClassCache`, `ConstantEvaluator`). Body is
+    unchanged — the five-step ordering is still required because the AST classifier path
+    needs a structural `JavaClass` (with full outer-class chain) for cross-file
+    inherited inners (the `j+k_complex.kt` trip-wire from the Step-3 post-mortem).
+  - Stage 5's full collapse — shrinking the AST side to "type parameter?" +
+    `getContainingClassIds()` — is documented as a deferred concern: it requires giving
+    the AST classifier path a FIR-derived `JavaClass` for cross-file inherited inners,
+    which the existing `getClassLikeSymbol` callback alone does not provide.
+
+- **`JavaResolutionContext.findLocalClass` (KDoc only)** — passthrough doc updated to
+  point at `JavaScopeResolver.findLocalClass`'s KDoc for the post-Stage-4 role.
+
+### Test Results
+
+`./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --rerun-tasks --no-build-cache` — **BUILD SUCCESSFUL** in 1m 56s, 0 failures / 0 errors. XML parse of `build/test-results/test/`: **2693 tests, all passed** (no regressions vs. the post-Step-3 baseline).
+
+The Step-4 perf gate on `testIntellij_platform_externalProcessAuthHelper` (re-run parse counter on the Stage-3 testbed; per the merged plan validation gate, must be ≤ Step-3's value within noise) was **NOT** run in this iteration — same harness-unreachability constraint as Step 3. The Stage-4 change is structurally a *replacement* of one same-cost lookup with another (one `findLocalClass`-mediated `tryResolve` per innermost containing class becomes one `tryResolve(containingId.createNestedClassId(name))` per containing-class entry), so the parse counter cannot be affected by this change alone (`tryResolve` does not parse anything; `findLocalClass`'s syntactic AST queries do not parse either). The symbol-creation counter could theoretically tick up by one extra `getClassLikeSymbolByClassId` call per containing-chain level for misses, but the FIR `tryResolve` callback already short-circuits on the first hit, and the chain is typically 1–2 deep. If the harness becomes available before Step 5, this iteration's perf gate can be re-run retrospectively.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | `resolveFromLocalScope`: Stage-4 swap (2a → containing-chain FIR walk); KDoc rewrite. `findLocalClass` passthrough KDoc updated. |
+| `compiler/java-direct/src/.../resolution/JavaScopeResolver.kt` | `findLocalClass` KDoc rewritten to describe post-Stage-4 role + Stage-5 deferral note. Body unchanged. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; `Last Updated` bumped. |
+
+### Key Learnings
+
+- **The Stage-4 spec's `findLocalClass: JavaClass?` signature is approximate.** The
+  unification doc shows `fun findLocalClass(name): JavaClass? { /* FIR via getClassLikeSymbol */ }`,
+  but `getClassLikeSymbolByClassId` returns a FIR symbol, not an AST `JavaClass`. The
+  practical Stage-4 transformation operates at the *`ClassId`-resolution* layer
+  (`resolveFromLocalScope`), where the FIR `tryResolve` callback already does what the
+  spec describes. The AST classifier path keeps a separate `findLocalClass` because its
+  consumers (`JavaTypeOverAst.computeClassifier`) require a structural `JavaClass`.
+- **Same-file top-level classes don't need a dedicated fast path inside
+  `resolveFromLocalScope`.** They share their `ClassId` with same-package cross-file
+  classes, so `resolveFromSamePackage` (the next step in `resolveSimpleNameToClassIdImpl`)
+  handles them with the same single `tryResolve` probe. The only behavioural change is
+  that same-file top-level no longer beats inherited inners in the `ClassId` path — but
+  that aligns with JLS 6.3 / 6.5.5.1 priority (inherited inners are in narrower scope
+  than same-package top-level).
+- **`getContainingClassIds()` already preserves innermost-wins ordering** (returns from
+  containingClass outwards, walking `outerClass`), so the Stage-4 walk does not need a
+  separate ordering pass.
+- **Stage 5's full collapse is genuinely entangled with the AST classifier API.**
+  `JavaTypeOverAst.computeClassifier` consumes `findLocalClass` for both single-name
+  lookup AND multi-part navigation (via `JavaClass.findInnerClass`). Eliminating
+  `findLocalClass` requires either restructuring `computeClassifier` to consult only
+  `findTypeParameter` + same-file fast path (with FIR taking over for everything else),
+  or providing a FIR-derived `JavaClass` for cross-file inherited inners. Neither is
+  in scope for Step 4; both belong to the Stage-5 work that the merged plan defers
+  through Step 5's verification-only sweep.
 
 ---
 

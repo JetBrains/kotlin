@@ -35,7 +35,7 @@ internal class JavaScopeResolver(
     fun findInheritedTypeParameter(name: String): JavaTypeParameter? = inheritedTypeParametersInScope[name]
 
     /**
-     * Finds a class by simple name in the AST-side scope.
+     * Finds a [JavaClass] for a simple name in the AST-side scope.
      *
      * Checks (in order):
      * 1. Inner classes directly declared on the containing class (purely syntactic AST query).
@@ -46,19 +46,31 @@ internal class JavaScopeResolver(
      *    (so deeply-nested classes see siblings of every enclosing class).
      * 5. Top-level classes declared in the same compilation unit (`sameFileTopLevelClassProvider`).
      *
-     * Stage 2 of the resolver-unification refactoring (see
-     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`) narrowed this method by
-     * removing the AST-side inherited-inner-class walk on every *outer* class. Stage 2b
-     * additionally dropped the BFS-side Phase 1 (`walkJavaSourceSupertypes`) — see
-     * [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId] — but kept step 3
-     * here. The retention is load-bearing: step 3 returns a `JavaClass` with its full
-     * AST-side outer-class chain, which the rest of the AST pipeline
-     * ([JavaTypeOverAst.computeClassifier], [JavaClassOverAst.findInnerClassInSupertypes])
-     * needs to thread outer-class type-argument substitutions through cross-file
-     * Java-source supertypes. The BFS-only path returns a bare `ClassId`, which loses that
-     * substitution context — see the `j+k_complex.kt` post-mortem in the 2026-05-05 entry
-     * of `compiler/java-direct/ITERATION_RESULTS.md`. Subsuming this step is a Stage 5
-     * concern.
+     * **Post-Stage-4 role.** As of Stage 4 of the resolver-unification refactoring (see
+     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`), this method is **no
+     * longer in the `ClassId`-resolution path**: `JavaResolutionContext.resolveFromLocalScope`
+     * now walks `getContainingClassIds()` and probes the FIR symbol provider via the
+     * `tryResolve(ClassId)` callback (and uses [JavaInheritedMemberResolver]'s aggregated
+     * map / BFS for inherited inners). What remains here is the AST-side fast path used by
+     * the Java model layer:
+     *
+     *  - [JavaTypeOverAst.computeClassifier] reads the result as a [JavaClassifier], which
+     *    must be a structural [JavaClass] (with its full AST-side outer-class chain) for
+     *    multi-part name navigation via [JavaClass.findInnerClass] and for outer-class
+     *    type-argument substitution to flow through Java-source supertype chains
+     *    (`compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`
+     *    relies on this — see the 2026-05-05 / 2026-05-06 entries in
+     *    `compiler/java-direct/ITERATION_RESULTS.md`).
+     *  - [org.jetbrains.kotlin.java.direct.JavaClassCache] / [ConstantEvaluator] also need
+     *    the AST [JavaClass] to materialise inner-class symbols and constant references.
+     *
+     * **Stage 5 deferral.** The unification doc's Stage-5 vision shrinks the AST side to
+     * "type parameter?" + "[getContainingClassIds]" only. Subsuming this method (and the
+     * inherited-inner step in particular) requires giving the AST classifier path a
+     * FIR-derived `JavaClass` for cross-file inherited inners, which the existing
+     * `getClassLikeSymbol` callback alone does not provide. See
+     * [JavaInheritedMemberResolver]'s class KDoc for the trip-wires that motivate the
+     * deferral.
      */
     fun findLocalClass(name: Name): JavaClass? {
         // 1. Inner classes of the containing class (purely syntactic AST query, plus

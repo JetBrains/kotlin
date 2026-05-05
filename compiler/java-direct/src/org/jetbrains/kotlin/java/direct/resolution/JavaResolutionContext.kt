@@ -76,12 +76,10 @@ class JavaResolutionContext private constructor(
     }
 
     /**
-     * Finds a class by simple name. Checks:
-     * 1. Inner classes of the containing class (if any)
-     * 2. Sibling inner classes (inner classes of the outer class)
-     * 3. Inner classes of supertypes (JLS 6.5.2 - inherited member types)
-     * 4. Inner classes of outer classes' supertypes (for nested inner classes)
-     * 5. Top-level classes in the same compilation unit
+     * Finds a class by simple name in the AST-side scope. Delegates to
+     * [JavaScopeResolver.findLocalClass]; see that method's KDoc for the five-step
+     * ordering and for the post-Stage-4 role (AST classifier fast path only — no longer
+     * in the `ClassId`-resolution path inside [resolveFromLocalScope]).
      */
     fun findLocalClass(name: Name): JavaClass? = scopeResolver.findLocalClass(name)
 
@@ -452,21 +450,49 @@ class JavaResolutionContext private constructor(
     /**
      * Step 2: Local/inner classes and inherited inner classes (JLS 6.5.2).
      *
-     * Checks the containing class hierarchy, same-file top-level classes, then
-     * cross-file inherited inner classes (via the aggregated map or BFS fallback).
+     * **Stage 4 of the resolver-unification refactoring** (see
+     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). The previous AST-side
+     * 2a path (`findLocalClass(name).fqName -> tryResolve(classId)`) — which threaded
+     * through all five [JavaScopeResolver.findLocalClass] steps to produce a candidate
+     * `ClassId` — is collapsed into the Stage-4 spec's two-step shape:
+     *
+     * 1. **Containing-chain walk via FIR.** Iterate [getContainingClassIds] from innermost
+     *    to outermost and probe `containingId.createNestedClassId(name)` via [tryResolve].
+     *    Subsumes [JavaScopeResolver.findLocalClass] steps 1, 2 and 4 (directly-declared
+     *    inner classes anywhere up the containing chain).
+     * 2. **Inherited-inner walk via FIR.** Existing aggregated-map / two-phase BFS
+     *    ([resolveInheritedInnerClassToClassId]). Subsumes step 3 of the AST `findLocalClass`
+     *    (inherited inner classes from same-file or cross-file supertypes — Java source via
+     *    [LeanJavaClassFinder.collectInheritedInnerClasses], Kotlin/binary via
+     *    [getSupertypeClassIds]).
+     *
+     * Step 5 of the AST `findLocalClass` (same-file top-level fast path) is **not**
+     * reproduced here: same-file top-level classes share their `ClassId` with same-package
+     * cross-file classes (`ClassId(packageFqName, simpleName)`), so they are picked up by
+     * [resolveFromSamePackage] (the next step in [resolveSimpleNameToClassIdImpl]). The AST
+     * fast path remains in [JavaScopeResolver.findLocalClass] for the AST classifier path
+     * ([JavaTypeOverAst.computeClassifier]); the Stage-5 vision of letting the AST side
+     * answer only "type parameter?" + "containingClassIds" is documented as a deferred
+     * concern in [JavaScopeResolver.findLocalClass]'s KDoc.
      */
     private fun resolveFromLocalScope(
         simpleName: String,
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)?,
     ): ClassId? {
-        // 2a. Inner classes of the containing class chain + same-file top-level classes
-        findLocalClass(Name.identifier(simpleName))?.let { localClass ->
-            val fqName = localClass.fqName
-            if (fqName != null) {
-                val classId = fqNameToClassId(fqName)
-                if (tryResolve(classId)) return classId
-            }
+        // 2a (Stage 4): Walk the containing chain via FIR `tryResolve`.
+        // Equivalent to (and replacing) the previous `findLocalClass(name).fqName` lookup
+        // that fanned out through `JavaScopeResolver.findLocalClass` steps 1, 2, 4 — those
+        // steps queried directly-declared inner classes on each level of the containing
+        // chain syntactically, but the resulting `ClassId(packageFqName, ...)` is identical
+        // to what the FIR symbol provider would resolve `containingId.createNestedClassId(name)`
+        // to (FIR's `JvmSymbolProvider` -> `JavaClassFinderOverAstImpl` resolves it through
+        // the same AST node when the inner is in source). The walk preserves the
+        // innermost-wins priority ordering required by JLS 6.3.
+        val nameId = Name.identifier(simpleName)
+        for (containingId in getContainingClassIds()) {
+            val candidate = containingId.createNestedClassId(nameId)
+            if (tryResolve(candidate)) return candidate
         }
 
         // 2b. Inherited inner classes from supertypes (cross-file, e.g., Kotlin classes).
