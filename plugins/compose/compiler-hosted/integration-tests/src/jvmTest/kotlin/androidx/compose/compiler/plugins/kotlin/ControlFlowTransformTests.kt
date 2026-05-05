@@ -2707,4 +2707,35 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             fun Modifier.clickable(f: () -> Unit): Modifier = this
         """
     )
+
+    // Regression test for b/509945632
+    @Test
+    fun testInlineSwitchNoComposables() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(clicked: Boolean) {
+                thenIf(
+                    condition = clicked,
+                    ifTrue = {
+                        "true"
+                    },
+                    ifFalse = {
+                        "false"
+                    },
+                )
+            }
+        """,
+        extra = """
+            inline fun thenIf(
+                condition: Boolean,
+                ifFalse: () -> Unit,
+                ifTrue: () -> Unit,
+            ) = if (condition) {
+                ifTrue()
+            } else {
+                ifFalse()
+            }
+        """
+    )
 }
