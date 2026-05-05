@@ -79,6 +79,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val PROPERTY_HIDES_JAVA_FIELD: KtDiagnosticFactory1<FirFieldSymbol> = KtDiagnosticFactory1("PROPERTY_HIDES_JAVA_FIELD", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class, getRendererFactory())
     val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD: KtDiagnosticFactory0 = KtDiagnosticFactory0("INTERFACE_COMPANION_BLOCK_PROPERTY_PRIVATE_FIELD", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, PsiElement::class, getRendererFactory())
+    val JVM_SPECIALIZE_NOT_SUPPORTED_HERE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JVM_SPECIALIZE_NOT_SUPPORTED_HERE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Types
     val JAVA_TYPE_MISMATCH: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("JAVA_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
