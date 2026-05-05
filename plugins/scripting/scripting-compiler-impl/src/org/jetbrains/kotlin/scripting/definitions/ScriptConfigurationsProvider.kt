@@ -40,7 +40,7 @@ open class ScriptConfigurationsProvider {
             getScriptConfigurationResult(project, it)
         }
 
-    protected open fun getScriptConfigurationResult(project: Project, file: KtFile): ScriptCompilationConfigurationResult? = null
+    open fun getScriptConfigurationResult(project: Project, file: KtFile): ScriptCompilationConfigurationResult? = null
 
     // TODO: consider fixing implementations and removing default implementation
     @Deprecated("Use getScriptCompilationConfiguration(KtFileScriptSource(ktFile), provided configuration) instead")
