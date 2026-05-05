@@ -5864,6 +5864,12 @@ private fun KaDiagnosticConverterBuilder.addConversions129() {
             token,
         )
     }
+    add(FirJvmErrors.JVM_SPECIALIZE_NOT_SUPPORTED_HERE) { firDiagnostic ->
+        JvmSpecializeNotSupportedHereImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
         ExternalClassConstructorPropertyParameterImpl(
             firDiagnostic as KtPsiDiagnostic,

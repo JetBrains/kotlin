@@ -79,6 +79,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+
+        val JVM_SPECIALIZE_NOT_SUPPORTED_HERE by error<PsiElement>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

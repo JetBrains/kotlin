@@ -4917,6 +4917,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConflictVersionAndJvmOverloadsAnnotation::class
     }
 
+    interface JvmSpecializeNotSupportedHere : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = JvmSpecializeNotSupportedHere::class
+    }
+
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KaType
