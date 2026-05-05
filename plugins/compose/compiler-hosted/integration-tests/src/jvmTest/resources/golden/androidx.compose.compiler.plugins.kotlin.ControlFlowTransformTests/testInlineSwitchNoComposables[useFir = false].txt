@@ -8,11 +8,10 @@ import androidx.compose.runtime.*
     thenIf(
         condition = clicked,
         ifTrue = {
-            val lambdaTrue = { }
+            "true"
         },
         ifFalse = {
-            remember { mutableStateOf(value = "Mock") }
-            val lambdaFalse = { }
+            "false"
         },
     )
 }
@@ -34,23 +33,10 @@ fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     thenIf(clicked, {
-      %composer.startReplaceGroup(<>)
-      sourceInformation(%composer, "C*<rememb...>:Test.kt")
-      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(false) {
-        mutableStateOf(
-          value = "Mock"
-        )
-      }
-      sourceInformationMarkerEnd(%composer)
-      tmp0_group
-      val lambdaFalse = {
-      }
-      %composer.endReplaceGroup()
+      "false"
     }
     ) {
-      val lambdaTrue = {
-      }
+      "true"
     }
     if (isTraceInProgress()) {
       traceEventEnd()
