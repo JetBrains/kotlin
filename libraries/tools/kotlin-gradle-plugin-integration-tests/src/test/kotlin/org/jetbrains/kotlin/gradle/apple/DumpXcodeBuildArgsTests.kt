@@ -12,15 +12,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.createKotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMXcodeDumpBuildService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.TransitiveSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
@@ -63,6 +57,9 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
     private fun TestProject.localIphoneosDerivedDataDir(projectName: String) =
         projectPath.resolve("$projectName/build/kotlin/swiftImportDd/dd_iphoneos")
 
+    private fun TestProject.localIphoneosDumpFingerprintFile(projectName: String) =
+        projectPath.resolve("$projectName/build/kotlin/swiftPMXcodeDumpFingerprints/iphoneos.json")
+
     private fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir: java.nio.file.Path) {
         assertDirectoryExists(dumpDir)
         assertFileExists(dumpDir.resolve("clangDump.sh"))
@@ -104,6 +101,17 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
             .associate { file ->
                 file.relativeTo(dumpDir).invariantSeparatorsPath to file.readText()
             }
+
+    private fun fingerprintValue(fingerprintFile: Path, name: String): String? {
+        val rawValue = """"$name"\s*:\s*(null|"([^"]*)")""".toRegex()
+            .find(fingerprintFile.toFile().readText())
+            ?.groupValues
+            ?.get(1)
+
+        return rawValue
+            ?.takeUnless { it == "null" }
+            ?.removeSurrounding("\"")
+    }
 
     private fun LockFileTestFixture.includeKmpMapsConsumerProjects(
         version: GradleVersion,
@@ -183,27 +191,12 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     syntheticProductType.set(SyntheticProductType.DYNAMIC)
                 }
 
-                project.tasks.register<DumpXcodeBuildArgs>("packageDumpArgs") {
-                    dependsOn(packageGeneration)
-                    xcodebuildPlatform.set(KonanTarget.IOS_SIMULATOR_ARM64.applePlatform)
-                    xcodebuildSdk.set(KonanTarget.IOS_SIMULATOR_ARM64.appleTarget.sdk)
-                    architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
-                    hasSwiftPMDependencies.set(true)
-                    packageResolvedFile.set(packageResolved)
-                    packageResolvedSynchronization.set("identifier:default")
-                    buildSettingsFingerprint.set("")
-                    directSwiftPMDependencies.set(extension.swiftPMDependencies)
-                    transitiveSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
-                    filesToTrackFromLocalPackages.set(stubTrackedFiles)
-                    syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
-                    coordinationService.set(
-                        SwiftPMXcodeDumpBuildService.registerIfAbsent(project)
-                    )
-                    swiftPMDependenciesCheckout.set(project.layout.buildDirectory.dir("checkout"))
-                    dumpedXcodeBuildArgsDir.set(
-                        project.layout.buildDirectory.dir("kotlin/customSwiftImportDump/iphonesimulator")
-                    )
-                }
+                project.registerSwiftPMImportDumpArgsTestTasks(
+                    extension = extension,
+                    packageGeneration = packageGeneration,
+                    stubTrackedFiles = stubTrackedFiles,
+                    packageResolved = packageResolved,
+                )
             }
 
             build("packageDumpArgs")
@@ -273,7 +266,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `different identifiers with same resolved dependencies reuse one xcodebuild execution`(version: GradleVersion) {
+    fun `different identifiers with same Package resolved hash reuse one xcodebuild execution`(version: GradleVersion) {
         val fuzzProjectName = "fuzz"
         val buzzProjectName = "buzz"
         val repoName = "SharedPackage"
@@ -325,6 +318,21 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                         localIphoneosDumpDir(fuzzProjectName).toFile(),
                         localIphoneosDumpDir(fuzzProjectName),
                         localIphoneosDumpDir(buzzProjectName),
+                    )
+
+                    val fuzzFingerprintFile = localIphoneosDumpFingerprintFile(fuzzProjectName)
+                    val buzzFingerprintFile = localIphoneosDumpFingerprintFile(buzzProjectName)
+                    assertFileExists(fuzzFingerprintFile)
+                    assertFileExists(buzzFingerprintFile)
+                    assertEquals(
+                        fingerprintValue(fuzzFingerprintFile, "packageResolvedHash"),
+                        fingerprintValue(buzzFingerprintFile, "packageResolvedHash"),
+                        "The exact Package.resolved hash should match even when projects use different lock identifiers"
+                    )
+                    assertTrue(
+                        fingerprintValue(fuzzFingerprintFile, "identifierDepsHash") !=
+                                fingerprintValue(buzzFingerprintFile, "identifierDepsHash"),
+                        "The fallback identifier/dependencies hash should differ for different lock identifiers"
                     )
                 }
             }
@@ -587,6 +595,71 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                         localIphoneosDerivedDataDir(fuzzProjectName),
                         localIphoneosDerivedDataDir(buzzProjectName),
                     )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `persistent shared dump state ignores owner path overwritten by a different fingerprint`(version: GradleVersion) {
+        val ownerProjectName = "owner"
+        val consumerProjectName = "consumer"
+        val repoName = "SharedPackage"
+        val alternateOwnerVersion = "useAlternateOwnerVersion"
+        val ownerLockIdentifier = "owner"
+        val consumerLockIdentifier = "consumer"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val sharedRepo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0", "1.0.1")) }
+
+                initSwiftPmProject(cacheDirFile) {}
+
+                val ownerProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(ownerLockIdentifier)
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = exact(
+                                    if (project.providers.gradleProperty(alternateOwnerVersion).isPresent) "1.0.1" else "1.0.0"
+                                ),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                        }
+                    }
+                }
+                val consumerProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(consumerLockIdentifier)
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                        }
+                    }
+                }
+
+                include(ownerProject, ownerProjectName)
+                include(consumerProject, consumerProjectName)
+
+                build(":$ownerProjectName:dumpXcodebuildArgsIphoneos") {
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                }
+
+                build(
+                    ":$ownerProjectName:dumpXcodebuildArgsIphoneos",
+                    "-P$alternateOwnerVersion=true",
+                ) {
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                }
+
+                build(":$consumerProjectName:dumpXcodebuildArgsIphoneos") {
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                    assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(consumerProjectName))
                 }
             }
         }

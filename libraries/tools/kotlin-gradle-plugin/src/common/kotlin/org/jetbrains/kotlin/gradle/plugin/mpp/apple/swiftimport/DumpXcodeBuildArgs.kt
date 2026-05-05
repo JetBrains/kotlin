@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
@@ -19,9 +16,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.services.BuildService
-import org.gradle.api.services.BuildServiceParameters
-import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
@@ -35,7 +29,6 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import java.io.File
 import java.security.MessageDigest
-import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -63,11 +56,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
         }
 
-    @get:IgnoreEmptyDirectories
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val resolvedPackagesState: ConfigurableFileCollection
-
     @get:OutputDirectory
     abstract val dumpedXcodeBuildArgsDir: DirectoryProperty
 
@@ -76,8 +64,9 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
     )
 
-    @get:Internal
-    abstract val packageResolvedFile: RegularFileProperty
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val fingerprintsFile: RegularFileProperty
 
     /**
      * Additional arguments to pass to `xcodebuild` when resolving SwiftPM dependencies.
@@ -101,18 +90,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @get:Internal
     abstract val syntheticImportProjectRoot: DirectoryProperty
 
-    @get:Input
-    abstract val packageResolvedSynchronization: Property<String>
-
-    @get:Input
-    abstract val directSwiftPMDependencies: SetProperty<SwiftPMDependency>
-
-    @get:Input
-    abstract val transitiveSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
-
-    @get:Input
-    abstract val buildSettingsFingerprint: Property<String>
-
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
 
@@ -125,33 +102,14 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @TaskAction
     fun dumpXcodeBuildArgs() {
         if (hasSwiftPMDependencies.get()) {
-            val identifierDepsFingerprint = normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
-                packageResolvedSynchronization.get(),
-                xcodebuildPlatform.get(),
-                xcodebuildSdk.get(),
-                architectures.get(),
-                additionalXcodeArgs.get(),
-                directSwiftPMDependencies.get(),
-                transitiveSwiftPMDependencies.get(),
-                buildSettingsFingerprint.get(),
+            val fingerprints = dumpTaskFingerprintJson.decodeFromString<XcodeDumpSharingFingerprints>(
+                fingerprintsFile.get().asFile.readText()
             )
-            val packageResolvedFingerprint = packageResolvedFile.orNull
-                ?.asFile
-                ?.takeIf { it.exists() }
-                ?.let {
-                    normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
-                        packageResolvedFile = it,
-                        xcodebuildPlatform = xcodebuildPlatform.get(),
-                        xcodebuildSdk = xcodebuildSdk.get(),
-                        architectures = architectures.get(),
-                        additionalXcodeArgs = additionalXcodeArgs.get(),
-                        buildSettingsFingerprint = buildSettingsFingerprint.get(),
-                    )
-                }
 
             val claim = coordinationService.get().claimOrJoinXcodeDump(
-                packageResolvedHash = packageResolvedFingerprint,
-                identifierDepsHash = identifierDepsFingerprint,
+                packageResolvedHash = fingerprints.packageResolvedHash,
+                identifierDepsHash = fingerprints.identifierDepsHash,
+                sdkDerivedDataDirName = "dd_${xcodebuildSdk.get()}",
                 ownerDumpDir = dumpedXcodeBuildArgsDir.get().asFile,
                 ownerDerivedDataDir = syntheticImportDd.get().asFile,
                 syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
@@ -259,93 +217,6 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
 
     companion object {
         const val TASK_NAME = "dumpXcodebuildArgs"
-    }
-}
-
-internal abstract class SwiftPMXcodeDumpBuildService : BuildService<BuildServiceParameters.None> {
-
-    private val stateLock = Any()
-
-    private val bucketsByPackageResolvedHash = mutableMapOf<String, XcodeDumpBucket>()
-    private val bucketsByIdentifierDepsHash = mutableMapOf<String, XcodeDumpBucket>()
-
-    class XcodeDumpBucket(
-        val id: String,
-        val ownerDumpDir: File,
-        val ownerDerivedDataDir: File,
-        val ownerSyntheticImportProjectRoot: File,
-        val ownerSwiftPMDependenciesCheckout: File,
-        val completion: CountDownLatch = CountDownLatch(1),
-        var failure: Throwable? = null,
-    )
-
-    sealed class XcodeDumpClaim {
-        abstract val bucket: XcodeDumpBucket
-
-        data class Owner(override val bucket: XcodeDumpBucket) : XcodeDumpClaim()
-        data class Existing(override val bucket: XcodeDumpBucket) : XcodeDumpClaim()
-    }
-
-    fun claimOrJoinXcodeDump(
-        packageResolvedHash: String?,
-        identifierDepsHash: String,
-        ownerDumpDir: File,
-        ownerDerivedDataDir: File,
-        syntheticImportProjectRoot: File,
-        swiftPMDependenciesCheckout: File,
-    ): XcodeDumpClaim {
-        synchronized(stateLock) {
-            val existingByPackageResolved = packageResolvedHash?.let { bucketsByPackageResolvedHash[it] }
-            if (existingByPackageResolved != null) {
-                bucketsByIdentifierDepsHash.putIfAbsent(identifierDepsHash, existingByPackageResolved)
-                return XcodeDumpClaim.Existing(existingByPackageResolved)
-            }
-
-            val existingByIdentifierDeps = bucketsByIdentifierDepsHash[identifierDepsHash]
-            if (existingByIdentifierDeps != null) {
-                packageResolvedHash?.let { bucketsByPackageResolvedHash.putIfAbsent(it, existingByIdentifierDeps) }
-                return XcodeDumpClaim.Existing(existingByIdentifierDeps)
-            }
-
-            val bucketId = packageResolvedHash ?: identifierDepsHash
-            val newBucket = XcodeDumpBucket(
-                id = bucketId,
-                ownerDumpDir = ownerDumpDir,
-                ownerDerivedDataDir = ownerDerivedDataDir,
-                ownerSyntheticImportProjectRoot = syntheticImportProjectRoot,
-                ownerSwiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
-            )
-            packageResolvedHash?.let { bucketsByPackageResolvedHash[it] = newBucket }
-            bucketsByIdentifierDepsHash[identifierDepsHash] = newBucket
-            return XcodeDumpClaim.Owner(newBucket)
-        }
-    }
-
-    fun awaitXcodeDump(bucket: XcodeDumpBucket) {
-        bucket.completion.await()
-        bucket.failure?.let {
-            throw GradleException("Shared SwiftPM xcodebuild dump failed for bucket '${bucket.id}'", it)
-        }
-    }
-
-    fun markXcodeDumpCompleted(bucket: XcodeDumpBucket) {
-        bucket.completion.countDown()
-    }
-
-    fun markXcodeDumpFailed(bucket: XcodeDumpBucket, failure: Throwable) {
-        bucket.failure = failure
-        bucket.completion.countDown()
-    }
-
-    companion object {
-        private const val SERVICE_NAME = "swiftPMXcodeDumpBuildService"
-
-        /** Registers the shared service once per build. */
-        fun registerIfAbsent(project: Project): Provider<SwiftPMXcodeDumpBuildService> =
-            project.gradle.sharedServices.registerIfAbsent(
-                SERVICE_NAME,
-                SwiftPMXcodeDumpBuildService::class.java
-            ) {}
     }
 }
 
@@ -557,8 +428,4 @@ private fun SwiftPMDependency.Remote.Version.toDumpTaskFingerprint(): String = w
     is SwiftPMDependency.Remote.Version.Range -> "range:$from..$through"
     is SwiftPMDependency.Remote.Version.Branch -> "branch:$value"
     is SwiftPMDependency.Remote.Version.Revision -> "revision:$value"
-}
-
-private val dumpTaskFingerprintJson = Json {
-    encodeDefaults = true
 }

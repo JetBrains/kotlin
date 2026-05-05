@@ -11,10 +11,11 @@ import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuildArgsDumpFingerprint
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.XCTestHelpers
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
@@ -442,6 +443,16 @@ internal fun TestProject.initSwiftPmProject(
 
         project.tasks
             .withType(DumpXcodeBuildArgs::class.java)
+            .configureEach { task ->
+                task.additionalXcodeArgs.set(
+                    listOf(
+                        "-packageFingerprintPolicy", "warn",
+                        "-packageCachePath", cacheDirFile.path,
+                    )
+                )
+            }
+        project.tasks
+            .withType(PrepareXcodeBuildArgsDumpFingerprint::class.java)
             .configureEach { task ->
                 task.additionalXcodeArgs.set(
                     listOf(

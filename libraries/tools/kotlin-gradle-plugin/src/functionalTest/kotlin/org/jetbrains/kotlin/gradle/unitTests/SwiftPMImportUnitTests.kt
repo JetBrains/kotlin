@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ComputeLocalPack
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.DumpXcodeBuildArgs
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PrepareXcodeBuildArgsDumpFingerprint
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
@@ -875,17 +876,26 @@ class SwiftPMImportUnitTests {
         val consumerDumpTask = consumer.tasks.findByName(
             lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "iphonesimulator")
         )
+        val consumerFingerprintTask = consumer.tasks.findByName(
+            lowerCamelCaseName(PrepareXcodeBuildArgsDumpFingerprint.TASK_NAME, "iphonesimulator")
+        )
 
         assertNotNull(consumerDumpTask)
+        assertNotNull(consumerFingerprintTask)
         assertIs<DumpXcodeBuildArgs>(consumerDumpTask)
+        assertIs<PrepareXcodeBuildArgsDumpFingerprint>(consumerFingerprintTask)
         assertTrue(
-            consumerDumpTask.directSwiftPMDependencies.get().isEmpty(),
-            "Consumer dump task should not invent direct SwiftPM dependencies"
+            consumerFingerprintTask.directSwiftPMDependencies.get().isEmpty(),
+            "Consumer dump fingerprint task should not invent direct SwiftPM dependencies"
         )
         assertTrue(
-            consumerDumpTask.taskDependencies.getDependencies(consumerDumpTask)
+            consumerFingerprintTask.taskDependencies.getDependencies(consumerFingerprintTask)
                 .any { it.path == ":kmp-maps:serializeSwiftPMDependenciesMetadata" },
-            "Consumer dump task should depend on transitive SwiftPM metadata coming from the kmp-maps project"
+            "Consumer dump fingerprint task should depend on transitive SwiftPM metadata coming from the kmp-maps project"
+        )
+        assertTrue(
+            consumerDumpTask.taskDependencies.getDependencies(consumerDumpTask).contains(consumerFingerprintTask),
+            "Consumer dump task should depend on its local dump sharing fingerprint task"
         )
     }
 
@@ -957,6 +967,12 @@ class SwiftPMImportUnitTests {
         val rightDumpTask = rightProject.tasks.findByName(
             lowerCamelCaseName(DumpXcodeBuildArgs.TASK_NAME, "iphonesimulator")
         )
+        val leftFingerprintTask = leftProject.tasks.findByName(
+            lowerCamelCaseName(PrepareXcodeBuildArgsDumpFingerprint.TASK_NAME, "iphonesimulator")
+        )
+        val rightFingerprintTask = rightProject.tasks.findByName(
+            lowerCamelCaseName(PrepareXcodeBuildArgsDumpFingerprint.TASK_NAME, "iphonesimulator")
+        )
         val leftConvertTask = leftProject.tasks.findByName(
             lowerCamelCaseName(ConvertSyntheticSwiftPMImportProjectIntoDefFile.TASK_NAME, "iphonesimulator")
         )
@@ -970,6 +986,10 @@ class SwiftPMImportUnitTests {
         assertIs<DumpXcodeBuildArgs>(mapsDumpTask)
         assertIs<DumpXcodeBuildArgs>(leftDumpTask)
         assertIs<DumpXcodeBuildArgs>(rightDumpTask)
+        assertNotNull(leftFingerprintTask)
+        assertNotNull(rightFingerprintTask)
+        assertIs<PrepareXcodeBuildArgsDumpFingerprint>(leftFingerprintTask)
+        assertIs<PrepareXcodeBuildArgsDumpFingerprint>(rightFingerprintTask)
 
         assertNotNull(leftConvertTask)
         assertNotNull(rightConvertTask)
@@ -1007,9 +1027,17 @@ class SwiftPMImportUnitTests {
             "Right dump task should materialize shared xcodebuild DerivedData into its local build directory"
         )
         assertEquals(
-            leftDumpTask.packageResolvedSynchronization.get(),
-            rightDumpTask.packageResolvedSynchronization.get(),
+            leftFingerprintTask.packageResolvedSynchronization.get(),
+            rightFingerprintTask.packageResolvedSynchronization.get(),
             "Matching consumers should use the same Package.resolved synchronization fingerprint input"
+        )
+        assertTrue(
+            leftDumpTask.taskDependencies.getDependencies(leftDumpTask).contains(leftFingerprintTask),
+            "Left dump task should depend on its local dump sharing fingerprint task"
+        )
+        assertTrue(
+            rightDumpTask.taskDependencies.getDependencies(rightDumpTask).contains(rightFingerprintTask),
+            "Right dump task should depend on its local dump sharing fingerprint task"
         )
 
         assertEquals(

@@ -46,7 +46,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import kotlin.io.readLines
 import kotlin.io.resolve
-
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 
 internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     if (project.kotlinPropertiesProvider.disableSwiftPMImport) return@KotlinProjectSetupAction
@@ -757,9 +757,36 @@ private fun Project.registerDumpXcodebuildArgsTask(
     transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
     targetSdk: String,
     targetPlatform: String,
-    architecture: org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture,
+    architecture: AppleArchitecture,
     isMacOSHost: Boolean,
 ): TaskProvider<DumpXcodeBuildArgs> {
+    val prepareFingerprintTask = project.locateOrRegisterTask<PrepareXcodeBuildArgsDumpFingerprint>(
+        lowerCamelCaseName(
+            PrepareXcodeBuildArgsDumpFingerprint.TASK_NAME,
+            targetSdk,
+        )
+    ) { fingerprintTask ->
+        fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
+        fingerprintTask.dependsOn(fetchSyntheticImportProjectPackages)
+        fingerprintTask.resolvedPackagesState.from(
+            fetchSyntheticImportProjectPackages.map { it.inputManifests },
+            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
+        )
+        fingerprintTask.packageResolvedFile.set(
+            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile.get() }
+        )
+        fingerprintTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
+        fingerprintTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
+        fingerprintTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        fingerprintTask.buildSettingsFingerprint.set(swiftPMImportExtension.dumpTaskBuildSettingsFingerprint())
+        fingerprintTask.xcodebuildPlatform.set(targetPlatform)
+        fingerprintTask.xcodebuildSdk.set(targetSdk)
+        fingerprintTask.architectures.add(architecture)
+        fingerprintTask.fingerprintsFile.set(
+            project.layout.buildDirectory.file("kotlin/swiftPMXcodeDumpFingerprints/$targetSdk.json")
+        )
+    }
+
     return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
         taskName
     ) { dumpTask ->
@@ -767,18 +794,8 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
         dumpTask.dependsOn(fetchSyntheticImportProjectPackages)
         dumpTask.dependsOn(computeLocalPackageDependencyInputFiles)
-        dumpTask.resolvedPackagesState.from(
-            fetchSyntheticImportProjectPackages.map { it.inputManifests },
-            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile },
-        )
-        dumpTask.packageResolvedFile.set(
-            fetchSyntheticImportProjectPackages.map { it.syntheticLockFile.get() }
-        )
+        dumpTask.dependsOn(prepareFingerprintTask)
         dumpTask.coordinationService.set(xcodeDumpBuildService)
-        dumpTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
-        dumpTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
-        dumpTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
-        dumpTask.buildSettingsFingerprint.set(swiftPMImportExtension.dumpTaskBuildSettingsFingerprint())
         dumpTask.xcodebuildPlatform.set(targetPlatform)
         dumpTask.xcodebuildSdk.set(targetSdk)
         dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
@@ -788,6 +805,7 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.architectures.add(architecture)
         dumpTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.map { it.filesToTrackFromLocalPackages.get() })
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
+        dumpTask.fingerprintsFile.set(prepareFingerprintTask.map { it.fingerprintsFile.get() })
         dumpTask.dumpedXcodeBuildArgsDir.set(
             project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk))
         )
