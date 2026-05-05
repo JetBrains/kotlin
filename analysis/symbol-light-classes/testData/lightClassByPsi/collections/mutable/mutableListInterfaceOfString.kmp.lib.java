@@ -34,12 +34,14 @@ public abstract class CMutableList2 /* test.CMutableList2*/ implements test.IMut
   @kotlin.SinceKotlin()
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsArray<@org.jetbrains.annotations.NotNull() java.lang.String> asJsArrayView();//  asJsArrayView()
 
   @kotlin.SinceKotlin()
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<@org.jetbrains.annotations.NotNull() java.lang.String> asJsReadonlyArrayView();//  asJsReadonlyArrayView()
 

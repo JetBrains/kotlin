@@ -8,6 +8,7 @@ public abstract class CSet2 /* test.CSet2*/ implements test.ISet {
   @kotlin.SinceKotlin()
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<@org.jetbrains.annotations.NotNull() java.lang.String> asJsReadonlySetView();//  asJsReadonlySetView()
 

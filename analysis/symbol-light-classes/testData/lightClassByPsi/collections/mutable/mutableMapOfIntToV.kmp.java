@@ -17,6 +17,7 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem> asJsMapView();//  asJsMapView()
 
@@ -24,6 +25,7 @@ public abstract class SMutableMap2 /* test.SMutableMap2*/<VElem>  implements jav
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<@org.jetbrains.annotations.NotNull() java.lang.Integer, VElem> asJsReadonlyMapView();//  asJsReadonlyMapView()
 

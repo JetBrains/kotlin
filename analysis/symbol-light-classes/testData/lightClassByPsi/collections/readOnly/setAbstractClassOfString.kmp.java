@@ -7,6 +7,7 @@ public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbra
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<@org.jetbrains.annotations.NotNull() java.lang.String> asJsReadonlySetView();//  asJsReadonlySetView()
 

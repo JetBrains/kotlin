@@ -7,6 +7,7 @@ public abstract class CMap2 /* test.CMap2*/ implements java.util.Map<@org.jetbra
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<@org.jetbrains.annotations.NotNull() kotlin.UInt, @org.jetbrains.annotations.NotNull() kotlin.UInt> asJsReadonlyMapView();//  asJsReadonlyMapView()
 

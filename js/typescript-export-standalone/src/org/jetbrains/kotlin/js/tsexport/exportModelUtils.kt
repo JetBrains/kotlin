@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsDontExportDefaultImplementation
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExport
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportDefault
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
@@ -216,6 +217,9 @@ private fun KaAnnotated.isExplicitlyExported(): Boolean =
 
 internal fun KaAnnotated.isJsNoRuntime(): Boolean =
     annotations.contains(JsNoRuntime)
+
+internal fun KaAnnotated.noDefaultImplementation(): Boolean =
+    annotations.contains(JsDontExportDefaultImplementation)
 
 private val KaSymbolVisibility.isPublicApi: Boolean
     get() = this == KaSymbolVisibility.PUBLIC || this == KaSymbolVisibility.PROTECTED

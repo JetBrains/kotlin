@@ -11,6 +11,7 @@ public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @o
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<T, @org.jetbrains.annotations.NotNull() test.A> asJsReadonlyMapView();//  asJsReadonlyMapView()
 

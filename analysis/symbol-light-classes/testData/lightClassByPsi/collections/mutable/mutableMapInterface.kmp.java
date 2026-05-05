@@ -17,6 +17,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsMap<KElem, VElem> asJsMapView();//  asJsMapView()
 
@@ -24,6 +25,7 @@ public abstract class CMutableMap2 /* test.CMutableMap2*/<KElem, VElem>  impleme
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<KElem, VElem> asJsReadonlyMapView();//  asJsReadonlyMapView()
 

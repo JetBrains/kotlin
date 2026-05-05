@@ -7,6 +7,7 @@ public abstract class CList2 /* test.CList2*/ implements java.util.List<@org.jet
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<@org.jetbrains.annotations.NotNull() kotlin.UInt> asJsReadonlyArrayView();//  asJsReadonlyArrayView()
 

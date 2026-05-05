@@ -639,7 +639,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             val implementationState by lazy { member.implementationState(klass) }
 
             fun hasDefaultImplementationIn(klass: KaClassSymbol): Boolean {
-                if (klass.classKind != KaClassKind.INTERFACE) return false
+                if (klass.classKind != KaClassKind.INTERFACE || member.noDefaultImplementation()) return false
                 return when (val implementationState = implementationState) {
                     is KaCallableImplementationState.Inherited -> !implementationState.isAmbiguous && implementationState.isOverridable
                     else -> false

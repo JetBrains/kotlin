@@ -311,6 +311,7 @@ public actual interface List<out E> : Collection<E> {
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
+    @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsReadonlyArrayView(): JsReadonlyArray<E> = createJsReadonlyArrayViewFrom(this)
 }
@@ -452,6 +453,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
+    @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsArrayView(): JsArray<E> = createJsArrayViewFrom(this)
 }
@@ -509,6 +511,7 @@ public actual interface Set<out E> : Collection<E> {
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
+    @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsReadonlySetView(): JsReadonlySet<E> = createJsReadonlySetViewFrom(this)
 }
@@ -568,6 +571,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
+    @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsSetView(): JsSet<E> = createJsSetViewFrom(this)
 }
@@ -712,6 +716,7 @@ public actual interface Map<K, out V> {
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
+    @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsReadonlyMapView(): JsReadonlyMap<K, V> = createJsReadonlyMapViewFrom(this)
 }
@@ -823,6 +828,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      */
     @ExperimentalJsExport
     @ExperimentalJsCollectionsApi
+    @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsMapView(): JsMap<K, V> = createJsMapViewFrom(this)
 }

@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 val EXPORTED_DEFAULT_IMPLEMENTATIONS by IrDeclarationOriginImpl.Regular
@@ -47,7 +49,7 @@ class PrepareExportedDefaultImplementationsLowering(private val context: JsIrBac
     }
 
     private fun IrOverridableDeclaration<*>.shouldExtractAsExportedDefaultImplementation(): Boolean =
-        origin != CONVERTERS_TO_JS_COLLECTIONS
+        !hasAnnotation(JsStandardClassIds.Annotations.JsDontExportDefaultImplementation)
                 && modality != Modality.ABSTRACT
                 && isReal
                 && isExported(context)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -207,6 +207,13 @@ public annotation class ExperimentalJsCollectionsApi
 @Target(AnnotationTarget.CLASS)
 @UsedFromCompilerGeneratedCode
 internal annotation class JsImplicitExport(val couldBeConvertedToExplicitExport: Boolean)
+
+/**
+ * Exclude the annotated interface member with a default implementation from `DefaultImpls` in the generated `.d.ts` file.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(PROPERTY, FUNCTION)
+internal annotation class JsDontExportDefaultImplementation
 
 /**
  * Specifies that an additional static method is generated from the annotated companion object member if it's a function.
