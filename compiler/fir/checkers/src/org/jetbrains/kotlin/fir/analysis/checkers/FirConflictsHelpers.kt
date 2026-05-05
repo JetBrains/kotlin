@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -547,6 +548,11 @@ private fun FirDeclarationCollector<*>.getConflictState(
         val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session)
         if (conflictingIsHidden) return ConflictState.NoConflict
     }
+
+    if (declaration !is FirEnumEntrySymbol &&
+        conflicting !is FirEnumEntrySymbol &&
+        declaration.isStatic != conflicting.isStatic
+    ) return ConflictState.NoConflict
 
     val overloadabilityHelper = session.declarationOverloadabilityHelper
 
