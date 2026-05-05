@@ -67,6 +67,7 @@ fun Project.customCompilerTest(
 
 fun Project.customFirstStageTest(
     rawVersion: String,
+    addWritePermissionsForAllProperties: Boolean = false,
 ): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
 
@@ -74,7 +75,14 @@ fun Project.customFirstStageTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage"
-    )
+    ) {
+        if (addWritePermissionsForAllProperties)
+            testInputsCheck {
+                // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
+                // So to invoke older compilers, more permissions are given.
+                extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
+            }
+    }
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -96,6 +104,9 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
 }
 
 /* Custom-first-stage test tasks for different compiler versions. */
+customFirstStageTest("2.0.0", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.1.0", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
 customFirstStageTest("2.4.0-Beta2")
 // TODO: Add a new task for the "custom-first-stage" test here.
