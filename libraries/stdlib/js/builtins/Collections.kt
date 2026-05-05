@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -224,6 +224,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  *
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
+@JsName("KtList")
 public actual interface List<out E> : Collection<E> {
     // Query Operations
 
@@ -331,6 +332,7 @@ public actual interface List<out E> : Collection<E> {
  *
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
+@JsName("KtMutableList")
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     /**
@@ -486,6 +488,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  *
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
+@JsName("KtSet")
 public actual interface Set<out E> : Collection<E> {
     // Query Operations
 
@@ -526,6 +529,7 @@ public actual interface Set<out E> : Collection<E> {
  *
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
+@JsName("KtMutableSet")
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
     actual override fun iterator(): MutableIterator<E>
@@ -603,6 +607,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *          can accept a key as a parameter (of [containsKey] for example) and return it in a [keys] set.
  * @param V the type of map values. The map is covariant in its value type.
  */
+@JsName("KtMap")
 public actual interface Map<K, out V> {
     // Query Operations
     /**
@@ -729,6 +734,7 @@ public actual interface Map<K, out V> {
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
  */
+@JsName("KtMutableMap")
 public actual interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
     /**

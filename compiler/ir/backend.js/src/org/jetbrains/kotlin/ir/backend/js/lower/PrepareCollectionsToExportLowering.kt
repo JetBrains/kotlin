@@ -66,9 +66,6 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
     private val jsStatic by lazy(LazyThreadSafetyMode.NONE) {
         context.symbols.jsStaticAnnotationSymbol.primaryConstructorSymbol
     }
-    private val jsNameCtor by lazy(LazyThreadSafetyMode.NONE) {
-        context.symbols.jsNameAnnotationSymbol.primaryConstructorSymbol
-    }
     private val jsExportIgnoreCtor by lazy(LazyThreadSafetyMode.NONE) {
         context.symbols.jsExportIgnoreAnnotationSymbol.primaryConstructorSymbol
     }
@@ -78,7 +75,6 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.symbol in exportedCollectionsInfo.exportableSymbols) {
-            declaration.addJsName()
             declaration.markWithJsImplicitExport()
 
             declaration.declarations.forEach {
@@ -200,12 +196,6 @@ class PrepareCollectionsToExportLowering(private val context: JsIrBackendContext
             correspondingPropertySymbol?.owner?.excludeFromJsExport()
         }
         annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor)
-    }
-
-    private fun IrDeclarationWithName.addJsName() {
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsNameCtor).apply {
-            arguments[0] = "Kt${name.asString()}".toIrConst(context.irBuiltIns.stringType)
-        }
     }
 
     private fun IrDeclarationWithName.addJsStatic() {

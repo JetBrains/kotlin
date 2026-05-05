@@ -20,8 +20,8 @@ export declare namespace kotlin {
 export declare namespace foo {
     const prop: number;
     function box(): string;
-    function asyncList(): Promise<any/* kotlin.collections.List<number> */>;
-    function arrayOfLists(): Array<any/* kotlin.collections.List<number> */>;
+    function asyncList(): Promise<any/* kotlin.collections.KtList<number> */>;
+    function arrayOfLists(): Array<any/* kotlin.collections.KtList<number> */>;
     function acceptArrayOfPairs(array: Array<kotlin.Pair<string, string>>): void;
     function justSomeDefaultExport(): string;
     class C {

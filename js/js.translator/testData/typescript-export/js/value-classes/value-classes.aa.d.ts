@@ -43,16 +43,16 @@ declare namespace JS_TESTS {
         function acceptNullableValueClass(v: Nullable<foo.IntValueClass>): Nullable<number>;
         function echoNullableValueClass(v: Nullable<foo.IntValueClass>): Nullable<foo.IntValueClass>;
         function compareValueClasses(a: foo.IntValueClass, b: foo.IntValueClass): boolean;
-        function createValueClassList(): any/* kotlin.collections.List<foo.IntValueClass> */;
-        function createValueClassSet(): any/* kotlin.collections.Set<foo.StringValueClass> */;
-        function createValueClassMap(): any/* kotlin.collections.Map<foo.IntValueClass, foo.StringValueClass> */;
-        function acceptValueClassList(list: any/* kotlin.collections.List<foo.IntValueClass> */): number;
+        function createValueClassList(): any/* kotlin.collections.KtList<foo.IntValueClass> */;
+        function createValueClassSet(): any/* kotlin.collections.KtSet<foo.StringValueClass> */;
+        function createValueClassMap(): any/* kotlin.collections.KtMap<foo.IntValueClass, foo.StringValueClass> */;
+        function acceptValueClassList(list: any/* kotlin.collections.KtList<foo.IntValueClass> */): number;
         function acceptValueClassArray(arr: Array<foo.IntValueClass>): number;
-        function mixedCollection(): any/* kotlin.collections.List<any> */;
-        function nestedValueClassCollection(): any/* kotlin.collections.List<kotlin.collections.List<foo.IntValueClass>> */;
+        function mixedCollection(): any/* kotlin.collections.KtList<any> */;
+        function nestedValueClassCollection(): any/* kotlin.collections.KtList<kotlin.collections.KtList<foo.IntValueClass>> */;
         function createValueClassWithCollection(): foo.ValueClassWithCollection;
-        function useValueClassAsMapKey(map: any/* kotlin.collections.Map<foo.IntValueClass, string> */): Nullable<string>;
-        function useValueClassAsMapValue(map: any/* kotlin.collections.Map<string, foo.IntValueClass> */): Nullable<number>;
+        function useValueClassAsMapKey(map: any/* kotlin.collections.KtMap<foo.IntValueClass, string> */): Nullable<string>;
+        function useValueClassAsMapValue(map: any/* kotlin.collections.KtMap<string, foo.IntValueClass> */): Nullable<number>;
         function createPairWithValueClass(): kotlin.Pair<foo.IntValueClass, foo.StringValueClass>;
         function createTripleWithValueClass(): kotlin.Triple<foo.IntValueClass, foo.StringValueClass, foo.BooleanValueClass>;
         function acceptPairWithValueClass(pair: kotlin.Pair<foo.IntValueClass, foo.IntValueClass>): number;
@@ -247,10 +247,10 @@ declare namespace JS_TESTS {
             constructor();
             addToList(v: foo.IntValueClass): void;
             getListSize(): number;
-            get list(): any/* kotlin.collections.List<foo.IntValueClass> */;
+            get list(): any/* kotlin.collections.KtList<foo.IntValueClass> */;
             get array(): Array<foo.StringValueClass>;
-            get mutableList(): any/* kotlin.collections.MutableList<foo.IntValueClass> */;
-            set mutableList(value: any/* kotlin.collections.MutableList<foo.IntValueClass> */);
+            get mutableList(): any/* kotlin.collections.KtMutableList<foo.IntValueClass> */;
+            set mutableList(value: any/* kotlin.collections.KtMutableList<foo.IntValueClass> */);
         }
         namespace ClassWithValueCollections {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -259,11 +259,11 @@ declare namespace JS_TESTS {
             }
         }
         class ValueClassWithCollection {
-            constructor(items: any/* kotlin.collections.List<number> */);
+            constructor(items: any/* kotlin.collections.KtList<number> */);
             equals(other: Nullable<any>): boolean;
             hashCode(): number;
             toString(): string;
-            get items(): any/* kotlin.collections.List<number> */;
+            get items(): any/* kotlin.collections.KtList<number> */;
         }
         namespace ValueClassWithCollection {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

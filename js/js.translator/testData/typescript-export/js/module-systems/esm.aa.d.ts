@@ -16,8 +16,8 @@ export declare function createConcreteInterfaceNested(): InterfaceWithNestedClas
 export declare function createValueInterfaceNested(value: number): InterfaceWithNestedClass.NestedValue;
 export declare function createFunInterfaceNested(value: string): FunInterfaceWithNestedClass.Nested;
 export declare function box(): string;
-export declare function asyncList(): Promise<any/* List<number> */>;
-export declare function arrayOfLists(): Array<any/* List<number> */>;
+export declare function asyncList(): Promise<any/* KtList<number> */>;
+export declare function arrayOfLists(): Array<any/* KtList<number> */>;
 declare function justSomeDefaultExport(): string;
 export default justSomeDefaultExport;
 export declare class C {
