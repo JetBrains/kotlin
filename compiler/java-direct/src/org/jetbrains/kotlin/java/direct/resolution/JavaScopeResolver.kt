@@ -35,34 +35,50 @@ internal class JavaScopeResolver(
     fun findInheritedTypeParameter(name: String): JavaTypeParameter? = inheritedTypeParametersInScope[name]
 
     /**
-     * Finds a class by simple name. Checks:
-     * 1. Inner classes of the containing class (if any)
-     * 2. Sibling inner classes (inner classes of the outer class)
-     * 3. Inner classes of supertypes (JLS 6.5.2 - inherited member types)
-     * 4. Inner classes of outer classes' supertypes (for nested inner classes)
-     * 5. Top-level classes in the same compilation unit
+     * Finds a class by simple name in the AST-side scope.
+     *
+     * Checks (in order):
+     * 1. Inner classes directly declared on the containing class chain (purely syntactic).
+     * 2. Sibling inner classes — inner classes declared on the immediate outer class.
+     * 3. Inherited inner classes from supertypes of the containing class
+     *    (`findInnerClassFromSupertypes`, JLS 6.5.2).
+     * 4. Inner classes declared on each outer class up the containing chain
+     *    (so deeply-nested classes see siblings of every enclosing class).
+     * 5. Top-level classes declared in the same compilation unit (`sameFileTopLevelClassProvider`).
+     *
+     * Stage 2 of the resolver-unification refactoring (see
+     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`) narrowed this method by
+     * removing the AST-side inherited-inner-class walk on each *outer* class in step 4 —
+     * that path was redundant with the aggregated-map / BFS lookup performed by
+     * [JavaResolutionContext.resolveFromLocalScope] step 2b for outer-of-outer cases.
+     * The supertype walk on the *containing* class is retained (step 3) because it is
+     * load-bearing for cases like `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`
+     * where the same-file aggregated-map / BFS path arrives at the inner class through
+     * a different ClassId shape (the `JavaClass.fqName` path resolves directly to the
+     * inherited inner's source-side ClassId, while the aggregated map is keyed by
+     * supertype ClassIds that the FIR side has not yet materialized at the resolution
+     * point).
      */
     fun findLocalClass(name: Name): JavaClass? {
-        // First check inner classes of the containing class
+        // 1. Inner classes of the containing class (purely syntactic AST query).
         containingClass?.findInnerClass(name)?.let { return it }
-        // Then check sibling inner classes (classes in the outer class)
-        // This handles cases like: class J { class AImpl {} class A extends AImpl {} }
+        // 2. Sibling inner classes — inner classes of the immediate outer class.
+        // Handles cases like: class J { class AImpl {} class A extends AImpl {} }
         containingClass?.outerClass?.findInnerClass(name)?.let { return it }
-        // Then check inner classes of supertypes (inherited member types per JLS 6.5.2)
-        // This handles cases like: class B extends A { ... } where A has inner class Y
+        // 3. Inherited inner classes from the containing class's supertypes (JLS 6.5.2).
+        // Retained as a load-bearing case (see KDoc above).
         containingClass?.let { cls ->
             inheritedMemberResolver.findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
         }
-        // Also check inner classes of outer classes and their supertypes.
-        // Walk the full outer class chain: for deeply nested classes like
-        // Outer { Inner1 { Inner2 { ... } } }, Inner2 must see siblings of Outer.
+        // 4. Inner classes of each outer class up the containing chain.
+        // For deeply-nested classes (Outer { Inner1 { Inner2 { ... } } }) Inner2 must
+        // see siblings of every enclosing class.
         var outer = containingClass?.outerClass
         while (outer != null) {
             outer.outerClass?.findInnerClass(name)?.let { return it }
-            inheritedMemberResolver.findInnerClassFromSupertypes(name, outer, mutableSetOf())?.let { return it }
             outer = outer.outerClass
         }
-        // Then check top-level classes
+        // 5. Top-level classes declared in the same compilation unit.
         return sameFileTopLevelClassProvider(name)
     }
 

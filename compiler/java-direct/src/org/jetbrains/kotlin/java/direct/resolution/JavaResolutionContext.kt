@@ -264,12 +264,38 @@ class JavaResolutionContext private constructor(
      * - ClassId("", "a.b") - root package, nested class "a.b"
      * 
      * Using ClassId avoids the ambiguity that string-based resolution has.
+     *
+     * @param tryResolve callback that checks whether a [ClassId] resolves via the FIR symbol
+     *        provider (returns `true` if found, `false` otherwise).
+     * @param getSupertypeClassIds optional callback returning direct supertype [ClassId]s for
+     *        already-resolved classes; used for inherited inner-class BFS through Kotlin /
+     *        binary supertypes.
+     * @param getClassLikeSymbol optional richer counterpart to [tryResolve]: when supplied,
+     *        returns the resolved class-like symbol with its [JavaResolvedClassOrigin], or
+     *        `null` if the [ClassId] does not resolve. Plumbed through Stage 1 of the
+     *        resolver-unification refactoring (see
+     *        `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`); not yet consumed
+     *        beyond deriving the boolean "exists?" check, but exposes the origin information
+     *        that the FIR caller already has so future stages can act on it.
      */
     fun resolve(
         name: String,
         tryResolve: (ClassId) -> Boolean,
         getSupertypeClassIds: ((ClassId) -> List<ClassId>)? = null,
+        getClassLikeSymbol: ((ClassId) -> JavaResolvedClassLikeSymbol?)? = null,
     ): ClassId? {
+        // Stage 1 of resolver-unification: when [getClassLikeSymbol] is supplied, derive the
+        // boolean "exists?" check from it so the boolean and the rich callback can never
+        // disagree within a single invocation. When it isn't supplied, the existing
+        // [tryResolve] is used unchanged. No current caller passes [getClassLikeSymbol], so
+        // this is behavior-preserving today; the parameter is the API hook future stages
+        // (which will read [JavaResolvedClassLikeSymbol.origin]) plug into.
+        val effectiveTryResolve: (ClassId) -> Boolean = if (getClassLikeSymbol != null) {
+            { classId -> getClassLikeSymbol(classId) != null }
+        } else {
+            tryResolve
+        }
+
         // Handle nested class references like "Map.Entry"
         if (name.contains('.')) {
             // Cache tryResolve results within this invocation. The recursive prefix splitting
@@ -281,11 +307,11 @@ class JavaResolutionContext private constructor(
             // resolveSimpleNameToClassId directly, avoiding the HashMap allocation entirely.
             val cache = HashMap<ClassId, Boolean>()
             val cachedTryResolve: (ClassId) -> Boolean = { classId ->
-                cache.getOrPut(classId) { tryResolve(classId) }
+                cache.getOrPut(classId) { effectiveTryResolve(classId) }
             }
             return resolveNestedClassToClassId(name, cachedTryResolve, getSupertypeClassIds)
         }
-        return resolveSimpleNameToClassId(name, tryResolve, getSupertypeClassIds)
+        return resolveSimpleNameToClassId(name, effectiveTryResolve, getSupertypeClassIds)
     }
 
     /**

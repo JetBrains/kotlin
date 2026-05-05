@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-04 (merged refactoring plan landed: `MERGED_REFACTORING_PLAN_2026_05_04.md`)
+**Last Updated**: 2026-05-05 (Step 2 of merged plan: Unification Stage 1 + partial Stage 2a landed; Stage 2b deferred to land with Stage 3)
 
 ### Entry Template
 
@@ -30,6 +30,110 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Merged plan Step 2: Unification Stage 1 + partial Stage 2a (drop outer-chain inherited walks); Stage 2b deferred — 2026-05-05
+
+### Overview
+
+Landed Step 2 of `MERGED_REFACTORING_PLAN_2026_05_04.md` — the "mechanical, risk-free"
+stage of the resolver-unification track. Two sub-stages applied in this iteration:
+**Stage 1** added the `getClassLikeSymbol` callback API surface (origin-aware counterpart
+to `tryResolve`) to `JavaResolutionContext.resolve()`; **Stage 2a** narrowed
+`JavaScopeResolver.findLocalClass` by removing the AST-side `findInnerClassFromSupertypes`
+walk on every *outer* class up the containing chain (the redundant path), retaining only
+the walk on the immediate containing class as a load-bearing case. The original Step 2
+also asks for **Stage 2b** ("drop `JavaInheritedMemberResolver`'s Phase 1") — that drop
+turned out to be inseparable from Stage 3 and is deferred with a documenting KDoc; see
+"Stage 2b deferral" below.
+
+### Changes
+
+- **Stage 1 — `getClassLikeSymbol` callback (new API surface)**
+  - New file `compiler/java-direct/src/.../resolution/JavaResolvedClassLikeSymbol.kt`
+    (~52 lines) introducing the public `JavaResolvedClassOrigin` enum
+    (`JAVA_SOURCE` / `JAVA_LIBRARY` / `KOTLIN` / `OTHER` — mirrors the relevant subset
+    of `FirDeclarationOrigin` without taking a FIR-internal dependency from `java-direct`)
+    and the public `JavaResolvedClassLikeSymbol(classId, origin)` data class.
+  - `JavaResolutionContext.resolve()` gained a fourth optional parameter
+    `getClassLikeSymbol: ((ClassId) -> JavaResolvedClassLikeSymbol?)? = null`. When it
+    is supplied, the function derives an `effectiveTryResolve = { getClassLikeSymbol(it) != null }`
+    so the boolean and the rich callback can never disagree within one invocation; when
+    it is not supplied (the only case for now — no current caller passes it), behaviour
+    is byte-for-byte unchanged. The parameter is the API hook future stages plug into;
+    Stage 1 is therefore behaviour-preserving by construction.
+- **Stage 2a (partial) — `JavaScopeResolver.findLocalClass`**
+  - Removed the call to `inheritedMemberResolver.findInnerClassFromSupertypes(name, outer, ...)`
+    inside the `outer = containingClass.outerClass; while (outer != null) { ... }` loop.
+    That walk was redundant with the aggregated-map / BFS lookup performed by
+    `JavaResolutionContext.resolveFromLocalScope` step 2b (the aggregated map covers the
+    same "inherited inner class through an outer's supertype" cases via the source index
+    and the BFS fallback covers cross-file Kotlin/binary supertypes via FIR).
+  - **Retained** the call on the *containing* class (step 3 of `findLocalClass`).
+    Bisecting Stage 2a showed that removing this one too regresses
+    `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`. Root
+    cause: the `findInnerClassFromSupertypes` path returns a `JavaClass` whose `fqName`
+    yields a different (source-side) `ClassId` shape than the supertype-keyed ClassIds
+    the aggregated map produces, and the FIR side has not yet materialised the latter
+    at the resolution point. The retained call is therefore load-bearing today; cleaning
+    it up is folded into Stage 5 (final origin-agnostic AST-side core).
+  - KDoc on `findLocalClass` rewritten to describe the new five-step ordering and to
+    cite the merged plan + `j+k_complex.kt` as the rationale for the retention.
+- **Stage 2b — deferred to land with Stage 3 (documentation only this iteration)**
+  - Added a "Stage 2b deferral note" block to the KDoc of
+    `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId`. Rationale recorded
+    inline: today `JavaTypeConversion.getResolvedSupertypeClassIds` short-circuits to
+    `emptyList()` for `FirDeclarationOrigin.Java.Source` (the documented
+    avoid-premature-lazy-resolution filter at line 446 of `JavaTypeConversion.kt`), so
+    `walkBinarySupertypes` (Phase 2) cannot traverse Java-source supertypes today.
+    `walkJavaSourceSupertypes` (Phase 1) is the only path that can reach inner classes
+    inherited through a `JavaSource → JavaSource → ...` chain. Stage 3 of the unification
+    replaces that filter with `lazyResolveToPhase(SUPER_TYPES)`; once it lands, Phase 1
+    collapses cleanly into Phase 2. Until then, Phase 1 stays.
+
+### Test Results
+
+`./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --rerun-tasks --no-build-cache` — **BUILD SUCCESSFUL**, 0 failures, 0 errors. The `JavaUsingAst*` matrix is unchanged from the
+previous green baseline. The intermediate state (Stage 2a as originally specified —
+removing `findInnerClassFromSupertypes` from both the containing-class step and the outer
+chain) regressed exactly one test (`InnerClasses.testJ_k_complex`) which is what drove
+the partial-removal decision documented above.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../resolution/JavaResolvedClassLikeSymbol.kt` | New (~52 lines): `JavaResolvedClassOrigin` enum + `JavaResolvedClassLikeSymbol` data class. |
+| `compiler/java-direct/src/.../resolution/JavaResolutionContext.kt` | `resolve()` gained `getClassLikeSymbol: ((ClassId) -> JavaResolvedClassLikeSymbol?)? = null`; existing `tryResolve` is replaced by an `effectiveTryResolve` that delegates to the rich callback when supplied. |
+| `compiler/java-direct/src/.../resolution/JavaScopeResolver.kt` | `findLocalClass`: dropped the per-outer-class `findInnerClassFromSupertypes` walk; KDoc rewritten to describe the new five-step order and cite `j+k_complex.kt`. |
+| `compiler/java-direct/src/.../resolution/JavaInheritedMemberResolver.kt` | KDoc-only: added Stage-2b deferral note to `resolveInheritedInnerClassToClassId`. |
+
+### Key Learnings
+
+- **Stage 2 is "mechanical" only above the line, not below it.** The merged plan's
+  Step 2 reads as a single mechanical bundle; the actual code shows Stage 1 / Stage 2a
+  outer-chain are genuinely mechanical, but `findLocalClass`'s containing-class walk and
+  `JavaInheritedMemberResolver`'s Phase 1 are entangled with the `Java.Source` filter
+  in `JavaTypeConversion.getResolvedSupertypeClassIds`. Removing them ahead of Stage 3
+  regresses cases that depend on the source-index walk being the only origin-agnostic
+  path. The right unit of landing is therefore "Stage 1 + Stage 2a outer-chain now;
+  Stage 2a containing-class + Stage 2b together with Stage 3", not "Stage 2 wholesale".
+- **`j+k_complex.kt` is the canonical pre-Stage-3 trip-wire.** It exercises an inherited
+  inner class along a same-file Java-source `class Outer<H> extends BaseOuter<H>` chain
+  where the inner is declared on `BaseOuter`. The aggregated map / BFS fallback path
+  reaches the inner via supertype-keyed ClassIds that the FIR side has not yet
+  materialised, while `findInnerClassFromSupertypes` reaches it via the AST/source-index
+  walk. Pre-Stage-3, only the AST path is reliable.
+- **`getClassLikeSymbol` should be public, not internal.** First attempt placed the new
+  types as `internal` to mirror the convention of resolution-package internals; the
+  Kotlin compiler then refused to expose them through the public `resolve()` signature
+  on `JavaResolutionContext` (an unrelated public class). Public visibility for the
+  callback's parameter type is structurally required, not stylistic.
+- **`--rerun` does not re-write `assertEqualsToFile` `.actual` neighbours**, so debugging
+  a Stage-2 regression had to lean on bisection (re-enable suspected calls one at a time
+  and re-run the suite) rather than on diff inspection. The forbidden
+  `kotlin.test.update.test.data=true` rule (AGENT_INSTRUCTIONS rule 5) is respected.
 
 ---
 

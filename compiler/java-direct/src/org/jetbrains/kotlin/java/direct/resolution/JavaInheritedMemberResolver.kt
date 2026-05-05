@@ -107,6 +107,19 @@ internal class JavaInheritedMemberResolver(
      * Both passes share `visited` (to avoid re-probing the same `ClassId`) and use the
      * `SupertypeClassId.SimpleName` probe pattern with ambiguity detection.
      *
+     * **Stage 2b deferral note** (resolver-unification — see
+     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). The merged plan
+     * (Step 2) lists "drop Phase 1 in favour of Phase 2 alone" as part of the mechanical
+     * Stage-2 work. In practice that drop cannot land in isolation: today
+     * `JavaTypeConversion.getResolvedSupertypeClassIds` short-circuits to `emptyList()` for
+     * `FirDeclarationOrigin.Java.Source` classes (the documented avoid-premature-lazy-resolution
+     * filter), so Phase 2 alone cannot walk through Java-source supertypes. Phase 1's text →
+     * `ClassId` resolution + source-index recursion is the only way to reach inner classes
+     * inherited along a chain `JavaSource → JavaSource → ...`. Stage 3 of the unification
+     * replaces that filter with `lazyResolveToPhase(SUPER_TYPES)`; once it lands,
+     * [getSupertypeClassIds] becomes origin-agnostic and Phase 1 collapses cleanly into
+     * Phase 2. Until then, Phase 1 stays.
+     *
      * @param resolveWithoutInheritance function to resolve a name without checking inherited
      *        inner classes (to avoid infinite recursion back into this method).
      */
