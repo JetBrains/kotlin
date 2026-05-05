@@ -53,7 +53,7 @@ class MavenTestProject(
 
         val javaHome = context.jdkProvider.getJavaHome(buildOptions.javaVersion) ?:
             throw RuntimeException("Can't find path for ${buildOptions.javaVersion}")
-        val nestedMavenTempDir = workDir.resolve(".mvn-tmp").createDirectories().absolutePathString()
+        val nestedMavenTempDir = context.mavenTempDir.createDirectories().absolutePathString()
         verifier.setEnvironmentVariable("JAVA_HOME", javaHome.absolutePathString())
         verifier.setEnvironmentVariable("MAVEN_OPTS", nestedMavenOpts(environmentVariables["MAVEN_OPTS"]))
         verifier.setEnvironmentVariable(

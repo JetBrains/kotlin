@@ -195,6 +195,7 @@
                         <kotlin.version>${project.version}</kotlin.version>
                         <kotlin.it.localRepo>${project.basedir}/local-repo-${surefire.forkNumber}</kotlin.it.localRepo>
                         <kotlin.it.mavenUserHome>${project.basedir}/maven-user-home-${surefire.forkNumber}</kotlin.it.mavenUserHome>
+                        <kotlin.it.mavenTempDir>${project.basedir}/maven-temp-${surefire.forkNumber}</kotlin.it.mavenTempDir>
                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
 
                         <!-- JDK configuration must follow this rule jdk\d+Home -->

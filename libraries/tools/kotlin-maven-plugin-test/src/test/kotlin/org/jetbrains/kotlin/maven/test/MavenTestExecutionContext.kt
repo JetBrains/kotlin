@@ -19,6 +19,7 @@ class MavenTestExecutionContext(
     val testWorkDir: Path,
     val sharedMavenLocal: Path,
     val mavenUserHome: Path,
+    val mavenTempDir: Path,
     val kotlinVersion: String,
     val kotlinBuildRepo: Path,
 ) {
@@ -66,6 +67,11 @@ fun createMavenTestExecutionContext(
         defaultValue = { "${System.getProperty("user.home")}/.m2" }
     )
 
+    val mavenTempDir = systemPropertyOrDefault(
+        "kotlin.it.mavenTempDir",
+        defaultValue = { "${System.getProperty("user.dir")}/maven-temp" }
+    )
+
     val kotlinVersion = systemPropertyOrDefault("kotlin.version",
         defaultValue = { "${KotlinVersion.CURRENT.major}.${KotlinVersion.CURRENT.minor}.255-SNAPSHOT" }
     )
@@ -81,6 +87,7 @@ fun createMavenTestExecutionContext(
         testWorkDir = tmpDir.resolve("maven-test-work"),
         sharedMavenLocal = Path(mavenRepoLocal),
         mavenUserHome = Path(mavenUserHome),
+        mavenTempDir = Path(mavenTempDir),
         kotlinVersion = kotlinVersion,
         kotlinBuildRepo = Path(kotlinBuildRepo),
     )
