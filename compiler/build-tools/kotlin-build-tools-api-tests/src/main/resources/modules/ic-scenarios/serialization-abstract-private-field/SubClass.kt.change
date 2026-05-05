@@ -1,0 +1,12 @@
+package org.example
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+class SubClass : Base() {
+    init {
+        println(3)
+        println(2)
+        println(1)
+    }
+}
