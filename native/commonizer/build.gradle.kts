@@ -65,7 +65,9 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        outputs.upToDateWhen { false }
+    }
     testData(project.isolated, "testData")
     withMockJdkRuntime()
 }
