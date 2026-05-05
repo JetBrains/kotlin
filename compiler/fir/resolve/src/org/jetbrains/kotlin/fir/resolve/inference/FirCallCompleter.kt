@@ -144,10 +144,6 @@ class FirCallCompleter(
             @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA
                 -> throw IllegalStateException()
-
-            @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)
-            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA_SECOND_ROUND
-                -> throw IllegalStateException()
         }
     }
 

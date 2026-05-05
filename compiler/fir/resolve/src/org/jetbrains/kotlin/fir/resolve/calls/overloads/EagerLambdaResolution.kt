@@ -26,28 +26,26 @@ import org.jetbrains.kotlin.utils.addToStdlib.same
 fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
     candidates: Set<Candidate>,
     components: BodyResolveComponents,
-    completionMode: ConstraintSystemCompletionMode,
 ): Set<Candidate> = context(components) {
-    runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(candidates, completionMode)
+    runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(candidates)
 }
 
 context(components: BodyResolveComponents)
 private tailrec fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
     candidates: Set<Candidate>,
-    completionMode: ConstraintSystemCompletionMode,
 ): Set<Candidate> {
     check(candidates.isNotEmpty())
     if (candidates.size == 1) return candidates
 
     // No lambda can be analyzed
-    if (!runEagerLambdaAnalysisForFirstReadyLambda(candidates, completionMode)) return candidates
+    if (!runEagerLambdaAnalysisForFirstReadyLambda(candidates)) return candidates
 
     val remainingSuccessfulCandidates =
         candidates.filterTo(mutableSetOf()) { it.isSuccessful }
 
     // Some candidates are still successful and there might be other ready lambdas, so repeat ELA again
     if (remainingSuccessfulCandidates.isNotEmpty()) {
-        return runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(remainingSuccessfulCandidates, completionMode)
+        return runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(remainingSuccessfulCandidates)
     }
 
     // If only unsuccessful candidates remain, return the first one.
@@ -63,7 +61,6 @@ private tailrec fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
 context(components: BodyResolveComponents)
 private fun runEagerLambdaAnalysisForFirstReadyLambda(
     candidates: Set<Candidate>,
-    completionMode: ConstraintSystemCompletionMode,
 ): Boolean {
     if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() || it.callInfo.isCollectionLiteralCall }) return false
     val call = candidates.first().callInfo.callSite as? FirFunctionCall ?: return false
@@ -83,7 +80,7 @@ private fun runEagerLambdaAnalysisForFirstReadyLambda(
 
             if (!lambdaAtomGroup.same { it.atom.parameterTypes.size }) continue
             if (!lambdaAtomGroup.all { it.atom.expectedType?.isSomeFunctionType(components.session) == true }) continue
-            if (!runEagerLambdaAnalysisForLambdaAtomGroup(lambdaAtomGroup, call, completionMode)) continue
+            if (!runEagerLambdaAnalysisForLambdaAtomGroup(lambdaAtomGroup, call)) continue
             return true
         }
     } finally {
@@ -102,7 +99,6 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
     // All the atoms refer to the same FirAnonymousFunction
     lambdaAtomGroup: Collection<LambdaAtomWithCandidate>,
     call: FirFunctionCall,
-    completionMode: ConstraintSystemCompletionMode,
 ): Boolean {
     val inferenceSession = components.context.inferenceSession
     val callCompleter = components.callCompleter
@@ -111,7 +107,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
         call.replaceCalleeReference(candidate.temporaryNamedReference())
         callCompleter.runCompletionForCall(
             candidate,
-            completionMode,
+            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
             call,
             components.initialTypeOfCandidate(candidate)
         )
