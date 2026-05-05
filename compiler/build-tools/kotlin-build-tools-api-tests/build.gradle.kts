@@ -13,12 +13,20 @@ plugins {
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
 val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
+val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
+val serializationCore = configurations.dependencyScope("serializationCore")
 
 val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
     extendsFrom(noArgCompilerPlugin.get())
 }
 val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
     extendsFrom(assignmentCompilerPlugin.get())
+}
+val serializationCompilerPluginResolvable = configurations.resolvable("serializationCompilerPluginResolvable") {
+    extendsFrom(serializationCompilerPlugin.get())
+}
+val serializationCoreResolvable = configurations.resolvable("serializationCoreResolvable") {
+    extendsFrom(serializationCore.get())
 }
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
@@ -64,6 +72,8 @@ dependencies {
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
     scriptingCompilerPlugin(project(":kotlin-scripting-compiler-embeddable"))
+    serializationCompilerPlugin(project(":kotlinx-serialization-compiler-plugin.embeddable"))
+    serializationCore(libs.kotlinx.serialization.core)
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
@@ -324,6 +334,8 @@ testing {
                     addClasspathProperty(noArgCompilerPluginResolvable.get(), "NOARG_COMPILER_PLUGIN")
                     addClasspathProperty(assignmentCompilerPluginResolvable.get(), "ASSIGNMENT_COMPILER_PLUGIN")
                     addClasspathProperty(scriptingCompilerPluginResolvable.get(), "SCRIPTING_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCompilerPluginResolvable.get(), "SERIALIZATION_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
