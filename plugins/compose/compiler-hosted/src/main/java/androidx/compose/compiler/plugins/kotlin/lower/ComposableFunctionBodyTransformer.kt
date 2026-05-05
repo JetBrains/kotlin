@@ -1297,19 +1297,24 @@ class ComposableFunctionBodyTransformer(
     private fun visitInlinedLambdaInComposableScope(declaration: IrFunction): IrStatement {
         val scope = currentFunctionScope
         val parentScope = scope.parent
-        val outerGroupRequired = parentScope is Scope.CaptureScope && parentScope.forceInlinedLambdaGroup
+        val forceInlineLambdaGroup = parentScope is Scope.CaptureScope && parentScope.forceInlinedLambdaGroup
 
-        if (!outerGroupRequired) {
-            val result = super.visitFunction(declaration)
+        if (!forceInlineLambdaGroup) {
+            val transformed = super.visitFunction(declaration)
             if (scope.hasComposableCalls) {
                 encounteredCapturedComposableCall()
             }
-            return result
+            return transformed
         }
 
         val originalBody = declaration.body ?: return super.visitFunction(declaration)
         val (body, returnVar) = originalBody.asBodyAndResultVar()
         body.transformChildrenVoid()
+
+        // Avoid transforming functions that are not referencing anything composable, as they cannot use slots.
+        if (!scope.hasComposableCalls) {
+            return super.visitFunction(declaration)
+        }
 
         scope.realizeGroup {
             irEndReplaceGroup(scope = scope, startOffset = body.endOffset, endOffset = body.endOffset)
