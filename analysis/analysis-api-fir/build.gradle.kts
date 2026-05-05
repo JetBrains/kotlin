@@ -63,7 +63,7 @@ optInToUnsafeDuringIrConstructionAPI()
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)
     ) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
         useJUnitPlatform()

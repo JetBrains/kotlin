@@ -10,7 +10,7 @@ see Window -> Flight Recorder Template Manager
   <event name="jdk.FileRead">
     <setting name="enabled">true</setting>
     <setting name="threshold">0 ms</setting>
-    <setting name="stackTrace">false</setting>
+    <setting name="stackTrace">true</setting>
   </event>
 
 </configuration>
