@@ -134,9 +134,14 @@ fun buildHtmlReport(files: List<AccessedFile>): String {
                     +"""
                         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 20px; }
                         h1 { font-size: 18px; }
+                        .hint { color: #555; font-size: 13px; margin-bottom: 12px; }
+                        .hint code { background: #f6f8fa; padding: 1px 4px; border-radius: 3px; }
                         details { border: 1px solid #ddd; border-radius: 4px; margin: 4px 0; padding: 6px 10px; }
                         details > summary { cursor: pointer; font-family: 'SF Mono', Menlo, monospace; font-size: 13px; }
                         pre { background: #f6f8fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; margin: 8px 0 0 0; white-space: pre-wrap; }
+                        .stack-actions { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+                        .stack-actions button { padding: 4px 10px; cursor: pointer; }
+                        .stack-actions .feedback { color: #2a7a2a; font-size: 12px; }
                         .pager { margin: 12px 0; display: flex; gap: 8px; align-items: center; }
                         .pager button { padding: 4px 10px; cursor: pointer; }
                         .pager button:disabled { cursor: default; opacity: 0.5; }
@@ -146,6 +151,15 @@ fun buildHtmlReport(files: List<AccessedFile>): String {
         }
         body {
             h1 { +"Undeclared inputs found (${files.size})" }
+            div("hint") {
+                +"Click "
+                strong { +"Open in IDEA" }
+                +" to copy a stacktrace, then in IntelliJ press "
+                code { +"Cmd/Ctrl+Shift+A" }
+                +" → "
+                em { +"Analyze Stack Trace or Thread Dump" }
+                +" → paste → OK."
+            }
             div("pager") {
                 button { id = "prev"; unsafe { +"&laquo; Prev" } }
                 span {
@@ -176,12 +190,33 @@ fun buildHtmlReport(files: List<AccessedFile>): String {
                             var end = Math.min(start + PAGE_SIZE, ITEMS.length);
                             for (var i = start; i < end; i++) {
                               var item = ITEMS[i];
+                              var stackText = STACKS[item.s];
                               var d = document.createElement('details');
                               var s = document.createElement('summary');
                               s.textContent = item.p;
                               var p = document.createElement('pre');
-                              p.textContent = STACKS[item.s];
+                              p.textContent = stackText;
+                              var actions = document.createElement('div');
+                              actions.className = 'stack-actions';
+                              var btn = document.createElement('button');
+                              btn.type = 'button';
+                              btn.textContent = 'Open in IDEA';
+                              var feedback = document.createElement('span');
+                              feedback.className = 'feedback';
+                              btn.addEventListener('click', (function(text, fb) {
+                                return function() {
+                                  navigator.clipboard.writeText(text).then(function() {
+                                    fb.textContent = 'Copied — paste into IDEA \u2192 Analyze Stack Trace';
+                                    setTimeout(function() { fb.textContent = ''; }, 4000);
+                                  }, function() {
+                                    fb.textContent = 'Copy failed';
+                                  });
+                                };
+                              })(stackText, feedback));
+                              actions.appendChild(btn);
+                              actions.appendChild(feedback);
                               d.appendChild(s);
+                              d.appendChild(actions);
                               d.appendChild(p);
                               frag.appendChild(d);
                             }
