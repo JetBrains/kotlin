@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.dsl.types
 
-import org.jetbrains.kotlin.config.JvmTarget as CompilerJvmTarget
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.config.JvmTarget as CompilerJvmTarget
 
 class JvmTargetConsistency {
     @Test
@@ -54,6 +54,18 @@ class JvmTargetConsistency {
                     )
                 }
             }
+    }
+
+    @Test
+    fun jdkReleaseHasAllJvmTargets() {
+        val jdkReleaseVersions = JdkRelease.entries.map { it.releaseName }
+        val jvmTargetVersions = JvmTarget.entries.map { it.targetName }
+        assertTrue(
+            jdkReleaseVersions.containsAll(jvmTargetVersions),
+            message =
+                "The following JvmTarget versions are not present in JdkRelease versions: ${jvmTargetVersions - jdkReleaseVersions}.\n" +
+                        "Please add them to org.jetbrains.kotlin.arguments.dsl.types.JdkRelease.",
+        )
     }
 
     private fun CompilerJvmTarget.toDslJvmTargetOrNull() = JvmTarget.entries.find { target ->

@@ -841,6 +841,7 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/JdkReleas
 	public static final field JDK_23 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_24 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_25 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
+	public static final field JDK_26 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_6 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_7 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;
 	public static final field JDK_8 Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/JdkRelease;

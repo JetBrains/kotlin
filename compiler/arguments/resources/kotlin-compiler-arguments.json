@@ -1299,6 +1299,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "26",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.4.0",
+                        "stabilizedVersion": "2.4.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
