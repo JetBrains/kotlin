@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompil
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("KT-86121: Incremental compilation with the serialization plugin")
 class SerializationSealedHierarchyIncrementalTest : BaseCompilationTest() {
 
-    @Disabled("enable when KT-86121 is fixed")
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Modifying a concrete subclass in a multi-file sealed serializable hierarchy succeeds incrementally")
     fun testIncrementalCompilationOfSealedSerializableHierarchy(strategyConfig: CompilerExecutionStrategyConfiguration) {
