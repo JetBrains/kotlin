@@ -7,6 +7,9 @@ export declare namespace kotlin.collections {
             readonly "kotlin.collections.KtList": unique symbol;
         };
     }
+    namespace KtList {
+        function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+    }
 }
 export declare namespace kotlin {
     class Pair<out A, out B> /* implements kotlin.io.Serializable */ {

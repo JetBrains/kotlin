@@ -7,6 +7,9 @@ export declare interface KtList<out E> /* extends Collection<E> */ {
         readonly "kotlin.collections.KtList": unique symbol;
     };
 }
+export declare namespace KtList {
+    function fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
+}
 
 // FILE: kotlin_lib1/lib1a.export.d.mts
 type Nullable<T> = T | null | undefined

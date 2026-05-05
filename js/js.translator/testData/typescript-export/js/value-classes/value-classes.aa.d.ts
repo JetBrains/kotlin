@@ -8,11 +8,17 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
         }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
         interface KtSet<out E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlySetView(): ReadonlySet<E>;
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.KtSet": unique symbol;
             };
+        }
+        namespace KtSet {
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
         }
         interface KtMap<K, out V> {
             asJsReadonlyMapView(): ReadonlyMap<K, V>;
@@ -20,11 +26,17 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMap": unique symbol;
             };
         }
+        namespace KtMap {
+            function fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMap<K, V>;
+        }
         interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
             asJsArrayView(): Array<E>;
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
             };
+        }
+        namespace KtMutableList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
         }
     }
     namespace kotlin {

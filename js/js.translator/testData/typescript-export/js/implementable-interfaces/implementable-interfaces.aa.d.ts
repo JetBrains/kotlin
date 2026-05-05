@@ -8,6 +8,9 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
         }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
     }
     namespace foo {
         function makeFunInterfaceWithSam(): foo.FunIFace;

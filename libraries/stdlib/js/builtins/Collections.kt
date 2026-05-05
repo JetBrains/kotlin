@@ -11,7 +11,7 @@
     "WRONG_MODIFIER_TARGET",
     "EXPOSED_NOT_EXPORTED_SUPER_INTERFACE_WARNING",
 )
-@file:OptIn(ExperimentalJsExport::class)
+@file:OptIn(ExperimentalJsExport::class, ExperimentalJsStatic::class, ExperimentalJsCollectionsApi::class)
 
 package kotlin.collections
 
@@ -328,6 +328,17 @@ public actual interface List<out E> : Collection<E> {
     @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsReadonlyArrayView(): JsReadonlyArray<E> = createJsReadonlyArrayViewFrom(this)
+
+    @JsExport.Ignore
+    @ExperimentalJsCollectionsApi
+    @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+    @SinceKotlin("2.4")
+    public companion object {
+        @JsStatic
+        @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+        @SinceKotlin("2.4")
+        public fun <E> fromJsArray(array: JsReadonlyArray<E>): List<E> = array.toList()
+    }
 }
 
 /**
@@ -484,6 +495,17 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsArrayView(): JsArray<E> = createJsArrayViewFrom(this)
+
+    @JsExport.Ignore
+    @ExperimentalJsCollectionsApi
+    @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+    @SinceKotlin("2.4")
+    public companion object {
+        @JsStatic
+        @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+        @SinceKotlin("2.4")
+        public fun <E> fromJsArray(array: JsReadonlyArray<E>): MutableList<E> = array.toMutableList()
+    }
 }
 
 /**
@@ -548,6 +570,17 @@ public actual interface Set<out E> : Collection<E> {
     @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsReadonlySetView(): JsReadonlySet<E> = createJsReadonlySetViewFrom(this)
+
+    @JsExport.Ignore
+    @ExperimentalJsCollectionsApi
+    @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+    @SinceKotlin("2.4")
+    public companion object {
+        @JsStatic
+        @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+        @SinceKotlin("2.4")
+        public fun <E> fromJsSet(set: JsReadonlySet<E>): Set<E> = set.toSet()
+    }
 }
 
 /**
@@ -616,6 +649,17 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsSetView(): JsSet<E> = createJsSetViewFrom(this)
+
+    @JsExport.Ignore
+    @ExperimentalJsCollectionsApi
+    @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+    @SinceKotlin("2.4")
+    public companion object {
+        @JsStatic
+        @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+        @SinceKotlin("2.4")
+        public fun <E> fromJsSet(set: JsReadonlySet<E>): MutableSet<E> = set.toMutableSet()
+    }
 }
 
 /**
@@ -771,6 +815,17 @@ public actual interface Map<K, out V> {
     @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsReadonlyMapView(): JsReadonlyMap<K, V> = createJsReadonlyMapViewFrom(this)
+
+    @JsExport.Ignore
+    @ExperimentalJsCollectionsApi
+    @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+    @SinceKotlin("2.4")
+    public companion object {
+        @JsStatic
+        @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+        @SinceKotlin("2.4")
+        public fun <K, V> fromJsMap(map: JsReadonlyMap<K, V>): Map<K, V> = map.toMap()
+    }
 }
 
 /**
@@ -892,4 +947,15 @@ public actual interface MutableMap<K, V> : Map<K, V> {
     @JsDontExportDefaultImplementation
     @SinceKotlin("2.0")
     public fun asJsMapView(): JsMap<K, V> = createJsMapViewFrom(this)
+
+    @JsExport.Ignore
+    @ExperimentalJsCollectionsApi
+    @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+    @SinceKotlin("2.4")
+    public companion object {
+        @JsStatic
+        @Deprecated("Only for use from JavaScript", level = DeprecationLevel.HIDDEN)
+        @SinceKotlin("2.4")
+        public fun <K, V> fromJsMap(map: JsReadonlyMap<K, V>): MutableMap<K, V> = map.toMutableMap()
+    }
 }

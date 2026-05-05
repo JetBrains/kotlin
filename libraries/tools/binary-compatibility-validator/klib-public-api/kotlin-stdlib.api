@@ -602,6 +602,11 @@ abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.collections/Mutable
 
     // Targets: [js]
     open fun asJsMapView(): kotlin.js.collections/JsMap<#A, #B> // kotlin.collections/MutableMap.asJsMapView|asJsMapView(){}[0]
+
+    // Targets: [js]
+    final object Companion { // kotlin.collections/MutableMap.Companion|null[0]
+        final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> fromJsMap(kotlin.js.collections/JsReadonlyMap<#A2, #B2>): kotlin.collections/MutableMap<#A2, #B2> // kotlin.collections/MutableMap.Companion.fromJsMap|fromJsMap(kotlin.js.collections.JsReadonlyMap<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.reflect/KMutableProperty1 : kotlin.reflect/KMutableProperty<#B>, kotlin.reflect/KProperty1<#A, #B> { // kotlin.reflect/KMutableProperty1|null[0]
@@ -637,6 +642,11 @@ abstract interface <#A: kotlin/Any?, #B: out kotlin/Any?> kotlin.collections/Map
 
     // Targets: [js]
     open fun asJsReadonlyMapView(): kotlin.js.collections/JsReadonlyMap<#A, #B> // kotlin.collections/Map.asJsReadonlyMapView|asJsReadonlyMapView(){}[0]
+
+    // Targets: [js]
+    final object Companion { // kotlin.collections/Map.Companion|null[0]
+        final fun <#A2: kotlin/Any?, #B2: kotlin/Any?> fromJsMap(kotlin.js.collections/JsReadonlyMap<#A2, #B2>): kotlin.collections/Map<#A2, #B2> // kotlin.collections/Map.Companion.fromJsMap|fromJsMap(kotlin.js.collections.JsReadonlyMap<0:0,0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: kotlin/Any?, #B: out kotlin/Any?> kotlin.reflect/KProperty1 : kotlin.reflect/KProperty<#B>, kotlin/Function1<#A, #B> { // kotlin.reflect/KProperty1|null[0]
@@ -673,6 +683,11 @@ abstract interface <#A: kotlin/Any?> kotlin.collections/MutableList : kotlin.col
 
     // Targets: [js]
     open fun asJsArrayView(): kotlin.js.collections/JsArray<#A> // kotlin.collections/MutableList.asJsArrayView|asJsArrayView(){}[0]
+
+    // Targets: [js]
+    final object Companion { // kotlin.collections/MutableList.Companion|null[0]
+        final fun <#A2: kotlin/Any?> fromJsArray(kotlin.js.collections/JsReadonlyArray<#A2>): kotlin.collections/MutableList<#A2> // kotlin.collections/MutableList.Companion.fromJsArray|fromJsArray(kotlin.js.collections.JsReadonlyArray<0:0>){0§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: kotlin/Any?> kotlin.collections/MutableListIterator : kotlin.collections/ListIterator<#A>, kotlin.collections/MutableIterator<#A> { // kotlin.collections/MutableListIterator|null[0]
@@ -694,6 +709,11 @@ abstract interface <#A: kotlin/Any?> kotlin.collections/MutableSet : kotlin.coll
 
     // Targets: [js]
     open fun asJsSetView(): kotlin.js.collections/JsSet<#A> // kotlin.collections/MutableSet.asJsSetView|asJsSetView(){}[0]
+
+    // Targets: [js]
+    final object Companion { // kotlin.collections/MutableSet.Companion|null[0]
+        final fun <#A2: kotlin/Any?> fromJsSet(kotlin.js.collections/JsReadonlySet<#A2>): kotlin.collections/MutableSet<#A2> // kotlin.collections/MutableSet.Companion.fromJsSet|fromJsSet(kotlin.js.collections.JsReadonlySet<0:0>){0§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: kotlin/Any?> kotlin.reflect/KMutableProperty : kotlin.reflect/KProperty<#A> // kotlin.reflect/KMutableProperty|null[0]
@@ -764,6 +784,11 @@ abstract interface <#A: out kotlin/Any?> kotlin.collections/List : kotlin.collec
 
     // Targets: [js]
     open fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<#A> // kotlin.collections/List.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
+
+    // Targets: [js]
+    final object Companion { // kotlin.collections/List.Companion|null[0]
+        final fun <#A2: kotlin/Any?> fromJsArray(kotlin.js.collections/JsReadonlyArray<#A2>): kotlin.collections/List<#A2> // kotlin.collections/List.Companion.fromJsArray|fromJsArray(kotlin.js.collections.JsReadonlyArray<0:0>){0§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: out kotlin/Any?> kotlin.collections/ListIterator : kotlin.collections/Iterator<#A> { // kotlin.collections/ListIterator|null[0]
@@ -794,6 +819,11 @@ abstract interface <#A: out kotlin/Any?> kotlin.collections/Set : kotlin.collect
 
     // Targets: [js]
     open fun asJsReadonlySetView(): kotlin.js.collections/JsReadonlySet<#A> // kotlin.collections/Set.asJsReadonlySetView|asJsReadonlySetView(){}[0]
+
+    // Targets: [js]
+    final object Companion { // kotlin.collections/Set.Companion|null[0]
+        final fun <#A2: kotlin/Any?> fromJsSet(kotlin.js.collections/JsReadonlySet<#A2>): kotlin.collections/Set<#A2> // kotlin.collections/Set.Companion.fromJsSet|fromJsSet(kotlin.js.collections.JsReadonlySet<0:0>){0§<kotlin.Any?>}[0]
+    }
 }
 
 abstract interface <#A: out kotlin/Any?> kotlin.reflect/KFunction : kotlin.reflect/KCallable<#A>, kotlin/Function<#A> // kotlin.reflect/KFunction|null[0]

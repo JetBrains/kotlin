@@ -8,11 +8,17 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
         }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
         interface KtMap<K, out V> {
             asJsReadonlyMapView(): ReadonlyMap<K, V>;
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.KtMap": unique symbol;
             };
+        }
+        namespace KtMap {
+            function fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMap<K, V>;
         }
     }
     function acceptList(x: kotlin.collections.KtList<any>): void;

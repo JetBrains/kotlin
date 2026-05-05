@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
@@ -37,7 +36,6 @@ val IrDeclaration.isExportedDefaultImplementation: Boolean
 /**
  * Extracts default implementations from exported interfaces
  */
-@PhasePrerequisites(PrepareCollectionsToExportLowering::class)
 class PrepareExportedDefaultImplementationsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val allowImplementingInterfaces = context.configuration.languageVersionSettings.supportsFeature(
         LanguageFeature.JsExportInterfacesInImplementableWay

@@ -1222,7 +1222,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         while (stack.isNotEmpty()) {
             val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
 
-            if (processedClass.isJsImplicitExport()) {
+            if (processedClass.couldBeConvertedToExplicitExport() == false) {
                 result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
                 continue
             }

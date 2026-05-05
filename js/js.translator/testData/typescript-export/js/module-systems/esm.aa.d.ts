@@ -6,6 +6,9 @@ export declare interface KtList<out E> /* extends Collection<E> */ {
         readonly "kotlin.collections.KtList": unique symbol;
     };
 }
+export declare namespace KtList {
+    function fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
+}
 export declare const value: {
     get(): number;
 };

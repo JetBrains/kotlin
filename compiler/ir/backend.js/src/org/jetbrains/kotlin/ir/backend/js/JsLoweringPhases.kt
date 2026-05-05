@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
-import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
-import org.jetbrains.kotlin.backend.common.lower.PropertiesLowering
-import org.jetbrains.kotlin.backend.common.lower.StripTypeAliasDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
@@ -32,8 +28,12 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsAllFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsPrivateFunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.inline.*
+import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
+import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
+import org.jetbrains.kotlin.ir.inline.isConsideredAsPrivateForInlining
+import org.jetbrains.kotlin.ir.inline.loweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctions(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<LoweringContext> {
@@ -154,7 +154,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::CopyInlineFunctionBodyLowering,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
     ::PrepareValueClassesToBeExportedLowering,
-    ::PrepareCollectionsToExportLowering,
     ::PrepareExportedDefaultImplementationsLowering,
     ::ReplaceSuspendIntrinsicLowering,
     ::PrepareSuspendFunctionsForExportLowering,
@@ -249,7 +248,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::ES6ConstructorCallLowering,
     ::CallsLowering,
     ::EscapedIdentifiersLowering,
-    ::RemoveImplicitExportsFromCollections,
     ::MainFunctionCallWrapperLowering,
     ::CleanupLowering,
     ::IrValidationAfterLoweringPhase,

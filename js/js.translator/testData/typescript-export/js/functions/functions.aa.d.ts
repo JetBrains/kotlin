@@ -8,11 +8,17 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtMutableList": unique symbol;
             };
         }
+        namespace KtMutableList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtMutableList<E>;
+        }
         interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlyArrayView(): ReadonlyArray<E>;
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
+        }
+        namespace KtList {
+            function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
         }
     }
     namespace foo {

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.functionSymbols
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
@@ -498,14 +496,6 @@ class BackendJsSymbols(
     val jsBoxApplySymbol by CallableIds.boxApply.functionSymbol()
     val jsCreateExternalThisSymbol by CallableIds.createExternalThis.functionSymbol()
 
-    // Collections interop:
-    val jsCreateListFrom by CallableIds.createListFrom.functionSymbol()
-    val jsCreateMutableListFrom by CallableIds.createMutableListFrom.functionSymbol()
-    val jsCreateSetFrom by CallableIds.createSetFrom.functionSymbol()
-    val jsCreateMutableSetFrom by CallableIds.createMutableSetFrom.functionSymbol()
-    val jsCreateMapFrom by CallableIds.createMapFrom.functionSymbol()
-    val jsCreateMutableMapFrom by CallableIds.createMutableMapFrom.functionSymbol()
-
     val throwableClass = StandardClassIds.Throwable.classSymbol()
     val primitiveCompanionObjects = primitivesWithImplicitCompanionObject().associateWith {
         ClassId(JsStandardClassIds.BASE_JS_INTERNAL_PACKAGE, Name.identifier("${it.identifier}CompanionObject")).classSymbol()
@@ -755,15 +745,6 @@ private object CallableIds {
     val arrayConcat = "arrayConcat".rootId
     val primitiveArrayConcat = "primitiveArrayConcat".rootId
     val taggedArrayCopy = "taggedArrayCopy".rootId
-
-    // Collections functions
-    private val String.collectionsCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))
-    val createListFrom = "createListFrom".collectionsCallableId
-    val createMutableListFrom = "createMutableListFrom".collectionsCallableId
-    val createSetFrom = "createSetFrom".collectionsCallableId
-    val createMutableSetFrom = "createMutableSetFrom".collectionsCallableId
-    val createMapFrom = "createMapFrom".collectionsCallableId
-    val createMutableMapFrom = "createMutableMapFrom".collectionsCallableId
 
     // JS reflection functions
     private val String.reflectionCallableId get() = CallableId(JsStandardClassIds.BASE_REFLECT_JS_INTERNAL_PACKAGE, Name.identifier(this))
