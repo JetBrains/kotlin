@@ -72,7 +72,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         ): R {
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = { operation.execute(projectId, executionPolicy, logger) }
-            return if (executionPolicy is ExecutionPolicy.InProcess) {
+            return if (executionPolicy is ExecutionPolicy.InProcess && System.getProperty("kotlin.bta.use-thread-pool") != "false") {
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
                 operationBody.call()
