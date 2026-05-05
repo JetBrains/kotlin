@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.assertDirectoryExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileExists
+import org.jetbrains.kotlin.gradle.testbase.assertOutputContainsExactlyTimes
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
@@ -54,19 +55,13 @@ import kotlin.test.assertTrue
 @SwiftPMImportGradlePluginTests
 class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
-    private val xcodeDumpBucketName = Regex("[0-9a-f]{64}")
     private val materializedDumpEntries = listOf("clangDump.sh", "ldDump.sh", "clang_args_dump", "ld_args_dump")
-
-    private fun TestProject.sharedDumpFingerprintDirs(vararg projectNames: String) =
-        projectNames.flatMap { projectName ->
-            projectPath.resolve("$projectName/build/kotlin/swiftImportClangDump/iphoneos/.buckets").toFile()
-                .listFiles()
-                .orEmpty()
-                .filter { it.isDirectory && it.name.matches(xcodeDumpBucketName) }
-        }
 
     private fun TestProject.localIphoneosDumpDir(projectName: String) =
         projectPath.resolve("$projectName/build/kotlin/swiftImportClangDump/iphoneos")
+
+    private fun TestProject.localIphoneosDerivedDataDir(projectName: String) =
+        projectPath.resolve("$projectName/build/kotlin/swiftImportDd/dd_iphoneos")
 
     private fun assertDumpDirectoryContainsXcodebuildArgsDump(dumpDir: java.nio.file.Path) {
         assertDirectoryExists(dumpDir)
@@ -76,20 +71,27 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
         assertDirectoryExists(dumpDir.resolve("ld_args_dump"))
     }
 
-    private fun assertLocalDumpDirsCopiedFromSharedBucket(
-        sharedDumpDir: File,
+    private fun assertLocalDumpDirsHaveSameMaterializedFiles(
+        referenceDumpDir: File,
         vararg localDumpDirs: Path,
     ) {
-        val sharedDumpFiles = materializedDumpFilesByRelativePath(sharedDumpDir)
-        assertTrue(sharedDumpFiles.isNotEmpty(), "Shared dump bucket should contain xcodebuild dump files")
+        val referenceDumpFiles = materializedDumpFilesByRelativePath(referenceDumpDir)
+        assertTrue(referenceDumpFiles.isNotEmpty(), "Reference dump directory should contain dump files")
 
         localDumpDirs.forEach { localDumpDir ->
             assertDumpDirectoryContainsXcodebuildArgsDump(localDumpDir)
             assertEquals(
-                sharedDumpFiles,
-                materializedDumpFilesByRelativePath(localDumpDir.toFile()),
-                "Local dump directory should be a copy of the shared dump bucket"
+                referenceDumpFiles.keys,
+                materializedDumpFilesByRelativePath(localDumpDir.toFile()).keys,
+                "Local dump directory should materialize the same dump files"
             )
+        }
+    }
+
+    private fun assertLocalDerivedDataDirsExist(vararg localDerivedDataDirs: Path) {
+        localDerivedDataDirs.forEach { localDerivedDataDir ->
+            assertDirectoryExists(localDerivedDataDir)
+            assertDirectoryExists(localDerivedDataDir.resolve("Build"))
         }
     }
 
@@ -189,11 +191,11 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     hasSwiftPMDependencies.set(true)
                     packageResolvedFile.set(packageResolved)
                     packageResolvedSynchronization.set("identifier:default")
+                    buildSettingsFingerprint.set("")
                     directSwiftPMDependencies.set(extension.swiftPMDependencies)
                     transitiveSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
                     filesToTrackFromLocalPackages.set(stubTrackedFiles)
                     syntheticImportProjectRoot.set(packageGeneration.map { it.syntheticImportProjectRoot.get() })
-                    syntheticImportDd.set(project.layout.buildDirectory.dir("kotlin/customSwiftImportDd"))
                     coordinationService.set(
                         SwiftPMXcodeDumpBuildService.registerIfAbsent(project)
                     )
@@ -258,9 +260,9 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size)
                     assertTasksExecuted(dumpTasks)
-                    val sharedDumpDir = sharedDumpFingerprintDirs(fuzzProjectName, buzzProjectName).single()
-                    assertLocalDumpDirsCopiedFromSharedBucket(
-                        sharedDumpDir,
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                    assertLocalDumpDirsHaveSameMaterializedFiles(
+                        localIphoneosDumpDir(fuzzProjectName).toFile(),
                         localIphoneosDumpDir(fuzzProjectName),
                         localIphoneosDumpDir(buzzProjectName),
                     )
@@ -271,7 +273,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `different identifiers with same resolved dependencies reuse one shared dump bucket`(version: GradleVersion) {
+    fun `different identifiers with same resolved dependencies reuse one xcodebuild execution`(version: GradleVersion) {
         val fuzzProjectName = "fuzz"
         val buzzProjectName = "buzz"
         val repoName = "SharedPackage"
@@ -315,12 +317,12 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     ":$buzzProjectName:dumpXcodebuildArgsIphoneos",
                 ) {
                     val dumpTasks = findTasksByPattern(Regex(":(${fuzzProjectName}|${buzzProjectName}):dumpXcodebuildArgsIphoneos"))
-                    val sharedDumpDir = sharedDumpFingerprintDirs(fuzzProjectName, buzzProjectName).single()
 
                     assertEquals(2, dumpTasks.size, "Different identifiers should still keep one local dump task per project")
                     assertTasksExecuted(dumpTasks)
-                    assertLocalDumpDirsCopiedFromSharedBucket(
-                        sharedDumpDir,
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                    assertLocalDumpDirsHaveSameMaterializedFiles(
+                        localIphoneosDumpDir(fuzzProjectName).toFile(),
                         localIphoneosDumpDir(fuzzProjectName),
                         localIphoneosDumpDir(buzzProjectName),
                     )
@@ -331,7 +333,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `different dependencies materialize separate shared dump buckets`(version: GradleVersion) {
+    fun `different dependencies execute separate xcodebuild dumps`(version: GradleVersion) {
         val fuzzProjectName = "fuzz"
         val buzzProjectName = "buzz"
         val fuzzRepoName = "FuzzPackage"
@@ -380,11 +382,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size, "Different dependency graphs should still keep one local dump task per project")
                     assertTasksExecuted(dumpTasks)
-                    assertEquals(
-                        2,
-                        sharedDumpFingerprintDirs(fuzzProjectName, buzzProjectName).size,
-                        "Different dependency graphs should materialize separate shared buckets"
-                    )
+                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(fuzzProjectName))
                     assertDumpDirectoryContainsXcodebuildArgsDump(localIphoneosDumpDir(buzzProjectName))
                 }
@@ -394,7 +392,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `different identifiers with different resolved dependencies materialize separate shared buckets`(version: GradleVersion) {
+    fun `different identifiers with different resolved dependencies execute separate xcodebuild dumps`(version: GradleVersion) {
         val fuzzProjectName = "fuzz"
         val buzzProjectName = "buzz"
         val repoName = "SharedPackage"
@@ -442,11 +440,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     assertEquals(2, dumpTasks.size)
 
                     assertTasksExecuted(dumpTasks)
-                    assertEquals(
-                        2,
-                        sharedDumpFingerprintDirs(fuzzProjectName, buzzProjectName).size,
-                        "Different fingerprints should produce separate shared dump directories"
-                    )
+                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
                 }
             }
         }
@@ -454,7 +448,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
-    fun `kmp maps consumers with different identifiers run local dump tasks but share one xcodebuild bucket`(version: GradleVersion) {
+    fun `kmp maps consumers with different identifiers run local dump tasks but share one xcodebuild execution`(version: GradleVersion) {
         val mapsProjectName = "kmp-maps"
         val leftProjectName = "left"
         val rightProjectName = "right"
@@ -479,18 +473,18 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
                     val dumpTasks = findTasksByPattern(
                         Regex(":(${mapsProjectName}|${leftProjectName}|${rightProjectName}):dumpXcodebuildArgsIphoneos")
                     )
-                    val sharedDumpDir = sharedDumpFingerprintDirs(leftProjectName, rightProjectName).single()
 
                     assertEquals(2, dumpTasks.size, "Both consumers should keep their own local dump task")
                     assertTasksExecuted(dumpTasks)
-                    assertLocalDumpDirsCopiedFromSharedBucket(
-                        sharedDumpDir,
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
+                    assertLocalDumpDirsHaveSameMaterializedFiles(
+                        localIphoneosDumpDir(leftProjectName).toFile(),
                         localIphoneosDumpDir(leftProjectName),
                         localIphoneosDumpDir(rightProjectName),
                     )
-                    assertTrue(
-                        sharedDumpDir.resolve("clang_args_dump").walkTopDown().any { it.isFile },
-                        "The single shared bucket should contain the actual xcodebuild clang dump before local tasks copy it"
+                    assertLocalDerivedDataDirsExist(
+                        localIphoneosDerivedDataDir(leftProjectName),
+                        localIphoneosDerivedDataDir(rightProjectName),
                     )
                 }
             }
@@ -572,11 +566,7 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size, "Using the different fingerprint task should produce two dump tasks")
                     assertTasksExecuted(dumpTasks)
-                    assertEquals(
-                        2,
-                        sharedDumpFingerprintDirs(fuzzProjectName, buzzProjectName).size,
-                        "Different fingerprints should materialize two shared dump directories"
-                    )
+                    assertOutputContainsExactlyTimes("Command line invocation:", 2)
                 }
 
                 build(
@@ -587,10 +577,15 @@ class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
                     assertEquals(2, dumpTasks.size, "Using the same fingerprint still keeps one local dump task per project")
                     assertTasksExecuted(dumpTasks)
+                    assertOutputContainsExactlyTimes("Command line invocation:", 1)
                     assertEquals(
-                        3,
-                        sharedDumpFingerprintDirs(fuzzProjectName, buzzProjectName).size,
-                        "Changing to one shared fingerprint should add exactly one new shared dump directory"
+                        materializedDumpFilesByRelativePath(localIphoneosDumpDir(fuzzProjectName).toFile()).keys,
+                        materializedDumpFilesByRelativePath(localIphoneosDumpDir(buzzProjectName).toFile()).keys,
+                        "Changing to one shared fingerprint should make both local dump directories materialize the same xcodebuild dump files"
+                    )
+                    assertLocalDerivedDataDirsExist(
+                        localIphoneosDerivedDataDir(fuzzProjectName),
+                        localIphoneosDerivedDataDir(buzzProjectName),
                     )
                 }
             }

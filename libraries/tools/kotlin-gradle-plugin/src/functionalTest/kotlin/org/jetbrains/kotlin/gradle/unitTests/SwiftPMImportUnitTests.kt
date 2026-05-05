@@ -890,7 +890,7 @@ class SwiftPMImportUnitTests {
     }
 
     @Test
-    fun `project dependency consumers keep local convert wiring and dump bucket roots`() {
+    fun `project dependency consumers keep local convert wiring and dump output roots`() {
         val rootProject = buildProject { configureRepositoriesForTests() }
 
         val mapsProject = swiftPMImportProject(
@@ -991,20 +991,20 @@ class SwiftPMImportUnitTests {
             rightDumpTask.dumpedXcodeBuildArgsDir.get().asFile,
             "Right dump task should use its local clang dump directory as the local conversion input"
         )
+        assertNotEquals(
+            leftDumpTask.syntheticImportDd.get().asFile,
+            rightDumpTask.syntheticImportDd.get().asFile,
+            "Each consumer should keep its own local DerivedData output directory"
+        )
         assertEquals(
             leftProject.layout.buildDirectory.dir("kotlin/swiftImportDd").get().asFile,
             leftDumpTask.syntheticImportDd.get().asFile,
-            "Left dump task should use its own build directory as the candidate derived data root"
+            "Left dump task should materialize shared xcodebuild DerivedData into its local build directory"
         )
         assertEquals(
             rightProject.layout.buildDirectory.dir("kotlin/swiftImportDd").get().asFile,
             rightDumpTask.syntheticImportDd.get().asFile,
-            "Right dump task should use its own build directory as the candidate derived data root"
-        )
-        assertNotEquals(
-            leftDumpTask.syntheticImportDd.get().asFile,
-            rightDumpTask.syntheticImportDd.get().asFile,
-            "Shared derived data roots are task-local candidates; execution-time claiming decides which one is used"
+            "Right dump task should materialize shared xcodebuild DerivedData into its local build directory"
         )
         assertEquals(
             leftDumpTask.packageResolvedSynchronization.get(),

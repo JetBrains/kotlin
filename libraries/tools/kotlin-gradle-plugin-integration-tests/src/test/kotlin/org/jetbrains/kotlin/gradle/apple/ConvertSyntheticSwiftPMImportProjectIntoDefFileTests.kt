@@ -83,6 +83,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                     architectures.add(KonanTarget.IOS_SIMULATOR_ARM64.appleArchitecture)
                     hasSwiftPMDependencies.set(true)
                     packageResolvedSynchronization.set("identifier:default")
+                    buildSettingsFingerprint.set("")
                     directSwiftPMDependencies.set(extension.swiftPMDependencies)
                     transitiveSwiftPMDependencies.set(TransitiveSwiftPMDependencies(emptyMap()))
                     coordinationService.set(SwiftPMXcodeDumpBuildService.registerIfAbsent(project))

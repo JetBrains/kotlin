@@ -778,6 +778,7 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.packageResolvedSynchronization.set(swiftPMImportExtension.packageResolvedSynchronization.toDumpTaskFingerprint())
         dumpTask.directSwiftPMDependencies.set(swiftPMImportExtension.swiftPMDependencies)
         dumpTask.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
+        dumpTask.buildSettingsFingerprint.set(swiftPMImportExtension.dumpTaskBuildSettingsFingerprint())
         dumpTask.xcodebuildPlatform.set(targetPlatform)
         dumpTask.xcodebuildSdk.set(targetSdk)
         dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
@@ -789,9 +790,6 @@ private fun Project.registerDumpXcodebuildArgsTask(
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         dumpTask.dumpedXcodeBuildArgsDir.set(
             project.layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(targetSdk))
-        )
-        dumpTask.syntheticImportDd.set(
-            project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
         )
     }
 }

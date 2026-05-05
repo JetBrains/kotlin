@@ -22,7 +22,7 @@ internal interface XcodebuildDefFileWorkParameters : WorkParameters {
     val discoverModulesImplicitly: Property<Boolean>
     val defFilesOutputDir: DirectoryProperty
     val ldDumpOutputDir: DirectoryProperty
-    val clangDumpIntermediatesDir: DirectoryProperty
+    val dumpedXcodeBuildArgsDir: DirectoryProperty
     val cinteropNamespace: Property<String>
 }
 
@@ -34,7 +34,7 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
             cinteropNamespace = parameters.cinteropNamespace.get(),
             defFilesDir = parameters.defFilesOutputDir.getFile(),
             ldDumpDir = parameters.ldDumpOutputDir.getFile(),
-            clangDumpIntermediatesDir = parameters.clangDumpIntermediatesDir.getFile(),
+            dumpedXcodeBuildArgsDir = parameters.dumpedXcodeBuildArgsDir.getFile(),
         )
     }
 
@@ -43,10 +43,10 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
         cinteropNamespace: String,
         defFilesDir: File,
         ldDumpDir: File,
-        clangDumpIntermediatesDir: File,
+        dumpedXcodeBuildArgsDir: File,
     ) {
-        val clangArgsDump = clangDumpIntermediatesDir.resolve("clang_args_dump")
-        val ldArgsDump = clangDumpIntermediatesDir.resolve("ld_args_dump")
+        val clangArgsDump = dumpedXcodeBuildArgsDir.resolve("clang_args_dump")
+        val ldArgsDump = dumpedXcodeBuildArgsDir.resolve("ld_args_dump")
         val discoverModulesImplicitly = parameters.discoverModulesImplicitly.get()
         val clangModulesFromParams = parameters.clangModules.get()
 
@@ -107,21 +107,6 @@ internal abstract class XcodebuildDefFileWorkAction : WorkAction<XcodebuildDefFi
             ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture))
                 .writeText(parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
         }
-    }
-
-    private fun List<XcodebuildDefFileUtils.ParsedClangCall>.mergeParsedClangCalls(
-        architecture: String,
-    ): XcodebuildDefFileUtils.ParsedClangCall {
-        check(isNotEmpty()) {
-            "Expected at least one clang dump for architecture '$architecture'"
-        }
-
-        return XcodebuildDefFileUtils.ParsedClangCall(
-            cinteropClangArgs = flatMap { it.cinteropClangArgs }.distinct(),
-            compileTimeFrameworkSearchPaths = flatMapTo(linkedSetOf()) { it.compileTimeFrameworkSearchPaths },
-            includeSearchPaths = flatMapTo(linkedSetOf()) { it.includeSearchPaths },
-            explicitModuleMaps = flatMapTo(linkedSetOf()) { it.explicitModuleMaps },
-        )
     }
 
     private fun <T> List<Pair<File, T>>.singleDistinctParsedCall(

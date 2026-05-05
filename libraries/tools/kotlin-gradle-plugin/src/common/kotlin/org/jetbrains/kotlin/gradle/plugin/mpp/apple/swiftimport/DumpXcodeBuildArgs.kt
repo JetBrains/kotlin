@@ -26,7 +26,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -72,9 +71,12 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @get:OutputDirectory
     abstract val dumpedXcodeBuildArgsDir: DirectoryProperty
 
-    @get:Optional
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
+    @get:OutputDirectory
+    val syntheticImportDd: DirectoryProperty = project.objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
+    )
+
+    @get:Internal
     abstract val packageResolvedFile: RegularFileProperty
 
     /**
@@ -108,10 +110,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @get:Input
     abstract val transitiveSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
 
-    @get:Internal
-    val syntheticImportDd: DirectoryProperty = project.objects.directoryProperty().convention(
-        project.layout.buildDirectory.dir(XcodebuildDefFileUtils.SYNTHETIC_IMPORT_DD_DIR)
-    )
+    @get:Input
+    abstract val buildSettingsFingerprint: Property<String>
 
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
@@ -133,32 +133,46 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
                 additionalXcodeArgs.get(),
                 directSwiftPMDependencies.get(),
                 transitiveSwiftPMDependencies.get(),
+                buildSettingsFingerprint.get(),
             )
             val packageResolvedFingerprint = packageResolvedFile.orNull
                 ?.asFile
                 ?.takeIf { it.exists() }
-                ?.let(::normalizedXcodeDumpTaskFingerprintByPackageResolvedFile)
+                ?.let {
+                    normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
+                        packageResolvedFile = it,
+                        xcodebuildPlatform = xcodebuildPlatform.get(),
+                        xcodebuildSdk = xcodebuildSdk.get(),
+                        architectures = architectures.get(),
+                        additionalXcodeArgs = additionalXcodeArgs.get(),
+                        buildSettingsFingerprint = buildSettingsFingerprint.get(),
+                    )
+                }
 
             val claim = coordinationService.get().claimOrJoinXcodeDump(
                 packageResolvedHash = packageResolvedFingerprint,
                 identifierDepsHash = identifierDepsFingerprint,
-                sharedDumpRoot = dumpedXcodeBuildArgsDir.get().asFile,
+                ownerDumpDir = dumpedXcodeBuildArgsDir.get().asFile,
+                ownerDerivedDataDir = syntheticImportDd.get().asFile,
+                syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
+                swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
             )
 
             when (claim) {
-                is SwiftPMXcodeDumpBuildService.XcodeDumpClaim.Owner -> runSharedXcodeDump(claim.bucket)
+                is SwiftPMXcodeDumpBuildService.XcodeDumpClaim.Owner -> runOwnerXcodeDump(claim.bucket)
                 is SwiftPMXcodeDumpBuildService.XcodeDumpClaim.Existing -> coordinationService.get().awaitXcodeDump(claim.bucket)
             }
 
-            copySharedDumpToLocalOutput(claim.bucket.sharedDumpDir)
+            copyOwnerDumpToLocalOutput(claim.bucket)
+            copyOwnerDerivedDataToLocalOutput(claim.bucket)
         }
     }
 
-    private fun runSharedXcodeDump(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
+    private fun runOwnerXcodeDump(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         try {
             submitXcodebuildArgsDumpWorkAction(
-                sharedDumpDir = bucket.sharedDumpDir,
-                sharedDerivedDataDir = syntheticImportDd.get().asFile.resolve(bucket.id),
+                ownerDumpDir = bucket.ownerDumpDir,
+                ownerDerivedDataDir = bucket.ownerDerivedDataDir,
             )
             workerExecutor.await()
             coordinationService.get().markXcodeDumpCompleted(bucket)
@@ -169,8 +183,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     }
 
     private fun submitXcodebuildArgsDumpWorkAction(
-        sharedDumpDir: File,
-        sharedDerivedDataDir: File,
+        ownerDumpDir: File,
+        ownerDerivedDataDir: File,
     ) {
         workerExecutor.noIsolation().submit(XcodebuildArgsDumpWorkAction::class.java) { params ->
             params.xcodebuildPlatform.set(xcodebuildPlatform)
@@ -178,69 +192,69 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             params.architectures.set(architectures)
             params.syntheticImportProjectRoot.set(syntheticImportProjectRoot)
             params.swiftPMDependenciesCheckout.set(swiftPMDependenciesCheckout)
-            params.syntheticImportDd.fileValue(sharedDerivedDataDir)
-            params.clangDumpIntermediatesDir.fileValue(sharedDumpDir)
+            params.syntheticImportDd.fileValue(ownerDerivedDataDir)
+            params.dumpedXcodeBuildArgsDir.fileValue(ownerDumpDir)
             params.additionalXcodeArgs.set(additionalXcodeArgs)
         }
     }
 
-    private fun copySharedDumpToLocalOutput(sharedDumpDir: File) {
+    private fun copyOwnerDumpToLocalOutput(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
         val localDumpDir = dumpedXcodeBuildArgsDir.get().asFile
-        val canonicalLocalDumpDir = localDumpDir.canonicalFile
-        val canonicalSharedDumpDir = sharedDumpDir.canonicalFile
-        if (canonicalLocalDumpDir == canonicalSharedDumpDir) return
-
-        if (canonicalSharedDumpDir.isDescendantOf(canonicalLocalDumpDir)) {
-            deleteMaterializedDumpFiles(localDumpDir)
-            deleteStaleBucketDirs(localDumpDir, canonicalSharedDumpDir)
-            fs.copy {
-                it.from(sharedDumpDir)
-                it.into(localDumpDir)
-            }
-            return
-        }
+        val ownerDumpDir = bucket.ownerDumpDir
+        if (localDumpDir.canonicalFile == ownerDumpDir.canonicalFile) return
 
         fs.delete {
             it.delete(localDumpDir)
         }
         fs.copy {
-            it.from(sharedDumpDir)
+            it.from(ownerDumpDir)
             it.into(localDumpDir)
         }
+        remapOwnerLocalPaths(localDumpDir, bucket)
     }
 
-    private fun deleteMaterializedDumpFiles(localDumpDir: File) {
+    private fun copyOwnerDerivedDataToLocalOutput(bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket) {
+        val sdkDerivedDataDir = "dd_${xcodebuildSdk.get()}"
+        val localDerivedDataDir = syntheticImportDd.get().asFile.resolve(sdkDerivedDataDir)
+        val ownerDerivedDataDir = bucket.ownerDerivedDataDir.resolve(sdkDerivedDataDir)
+        if (localDerivedDataDir.canonicalFile == ownerDerivedDataDir.canonicalFile) return
+
         fs.delete {
-            it.delete(localDumpDir.resolve("clangDump.sh"))
-            it.delete(localDumpDir.resolve("ldDump.sh"))
-            it.delete(localDumpDir.resolve("clang_args_dump"))
-            it.delete(localDumpDir.resolve("ld_args_dump"))
+            it.delete(localDerivedDataDir)
+        }
+        fs.copy {
+            it.from(ownerDerivedDataDir)
+            it.into(localDerivedDataDir)
         }
     }
 
-    private fun deleteStaleBucketDirs(localDumpDir: File, currentBucketDir: File) {
-        fs.delete { delete ->
-            localDumpDir.resolve(SWIFT_PM_XCODE_DUMP_BUCKETS_DIR)
-                .listFiles()
-                .orEmpty()
-                .filter { it.isDirectory && it.name.matches(xcodeDumpBucketIdRegex) }
-                .filterNot { it.canonicalFile == currentBucketDir }
-                .forEach { delete.delete(it) }
+    private fun remapOwnerLocalPaths(
+        localDumpDir: File,
+        bucket: SwiftPMXcodeDumpBuildService.XcodeDumpBucket,
+    ) {
+        val sdkDerivedDataDir = "dd_${xcodebuildSdk.get()}"
+        val replacements = listOf(
+            bucket.ownerSyntheticImportProjectRoot.path to syntheticImportProjectRoot.get().asFile.path,
+            bucket.ownerSwiftPMDependenciesCheckout.path to swiftPMDependenciesCheckout.get().asFile.path,
+            bucket.ownerDerivedDataDir.resolve(sdkDerivedDataDir).path to syntheticImportDd.get().asFile.resolve(sdkDerivedDataDir).path,
+        ).filter { (from, to) -> from != to }
 
-            localDumpDir.listFiles()
-                .orEmpty()
-                .filter { it.isDirectory && it.name.matches(xcodeDumpBucketIdRegex) }
-                .forEach { delete.delete(it) }
-        }
+        if (replacements.isEmpty()) return
+
+        localDumpDir.walkTopDown()
+            .filter { it.isFile }
+            .forEach { file ->
+                val original = file.readText()
+                val remapped = replacements.fold(original) { content, (from, to) ->
+                    content.replacePath(from, to)
+                }
+                if (remapped != original) file.writeText(remapped)
+            }
     }
 
-    private fun File.isDescendantOf(parent: File): Boolean {
-        var current: File? = this
-        while (current != null) {
-            if (current == parent) return true
-            current = current.parentFile
-        }
-        return false
+    private fun String.replacePath(from: String, to: String): String {
+        val pathBoundary = "(?=$|[/;\\s\"'])"
+        return Regex("${Regex.escape(from)}$pathBoundary").replace(this, Regex.escapeReplacement(to))
     }
 
     companion object {
@@ -252,12 +266,17 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<BuildService
 
     private val stateLock = Any()
 
-    private val bucketsByPackageResolvedHash = mutableMapOf<String, MutableXcodeDumpBucket>()
-    private val bucketsByIdentifierDepsHash = mutableMapOf<String, MutableXcodeDumpBucket>()
+    private val bucketsByPackageResolvedHash = mutableMapOf<String, XcodeDumpBucket>()
+    private val bucketsByIdentifierDepsHash = mutableMapOf<String, XcodeDumpBucket>()
 
-    data class XcodeDumpBucket(
+    class XcodeDumpBucket(
         val id: String,
-        val sharedDumpDir: File,
+        val ownerDumpDir: File,
+        val ownerDerivedDataDir: File,
+        val ownerSyntheticImportProjectRoot: File,
+        val ownerSwiftPMDependenciesCheckout: File,
+        val completion: CountDownLatch = CountDownLatch(1),
+        var failure: Throwable? = null,
     )
 
     sealed class XcodeDumpClaim {
@@ -270,62 +289,52 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<BuildService
     fun claimOrJoinXcodeDump(
         packageResolvedHash: String?,
         identifierDepsHash: String,
-        sharedDumpRoot: File,
+        ownerDumpDir: File,
+        ownerDerivedDataDir: File,
+        syntheticImportProjectRoot: File,
+        swiftPMDependenciesCheckout: File,
     ): XcodeDumpClaim {
         synchronized(stateLock) {
             val existingByPackageResolved = packageResolvedHash?.let { bucketsByPackageResolvedHash[it] }
             if (existingByPackageResolved != null) {
                 bucketsByIdentifierDepsHash.putIfAbsent(identifierDepsHash, existingByPackageResolved)
-                return XcodeDumpClaim.Existing(existingByPackageResolved.toPublicBucket())
+                return XcodeDumpClaim.Existing(existingByPackageResolved)
             }
 
             val existingByIdentifierDeps = bucketsByIdentifierDepsHash[identifierDepsHash]
             if (existingByIdentifierDeps != null) {
                 packageResolvedHash?.let { bucketsByPackageResolvedHash.putIfAbsent(it, existingByIdentifierDeps) }
-                return XcodeDumpClaim.Existing(existingByIdentifierDeps.toPublicBucket())
+                return XcodeDumpClaim.Existing(existingByIdentifierDeps)
             }
 
             val bucketId = packageResolvedHash ?: identifierDepsHash
-            val newBucket = MutableXcodeDumpBucket(
+            val newBucket = XcodeDumpBucket(
                 id = bucketId,
-                sharedDumpDir = sharedDumpRoot.resolve(SWIFT_PM_XCODE_DUMP_BUCKETS_DIR).resolve(bucketId),
+                ownerDumpDir = ownerDumpDir,
+                ownerDerivedDataDir = ownerDerivedDataDir,
+                ownerSyntheticImportProjectRoot = syntheticImportProjectRoot,
+                ownerSwiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
             )
             packageResolvedHash?.let { bucketsByPackageResolvedHash[it] = newBucket }
             bucketsByIdentifierDepsHash[identifierDepsHash] = newBucket
-            return XcodeDumpClaim.Owner(newBucket.toPublicBucket())
+            return XcodeDumpClaim.Owner(newBucket)
         }
     }
 
     fun awaitXcodeDump(bucket: XcodeDumpBucket) {
-        val mutableBucket = synchronized(stateLock) {
-            bucket.mutableBucket()
-        }
-        mutableBucket.completion.await()
-        mutableBucket.failure?.let {
+        bucket.completion.await()
+        bucket.failure?.let {
             throw GradleException("Shared SwiftPM xcodebuild dump failed for bucket '${bucket.id}'", it)
         }
     }
 
     fun markXcodeDumpCompleted(bucket: XcodeDumpBucket) {
-        val mutableBucket = synchronized(stateLock) {
-            bucket.mutableBucket()
-        }
-        mutableBucket.completion.countDown()
+        bucket.completion.countDown()
     }
 
     fun markXcodeDumpFailed(bucket: XcodeDumpBucket, failure: Throwable) {
-        val mutableBucket = synchronized(stateLock) {
-            bucket.mutableBucket().apply {
-                this.failure = failure
-            }
-        }
-        mutableBucket.completion.countDown()
-    }
-
-    private fun XcodeDumpBucket.mutableBucket(): MutableXcodeDumpBucket {
-        return bucketsByIdentifierDepsHash.values.firstOrNull { it.id == id }
-            ?: bucketsByPackageResolvedHash.values.firstOrNull { it.id == id }
-            ?: error("Unknown SwiftPM xcodebuild dump bucket '$id'")
+        bucket.failure = failure
+        bucket.completion.countDown()
     }
 
     companion object {
@@ -340,31 +349,36 @@ internal abstract class SwiftPMXcodeDumpBuildService : BuildService<BuildService
     }
 }
 
-private data class MutableXcodeDumpBucket(
-    val id: String,
-    val sharedDumpDir: File,
-    var failure: Throwable? = null,
-    val completion: CountDownLatch = CountDownLatch(1),
-) {
-    fun toPublicBucket(): SwiftPMXcodeDumpBuildService.XcodeDumpBucket =
-        SwiftPMXcodeDumpBuildService.XcodeDumpBucket(id, sharedDumpDir)
-}
-
-private const val SWIFT_PM_XCODE_DUMP_BUCKETS_DIR = ".buckets"
-private val xcodeDumpBucketIdRegex = Regex("[0-9a-f]{64}")
-
 internal fun normalizeXcodebuildArgs(args: List<String>): List<String> {
     return args.sorted()
 }
 
 internal fun normalizedXcodeDumpTaskFingerprintByPackageResolvedFile(
     packageResolvedFile: File,
+    xcodebuildPlatform: String,
+    xcodebuildSdk: String,
+    architectures: Set<AppleArchitecture>,
+    additionalXcodeArgs: List<String>,
+    buildSettingsFingerprint: String,
 ): String {
     val packageResolvedHash = MessageDigest.getInstance("SHA-256")
         .digest(packageResolvedFile.readBytes())
         .joinToString("") { byte -> "%02x".format(byte) }
 
-    return packageResolvedHash
+    val payload = dumpTaskFingerprintJson.encodeToString(
+        PackageResolvedDumpTaskFingerprint(
+            packageResolvedHash = packageResolvedHash,
+            xcodebuildPlatform = xcodebuildPlatform,
+            xcodebuildSdk = xcodebuildSdk,
+            architectures = architectures.map { it.name }.sorted(),
+            buildSettingsFingerprint = buildSettingsFingerprint,
+            additionalXcodeArgs = normalizeXcodebuildArgs(additionalXcodeArgs),
+        )
+    )
+
+    return MessageDigest.getInstance("SHA-256")
+        .digest(payload.toByteArray())
+        .joinToString("") { byte -> "%02x".format(byte) }
 }
 
 internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
@@ -375,6 +389,7 @@ internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
     additionalXcodeArgs: List<String>,
     directSwiftPmDependencies: Set<SwiftPMDependency>,
     transitiveSwiftPmDependencies: TransitiveSwiftPMDependencies,
+    buildSettingsFingerprint: String,
 ): String {
     // The fingerprint serializes only build-relevant SwiftPM inputs so equal declarations map to one shared dump owner.
     val payload = dumpTaskFingerprintJson.encodeToString(
@@ -383,6 +398,7 @@ internal fun normalizedXcodeDumpTaskFingerprintByIdentifierDeps(
             xcodebuildPlatform = xcodebuildPlatform,
             xcodebuildSdk = xcodebuildSdk,
             architectures = architectures.map { it.name }.sorted(),
+            buildSettingsFingerprint = buildSettingsFingerprint,
             directSwiftPmDependencies = directSwiftPmDependencies
                 .map { it.toDumpTaskFingerprint() }
                 .sortedBy { it.stableSortKey },
@@ -434,9 +450,37 @@ private data class DumpTaskFingerprint(
     val xcodebuildPlatform: String,
     val xcodebuildSdk: String,
     val architectures: List<String>,
+    val buildSettingsFingerprint: String,
     val directSwiftPmDependencies: List<NormalizedSwiftPMDependency>,
     val transitiveSwiftPmDependencies: List<NormalizedTransitiveSwiftPMMetadata>,
     val additionalXcodeArgs: List<String>,
+)
+
+@Serializable
+private data class PackageResolvedDumpTaskFingerprint(
+    val packageResolvedHash: String,
+    val xcodebuildPlatform: String,
+    val xcodebuildSdk: String,
+    val architectures: List<String>,
+    val buildSettingsFingerprint: String,
+    val additionalXcodeArgs: List<String>,
+)
+
+internal fun SwiftPMImportExtension.dumpTaskBuildSettingsFingerprint(): String = dumpTaskFingerprintJson.encodeToString(
+    DumpTaskBuildSettingsFingerprint(
+        iosDeploymentTarget = iosMinimumDeploymentTarget.orNull.orEmpty(),
+        macosDeploymentTarget = macosMinimumDeploymentTarget.orNull.orEmpty(),
+        watchosDeploymentTarget = watchosMinimumDeploymentTarget.orNull.orEmpty(),
+        tvosDeploymentTarget = tvosMinimumDeploymentTarget.orNull.orEmpty(),
+    )
+)
+
+@Serializable
+private data class DumpTaskBuildSettingsFingerprint(
+    val iosDeploymentTarget: String,
+    val macosDeploymentTarget: String,
+    val watchosDeploymentTarget: String,
+    val tvosDeploymentTarget: String,
 )
 
 internal fun PackageResolvedSynchronization.toDumpTaskFingerprint(): String = when (this) {

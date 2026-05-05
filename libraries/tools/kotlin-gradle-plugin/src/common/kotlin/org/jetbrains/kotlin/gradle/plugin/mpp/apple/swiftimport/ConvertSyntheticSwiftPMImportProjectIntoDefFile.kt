@@ -84,7 +84,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
                 params.discoverModulesImplicitly.set(discoverModulesImplicitly)
                 params.defFilesOutputDir.set(defFiles)
                 params.ldDumpOutputDir.set(ldDump)
-                params.clangDumpIntermediatesDir.set(dumpedXcodeBuildArgsDir)
+                params.dumpedXcodeBuildArgsDir.set(dumpedXcodeBuildArgsDir)
                 params.cinteropNamespace.set(cinteropNamespace)
             }
         } else {

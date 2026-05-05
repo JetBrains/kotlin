@@ -27,7 +27,7 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val syntheticImportProjectRoot: DirectoryProperty
     val swiftPMDependenciesCheckout: DirectoryProperty
     val syntheticImportDd: DirectoryProperty
-    val clangDumpIntermediatesDir: DirectoryProperty
+    val dumpedXcodeBuildArgsDir: DirectoryProperty
     val additionalXcodeArgs: ListProperty<String>
 }
 
@@ -36,23 +36,23 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
 ) : WorkAction<XcodebuildArgsDumpWorkParameters> {
 
     override fun execute() {
-        val dumpIntermediates = parameters.clangDumpIntermediatesDir.getFile().also {
+        val dumpedXcodeBuildArgsDir = parameters.dumpedXcodeBuildArgsDir.getFile().also {
             if (it.exists()) {
                 it.deleteRecursively()
             }
             it.mkdirs()
         }
 
-        val clangArgsDumpScript = dumpIntermediates.resolve("clangDump.sh")
+        val clangArgsDumpScript = dumpedXcodeBuildArgsDir.resolve("clangDump.sh")
         clangArgsDumpScript.writeText(XcodebuildDefFileUtils.clangArgsDumpScript())
         clangArgsDumpScript.setExecutable(true)
-        val clangArgsDump = dumpIntermediates.resolve("clang_args_dump")
+        val clangArgsDump = dumpedXcodeBuildArgsDir.resolve("clang_args_dump")
         clangArgsDump.mkdirs()
 
-        val ldArgsDumpScript = dumpIntermediates.resolve("ldDump.sh")
+        val ldArgsDumpScript = dumpedXcodeBuildArgsDir.resolve("ldDump.sh")
         ldArgsDumpScript.writeText(XcodebuildDefFileUtils.ldArgsDumpScript())
         ldArgsDumpScript.setExecutable(true)
-        val ldArgsDump = dumpIntermediates.resolve("ld_args_dump")
+        val ldArgsDump = dumpedXcodeBuildArgsDir.resolve("ld_args_dump")
         ldArgsDump.mkdirs()
 
         runXcodebuildAndDumpArgs(
