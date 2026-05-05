@@ -72,6 +72,12 @@ public class SerializationNativeWithInlinedFunInKlibTestGenerated extends Abstra
   }
 
   @Test
+  @TestMetadata("companionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("companionBlocks.kt");
+  }
+
+  @Test
   @TestMetadata("constValInSerialName.kt")
   public void testConstValInSerialName() {
     run("constValInSerialName.kt");
