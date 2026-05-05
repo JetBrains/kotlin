@@ -1,0 +1,28 @@
+FILE: logFieldAlreadyExistsCompanionBlock.kt
+    @R|lombok/extern/java/Log|() public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final static val log: R|kotlin/String| = String(OK)
+            public static get(): R|kotlin/String|
+
+        public final static fun test(): R|kotlin/Unit| {
+            Q|C.Companion|.R|/C.Companion.log|.R|java/util/logging/Logger.info|(String(test))
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() private final val log: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|C.Companion|).R|kotlin/reflect/KClass.qualifiedName|)
+                private get(): R|java/util/logging/Logger|
+
+            private constructor(): R|C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        Q|C|.R|/C.test*s|()
+        ^box Q|C|.R|/C.log*s|
+    }
