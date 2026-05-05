@@ -15,6 +15,7 @@ import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_MESSAGE_RENDERER
+import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.WithDaemon.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
@@ -165,6 +166,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                     }.build()
 
                     compilationOperationBuilder[INCREMENTAL_COMPILATION] = classpathSnapshotsOptions
+                    compilationOperationBuilder[LOOKUP_TRACKER] = LoggingCompilerLookupTracker(log)
                 }
             }.build()
             val executionConfig = when (executionStrategy) {
