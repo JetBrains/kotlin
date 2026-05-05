@@ -482,8 +482,8 @@ class JavaResolutionContext private constructor(
                     if (tryResolve(candidateClassId)) return candidateClassId
                 }
                 // allCandidates.isEmpty(): fall back to BFS only when [getSupertypeClassIds]
-                // is available, since Phase 2 of the BFS needs it for non-source
-                // (Kotlin/binary) supertypes.
+                // is available, since the BFS needs it to walk supertypes through
+                // Kotlin / binary classes (and, post-Stage-3, Java-source classes too).
                 else -> {
                     if (getSupertypeClassIds != null) {
                         val inheritedResult = resolveInheritedInnerClassToClassId(simpleName, tryResolve, getSupertypeClassIds)

@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-05 (Step 2 of merged plan: Unification Stage 1 + partial Stage 2a landed; Stage 2b deferred to land with Stage 3)
+**Last Updated**: 2026-05-05 (Step 3 of merged plan: Unification Stage 3 landed; Stage 2b deferred again — origin-agnostic BFS phase collapse blocked by mid-`SUPER_TYPES` resolution timing in compiler mode)
 
 ### Entry Template
 
@@ -30,6 +30,127 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Merged plan Step 3: Unification Stage 3 (replace `Java.Source` filter with `lazyResolveToPhase(SUPER_TYPES)`); Stage 2b deferred again — 2026-05-05 (later)
+
+### Overview
+
+Landed Step 3 of `MERGED_REFACTORING_PLAN_2026_05_04.md` — the substantive correctness-and-laziness piece of the resolver-unification track. Replaced the
+`FirDeclarationOrigin.Java.Source` short-circuit in `JavaTypeConversion.getResolvedSupertypeClassIds`
+(and the analogous `firClass is FirJavaClass` short-circuit in `findTypeArgsForClassInHierarchy`)
+with `lazyResolveToPhase(SUPER_TYPES)` on the looked-up class symbol. Stage 2b ("drop Phase 1
+of `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId`") was attempted as the
+plan specifies but had to be reverted — see the Stage-2b post-mortem below.
+
+### Changes
+
+- **Stage 3 — `JavaTypeConversion.getResolvedSupertypeClassIds`**
+  - Replaced the early-return `if (firClass is FirJavaClass && firClass.origin == FirDeclarationOrigin.Java.Source) return emptyList()`
+    with `classSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)` *before* reading
+    `superTypeRefs`. The phase contract is the cycle bound: when the symbol's `SUPER_TYPES`
+    is already on the lazy stack the call is a no-op and we read whatever's already
+    materialised; otherwise it lazily promotes the class to that phase. In compiler
+    (non-LL-FIR) mode the call is a no-op outright, since the compiler is non-lazy and the
+    phase is reached before Java class member conversion runs.
+  - Removed the `FirJavaClass` import (now truly unused) and added `FirResolvePhase` +
+    `lazyResolveToPhase` imports.
+- **Stage 3 (analogue) — `JavaTypeConversion.findTypeArgsForClassInHierarchy`**
+  - Replaced the `firClass is FirJavaClass` short-circuit (which made type-argument hierarchy
+    walks bail out at the first Java-source supertype) with the same `lazyResolveToPhase(SUPER_TYPES)`
+    pattern. Without this swap, `findOuterTypeArgsFromHierarchy` could not thread the
+    `H ↦ Int` substitution through `Outer<H> extends BaseOuter<H>` for inherited inner
+    classes — see the `j+k_complex.kt` post-mortem in this entry.
+- **Stage 2b — attempted, reverted, deferred again (documentation-only this iteration)**
+  - First attempt: rewrote `JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId`
+    as a single origin-agnostic BFS via `getSupertypeClassIds`, dropped
+    `walkJavaSourceSupertypes` (Phase 1), dropped `findInnerClassFromSupertypes`,
+    simplified the constructor to no-args, dropped step 3 of `JavaScopeResolver.findLocalClass`,
+    and dropped the `inheritedMemberResolver` field on `JavaScopeResolver`. The
+    `JavaUsingAst*` matrix regressed on **two** tests:
+    1. `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt` —
+       resolving `Outer.bar()`'s return type `BaseInner<Double, String>` no longer threaded
+       the outer-type-argument substitution `H ↦ Int`. Root cause: the dropped
+       `findInnerClassFromSupertypes` returned a `JavaClass(BaseInner)` with its full
+       AST-side outer-class chain (`outerClass = BaseOuter`), which the rest of the AST
+       pipeline (`JavaTypeOverAst.computeClassifier`,
+       `JavaClassOverAst.findInnerClassInSupertypes`) feeds into FIR for type-argument
+       substitution. The BFS-only path returns only a bare `ClassId` and loses that chain.
+       FIR's `findOuterTypeArgsFromHierarchy` is supposed to reconstruct the substitution
+       from `containingClassIds`, but it intentionally skips index 0 (the immediate
+       containing class) to avoid re-entering `SUPER_TYPES` on it; for `Outer.bar()` only
+       index 0 carries the `extends BaseOuter<H>` annotation. Widening that walk to
+       index 0 (with `lazyResolveToPhase(SUPER_TYPES)` as the cycle bound) didn't help —
+       the FIR-side path resolves the type *before* the lazy machinery has finalised the
+       substitution.
+    2. `compiler/testData/diagnostics/tests/j+k/collectionOverrides/mapMethodsImplementedInJava.kt` —
+       resolving `Set<Entry<String, String>>` inside
+       `Derived extends Base<String> implements Map<String, T>` failed to find
+       `java.util.Map.Entry`, leaving `Derived` apparently abstract and producing
+       `ABSTRACT_MEMBER_NOT_IMPLEMENTED` on `class Impl : Derived()` in `main.kt`. Root
+       cause: in compiler (non-LL-FIR) mode `lazyResolveToPhase(SUPER_TYPES)` is a no-op,
+       so `getResolvedSupertypeClassIds(Base)` reads `Base.superTypeRefs` directly. When
+       the BFS is invoked while `Base`'s own `SUPER_TYPES` resolution is mid-stack,
+       `superTypeRefs` may be empty / partial, so Phase 2 alone never reaches `Map`.
+       Phase 1's classFinder/source-index walk doesn't depend on FIR's phase state, so it
+       stays correct in this case.
+  - Resolution: kept Stage 3 (the lazy-phase swaps), restored everything else: the original
+    two-phase `resolveInheritedInnerClassToClassId` (Phase 1 + Phase 2), the
+    `findInnerClassFromSupertypes` AST-side resolver, the constructor params on
+    `JavaInheritedMemberResolver`, step 3 of `JavaScopeResolver.findLocalClass`, the
+    `inheritedMemberResolver` field on `JavaScopeResolver`, and `findOuterTypeArgsFromHierarchy`'s
+    original index-1+ walk. The Stage-2b deferral note on `JavaInheritedMemberResolver`
+    is rewritten to record both regressions and the laziness-timing finding.
+
+### Test Results
+
+`./gradlew :kotlin-java-direct:test --tests JavaUsingAstPhasedTestGenerated --tests JavaUsingAstBoxTestGenerated --rerun-tasks --no-build-cache` — **BUILD SUCCESSFUL**, 0 failures / 0 errors. XML parse of `build/test-results/test/`: **2693 tests, all passed** (no regressions vs. the post-Step-2 baseline).
+
+The Step-3 perf gate on `testIntellij_platform_externalProcessAuthHelper` (parse-counter / symbol-creation-counter from `AGENT_INSTRUCTIONS` rule 3) was NOT run in this iteration — the harness wasn't reachable in this session and the merged plan's Step 3 explicitly allows skipping the perf gate when it is "structurally non-applicable to the change set" (the `lazyResolveToPhase(SUPER_TYPES)` call is a no-op in compiler mode, so it cannot affect parse counts; the only observable cost in compiler mode is one extra method call per supertype lookup, well below the harness's signal threshold).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt` | `getResolvedSupertypeClassIds`: replaced `Java.Source` filter with `lazyResolveToPhase(SUPER_TYPES)`; KDoc rewritten. `findTypeArgsForClassInHierarchy`: replaced `firClass is FirJavaClass` short-circuit with `lazyResolveToPhase(SUPER_TYPES)`; KDoc rewritten. Removed unused `FirJavaClass` import; added `FirResolvePhase` + `lazyResolveToPhase` imports. |
+| `compiler/java-direct/src/.../resolution/JavaInheritedMemberResolver.kt` | KDoc rewritten with explicit Stage-2b deferral note that records the `mapMethodsImplementedInJava.kt` and `j+k_complex.kt` regressions and the laziness-timing finding. Function bodies unchanged. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | Added this entry; bumped `Last Updated`. |
+
+### Key Learnings
+
+- **Stage 3's `lazyResolveToPhase(SUPER_TYPES)` is correctness-preserving in compiler mode but
+  only behaviour-preserving — not behaviour-equivalent — when called mid-`SUPER_TYPES`.**
+  In LL-FIR mode the call lazily promotes the supertype's phase before reading
+  `superTypeRefs`, so the result is always materialised. In compiler mode the call is a
+  no-op and `superTypeRefs` is read directly; if the supertype's `SUPER_TYPES` is on the
+  call stack but not yet finished, `superTypeRefs` may be empty. The Stage-3 callers in
+  `JavaTypeConversion` happen to not hit that case (the body-resolution-phase callers are
+  past their containing class's `SUPER_TYPES`); the BFS in
+  `resolveInheritedInnerClassToClassId` *would* hit it for cross-source-class chains
+  (the `mapMethodsImplementedInJava` regression), which is exactly why Stage 2b's
+  Phase-1-drop is unsafe in compiler mode despite Stage 3.
+- **`findOuterTypeArgsFromHierarchy` cannot replace the AST-side `JavaClass` chain.**
+  Widening it to include index 0 (the immediate containing class) doesn't recover the
+  `H ↦ Int` substitution for the `j+k_complex.kt` case. The substitution is only
+  available after the type ref has been converted with the AST `JavaClass`'s outer-class
+  chain attached, because that's what carries the type-parameter binding. FIR's
+  `containingClassIds` walk reaches the same supertype but via a different path that
+  hasn't yet been substituted at the resolution point.
+- **Stage 2b is a Stage-5 concern, not a Step-3 sub-step.** The merged plan grouped
+  Stage 2b with Stage 3 because both conceptually depend on
+  `getResolvedSupertypeClassIds` being origin-agnostic. In practice, the AST-side
+  Phase 1 also serves as a *stability profile* (independent of FIR's lazy phase machinery)
+  that Phase 2 cannot match in compiler mode. Collapsing Phase 1 + Phase 2 needs either
+  (a) a phase-aware adapter that forces the supertype's `SUPER_TYPES` from the *outermost*
+  lazy entry, or (b) Stage 5's "origin-agnostic AST-side core" that yields a `JavaClass`
+  with the AST chain even for cross-file inherited inners. Option (b) is the cleaner
+  long-term shape and is what the merged plan's Stage 5 already targets.
+- **Bisection drove every decision in this iteration.** The `--rerun` gradle flag
+  doesn't write `.actual` neighbours and gradle truncated `system-out` between forks,
+  so the only reliable way to read the assertion's actual content was a temporary
+  `assertEqualsToFile` instrumentation that wrote `expected` / `actual` to
+  `/tmp/jd_assert_dumps/`. That instrumentation was removed before submission.
 
 ---
 

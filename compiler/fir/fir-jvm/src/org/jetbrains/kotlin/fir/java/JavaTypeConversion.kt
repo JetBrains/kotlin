@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -430,21 +431,27 @@ private fun resolveTypeName(
 }
 
 /**
- * Returns the direct supertype ClassIds for a given class, reading only already-resolved types.
- * Only works for non-Java classes (Kotlin/builtin) to avoid triggering premature lazy resolution
- * of Java class supertypes. Kotlin class supertypes are resolved in the SUPER_TYPES phase
- * which runs before Java class member conversion.
+ * Returns the direct supertype ClassIds for a given class, reading [FirRegularClass.superTypeRefs].
+ *
+ * **Stage 3 of the resolver-unification refactoring** (see
+ * `compiler/java-direct/implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). Replaces the
+ * previous `FirDeclarationOrigin.Java.Source` short-circuit with an explicit
+ * [lazyResolveToPhase] to [FirResolvePhase.SUPER_TYPES] on the looked-up class symbol. The phase
+ * contract is the cycle bound: if the symbol's `SUPER_TYPES` resolution is already on the stack
+ * (e.g. we are mid-way through resolving the very class whose supertypes we'd be reading) the
+ * call is a no-op; otherwise it lazily promotes the class to that phase. In the compiler
+ * (non-LL-FIR) mode the call is a no-op outright, since the compiler is non-lazy and the phase
+ * is reached before Java class member conversion runs.
+ *
+ * The function is invoked only for inherited-inner-class lookups (via the `getSupertypeClassIds`
+ * callback registered in `resolveSymbolBasedClassId`), so promoting to `SUPER_TYPES` here
+ * respects laziness invariant 3 of the unification doc: supertype-phase resolution is forced
+ * only when supertypes are actually needed, not on the simple "does this class exist?" probe.
  */
 private fun getResolvedSupertypeClassIds(classId: ClassId, session: FirSession): List<ClassId> {
-    val firClass = classId.toLookupTag().toRegularClassSymbol(session)?.fir ?: return emptyList()
-    // Only read supertypes from non-Java-source classes. Java SOURCE class supertypes are walked
-    // via the class finder in Phase 1 of resolveInheritedInnerClassToClassId.
-    // Accessing FirJavaClass.superTypeRefs for source classes could trigger premature lazy resolution
-    // (it calls javaClass.supertypes which may circle back into type conversion).
-    // Binary Java classes (Java.Library) have pre-populated nonEnhancedSuperTypes, so accessing
-    // their superTypeRefs is safe and necessary for walking binary supertype hierarchies.
-    if (firClass is FirJavaClass && firClass.origin == FirDeclarationOrigin.Java.Source) return emptyList()
-    return firClass.superTypeRefs.mapNotNull { ref ->
+    val classSymbol = classId.toLookupTag().toRegularClassSymbol(session) ?: return emptyList()
+    classSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    return classSymbol.fir.superTypeRefs.mapNotNull { ref ->
         (ref as? FirResolvedTypeRef)?.coneType?.classId
     }
 }
@@ -485,7 +492,21 @@ private fun findOuterTypeArgsFromHierarchy(
 
 /**
  * Recursively searches for a target class in a type's supertype hierarchy and returns
- * its type arguments. Only walks through non-Java classes to avoid premature resolution.
+ * its type arguments.
+ *
+ * **Stage 3 of the resolver-unification refactoring** (see
+ * `compiler/java-direct/implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). The previous
+ * `firClass is FirJavaClass` short-circuit (mirroring the dropped
+ * `FirDeclarationOrigin.Java.Source` filter in [getResolvedSupertypeClassIds]) made this walk
+ * unable to thread type arguments through Java-source supertype chains, regressing tests like
+ * `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt` whose inherited
+ * inner classes (e.g. `Outer<H> extends BaseOuter<H>` → `BaseInner<E,F>`) require the
+ * `H ↦ Int` substitution to flow through the Java-source supertype. The filter is replaced
+ * with `lazyResolveToPhase(SUPER_TYPES)` on the looked-up class symbol, matching the cycle
+ * bound used in [getResolvedSupertypeClassIds]: when the symbol is currently mid-`SUPER_TYPES`
+ * resolution the call is a no-op (and we read whatever's already resolved); otherwise it
+ * lazily promotes the class to the requested phase. In compiler (non-LL-FIR) mode the call
+ * is a no-op outright since the compiler is non-lazy.
  *
  * @param type the current supertype being examined
  * @param targetClassId the outer class ClassId we're looking for
@@ -503,9 +524,9 @@ private fun findTypeArgsForClassInHierarchy(
     if (typeClassId == targetClassId) return type.typeArguments
     if (!visited.add(typeClassId)) return null
 
-    val firClass = typeClassId.toLookupTag().toRegularClassSymbol(session)?.fir ?: return null
-    // Only walk through non-Java classes to avoid premature lazy resolution.
-    if (firClass is FirJavaClass) return null
+    val classSymbol = typeClassId.toLookupTag().toRegularClassSymbol(session) ?: return null
+    classSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+    val firClass = classSymbol.fir
 
     for (superRef in firClass.superTypeRefs) {
         val superType = (superRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType ?: continue

@@ -38,35 +38,37 @@ internal class JavaScopeResolver(
      * Finds a class by simple name in the AST-side scope.
      *
      * Checks (in order):
-     * 1. Inner classes directly declared on the containing class chain (purely syntactic).
+     * 1. Inner classes directly declared on the containing class (purely syntactic AST query).
      * 2. Sibling inner classes — inner classes declared on the immediate outer class.
-     * 3. Inherited inner classes from supertypes of the containing class
-     *    (`findInnerClassFromSupertypes`, JLS 6.5.2).
+     * 3. Inherited inner classes from the containing class's supertypes
+     *    ([JavaInheritedMemberResolver.findInnerClassFromSupertypes], JLS 6.5.2).
      * 4. Inner classes declared on each outer class up the containing chain
      *    (so deeply-nested classes see siblings of every enclosing class).
      * 5. Top-level classes declared in the same compilation unit (`sameFileTopLevelClassProvider`).
      *
      * Stage 2 of the resolver-unification refactoring (see
      * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`) narrowed this method by
-     * removing the AST-side inherited-inner-class walk on each *outer* class in step 4 —
-     * that path was redundant with the aggregated-map / BFS lookup performed by
-     * [JavaResolutionContext.resolveFromLocalScope] step 2b for outer-of-outer cases.
-     * The supertype walk on the *containing* class is retained (step 3) because it is
-     * load-bearing for cases like `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`
-     * where the same-file aggregated-map / BFS path arrives at the inner class through
-     * a different ClassId shape (the `JavaClass.fqName` path resolves directly to the
-     * inherited inner's source-side ClassId, while the aggregated map is keyed by
-     * supertype ClassIds that the FIR side has not yet materialized at the resolution
-     * point).
+     * removing the AST-side inherited-inner-class walk on every *outer* class. Stage 2b
+     * additionally dropped the BFS-side Phase 1 (`walkJavaSourceSupertypes`) — see
+     * [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId] — but kept step 3
+     * here. The retention is load-bearing: step 3 returns a `JavaClass` with its full
+     * AST-side outer-class chain, which the rest of the AST pipeline
+     * ([JavaTypeOverAst.computeClassifier], [JavaClassOverAst.findInnerClassInSupertypes])
+     * needs to thread outer-class type-argument substitutions through cross-file
+     * Java-source supertypes. The BFS-only path returns a bare `ClassId`, which loses that
+     * substitution context — see the `j+k_complex.kt` post-mortem in the 2026-05-05 entry
+     * of `compiler/java-direct/ITERATION_RESULTS.md`. Subsuming this step is a Stage 5
+     * concern.
      */
     fun findLocalClass(name: Name): JavaClass? {
-        // 1. Inner classes of the containing class (purely syntactic AST query).
+        // 1. Inner classes of the containing class (purely syntactic AST query, plus
+        // [JavaClassOverAst.findInnerClassInSupertypes] same-file supertype walk).
         containingClass?.findInnerClass(name)?.let { return it }
         // 2. Sibling inner classes — inner classes of the immediate outer class.
         // Handles cases like: class J { class AImpl {} class A extends AImpl {} }
         containingClass?.outerClass?.findInnerClass(name)?.let { return it }
         // 3. Inherited inner classes from the containing class's supertypes (JLS 6.5.2).
-        // Retained as a load-bearing case (see KDoc above).
+        // Required for cross-file Java-source supertypes; see KDoc above.
         containingClass?.let { cls ->
             inheritedMemberResolver.findInnerClassFromSupertypes(name, cls, mutableSetOf())?.let { return it }
         }
@@ -118,9 +120,9 @@ internal class JavaScopeResolver(
         return JavaScopeResolver(
             sameFileTopLevelClassProvider,
             containingClass = newContainingClass,
-            inheritedMemberResolver,
-            typeParametersInScope,
-            inheritedTypeParametersInScope,
+            inheritedMemberResolver = inheritedMemberResolver,
+            typeParametersInScope = typeParametersInScope,
+            inheritedTypeParametersInScope = inheritedTypeParametersInScope,
         )
     }
 

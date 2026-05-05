@@ -14,16 +14,49 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Resolves inherited inner classes from supertype hierarchies.
+ * Resolves inherited inner classes from supertype hierarchies, implementing JLS 6.5.2
+ * (inherited member types in scope).
  *
- * Responsible for:
- * - Finding inner classes inherited from supertypes (JLS 6.5.2 — inherited member types)
- * - BFS traversal of supertype hierarchies for inner class resolution
- * - Aggregating inherited inner classes across the containing class chain
- * - Detecting ambiguities when multiple supertypes declare inner classes with the same name
+ * Two entry points serve different consumers:
  *
- * This class encapsulates the supertype-walking logic that was previously embedded in
- * [JavaResolutionContext], making it independently testable and reducing the context's complexity.
+ * - [findInnerClassFromSupertypes] returns a [JavaClass] (with its full AST-side outer-class
+ *   chain) for inherited inner classes, including cross-file Java-source supertypes via the
+ *   [classFinder]. Used by [JavaScopeResolver.findLocalClass] step 3 so that the rest of the
+ *   AST pipeline (`JavaTypeOverAst.computeClassifier`, `JavaClassOverAst.findInnerClassInSupertypes`)
+ *   can thread outer-class type arguments through the AST chain — the substitution context
+ *   FIR needs for cases like
+ *   `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`.
+ *
+ * - [resolveInheritedInnerClassToClassId] returns a `ClassId` via a two-phase BFS:
+ *   Phase 1 ([walkJavaSourceSupertypes]) walks Java-source supertypes through the AST /
+ *   classFinder source index — independent of FIR's lazy phase machinery, so it stays
+ *   correct even when the BFS is invoked while the supertype's own `SUPER_TYPES` resolution
+ *   is on the call stack. Phase 2 ([walkBinarySupertypes]) walks Kotlin / binary supertypes
+ *   through FIR's `getSupertypeClassIds` callback (which, after Stage 3 of the unification
+ *   refactoring, uses `lazyResolveToPhase(SUPER_TYPES)`).
+ *
+ * **Stage 2b deferral note** (see `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`).
+ * The merged plan's Step 2 lists "drop Phase 1 in favour of Phase 2 alone" as part of the
+ * mechanical Stage-2 work — the spec assumed that once Stage 3 makes
+ * `JavaTypeConversion.getResolvedSupertypeClassIds` origin-agnostic, Phase 2 alone can walk
+ * Java-source supertypes too. In practice that drop regresses
+ * `compiler/testData/diagnostics/tests/j+k/collectionOverrides/mapMethodsImplementedInJava.kt`:
+ * resolving `Set<Entry<…>>` inside `Derived extends Base<String> implements Map<String, T>`
+ * needs the BFS to find `Entry` on `Map` while `Base`'s `SUPER_TYPES` is on the resolution
+ * stack. In compiler (non-LL-FIR) mode `lazyResolveToPhase(SUPER_TYPES)` is a no-op, so
+ * `getResolvedSupertypeClassIds(Base)` may read `Base.superTypeRefs` *before* its
+ * `SUPER_TYPES` phase has finished and produce empty / partial results. Phase 1's AST walk
+ * reads supertype names directly from the source-index, doesn't depend on FIR's phase
+ * state, and therefore stays correct. Stage 2b is consequently DEFERRED again (was already
+ * deferred to "ride together with Stage 3" in the merged plan); collapsing the two phases
+ * is a Stage 5 concern, conditional on routing the BFS through a phase-aware adapter that
+ * forces the supertype's `SUPER_TYPES` from the *outermost* lazy entry.
+ *
+ * Stage 2b also deliberately does NOT subsume [findInnerClassFromSupertypes]: the BFS
+ * yields a bare `ClassId`, but downstream FIR conversion needs an AST-side `JavaClass` to
+ * recover outer-class type-argument substitutions for inherited inner classes (the
+ * `j+k_complex.kt` post-mortem in the 2026-05-05 entry of `ITERATION_RESULTS.md` covers
+ * this).
  */
 internal class JavaInheritedMemberResolver(
     private val packageFqName: FqName,
@@ -33,13 +66,13 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Searches for an inner class with the given name in the supertype hierarchy.
-     * This implements JLS 6.5.2 - inherited member types are in scope.
+     * Implements JLS 6.5.2 — inherited member types are in scope.
      *
      * Returns null if multiple inner classes with the same name are found (ambiguity),
-     * which will cause the MISSING_DEPENDENCY_CLASS error as per javac behavior.
-     *
-     * Uses the [classFinder] (if available) to detect cross-file ambiguities.
-     * Falls back to local resolution for same-file supertypes.
+     * matching `javac`'s `MISSING_DEPENDENCY_CLASS` error. Uses the [classFinder] (if
+     * available) to detect cross-file ambiguities and to materialize the inherited
+     * `JavaClass` for cross-file Java-source supertypes; falls back to local resolution for
+     * same-file supertypes via [sameFileTopLevelClassProvider].
      */
     fun findInnerClassFromSupertypes(name: Name, javaClass: JavaClass, visited: MutableSet<JavaClass>): JavaClass? {
         if (javaClass in visited) return null
@@ -47,44 +80,27 @@ internal class JavaInheritedMemberResolver(
 
         val allFound = mutableSetOf<JavaClass>()
 
-        // First, try local resolution (same-file supertypes)
+        // Same-file supertypes — local resolution by simple name. Cross-file supertypes are
+        // handled by the classFinder fallback below; that path is the one the
+        // `j+k_complex.kt` trip-wire depends on.
         for (supertype in javaClass.supertypes) {
             val supertypeRef = supertype.presentableText.let { text ->
                 val withoutGenerics = text.substringBefore('<').trim()
                 withoutGenerics.substringBefore('.').trim()
             }
-
             if (supertypeRef.isEmpty()) continue
-
             val supertypeClass = sameFileTopLevelClassProvider(Name.identifier(supertypeRef)) ?: continue
-
-            supertypeClass.findInnerClass(name)?.let { found ->
-                allFound.add(found)
-            }
-
-            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { found ->
-                allFound.add(found)
-            }
+            supertypeClass.findInnerClass(name)?.let { allFound.add(it) }
+            findInnerClassFromSupertypes(name, supertypeClass, visited)?.let { allFound.add(it) }
         }
 
-        // If local resolution found nothing, try cross-file detection
         if (allFound.isEmpty()) {
             val javaClassOverAst = javaClass as? JavaClassOverAst
             if (javaClassOverAst != null && classFinder != null) {
-                val fqName = javaClassOverAst.fqName
-                val containingClassId = fqNameInPackageToClassId(fqName, packageFqName)
-
-                val inheritedInners = classFinder.collectInheritedInnerClasses(containingClassId)
-                val candidates = inheritedInners[name.asString()] ?: emptySet()
-
-                if (candidates.size > 1) {
-                    // Ambiguity detected across multiple supertypes
-                    return null
-                }
-
-                if (candidates.size == 1) {
-                    return classFinder.findClass(JavaClassFinder.Request(candidates.first()))
-                }
+                val containingClassId = fqNameInPackageToClassId(javaClassOverAst.fqName, packageFqName)
+                val candidates = classFinder.collectInheritedInnerClasses(containingClassId)[name.asString()] ?: emptySet()
+                if (candidates.size > 1) return null
+                if (candidates.size == 1) return classFinder.findClass(JavaClassFinder.Request(candidates.first()))
             }
         }
 
@@ -94,10 +110,8 @@ internal class JavaInheritedMemberResolver(
 
     /**
      * Try to resolve a simple name as an inner class inherited from supertypes.
-     * This handles cross-file inheritance (e.g., a Java class extending a Kotlin class with an
-     * inner class).
      *
-     * Runs two passes:
+     * Two-phase BFS (see the class KDoc for the Stage-2b deferral rationale):
      *   1. [walkJavaSourceSupertypes] — BFS over [JavaClassifierType] supertypes from the Java
      *      model; fast for same-file Java source supertypes, fully self-contained (no FIR
      *      interaction). Non-source supertypes are recorded in `nonSourceSupertypeIds`.
@@ -106,19 +120,6 @@ internal class JavaInheritedMemberResolver(
      *
      * Both passes share `visited` (to avoid re-probing the same `ClassId`) and use the
      * `SupertypeClassId.SimpleName` probe pattern with ambiguity detection.
-     *
-     * **Stage 2b deferral note** (resolver-unification — see
-     * `implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`). The merged plan
-     * (Step 2) lists "drop Phase 1 in favour of Phase 2 alone" as part of the mechanical
-     * Stage-2 work. In practice that drop cannot land in isolation: today
-     * `JavaTypeConversion.getResolvedSupertypeClassIds` short-circuits to `emptyList()` for
-     * `FirDeclarationOrigin.Java.Source` classes (the documented avoid-premature-lazy-resolution
-     * filter), so Phase 2 alone cannot walk through Java-source supertypes. Phase 1's text →
-     * `ClassId` resolution + source-index recursion is the only way to reach inner classes
-     * inherited along a chain `JavaSource → JavaSource → ...`. Stage 3 of the unification
-     * replaces that filter with `lazyResolveToPhase(SUPER_TYPES)`; once it lands,
-     * [getSupertypeClassIds] becomes origin-agnostic and Phase 1 collapses cleanly into
-     * Phase 2. Until then, Phase 1 stays.
      *
      * @param resolveWithoutInheritance function to resolve a name without checking inherited
      *        inner classes (to avoid infinite recursion back into this method).
@@ -217,6 +218,12 @@ internal class JavaInheritedMemberResolver(
      * [walkJavaSourceSupertypes]. Uses [getSupertypeClassIds] to walk each one transitively;
      * probes the same `parentClassId.SimpleName` pattern; shares [visited] so cross-pass
      * ambiguity is still detected.
+     *
+     * Stage 3 of the resolver-unification refactoring widened
+     * `JavaTypeConversion.getResolvedSupertypeClassIds` to materialise Java-source supertypes
+     * via `lazyResolveToPhase(SUPER_TYPES)`, but the BFS here is still seeded only from
+     * non-source ClassIds collected by Phase 1 — the Stage-2b deferral note on the class
+     * KDoc explains why Phase 2 cannot subsume Phase 1 in compiler mode.
      */
     private fun walkBinarySupertypes(
         simpleName: String,
