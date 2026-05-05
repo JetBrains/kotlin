@@ -328,12 +328,31 @@ class FirCallCompleter(
         return origin == FirDeclarationOrigin.Synthetic.FakeFunction && (this as? FirCallableSymbol)?.callableId == SyntheticCallableId.ELVIS
     }
 
+
+    fun runCompletionUntilFirstLambdaIsReady(
+        candidate: Candidate,
+        call: FirFunctionCall,
+    ) {
+        val resolutionMode = candidate.callInfo.resolutionMode
+        val initialType = components.initialTypeOfCandidate(candidate)
+        val completionMode = candidate.computeCompletionMode(resolutionMode, initialType, call)
+        val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
+
+        runCompletionForCall(
+            candidate,
+            completionMode,
+            call, initialType, analyzer,
+            isUntilFirstLambda = true,
+        )
+    }
+
     fun runCompletionForCall(
         candidate: Candidate,
         completionMode: ConstraintSystemCompletionMode,
         call: FirExpression,
         initialType: ConeKotlinType,
         analyzer: PostponedArgumentsAnalyzer? = null,
+        isUntilFirstLambda: Boolean = false,
     ) {
         @Suppress("NAME_SHADOWING")
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
@@ -354,6 +373,7 @@ class FirCallCompleter(
             initialType,
             transformer.resolutionContext,
             postponedAtomAnalyzer,
+            isUntilFirstLambda,
         )
     }
 

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // ISSUE: KT-51400
 // LANGUAGE: +EagerLambdaAnalysis +CallCompletionRefinementsFor25
@@ -38,10 +38,10 @@ class A {
         // K == Number
         val x1 = i.singleOverload(::bar2, ::foo, ::bar) { value -> 0 }
         // Here it's mostly the same, but can we fix K while it's used as a return type?
-        val x2 = i.<!OVERLOAD_RESOLUTION_AMBIGUITY!>debounce<!>(::bar2, ::foo, ::bar) { <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>value<!> -> 0 }
+        val x2 = i.debounce(::bar2, ::foo, ::bar) { value -> 0 }
 
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: debounce, [/debounce, /debounce]")!>x2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x2<!>
     }
 }
 

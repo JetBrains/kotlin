@@ -203,6 +203,7 @@ class FirDelegatedPropertyInferenceSession(
                 notCompletedCalls,
                 unitType, resolutionContext,
                 postponedAtomAnalyzer,
+                isUntilFirstLambda = false,
             )
         }
 
