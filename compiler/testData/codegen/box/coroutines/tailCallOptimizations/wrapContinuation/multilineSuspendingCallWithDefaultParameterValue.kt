@@ -2,7 +2,6 @@
 // ISSUE: KT-83363
 
 // WITH_STDLIB
-// TARGET_BACKEND: JVM
 
 import kotlin.coroutines.*
 

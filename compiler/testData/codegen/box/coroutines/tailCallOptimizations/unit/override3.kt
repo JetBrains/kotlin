@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
@@ -12,11 +11,15 @@ suspend fun <T> tx(lambda: () -> T): T = suspendCoroutine { c = it; lambda() }
 
 object Dummy
 
-interface Base<T> {
-    suspend fun generic(): T
+interface Foo {
+    suspend fun generic(): Any
 }
 
-class Derived: Base<Unit> {
+interface Base {
+    suspend fun generic(): Unit
+}
+
+class Derived: Base, Foo {
     override suspend fun generic(): Unit {
         tx { Dummy }
     }
@@ -30,8 +33,8 @@ fun box(): String {
     var res: Any? = null
 
     builder {
-        val base: Base<*> = Derived()
-        res = base.generic()
+        val foo: Foo = Derived()
+        res = foo.generic()
     }
 
     (c as? Continuation<Dummy>)?.resume(Dummy)

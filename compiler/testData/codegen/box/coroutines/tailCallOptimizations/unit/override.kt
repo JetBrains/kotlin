@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
@@ -16,14 +15,12 @@ interface Base<T> {
     suspend fun generic(): T
 }
 
-abstract class Derived1: Base<Unit> {
-}
-
-class Derived2: Derived1() {
+class Derived: Base<Unit> {
     override suspend fun generic(): Unit {
         tx { Dummy }
     }
 }
+
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
@@ -32,7 +29,7 @@ fun box(): String {
     var res: Any? = null
 
     builder {
-        val base: Base<*> = Derived2()
+        val base: Base<*> = Derived()
         res = base.generic()
     }
 
