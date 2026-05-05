@@ -42,11 +42,35 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
         if (container is IrConstructor) {
             val originalConstructor = container
 
+            // skip constructors that were actually created by the splitting itself
+            if (originalConstructor.symbol in backendContext.originalCtorToSplitCtorMap.values.map { it.first })
+                return
+
             // very rough first idea: transform it into fn init + constructor (name new or smth, figure names out later), init just initializes, constructor also allocates
             // the observable behavior of the constructor shouldn't change in the ned
             val irClass = originalConstructor.parent as IrClass
 
             // TODO could use irClass.transformDeclarationsFlat, but thats more complicated, and less performant, because it iterates all decls
+
+            val newConstructorInitializeDoAllocate = irClass.addConstructor {
+                updateFrom(originalConstructor)
+                startOffset = originalConstructor.startOffset
+                endOffset = originalConstructor.endOffset
+                origin = originalConstructor.origin
+                name = originalConstructor.name
+                visibility = originalConstructor.visibility
+                isInline = originalConstructor.isInline
+                isExpect = originalConstructor.isExpect
+                returnType = originalConstructor.returnType
+                isPrimary = originalConstructor.isPrimary
+                isExternal = originalConstructor.isExternal
+                containerSource = originalConstructor.containerSource
+            }
+
+            backendContext.originalCtorToSplitCtorMap += originalConstructor.symbol to newConstructorInitializeDoAllocate.symbol
+
+            // for initNoAlloc, parameters are moved, so only need to copy these
+            newConstructorInitializeDoAllocate.copyParametersFrom(originalConstructor)
 
             // TODO names
             val initializeDontAllocateFunction = irClass.addFunction(
@@ -96,26 +120,6 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
 
             // patch parents
             initializeDontAllocateFunction.body?.patchDeclarationParents(initializeDontAllocateFunction)
-
-            val newConstructorInitializeDoAllocate = irClass.addConstructor {
-                updateFrom(originalConstructor)
-                startOffset = originalConstructor.startOffset
-                endOffset = originalConstructor.endOffset
-                origin = originalConstructor.origin
-                name = originalConstructor.name
-                visibility = originalConstructor.visibility
-                isInline = originalConstructor.isInline
-                isExpect = originalConstructor.isExpect
-                returnType = originalConstructor.returnType
-                isPrimary = originalConstructor.isPrimary
-                isExternal = originalConstructor.isExternal
-                containerSource = originalConstructor.containerSource
-            }
-
-            backendContext.originalCtorToSplitCtorMap += originalConstructor.symbol to newConstructorInitializeDoAllocate.symbol
-
-            // for initNoAlloc, parameters are moved, so only need to copy these
-            newConstructorInitializeDoAllocate.copyParametersFrom(originalConstructor)
 
 
             // copy non-parameter "signatures" to both new functions
@@ -174,15 +178,13 @@ class SplitConstructorsIntoAllocationInitialization(val backendContext: WasmBack
 
 class RewriteConstructorCallsAfterSplit(val backendContext: WasmBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val fileContext = backendContext.getFileContext(container.file)
-
-
         // assert that (has delegating constructor call) implies (is constructor)
         // TODO maybe remove later because can't do it only in debug mode :(
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             // delegating constructors should delegate to the initNoAlloc function instead
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                super.visitDelegatingConstructorCall(expression)
                 // we should be in an initNoAlloc function
                 assert(expression.symbol in backendContext.originalCtorToInitNoAllocFnMap) {
                     "Found delegating constructor call in non-initNoAlloc function: ${expression.symbol}"
@@ -201,6 +203,7 @@ class RewriteConstructorCallsAfterSplit(val backendContext: WasmBackendContext) 
             }
 
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+                super.visitConstructorCall(expression)
                 val fnSymbol = backendContext.originalCtorToSplitCtorMap[expression.symbol]!!
 
                 return irConstructorCall(expression, fnSymbol)

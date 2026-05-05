@@ -51,8 +51,12 @@ class WasmBackendContext(
     val isDebugFriendlyCompilation = configuration.getBoolean(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION)
 
     // TODO move, rename, link to from lowerings, etc.
-    val originalCtorToSplitCtorMap = mutableMapOf<IrConstructorSymbol, IrConstructorSymbol>()
-    val originalCtorToInitNoAllocFnMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
+    val originalCtorToSplitCtorMap = mutableMapOf<IrConstructorSymbol, Pair<
+            // new constructor
+            IrConstructorSymbol,
+            // initialize but don't allocate function (called by new constructor)
+            IrSimpleFunctionSymbol
+            >>()
 
     override val typeSystem: IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     override var inVerbosePhase: Boolean = false
