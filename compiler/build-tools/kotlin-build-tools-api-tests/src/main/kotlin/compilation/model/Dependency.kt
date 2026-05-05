@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.compilation.model
 
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioDependency
 import java.nio.file.Path
 
 /**
@@ -28,7 +29,7 @@ interface Dependency {
  */
 class FileDependency(
     override val location: Path,
-) : Dependency {
+) : Dependency, ScenarioDependency {
     data class FileDependencyCacheKey(
         val location: Path,
     ) : DependencyScenarioDslCacheKey
