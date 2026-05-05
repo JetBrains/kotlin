@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.VariableKind
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.ir.generator.IrSymbolTree.constructorSymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.propertySymbol
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.simpleFunctionSymbol
 import org.jetbrains.kotlin.ir.generator.IrTree.propertyWithLateBinding
@@ -68,6 +69,12 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(functionWithLateBinding) {
             configureDeclarationWithLateBindinig(simpleFunctionSymbol)
+        }
+
+        impl(constructor)
+
+        impl(constructorWithLateBinding) {
+            configureDeclarationWithLateBindinig(constructorSymbol)
         }
 
         impl(field) {
