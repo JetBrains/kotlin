@@ -4,7 +4,7 @@
 box generators now actually route `// FILE: *.java` blocks through java-direct AST;
 prior numbers were against PSI loading (see 2026-04-28 entry).
 
-**Last Updated**: 2026-05-04 (Phase 1 BinaryJavaClassFinder turned ON by default; `<javaSourceRoots packagePrefix=...>` honoured by `JavaPackageIndexer`)
+**Last Updated**: 2026-05-04 (merged refactoring plan landed: `MERGED_REFACTORING_PLAN_2026_05_04.md`)
 
 ### Entry Template
 
@@ -30,6 +30,80 @@ prior numbers were against PSI loading (see 2026-04-28 entry).
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Merged refactoring plan: PSI removal × resolver unification — 2026-05-04 (later)
+
+### Overview
+
+Added `implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md`, a coordination-only design
+document that sequences the two ongoing refactoring tracks
+(`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` and
+`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`) into a single seven-step execution
+order. The merged ordering is **unification first → measure → PSI Phase 2/3**, agreed
+in the cross-check planning rounds. The new doc references the two source documents
+rather than duplicating their content; this iteration entry is the project-convention
+log of the doc landing.
+
+### Changes
+
+- New `compiler/java-direct/implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md`
+  (~352 lines). Sections:
+  - §1 Overview — frames the two refactorings as one execution plan, names the source
+    documents, states the high-level outcome.
+  - §2 Motivation — cites the cross-check verdict ("compatible and largely reinforcing")
+    and the ordering review (unification mostly local, PSI Phase 2/3 broader); lists
+    non-goals.
+  - §3 Expected Results — bullet list of post-merge end-state items, each linked to the
+    section in the source doc that owns the detail.
+  - §4 Source documents and their continuing roles — table that codifies *what* each doc
+    owns, with the explicit note that this doc does not duplicate iteration entries.
+  - §5 Merged execution order — seven steps with a uniform template (Origin / Goal /
+    Prerequisites / Validation gate / References): (1) PSI Phase 1 ✅ landed,
+    (2) Unification Stages 1–2, (3) Unification Stage 3 + perf gate on clean Phase-1
+    baseline, (4) Unification Stages 4–5, (5) performance & test-data sweep,
+    (6) PSI Phase 2, (7) PSI Phase 3 + 1–2-release transition + PSI removal.
+  - §6 Coupling points — indirect-caller audit shared between Step 3 and Step 6;
+    doc-wording follow-ups when Step 6 lands; parse-counter guardrail run twice;
+    Phase-1 follow-up failures dissolved by Step 6.
+  - §7 Rationale — smaller blast radius first, clean baseline for perf gate, audit-work
+    re-use, plus the explicit trade-off (IntelliJ-platform-dependency removal lands
+    later).
+  - §8 Cross-references — `AGENT_INSTRUCTIONS.md`, `ARCHITECTURE.md`, `RESOLUTION_PIPELINE.md`,
+    the two source docs, `CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`, this log.
+- Step 1 status reflects current reality (default-ON, 2692/2692 (100%), six follow-ups
+  fixed plus `<javaSourceRoots packagePrefix=...>` plumbing landed) — not the stale
+  "default-OFF / six follow-ups pending" state from the plan-template draft.
+
+### Test Results
+
+Documentation-only deliverable; no build, no tests, no production source modified, in
+line with `AGENT_INSTRUCTIONS.md` § Non-Negotiable Rules and the prior planning-round
+agreement that this is a planning/coordination deliverable only.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md` | New: ~352 lines, the merged execution-order plan. |
+| `compiler/java-direct/ITERATION_RESULTS.md` | This entry; updated `Last Updated` line. |
+
+### Key Learnings
+
+- **A coordination doc should not duplicate source-document content.** Each subsection
+  here cross-links to a source-doc section instead. If a source doc evolves (a stage is
+  re-scoped, a phase is split), this plan only has to update the link, not re-derive
+  anything.
+- **Step 1's status was already moving when the plan template was drafted.** The
+  template assumed "default-OFF, six follow-ups pending"; reality at writing time was
+  "default-ON, six follow-ups fixed, plus `packagePrefix` plumbing for
+  `IntelliJFullPipelineTestsGenerated` also landed". `ITERATION_RESULTS.md` (timestamped)
+  is the source of truth for status; the merged plan reflects the post-2026-05-04 state.
+- **Per-step validation gates pin where the parse-counter / symbol-creation-counter
+  check runs.** Two runs (after Step 3 and after Step 6), each on a clean prior baseline,
+  give single-redesign attribution. Anything else collapses two changes into one signal
+  and forces hand-bisection if a regression appears.
 
 ---
 
