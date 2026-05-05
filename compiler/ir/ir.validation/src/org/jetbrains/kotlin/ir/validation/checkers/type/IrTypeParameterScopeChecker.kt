@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.validation.checkers.type
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -38,12 +39,31 @@ object IrTypeParameterScopeChecker : IrTypeChecker {
         element: IrElement,
         typeParameterSymbol: IrTypeParameterSymbol,
     ) {
-        if (!element.isTypeOfIntrinsicCall() && !context.typeParameterScopeStack.isVisibleInCurrentScope(typeParameterSymbol)) {
+        if (shouldReportVisibilityError(context, element, typeParameterSymbol)) {
             context.error(
                 element,
                 "The following element references a type parameter '${typeParameterSymbol.owner.render()}' that is not available " +
                         "in the current scope."
             )
         }
+    }
+
+    private fun shouldReportVisibilityError(
+        context: CheckerContext,
+        element: IrElement,
+        typeParameterSymbol: IrTypeParameterSymbol,
+    ): Boolean =
+        // typeOf intrinsic is a special case with allowed out-of-scope type parameters.
+        !element.isTypeOfIntrinsicCall()
+                // TODO(KT-85683): Temporary workaround, remove once the issue is fixed.
+                && !element.isBackingFieldWithGettersTypeParameter(typeParameterSymbol)
+                && !context.typeParameterScopeStack.isVisibleInCurrentScope(typeParameterSymbol)
+
+    private fun IrElement.isBackingFieldWithGettersTypeParameter(
+        typeParameterSymbol: IrTypeParameterSymbol,
+    ): Boolean {
+        if (this !is IrField) return false
+        val property = correspondingPropertySymbol?.owner ?: return false
+        return property.getter?.typeParameters?.any { it.symbol == typeParameterSymbol } == true
     }
 }
