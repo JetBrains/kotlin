@@ -53,15 +53,19 @@ class MavenTestProject(
 
         val javaHome = context.jdkProvider.getJavaHome(buildOptions.javaVersion) ?:
             throw RuntimeException("Can't find path for ${buildOptions.javaVersion}")
+        val nestedMavenTempDir = workDir.resolve(".mvn-tmp").createDirectories().absolutePathString()
         verifier.setEnvironmentVariable("JAVA_HOME", javaHome.absolutePathString())
         verifier.setEnvironmentVariable("MAVEN_OPTS", nestedMavenOpts(environmentVariables["MAVEN_OPTS"]))
         verifier.setEnvironmentVariable(
             "MAVEN_USER_HOME",
             environmentVariables["MAVEN_USER_HOME"] ?: context.mavenUserHome.absolutePathString()
         )
+        verifier.setEnvironmentVariable("TMP", environmentVariables["TMP"] ?: nestedMavenTempDir)
+        verifier.setEnvironmentVariable("TEMP", environmentVariables["TEMP"] ?: nestedMavenTempDir)
+        verifier.setEnvironmentVariable("TMPDIR", environmentVariables["TMPDIR"] ?: nestedMavenTempDir)
 
         for ((key, value) in environmentVariables) {
-            if (key == "MAVEN_OPTS" || key == "MAVEN_USER_HOME") continue
+            if (key in NESTED_MAVEN_ENVIRONMENT_KEYS) continue
             verifier.setEnvironmentVariable(key, value)
         }
 
@@ -115,6 +119,10 @@ class MavenTestProject(
         listOf(NESTED_MAVEN_OPTS, extraMavenOpts)
             .filterNot { it.isNullOrBlank() }
             .joinToString(" ")
+
+    private companion object {
+        val NESTED_MAVEN_ENVIRONMENT_KEYS = setOf("MAVEN_OPTS", "MAVEN_USER_HOME", "TMP", "TEMP", "TMPDIR")
+    }
 
     @Suppress("unused")
     fun makeSnapshotTo(base: String) {
