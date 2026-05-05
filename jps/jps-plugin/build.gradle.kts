@@ -115,6 +115,7 @@ tasks.compileKotlin {
 
 projectTests {
     testTask(parallel = true, jUnitMode = JUnitMode.JUnit4, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         // do not replace with compile/runtime dependency,
         // because it forces Intellij reindexing after each compiler change
         dependsOn(":kotlin-compiler:dist")
