@@ -35,12 +35,8 @@ tasks.withType<Test>().configureEach {
                         stacktrace = it.stackTrace.frames
                     )
                 }
-                .map {
-                    AccessedFile(
-                        path = Paths.get((if (!it.path.isAbsolute) projectPath.resolve(it.path) else it.path).toFile().canonicalPath),
-                        stacktrace = it.stacktrace
-                    )
-                }
+                .map { it.mapPath { path -> if (!path.isAbsolute) projectPath.resolve(path) else path } }
+                .map { it.mapPath { path -> Paths.get(path.toFile().canonicalPath) } }
                 .filter { it.path.startsWith(projectPath) }
                 .associateBy { it.path }
 
@@ -67,6 +63,12 @@ data class AccessedFile(
     val path: java.nio.file.Path,
     val stacktrace: List<RecordedFrame>,
 ) {
+    fun mapPath(mapper: (java.nio.file.Path) -> java.nio.file.Path) =
+        AccessedFile(
+            path = mapper(path),
+            stacktrace = stacktrace
+        )
+
     fun formatStacktrace() = buildString {
         stacktrace.forEach { frame ->
             val method = frame.method
