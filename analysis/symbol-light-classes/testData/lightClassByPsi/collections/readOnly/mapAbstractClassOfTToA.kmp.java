@@ -16,6 +16,23 @@ public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @o
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<T, @org.jetbrains.annotations.NotNull() test.A> asJsReadonlyMapView();//  asJsReadonlyMapView()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() test.A get(T);//  get(T)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean containsKey(T);//  containsKey(T)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsValue(@org.jetbrains.annotations.NotNull() test.A)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() test.A> getValues();//  getValues()
 
@@ -26,19 +43,6 @@ public abstract class TAMap2 /* test.TAMap2*/<T>  implements java.util.Map<T, @o
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Set<T> getKeys();//  getKeys()
-
-  @java.lang.Override()
-  @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() test.A get(T);//  get(T)
-
-  @java.lang.Override()
-  public boolean containsKey(T);//  containsKey(T)
-
-  @java.lang.Override()
-  public boolean containsValue(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsValue(@org.jetbrains.annotations.NotNull() test.A)
-
-  @java.lang.Override()
-  public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
   public int getSize();//  getSize()

@@ -16,6 +16,23 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyMap<@org.jetbrains.annotations.NotNull() test.A, T> asJsReadonlyMapView();//  asJsReadonlyMapView()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  @org.jetbrains.annotations.Nullable()
+  public @org.jetbrains.annotations.Nullable() T get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean containsValue(T);//  containsValue(T)
+
+  @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
+  public boolean isEmpty();//  isEmpty()
+
+  @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Collection<T> getValues();//  getValues()
 
@@ -26,19 +43,6 @@ public abstract class ATMap2 /* test.ATMap2*/<T>  implements java.util.Map<@org.
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Set<@org.jetbrains.annotations.NotNull() test.A> getKeys();//  getKeys()
-
-  @java.lang.Override()
-  @org.jetbrains.annotations.Nullable()
-  public @org.jetbrains.annotations.Nullable() T get(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  get(@org.jetbrains.annotations.NotNull() test.A)
-
-  @java.lang.Override()
-  public boolean containsKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() test.A);//  containsKey(@org.jetbrains.annotations.NotNull() test.A)
-
-  @java.lang.Override()
-  public boolean containsValue(T);//  containsValue(T)
-
-  @java.lang.Override()
-  public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()
   public int getSize();//  getSize()

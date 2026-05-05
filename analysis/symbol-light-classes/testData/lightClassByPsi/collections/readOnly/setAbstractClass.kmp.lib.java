@@ -12,16 +12,20 @@ public abstract class CSet2 /* test.CSet2*/<Elem>  implements java.util.Set<Elem
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<Elem> asJsReadonlySetView();//  asJsReadonlySetView()
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
-  public  CSet2();//  .ctor()
-
+  @kotlin.js.JsExport.Ignore()
   public boolean contains(Elem);//  contains(Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
+
+  public  CSet2();//  .ctor()
 
   public int getSize();//  getSize()
 }

@@ -6,27 +6,35 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements ja
   private final int size;
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public Elem removeAt(int);//  removeAt(int)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public Elem set(int, Elem);//  set(int, Elem)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public boolean add(Elem);//  add(Elem)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public boolean addAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public boolean addAll(int, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  addAll(int, @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public boolean remove(Elem);//  remove(Elem)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public boolean removeAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  removeAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @kotlin.IgnorableReturnValue()
+  @kotlin.js.JsExport.Ignore()
   public boolean retainAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  retainAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @kotlin.SinceKotlin()
@@ -43,37 +51,48 @@ public abstract class CMutableList2 /* test.CMutableList2*/<Elem>  implements ja
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlyArray<Elem> asJsReadonlyArrayView();//  asJsReadonlyArrayView()
 
-  @org.jetbrains.annotations.NotNull()
-  public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
-
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.List<Elem> subList(int, int);//  subList(int, int)
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator();//  listIterator()
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.ListIterator<Elem> listIterator(int);//  listIterator(int)
 
-  public  CMutableList2();//  .ctor()
-
+  @kotlin.js.JsExport.Ignore()
   public Elem get(int);//  get(int)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean contains(Elem);//  contains(Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
 
-  public int getSize();//  getSize()
-
+  @kotlin.js.JsExport.Ignore()
   public int indexOf(Elem);//  indexOf(Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public int lastIndexOf(Elem);//  lastIndexOf(Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public void add(int, Elem);//  add(int, Elem)
 
+  @kotlin.js.JsExport.Ignore()
   public void clear();//  clear()
+
+  @org.jetbrains.annotations.NotNull()
+  public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
+
+  public  CMutableList2();//  .ctor()
+
+  public int getSize();//  getSize()
 }
 
 public class CMutableList3 /* test.CMutableList3*/<Elem>  implements java.util.List<Elem>, kotlin.jvm.internal.markers.KMutableList {

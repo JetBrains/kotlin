@@ -8,8 +8,10 @@
     "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
     "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
     "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
-    "WRONG_MODIFIER_TARGET"
+    "WRONG_MODIFIER_TARGET",
+    "EXPOSED_NOT_EXPORTED_SUPER_INTERFACE_WARNING",
 )
+@file:OptIn(ExperimentalJsExport::class)
 
 package kotlin.collections
 
@@ -224,19 +226,25 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
  *
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
+@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 @JsName("KtList")
 public actual interface List<out E> : Collection<E> {
     // Query Operations
 
+    @JsExport.Ignore
     actual override val size: Int
 
+    @JsExport.Ignore
     actual override fun isEmpty(): Boolean
 
+    @JsExport.Ignore
     actual override fun contains(element: @UnsafeVariance E): Boolean
 
+    @JsExport.Ignore
     actual override fun iterator(): Iterator<E>
 
     // Bulk Operations
+    @JsExport.Ignore
     actual override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     // Positional Access Operations
@@ -247,6 +255,7 @@ public actual interface List<out E> : Collection<E> {
      *
      * @sample samples.collections.Collections.Lists.get
      */
+    @JsExport.Ignore
     public actual operator fun get(index: Int): E
 
     // Search Operations
@@ -258,6 +267,7 @@ public actual interface List<out E> : Collection<E> {
      *
      * @sample samples.collections.Collections.Lists.indexOf
      */
+    @JsExport.Ignore
     public actual fun indexOf(element: @UnsafeVariance E): Int
 
     /**
@@ -268,6 +278,7 @@ public actual interface List<out E> : Collection<E> {
      *
      * @sample samples.collections.Collections.Lists.lastIndexOf
      */
+    @JsExport.Ignore
     public actual fun lastIndexOf(element: @UnsafeVariance E): Int
 
     // List Iterators
@@ -280,6 +291,7 @@ public actual interface List<out E> : Collection<E> {
      *
      * @sample samples.collections.Collections.Lists.listIterator
      */
+    @JsExport.Ignore
     public actual fun listIterator(): ListIterator<E>
 
     /**
@@ -288,6 +300,7 @@ public actual interface List<out E> : Collection<E> {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than [size] of this list.
      * @sample samples.collections.Collections.Lists.listIteratorWithIndex
      */
+    @JsExport.Ignore
     public actual fun listIterator(index: Int): ListIterator<E>
 
     // View
@@ -303,6 +316,7 @@ public actual interface List<out E> : Collection<E> {
      *
      * @sample samples.collections.Collections.Lists.subList
      */
+    @JsExport.Ignore
     public actual fun subList(fromIndex: Int, toIndex: Int): List<E>
 
     /**
@@ -333,6 +347,7 @@ public actual interface List<out E> : Collection<E> {
  *
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
+@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 @JsName("KtMutableList")
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
@@ -343,9 +358,11 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.add
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun add(element: E): Boolean
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun remove(element: E): Boolean
 
@@ -359,6 +376,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAll
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
 
@@ -377,15 +395,19 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAllAt
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     public actual fun addAll(index: Int, elements: Collection<E>): Boolean
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
 
+    @JsExport.Ignore
     actual override fun clear(): Unit
 
     // Positional Access Operations
@@ -398,6 +420,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.set
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     public actual operator fun set(index: Int, element: E): E
 
@@ -412,6 +435,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAt
      */
+    @JsExport.Ignore
     public actual fun add(index: Int, element: E): Unit
 
     /**
@@ -425,12 +449,15 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.removeAt
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     public actual fun removeAt(index: Int): E
 
     // List Iterators
+    @JsExport.Ignore
     override actual fun listIterator(): MutableListIterator<E>
 
+    @JsExport.Ignore
     override actual fun listIterator(index: Int): MutableListIterator<E>
 
     // View
@@ -445,6 +472,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.subList
      */
+    @JsExport.Ignore
     override actual fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
 
     /**
@@ -490,19 +518,25 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
  *
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
+@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 @JsName("KtSet")
 public actual interface Set<out E> : Collection<E> {
     // Query Operations
 
+    @JsExport.Ignore
     override actual val size: Int
 
+    @JsExport.Ignore
     override actual fun isEmpty(): Boolean
 
+    @JsExport.Ignore
     override actual fun contains(element: @UnsafeVariance E): Boolean
 
+    @JsExport.Ignore
     override actual fun iterator(): Iterator<E>
 
     // Bulk Operations
+    @JsExport.Ignore
     override actual fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     /**
@@ -532,9 +566,11 @@ public actual interface Set<out E> : Collection<E> {
  *
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
+@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 @JsName("KtMutableSet")
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
+    @JsExport.Ignore
     actual override fun iterator(): MutableIterator<E>
 
     // Modification Operations
@@ -546,23 +582,29 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Sets.add
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun add(element: E): Boolean
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean
 
+    @JsExport.Ignore
     @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
 
+    @JsExport.Ignore
     actual override fun clear(): Unit
 
     /**
@@ -611,6 +653,7 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *          can accept a key as a parameter (of [containsKey] for example) and return it in a [keys] set.
  * @param V the type of map values. The map is covariant in its value type.
  */
+@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 @JsName("KtMap")
 public actual interface Map<K, out V> {
     // Query Operations
@@ -623,6 +666,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.size
      */
+    @JsExport.Ignore
     public actual val size: Int
 
     /**
@@ -630,6 +674,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.isEmpty
      */
+    @JsExport.Ignore
     public actual fun isEmpty(): Boolean
 
     /**
@@ -637,6 +682,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.containsKey
      */
+    @JsExport.Ignore
     public actual fun containsKey(key: K): Boolean
 
     /**
@@ -644,6 +690,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.containsValue
      */
+    @JsExport.Ignore
     public actual fun containsValue(value: @UnsafeVariance V): Boolean
 
     /**
@@ -655,6 +702,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.get
      */
+    @JsExport.Ignore
     public actual operator fun get(key: K): V?
 
     // Views
@@ -663,6 +711,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.keySet
      */
+    @JsExport.Ignore
     public actual val keys: Set<K>
 
     /**
@@ -670,6 +719,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.valueSet
      */
+    @JsExport.Ignore
     public actual val values: Collection<V>
 
     /**
@@ -677,6 +727,7 @@ public actual interface Map<K, out V> {
      *
      * @sample samples.collections.Maps.CoreApi.entrySet
      */
+    @JsExport.Ignore
     public actual val entries: Set<Map.Entry<K, V>>
 
     /**
@@ -698,6 +749,7 @@ public actual interface Map<K, out V> {
      * @param K the type of the entry key. The entry is covariant in its key type.
      * @param V the type of the entry value. The entry is covariant in its value type.
      */
+    @JsExport.Ignore
     public actual interface Entry<out K, out V> {
         /**
          * Returns the key of this key/value pair.
@@ -739,6 +791,7 @@ public actual interface Map<K, out V> {
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
  */
+@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 @JsName("KtMutableMap")
 public actual interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
@@ -749,6 +802,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.put
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     public actual fun put(key: K, value: V): V?
 
@@ -759,6 +813,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.remove
      */
+    @JsExport.Ignore
     @IgnorableReturnValue
     public actual fun remove(key: K): V?
 
@@ -768,6 +823,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.putAll
      */
+    @JsExport.Ignore
     public actual fun putAll(from: Map<out K, V>): Unit
 
     /**
@@ -775,6 +831,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.clear
      */
+    @JsExport.Ignore
     public actual fun clear(): Unit
 
     // Views
@@ -783,6 +840,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.keySetMutable
      */
+    @JsExport.Ignore
     actual override val keys: MutableSet<K>
 
     /**
@@ -790,6 +848,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.valueSetMutable
      */
+    @JsExport.Ignore
     actual override val values: MutableCollection<V>
 
     /**
@@ -797,6 +856,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.entrySetMutable
      */
+    @JsExport.Ignore
     actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
     /**
@@ -812,6 +872,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      * @param K the type of the entry key. The entry is invariant in its key type.
      * @param V the type of the entry value. The entry is invariant in its value type.
      */
+    @JsExport.Ignore
     public actual interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**
          * Changes the value associated with the key of this entry.

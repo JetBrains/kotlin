@@ -1,19 +1,57 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-    function provideList(): any/* kotlin.collections.KtList<number> */;
-    function provideMutableList(): any/* kotlin.collections.KtMutableList<number> */;
-    function provideSet(): any/* kotlin.collections.KtSet<number> */;
-    function provideMutableSet(): any/* kotlin.collections.KtMutableSet<number> */;
-    function provideMap(): any/* kotlin.collections.KtMap<string, number> */;
-    function provideMutableMap(): any/* kotlin.collections.KtMutableMap<string, number> */;
-    function consumeList(list: any/* kotlin.collections.KtList<number> */): boolean;
-    function consumeMutableList(list: any/* kotlin.collections.KtMutableList<number> */): boolean;
-    function consumeSet(list: any/* kotlin.collections.KtSet<number> */): boolean;
-    function consumeMutableSet(list: any/* kotlin.collections.KtMutableSet<number> */): boolean;
-    function consumeMap(map: any/* kotlin.collections.KtMap<string, number> */): boolean;
-    function consumeMutableMap(map: any/* kotlin.collections.KtMutableMap<string, number> */): boolean;
-    function provideListAsync(): Promise<any/* kotlin.collections.KtList<number> */>;
+    namespace kotlin.collections {
+        interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlyArrayView(): ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtList": unique symbol;
+            };
+        }
+        interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsArrayView(): Array<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMutableList": unique symbol;
+            };
+        }
+        interface KtSet<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlySetView(): ReadonlySet<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtSet": unique symbol;
+            };
+        }
+        interface KtMutableSet<E> extends kotlin.collections.KtSet<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsSetView(): Set<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMutableSet": unique symbol;
+            };
+        }
+        interface KtMap<K, out V> {
+            asJsReadonlyMapView(): ReadonlyMap<K, V>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMap": unique symbol;
+            };
+        }
+        interface KtMutableMap<K, V> extends kotlin.collections.KtMap<K, V> {
+            asJsMapView(): Map<K, V>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMutableMap": unique symbol;
+            };
+        }
+    }
+    function provideList(): kotlin.collections.KtList<number>;
+    function provideMutableList(): kotlin.collections.KtMutableList<number>;
+    function provideSet(): kotlin.collections.KtSet<number>;
+    function provideMutableSet(): kotlin.collections.KtMutableSet<number>;
+    function provideMap(): kotlin.collections.KtMap<string, number>;
+    function provideMutableMap(): kotlin.collections.KtMutableMap<string, number>;
+    function consumeList(list: kotlin.collections.KtList<number>): boolean;
+    function consumeMutableList(list: kotlin.collections.KtMutableList<number>): boolean;
+    function consumeSet(list: kotlin.collections.KtSet<number>): boolean;
+    function consumeMutableSet(list: kotlin.collections.KtMutableSet<number>): boolean;
+    function consumeMap(map: kotlin.collections.KtMap<string, number>): boolean;
+    function consumeMutableMap(map: kotlin.collections.KtMutableMap<string, number>): boolean;
+    function provideListAsync(): Promise<kotlin.collections.KtList<number>>;
 }
 
 

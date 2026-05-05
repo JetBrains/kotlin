@@ -12,16 +12,20 @@ public abstract class SSet2 /* test.SSet2*/ implements java.util.Set<@org.jetbra
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<@org.jetbrains.annotations.NotNull() java.lang.String> asJsReadonlySetView();//  asJsReadonlySetView()
 
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<@org.jetbrains.annotations.NotNull() java.lang.String> iterator();//  iterator()
 
-  public  SSet2();//  .ctor()
-
+  @kotlin.js.JsExport.Ignore()
   public boolean contains(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  contains(@org.jetbrains.annotations.NotNull() java.lang.String)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<@org.jetbrains.annotations.NotNull() java.lang.String>)
 
+  @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
+
+  public  SSet2();//  .ctor()
 
   public int getSize();//  getSize()
 }
