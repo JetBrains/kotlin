@@ -51,7 +51,7 @@ enum class ConstraintSystemCompletionMode(
         preventFixingTypeVariablesRelatedToReturnType = true,
     ),
 
-    @ExclusiveForOverloadResolutionByLambdaReturnType
+    @ExclusiveForOverloadResolutionByLambdaReturnType // Becomes unused in K2 since ELA
     UNTIL_FIRST_LAMBDA(
         allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
@@ -59,7 +59,7 @@ enum class ConstraintSystemCompletionMode(
         shouldForkPointConstraintsBeResolved = true,
         // We shouldn't do it here because of input type semi-fixing
         fixNotInferredTypeVariablesToErrorType = false,
-        preventFixingTypeVariablesRelatedToReturnType = true,
+        preventFixingTypeVariablesRelatedToReturnType = false,
     );
 
     @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)

@@ -63,8 +63,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         candidateReturnType: ConeKotlinType,
         context: ResolutionContext,
         analyzer: PostponedAtomAnalyzer,
+        isUntilFirstLambda: Boolean,
     ) {
-        c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, analyzer)
+        c.runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, analyzer, isUntilFirstLambda)
     }
 
     private class AnalyzerWithLambdaTracker(
@@ -95,13 +96,15 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         topLevelType: ConeKotlinType,
         context: ResolutionContext,
         givenAnalyzer: PostponedAtomAnalyzer,
+        // Only true for ELA
+        isUntilFirstLambda: Boolean,
     ) {
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
         context.session.inferenceLogger?.logStage("Call Completion", this)
 
         val analyzer = AnalyzerWithLambdaTracker(
             givenAnalyzer,
-            stopAtFirstLambda = isEagerLambdaAnalysisEnabled && completionMode.isUntilFirstLambda(),
+            stopAtFirstLambda = isUntilFirstLambda,
         )
 
         completion@ while (true) {

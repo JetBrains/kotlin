@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// LATEST_LV_DIFFERENCE
 import kotlin.experimental.ExperimentalTypeInference
 
 interface MyList<E>

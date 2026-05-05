@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtomWithPostponedChi
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -105,11 +104,9 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
 
     for ((candidate, atom) in lambdaAtomGroup) {
         call.replaceCalleeReference(candidate.temporaryNamedReference())
-        callCompleter.runCompletionForCall(
+        callCompleter.runCompletionUntilFirstLambdaIsReady(
             candidate,
-            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
             call,
-            components.initialTypeOfCandidate(candidate)
         )
         for (inputType in atom.inputTypes) {
             inferenceSession.semiFixTypeVariablesAllowingFixationToOtherOnes(inputType, myCs = candidate.system)
