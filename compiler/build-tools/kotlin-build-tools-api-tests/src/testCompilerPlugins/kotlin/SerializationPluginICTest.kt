@@ -37,7 +37,6 @@ class SerializationPluginICTest : BaseCompilationTest() {
         }
     }
 
-    @Disabled("enable when fixed")
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("KT-86121: Modifying a concrete subclass in a multi-file sealed serializable hierarchy succeeds incrementally")
     fun testIncrementalCompilationOfSealedSerializableHierarchy(strategyConfig: CompilerExecutionStrategyConfiguration) {
