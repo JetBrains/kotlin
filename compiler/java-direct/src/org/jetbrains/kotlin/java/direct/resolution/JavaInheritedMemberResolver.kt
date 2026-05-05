@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 internal class JavaInheritedMemberResolver(
     private val packageFqName: FqName,
     private val classFinder: LeanJavaClassFinder?,
-    private val localClassProvider: (Name) -> JavaClass?,
+    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
 ) {
 
     /**
@@ -56,7 +56,7 @@ internal class JavaInheritedMemberResolver(
 
             if (supertypeRef.isEmpty()) continue
 
-            val supertypeClass = localClassProvider(Name.identifier(supertypeRef)) ?: continue
+            val supertypeClass = sameFileTopLevelClassProvider(Name.identifier(supertypeRef)) ?: continue
 
             supertypeClass.findInnerClass(name)?.let { found ->
                 allFound.add(found)

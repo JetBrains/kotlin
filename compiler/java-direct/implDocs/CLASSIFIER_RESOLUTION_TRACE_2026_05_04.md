@@ -38,7 +38,7 @@ The reference under analysis is the `Base` token inside `Derived.java`'s
 That combination matters: it forces the resolver through the same-package
 fallback at the bottom of the JLS chain, which in turn forces a round-trip
 through the FIR symbol provider. None of the earlier resolution steps
-(type parameters, local classes, inherited inner classes, explicit imports)
+(type parameters, same-file top-level classes, inherited inner classes, explicit imports)
 match.
 
 ---
@@ -55,7 +55,7 @@ FirJavaClass(Derived).superTypeRefs evaluation
             │     ├─ findTypeParameter("Base")               miss
             │     ├─ findLocalClass("Base")                   miss
             │     │   └─ JavaScopeResolver.findLocalClass     miss
-            │     │       └─ localClassProvider("Base")       miss (different file)
+            │     │       └─ sameFileTopLevelClassProvider("Base")       miss (different file)
             │     ├─ findInheritedTypeParameter("Base")       miss
             │     └─ findLocalClass("Base") again — for parts.size==1 the
             │         multi-part navigation branch repeats the same lookup

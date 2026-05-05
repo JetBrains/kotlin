@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
  * This class encapsulates the scoping logic that was previously embedded in [JavaResolutionContext].
  */
 internal class JavaScopeResolver(
-    private val localClassProvider: (Name) -> JavaClass?,
+    private val sameFileTopLevelClassProvider: (Name) -> JavaClass?,
     private val containingClass: JavaClass?,
     private val inheritedMemberResolver: JavaInheritedMemberResolver,
     /** Type parameters with HIGH priority (method/class own params, win over inner class names). */
@@ -63,7 +63,7 @@ internal class JavaScopeResolver(
             outer = outer.outerClass
         }
         // Then check top-level classes
-        return localClassProvider(name)
+        return sameFileTopLevelClassProvider(name)
     }
 
     /**
@@ -75,7 +75,7 @@ internal class JavaScopeResolver(
         if (typeParams.isEmpty()) return this
         val newScope = typeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaScopeResolver(
-            localClassProvider, containingClass, inheritedMemberResolver, newScope,
+            sameFileTopLevelClassProvider, containingClass, inheritedMemberResolver, newScope,
             inheritedTypeParametersInScope,
         )
     }
@@ -89,7 +89,7 @@ internal class JavaScopeResolver(
         if (typeParams.isEmpty()) return this
         val newInherited = inheritedTypeParametersInScope + typeParams.associateBy { it.name.asString() }
         return JavaScopeResolver(
-            localClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
+            sameFileTopLevelClassProvider, containingClass, inheritedMemberResolver, typeParametersInScope,
             newInherited,
         )
     }
@@ -100,7 +100,7 @@ internal class JavaScopeResolver(
      */
     fun withContainingClass(newContainingClass: JavaClass): JavaScopeResolver {
         return JavaScopeResolver(
-            localClassProvider,
+            sameFileTopLevelClassProvider,
             containingClass = newContainingClass,
             inheritedMemberResolver,
             typeParametersInScope,
