@@ -9,11 +9,13 @@
 #include "llvm-c/Core.h"
 
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/IR/Module.h"
 
 #include <cstring>
 #include <string>
 
 using namespace llvm;
+using namespace llvm::kotlin;
 
 static constexpr const char *FunctionPrologueSafepointName =
     "Kotlin_mm_safePointFunctionPrologue";
@@ -68,8 +70,9 @@ static void removeOrInlinePrologueSafepointInstructions(
   }
 }
 
-void LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef M,
-                                         int IsSafepointInliningAllowed) {
+static void
+LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef M,
+                                    int IsSafepointInliningAllowed) {
   for (auto F = LLVMGetFirstFunction(M); F; F = LLVMGetNextFunction(F)) {
     if (LLVMIsDeclaration(F))
       continue;
@@ -85,4 +88,20 @@ void LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef M,
                                                   IsSafepointInliningAllowed);
     }
   }
+}
+
+RemoveRedundantSafepointsPass::RemoveRedundantSafepointsPass(
+    bool IsSafepointInliningAllowed)
+    : IsSafepointInliningAllowed(IsSafepointInliningAllowed) {}
+
+PreservedAnalyses
+RemoveRedundantSafepointsPass::run(Module &M, ModuleAnalysisManager &AM) {
+  if (!run(M))
+    return PreservedAnalyses::all();
+  return PreservedAnalyses::none();
+}
+
+bool RemoveRedundantSafepointsPass::run(Module &M) {
+  LLVMKotlinRemoveRedundantSafepoints(wrap(&M), IsSafepointInliningAllowed);
+  return true;
 }

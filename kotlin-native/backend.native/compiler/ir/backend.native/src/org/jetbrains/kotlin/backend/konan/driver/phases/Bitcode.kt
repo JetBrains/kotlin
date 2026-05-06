@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
-import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -104,15 +103,9 @@ internal val StackProtectorPhase = optimizationPipelinePass(
         pipeline = ::StackProtectorPipeline
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
+internal val RemoveRedundantSafepointsPhase = optimizationPipelinePass(
         name = "RemoveRedundantSafepoints",
-        postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ ->
-            RemoveRedundantSafepointsPass().runOnModule(
-                    module = context.llvm.module,
-                    isSafepointInliningAllowed = context.shouldInlineSafepoints()
-            )
-        }
+        pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
 internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
@@ -161,8 +154,8 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
+        it.runAndMeasurePhase(RemoveRedundantSafepointsPhase, module)
     }
-    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
         runAndMeasurePhase(OptimizeTLSDataLoadsPhase)
     }
