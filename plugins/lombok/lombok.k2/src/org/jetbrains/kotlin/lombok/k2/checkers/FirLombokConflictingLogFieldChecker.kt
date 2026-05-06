@@ -31,9 +31,10 @@ import org.jetbrains.kotlin.name.Name
 object FirLombokConflictingLogFieldChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val log = context.session.lombokService.getLog(declaration.symbol) ?: return
+        val lombokService = context.session.lombokService
+        if (lombokService.getLog(declaration.symbol) == null) return
 
-        val container = if (log.fieldIsStatic) {
+        val container = if (lombokService.config.logFieldIsStatic) {
             if (declaration.isCompanion) {
                 declaration.symbol
             } else {
@@ -43,7 +44,7 @@ object FirLombokConflictingLogFieldChecker : FirRegularClassChecker(MppCheckerKi
             declaration.symbol
         }
 
-        val fieldName = Name.identifier(log.fieldName)
+        val fieldName = Name.identifier(lombokService.config.logFieldName)
         val declaredMemberScope = context.session.declaredMemberScope(container, memberRequiredPhase = null)
         var hasConflict = false
         declaredMemberScope.processPropertiesByName(fieldName) {

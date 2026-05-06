@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.GlobalAccessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Setter
+import org.jetbrains.kotlin.lombok.k2.config.GlobalConfig
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.utils.AccessorNames
@@ -67,7 +67,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         val [classSymbol, declaredScope] = key
         val data = lombokService.getData(classSymbol)
         val fieldsWithAccessor = computeFieldsWithAccessors(classSymbol, data) ?: return null
-        val globalAccessors = lombokService.globalAccessors
+        val config = lombokService.config
         val classAccessors = lombokService.getAccessors(classSymbol)
         val explicitlyDeclaredFunctions = declaredScope?.collectAllFunctions()?.associateBy { it.name }.orEmpty()
         return buildMap {
@@ -75,7 +75,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 val dispatchReceiverType = runIf(!field.isStatic) { classSymbol.defaultType() }
                 val fieldAccessors = lombokService.getAccessors(field.symbol)
 
-                val getterName = getter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, globalAccessors) }
+                val getterName = getter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, config) }
                 val getterVisibility = getter?.visibility
 
                 if (getterName != null &&
@@ -95,7 +95,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     getOrPut(getterName) { mutableListOf() }.add(function)
                 }
 
-                val setterName = setter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, globalAccessors) }
+                val setterName = setter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, config) }
                 val setterVisibility = setter?.visibility
 
                 if (setterName != null &&
@@ -103,8 +103,8 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                     setterVisibility != null
                 ) {
                     val returnTypeRef = if (
-                        fieldAccessors?.chain ?: classAccessors?.chain ?: globalAccessors.chain ||
-                        fieldAccessors?.fluent ?: classAccessors?.fluent ?: globalAccessors.fluent
+                        fieldAccessors?.chain ?: classAccessors?.chain ?: config.accessorsChain ||
+                        fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent
                     ) {
                         buildResolvedTypeRef { coneType = classSymbol.defaultType() }
                     } else {
@@ -178,21 +178,21 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         accessorInfo: ConeLombokAnnotations.AbstractAccessor,
         fieldAccessors: Accessors?,
         classAccessors: Accessors?,
-        globalAccessors: GlobalAccessors,
+        config: GlobalConfig,
     ): Name? {
         if (accessorInfo.visibility == null) return null
 
-        val prefixes = fieldAccessors?.prefix ?: classAccessors?.prefix ?: globalAccessors.prefix
+        val prefixes = fieldAccessors?.prefix ?: classAccessors?.prefix ?: config.accessorsPrefix
         // Don't generate the accessor if the field doesn't match any provided prefix
         val propertyName = field.extractPropertyNameOrNull(prefixes) ?: return null
 
         val isPrimitiveBoolean = field.returnTypeRef.isPrimitiveBoolean()
-        val functionName = if (fieldAccessors?.fluent ?: classAccessors?.fluent ?: globalAccessors.fluent) {
+        val functionName = if (fieldAccessors?.fluent ?: classAccessors?.fluent ?: config.accessorsFluent) {
             propertyName
         } else {
             val prefix = when (accessorInfo) {
                 is Getter -> {
-                    if (isPrimitiveBoolean && !globalAccessors.noIsPrefix)
+                    if (isPrimitiveBoolean && !config.getterNoIsPrefix)
                         AccessorNames.IS
                     else
                         AccessorNames.GET

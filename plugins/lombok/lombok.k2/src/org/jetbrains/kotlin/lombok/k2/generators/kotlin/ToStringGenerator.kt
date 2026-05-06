@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.Call
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.findAnnotationOnPropertyOrField
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -145,6 +143,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 }
 
                 val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, session)
+                val config = session.lombokService.config
 
                 // Can't check for `property.hasBackingField` right here
                 // because it requires the `BODY_RESOLVE ` phase, but the current phase might be less.
@@ -152,11 +151,11 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 val ignoreWithoutBackingField = if (toStringIncludeAnnotation != null) {
                     false
                 } else {
-                    if (toStringConfig.onlyExplicitlyIncluded) return@processAllProperties
+                    if (toStringConfig.onlyExplicitlyIncluded ?: config.toStringOnlyExplicitlyIncluded) return@processAllProperties
                     true // Treat properties without backing fields as parameterless methods, so include them if only they are explicitly included.
                 }
 
-                val displayName = if (toStringConfig.includeFieldNames) {
+                val displayName = if (toStringConfig.includeFieldNames ?: config.toStringIncludeFieldNames) {
                     val customName = toStringIncludeAnnotation?.let {
                         it.findArgumentByName(INCLUDE_NAME)
                             ?.let { arg -> (arg as? FirLiteralExpression)?.value as? String }

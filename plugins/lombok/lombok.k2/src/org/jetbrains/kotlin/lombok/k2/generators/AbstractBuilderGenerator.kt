@@ -665,8 +665,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     private fun T.getBuilderClassShortName(builderDeclaration: FirDeclaration): String {
+        val refinedBuilderClassName = builderClassName ?: session.lombokService.config.builderClassName
+
         if (hasSpecifiedBuilderClassName) {
-            return builderClassName
+            return refinedBuilderClassName
         }
 
         val builderClassNamePart = when (builderDeclaration) {
@@ -686,7 +688,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             }
         }
 
-        return builderClassName.replace("*", builderClassNamePart)
+        return refinedBuilderClassName.replace("*", builderClassNamePart)
     }
 
     private fun Name.toMethodName(builder: AbstractBuilder): Name {

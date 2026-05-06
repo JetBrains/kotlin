@@ -21,14 +21,31 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService
 
-        val actualLombokAnnotation = lombokService.getLog(declaration.symbol) ?: lombokService.getToString(declaration.symbol) ?: return
-
-        val flagUsage = actualLombokAnnotation.flagUsage ?: return
-        val source = actualLombokAnnotation.annotation.source ?: declaration.source ?: return
-        val factory = when (flagUsage) {
-            FlagUsageValue.Warning -> LombokFirDiagnostics.FLAG_USAGE_WARNING
-            FlagUsageValue.Error -> LombokFirDiagnostics.FLAG_USAGE_ERROR
+        val lombokAnnotationsWithFlagUsages = buildList {
+            lombokService.config.logFlagUsage?.let { logFlagUsage ->
+                lombokService.getLog(declaration.symbol)?.let { log ->
+                    add(log to logFlagUsage)
+                }
+            }
+            lombokService.config.toStringFlagUsage?.let { toStringFlagUsage ->
+                lombokService.getToString(declaration.symbol)?.let { toString ->
+                    add(toString to toStringFlagUsage)
+                }
+            }
         }
-        reporter.reportOn(source, factory, actualLombokAnnotation.annotation.toAnnotationClassId(context.session)!!.shortClassName, context)
+
+        for ([actualLombokAnnotation, flagUsage] in lombokAnnotationsWithFlagUsages) {
+            val source = actualLombokAnnotation.annotation.source ?: declaration.source ?: continue
+            val factory = when (flagUsage) {
+                FlagUsageValue.Warning -> LombokFirDiagnostics.FLAG_USAGE_WARNING
+                FlagUsageValue.Error -> LombokFirDiagnostics.FLAG_USAGE_ERROR
+            }
+            reporter.reportOn(
+                source,
+                factory,
+                actualLombokAnnotation.annotation.toAnnotationClassId(context.session)!!.shortClassName,
+                context
+            )
+        }
     }
 }

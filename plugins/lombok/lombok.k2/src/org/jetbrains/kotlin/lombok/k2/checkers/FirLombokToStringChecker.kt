@@ -47,7 +47,9 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
             reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS, context)
         }
 
-        if (toStringAnnInfo.callSuper == CallSuperMode.Warn && declaration.hasNonAnyClassSupertype(context.session)) {
+        if ((toStringAnnInfo.callSuper ?: context.session.lombokService.config.toStringCallSuper) == CallSuperMode.Warn &&
+            declaration.hasNonAnyClassSupertype(context.session)
+        ) {
             /**
              * Mirrors Lombok Java behaviour: when `lombok.toString.callSuper=warn` is set and a `@ToString`-annotated
              * class has a non-trivial superclass (i.e. not just `kotlin.Any`/`java.lang.Object`), emits a warning

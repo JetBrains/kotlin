@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
-import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.GlobalAccessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.AllArgsConstructor
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Data
@@ -39,7 +38,6 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         }
     }
 
-    val config = configFile?.let(LombokConfig::parse) ?: LombokConfig.Empty
     private val cachesFactory = session.firCachesFactory
 
     private val accessorsCache: Cache<Accessors?> = cachesFactory.createCache { symbol ->
@@ -79,11 +77,11 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     }
 
     private val builderCache: Cache<Builder?> = cachesFactory.createCache { symbol ->
-        Builder.getIfAnnotated(symbol.fir, config, session)
+        Builder.getOrNull(symbol.fir, session)
     }
 
     private val superBuilderCache: Cache<SuperBuilder?> = cachesFactory.createCache { symbol ->
-        SuperBuilder.getIfAnnotated(symbol.fir, config, session)
+        SuperBuilder.getOrNull(symbol.fir, session)
     }
 
     private val singularCache: Cache<Singular?> = cachesFactory.createCache { symbol ->
@@ -91,15 +89,18 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     }
 
     private val logCache: Cache<Log?> = cachesFactory.createCache { symbol ->
-        Log.getIfAnnotated(symbol.fir, config, session)
+        Log.getOrNull(symbol.fir, session)
     }
 
     private val toStringCache: Cache<ToString?> = cachesFactory.createCache { symbol ->
-        ToString.getIfAnnotated(symbol.fir, config, session)
+        ToString.getOrNull(symbol.fir, session)
+    }
+
+    val config: GlobalConfig by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        GlobalConfig.extract(configFile?.let(LombokConfig::parse) ?: LombokConfig.Empty)
     }
 
     fun getAccessors(symbol: FirBasedSymbol<*>): Accessors? = accessorsCache.getValue(symbol)
-    val globalAccessors: GlobalAccessors by lazy { GlobalAccessors.get(config, session) }
     fun getGetter(symbol: FirBasedSymbol<*>): Getter? = getterCache.getValue(symbol)
     fun getSetter(symbol: FirBasedSymbol<*>): Setter? = setterCache.getValue(symbol)
     fun getWith(symbol: FirBasedSymbol<*>): With? = withCache.getValue(symbol)

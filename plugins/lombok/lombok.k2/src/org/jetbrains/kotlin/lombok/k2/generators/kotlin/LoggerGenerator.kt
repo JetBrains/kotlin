@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -105,7 +104,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         // Don't generate the companion if the `owner` isn't marked with `@Log` annotation
         // or if config specifies the logger mustn't be static
-        if (session.lombokService.getLog(owner)?.fieldIsStatic != true) {
+        if (session.lombokService.getLog(owner) == null || !session.lombokService.config.logFieldIsStatic) {
             return null
         }
 
@@ -139,19 +138,21 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             return null
         }
 
+        val config = session.lombokService.config
+
         val log = if (classSymbol.isCompanion) {
             val logOnCompanion = session.lombokService.getLog(classSymbol)
             if (logOnCompanion != null) {
-                logOnCompanion.takeIf { it.fieldIsStatic } ?: return null
+                logOnCompanion.takeIf { config.logFieldIsStatic } ?: return null
             } else {
                 val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
-                session.lombokService.getLog(outerClass)?.takeIf { it.fieldIsStatic } ?: return null
+                session.lombokService.getLog(outerClass)?.takeIf { config.logFieldIsStatic } ?: return null
             }
         } else {
-            session.lombokService.getLog(classSymbol)?.takeIf { classSymbol.classKind.isObject || !it.fieldIsStatic } ?: return null
+            session.lombokService.getLog(classSymbol)?.takeIf { classSymbol.classKind.isObject || !config.logFieldIsStatic } ?: return null
         }
 
-        val logPropertyName = Name.identifier(log.fieldName)
+        val logPropertyName = Name.identifier(config.logFieldName)
 
         // Ignore generation if a property with the same name already exists (but warn about it in a checker)
         var propertyAlreadyExists = false
@@ -171,7 +172,6 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     private fun tryGeneratingLogProperty(log: ConeLombokAnnotations.Log, logContainingClass: FirClassSymbol<*>): FirPropertySymbol? {
         if (log.visibility == null) return null
         val logContainingClassId = logContainingClass.classId
-        val logPropertyName = Name.identifier(log.fieldName)
 
         val loggerSymbol =
             session.symbolProvider.getClassLikeSymbolByClassId(LOGGER_CLASS_ID) as? FirRegularClassSymbol ?: return null
@@ -190,16 +190,17 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             } ?: return null
 
         val topicExpression = tryGeneratingTopicExpression(log, logContainingClassId) ?: return null
+        val config = session.lombokService.config
 
         return createMemberProperty(
             owner = logContainingClass,
             key = LoggerGeneratorKey,
-            name = logPropertyName,
+            name = Name.identifier(config.logFieldName),
             returnType = LOGGER_CLASS_ID.constructClassLikeType(),
         ) {
             visibility = log.visibility
         }.also { logProperty ->
-            if (log.fieldIsStatic) {
+            if (config.logFieldIsStatic) {
                 // Add `@JvmStatic` annotation call
                 logProperty.replaceAnnotations(
                     listOf(
