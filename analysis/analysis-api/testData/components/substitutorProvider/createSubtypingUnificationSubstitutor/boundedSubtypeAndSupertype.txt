@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {A = it(kotlin/Int & T), B = it(kotlin/Int & T), C = it(kotlin/Int & T)}>
+Substituted pairs:
+it(kotlin/Int & T) <: T (Original: A <: T)
+
 ASSIGN_RIGHT:
 Substitutor: <map substitutor: {T = A, X = A, R = A}>
 Substituted pairs:

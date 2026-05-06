@@ -1,0 +1,12 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {T = kotlin/String}>
+Substituted pairs:
+A<kotlin/String> <: {CAlias<kotlin/Int, kotlin/String>=} C<kotlin/Int, kotlin/String> (Original: A<T> <: {CAlias<kotlin/Int, kotlin/String>=} C<kotlin/Int, kotlin/String>)
+
+ASSIGN_RIGHT:
+Substitutor: null
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {T = kotlin/String}>
+Substituted pairs:
+A<kotlin/String> <: {CAlias<kotlin/Int, kotlin/String>=} C<kotlin/Int, kotlin/String> (Original: A<T> <: {CAlias<kotlin/Int, kotlin/String>=} C<kotlin/Int, kotlin/String>)

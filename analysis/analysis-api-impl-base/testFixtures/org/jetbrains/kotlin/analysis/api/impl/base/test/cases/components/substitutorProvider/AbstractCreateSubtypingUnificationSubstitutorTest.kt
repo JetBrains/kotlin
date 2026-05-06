@@ -66,6 +66,10 @@ abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnaly
                 }
             }
 
+            val substitutorAssignLeft = createSubtypingUnificationSubstitutor(
+                leftToRightTypePairs,
+                KaUnificationSubstitutorPolicy.ASSIGN_LEFT
+            )
             val substitutorAssignRight = createSubtypingUnificationSubstitutor(
                 leftToRightTypePairs,
                 KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
@@ -88,6 +92,9 @@ abstract class AbstractCreateSubtypingUnificationSubstitutorTest : AbstractAnaly
                     }
                 }
 
+                appendLine("ASSIGN_LEFT:")
+                renderActual(substitutorAssignLeft)
+                appendLine()
                 appendLine("ASSIGN_RIGHT:")
                 renderActual(substitutorAssignRight)
                 appendLine()

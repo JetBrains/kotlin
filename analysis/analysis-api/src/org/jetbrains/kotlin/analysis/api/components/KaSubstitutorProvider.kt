@@ -60,7 +60,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * Returns `null` if such an assignment is not possible.
      *
      * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[leftType] <: [rightType]' and
-     * tries to solve the given contraint system:
+     * tries to solve the given constraint system:
      * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
      * - If there are no type parameters involved in the provided types and [leftType] is a subtype of [rightType],
      *   [KaSubstitutor.Empty] is returned.
@@ -77,6 +77,8 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun <T: X, X: R, R: Number> someFun(leftType: MyClass<Int>, rightType: MyClass<T>) {}
      * ```
      *
+     * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_LEFT)` returns
+     *   `null`, as `T` is fixed and not guaranteed to be exactly `Int` to satisfy the constraint.
      * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns
      *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
      * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns the exact same
@@ -86,13 +88,16 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun <C: Any, T: Int> foo(leftType: List<C>, rightType: List<T>) {}
      * ```
      *
+     * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_LEFT)` returns
+     *   `KaSubstitutor { C -> T }`.
      * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
-     *   as `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
+     *   as `C` is fixed and `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
      *   (e.g., with `{ C -> kotlin/Any, T -> kotlin/Int }`).
      * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
      *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
      *   `List<C>` is a subtype of `List<T>`.
      *
+     * @see KaUnificationSubstitutorPolicy.ASSIGN_LEFT
      * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
      * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
      */
@@ -105,8 +110,8 @@ public interface KaSubstitutorProvider : KaSessionComponent {
     ): KaSubstitutor?
 
     /**
-     * Creates a [KaSubstitutor] which assigns type arguments such that each in each pair from [leftTypesToRightTypes],
-     * left type is a subtype of its right type when substituted.
+     * Creates a [KaSubstitutor] which assigns type arguments such that, for each pair in [leftTypesToRightTypes],
+     * the left type is a subtype of the right type when substituted.
      * Returns `null` if such an assignment is not possible.
      *
      * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
@@ -131,21 +136,13 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * fun lefts(left1: List<Int>, left2: List<String>) {}
      *
      * ```
-     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_LEFT)`
+     *   returns `null` as the left types contain no type parameters and the concrete left types are not subtypes of their generic right types.
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
      *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
-     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
+     * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
      *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
-     *
-     * ```
-     * fun <T : CharSequence, R : T> foo(left: Pair<T, R>, right: Pair<R, R>){}
-     * ```
-     *
-     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
-     *   as `Pair<T, R>` is not always a subtype of `Pair<R, R>` (e.g., with `{ T -> kotlin/CharSequence, R -> kotlin/String }`).
-     * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
-     *   `KaSubstitutor { R -> kotlin/CharSequence, T -> kotlin/CharSequence }`, as with such a substitution,
-     *   `Pair<T, R>` is a subtype of `Pair<R, R>`.
-     *
+     * @see KaUnificationSubstitutorPolicy.ASSIGN_LEFT
      * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
      * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
      */
@@ -158,7 +155,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
 }
 
 /**
- * [KaUnificationSubstitutorPolicy] determines the way unification [KaSubstitutor]s are created in [KaSubstitutorProvider].
+ * [KaUnificationSubstitutorPolicy] determines the way unification [KaSubstitutor]s are created in [KaSubstitutorProvider.createSubtypingUnificationSubstitutor].
  * Note that the policy only affects the construction when at least one of the involved types is generic, i.e., depends on a type parameter.
  */
 @KaIdeApi
@@ -166,14 +163,52 @@ public enum class KaUnificationSubstitutorPolicy {
     /**
      * Requires that the left type is a subtype of the right type for
      * all possible instantiations of the left type parameters.
+     * Type parameters of the right type are treated as fixed.
+     *
+     * If there exists any instantiation for which the substituted left type is not
+     * a subtype of the substituted right type, no substitutor is produced.
+     *
+     * The constructed substitutor contains mappings for all type parameters of the left type
+     * such that the substituted left type is a supertype of the right type.
+     *
+     * ### Examples:
+     * ```kotlin
+     * interface A<T> : B<T>
+     * interface B<T> : C<Int, T>
+     * interface C<X, Y>
+     *
+     * fun <K> test(leftType: A<K>, rightType: C<Int, String>) {}
+     * ```
+     *
+     * The left type here is generic `A<K>` and the right type is fixed supertype `C<Int, String>`.
+     * For this case, [ASSIGN_LEFT] will produce `{ K -> String }` as with such a substitution, `A<String>` is a subtype of `C<Int, String>`.
+     *
+     * ```kotlin
+     * fun <T, R: Int> example(leftType: List<T>, rightType: List<R>) {}
+     * ```
+     *
+     * [ASSIGN_LEFT] produces `{ T -> R }` mapping as with such a substitution, `List<T>` is a subtype of `List<R>`.
+     *
+     * ```kotlin
+     * fun <T: Number> example(leftType: Number, rightType: T) {}
+     * ```
+     *
+     * There are no free type parameters as the left type `Number` is concrete.
+     * `T` is not guaranteed to be exactly `Number` to satisfy the constraint (e.g., with `{ T -> Int }`),
+     * so [ASSIGN_LEFT] produces no substitutor.
+     */
+    ASSIGN_LEFT,
+
+    /**
+     * Requires that the left type is a subtype of the right type for
+     * all possible instantiations of the right type parameters.
+     * Type parameters of the left type are treated as fixed.
      *
      * If there exists any instantiation for which the substituted left type is not
      * a subtype of the substituted right type, no substitutor is produced.
      *
      * The constructed substitutor contains mappings for all type parameters of the right type
      * such that the substituted right type is a supertype of the left type.
-     *
-     * [ASSIGN_RIGHT] corresponds to the way Kotlin specification handles subtyping of generic types.
      *
      * ### Examples:
      * ```kotlin
@@ -210,10 +245,6 @@ public enum class KaUnificationSubstitutorPolicy {
      * The constructed substitutor contains mappings for all type parameters of both the left type and the right type
      * such that the substituted right type is a supertype of the substituted left type.
      *
-     * [ASSIGN_ALL] unification is a subset of [ASSIGN_RIGHT] unification:
-     * if the left type is a subtype of the right type for all possible instantiations of the left type parameters,
-     * then [ASSIGN_ALL] unification can pick any of these instantiations to satisfy the constraints.
-     *
      * ### Examples:
      * ```kotlin
      * fun <T: Int, R: Number> example(leftType: List<T>, rightType: List<R>) {}
@@ -227,6 +258,7 @@ public enum class KaUnificationSubstitutorPolicy {
      * ```kotlin
      * fun <T, R: Int> example(leftType: List<T>, rightType: List<R>) {}
      * ```
+     *
      * Since `List<T>` is not guaranteed to be a subtype of `List<R>` with `R: Int` for all the possible instantiations if `T`,
      * [ASSIGN_RIGHT] unification fails. However, there is a mapping that would solve this constraint.
      * [ASSIGN_ALL] unification in this case returns `{ R -> kotlin/Int, T -> kotlin/Int }`.
@@ -356,7 +388,7 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * Returns `null` if such an assignment is not possible.
  *
  * [createSubtypingUnificationSubstitutor] creates a constraint system, adds all the required bounds for '[leftType] <: [rightType]' and
- * tries to solve the given contraint system:
+ * tries to solve the given constraint system:
  * - If there were no contradictions found in the constraint system, the resulting substitutor is non-null. Otherwise, `null` is returned.
  * - If there are no type parameters involved in the provided types and [leftType] is a subtype of [rightType],
  *   [KaSubstitutor.Empty] is returned.
@@ -373,6 +405,8 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * fun <T: X, X: R, R: Number> someFun(leftType: MyClass<Int>, rightType: MyClass<T>) {}
  * ```
  *
+ * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_LEFT)` returns
+ *   `null`, as `T` is fixed and not guaranteed to be exactly `Int` to satisfy the constraint.
  * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns
  *   `KaSubstitutor { T -> kotlin/Int, X -> kotlin/Int, R -> kotlin/Int }`.
  * - `createSubtypingUnificationSubstitutor(MyClass<Int>, MyClass<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns the exact same
@@ -382,13 +416,16 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * fun <C: Any, T: Int> foo(leftType: List<C>, rightType: List<T>) {}
  * ```
  *
+ * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_LEFT)` returns
+ *   `KaSubstitutor { C -> T }`.
  * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
- *   as `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
+ *   as `C` is fixed and `List<C>` is not a subtype of `List<T>` for all possible instantiations of `C`
  *   (e.g., with `{ C -> kotlin/Any, T -> kotlin/Int }`).
  * - `createSubtypingUnificationSubstitutor(List<C>, List<T>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
  *   `KaSubstitutor { C -> kotlin/Int, T -> kotlin/Int }`, as with such a substitution,
  *   `List<C>` is a subtype of `List<T>`.
  *
+ * @see KaUnificationSubstitutorPolicy.ASSIGN_LEFT
  * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
  * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
  */
@@ -412,8 +449,8 @@ public fun createSubtypingUnificationSubstitutor(
 }
 
 /**
- * Creates a [KaSubstitutor] which assigns type arguments such that each in each pair from [leftTypesToRightTypes],
- * left type is a subtype of its right type when substituted.
+ * Creates a [KaSubstitutor] which assigns type arguments such that, for each pair in [leftTypesToRightTypes],
+ * the left type is a subtype of the right type when substituted.
  * Returns `null` if such an assignment is not possible.
  *
  * Note that when one type parameter is shared across several constraint pairs, all these pairs affect the resulting substitution
@@ -438,21 +475,13 @@ public fun createSubtypingUnificationSubstitutor(
  * fun lefts(left1: List<Int>, left2: List<String>) {}
  *
  * ```
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_LEFT)`
+ *   returns `null` as the left types contain no type parameters and the concrete left types are not subtypes of their generic right types.
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)`
  *   returns `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
- * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>)), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
+ * - `createSubtypingUnificationSubstitutor(listOf(List<Int> to List<X>, List<String> to List<X>), KaUnificationSubstitutorPolicy.ASSIGN_ALL)`
  *   returns the same substitutor `KaSubstitutor { X -> intersection(kotlin/Comparable<*> & java/io/Serializable) }`.
- *
- * ```
- * fun <T : CharSequence, R : T> foo(left: Pair<T, R>, right: Pair<R, R>){}
- * ```
- *
- * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_RIGHT)` returns `null`,
- *   as `Pair<T, R>` is not always a subtype of `Pair<R, R>` (e.g., with `{ T -> kotlin/CharSequence, R -> kotlin/String }`).
- * - `createSubtypingUnificationSubstitutor(Pair<T, R>, Pair<R, R>, KaUnificationSubstitutorPolicy.ASSIGN_ALL)` returns
- *   `KaSubstitutor { R -> kotlin/CharSequence, T -> kotlin/CharSequence }`, as with such a substitution,
- *   `Pair<T, R>` is a subtype of `Pair<R, R>`.
- *
+ * @see KaUnificationSubstitutorPolicy.ASSIGN_LEFT
  * @see KaUnificationSubstitutorPolicy.ASSIGN_RIGHT
  * @see KaUnificationSubstitutorPolicy.ASSIGN_ALL
  */

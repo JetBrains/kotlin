@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+Container<kotlin/String> <: Container<*> (Original: Container<kotlin/String> <: Container<*>)
+
 ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:

@@ -1,3 +1,6 @@
+ASSIGN_LEFT:
+Substitutor: null
+
 ASSIGN_RIGHT:
 Substitutor: <map substitutor: {I = kotlin/String, T = BaseIn<BaseIn<*>>}>
 Substituted pairs:

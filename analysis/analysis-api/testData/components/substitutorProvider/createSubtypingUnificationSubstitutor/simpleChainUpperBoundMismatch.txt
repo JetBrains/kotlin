@@ -1,0 +1,12 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {K = kotlin/String}>
+Substituted pairs:
+A<kotlin/String> <: C<kotlin/Int, kotlin/String> (Original: A<K> <: C<kotlin/Int, kotlin/String>)
+
+ASSIGN_RIGHT:
+Substitutor: null
+
+ASSIGN_ALL:
+Substitutor: <map substitutor: {K = kotlin/String}>
+Substituted pairs:
+A<kotlin/String> <: C<kotlin/Int, kotlin/String> (Original: A<K> <: C<kotlin/Int, kotlin/String>)

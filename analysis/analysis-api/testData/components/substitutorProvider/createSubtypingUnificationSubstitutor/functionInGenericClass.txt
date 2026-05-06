@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {B = A}>
+Substituted pairs:
+A <: A (Original: B <: A)
+
 ASSIGN_RIGHT:
 Substitutor: null
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 import org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -109,7 +108,6 @@ internal class KaFirSubstitutorProvider(
         }
     }
 
-    @KaIdeApi
     override fun createSubtypingUnificationSubstitutor(
         leftType: KaType,
         rightType: KaType,
@@ -187,29 +185,14 @@ internal class KaFirSubstitutorProvider(
             /**
              * Contains all free type parameters. Free type parameters are parameters for which the constraint system will try
              * to find a mapping to satisfy the constraints.
-             *
-             * The final list depends on the [constructionPolicy].
-             * If we have to check whether the constraints are valid for any values of the type parameters ([KaUnificationSubstitutorPolicy.ASSIGN_RIGHT]),
-             * we have to exclude type parameters involved in the left types.
-             * If we include left type parameters as well, the constraint system could assign any types to them to satisfy the constraint system.
-             * ```kotlin
-             * fun <RIGHT: Number> foo(right: RIGHT) {}
-             *
-             * fun <LEFT: Any> bar(left: LEFT) {}
-             * ```
-             * Here `LEFT` type is not necessarily a subtype of `RIGHT`. However, if we include `LEFT` in the constraint system,
-             * the constraint system will not have any contradictions as `LEFT -> RIGHT` mapping satisfies the `LEFT <: RIGHT` constraint.
-             *
-             * If we just need to find any mapping for which the constraints hold ([KaUnificationSubstitutorPolicy.ASSIGN_ALL]),
-             * we include left type parameters as well.
              */
-            val allInvolvedTypeParameters = if (constructionPolicy == KaUnificationSubstitutorPolicy.ASSIGN_RIGHT) {
-                rightTypeParameters - leftTypeParameters
-            } else {
-                rightTypeParameters + leftTypeParameters
-            }.distinct()
+            val freeTypeParameters = when (constructionPolicy) {
+                KaUnificationSubstitutorPolicy.ASSIGN_LEFT -> leftTypeParameters - rightTypeParameters
+                KaUnificationSubstitutorPolicy.ASSIGN_RIGHT -> rightTypeParameters - leftTypeParameters
+                KaUnificationSubstitutorPolicy.ASSIGN_ALL -> (rightTypeParameters + leftTypeParameters).distinct()
+            }
 
-            val coneTypeParameterList = allInvolvedTypeParameters.map { kaTypeParameter ->
+            val coneTypeParameterList = freeTypeParameters.map { kaTypeParameter ->
                 require(kaTypeParameter is KaFirTypeParameterSymbol)
                 ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
             }

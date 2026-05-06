@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {T = kotlin/Int}>
+Substituted pairs:
+kotlin/Int <: kotlin/Int (Original: T <: kotlin/Int)
+
 ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:

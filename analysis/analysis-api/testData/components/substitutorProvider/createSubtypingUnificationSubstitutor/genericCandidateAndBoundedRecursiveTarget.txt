@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {A = B}>
+Substituted pairs:
+kotlin/collections/List<B> <: kotlin/collections/List<B> (Original: kotlin/collections/List<A> <: kotlin/collections/List<B>)
+
 ASSIGN_RIGHT:
 Substitutor: null
 

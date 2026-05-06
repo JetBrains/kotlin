@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <map substitutor: {PARAM = T}>
+Substituted pairs:
+T <: T (Original: PARAM <: T)
+
 ASSIGN_RIGHT:
 Substitutor: <map substitutor: {T = PARAM}>
 Substituted pairs:

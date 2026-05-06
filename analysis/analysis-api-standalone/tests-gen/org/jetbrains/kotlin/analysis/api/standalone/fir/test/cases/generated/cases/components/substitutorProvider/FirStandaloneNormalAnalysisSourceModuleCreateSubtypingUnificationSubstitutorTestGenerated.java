@@ -86,6 +86,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateSubtypingUnificationSu
   }
 
   @Test
+  @TestMetadata("fixedSupertypeGenericSubtype.kt")
+  public void testFixedSupertypeGenericSubtype() {
+    run("fixedSupertypeGenericSubtype.kt");
+  }
+
+  @Test
   @TestMetadata("functionInGenericClass.kt")
   public void testFunctionInGenericClass() {
     run("functionInGenericClass.kt");
@@ -113,6 +119,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateSubtypingUnificationSu
   @TestMetadata("incompatibleDependentBoundedTypeParameters2.kt")
   public void testIncompatibleDependentBoundedTypeParameters2() {
     run("incompatibleDependentBoundedTypeParameters2.kt");
+  }
+
+  @Test
+  @TestMetadata("invariantMismatch.kt")
+  public void testInvariantMismatch() {
+    run("invariantMismatch.kt");
   }
 
   @Test
@@ -149,6 +161,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateSubtypingUnificationSu
   @TestMetadata("simpleBoundedParameter.kt")
   public void testSimpleBoundedParameter() {
     run("simpleBoundedParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("simpleChainUpperBoundMismatch.kt")
+  public void testSimpleChainUpperBoundMismatch() {
+    run("simpleChainUpperBoundMismatch.kt");
   }
 
   @Test
@@ -209,6 +227,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateSubtypingUnificationSu
   @TestMetadata("twoStarProjections.kt")
   public void testTwoStarProjections() {
     run("twoStarProjections.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAlias.kt")
+  public void testTypeAlias() {
+    run("typeAlias.kt");
   }
 
   @Test

@@ -1,3 +1,8 @@
+ASSIGN_LEFT:
+Substitutor: <empty substitutor>
+Substituted pairs:
+B <: A<in kotlin/Nothing> (Original: B <: A<in kotlin/Nothing>)
+
 ASSIGN_RIGHT:
 Substitutor: <empty substitutor>
 Substituted pairs:
