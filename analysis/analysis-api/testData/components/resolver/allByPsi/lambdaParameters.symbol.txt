@@ -190,7 +190,7 @@ KtNameReferenceExpression(107,111): 'prop'
 KtDotQualifiedExpression(118,132): 'prop.action2()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
 KtNameReferenceExpression(118,122): 'prop'
   KaSymbolResolutionSuccess:
@@ -201,12 +201,12 @@ KtNameReferenceExpression(118,122): 'prop'
 KtCallExpression(123,132): 'action2()'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
 KtNameReferenceExpression(123,130): 'action2'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
 
 KtValueArgumentList(130,132): '()'
   null

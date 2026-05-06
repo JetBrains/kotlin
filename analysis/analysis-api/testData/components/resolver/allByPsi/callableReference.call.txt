@@ -1421,7 +1421,7 @@ KtNameReferenceExpression(1026,1042): 'topLevelVariable'
 KtDotQualifiedExpression(1047,1074): '::lateinitVar.isInitialized'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
 
 KtCallableReferenceExpression(1047,1060): '::lateinitVar'
   KaCallResolutionSuccess:
@@ -1456,7 +1456,7 @@ KtNameReferenceExpression(1049,1060): 'lateinitVar'
 KtNameReferenceExpression(1061,1074): 'isInitialized'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
 
 KtNamedFunction(1078,1299): 'fun <T : Number> typeClass(classWithType: ClassWithType<T>) {'
   null

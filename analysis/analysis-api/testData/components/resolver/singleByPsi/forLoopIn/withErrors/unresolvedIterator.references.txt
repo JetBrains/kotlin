@@ -4,7 +4,7 @@ KtForExpression(15,32): 'for (x in Y()) {}'
     usesContextSensitiveResolution: false
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'Y'.>
       attempts[1]: KaSymbolResolutionError
         diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
       attempts[2]: KaSymbolResolutionError

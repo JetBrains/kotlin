@@ -99,7 +99,7 @@ KtNameReferenceExpression(123,130): 'action2'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'action2' on receiver of type 'Int'.>
     symbols:
       Nothing (Unresolved reference)
 

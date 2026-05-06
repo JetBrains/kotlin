@@ -1033,7 +1033,7 @@ KtDotQualifiedExpression(1177,1196): 'v2.prop1.hashCode()'
 KtDotQualifiedExpression(1177,1185): 'v2.prop1'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass'.>
 
 KtNameReferenceExpression(1177,1179): 'v2'
   KaSymbolResolutionSuccess:
@@ -1044,7 +1044,7 @@ KtNameReferenceExpression(1177,1179): 'v2'
 KtNameReferenceExpression(1180,1185): 'prop1'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass'.>
 
 KtCallExpression(1186,1196): 'hashCode()'
   KaSymbolResolutionError:
@@ -1426,7 +1426,7 @@ KtSafeQualifiedExpression(1512,1527): 'i?.prop2?.dec()'
 KtSafeQualifiedExpression(1512,1520): 'i?.prop2'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'SealedClass'.>
 
 KtNameReferenceExpression(1512,1513): 'i'
   KaSymbolResolutionSuccess:
@@ -1437,7 +1437,7 @@ KtNameReferenceExpression(1512,1513): 'i'
 KtNameReferenceExpression(1515,1520): 'prop2'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'SealedClass'.>
 
 KtCallExpression(1522,1527): 'dec()'
   KaSymbolResolutionError:
@@ -1589,7 +1589,7 @@ KtSafeQualifiedExpression(1644,1665): 'v2?.prop1?.hashCode()'
 KtSafeQualifiedExpression(1644,1653): 'v2?.prop1'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass'.>
 
 KtNameReferenceExpression(1644,1646): 'v2'
   KaSymbolResolutionSuccess:
@@ -1600,7 +1600,7 @@ KtNameReferenceExpression(1644,1646): 'v2'
 KtNameReferenceExpression(1648,1653): 'prop1'
   KaSymbolResolutionError:
     candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass'.>
 
 KtCallExpression(1655,1665): 'hashCode()'
   KaSymbolResolutionError:

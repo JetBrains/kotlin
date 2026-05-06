@@ -8,8 +8,8 @@ KtForExpression(23,37): 'for(i in f) {}'
         diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Int.iterator(): Any' is inapplicable because of a receiver type mismatch.>,
       KaSymbolResolutionError:
         candidateSymbols = []
-        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>,
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext' on receiver of type 'Any'.>,
       KaSymbolResolutionError:
         candidateSymbols = []
-        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
+        diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next' on receiver of type 'Any'.>
     ]

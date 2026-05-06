@@ -512,7 +512,7 @@ KtNameReferenceExpression(1180,1185): 'prop1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -802,7 +802,7 @@ KtNameReferenceExpression(1515,1520): 'prop2'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'SealedClass'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -924,7 +924,7 @@ KtNameReferenceExpression(1648,1653): 'prop1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'SealedClass'.>
     symbols:
       Nothing (Unresolved reference)
 

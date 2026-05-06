@@ -72,7 +72,7 @@ KtNameReferenceExpression(118,127): 'JCOption1'
 KtDotQualifiedExpression(131,145): 'instance.prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'JClass'.>
 
 KtNameReferenceExpression(131,139): 'instance'
   KaCallResolutionSuccess:
@@ -94,7 +94,7 @@ KtNameReferenceExpression(131,139): 'instance'
 KtNameReferenceExpression(140,145): 'prop1'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'JClass'.>
 
 KtWhenEntry(151,181): 'is JCOption2 -> instance.prop2'
   null
@@ -114,7 +114,7 @@ KtNameReferenceExpression(154,163): 'JCOption2'
 KtDotQualifiedExpression(167,181): 'instance.prop2'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'JClass'.>
 
 KtNameReferenceExpression(167,175): 'instance'
   KaCallResolutionSuccess:
@@ -136,7 +136,7 @@ KtNameReferenceExpression(167,175): 'instance'
 KtNameReferenceExpression(176,181): 'prop2'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'JClass'.>
 
 KtWhenEntry(187,213): 'is Nested -> instance.prop'
   null
@@ -156,7 +156,7 @@ KtNameReferenceExpression(190,196): 'Nested'
 KtDotQualifiedExpression(200,213): 'instance.prop'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'JClass'.>
 
 KtNameReferenceExpression(200,208): 'instance'
   KaCallResolutionSuccess:
@@ -178,7 +178,7 @@ KtNameReferenceExpression(200,208): 'instance'
 KtNameReferenceExpression(209,213): 'prop'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'JClass'.>
 
 KtNamedFunction(218,426): 'fun testSealedJClassInIf(instance: SealedJClass): Int {'
   null

@@ -5,7 +5,7 @@ KtForExpression(23,37): 'for(i in f) {}'
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
     iteratorCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'Foo'.>
     nextCallAttempt = KaCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>

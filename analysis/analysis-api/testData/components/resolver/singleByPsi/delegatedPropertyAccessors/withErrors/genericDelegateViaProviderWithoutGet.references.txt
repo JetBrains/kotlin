@@ -5,7 +5,7 @@ KtPropertyDelegate(419,455): 'by ProvideDelegateHolder("provided")'
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionSuccess
       attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>
     symbols:
       0: (in myPack) operator fun <T> myPack.ProvideDelegateHolder.provideDelegate(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): myPack.GenericDelegate<T>
       1: (in myPack.GenericDelegate) operator fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, newValue: T)

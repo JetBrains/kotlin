@@ -459,7 +459,7 @@ KtNameReferenceExpression(1061,1074): 'isInitialized'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'isInitialized' on receiver of type 'KMutableProperty0<MyClass>'.>
     symbols:
       Nothing (Unresolved reference)
 

@@ -341,6 +341,7 @@ internal class UnsupportedArrayLiteralOutsideOfAnnotationWarningImpl(
 internal class UnresolvedReferenceImpl(
     override val reference: String,
     override val operator: String?,
+    override val receiverType: KaType?,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnresolvedReference

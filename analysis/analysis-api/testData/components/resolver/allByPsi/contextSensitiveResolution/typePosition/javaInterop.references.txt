@@ -44,7 +44,7 @@ KtNameReferenceExpression(140,145): 'prop1'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop1' on receiver of type 'JClass'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -70,7 +70,7 @@ KtNameReferenceExpression(176,181): 'prop2'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop2' on receiver of type 'JClass'.>
     symbols:
       Nothing (Unresolved reference)
 
@@ -96,7 +96,7 @@ KtNameReferenceExpression(209,213): 'prop'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'JClass'.>
     symbols:
       Nothing (Unresolved reference)
 

@@ -5,6 +5,6 @@ KtPropertyDelegate(127,135): 'by Bar()'
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionSuccess
       attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'NoDelegate'.>
     symbols:
       (in ROOT) operator fun Bar.provideDelegate(_this: kotlin.Any?, p: kotlin.Any?): NoDelegate

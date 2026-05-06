@@ -10,13 +10,13 @@ fun <T : Sub> withTypeParam() {}
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().unresolved()
           ^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: unresolved reference 'unresolved'.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: unresolved reference 'unresolved' on receiver of type 'Sub'.
     Sub().unresolved()
           ^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
     SubSub().unresolved()
              ^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: unresolved reference 'unresolved'.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: unresolved reference 'unresolved' on receiver of type 'SubSub'.
     SubSub().unresolved()
              ^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:14:15: error: cannot access 'test.Super' which is a supertype of '<anonymous>'. Check your module classpath for missing or conflicting dependencies.

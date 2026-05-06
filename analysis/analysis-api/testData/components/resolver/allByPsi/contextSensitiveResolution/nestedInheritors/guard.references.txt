@@ -189,6 +189,6 @@ KtNameReferenceExpression(811,815): 'prop'
     isImplicitReferenceToCompanion: false
     usesContextSensitiveResolution: false
     attempt: KaSymbolResolutionError
-    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop'.>
+    diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'prop' on receiver of type 'OpenClass'.>
     symbols:
       Nothing (Unresolved reference)

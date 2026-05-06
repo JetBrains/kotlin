@@ -4,9 +4,9 @@ KtPropertyDelegate(328,364): 'by ProvideDelegateHolder("provided")'
     usesContextSensitiveResolution: false
     attempt: KaCompoundSymbolResolutionError
       attempts[0]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue'.>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'getValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>
       attempts[1]: KaSymbolResolutionError
-        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue'.>
+        diagnostic: ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'setValue' on receiver of type 'GenericDelegate<TypeVariable(T)>'.>
       attempts[2]: KaSymbolResolutionError
         diagnostic: ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): myPack/provideDelegate>
     symbols:
