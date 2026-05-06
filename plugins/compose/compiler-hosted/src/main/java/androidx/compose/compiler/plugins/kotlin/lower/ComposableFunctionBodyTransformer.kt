@@ -1301,7 +1301,7 @@ class ComposableFunctionBodyTransformer(
 
         if (!forceInlineLambdaGroup) {
             val transformed = super.visitFunction(declaration)
-            if (scope.hasComposableCalls) {
+            if (scope.hasComposableCallsWithGroups) {
                 encounteredCapturedComposableCall()
             }
             return transformed
@@ -1311,10 +1311,11 @@ class ComposableFunctionBodyTransformer(
         val (body, returnVar) = originalBody.asBodyAndResultVar()
         body.transformChildrenVoid()
 
-        // Avoid transforming functions that are not referencing anything composable, as they cannot use slots.
-        if (!scope.hasComposableCalls) {
+        // Avoid transforming functions that are not referencing anything composable, as they cannot use slots (read-only is fine).
+        if (!scope.hasComposableCallsWithGroups) {
             return super.visitFunction(declaration)
         }
+        encounteredCapturedComposableCall()
 
         scope.realizeGroup {
             irEndReplaceGroup(scope = scope, startOffset = body.endOffset, endOffset = body.endOffset)
@@ -3065,9 +3066,7 @@ class ComposableFunctionBodyTransformer(
                         expression.arguments[index] = transformed
                     }
                 }
-                return if (captureScope.hasCapturedComposableCall && !captureScope.forceInlinedLambdaGroup) {
-                    // the outer group around the call is only required when the inline function body is not
-                    // wrapped with a group.
+                return if (captureScope.hasCapturedComposableCall) {
                     captureScope.realizeAllDirectChildren()
                     expression.asCoalescableGroup(captureScope)
                 } else {

@@ -496,6 +496,26 @@ class CompositionTests {
         counter += 10
         advance()
     }
+
+    // Regression test for b/509945632
+    @Test
+    fun testInlineFunctionWith2LambdasComposable() = compositionTest {
+        var elements by mutableStateOf(emptyList<String>())
+        var counter = 0
+        compose {
+            // if not wrapped with a group, `ReceiveValueGroup` is removed after update
+            elements.associateBy({
+                remember { it }
+            }, {
+                it.length
+            })
+            ReceiveValueGroup(counter)
+        }
+
+        elements = List(100) { "$it" }
+        counter += 10
+        advance()
+    }
 }
 
 @Composable

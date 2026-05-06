@@ -1,0 +1,55 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+val Local = staticCompositionLocalOf { null }
+
+@Composable fun Test(clicked: Boolean) {
+    thenIf(
+        condition = clicked,
+        ifTrue = {
+            Local.current
+        },
+        ifFalse = {
+            Local.current
+        },
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val Local: ProvidableCompositionLocal<Nothing?> = staticCompositionLocalOf {
+  null
+}
+@Composable
+fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)N(clicked)*<curren...>,<curren...>,<curren...>,<curren...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(clicked)) 0b0100 else 0b0010
+  }
+  if (%composer.shouldExecute(%dirty and 0b0011 != 0b0010, %dirty and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    thenIf(clicked, {
+      Local.<get-current>(%composer, 0b0110)
+    }
+    ) {
+      Local.<get-current>(%composer, 0b0110)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(clicked, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

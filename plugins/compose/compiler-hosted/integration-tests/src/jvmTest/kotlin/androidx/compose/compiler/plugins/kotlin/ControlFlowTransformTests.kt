@@ -2738,4 +2738,37 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    // Regression test for b/509945632
+    @Test
+    fun testInlineSwitchReadOnly() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            val Local = staticCompositionLocalOf { null }
+
+            @Composable fun Test(clicked: Boolean) {
+                thenIf(
+                    condition = clicked,
+                    ifTrue = {
+                        Local.current
+                    },
+                    ifFalse = {
+                        Local.current
+                    },
+                )
+            }
+        """,
+        extra = """
+            inline fun thenIf(
+                condition: Boolean,
+                ifFalse: () -> Unit,
+                ifTrue: () -> Unit,
+            ) = if (condition) {
+                ifTrue()
+            } else {
+                ifFalse()
+            }
+        """
+    )
 }
