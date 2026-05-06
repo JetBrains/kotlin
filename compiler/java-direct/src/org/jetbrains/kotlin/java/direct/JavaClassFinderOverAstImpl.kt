@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.name.Name
  * to a single concern lives on the corresponding collaborator.
  */
 class JavaClassFinderOverAstImpl internal constructor(
-    private val session: FirSession?,
+    private val session: FirSession,
     sourceRootEntries: List<JavaSourceRootEntry>,
     sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
 ) : JavaClassFinder, LeanJavaClassFinder {
