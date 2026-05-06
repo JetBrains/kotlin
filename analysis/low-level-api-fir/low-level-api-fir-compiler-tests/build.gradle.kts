@@ -56,7 +56,6 @@ projectTests {
     testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
     testData(project(":compiler:fir:raw-fir:psi2fir").isolated, "testData/rawBuilder")
     testData(project(":compiler:fir:raw-fir:psi2fir").isolated, "testData/rawBuilder")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/metadataDiagnostic")
     testData(project(":js:js.translator").isolated, "testData/_commonFiles")
     testData(project(":plugins:scripting:scripting-tests").isolated, "testData/diagnostics")
     testData(project(":plugins:scripting:scripting-tests").isolated, "testData/codegen")

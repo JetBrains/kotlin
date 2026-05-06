@@ -74,6 +74,10 @@ fun main(args: Array<String>) {
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
+
+            testClass<AbstractMetadataDiagnosticTest> {
+                model("diagnostics/metadataDiagnosticTests", excludedPattern = excludedCustomTestdataPattern)
+            }
         }
 
         testGroup(testRoot, "compiler/testData") {
@@ -85,12 +89,6 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLoadCompiledJvmWithAnnotationsInMetadataKotlinTest> {
                 model("loadJava/compiledKotlin", extension = "kt")
                 model("loadJava/compiledKotlinWithStdlib", extension = "kt")
-            }
-        }
-
-        testGroup(testRoot, "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractMetadataDiagnosticTest> {
-                model("metadataDiagnostic", excludedPattern = excludedCustomTestdataPattern)
             }
         }
 

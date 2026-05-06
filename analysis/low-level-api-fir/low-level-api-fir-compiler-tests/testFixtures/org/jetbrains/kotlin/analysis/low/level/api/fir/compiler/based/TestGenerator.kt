@@ -40,16 +40,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(generatedTestRoot, "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractLLMetadataDiagnosticsTest> {
-                model("metadataDiagnostic", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
-            }
-
-            testClass<AbstractLLReversedMetadataDiagnosticsTest> {
-                model("metadataDiagnostic", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
-            }
-        }
-
         testGroup(generatedTestRoot, "plugins/scripting/scripting-tests/testData") {
             this.run {
                 fun TestGroup.TestClass.scriptDiagnosticsInit() {
@@ -219,6 +209,14 @@ fun main(args: Array<String>) {
                 testClass<AbstractLLReversedScriptBlackBoxTest> {
                     scriptBlackBoxInit()
                 }
+            }
+
+            testClass<AbstractLLMetadataDiagnosticsTest> {
+                model("diagnostics/metadataDiagnosticTests", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
+            }
+
+            testClass<AbstractLLReversedMetadataDiagnosticsTest> {
+                model("diagnostics/metadataDiagnosticTests", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME.canFreezeIDE)
             }
         }
 
