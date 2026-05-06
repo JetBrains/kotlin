@@ -104,6 +104,7 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
 }
 
 /* Custom-first-stage test tasks for different compiler versions. */
+customFirstStageTest("1.9.20", addWritePermissionsForAllProperties = true)
 customFirstStageTest("2.0.0", addWritePermissionsForAllProperties = true)
 customFirstStageTest("2.1.0", addWritePermissionsForAllProperties = true)
 customFirstStageTest("2.2.0")
