@@ -15,6 +15,10 @@
 > [`implDocs/RESOLUTION_PIPELINE.md`](RESOLUTION_PIPELINE.md),
 > [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md),
 > [`implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+> [`implDocs/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
+> (superseded by the next entry; kept for fallback alternatives A / C / F),
+> [`implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+> (chosen redesign track for closing the unification residue; Step 4.5a / 4.5b inserts and the Step 4 re-classification are now applied to §5 below),
 > [`implDocs/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`](CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md).
 
 ---
@@ -82,14 +86,25 @@ End-state after all steps land:
   [§2.5](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.5).
 - Classifier resolution goes through one origin-agnostic FIR path; the AST-side resolver
   shrinks to its irreducible core (type parameters, `containingClassIds`, and the
-  same-file fast path).
+  same-file fast path). Becomes **literally** true post-Step-4.5b, when
+  `JavaScopeResolver.findLocalClass` and `JavaClassOverAst.findInnerClassInSupertypes`
+  retire and `JavaClassifierType.classifier?.classId` answers every cross-file reference
+  via `firSession.symbolProvider`.
   Owns:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 5](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 5](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §10](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
 - The five laziness invariants are upheld and the three failure modes remain guarded
-  against.
+  against. Post-Step-4.5a, failure mode 1's mitigation moves from *structural*
+  (the model has no `FirSession`) to *policy + typed wrapper* — invariants 1, 2, 3
+  are enforced by KDoc + an `AGENT_INSTRUCTIONS.md` rule + a typed `LazySessionAccess`
+  wrapper that makes the laziness contract checkable rather than reviewable. The new
+  `JavaSupertypeLoopChecker` (model-side analogue of K1's `SupertypeLoopChecker`)
+  bounds inheritance cycles on every supertype-walking entry point and emits
+  `CYCLIC_INHERITANCE_HIERARCHY` for Java-only cycles that today silently truncate.
   Owns:
   [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Five laziness invariants](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Three failure modes](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [§Three failure modes](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §§6.1, 7, 8](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
 - Performance is not regressed on the agreed CI testbed
   (`IntelliJFullPipelineTestsGenerated.testIntellij_platform_externalProcessAuthHelper`):
   parse-counter / symbol-creation-counter values after Step 4 (end of unification) and
@@ -108,6 +123,8 @@ and when*.
 |---|---|---|
 | [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md) | What/why of PSI removal. | Three-phase design, indirect-caller catalogue (§1.5), risks per phase (§2.7). |
 | [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md) | What/why of resolver unification. | Five laziness invariants, three failure modes, five-stage migration. |
+| [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md) | **Superseded** — design space for the L1 / L2 leftovers (alternatives A–F + Step-6 compatibility verdicts). | Kept for fallback closers A / C / F if `FirSession` injection is rejected; the §2 timing-bug analysis remains canonical. |
+| [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md) | Redesign track for closing the unification residue (L1 + L2); supersedes the alternatives doc. | Deletion of `JavaClassifierType.resolve(...)` and `JavaAnnotation.resolveAnnotation(...)`; per-origin supertype routing; `JavaSupertypeLoopChecker` (cycle bound + diagnostic emission); typed `LazySessionAccess`; `directSupertypeClassIds()` cache on `FirJavaClass` (variant C); per-file plan for Step 4.5a / 4.5b (§5 inserts and Step 4 re-classification **applied 2026-05-06**). |
 | [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) | Per-iteration log. | Dated entries for each landed step (overview / changes / test results / files / key learnings). |
 | `MERGED_REFACTORING_PLAN_2026_05_04.md` (this doc) | When / in what order. | Step ordering, per-step prerequisites and validation gates, coupling points. |
 
@@ -188,18 +205,25 @@ Each step uses the same template:
   [§Five laziness invariants](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
   [§Three failure modes](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
 
-#### Step 4 — Unification Stages 4–5
+#### Step 4 — Unification Stages 4 + partial 5 (KDoc only)
 
-- **Origin**: Unification Stages 4 and 5.
-- **Goal**: Collapse `findLocalClass` into the unified path (Stage 4); finalise the
-  origin-agnostic outcome — the AST-side resolver retains only type parameters +
-  `containingClassIds` + the same-file fast path (Stage 5).
+- **Origin**: Unification Stages 4 and partial Stage 5 (KDoc-only — full Stage 5
+  body retirement is now Step 4.5b below).
+- **Goal**: Collapse `findLocalClass` out of the `ClassId`-resolution path (Stage 4);
+  the origin-agnostic outcome (Stage 5) is delivered as KDoc on
+  `JavaScopeResolver.findLocalClass` documenting its post-Stage-4 role as the
+  AST-side fast path for `JavaTypeOverAst.computeClassifier` /
+  `JavaClassCache` / `ConstantEvaluator`. The full body retirement is deferred
+  to Step 4.5b once the model has direct access to FIR-derived classifier data
+  (post-Step-4.5a `FirSession` injection).
 - **Prerequisites**: Step 3 green; Stage 3's parse-counter baseline recorded.
 - **Validation gate**: full `JavaUsingAst*` matrix unchanged + re-run parse counter on
   the Stage-3 testbed (must be ≤ Step 3's value, within noise).
 - **References**:
   [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 4](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Stage 5](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [§Stage 5](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §13](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+  (Step 4 re-classification rationale).
 
 #### Step 5 — Performance & test-data sweep (verification only)
 
@@ -216,6 +240,69 @@ Each step uses the same template:
   [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Verification under realistic loads](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md);
   [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.7 Phase 1](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
 
+#### Step 4.5a — `FirSession` injection + `resolve(...)` deletion + drop Phase 1 (closes L1)
+
+- **Origin**: `FirSession`-injection redesign track (closes L1 — drop Phase 1
+  of `JavaInheritedMemberResolver`'s inherited-inner BFS).
+- **Goal**: Land the load-bearing **deletion** of `JavaClassifierType.resolve(...)`
+  and `JavaAnnotation.resolveAnnotation(...)` from `core/compiler.common.jvm`'s
+  public interfaces; restore `JavaTypeConversion.resolveTypeName` to its
+  pre-`java-direct` body (`classifier?.classId ?: findClassIdByFqNameString(...) ?: ClassId.topLevel(...)`);
+  collapse `JavaInheritedMemberResolver`'s two-phase BFS into a single per-class-dispatched
+  origin-agnostic loop using a new model-internal `directSupertypeClassIds(classId)`
+  dispatcher; introduce the new `directSupertypeClassIds()` cache on `FirJavaClass`
+  (variant C of the alternatives doc); introduce the typed `LazySessionAccess`
+  wrapper as the failure-mode-1 mitigation; introduce `JavaSupertypeLoopChecker`
+  (model-side analogue of K1's `SupertypeLoopChecker`) for inheritance-cycle
+  bounding + `CYCLIC_INHERITANCE_HIERARCHY` emission for Java-only cycles; delete
+  the dead `JavaResolvedClassOrigin` / `JavaResolvedClassLikeSymbol` plumbing
+  added in Step 2's Stage 1; migrate the three test-fixture call sites in
+  `JavaParsingMembersTest.kt` and `JavaParsingTypeResolutionTest.kt` to property
+  reads (`paramType.classifier?.classId`) backed by a shared minimal-`FirSession`
+  helper.
+- **Prerequisites**: Step 5 green; **`FirSession` is reachable inside the Java
+  Model** (the wiring iteration — late-init on `JavaClassFinderOverAst` first,
+  restructured entry point later — is itself a separate piece of work, not
+  scoped to this step).
+- **Validation gate**: full `JavaUsingAst*` matrix unchanged; trip-wire pair
+  green (`Tests.Generics.InnerClasses.testJ_k_complex` and
+  `Tests.J_k.CollectionOverrides.testMapMethodsImplementedInJava`); cross-origin
+  re-entry trip-wire green (`KJKComplexHierarchyNestedLoop.kt`); new diagnostic
+  test cases for direct (`A extends A`) and indirect (`A extends B; B extends A`)
+  Java-only inheritance cycles produce `CYCLIC_INHERITANCE_HIERARCHY` and do
+  not deadlock; `git diff` review per `AGENT_INSTRUCTIONS.md` rule 4. Perf:
+  parse counter unchanged (no new parses); symbol-creation counter unchanged
+  call distribution; the BFS path is structurally cheaper (no
+  `lazyResolveToPhase(SUPER_TYPES)` no-op + `superTypeRefs` enhancement read on
+  the Java arms).
+- **References**:
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11 "Step 4.5a"](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md);
+  [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md` §3 "C — pre-resolved supertype-`ClassId` cache"](UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
+  (variant C and fallback variant D).
+
+#### Step 4.5b — Stage-5 collapse (closes L2)
+
+- **Origin**: `FirSession`-injection redesign track (closes L2 — retire
+  `JavaScopeResolver.findLocalClass` body and
+  `JavaClassOverAst.findInnerClassInSupertypes`).
+- **Goal**: Retire the AST-side `JavaScopeResolver.findLocalClass` body;
+  retire `JavaClassOverAst.findInnerClassInSupertypes` (or shrink it to a
+  same-file fast path); upgrade `JavaClassifierTypeOverAst.computeClassifier()`'s
+  cross-file branch (introduced minimally in 4.5a as a `JavaClassifier` with only
+  `classId` populated) to wrap a full `JavaClass`-shaped adapter
+  (`FirBackedJavaClassAdapter`) backed by the C-cache landed in 4.5a (or by
+  the fallback-variant-D `firClass.javaClass` direct read, whichever 4.5a
+  picked). The unification headline (§3 bullet 3) becomes literally true.
+- **Prerequisites**: Step 4.5a green.
+- **Validation gate**: full `JavaUsingAst*` matrix unchanged; trip-wire pair
+  green (`testJ_k_complex`, `testMapMethodsImplementedInJava`); same-file
+  fast-path parity check (the AST-only fast path for same-file references
+  must still bypass the symbol provider); `KJKComplexHierarchyNestedLoop.kt`
+  green; perf-counter re-run (must be within noise of the post-Step-4.5a
+  baseline).
+- **References**:
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11 "Step 4.5b"](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
+
 #### Step 6 — PSI Phase 2: structural refactoring of the symbol-provider topology
 
 - **Origin**: PSI Phase 2.
@@ -227,9 +314,13 @@ Each step uses the same template:
   completeness) are re-routed through `session.symbolProvider` with optional Java-origin
   filtering. `CombinedJavaClassFinder` *and* the Phase-1 `BinaryJavaClassFinder` are
   deleted; `FirJavaFacade.classFinder` becomes the source-only finder.
-- **Prerequisites**: Step 5 green; Stage 3's lazy-phase routing already in place
-  (Step 3), so the indirect-caller audit reuses the `session.symbolProvider` + optional
-  origin-filter pattern unification just made canonical.
+- **Prerequisites**: Steps 4.5a + 4.5b green (the model's classifier path now
+  goes through `firSession.symbolProvider` for cross-origin queries —
+  *exactly* the post-Step-6 canonical entry, so the indirect-caller audit
+  becomes a propagation, not an invention); Stage 3's lazy-phase routing
+  already in place (Step 3), so the indirect-caller audit reuses the
+  `session.symbolProvider` + optional origin-filter pattern unification just
+  made canonical.
 - **Validation gate**: full `JavaUsingAst*` matrix + re-run parse counter and
   symbol-creation counter on the same testbed. Any new regression is attributable to
   Phase 2 alone, since Steps 1–5 set the prior baseline.

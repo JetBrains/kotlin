@@ -298,6 +298,35 @@ Each has a mechanical mitigation.
    of supertypes that the original AST walk never had to touch. The current
    AST walk is intentionally one-step-at-a-time (BFS guided by visited set);
    the unified version must do the same.
+
+   *Mitigation enforcement update — post-Step-4.5a (`FirSession` injection
+   track).* Pre-injection, this failure mode is **structurally** prevented:
+   the Java Model has no handle on `FirSession` and therefore physically
+   cannot reach `session.symbolProvider`. Once `FirSession` is injected into
+   the model
+   ([`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md) §§7, 8),
+   the structural prevention disappears; the model *can* reach the symbol
+   provider, so the invariant becomes a coding rule. Mitigation is then
+   three-tiered:
+
+   - **KDoc.** Each model-side resolution-time helper is annotated with the
+     "no batched eager lookups" rule.
+   - **`AGENT_INSTRUCTIONS.md` rule.** A new bullet under the laziness
+     section forbids calling `firSession.symbolProvider.*` from anything
+     reachable from cache-population code (`JavaClassCache`,
+     `LeanJavaClassFinder.indexFile`, `JavaSupertypeGraph`-population).
+   - **Typed `LazySessionAccess` wrapper** (required, not optional). The
+     wrapper is a value class around `FirSession` whose surface exposes only
+     symbol-provider methods needed by resolution-time code. Cache-population
+     components hold AST-shaped inputs only — they never see the wrapper, so
+     they cannot reach the symbol provider. This makes the invariant
+     **typeable** rather than reviewable; future contributors editing
+     cache-population code get a compile-time error rather than a code-review
+     comment.
+
+   The wrapper lands as part of Step 4.5a alongside `JavaSupertypeLoopChecker`;
+   see the proposal doc §11 for the per-file contract and §12 Q2 for the
+   resolution rationale.
 2. **Routing type-parameter lookups through FIR.** Type parameters of an
    outer Java class are syntactic — answerable from the AST without any
    resolution. If we accidentally route `findTypeParameter("T")` through a

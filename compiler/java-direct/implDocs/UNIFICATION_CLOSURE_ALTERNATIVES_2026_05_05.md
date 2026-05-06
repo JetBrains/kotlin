@@ -1,5 +1,22 @@
 # Unification Closure — Phase-light Alternatives — 2026-05-05
 
+> **🛈 SUPERSEDED — 2026-05-05.** The recommendation in §5 (D + B, sequenced as
+> Step 4.5a + Step 4.5b) is **subsumed** by the `FirSession` injection redesign
+> documented in [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md),
+> which closes both L1 and L2 as a natural consequence of removing the callback
+> layer from `JavaClassifierType.resolve(...)`. Read the injection proposal first.
+>
+> This document is **kept** because:
+> - The §2 timing-bug analysis is the canonical reference for the read-side bug
+>   that motivates both tracks; the injection proposal cites it.
+> - Alternatives **A** and **F** remain the documented fallback **L1 closers** if
+>   `FirSession` injection is rejected.
+> - Alternative **C** remains the documented fallback if the `FirJavaClass.javaClass`
+>   visibility flip (D's prerequisite, carried over into the injection proposal) is
+>   rejected by FIR-core review.
+> - The §4 Step-6 compatibility verdicts on each alternative remain accurate; in
+>   particular E's structural incompatibility with Step 6 is unchanged.
+>
 > **Status / scope.** Companion to
 > [`MERGED_REFACTORING_PLAN_2026_05_04.md`](MERGED_REFACTORING_PLAN_2026_05_04.md)
 > and [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
@@ -11,7 +28,9 @@
 > **not** by itself amend the merged plan — it captures the design space so a follow-up
 > amendment can pick a track.
 >
-> See also: [`AGENT_INSTRUCTIONS.md`](../AGENT_INSTRUCTIONS.md),
+> See also: [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+> (chosen track; supersedes §5 of this doc),
+> [`AGENT_INSTRUCTIONS.md`](../AGENT_INSTRUCTIONS.md),
 > [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md),
 > [`CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`](CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md),
 > [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md).
