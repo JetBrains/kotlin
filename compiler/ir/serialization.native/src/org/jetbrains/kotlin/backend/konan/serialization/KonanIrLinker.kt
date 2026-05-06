@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
@@ -64,6 +66,8 @@ class KonanIrLinker(
         diagnosticReporter = irDiagnosticReporter,
     )
 
+    private val globalDeclarationTable = KonanGlobalDeclarationTable(builtIns)
+
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
@@ -71,6 +75,7 @@ class KonanIrLinker(
         friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
         platformSpecificClassFilter = K1LazyFakeOverrideClassFilter,
+        fakeOverrideDeclarationTable = KonanDeclarationTable(globalDeclarationTable),
         externalOverridabilityConditions = externalOverridabilityConditions,
         isMultipleInheritedImplementationsAllowed = {
             // Properties of ObjC protocols are serialized as final, along with their getters and setters.
