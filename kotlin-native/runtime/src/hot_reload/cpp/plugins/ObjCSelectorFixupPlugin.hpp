@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #ifndef KOTLIN_NATIVE_OBJCSELECTORFIXUPPLUGIN_HPP
 #define KOTLIN_NATIVE_OBJCSELECTORFIXUPPLUGIN_HPP
 
@@ -26,5 +24,3 @@ public:
 } // namespace kotlin::hot::orc::plugins
 
 #endif // KOTLIN_NATIVE_OBJCSELECTORFIXUPPLUGIN_HPP
-
-#endif

@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #include "WeakSymbolFallbackGenerator.hpp"
 
 namespace kotlin::hot::orc::plugins {
@@ -43,5 +41,3 @@ llvm::Error WeakSymbolFallbackGenerator::tryToGenerate(
 }
 
 } // namespace kotlin::hot::orc::plugins
-
-#endif

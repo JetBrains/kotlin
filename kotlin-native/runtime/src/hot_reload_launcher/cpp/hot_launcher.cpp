@@ -7,8 +7,6 @@
 #include "Types.h"
 #include "Common.h"
 
-#ifdef KONAN_HOT_RELOAD
-
 #include "HotReload.hpp"
 #include "HotReloadInternal.hpp"
 
@@ -19,12 +17,6 @@ using kotlin::hot::HotReloadImpl;
 // TODO: While, on iOS, it needs to be bundled, somehow?
 static constexpr auto kBootstrapFilePathEnv = "KONAN_HOT_RELOAD_BOOT";
 static constexpr auto kExpectedBootstrapFilePath = "./output.bootstrap.o";
-
-#else
-
-KInt Konan_start(const ObjHeader* args);
-
-#endif
 
 
 OBJ_GETTER(setupArgs, const int argc, const char** argv) {
@@ -53,8 +45,6 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
     ObjHolder args{};
     setupArgs(argc, argv, args.slot());
 
-#ifdef KONAN_HOT_RELOAD
-
     HotReloadImpl::Instance().LoadBootstrapFile(bootstrapPath);
     const auto KonanStart = HotReloadImpl::Instance().LookupForKonanStart();
 
@@ -64,10 +54,6 @@ extern "C" KInt Konan_run_start(const int argc, const char** argv) {
 
     std::fprintf(stderr, "error :: could not load expected bootstrap file at path: %s\n", kExpectedBootstrapFilePath);
     return EXIT_FAILURE;
-
-#else
-    return Konan_start(args.obj());
-#endif
 }
 
 extern "C" RUNTIME_EXPORT int Init_and_run_start(const int argc, const char** argv, const int memoryDeInit) {

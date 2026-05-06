@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #ifndef KOTLIN_NATIVE_COMMON_HPP
 #define KOTLIN_NATIVE_COMMON_HPP
 
@@ -14,5 +12,3 @@ inline constexpr auto kImplSymbolSuffix = "$knhr";
 }
 
 #endif // KOTLIN_NATIVE_COMMON_HPP
-
-#endif

@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #include "ObjCSelectorFixupPlugin.hpp"
 #include "HotReloadInternal.hpp"
 
@@ -151,5 +149,3 @@ void ObjCSelectorFixupPlugin::modifyPassConfig(
 }
 
 }
-
-#endif

@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #include <deque>
 #include <unordered_map>
 #include <unordered_set>
@@ -1019,5 +1017,3 @@ void HotReloadImpl::UpdateShadowStackReferences(const ObjHeader* oldObject, ObjH
 }
 
 // endregion
-
-#endif

@@ -6,8 +6,6 @@
 #ifndef HOTRELOADSTATS_HPP
 #define HOTRELOADSTATS_HPP
 
-#ifdef KONAN_HOT_RELOAD
-
 #include "Types.h"
 #include <vector>
 
@@ -41,7 +39,5 @@ private:
     Stats currentStats_ = {};
 };
 }
-
-#endif
 
 #endif //HOTRELOADSTATS_HPP

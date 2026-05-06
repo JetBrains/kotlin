@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #include "KotlinSymbolExternalizerPlugin.hpp"
 #include "PluginsCommon.hpp"
 #include "llvm/ExecutionEngine/Orc/Shared/MachOObjectFormat.h"
@@ -107,5 +105,3 @@ void KotlinSymbolExternalizerPlugin::modifyPassConfig(
 }
 
 } // namespace kotlin::hot::orc::plugins
-
-#endif

@@ -6,8 +6,6 @@
 #ifndef HOTRELOADSERVER_HPP
 #define HOTRELOADSERVER_HPP
 
-#ifdef KONAN_HOT_RELOAD
-
 #include <vector>
 #include <string>
 #include <thread>
@@ -197,8 +195,6 @@ private:
         onReloadCallback(dylibPaths);
     }
 };
-
-#endif
 
 
 #endif // HOTRELOADSERVER_HPP

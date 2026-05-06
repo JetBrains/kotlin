@@ -6,8 +6,6 @@
 #ifndef HOTRELOAD_PLUGINS_HPP
 #define HOTRELOAD_PLUGINS_HPP
 
-#ifdef KONAN_HOT_RELOAD
-
 #include "PluginsCommon.hpp"
 #include "WeakSymbolFallbackGenerator.hpp"
 #include "ObjCSelectorFixupPlugin.hpp"
@@ -22,5 +20,4 @@ using orc::plugins::ObjCSelectorFixupPlugin;
 using orc::plugins::MachOHostDataSymbolGenerator;
 #endif
 
-#endif // KONAN_HOT_RELOAD
 #endif // HOTRELOAD_PLUGINS_HPP

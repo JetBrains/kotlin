@@ -1,10 +1,10 @@
-//
-// Created by Gabriele.Pappalardo on 19/11/2025.
-//
+/**
+* Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+*/
+
 #include "Common.h"
 #include "Types.h"
-
-#ifdef KONAN_HOT_RELOAD
 
 #include "HotReloadStats.hpp"
 
@@ -83,5 +83,3 @@ void StatsCollector::RegisterSuccessful(const bool wasSuccessful) noexcept {
     currentStats_.wasSuccessful_ = wasSuccessful;
 }
 } // namespace kotlin::hot
-
-#endif

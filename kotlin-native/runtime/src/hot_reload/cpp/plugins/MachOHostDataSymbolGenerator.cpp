@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #include "MachOHostDataSymbolGenerator.hpp"
 #include "../HotReloadUtility.hpp"
 
@@ -98,5 +96,3 @@ llvm::Error MachOHostDataSymbolGenerator::tryToGenerate(
 }
 
 } // namespace kotlin::hot::orc::plugins
-
-#endif

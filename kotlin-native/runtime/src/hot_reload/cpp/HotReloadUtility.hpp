@@ -6,8 +6,6 @@
 #ifndef HOTRELOADUTILITY_HPP
 #define HOTRELOADUTILITY_HPP
 
-#ifdef KONAN_HOT_RELOAD
-
 #include <chrono>
 #include <Memory.h>
 #include <Logging.hpp>
@@ -66,7 +64,5 @@ inline const char* referenceOriginToString(const ReferenceOrigin origin) noexcep
 }
 
 }; // namespace kotlin::hot::utility
-
-#endif
 
 #endif // HOTRELOADUTILITY_HPP

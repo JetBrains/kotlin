@@ -10,8 +10,6 @@
 #ifndef HOTRELOAD_INTERNAL_HPP
 #define HOTRELOAD_INTERNAL_HPP
 
-#ifdef KONAN_HOT_RELOAD
-
 #include <memory>
 #include <string>
 #include <vector>
@@ -86,10 +84,6 @@ private:
     void Perform(mm::ThreadData& currentThreadData) const;
     std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) const;
 
-    static ObjHeader* PerformStateTransfer(mm::ThreadData& currentThreadData, ObjHeader* existingObject, const TypeInfo* newTypeInfo);
-    static int UpdateHeapReferences(ObjHeader* oldObject, ObjHeader* newObject);
-    static void UpdateShadowStackReferences(const ObjHeader* oldObject, ObjHeader* newObject);
-
     llvm::orc::JITDylib* getStubsJD() const;
 
     HotReloadServer server_{};
@@ -107,7 +101,5 @@ private:
 };
 
 } // namespace kotlin::hot
-
-#endif
 
 #endif // HOTRELOAD_INTERNAL_HPP

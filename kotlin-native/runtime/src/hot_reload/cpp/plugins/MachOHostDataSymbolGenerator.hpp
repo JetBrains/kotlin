@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #ifndef KOTLIN_NATIVE_MACHOHOSTDATASYMBOLGENERATOR_HPP
 #define KOTLIN_NATIVE_MACHOHOSTDATASYMBOLGENERATOR_HPP
 
@@ -34,5 +32,4 @@ private:
 
 } // namespace kotlin::hot::orc::plugins
 
-#endif
 #endif

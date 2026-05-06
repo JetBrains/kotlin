@@ -1,5 +1,3 @@
-#ifdef KONAN_HOT_RELOAD
-
 #include "HotReloadInternal.hpp"
 #include "HotReloadUtility.hpp"
 #include "plugins/PluginsCommon.hpp"
@@ -33,5 +31,3 @@ KotlinObjectFile KotlinObjectFile::Create(const llvm::MemoryBufferRef& Buf, std:
 
     return result;
 }
-
-#endif
