@@ -12,7 +12,6 @@
 #include "llvm/Passes/StandardInstrumentations.h"
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Error.h"
-#include "llvm/Transforms/Utils/Cloning.h"
 
 using namespace llvm;
 using namespace llvm::kotlin;
@@ -36,11 +35,6 @@ void LLVMKotlinInitializeTargets() {
 
 void LLVMKotlinSetNoTailCall(LLVMValueRef Call) {
   unwrap<CallInst>(Call)->setTailCallKind(CallInst::TCK_NoTail);
-}
-
-int LLVMKotlinInlineCall(LLVMValueRef Call) {
-  InlineFunctionInfo IFI;
-  return InlineFunction(*unwrap<CallBase>(Call), IFI).isSuccess();
 }
 
 namespace {

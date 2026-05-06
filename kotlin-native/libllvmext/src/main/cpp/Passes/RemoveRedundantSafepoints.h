@@ -16,6 +16,7 @@ public:
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AF);
 
   bool run(Module &M);
+  bool run(Function &F);
 
 private:
   bool IsSafepointInliningAllowed;
