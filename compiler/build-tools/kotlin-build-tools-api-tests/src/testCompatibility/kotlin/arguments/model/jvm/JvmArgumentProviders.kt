@@ -383,6 +383,11 @@ private val jvmCompilerArguments: List<JvmArgumentTestDescriptor<*>> = listOf(
                 }
             }
         ),
+        invalidRawValues = listOf(
+            "non-existent-mode",
+            "under-migration=warn",
+            "foo:bar:baz",
+        ),
         valueString = { value ->
             value?.joinToString(",") { item ->
                 when (item) {

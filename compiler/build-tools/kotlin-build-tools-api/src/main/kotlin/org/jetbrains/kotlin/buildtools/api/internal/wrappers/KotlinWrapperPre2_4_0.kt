@@ -557,7 +557,7 @@ internal class KotlinWrapperPre2_4_0(
                                     Jsr305.SpecificAnnotation(parts[0].removePrefix("@"), jsr305mode(parts[1]))
                                 }
                             }
-                            else -> throw CompilerArgumentsParseException("Invalid -Xjsr30 format: $it")
+                            else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $it")
                         }
                     } as V
                 }

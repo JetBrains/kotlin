@@ -338,6 +338,11 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         argument = X_JSR305,
         argumentValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore")),
         argumentRawValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore").joinToString(",")),
+        invalidRawValues = listOf(
+            "non-existent-mode",
+            "under-migration=warn",
+            "foo:bar:baz",
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xjsr305=$value") },
     ),

@@ -545,7 +545,7 @@ private object JvmCompilerArgumentPre2_4_0ValueAdapter : CommonCompilerArgumentP
                         1 -> Jsr305.Global(jsr305mode(parts[0]))
                         2 if parts[0] == "under-migration" -> Jsr305.UnderMigration(jsr305mode(parts[1]))
                         2 -> Jsr305.SpecificAnnotation(parts[0].removePrefix("@"), jsr305mode(parts[1]))
-                        else -> throw CompilerArgumentsParseException("Invalid -Xjsr30 format: $it")
+                        else -> throw CompilerArgumentsParseException("Invalid -Xjsr305 format: $it")
                     }
                 } as T
             }
