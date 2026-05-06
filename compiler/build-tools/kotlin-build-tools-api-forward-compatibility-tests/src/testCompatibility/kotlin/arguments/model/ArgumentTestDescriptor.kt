@@ -9,13 +9,30 @@ internal interface ArgumentTestDescriptor<T> {
     val argumentName: String
     val argument: Any
 
+    /**
+     * Valid typed values.
+     */
     val argumentValues: List<T>
+
+    /**
+     * Raw CLI string forms of [argumentValues]. Each string must round-trip: parsing it via
+     * `applyArgumentStrings` produces a typed value whose [getValueString] returns the same string.
+     */
     val argumentRawValues: List<String>
 
+    /**
+     * Typed values whose assignment must throw `CompilerArgumentsParseException`. Use for
+     * structurally invalid values (e.g., a path containing the platform path separator inside a
+     * single path-list entry).
+     */
     val invalidArgumentValues: List<T>
     val runsInvalidArgumentValueTest: Boolean
         get() = invalidArgumentValues.isNotEmpty()
 
+    /**
+     * Raw CLI strings that must be rejected as a parse error. Typical use: a non-existent enum
+     * entry for enum-backed arguments.
+     */
     val invalidRawValues: List<String>
     val runsInvalidRawValueTest: Boolean
         get() = invalidRawValues.isNotEmpty()
