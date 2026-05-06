@@ -5,6 +5,7 @@
 #include "KotlinPlugin.h"
 
 #include "Passes/HideSymbols.h"
+#include "Passes/PrepareThreadSanitizer.h"
 
 #include "llvm/Passes/PassBuilder.h"
 
@@ -19,6 +20,15 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                    ArrayRef<PassBuilder::PipelineElement>) {
                   if (Name == "kotlin-hide-symbols") {
                     PM.addPass(HideSymbolsPass());
+                    return true;
+                  }
+                  return false;
+                });
+            PB.registerPipelineParsingCallback(
+                [](StringRef Name, FunctionPassManager &PM,
+                   ArrayRef<PassBuilder::PipelineElement>) {
+                  if (Name == "kotlin-tsan") {
+                    PM.addPass(PrepareThreadSanitizerPass());
                     return true;
                   }
                   return false;
