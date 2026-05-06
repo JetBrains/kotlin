@@ -1,3 +1,6 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-JS:1.9,2.0,2.1
+// ^^^ KT-86180: CompileError: WebAssembly.Module(): Compiling function #3801:"C$<get-appendDigit1>.invoke" failed: call[0] expected type (ref null 994), found struct.new of type (ref 694) @+330409
+
 inline operator fun Double.provideDelegate(thisRef: Any?, kProp: Any?) = this.toLong()
 
 inline operator fun Long.getValue(thisRef: Any?, kProp: Any?) = this.toInt()

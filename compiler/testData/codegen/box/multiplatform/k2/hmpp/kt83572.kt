@@ -3,6 +3,9 @@
 // DIAGNOSTICS: -OPT_IN_USAGE
 // DONT_TARGET_EXACT_BACKEND: JVM_IR, NATIVE, WASM_WASI
 // ES_MODULES
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-Js:2.0
+// ^^^ 1st stage of K/W v2.0.0 creates invalid klib, which causes PL error on 2nd compilation stage:
+//     Class initialization error: Constructor 'Selection.<init>' should call a constructor of direct super class 'Range' but calls 'Any.<init>' instead
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:*
 
 // MODULE: web
