@@ -1,5 +1,5 @@
 
-// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.codegen.TestScriptWithSimpleEnvVars
+// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.test.runners.codegen.TestScriptWithSimpleEnvVars
 
 // envVar: stringVar1=abracadabra
 

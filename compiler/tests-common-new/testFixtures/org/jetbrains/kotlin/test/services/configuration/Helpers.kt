@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.HAS_CUSTOM_EXTENSION_FILES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
@@ -66,7 +67,8 @@ fun CompilerConfiguration.addSourcesForDependsOnClosure(
 ) {
     val isMppCompilation = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
     for (mppModule in module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)) {
-        for (file in mppModule.kotlinFiles) {
+        val files = if (HAS_CUSTOM_EXTENSION_FILES in module.directives) mppModule.files else mppModule.kotlinFiles
+        for (file in files) {
             addKotlinSourceRoot(
                 path = testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(file).canonicalPath,
                 hmppModuleName = runIf(isMppCompilation) { mppModule.name }

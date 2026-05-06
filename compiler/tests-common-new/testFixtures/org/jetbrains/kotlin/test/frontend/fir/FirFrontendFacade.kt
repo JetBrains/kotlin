@@ -272,11 +272,18 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
         val parser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
+        val keepNonKtFiles = FirDiagnosticsDirectives.HAS_CUSTOM_EXTENSION_FILES in module.directives
         val (ktFiles, lightTreeFiles) = when (parser) {
             FirParser.LightTree -> {
-                emptyMap<TestFile, KtFile>() to testServices.sourceFileProvider.getKtSourceFilesForSourceFiles(module.files)
+                emptyMap<TestFile, KtFile>() to testServices.sourceFileProvider.getKtSourceFilesForSourceFiles(
+                    module.files, keepNonKtFiles
+                )
             }
-            FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project) to emptyMap()
+            FirParser.Psi -> {
+                testServices.sourceFileProvider.getKtFilesForSourceFiles(
+                    module.files, project, keepNonKtFiles = keepNonKtFiles
+                ) to emptyMap()
+            }
         }
 
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {

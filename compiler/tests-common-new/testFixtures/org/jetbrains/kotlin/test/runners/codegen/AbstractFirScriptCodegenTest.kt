@@ -116,7 +116,7 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)
         val fileInfos = info.fileInfos.ifEmpty { return }
-        val classLoader = generatedTestClassLoader(testServices, module, info.classFileFactory)
+        val classLoader = generatedTestClassLoader(testServices, module, info.classFileFactory, addClassPathFromConfiguration = true)
         try {
             for (fileInfo in fileInfos) {
                 when (val sourceFile = fileInfo.sourceFile) {
@@ -157,16 +157,21 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
 
         val scriptClass = classLoader.loadClass(scriptFqName.asString())
         val ctor = scriptClass.constructors.single()
-        val args: Array<String> =
-            Regex("param: (\\S.*)").find(scriptText)?.let { it.groups[1]?.value?.split(" ") }
-                .orEmpty().toTypedArray()
-        val scriptInstance = ctor.newInstance(args)
+        val scriptParams = scriptText.readListAfterColon("param")
+        val scriptReceivers = scriptText.readListAfterColon("receiver")
+        val scriptEnvironmentVars = scriptText.readMapAfterColon("envVar")
+        val arrayOfParameters = (scriptParams + scriptReceivers + scriptEnvironmentVars.values).toTypedArray()
+        val scriptInstance = if (ctor.parameters.first().type.isArray) {
+            ctor.newInstance(arrayOfParameters)
+        } else {
+            ctor.newInstance(*arrayOfParameters)
+        }
         for ((fieldName, expectedValue) in expected) {
             if (expectedValue == "<nofield>") {
                 try {
                     scriptClass.getDeclaredField(fieldName)
                     assertions.fail { "must have no field $fieldName" }
-                } catch (e: NoSuchFieldException) {
+                } catch (_: NoSuchFieldException) {
                     continue
                 }
             }
@@ -177,6 +182,19 @@ class FirJvmScriptRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
             val resultString = result?.toString() ?: "null"
             assertions.assertEquals(expectedValue, resultString) { "comparing field $fieldName" }
         }
+    }
+
+    private fun String.readListAfterColon(name: String): List<String> {
+        return Regex("$name: (\\S.*)").find(this)?.let { it.groups[1]?.value?.split(" ") }
+            .orEmpty()
+    }
+
+    private fun String.readMapAfterColon(name: String): Map<String, String> {
+        return Regex("$name: (\\S.*)").find(this)?.let { it.groups[1]?.value?.split(" ") }
+            .orEmpty()
+            .associate { line ->
+                line.substringBefore('=') to line.substringAfter('=')
+            }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {

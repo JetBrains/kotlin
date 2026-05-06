@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.ir.validation.checkers.expression
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.ir.validation.checkers.IrElementChecker
@@ -22,12 +25,28 @@ object IrValueAccessScopeChecker : IrElementChecker<IrValueAccessExpression>(IrV
     override fun check(element: IrValueAccessExpression, context: CheckerContext) {
         if (!context.valueSymbolScopeStack.isVisibleInCurrentScope(element.symbol)) {
             val declaration = element.symbol.owner
-            if (declaration is IrValueParameter &&
-                declaration.origin == IrDeclarationOrigin.INSTANCE_RECEIVER &&
-                declaration.parents.any { (it as? IrClass)?.origin == IrDeclarationOrigin.SCRIPT_CLASS }
+            if (declaration is IrValueParameter) {
+                if (declaration.origin == IrDeclarationOrigin.INSTANCE_RECEIVER &&
+                    declaration.parents.any { (it as? IrClass)?.origin == IrDeclarationOrigin.SCRIPT_CLASS }
+                ) {
+                    // Invalid references to a different script instance are instead reported in the scripting plugin,
+                    // with a more accurate error message.
+                    return
+                }
+                if (declaration.origin == IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER &&
+                    (declaration.parent as? IrScript)?.origin == SCRIPT_K2_ORIGIN
+                ) {
+                    // May happen with scripts with custom configuration
+                    // Implicit receiver appears only at stage of the script running
+                    return
+                }
+            }
+            if (declaration is IrVariable
+                && declaration.origin == IrDeclarationOrigin.SCRIPT_CALL_PARAMETER
+                && (declaration.parent as? IrScript)?.origin == SCRIPT_K2_ORIGIN
             ) {
-                // Invalid references to a different script instance are instead reported in the scripting plugin,
-                // with a more accurate error message.
+                // May happen with scripts with custom configuration
+                // Parameter appears only at stage of the script running
                 return
             }
 

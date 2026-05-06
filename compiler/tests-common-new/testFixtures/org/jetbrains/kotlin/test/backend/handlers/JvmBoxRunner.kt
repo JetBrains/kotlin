@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
@@ -322,9 +323,13 @@ fun generatedTestClassLoader(
     testServices: TestServices,
     module: TestModule,
     classFileFactory: ClassFileFactory,
+    addClassPathFromConfiguration: Boolean = false,
 ): GeneratedClassLoader {
     val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
     val classpath = computeTestRuntimeClasspath(testServices, module)
+    if (addClassPathFromConfiguration) {
+        classpath += configuration.jvmClasspathRoots
+    }
     val withReflection = configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true
     if (PREFER_IN_TEST_OVER_STDLIB in module.directives) {
         require(USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION !in module.directives)
