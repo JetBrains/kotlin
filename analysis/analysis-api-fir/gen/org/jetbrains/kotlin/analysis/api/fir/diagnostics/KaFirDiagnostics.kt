@@ -1568,6 +1568,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AbsenceOfPrimaryConstructorForValueClass::class
     }
 
+    interface ExpectValueClassWithNoPrimaryConstructorHasSecondary : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = ExpectValueClassWithNoPrimaryConstructorHasSecondary::class
+    }
+
     interface InlineClassConstructorWrongParametersSize : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = InlineClassConstructorWrongParametersSize::class
     }

@@ -10,11 +10,7 @@ expect value class CommonUSize : Comparable<CommonUSize> {
 
 fun compareUSize(a: CommonUSize, b: CommonUSize) = a.compareTo(b)
 
-expect value class CommonSomething {
-    constructor(value: Int)
-}
-
-fun createCommonSomething() = CommonSomething(20)
+expect value class CommonSomething
 
 // MODULE: platform()()(common)
 
@@ -25,5 +21,5 @@ actual value class CommonSomething(val value: Int)
 
 fun box() = "OK".also {
     compareUSize(20.toUInt(), 30.toUInt())
-    createCommonSomething().value
+    CommonSomething(10).value
 }

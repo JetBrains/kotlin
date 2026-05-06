@@ -1879,6 +1879,11 @@ internal class AbsenceOfPrimaryConstructorForValueClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.AbsenceOfPrimaryConstructorForValueClass
 
+internal class ExpectValueClassWithNoPrimaryConstructorHasSecondaryImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ExpectValueClassWithNoPrimaryConstructorHasSecondary
+
 internal class InlineClassConstructorWrongParametersSizeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

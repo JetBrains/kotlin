@@ -179,6 +179,10 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
                 reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS)
+            } else {
+                declaration.constructors(context.session).filter { !it.isPrimary }.forEach { constructor ->
+                    reporter.reportOn(constructor.source, FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY)
+                }
             }
             return
         }

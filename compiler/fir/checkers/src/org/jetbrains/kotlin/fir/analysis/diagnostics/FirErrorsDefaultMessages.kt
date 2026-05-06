@@ -342,6 +342,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_CLASS_AS_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_REFINEMENT_ANNOTATION_WRONG_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_ABSTRACT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
@@ -2403,6 +2404,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner.")
         map.put(VALUE_CLASS_NOT_FINAL, "Value class can be only final.")
         map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value classes.")
+        map.put(
+            EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
+            "Expect value class without primary constructor cannot have secondary constructors.",
+        )
         map.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Value class must have exactly one primary constructor parameter.")
         map.put(VALUE_CLASS_EMPTY_CONSTRUCTOR, "Value class must have at least one primary constructor parameter.")
         map.put(

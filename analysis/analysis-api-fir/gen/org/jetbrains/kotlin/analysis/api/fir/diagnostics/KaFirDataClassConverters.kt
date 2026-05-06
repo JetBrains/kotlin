@@ -1992,6 +1992,12 @@ private fun KaDiagnosticConverterBuilder.addConversions41() {
             token,
         )
     }
+    add(FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY) { firDiagnostic ->
+        ExpectValueClassWithNoPrimaryConstructorHasSecondaryImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS) { firDiagnostic ->
         ValueClassCannotHaveContextReceiversImpl(
             firDiagnostic as KtPsiDiagnostic,
