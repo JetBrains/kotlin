@@ -8,6 +8,8 @@
 
 #ifdef KONAN_HOT_RELOAD
 
+#include "Memory.h"
+
 namespace kotlin::hot {
 
 /// Public interface for HotReload, does not expose LLVM dependencies.
@@ -20,7 +22,7 @@ public:
 } // namespace kotlin::hot
 
 extern "C" {
-    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader* objectPath);
+    void Kotlin_native_internal_HotReload_perform(ObjHeader*, const ObjHeader*);
     void Kotlin_native_internal_HotReload_invokeSuccessCallback();
     void* KNHR_LoadObjCStubAddress(const char* name);
 }

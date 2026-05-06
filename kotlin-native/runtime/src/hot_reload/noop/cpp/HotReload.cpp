@@ -1,13 +1,10 @@
 #ifdef KONAN_HOT_RELOAD
 
-#include "Memory.h"
+#include "HotReload.hpp"
 
 namespace kotlin::hot {
 
-class HotReload {
-public:
-    static void InitModule() noexcept {}
-};
+void HotReload::InitModule() noexcept {}
 
 } // namespace kotlin::hot
 

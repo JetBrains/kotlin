@@ -38,4 +38,5 @@ enum class RuntimeModule(val filename: String) {
     CRASH_HANDLER_NOOP("noop_crashHandler.bc"),
     HOT_RELOAD("hot_reload.bc"),
     HOT_RELOAD_LAUNCHER("hot_reload_launcher.bc"),
+    HOT_RELOAD_STATE_TRANSFER("hot_reload_state_transfer.bc")
 }

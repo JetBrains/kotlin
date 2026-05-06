@@ -82,7 +82,6 @@ private:
     // Class/instance reloading
     void ReloadClassesAndInstances(mm::ThreadData& currentThreadData) const;
     void Perform(mm::ThreadData& currentThreadData) const;
-    std::vector<ObjHeader*> FindObjectsToReload(const TypeInfo* oldTypeInfo) const;
 
     llvm::orc::JITDylib* getStubsJD() const;
 

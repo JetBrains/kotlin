@@ -329,10 +329,32 @@ bitcode {
             headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/main/cpp")
             headersDirs.from("${nativeDependencies.llvmPath}/include")
             sourceSets {
-                main {}
+                main {
+                    inputFiles.exclude("**/StateTransfer.cpp")
+                }
             }
             onlyIf { it.family.isAppleFamily }
         }
+
+        module("hot_reload_state_transfer") {
+              srcRoot.set(layout.projectDirectory.dir("src/hot_reload"))
+              headersDirs.from(
+                  "src/alloc/common/cpp",
+                  "src/gcScheduler/common/cpp",
+                  "src/gc/common/cpp",
+                  "src/mm/cpp",
+                  "src/externalCallsChecker/common/cpp",
+                  "src/main/cpp",
+              )
+              sourceSets {
+                  main {
+                      inputFiles.setIncludes(listOf("StateTransfer.cpp"))
+                  }
+                  test {
+                      inputFiles.from(srcRoot.dir("tests/cpp"))
+                  }
+              }
+          }
 
         module("noop_hot_reload") {
             srcRoot.set(layout.projectDirectory.dir("src/hot_reload/noop"))
