@@ -31,12 +31,21 @@ internal class XcodeEnvironment(private val project: Project) {
                 ?: readEnvVariable("KOTLIN_FRAMEWORK_BUILD_TYPE")?.toNativeBuildType()
         }
 
+    val archs: List<String>
+        get() = readEnvVariable("ARCHS")?.split(" ")?.filter { it.isNotBlank() }.orEmpty()
+
+    val excludedArchs: List<String>
+        get() = readEnvVariable("EXCLUDED_ARCHS")?.split(" ")?.filter { it.isNotBlank() }.orEmpty()
+
     val targets: List<KonanTarget>
         get() {
             val sdk = readEnvVariable("SDK_NAME") ?: return emptyList()
-            val archs = readEnvVariable("ARCHS")?.split(" ") ?: return emptyList()
+            val rawArchs = archs
+            if (rawArchs.isEmpty()) return emptyList()
+            val effectiveArchs = rawArchs - excludedArchs.toSet()
+            if (effectiveArchs.isEmpty()) return emptyList()
             val isCatalyst = readEnvVariable("IS_MACCATALYST") == "YES"
-            return AppleSdk.defineNativeTargets(sdk, archs, isCatalyst)
+            return AppleSdk.defineNativeTargets(sdk, effectiveArchs, isCatalyst)
         }
 
     val frameworkSearchDir: File?

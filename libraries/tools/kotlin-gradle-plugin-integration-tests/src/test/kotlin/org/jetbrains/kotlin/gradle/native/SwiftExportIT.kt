@@ -89,6 +89,39 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-86142: embedSwiftExportForXcode succeeds when EXCLUDED_ARCHS filters unconfigured architecture")
+    @GradleTest
+    fun shouldSucceedSwiftExportWhenExcludedArchsFiltersUnconfiguredArchitecture(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(
+                    testBuildDir,
+                    archs = listOf("arm64", "x86_64"),
+                    sdk = "iphonesimulator",
+                    excludedArchs = listOf("x86_64"),
+                )
+            ) {
+                assertNoDiagnostic(KotlinToolingDiagnostics.XcodeArchitectureNotConfiguredInGradle)
+            }
+        }
+    }
+
     @DisplayName("embedSwiftExport executes normally")
     @GradleTest
     fun testSwiftExportExecutionWithSwiftExportEnabled(

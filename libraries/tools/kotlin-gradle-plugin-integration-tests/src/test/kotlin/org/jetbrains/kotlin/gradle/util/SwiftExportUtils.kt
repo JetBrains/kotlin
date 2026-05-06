@@ -38,11 +38,13 @@ internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
     archs: List<String> = listOf("arm64"),
     sdk: String = "iphoneos",
+    excludedArchs: List<String> = emptyList(),
     iphoneOsDeploymentTarget: String = "14.1",
 ) = EnvironmentalVariables(
     "CONFIGURATION" to "Debug",
     "SDK_NAME" to sdk,
     "ARCHS" to archs.joinToString(" "),
+    "EXCLUDED_ARCHS" to excludedArchs.joinToString(" "),
     "ONLY_ACTIVE_ARCH" to "YES",
     "TARGET_BUILD_DIR" to testBuildDir.absolutePathString(),
     "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",

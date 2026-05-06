@@ -13,6 +13,7 @@ fun Project.applyEmbedAndSignEnvironment(
     configuration: String,
     sdk: String,
     archs: String,
+    excludedArchs: String? = null,
     builtProductsDirectory: String = layout.buildDirectory.dir("products").getFile().absolutePath,
     targetBuildDirectory: String = layout.buildDirectory.dir("buildDir").getFile().absolutePath,
     dwarfDsymFolderPath: String? = null,
@@ -29,6 +30,10 @@ fun Project.applyEmbedAndSignEnvironment(
     extensions.extraProperties.set(
         "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.ARCHS",
         archs
+    )
+    extensions.extraProperties.set(
+        "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.EXCLUDED_ARCHS",
+        excludedArchs,
     )
     extensions.extraProperties.set(
         "${XcodeEnvironment.XCODE_ENVIRONMENT_OVERRIDE_KEY}.BUILT_PRODUCTS_DIR",

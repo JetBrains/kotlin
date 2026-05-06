@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ValidateXcodeArchitecturesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
@@ -180,6 +181,38 @@ class SwiftExportUnitTests {
 
         assertEquals(linkTask.binary.buildType, buildType)
         assertEquals(linkTask.konanTarget, arm64SimLib.konanTarget)
+    }
+
+    @Test
+    fun `KT-86142 - excluded archs filter requestedTargets so validation does not fire`() {
+        val project = swiftExportProject(
+            archs = "arm64 x86_64",
+            excludedArchs = "x86_64",
+            multiplatform = { iosSimulatorArm64() }
+        )
+        project.evaluate()
+
+        val validateTask = project.tasks.getByName("validateArchitecturesForEmbedSwiftExportForXcode") as ValidateXcodeArchitecturesTask
+        assertEquals(listOf("ios_simulator_arm64"), validateTask.requestedTargets.get())
+        assertEquals(setOf("ios_simulator_arm64"), validateTask.configuredTargets.get())
+    }
+
+    @Test
+    fun `KT-86142 - all archs excluded registers a no-op embed task without validation`() {
+        val project = swiftExportProject(
+            archs = "x86_64",
+            excludedArchs = "x86_64",
+            multiplatform = { iosArm64() }
+        )
+        project.evaluate()
+
+        val embedTask = project.tasks.findByName("embedSwiftExportForXcode")
+        assertNotNull(embedTask, "embedSwiftExportForXcode must be registered as a no-op so Xcode's invocation succeeds")
+        assertNull(
+            project.tasks.findByName("validateArchitecturesForEmbedSwiftExportForXcode"),
+            "validation must not be wired when no architectures remain after EXCLUDED_ARCHS filtering"
+        )
+        assertEquals(0, embedTask.taskDependencies.getDependencies(null).size)
     }
 
     @Test
@@ -1247,6 +1280,7 @@ private fun swiftExportProject(
     configuration: String = "DEBUG",
     sdk: String = "iphonesimulator",
     archs: String = "arm64",
+    excludedArchs: String? = null,
     projectBuilder: ProjectBuilder.() -> Unit = { },
     multiplatform: KotlinMultiplatformExtension.() -> Unit = {
         iosSimulatorArm64()
@@ -1259,6 +1293,7 @@ private fun swiftExportProject(
             configuration = configuration,
             sdk = sdk,
             archs = archs,
+            excludedArchs = excludedArchs,
         )
         configureRepositoriesForTests()
     },
